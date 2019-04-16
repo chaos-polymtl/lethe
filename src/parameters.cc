@@ -1,0 +1,426 @@
+#include "parameters.h"
+
+namespace Parameters
+{
+
+  void declareAllParameters(ParameterHandler &prm)
+  {
+    Parameters::NonLinearSolver::declare_parameters (prm);
+    Parameters::LinearSolver::declare_parameters (prm);
+    Parameters::SimulationControl::declare_parameters (prm);
+    Parameters::MeshAdaptation::declare_parameters (prm);
+    Parameters::Mesh::declare_parameters(prm);
+    Parameters::PhysicalProperties::declare_parameters(prm);
+    Parameters::Timer::declare_parameters(prm);
+    Parameters::FEM::declare_parameters(prm);
+    Parameters::AnalyticalSolution::declare_parameters(prm);
+ }
+
+  FEM getFEMParameters2D(std::string file)
+  {
+    ParameterHandler prm;
+    Parameters::declareAllParameters(prm);
+    Parameters::BoundaryConditions<2> bcs;
+    bcs.declare_parameters(prm);
+    //// Parsing of the file
+    prm.parse_input (file);
+    Parameters::FEM              fem;
+    fem.parse_parameters(prm);
+    return fem;
+  }
+
+  FEM getFEMParameters3D(std::string file)
+  {
+    ParameterHandler prm;
+    Parameters::declareAllParameters(prm);
+    Parameters::BoundaryConditions<3> bcs;
+    bcs.declare_parameters(prm);
+    //// Parsing of the file
+    prm.parse_input (file);
+    Parameters::FEM              fem;
+    fem.parse_parameters(prm);
+    return fem;
+  }
+
+
+  void SimulationControl::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("simulation control");
+    {
+      prm.declare_entry("method", "steady",
+                        Patterns::Selection("steady|backward"),
+                        "The kind of solver for the linear system. "
+                        "Choices are <steady|backward>.");
+      prm.declare_entry("time step", "1.",
+                        Patterns::Double(),
+                        "Time step value");
+      prm.declare_entry("time end", "1",
+                        Patterns::Double(),
+                        "Time step value");
+      prm.declare_entry("adapt", "false",
+                        Patterns::Bool(),
+                        "Adaptative time-stepping <true|false>");
+      prm.declare_entry("number mesh adapt", "1",
+                        Patterns::Integer(),
+                        "Number of mesh adaptation (for steady simulations)");
+      prm.declare_entry("max cfl", "1",
+                        Patterns::Double(),
+                        "Maximum CFL value");
+      prm.declare_entry("output name", "simulation",
+                        Patterns::FileName(),
+                        "File output prefix");
+
+      prm.declare_entry("output frequency", "1",
+                        Patterns::Integer(),
+                        "Output frequency");
+
+      prm.declare_entry("subdivision", "1",
+                        Patterns::Integer(),
+                        "Subdivision of mesh cell in postprocessing");
+    }
+    prm.leave_subsection();
+  }
+
+  void SimulationControl::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("simulation control");
+    {
+      const std::string sv = prm.get("method");
+      if (sv == "steady")
+        method = steady;
+      else if (sv == "backward")
+        method = backward;
+      else if (sv == "bdf2")
+        method = bdf2;
+      dt              = prm.get_double("time step");
+      timeEnd         = prm.get_double("time end");
+      adapt           = prm.get_bool("adapt");
+      maxCFL          = prm.get_double("max cfl");
+      nbMeshAdapt     = prm.get_integer("number mesh adapt");
+      outputName      = prm.get("output name");
+      outputFrequency = prm.get_integer("output frequency");
+      subdivision     = prm.get_integer("subdivision");
+
+    }
+    prm.leave_subsection();
+  }
+
+  void Timer::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("timer");
+    {
+      prm.declare_entry("type", "none",
+                        Patterns::Selection("none|iteration|end"),
+                        "Clock monitoring methods "
+                        "Choices are <none|iteration|end>.");
+    }
+    prm.leave_subsection();
+  }
+
+  void Timer::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("timer");
+    {
+      const std::string cl = prm.get("type");
+      if (cl == "none")
+        type = none;
+      else if (cl == "iteration")
+        type = iteration;
+      else if (cl == "end")
+        type = end;
+    }
+    prm.leave_subsection();
+
+  }
+
+
+  void PhysicalProperties::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("physical properties");
+    {
+      prm.declare_entry("kinematic viscosity", "1",
+                        Patterns::Double(),
+                        "Kinematic viscosity");
+    }
+    prm.leave_subsection();
+  }
+
+  void PhysicalProperties::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("physical properties");
+    {
+      viscosity  = prm.get_double("kinematic viscosity");
+    }
+    prm.leave_subsection();
+  }
+
+  void FEM::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("FEM");
+    {
+      prm.declare_entry("velocity order", "1",
+                        Patterns::Integer(),
+                        "interpolation order velocity");
+      prm.declare_entry("pressure order", "1",
+                        Patterns::Integer(),
+                        "interpolation order pressure");
+      prm.declare_entry("qmapping all", "false",
+                        Patterns::Bool(),
+                        "Apply high order mapping everywhere");
+    }
+    prm.leave_subsection();
+  }
+
+  void FEM::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("FEM");
+    {
+      velocityOrder   = prm.get_integer("velocity order");
+      pressureOrder   = prm.get_integer("pressure order");
+      qmapping_all    = prm.get_bool("qmapping all");
+    }
+    prm.leave_subsection();
+  }
+
+  void AnalyticalSolution::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("analytical solution");
+    {
+      prm.declare_entry("error precision", "3",
+                        Patterns::Integer(),
+                        "Number of digits displayed when showing residuals");
+    }
+    prm.leave_subsection();
+  }
+
+  void AnalyticalSolution::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("analytical solution");
+    {
+      errorPrecision = prm.get_integer("error precision");
+    }
+    prm.leave_subsection();
+  }
+
+  void NonLinearSolver::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("non-linear solver");
+    {
+      prm.declare_entry("verbosity", "verbose",
+                        Patterns::Selection("quiet|verbose"),
+                        "State whether from the non-linear solver should be printed "
+                        "Choices are <quiet|verbose>.");
+      prm.declare_entry("tolerance", "1e-6",
+                        Patterns::Double(),
+                        "Newton solver tolerance");
+      prm.declare_entry("max iterations", "10",
+                        Patterns::Integer(),
+                        "Maximum number of Newton Iterations");
+      prm.declare_entry("residual precision", "2",
+                        Patterns::Integer(),
+                        "Number of digits displayed when showing residuals");
+    }
+    prm.leave_subsection();
+  }
+
+  void NonLinearSolver::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("non-linear solver");
+    {
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = verbose;
+      if (op == "quiet")
+        verbosity = quiet;
+      tolerance       = prm.get_double("tolerance");
+      maxIterations   = prm.get_integer("max iterations");
+      residualPrecision = prm.get_integer("residual precision");
+    }
+    prm.leave_subsection();
+  }
+
+
+  void Mesh::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("mesh");
+    {
+      prm.declare_entry("type", "gmsh",
+                        Patterns::Selection("gmsh|primitive"),
+                        "Type of mesh "
+                        "Choices are <gmsh|primitive>.");
+      prm.declare_entry("file name", "none",
+                        Patterns::FileName(),
+                        "GMSH file name");
+      prm.declare_entry("initial refinement", "0",
+                        Patterns::Integer(),
+                        "Initial refinement of primitive mesh");
+    }
+    prm.leave_subsection();
+  }
+
+  void Mesh::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("mesh");
+    {
+      const std::string op = prm.get("type");
+      if (op == "gmsh")
+        type = gmsh;
+      if (op == "uniform")
+        type = primitive;
+      fileName      = prm.get("file name");
+      initialRefinement = prm.get_integer("initial refinement");
+    }
+    prm.leave_subsection();
+  }
+
+
+  void LinearSolver::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("linear solver");
+    {
+      prm.declare_entry("verbosity", "verbose",
+                        Patterns::Selection("quiet|verbose"),
+                        "State whether output from solver runs should be printed. "
+                        "Choices are <quiet|verbose>.");
+      prm.declare_entry("residual precision", "2",
+                        Patterns::Integer(),
+                        "Residual precision");
+      prm.declare_entry("pressure rhs", "false",
+                        Patterns::Bool(),
+                        "State if pressure RHS projection is to be used. "
+                        "Choices are <false|true>.");
+      prm.declare_entry("method", "gmres",
+                        Patterns::Selection("gmres|bicgstab|amg"),
+                        "The kind of solver for the linear system. "
+                        "Choices are <gmres|bicgstab|amg>.");
+      prm.declare_entry("relative residual", "1e-2",
+                        Patterns::Double(),
+                        "Linear solver residual");
+      prm.declare_entry("minimum residual", "1e-8",
+                        Patterns::Double(),
+                        "Linear solver minimum residual");
+      prm.declare_entry("max iters", "1000",
+                        Patterns::Integer(),
+                        "Maximum solver iterations");
+      prm.declare_entry("ilu fill", "4",
+                        Patterns::Double(),
+                        "Ilu preconditioner fill");
+      prm.declare_entry("ilu absolute tolerance", "1e-3",
+                        Patterns::Double(),
+                        "Ilu preconditioner tolerance");
+      prm.declare_entry("ilu relative tolerance", "1.00",
+                        Patterns::Double(),
+                        "Ilu relative tolerance");
+      prm.declare_entry("amg aggregation threshold", "1e-10",
+                        Patterns::Double(),
+                        "amg aggregation threshold");
+      prm.declare_entry("amg n cycles", "1",
+                        Patterns::Integer(),
+                        "amg number of cycles");
+      prm.declare_entry("amg w cycles", "false",
+                        Patterns::Bool(),
+                        "amg w cycling");
+      prm.declare_entry("amg smoother sweeps", "2",
+                        Patterns::Integer(),
+                        "amg smoother sweeps");
+      prm.declare_entry("amg smoother overlap", "1",
+                        Patterns::Integer(),
+                        "amg smoother overlap");
+    }
+    prm.leave_subsection();
+  }
+  void LinearSolver::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("linear solver");
+    {
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = verbose;
+      if (op == "quiet")
+        verbosity = quiet;
+
+      const std::string sv = prm.get("method");
+      if (sv == "amg")
+        solver = amg;
+      else if (sv == "gmres")
+        solver = gmres;
+      else if (sv == "bicgstab")
+        solver = bicgstab;
+      rhsCorr                           = prm.get_bool("pressure rhs");
+      residual_precision                = prm.get_integer("residual precision");
+      relative_residual                 = prm.get_double("relative residual");
+      minimum_residual                  = prm.get_double("minimum residual");
+      max_iterations                    = prm.get_integer("max iters");
+      ilu_fill                          = prm.get_double("ilu fill");
+      ilu_atol                          = prm.get_double("ilu absolute tolerance");
+      ilu_rtol                          = prm.get_double("ilu relative tolerance");
+      amg_aggregation_threshold         = prm.get_double("amg aggregation threshold");
+      amg_n_cycles                      = prm.get_integer("amg n cycles");
+      amg_w_cycles                      = prm.get_bool("amg w cycles");
+      amg_smoother_sweeps               = prm.get_integer("amg smoother sweeps");
+      amg_smoother_overlap              = prm.get_integer("amg smoother overlap");
+    }
+    prm.leave_subsection();
+  }
+  void MeshAdaptation::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("mesh adaptation");
+    {
+      prm.declare_entry("type", "none",
+                        Patterns::Selection("none|uniform|kelly"),
+                        "Type of mesh adaptation"
+
+                        "Choices are <none|uniform|kelly>.");
+      prm.declare_entry("fraction type", "number",
+                        Patterns::Selection("number|fraction"),
+                        "How the fraction of refinement/coarsening are interepreted"
+                        "Choices are <number|fraction>.");
+      prm.declare_entry("max number elements", "100000000",
+                        Patterns::Integer(),
+                        "Maximum number of elements");
+      prm.declare_entry("max refinement level", "10",
+                        Patterns::Integer(),
+                        "Maximum refinement level");
+      prm.declare_entry("min refinement level", "1",
+                        Patterns::Integer(),
+                        "Minimum refinement level");
+      prm.declare_entry("frequency", "1",
+                        Patterns::Integer(),
+                        "Frequency of the mesh refinement");
+      prm.declare_entry("fraction refinement", "0.1",
+                        Patterns::Double(),
+                        "Fraction of refined elements");
+      prm.declare_entry("fraction coarsening", "0.05",
+                        Patterns::Double(),
+                        "Fraction of coarsened elements");
+    }
+    prm.leave_subsection();
+  }
+
+  void MeshAdaptation::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("mesh adaptation");
+    {
+      const std::string op = prm.get("type");
+      if (op == "none")
+        type = none;
+      if (op == "uniform")
+        type = uniform;
+      if (op == "kelly")
+        type = kelly;
+
+      const std::string fop = prm.get("fraction type");
+      if (fop == "number")
+        fractionType = number;
+      if (fop == "fraction")
+        fractionType = fraction;
+      maxNbElements      = prm.get_integer("max number elements");
+      maxRefLevel        = prm.get_integer("max refinement level");
+      minRefLevel        = prm.get_integer("min refinement level");
+      frequency          = prm.get_integer("frequency");
+      fractionCoarsening = prm.get_double("fraction coarsening");
+      fractionRefinement = prm.get_double("fraction refinement");
+    }
+    prm.leave_subsection();
+  }
+}
