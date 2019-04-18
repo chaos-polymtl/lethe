@@ -28,7 +28,20 @@ end
 subsection physical properties
     set kinematic viscosity            = 1.0000
 end
-
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+subsection forces
+    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
+    set calculate forces      = false     # Enable force calculation
+    set calculate torques     = true     # Enable torque calculation
+    set force name            = force     # Name prefix of force files
+    set torque name           = torque    # Name prefix of torque files
+    set output precision      = 10        # Output precision
+    set display precision     = 3         # Log precision
+    set calculation frequency = 1         # Frequency of the force calculation
+    set output frequency      = 1         # Frequency of file update
+end
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------

@@ -42,84 +42,88 @@ MMS3DNavierStokes<dim>::MMS3DNavierStokes(const std::string input_filename, cons
 template<int dim>
 void MMS3DNavierStokes<dim>::runMMS_3D()
 {
-    assert(dim==3);
-    const int initialSize=this->meshParameters.initialRefinement;
+  std::vector<double>                   ErrorLog;
+  std::vector<double>                   wallTime;
+  assert(dim==3);
+  const int initialSize=this->meshParameters.initialRefinement;
 
-    this->make_cube_grid(initialSize);
-    this->setup_dofs();
+  this->make_cube_grid(initialSize);
+  this->setup_dofs();
 
-    this->exact_solution = new ExactSolutionMMS3D<dim>;
-    this->forcing_function = new MMS3DSineForcingFunction<dim>;
-    this->viscosity_=this->physicalProperties.viscosity;
+  this->exact_solution = new ExactSolutionMMS3D<dim>;
+  this->forcing_function = new MMS3DSineForcingFunction<dim>;
+  this->viscosity_=this->physicalProperties.viscosity;
 
-    Timer timer;
-    while(this->simulationControl.integrate())
+  Timer timer;
+  while(this->simulationControl.integrate())
+  {
+    printTime(this->pcout,this->simulationControl);
+    timer.start ();
+    if (this->simulationControl.getIter() !=1)
     {
-      printTime(this->pcout,this->simulationControl);
-      timer.start ();
-      if (this->simulationControl.getIter() !=1)
-      {
-        this->refine_mesh();
-      }
-      this->setSolutionVector(0.);
-      this->newton_iteration(false);
-      this->postprocess();
-      this->oldCalculateL2Error();
-
-      this->wallTime_.push_back((timer.wall_time()));
-      this->finishTimeStep();
+      this->refine_mesh();
     }
+    this->setSolutionVector(0.);
+    this->newton_iteration(false);
+    this->postprocess();
+    double L2Error= this->calculateL2Error();
+    this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+    ErrorLog.push_back(L2Error);
 
-    if(this->this_mpi_process==0)
+    wallTime.push_back((timer.wall_time()));
+    this->finishTimeStep();
+  }
+
+  if(this->this_mpi_process==0)
+  {
+    assert (wallTime.size()==ErrorLog.size());
+    std::ofstream output_file("./L2Error-3D.dat");
+    for (unsigned int i=0 ; i < ErrorLog.size() ; ++i)
     {
-      assert (this->wallTime_.size()==this->L2ErrorU_.size());
-      std::ofstream output_file("./L2Error-3D.dat");
-      for (unsigned int i=0 ; i < this->L2ErrorU_.size() ; ++i)
-      {
-        output_file << i+initialSize << " " << this->L2ErrorU_[i] << " " << this->wallTime_[i] << std::endl;
-      }
-      output_file.close();
+      output_file << i+initialSize << " " << ErrorLog[i] << " " << wallTime[i] << std::endl;
     }
+    output_file.close();
+  }
 }
 
 int main (int argc, char *argv[])
 {
-    try
-    {
+  try
+  {
     if (argc != 2)
-      {
-        std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-        std::exit(1);
-      }
-        Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
+    {
+      std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
+      std::exit(1);
+    }
+    Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
 
-        Parameters::FEM              fem;
-        fem=Parameters::getFEMParameters2D(argv[1]);
-        MMS3DNavierStokes<3> problem(argv[1],fem.velocityOrder,fem.pressureOrder);
-        problem.runMMS_3D();
-    }
-    catch (std::exception &exc)
-    {
-        std::cerr << std::endl << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        std::cerr << "Exception on processing: " << std::endl
-                  << exc.what() << std::endl
-                  << "Aborting!" << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        return 1;
-    }
-    catch (...)
-    {
-        std::cerr << std::endl << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        std::cerr << "Unknown exception!" << std::endl
-                  << "Aborting!" << std::endl
-                  << "----------------------------------------------------"
-                  << std::endl;
-        return 1;
-    }
-    return 0;
+    Parameters::FEM              fem;
+    fem=Parameters::getFEMParameters2D(argv[1]);
+    MMS3DNavierStokes<3> problem(argv[1],fem.velocityOrder,fem.pressureOrder);
+    problem.runMMS_3D();
+  }
+  catch (std::exception &exc)
+  {
+    std::cerr << std::endl << std::endl
+              << "----------------------------------------------------"
+              << std::endl;
+    std::cerr << "Exception on processing: " << std::endl
+              << exc.what() << std::endl
+              << "Aborting!" << std::endl
+              << "----------------------------------------------------"
+              << std::endl;
+    return 1;
+  }
+  catch (...)
+  {
+    std::cerr << std::endl << std::endl
+              << "----------------------------------------------------"
+              << std::endl;
+    std::cerr << "Unknown exception!" << std::endl
+              << "Aborting!" << std::endl
+              << "----------------------------------------------------"
+              << std::endl;
+    return 1;
+  }
+  return 0;
 }

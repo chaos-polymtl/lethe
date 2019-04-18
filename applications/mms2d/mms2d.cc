@@ -25,38 +25,42 @@ MMSNavierStokes<dim>::MMSNavierStokes(const std::string input_filename, const un
 template<int dim>
 void MMSNavierStokes<dim>::runMMS()
 {
-    const int initialSize=this->meshParameters.initialRefinement;
-    this->make_cube_grid(initialSize);
-    this->setup_dofs();
-    this->exact_solution = new ExactSolutionMMS<dim>;
-    this->forcing_function = new MMSSineForcingFunction<dim>;
-    this->viscosity_=this->physicalProperties.viscosity;
+  std::vector<double>                   ErrorLog;
+  std::vector<double>                   wallTime;
+  const int initialSize=this->meshParameters.initialRefinement;
+  this->make_cube_grid(initialSize);
+  this->setup_dofs();
+  this->exact_solution = new ExactSolutionMMS<dim>;
+  this->forcing_function = new MMSSineForcingFunction<dim>;
+  this->viscosity_=this->physicalProperties.viscosity;
 
-    Timer timer;
-    while(this->simulationControl.integrate())
+  Timer timer;
+  while(this->simulationControl.integrate())
+  {
+    printTime(this->pcout,this->simulationControl);
+    timer.start ();
+    if (this->simulationControl.getIter() !=1) this->refine_mesh();
+    // Force restart from scratch of the solution
+    this->newton_iteration(true);
+    this->postprocess();
+    double L2Error= this->calculateL2Error();
+    this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+    ErrorLog.push_back(L2Error);
+
+    wallTime.push_back((timer.wall_time()));
+    this->finishTimeStep();
+  }
+
+  if(this->this_mpi_process==0)
+  {
+    assert (wallTime.size()==ErrorLog.size());
+    std::ofstream output_file("./L2Error-2D.dat");
+    for (unsigned int i=0 ; i < ErrorLog.size() ; ++i)
     {
-        printTime(this->pcout,this->simulationControl);
-        timer.start ();
-        if (this->simulationControl.getIter() !=1) this->refine_mesh();
-        // Force restart from scratch of the solution
-        this->newton_iteration(true);
-        this->postprocess();
-        this->oldCalculateL2Error();
-
-        this->wallTime_.push_back((timer.wall_time()));
-        this->finishTimeStep();
+      output_file << i+initialSize << " " << ErrorLog[i] << " " << wallTime[i] << std::endl;
     }
-
-    if(this->this_mpi_process==0)
-      {
-        assert (this->wallTime_.size()==this->L2ErrorU_.size());
-        std::ofstream output_file("./L2Error-2D.dat");
-        for (unsigned int i=0 ; i < this->L2ErrorU_.size() ; ++i)
-          {
-            output_file << i+initialSize << " " << this->L2ErrorU_[i] << " " << this->wallTime_[i] << std::endl;
-          }
-        output_file.close();
-      }
+    output_file.close();
+  }
 }
 
 int main (int argc, char *argv[])

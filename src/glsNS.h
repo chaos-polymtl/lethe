@@ -27,6 +27,7 @@
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/timer.h>
+#include <deal.II/base/table_handler.h>
 
 
 //LAC
@@ -102,13 +103,10 @@ public:
   GLSNavierStokesSolver(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure);
   ~GLSNavierStokesSolver();
 
-  // Temporary functions that will have the brough back into their own applications
-  void runBackwardStep();
-
   void refine_mesh();
   void setup_dofs();
-  void oldCalculateL2Error();
   double calculateL2Error();
+  void setInitialCondition(Parameters::InitialConditionType initial_condition_type );
   void postprocess();
   void finishTimeStep();
   void setSolutionVector(double value);
@@ -135,26 +133,34 @@ protected:
   Parameters::PhysicalProperties        physicalProperties;
   Parameters::Timer                     clock;
   Parameters::FEM                       femParameters;
+  Parameters::Forces                    forcesParameters;
   Parameters::AnalyticalSolution        analyticalSolutionParameters;
+  Parameters::InitialConditions<dim>    initialConditionParameters;
   Parameters::BoundaryConditions<dim>   boundaryConditions;
 
 
 private:
+  template <Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step,
+                                                                                       const bool assemble_matrix);
+
+  void assemble_L2_projection();
+  void set_nodal_values();
   void refine_mesh_Kelly();
   void refine_mesh_uniform();
   void projectRHSPressureConstant();
   void projectNewtonUpdatePressureConstant();
   void initializePressureRHSCorrection();
-
-  template <Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step,
-                                                                                       const bool assemble_matrix);
+  void calculate_forces();
+  void calculate_torques();
   void assemble_system(const bool initial_step);
   void assemble_rhs(const bool initial_step);
-  void solve(bool initial_step); // Interface function
-  void solveGMRES(bool initial_step);
-  void solveBiCGStab(bool initial_step);
-  void solveAMG(bool initial_step);
-  void write_output_results(const std::string solutionName, const unsigned int cycle);
+  void solve(bool initial_step, double relative_residual, double minimum_residual); // Interface function
+  void solveGMRES(bool initial_step, double absolute_residual, double relative_residual);
+  void solveBiCGStab(bool initial_step, double absolute_residual, double relative_residual);
+  void solveAMG(bool initial_step, double absolute_residual, double relative_residual);
+  void write_output_forces();
+  void write_output_torques();
+  void write_output_results(const std::string folder, const std::string solutionName, const unsigned int cycle, const double time);
 
   DoFHandler<dim>                  dof_handler;
   FESystem<dim>                    fe;
@@ -188,10 +194,17 @@ private:
   const  unsigned int            degreePressure_;
   const  unsigned int            degreeQuadrature_;
 
+  // Force analysis
+  std::vector<Tensor<1,dim>>     forces_;
+  std::vector<Tensor<1,3>>       torques_;
+  std::vector<TableHandler>      forces_tables;
+  std::vector<TableHandler>      torques_tables;
 
   double                         globalVolume_;
   const bool                     SUPG=true;
   const double                   GLS_u_scale=1;
+  std::vector<std::pair<double,std::string> > times_and_names_;
+
 
 
 protected:
@@ -224,6 +237,7 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(std::string input_filename, co
   // Parameters declaration
   Parameters::declareAllParameters(prm);
   boundaryConditions.declare_parameters (prm);
+  initialConditionParameters.declare_parameters(prm);
 
   // Parsing of the file
   prm.parse_input (input_filename);
@@ -232,12 +246,14 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(std::string input_filename, co
   linearSolverParameters.parse_parameters (prm);
   nonLinearSolverParameters.parse_parameters (prm);
   meshAdaptationParameters.parse_parameters(prm);
+  initialConditionParameters.parse_parameters(prm);
   boundaryConditions.parse_parameters(prm);
   meshParameters.parse_parameters(prm);
   physicalProperties.parse_parameters(prm);
   clock.parse_parameters(prm);
   femParameters.parse_parameters(prm);
   analyticalSolutionParameters.parse_parameters(prm);
+  forcesParameters.parse_parameters(prm);
   // Initialize simulation control
   simulationControl.initialize(prm);
 
@@ -246,6 +262,10 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(std::string input_filename, co
     computing_timer.disable_output();
 
   viscosity_=physicalProperties.viscosity;
+  forces_.resize(boundaryConditions.size);
+  torques_.resize(boundaryConditions.size);
+  forces_tables.resize(boundaryConditions.size);
+  torques_tables.resize(boundaryConditions.size);
 
   pcout << "Running on " << Utilities::MPI::n_mpi_processes(mpi_communicator)<< " MPI rank(s)..." << std::endl;
 }
@@ -284,6 +304,8 @@ void GLSNavierStokesSolver<dim>::setSolutionVector(double value)
 {
   present_solution=value;
 }
+
+
 
 
 template <int dim>
@@ -690,6 +712,153 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
   system_rhs.compress (VectorOperation::add);
 }
 
+/**
+ * Set the initial condition using a L2 or a viscous solver
+**/
+template <int dim>
+void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditionType initial_condition_type)
+{
+  if (initial_condition_type == Parameters::InitialConditionType::L2projection)
+  {
+    assemble_L2_projection();
+    solve(true,1e-12,1e-12);
+    present_solution=newton_update;
+    finishTimeStep();
+    postprocess();
+  }
+  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
+  {
+    set_nodal_values();
+    finishTimeStep();
+    postprocess();
+  }
+
+  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
+  {
+    viscosity_=1;
+    Parameters::SimulationControl::TimeSteppingMethod previousControl =  simulationControl.getMethod();
+    simulationControl.setMethod(Parameters::SimulationControl::steady);
+    newton_iteration(true);
+    simulationControl.setMethod(previousControl);
+    finishTimeStep();
+    postprocess();
+    simulationControl.setMethod(previousControl);
+    viscosity_=this->physicalProperties.viscosity;
+  }
+  else
+  {
+    finishTimeStep();
+    postprocess();
+  }
+}
+
+template <int dim>
+void GLSNavierStokesSolver<dim>::assemble_L2_projection()
+{
+  system_matrix    = 0;
+  system_rhs       = 0;
+  QGauss<dim>              quadrature_formula(degreeQuadrature_);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  FEValues<dim> fe_values (mapping,
+                           fe,
+                           quadrature_formula,
+                           update_values |
+                           update_quadrature_points |
+                           update_JxW_values
+                           );
+  const unsigned int   dofs_per_cell = fe.dofs_per_cell;
+  const unsigned int   n_q_points    = quadrature_formula.size();
+  FullMatrix<double>   local_matrix (dofs_per_cell, dofs_per_cell);
+  Vector<double>       local_rhs    (dofs_per_cell);
+  std::vector<Vector<double> >      initial_velocity (n_q_points, Vector<double>(dim+1));
+  std::vector<types::global_dof_index> local_dof_indices (dofs_per_cell);
+  const FEValuesExtractors::Vector velocities (0);
+  const FEValuesExtractors::Scalar pressure (dim);
+
+
+  Tensor<1, dim>  rhs_initial_velocity_pressure;
+  double  rhs_initial_pressure;
+
+
+  std::vector<Tensor<1, dim+1> >  phi                     (dofs_per_cell);
+  std::vector<Tensor<1, dim> >  phi_u                     (dofs_per_cell);
+  std::vector<double>           phi_p                     (dofs_per_cell);
+
+  typename DoFHandler<dim>::active_cell_iterator
+  cell = dof_handler.begin_active(),
+  endc = dof_handler.end();
+  for (; cell!=endc; ++cell)
+  {
+    if (cell->is_locally_owned())
+    {
+      fe_values.reinit(cell);
+      local_matrix = 0;
+      local_rhs    = 0;
+      initialConditionParameters.uvwp.vector_value_list(fe_values.get_quadrature_points(), initial_velocity);
+      for (unsigned int q=0; q<n_q_points; ++q)
+      {
+        for (unsigned int k=0; k<dofs_per_cell; ++k)
+        {
+          phi[k]      =  fe_values.shape_value(k, q);
+          phi_p[k]      =  fe_values[pressure]  .value(k, q);
+          phi_u[k]      =  fe_values[velocities].value(k, q);
+
+
+        }
+
+        // Establish the rhs tensor operator
+        for( int i=0; i<dim; ++i )
+        {
+            const unsigned int component_i = fe.system_to_component_index(i).first;
+            rhs_initial_velocity_pressure[i] = initial_velocity[q](component_i);
+        }
+        rhs_initial_pressure=initial_velocity[q](dim);
+
+        for (unsigned int i=0; i<dofs_per_cell; ++i)
+        {
+          // Matrix assembly
+          for (unsigned int j=0; j<dofs_per_cell; ++j)
+          {
+            local_matrix(i, j) += (phi_u[j]*phi_u[i]) * fe_values.JxW(q) ;
+            local_matrix(i, j) += (phi_p[j]*phi_p[i]) * fe_values.JxW(q) ;
+          }
+          local_rhs(i) +=  (phi_u[i] * rhs_initial_velocity_pressure + phi_p[i]*rhs_initial_pressure) * fe_values.JxW(q);
+        }
+      }
+
+
+      cell->get_dof_indices (local_dof_indices);
+      const AffineConstraints<double> &constraints_used = nonzero_constraints;
+      constraints_used.distribute_local_to_global(local_matrix,
+                                                  local_rhs,
+                                                  local_dof_indices,
+                                                  system_matrix,
+                                                  system_rhs);
+    }
+  }
+  system_matrix.compress (VectorOperation::add);
+  system_rhs.compress (VectorOperation::add);
+}
+
+template <int dim>
+void GLSNavierStokesSolver<dim>::set_nodal_values()
+{
+  const FEValuesExtractors::Vector velocities (0);
+  const FEValuesExtractors::Scalar pressure (dim);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  VectorTools::interpolate(mapping,
+                           dof_handler,
+                           initialConditionParameters.uvwp,
+                           newton_update,
+                           fe.component_mask(velocities));
+  VectorTools::interpolate(mapping,
+                           dof_handler,
+                           initialConditionParameters.uvwp,
+                           newton_update,
+                           fe.component_mask(pressure));
+  present_solution+=newton_update;
+}
+
 template <int dim>
 void GLSNavierStokesSolver<dim>::assemble_system(const bool initial_step)
 {
@@ -731,22 +900,22 @@ void GLSNavierStokesSolver<dim>::projectNewtonUpdatePressureConstant()
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solve(const bool initial_step)
+void GLSNavierStokesSolver<dim>::solve(const bool initial_step, double relative_residual, double minimum_residual)
 {
-  if (linearSolverParameters.solver==linearSolverParameters.gmres)    solveGMRES(initial_step);
-  else if (linearSolverParameters.solver==linearSolverParameters.bicgstab) solveBiCGStab(initial_step);
-  else if (linearSolverParameters.solver==linearSolverParameters.amg)      solveAMG(initial_step);
+  if (linearSolverParameters.solver==linearSolverParameters.gmres)         solveGMRES(initial_step,minimum_residual,relative_residual);
+  else if (linearSolverParameters.solver==linearSolverParameters.bicgstab) solveBiCGStab(initial_step,minimum_residual,relative_residual);
+  else if (linearSolverParameters.solver==linearSolverParameters.amg)      solveAMG(initial_step,minimum_residual,relative_residual);
   else throw("This solver is not allowed");
 }
 
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step)
+void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
   if (linearSolverParameters.rhsCorr) projectRHSPressureConstant();
   const AffineConstraints<double> &constraints_used = initial_step ? nonzero_constraints : zero_constraints;
-  const double linear_solver_tolerance = std::max(linearSolverParameters.relative_residual*system_rhs.l2_norm(),linearSolverParameters.minimum_residual);
+  const double linear_solver_tolerance = std::max(relative_residual*system_rhs.l2_norm(),absolute_residual);
 
   if (linearSolverParameters.verbosity!=Parameters::LinearSolver::quiet)
   {
@@ -785,13 +954,13 @@ void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step)
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step)
+void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
   if (linearSolverParameters.rhsCorr) projectRHSPressureConstant();
 
   const AffineConstraints<double> &constraints_used = initial_step ? nonzero_constraints : zero_constraints;
-  const double linear_solver_tolerance = std::max(linearSolverParameters.relative_residual*system_rhs.l2_norm(),linearSolverParameters.minimum_residual);
+  const double linear_solver_tolerance = std::max(relative_residual*system_rhs.l2_norm(),absolute_residual);
   if (linearSolverParameters.verbosity!=Parameters::LinearSolver::quiet)
   {
     pcout << "  -Tolerance of iterative solver is : " << std::setprecision(linearSolverParameters.residual_precision) << linear_solver_tolerance << std::endl;
@@ -828,13 +997,13 @@ void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step)
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solveAMG (const bool initial_step)
+void GLSNavierStokesSolver<dim>::solveAMG (const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
   const AffineConstraints<double> &constraints_used = initial_step ? nonzero_constraints : zero_constraints;
 
-  const double linear_solver_tolerance = std::max(linearSolverParameters.relative_residual*system_rhs.l2_norm(),linearSolverParameters.minimum_residual);
+  const double linear_solver_tolerance = std::max(relative_residual*system_rhs.l2_norm(),absolute_residual);
   if (linearSolverParameters.verbosity!=Parameters::LinearSolver::quiet)
   {
     pcout << "  -Tolerance of iterative solver is : " << std::setprecision(linearSolverParameters.residual_precision) << linear_solver_tolerance << std::endl;
@@ -1012,8 +1181,8 @@ void GLSNavierStokesSolver<dim>::newton_iteration( const bool  is_initial_step)
               assemble_system(first_step);
               current_res = system_rhs.l2_norm();
               if (nonLinearSolverParameters.verbosity != nonLinearSolverParameters.quiet)
-                pcout  << "Initial Newton iteration: " << outer_iteration << "  - Residual:  " << std::setprecision(nonLinearSolverParameters.residualPrecision) << current_res << std::endl;
-              solve(first_step);
+                pcout  << "Initial Newton iteration: " << outer_iteration << "  - Residual:  " << std::setprecision(nonLinearSolverParameters.display_precision) << current_res << std::endl;
+              solve(first_step,linearSolverParameters.relative_residual,linearSolverParameters.minimum_residual);
               local_evaluation_point = newton_update;
               nonzero_constraints.distribute(local_evaluation_point);
               evaluation_point = local_evaluation_point;
@@ -1030,7 +1199,7 @@ void GLSNavierStokesSolver<dim>::newton_iteration( const bool  is_initial_step)
               if (outer_iteration==0) current_res = system_rhs.l2_norm();
               if (nonLinearSolverParameters.verbosity != nonLinearSolverParameters.quiet)
                 pcout  << "Newton iteration: " << outer_iteration << "  - Residual:  " << current_res << std::endl;
-              solve(first_step);
+              solve(first_step,linearSolverParameters.relative_residual,linearSolverParameters.minimum_residual);
               for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
                 {
                   local_evaluation_point = present_solution;
@@ -1041,7 +1210,7 @@ void GLSNavierStokesSolver<dim>::newton_iteration( const bool  is_initial_step)
                   current_res = system_rhs.l2_norm();
                   if (nonLinearSolverParameters.verbosity != nonLinearSolverParameters.quiet)
                     pcout << "\t\talpha = " << std::setw(6) << alpha << std::setw(0)
-                            << " res = " << std::setprecision(nonLinearSolverParameters.residualPrecision) << current_res << std::endl;
+                            << " res = " << std::setprecision(nonLinearSolverParameters.display_precision) << current_res << std::endl;
                   if (current_res < 0.9*last_res)
                     break;
                 }
@@ -1059,11 +1228,27 @@ void GLSNavierStokesSolver<dim>::newton_iteration( const bool  is_initial_step)
 template <int dim>
 void GLSNavierStokesSolver<dim>::postprocess()
 {
-    if (simulationControl.isOutputIteration()) write_output_results(simulationControl.getOuputName(), simulationControl.getIter());
+    if (simulationControl.isOutputIteration()) write_output_results(simulationControl.getOutputFolder(),simulationControl.getOuputName(), simulationControl.getIter(), simulationControl.getTime());
+
+    if(forcesParameters.calculate_force)
+    {
+      if (simulationControl.getIter()%forcesParameters.calculation_frequency==0)
+        calculate_forces();
+      if (simulationControl.getIter()%forcesParameters.output_frequency==0)
+        write_output_forces();
+    }
+
+    if(forcesParameters.calculate_torque)
+    {
+      if (simulationControl.getIter()%forcesParameters.calculation_frequency==0)
+        calculate_torques();
+      if (simulationControl.getIter()%forcesParameters.output_frequency==0)
+        write_output_torques();
+    }
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::write_output_results (const std::string solutionName, const unsigned int iter)
+void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder, const std::string solutionName, const unsigned int iter, const double time)
 {
   TimerOutput::Scope t(computing_timer, "output");
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
@@ -1086,7 +1271,7 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string solutio
 
   data_out.build_patches (mapping,simulationControl.getSubdivision());
 
-  const std::string filename = (solutionName +
+  const std::string filename = (folder+ solutionName + "." +
                                 Utilities::int_to_string (iter, 4) +
                                 "." +
                                 Utilities::int_to_string
@@ -1094,101 +1279,56 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string solutio
   std::ofstream output ((filename + ".vtu").c_str());
   data_out.write_vtu (output);
 
-
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
-    {
-      std::vector<std::string> filenames;
-      for (unsigned int i=0;
-           i<Utilities::MPI::n_mpi_processes(mpi_communicator);
-           ++i)
-        filenames.push_back (solutionName +
-                             Utilities::int_to_string (iter, 4) +
-                             "." +
-                             Utilities::int_to_string (i, 4) +
-                             ".vtu");
-      std::ofstream master_output ((solutionName +
-                                    Utilities::int_to_string (iter, 4) +
-                                    ".pvtu").c_str());
-      data_out.write_pvtu_record (master_output, filenames);
-    }
+  {
+    std::vector<std::string> filenames;
+    for (unsigned int i=0;
+         i<Utilities::MPI::n_mpi_processes(mpi_communicator);
+         ++i)
+      filenames.push_back (solutionName + "." +
+                           Utilities::int_to_string (iter, 4) +
+                           "." +
+                           Utilities::int_to_string (i, 4) +
+                           ".vtu");
+
+    std::string pvtu_filename = (solutionName + "."+
+                                 Utilities::int_to_string (iter, 4) +
+                                 ".pvtu");
+    std::ofstream master_output ((folder+pvtu_filename).c_str());
+
+    data_out.write_pvtu_record (master_output, filenames);
+
+    const std::string pvdPrefix= (folder + solutionName );
+    times_and_names_.push_back (std::pair<double,std::string> (time, pvtu_filename));
+    std::ofstream pvd_output (pvdPrefix+".pvd");
+    DataOutBase::write_pvd_record (pvd_output, times_and_names_);
+  }
 }
 
-//Find the l2 norm of the error between the finite element sol'n and the exact sol'n
 template <int dim>
-void GLSNavierStokesSolver<dim>::oldCalculateL2Error()
+void GLSNavierStokesSolver<dim>::write_output_forces ()
 {
-  TimerOutput::Scope t(computing_timer, "error");
-
-  QGauss<dim>  quadrature_formula(degreeQuadrature_+1);
-  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
-  FEValues<dim> fe_values (mapping,
-                           fe, quadrature_formula,
-                           update_values   | update_gradients |
-                           update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Vector velocities (0);
-  const FEValuesExtractors::Scalar pressure (dim);
-
-
-  const unsigned int   			dofs_per_cell = fe.dofs_per_cell;         // This gives you dofs per cell
-  std::vector<types::global_dof_index> local_dof_indices (dofs_per_cell); //  Local connectivity
-
-  const unsigned int   n_q_points    = quadrature_formula.size();
-
-  std::vector<Vector<double> > q_exactSol (n_q_points, Vector<double>(dim+1));
-
-
-  std::vector<Tensor<1,dim> > local_velocity_values (n_q_points);
-  std::vector<double > local_pressure_values (n_q_points);
-
-  double l2errorU=0.;
-
-  //loop over elements
-  typename DoFHandler<dim>::active_cell_iterator
-      cell = dof_handler.begin_active(),
-      endc = dof_handler.end();
-  for (; cell!=endc; ++cell)
+  TimerOutput::Scope t(computing_timer, "output_forces");
+  for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
   {
-    if (cell->is_locally_owned())
-    {
-      fe_values.reinit (cell);
-      fe_values[velocities].get_function_values (present_solution,
-                                                 local_velocity_values);
-      fe_values[pressure].get_function_values(present_solution,
-                                              local_pressure_values);
+    std::string filename = forcesParameters.force_output_name+"."+Utilities::int_to_string (boundary_id, 2)+".dat";
+    std::ofstream output (filename.c_str());
 
-      //Retrieve the effective "connectivity matrix" for this element
-      cell->get_dof_indices (local_dof_indices);
-
-      // Get the exact solution at all gauss points
-      exact_solution->vector_value_list(fe_values.get_quadrature_points(),
-                                        q_exactSol);
-
-      for(unsigned int q=0; q<n_q_points; q++)
-      {
-        //Find the values of x and u_h (the finite element solution) at the quadrature points
-        double ux_sim=local_velocity_values[q][0];
-        double ux_exact=q_exactSol[q][0];
-
-        double uy_sim=local_velocity_values[q][1];
-        double uy_exact=q_exactSol[q][1];
-
-        l2errorU += (ux_sim-ux_exact)*(ux_sim-ux_exact) * fe_values.JxW(q);
-        l2errorU += (uy_sim-uy_exact)*(uy_sim-uy_exact) * fe_values.JxW(q);
-
-        if (dim==3)
-        {
-          double uz_sim=local_velocity_values[q][2];
-          double uz_exact=q_exactSol[q][2];
-          l2errorU += (uz_sim-uz_exact)*(uz_sim-uz_exact) * fe_values.JxW(q);
-        }
-      }
-    }
+    forces_tables[boundary_id].write_text(output);
   }
-  l2errorU=Utilities::MPI::sum(l2errorU,mpi_communicator);
+}
 
-  pcout << "L2Error U is : " << std::setprecision(analyticalSolutionParameters.errorPrecision) << std::sqrt(l2errorU) << std::endl;
-  L2ErrorU_.push_back(std::sqrt(l2errorU));
+template <int dim>
+void GLSNavierStokesSolver<dim>::write_output_torques ()
+{
+  TimerOutput::Scope t(computing_timer, "output_torques");
+  for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+  {
+    std::string filename = forcesParameters.torque_output_name+"."+Utilities::int_to_string (boundary_id, 2)+".dat";
+    std::ofstream output (filename.c_str());
+
+    torques_tables[boundary_id].write_text(output);
+  }
 }
 
 //Find the l2 norm of the error between the finite element sol'n and the exact sol'n
@@ -1268,37 +1408,220 @@ double GLSNavierStokesSolver<dim>::calculateL2Error()
   return std::sqrt(l2errorU);
 }
 
+// This is a primitive first implementation that could be greatly improved by doing a single pass instead of
+// N boundary passes
 template<int dim>
-void GLSNavierStokesSolver<dim>::runBackwardStep()
+void GLSNavierStokesSolver<dim>::calculate_forces()
 {
-    GridIn<dim> grid_in;
-    grid_in.attach_triangulation (triangulation);
-    std::ifstream input_file("backwardStep.msh");
+  TimerOutput::Scope t(computing_timer, "calculate_forces");
 
-    grid_in.read_msh(input_file);
-    setup_dofs();
-    viscosity_=0.02;
+  QGauss<dim-1>  face_quadrature_formula(degreeQuadrature_+1);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  const int n_q_points = face_quadrature_formula.size();
+  const FEValuesExtractors::Vector velocities (0);
+  const FEValuesExtractors::Scalar pressure (dim);
+  std::vector<double> pressure_values(n_q_points);
+  std::vector<Tensor< 2, dim> > velocity_gradients(n_q_points);
+  Tensor<1,dim> normal_vector;
+  Tensor<2,dim> fluid_stress;
+  Tensor<2,dim> fluid_pressure;
+  Tensor<1,dim> force;
 
+  FEFaceValues<dim> fe_face_values (mapping, fe, face_quadrature_formula, update_values
+                                    | update_quadrature_points | update_gradients | update_JxW_values
+                                    | update_normal_vectors );
 
-    forcing_function = new NoForce<dim>;
-
-    for (int cycle=0 ; cycle <7; cycle++)
+  for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+  {
+    force=0;
+    typename DoFHandler<dim>::active_cell_iterator
+        cell = dof_handler.begin_active(), endc = dof_handler.end();
+    for (; cell!=endc; ++cell)
     {
-        if (cycle !=0)
+      if (cell->is_locally_owned())
+      {
+        for (unsigned int face=0; face < GeometryInfo<dim>::faces_per_cell; face++)
         {
-            refine_mesh_Kelly();
-            if(cycle>0) viscosity_=1./100;
-            if(cycle>1) viscosity_=1./200;
-            if(cycle>2) viscosity_=1./400;
-            if(cycle>3) viscosity_=1./600;
-            if(cycle>4) viscosity_=1./800;
-            if(cycle>5) viscosity_=1./1000;
-            newton_iteration(false);
+          if (cell->face(face)->at_boundary())
+          {
+            fe_face_values.reinit (cell, face);
+            if (cell->face(face)->boundary_id() == boundary_id)
+            {
+              std::vector<Point<dim> > q_points = fe_face_values.get_quadrature_points();
+              fe_face_values[velocities].get_function_gradients(present_solution, velocity_gradients);
+              fe_face_values[pressure].get_function_values(present_solution, pressure_values);
+              for (int q = 0; q < n_q_points; q++)
+              {
+                normal_vector = -fe_face_values.normal_vector(q);
+                for (int d=0 ; d<dim ; ++d)
+                {
+                  fluid_pressure[d][d] = pressure_values[q];
+                }
+                fluid_stress = viscosity_*(velocity_gradients[q]+transpose(velocity_gradients[q])) - fluid_pressure;
+                force += fluid_stress*normal_vector*fe_face_values.JxW(q);
+              }
+            }
+          }
         }
-        else newton_iteration(true);
-        write_output_results ("BackwardStep-",cycle);
-        computing_timer.print_summary ();
-        computing_timer.reset ();
+      }
     }
+    forces_[boundary_id]=Utilities::MPI::sum(force,mpi_communicator);
+  }
+
+  if(forcesParameters.verbosity==forcesParameters.verbose &&  this_mpi_process==0)
+  {
+    pcout << std::endl;
+    TableHandler table;
+
+    for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+    {
+      table.add_value("Boundary ID", boundary_id);
+      table.add_value("f_x",forces_[boundary_id][0]);
+      table.add_value("f_y",forces_[boundary_id][1]);
+      table.set_precision("f_x" ,forcesParameters.display_precision);
+      table.set_precision("f_y" ,forcesParameters.display_precision);
+      if(dim==3)
+      {
+        table.add_value("f_z",forces_[boundary_id][2]);
+        table.set_precision("f_z" ,forcesParameters.display_precision);
+      }
+    }
+
+    std::cout << "+--------------------------------+"  << std::endl;
+    std::cout << "|  Force summary                 |" << std::endl;
+    std::cout << "+--------------------------------+"  << std::endl;
+    table.write_text(std::cout);
+  }
+
+  for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+  {
+    forces_tables[boundary_id].add_value("time",simulationControl.getTime());
+    forces_tables[boundary_id].add_value("f_x",forces_[boundary_id][0]);
+    forces_tables[boundary_id].add_value("f_y",forces_[boundary_id][1]);
+    if(dim==3) forces_tables[boundary_id].add_value("f_z",forces_[boundary_id][2]);
+    else forces_tables[boundary_id].add_value("f_z",0.);
+
+    // Precision
+    forces_tables[boundary_id].set_precision("f_x" ,forcesParameters.output_precision);
+    forces_tables[boundary_id].set_precision("f_y" ,forcesParameters.output_precision);
+    forces_tables[boundary_id].set_precision("f_z" ,forcesParameters.output_precision);
+    forces_tables[boundary_id].set_precision("time",forcesParameters.output_precision);
+  }
+}
+
+template<int dim>
+void GLSNavierStokesSolver<dim>::calculate_torques()
+{
+  TimerOutput::Scope t(computing_timer, "calculate_torques");
+
+  QGauss<dim-1>  face_quadrature_formula(degreeQuadrature_+1);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  const int n_q_points = face_quadrature_formula.size();
+  const FEValuesExtractors::Vector velocities (0);
+  const FEValuesExtractors::Scalar pressure (dim);
+  std::vector<double> pressure_values(n_q_points);
+  std::vector<Tensor< 2, dim> > velocity_gradients(n_q_points);
+  Tensor<1,dim> normal_vector;
+  Tensor<2,dim> fluid_stress;
+  Tensor<2,dim> fluid_pressure;
+
+  Tensor<1,dim> force;
+  Tensor<1,dim> distance;
+  // torque tensor had to be considered in 3D at all time...
+  Tensor<1,3> torque;
+
+
+  FEFaceValues<dim> fe_face_values (mapping, fe, face_quadrature_formula, update_values
+                                    | update_quadrature_points | update_gradients | update_JxW_values
+                                    | update_normal_vectors );
+
+  for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+  {
+    torque=0;
+    Point<dim> center_of_rotation=boundaryConditions.bcFunctions[boundary_id].cor;
+    typename DoFHandler<dim>::active_cell_iterator
+        cell = dof_handler.begin_active(), endc = dof_handler.end();
+    for (; cell!=endc; ++cell)
+    {
+      if (cell->is_locally_owned())
+      {
+        for (unsigned int face=0; face < GeometryInfo<dim>::faces_per_cell; face++)
+        {
+
+          if (cell->face(face)->at_boundary())
+          {
+            fe_face_values.reinit (cell, face);
+            if (cell->face(face)->boundary_id() == boundary_id)
+            {
+              std::vector<Point<dim> > q_points = fe_face_values.get_quadrature_points();
+              fe_face_values[velocities].get_function_gradients(present_solution, velocity_gradients);
+              fe_face_values[pressure].get_function_values(present_solution, pressure_values);
+              for (int q = 0; q < n_q_points; q++)
+              {
+                normal_vector = -fe_face_values.normal_vector(q);
+                for (int d=0 ; d<dim ; ++d)
+                {
+                  fluid_pressure[d][d] = pressure_values[q];
+                }
+                fluid_stress = viscosity_*(velocity_gradients[q]+transpose(velocity_gradients[q])) - fluid_pressure;
+                force = fluid_stress*normal_vector*fe_face_values.JxW(q);
+
+                distance = q_points[q]-center_of_rotation;
+                if (dim==2)
+                {
+                  torque[0]=0.;
+                  torque[1]=0.;
+                  torque[2]+=distance[0]*force[1]-distance[1]*force[0];
+                }
+                else if (dim==3)
+                {
+                  torque[0] += distance[1] * force[2] - distance[2] * force[1];
+                  torque[1] += distance[2] * force[0] - distance[0] * force[2];
+                  torque[2] += distance[0] * force[1] - distance[1] * force[0];
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    torques_[boundary_id]=Utilities::MPI::sum(torque,mpi_communicator);
+  }
+
+  if(forcesParameters.verbosity==forcesParameters.verbose &&  this_mpi_process==0)
+  {
+    pcout << std::endl;
+    TableHandler table;
+
+    for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+    {
+      table.add_value("Boundary ID", boundary_id);
+      table.add_value("T_x",torques_[boundary_id][0]);
+      table.add_value("T_y",torques_[boundary_id][1]);
+      table.set_precision("T_x" ,forcesParameters.display_precision);
+      table.set_precision("T_y" ,forcesParameters.display_precision);
+      table.add_value("T_z",torques_[boundary_id][2]);
+      table.set_precision("T_z" ,forcesParameters.display_precision);
+    }
+
+    std::cout << "+------------------------------------------+"  << std::endl;
+    std::cout << "|  Torque summary                          |" << std::endl;
+    std::cout << "+------------------------------------------+"  << std::endl;
+    table.write_text(std::cout);
+  }
+
+  for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
+  {
+    torques_tables[boundary_id].add_value("time",simulationControl.getTime());
+    torques_tables[boundary_id].add_value("T_x",torques_[boundary_id][0]);
+    torques_tables[boundary_id].add_value("T_y",torques_[boundary_id][1]);
+    torques_tables[boundary_id].add_value("T_z",torques_[boundary_id][2]);
+
+    // Precision
+    torques_tables[boundary_id].set_precision("T_x" ,forcesParameters.output_precision);
+    torques_tables[boundary_id].set_precision("T_y" ,forcesParameters.output_precision);
+    torques_tables[boundary_id].set_precision("T_z" ,forcesParameters.output_precision);
+    torques_tables[boundary_id].set_precision("time",forcesParameters.output_precision);
+  }
 }
 

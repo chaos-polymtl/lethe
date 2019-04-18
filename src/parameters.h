@@ -36,16 +36,17 @@ namespace Parameters
     // Number of mesh adaptation (steady simulations)
     unsigned int nbMeshAdapt;
 
+    // Folder for simulation output
+    std::string output_folder;
+
     // Prefix for simulation output
-    std::string outputName;
+    std::string output_name;
 
     // Frequency of the output
     unsigned int outputFrequency;
 
     // Subdivsions of the results in the output
     unsigned int subdivision;
-
-
 
     static void declare_parameters (ParameterHandler &prm);
     void parse_parameters (ParameterHandler &prm);
@@ -79,6 +80,40 @@ namespace Parameters
     void parse_parameters (ParameterHandler &prm);
   };
 
+  struct Forces
+  {
+    // Type of verbosity for the iterative solver
+    enum  Verbosity { quiet, verbose };
+    Verbosity verbosity;
+
+    // Enable force post-processing
+    bool calculate_force;
+
+    // Enable torque post-processing
+    bool calculate_torque;
+
+    // Frequency of the output
+    unsigned int calculation_frequency;
+
+    // Frequency of the output
+    unsigned int output_frequency;
+
+    // Output precision
+    unsigned int output_precision;
+
+    // Display precision
+    unsigned int display_precision;
+
+    // Prefix for simulation output
+    std::string force_output_name;
+
+    // Prefix for the torque output
+    std::string torque_output_name;
+
+    static void declare_parameters (ParameterHandler &prm);
+    void parse_parameters (ParameterHandler &prm);
+  };
+
   struct FEM
   {
     // Interpolation order velocity
@@ -107,7 +142,7 @@ namespace Parameters
     unsigned int maxIterations;
 
     // Residual precision
-    unsigned int residualPrecision;
+    unsigned int display_precision;
 
     static void declare_parameters (ParameterHandler &prm);
     void parse_parameters (ParameterHandler &prm);
@@ -229,6 +264,9 @@ namespace Parameters
     Functions::ParsedFunction<dim> u;
     Functions::ParsedFunction<dim> v;
     Functions::ParsedFunction<dim> w;
+
+    // Point for the center of rotation
+    Point<dim>                     cor;
   };
 
   template <int dim>
@@ -273,6 +311,11 @@ namespace Parameters
     prm.set("Function expression","0");
     prm.leave_subsection();
 
+    prm.enter_subsection("cor");
+    prm.declare_entry("x","0",Patterns::Double(),"X COR");
+    prm.declare_entry("y","0",Patterns::Double(),"Y COR");
+    prm.declare_entry("z","0",Patterns::Double(),"Z COR");
+    prm.leave_subsection();
 
   }
 
@@ -297,6 +340,12 @@ namespace Parameters
 
       prm.enter_subsection("w");
       bcFunctions[i_bc].w.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("cor");
+      bcFunctions[i_bc].cor[0]=prm.get_double("x");
+      bcFunctions[i_bc].cor[1]=prm.get_double("y");
+      if (dim==3) bcFunctions[i_bc].cor[2]=prm.get_double("z");
       prm.leave_subsection();
     }
   }
@@ -382,6 +431,76 @@ namespace Parameters
         }
         prm.leave_subsection();
       }
+    }
+    prm.leave_subsection();
+  }
+
+  // Type of initial conditions
+  enum InitialConditionType {none, L2projection, viscous, nodal};
+
+  template <int dim>
+  class InitialConditions
+  {
+  public:
+    InitialConditions():
+      uvwp(dim+1)
+    {}
+
+    InitialConditionType type;
+
+    // Artificial viscosity
+    double viscosity;
+
+    // Velocity components
+    Functions::ParsedFunction<dim> uvwp;
+
+    void declare_parameters (ParameterHandler &prm);
+    void parse_parameters (ParameterHandler &prm);
+  };
+
+
+
+
+  template <int dim>
+  void InitialConditions<dim>::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("initial conditions");
+    {
+      prm.declare_entry("type", "none",
+                        Patterns::Selection("none|L2projection|viscous|nodal"),
+                        "Type of initial condition"
+                        "Choices are <none|L2projection|viscous|nodal>.");
+
+      prm.enter_subsection("uvwp");
+      uvwp.declare_parameters(prm,dim);
+      if (dim==2) prm.set("Function expression","0; 0; 0");
+      if (dim==3) prm.set("Function expression","0; 0; 0; 0");
+      prm.leave_subsection();
+
+      prm.declare_entry("viscosity", "1",Patterns::Double(),"viscosity for viscous initial conditions");
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void InitialConditions<dim>::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("initial conditions");
+    {
+      const std::string op = prm.get("type");
+      if (op == "none")
+        type = none;
+      if (op == "L2projection")
+        type = L2projection;
+      if (op == "viscous")
+        type = viscous;
+      if (op== "nodal")
+        type = nodal;
+
+      viscosity = prm.get_double("viscosity");
+      prm.enter_subsection("uvwp");
+      uvwp.parse_parameters(prm);
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }

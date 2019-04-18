@@ -23,42 +23,44 @@ MMSUnstructuredNavierStokes<dim>::MMSUnstructuredNavierStokes(const std::string 
 template<int dim>
 void MMSUnstructuredNavierStokes<dim>::runMMSUnstructured()
 {
-    const int initialSize=3;
+  std::vector<double>                   ErrorLog;
+  std::vector<double>                   wallTime;
+  GridIn<dim> grid_in;
+  grid_in.attach_triangulation (this->triangulation);
+  std::ifstream input_file(this->meshParameters.fileName);
+  grid_in.read_msh(input_file);
+  this->setup_dofs();
+  this->exact_solution = new ExactSolutionMMS<dim>;
+  this->forcing_function = new MMSSineForcingFunction<dim>;
+  this->viscosity_=this->physicalProperties.viscosity;
 
-    GridIn<dim> grid_in;
-    grid_in.attach_triangulation (this->triangulation);
-    std::ifstream input_file(this->meshParameters.fileName);
-    grid_in.read_msh(input_file);
-    this->setup_dofs();
-    this->exact_solution = new ExactSolutionMMS<dim>;
-    this->forcing_function = new MMSSineForcingFunction<dim>;
-    this->viscosity_=this->physicalProperties.viscosity;
+  Timer timer;
+  while(this->simulationControl.integrate())
+  {
+    printTime(this->pcout,this->simulationControl);
+    timer.start ();
+    if (this->simulationControl.getIter() !=1) this->refine_mesh();
+    // Force restart from scratch of the solution
+    this->newton_iteration(true);
+    this->postprocess();
+    double L2Error= this->calculateL2Error();
+    this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+    ErrorLog.push_back(L2Error);
 
-    Timer timer;
-    while(this->simulationControl.integrate())
+    wallTime.push_back((timer.wall_time()));
+    this->finishTimeStep();
+  }
+
+  if(this->this_mpi_process==0)
+  {
+    assert (wallTime.size()==ErrorLog.size());
+    std::ofstream output_file("./L2Error-2D.dat");
+    for (unsigned int i=0 ; i < ErrorLog.size() ; ++i)
     {
-        printTime(this->pcout,this->simulationControl);
-        timer.start ();
-        if (this->simulationControl.getIter() !=1) this->refine_mesh();
-        // Force restart from scratch of the solution
-        this->newton_iteration(true);
-        this->postprocess();
-        this->oldCalculateL2Error();
-
-        this->wallTime_.push_back((timer.wall_time()));
-        this->finishTimeStep();
+      output_file << i << " " << ErrorLog[i] << " " << wallTime[i] << std::endl;
     }
-
-    if(this->this_mpi_process==0)
-      {
-        assert (this->wallTime_.size()==this->L2ErrorU_.size());
-        std::ofstream output_file("./L2Error-2D.dat");
-        for (unsigned int i=0 ; i < this->L2ErrorU_.size() ; ++i)
-          {
-            output_file << i+initialSize << " " << this->L2ErrorU_[i] << " " << this->wallTime_[i] << std::endl;
-          }
-        output_file.close();
-      }
+    output_file.close();
+  }
 }
 
 int main (int argc, char *argv[])

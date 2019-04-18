@@ -39,7 +39,8 @@ public:
   Parameters::SimulationControl::TimeSteppingMethod getMethod(){return method;}
   void setMethod(Parameters::SimulationControl::TimeSteppingMethod  p_method){ method=p_method;}
 
-  std::string getOuputName(){return parameterControl.outputName;}
+  std::string getOuputName(){return parameterControl.output_name;}
+  std::string getOutputFolder(){return parameterControl.output_folder;}
 
   double getTimeStep(){return dt;}
   double getTime(){return time;}
@@ -54,7 +55,7 @@ public:
 
   bool integrate()
   {
-    if ( (parameterControl.method==parameterControl.steady && iter>=(nbMeshAdapt+1)) || (parameterControl.method==parameterControl.backward && time >=endTime)) return false;
+    if ( (parameterControl.method==parameterControl.steady && iter>=(nbMeshAdapt+1)) || (parameterControl.method==parameterControl.backward && time >=(endTime-1e-6*dt))) return false;
     else
     {
       iter++;

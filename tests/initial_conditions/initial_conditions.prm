@@ -1,0 +1,36 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = steady
+  set number mesh adapt       = -1
+  set output name              = initial_conditions
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = primitive
+    set initial refinement   = 3
+end
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set verbosity               = quiet
+end
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = L2projection     # Type of ways to set initial conditions <none|L2Projection|viscous>
+    set viscosity = 1   # Viscosity used for viscous solution
+    subsection uvwp
+            set Function expression = x; y; y # Analytical formula used for the L2 projection
+    end
+end
+
+

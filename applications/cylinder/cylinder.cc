@@ -29,36 +29,14 @@ void VonKarmanNavierStokes<dim>::run()
   grid_in.read_msh(input_file);
 
 
-  Point<dim,double> circleCenter(1.0,0.5);
+  Point<dim,double> circleCenter(8,8);
   static const SphericalManifold<dim> boundary(circleCenter);
   this->triangulation.set_all_manifold_ids_on_boundary(0,0);
   this->triangulation.set_manifold (0, boundary);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  // First iteration to set-up initial condition with steady Stokes solution
-  this->viscosity_=1;
-  Parameters::SimulationControl::TimeSteppingMethod previousControl =  this->simulationControl.getMethod();
-  this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-  this->newton_iteration(true);
-  this->postprocess();
-  this->simulationControl.setMethod(previousControl);
-  this->finishTimeStep();
-
-  // Lower viscosity
-  this->viscosity_=0.01;
-  this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-  this->newton_iteration(false);
-  this->postprocess();
-  this->simulationControl.setMethod(previousControl);
-  this->finishTimeStep();
-
-
-
-
-  this->simulationControl.setMethod(previousControl);
-  this->viscosity_=this->physicalProperties.viscosity;
-
+  this->setInitialCondition(this->initialConditionParameters.type);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
@@ -66,8 +44,6 @@ void VonKarmanNavierStokes<dim>::run()
       this->postprocess();
       this->refine_mesh();
       this->finishTimeStep();
-      this->computing_timer.print_summary ();
-      this->computing_timer.reset ();
     }
 }
 

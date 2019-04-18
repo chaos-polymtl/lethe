@@ -13,15 +13,19 @@ namespace Parameters
     Parameters::PhysicalProperties::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::FEM::declare_parameters(prm);
+    Parameters::Forces::declare_parameters(prm);
     Parameters::AnalyticalSolution::declare_parameters(prm);
  }
 
+  // TODO : refactor this whole getFEM parameters...
   FEM getFEMParameters2D(std::string file)
   {
     ParameterHandler prm;
     Parameters::declareAllParameters(prm);
     Parameters::BoundaryConditions<2> bcs;
     bcs.declare_parameters(prm);
+    Parameters::InitialConditions<2> init;
+    init.declare_parameters(prm);
     //// Parsing of the file
     prm.parse_input (file);
     Parameters::FEM              fem;
@@ -35,6 +39,8 @@ namespace Parameters
     Parameters::declareAllParameters(prm);
     Parameters::BoundaryConditions<3> bcs;
     bcs.declare_parameters(prm);
+    Parameters::InitialConditions<3> init;
+    init.declare_parameters(prm);
     //// Parsing of the file
     prm.parse_input (file);
     Parameters::FEM              fem;
@@ -66,7 +72,11 @@ namespace Parameters
       prm.declare_entry("max cfl", "1",
                         Patterns::Double(),
                         "Maximum CFL value");
-      prm.declare_entry("output name", "simulation",
+      prm.declare_entry("output path", "./",
+                        Patterns::FileName(),
+                        "File output prefix");
+
+      prm.declare_entry("output name", "out",
                         Patterns::FileName(),
                         "File output prefix");
 
@@ -97,7 +107,8 @@ namespace Parameters
       adapt           = prm.get_bool("adapt");
       maxCFL          = prm.get_double("max cfl");
       nbMeshAdapt     = prm.get_integer("number mesh adapt");
-      outputName      = prm.get("output name");
+      output_folder   = prm.get("output path");
+      output_name     = prm.get("output name");
       outputFrequency = prm.get_integer("output frequency");
       subdivision     = prm.get_integer("subdivision");
 
@@ -182,6 +193,63 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  void Forces::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("forces");
+    {
+      prm.declare_entry("verbosity", "quiet",
+                        Patterns::Selection("quiet|verbose"),
+                        "State whether from the non-linear solver should be printed "
+                        "Choices are <quiet|verbose>.");
+      prm.declare_entry("calculate forces", "false",
+                        Patterns::Bool(),
+                        "Enable calculation of forces");
+      prm.declare_entry("calculate torques", "false",
+                        Patterns::Bool(),
+                        "Enable calculation of torques");
+      prm.declare_entry("force name", "force",
+                        Patterns::FileName(),
+                        "File output force prefix");
+      prm.declare_entry("torque name", "torque",
+                        Patterns::FileName(),
+                        "File output force prefix");
+      prm.declare_entry("output precision", "10",
+                        Patterns::Integer(),
+                        "Calculation frequency");
+      prm.declare_entry("display precision", "4",
+                        Patterns::Integer(),
+                        "Output frequency");
+      prm.declare_entry("calculation frequency", "1",
+                        Patterns::Integer(),
+                        "Calculation frequency");
+      prm.declare_entry("output frequency", "1",
+                        Patterns::Integer(),
+                        "Output frequency");
+    }
+    prm.leave_subsection();
+  }
+
+  void Forces::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("forces");
+    {
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = verbose;
+      if (op == "quiet")
+        verbosity = quiet;
+      calculate_force       = prm.get_bool("calculate forces");
+      calculate_torque      = prm.get_bool("calculate torques");
+      force_output_name     = prm.get("force name");
+      torque_output_name    = prm.get("torque name");
+      display_precision     = prm.get_integer("display precision");
+      output_precision      = prm.get_integer("output precision");
+      calculation_frequency = prm.get_integer("calculation frequency");
+      output_frequency      = prm.get_integer("output frequency");
+    }
+    prm.leave_subsection();
+  }
+
   void AnalyticalSolution::declare_parameters (ParameterHandler &prm)
   {
     prm.enter_subsection("analytical solution");
@@ -216,7 +284,7 @@ namespace Parameters
       prm.declare_entry("max iterations", "10",
                         Patterns::Integer(),
                         "Maximum number of Newton Iterations");
-      prm.declare_entry("residual precision", "2",
+      prm.declare_entry("residual precision", "4",
                         Patterns::Integer(),
                         "Number of digits displayed when showing residuals");
     }
@@ -234,7 +302,7 @@ namespace Parameters
         verbosity = quiet;
       tolerance       = prm.get_double("tolerance");
       maxIterations   = prm.get_integer("max iterations");
-      residualPrecision = prm.get_integer("residual precision");
+      display_precision = prm.get_integer("residual precision");
     }
     prm.leave_subsection();
   }
@@ -282,7 +350,7 @@ namespace Parameters
                         Patterns::Selection("quiet|verbose"),
                         "State whether output from solver runs should be printed. "
                         "Choices are <quiet|verbose>.");
-      prm.declare_entry("residual precision", "2",
+      prm.declare_entry("residual precision", "4",
                         Patterns::Integer(),
                         "Residual precision");
       prm.declare_entry("pressure rhs", "false",
