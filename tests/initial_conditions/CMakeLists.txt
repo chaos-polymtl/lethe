@@ -1,2 +1,0 @@
-SET(TEST_TARGET initial_conditions)
-DEAL_II_PICKUP_TESTS()

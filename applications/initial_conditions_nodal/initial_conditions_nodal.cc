@@ -59,16 +59,6 @@ void InitialConditionsNavierStokes<dim>::run()
   {
     throw "Nodal initial condition error";
   }
-  this->setInitialCondition(Parameters::L2projection);
-  double error_L2projection= this->calculateL2Error();
-  if (error_L2projection<1e-9)
-  {
-    this->pcout << "The L2projection initial condition is OK"<< std::endl;
-  }
-  else
-  {
-    throw "L2projection initial condition error";
-  }
 }
 
 int main (int argc, char *argv[])

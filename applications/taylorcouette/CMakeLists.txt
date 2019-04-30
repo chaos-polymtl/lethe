@@ -12,6 +12,6 @@ ADD_EXECUTABLE(taylorcouette taylorcouette.cc)
 DEAL_II_SETUP_TARGET(taylorcouette)
 TARGET_LINK_LIBRARIES(taylorcouette lethe)
 
+install(TARGETS taylorcouette RUNTIME DESTINATION bin)
 
-#ENABLE_TESTING()
-#ADD_SUBDIRECTORY(tests)
+

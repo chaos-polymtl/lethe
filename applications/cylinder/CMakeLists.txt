@@ -12,6 +12,7 @@ ADD_EXECUTABLE(cylinder cylinder.cc)
 DEAL_II_SETUP_TARGET(cylinder)
 TARGET_LINK_LIBRARIES(cylinder lethe)
 
+install(TARGETS cylinder RUNTIME DESTINATION bin)
 
 #ENABLE_TESTING()
 #ADD_SUBDIRECTORY(tests)

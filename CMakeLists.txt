@@ -24,7 +24,8 @@ ADD_SUBDIRECTORY(tests/taylorcouette_unstructured)
 ADD_SUBDIRECTORY(tests/mms2d)
 ADD_SUBDIRECTORY(tests/mms2d_unstructured)
 ADD_SUBDIRECTORY(tests/mms3d)
-ADD_SUBDIRECTORY(tests/initial_conditions)
+ADD_SUBDIRECTORY(tests/initial_conditions_L2)
+ADD_SUBDIRECTORY(tests/initial_conditions_nodal)
 
 
 

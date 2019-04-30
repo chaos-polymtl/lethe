@@ -3,4 +3,3 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 243
    Volume of triangulation:      4
 The nodal initial condition is OK
-The L2projection initial condition is OK

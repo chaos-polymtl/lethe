@@ -12,6 +12,5 @@ ADD_EXECUTABLE(taylorcouette_unstructured taylorcouette_unstructured.cc)
 DEAL_II_SETUP_TARGET(taylorcouette_unstructured)
 TARGET_LINK_LIBRARIES(taylorcouette_unstructured lethe)
 
+install(TARGETS taylorcouette_unstructured RUNTIME DESTINATION bin)
 
-#ENABLE_TESTING()
-#ADD_SUBDIRECTORY(tests)

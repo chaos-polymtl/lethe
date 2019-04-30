@@ -12,3 +12,5 @@ INCLUDE_DIRECTORIES(
 ADD_EXECUTABLE(mms2d_unstructured mms2d_unstructured.cc)
 DEAL_II_SETUP_TARGET(mms2d_unstructured)
 TARGET_LINK_LIBRARIES(mms2d_unstructured lethe)
+
+install(TARGETS mms2d_unstructured RUNTIME DESTINATION bin)
