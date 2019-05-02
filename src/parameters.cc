@@ -3,29 +3,13 @@
 namespace Parameters
 {
 
-  void declareAllParameters(ParameterHandler &prm)
-  {
-    Parameters::NonLinearSolver::declare_parameters (prm);
-    Parameters::LinearSolver::declare_parameters (prm);
-    Parameters::SimulationControl::declare_parameters (prm);
-    Parameters::MeshAdaptation::declare_parameters (prm);
-    Parameters::Mesh::declare_parameters(prm);
-    Parameters::PhysicalProperties::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
-    Parameters::FEM::declare_parameters(prm);
-    Parameters::Forces::declare_parameters(prm);
-    Parameters::AnalyticalSolution::declare_parameters(prm);
- }
+
 
   // TODO : refactor this whole getFEM parameters...
   FEM getFEMParameters2D(std::string file)
   {
     ParameterHandler prm;
-    Parameters::declareAllParameters(prm);
-    Parameters::BoundaryConditions<2> bcs;
-    bcs.declare_parameters(prm);
-    Parameters::InitialConditions<2> init;
-    init.declare_parameters(prm);
+    Parameters::declareAllParameters<2>(prm);
     //// Parsing of the file
     prm.parse_input (file);
     Parameters::FEM              fem;
@@ -36,11 +20,7 @@ namespace Parameters
   FEM getFEMParameters3D(std::string file)
   {
     ParameterHandler prm;
-    Parameters::declareAllParameters(prm);
-    Parameters::BoundaryConditions<3> bcs;
-    bcs.declare_parameters(prm);
-    Parameters::InitialConditions<3> init;
-    init.declare_parameters(prm);
+    Parameters::declareAllParameters<3>(prm);
     //// Parsing of the file
     prm.parse_input (file);
     Parameters::FEM              fem;

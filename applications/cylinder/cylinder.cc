@@ -4,21 +4,14 @@ template <int dim>
 class VonKarmanNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  VonKarmanNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure);
+  VonKarmanNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
+    GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure){}
   void run();
 
 private:
 
   std::vector<double>          wallTime_;
 };
-
-template <int dim>
-VonKarmanNavierStokes<dim>::VonKarmanNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure):
-  GLSNavierStokesSolver<dim>(input_filename,degreeVelocity,degreePressure)
-{
-
-}
-
 
 template<int dim>
 void VonKarmanNavierStokes<dim>::run()
@@ -36,7 +29,7 @@ void VonKarmanNavierStokes<dim>::run()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->setInitialCondition(this->initialConditionParameters.type);
+  this->setInitialCondition(this->initialConditionParameters->type);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
@@ -57,9 +50,14 @@ int main (int argc, char *argv[])
         std::exit(1);
       }
         Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
-        Parameters::FEM              fem;
-        fem=Parameters::getFEMParameters2D(argv[1]);
-        VonKarmanNavierStokes<2> problem_2d(argv[1],fem.velocityOrder,fem.pressureOrder);
+        ParameterHandler prm;
+        NavierStokesSolverParameters<2> NSparam;
+        NSparam.declare(prm);
+        // Parsing of the file
+        prm.parse_input (argv[1]);
+        NSparam.parse(prm);
+
+        VonKarmanNavierStokes<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
         problem_2d.run();
     }
     catch (std::exception &exc)

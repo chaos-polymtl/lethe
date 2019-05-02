@@ -26,21 +26,16 @@ template <int dim>
 class InitialConditionsNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  InitialConditionsNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure);
+  InitialConditionsNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
+    GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure)
+  {
+  }
   void run();
 
 private:
 
   std::vector<double>          wallTime_;
 };
-
-template <int dim>
-InitialConditionsNavierStokes<dim>::InitialConditionsNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure):
-  GLSNavierStokesSolver<dim>(input_filename,degreeVelocity,degreePressure)
-{
-
-}
-
 
 template<int dim>
 void InitialConditionsNavierStokes<dim>::run()
@@ -71,9 +66,14 @@ int main (int argc, char *argv[])
         std::exit(1);
       }
         Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
-        Parameters::FEM              fem;
-        fem=Parameters::getFEMParameters2D(argv[1]);
-        InitialConditionsNavierStokes<2> problem_2d(argv[1],fem.velocityOrder,fem.pressureOrder);
+        ParameterHandler prm;
+        NavierStokesSolverParameters<2> nsparam;
+        nsparam.declare(prm);
+        // Parsing of the file
+        prm.parse_input (argv[1]);
+        nsparam.parse(prm);
+
+        InitialConditionsNavierStokes<2> problem_2d(nsparam,nsparam.femParameters.velocityOrder,nsparam.femParameters.pressureOrder);
         problem_2d.run();
     }
     catch (std::exception &exc)

@@ -96,11 +96,69 @@
 using namespace dealii;
 
 template <int dim>
+class NavierStokesSolverParameters
+{
+public:
+
+  Parameters::LinearSolver              linearSolverParameters;
+  Parameters::NonLinearSolver           nonLinearSolverParameters;
+  Parameters::MeshAdaptation            meshAdaptationParameters;
+  Parameters::Mesh                      meshParameters;
+  Parameters::PhysicalProperties        physicalProperties;
+  Parameters::Timer                     clock;
+  Parameters::FEM                       femParameters;
+  Parameters::Forces                    forcesParameters;
+  Parameters::AnalyticalSolution        analyticalSolutionParameters;
+  Parameters::BoundaryConditions<dim>   boundaryConditions;
+  Parameters::InitialConditions<dim>    *initialConditionParameters;
+  SimulationControl                     simulationControl;
+
+
+  //NavierStokesSolverParameters(ParameterHandler &prm)
+  //{
+  //  parse(prm);
+  //}
+  void declare(ParameterHandler &prm)
+  {
+    initialConditionParameters = new Parameters::InitialConditions<dim>;
+    Parameters::NonLinearSolver::declare_parameters (prm);
+    Parameters::LinearSolver::declare_parameters (prm);
+    Parameters::SimulationControl::declare_parameters (prm);
+    Parameters::MeshAdaptation::declare_parameters (prm);
+    Parameters::Mesh::declare_parameters(prm);
+    Parameters::PhysicalProperties::declare_parameters(prm);
+    Parameters::Timer::declare_parameters(prm);
+    Parameters::FEM::declare_parameters(prm);
+    Parameters::Forces::declare_parameters(prm);
+    Parameters::AnalyticalSolution::declare_parameters(prm);
+    boundaryConditions.declare_parameters(prm);
+    initialConditionParameters->declare_parameters(prm);
+  }
+
+  void parse(ParameterHandler &prm)
+  {
+    linearSolverParameters.parse_parameters (prm);
+    nonLinearSolverParameters.parse_parameters (prm);
+    meshAdaptationParameters.parse_parameters(prm);
+    meshParameters.parse_parameters(prm);
+    physicalProperties.parse_parameters(prm);
+    clock.parse_parameters(prm);
+    femParameters.parse_parameters(prm);
+    analyticalSolutionParameters.parse_parameters(prm);
+    forcesParameters.parse_parameters(prm);
+    initialConditionParameters->parse_parameters(prm);
+    boundaryConditions.parse_parameters(prm);
+    simulationControl.initialize(prm);
+  }
+};
+
+template <int dim>
 class GLSNavierStokesSolver
 {
 
 public:
-  GLSNavierStokesSolver(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure);
+  GLSNavierStokesSolver(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure);
+
   ~GLSNavierStokesSolver();
 
   void refine_mesh();
@@ -125,18 +183,6 @@ protected:
 
 
 
-  SimulationControl                     simulationControl;
-  Parameters::LinearSolver              linearSolverParameters;
-  Parameters::NonLinearSolver           nonLinearSolverParameters;
-  Parameters::MeshAdaptation            meshAdaptationParameters;
-  Parameters::Mesh                      meshParameters;
-  Parameters::PhysicalProperties        physicalProperties;
-  Parameters::Timer                     clock;
-  Parameters::FEM                       femParameters;
-  Parameters::Forces                    forcesParameters;
-  Parameters::AnalyticalSolution        analyticalSolutionParameters;
-  Parameters::InitialConditions<dim>    initialConditionParameters;
-  Parameters::BoundaryConditions<dim>   boundaryConditions;
 
 
 private:
@@ -208,6 +254,7 @@ private:
 
 
 protected:
+
   // Physical Properties
   double                                viscosity_;
   std::vector<double>                   L2ErrorU_;
@@ -215,12 +262,25 @@ protected:
   ConditionalOStream                    pcout;
   TimerOutput                           computing_timer;
 
+  NavierStokesSolverParameters<dim>     nsparam;
 
+  SimulationControl                     simulationControl;
+  Parameters::LinearSolver              linearSolverParameters;
+  Parameters::NonLinearSolver           nonLinearSolverParameters;
+  Parameters::MeshAdaptation            meshAdaptationParameters;
+  Parameters::Mesh                      meshParameters;
+  Parameters::PhysicalProperties        physicalProperties;
+  Parameters::Timer                     clock;
+  Parameters::FEM                       femParameters;
+  Parameters::Forces                    forcesParameters;
+  Parameters::AnalyticalSolution        analyticalSolutionParameters;
+  Parameters::BoundaryConditions<dim>   boundaryConditions;
+  Parameters::InitialConditions<dim>    *initialConditionParameters;
 };
 
 // Constructor
 template<int dim>
-GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure):
+GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<dim> p_nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
     mpi_communicator (MPI_COMM_WORLD),
     n_mpi_processes (Utilities::MPI::n_mpi_processes(mpi_communicator)),
     this_mpi_process (Utilities::MPI::this_mpi_process(mpi_communicator)),
@@ -230,32 +290,21 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(std::string input_filename, co
     fe(FE_Q<dim>(degreeVelocity), dim, FE_Q<dim>(degreePressure), 1),
     degreeVelocity_(degreeVelocity),degreePressure_(degreePressure),degreeQuadrature_(degreeVelocity+1),
     pcout (std::cout, (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)),
-    computing_timer (mpi_communicator, pcout, TimerOutput::summary, TimerOutput::wall_times)
+    computing_timer (mpi_communicator, pcout, TimerOutput::summary, TimerOutput::wall_times),
+    nsparam(p_nsparam)
 {
-  ParameterHandler prm;
-
-  // Parameters declaration
-  Parameters::declareAllParameters(prm);
-  boundaryConditions.declare_parameters (prm);
-  initialConditionParameters.declare_parameters(prm);
-
-  // Parsing of the file
-  prm.parse_input (input_filename);
-
-  // Parsing of sections
-  linearSolverParameters.parse_parameters (prm);
-  nonLinearSolverParameters.parse_parameters (prm);
-  meshAdaptationParameters.parse_parameters(prm);
-  initialConditionParameters.parse_parameters(prm);
-  boundaryConditions.parse_parameters(prm);
-  meshParameters.parse_parameters(prm);
-  physicalProperties.parse_parameters(prm);
-  clock.parse_parameters(prm);
-  femParameters.parse_parameters(prm);
-  analyticalSolutionParameters.parse_parameters(prm);
-  forcesParameters.parse_parameters(prm);
-  // Initialize simulation control
-  simulationControl.initialize(prm);
+  boundaryConditions           = nsparam.boundaryConditions;
+  initialConditionParameters   = nsparam.initialConditionParameters;
+  meshParameters               = nsparam.meshParameters;
+  linearSolverParameters       = nsparam.linearSolverParameters;
+  nonLinearSolverParameters    = nsparam.nonLinearSolverParameters;
+  meshAdaptationParameters     = nsparam.meshAdaptationParameters;
+  physicalProperties           = nsparam.physicalProperties;
+  clock                        = nsparam.clock;
+  femParameters                = nsparam.femParameters;
+  analyticalSolutionParameters = nsparam.analyticalSolutionParameters;
+  forcesParameters             = nsparam.forcesParameters;
+  simulationControl            = nsparam.simulationControl;
 
   // Change the behavior of the timer for situations when you don't want outputs
   if (clock.type==Parameters::Timer::none)
@@ -269,8 +318,6 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(std::string input_filename, co
 
   pcout << "Running on " << Utilities::MPI::n_mpi_processes(mpi_communicator)<< " MPI rank(s)..." << std::endl;
 }
-
-
 
 template <int dim>
 GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver ()
@@ -794,7 +841,7 @@ void GLSNavierStokesSolver<dim>::assemble_L2_projection()
       fe_values.reinit(cell);
       local_matrix = 0;
       local_rhs    = 0;
-      initialConditionParameters.uvwp.vector_value_list(fe_values.get_quadrature_points(), initial_velocity);
+      initialConditionParameters->uvwp.vector_value_list(fe_values.get_quadrature_points(), initial_velocity);
       for (unsigned int q=0; q<n_q_points; ++q)
       {
         for (unsigned int k=0; k<dofs_per_cell; ++k)
@@ -848,12 +895,12 @@ void GLSNavierStokesSolver<dim>::set_nodal_values()
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
   VectorTools::interpolate(mapping,
                            dof_handler,
-                           initialConditionParameters.uvwp,
+                           initialConditionParameters->uvwp,
                            newton_update,
                            fe.component_mask(velocities));
   VectorTools::interpolate(mapping,
                            dof_handler,
-                           initialConditionParameters.uvwp,
+                           initialConditionParameters->uvwp,
                            newton_update,
                            fe.component_mask(pressure));
   present_solution+=newton_update;

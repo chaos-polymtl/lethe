@@ -37,7 +37,7 @@ template <int dim>
 class TaylorCouetteNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  TaylorCouetteNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure);
+  TaylorCouetteNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure);
   void run();
 
 private:
@@ -46,8 +46,8 @@ private:
 };
 
 template <int dim>
-TaylorCouetteNavierStokes<dim>::TaylorCouetteNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure):
-  GLSNavierStokesSolver<dim>(input_filename,degreeVelocity,degreePressure)
+TaylorCouetteNavierStokes<dim>::TaylorCouetteNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
+  GLSNavierStokesSolver<dim>(nsparam,degreeVelocity,degreePressure)
 {
 
 }
@@ -108,19 +108,24 @@ void TaylorCouetteNavierStokes<dim>::run()
 
 int main (int argc, char *argv[])
 {
-    try
-    {
+  try
+  {
     if (argc != 2)
-      {
-        std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-        std::exit(1);
-      }
-        Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
-        Parameters::FEM              fem;
-        fem=Parameters::getFEMParameters2D(argv[1]);
-        TaylorCouetteNavierStokes<2> problem_2d(argv[1],fem.velocityOrder,fem.pressureOrder);
-        problem_2d.run();
+    {
+      std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
+      std::exit(1);
     }
+    Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
+    ParameterHandler prm;
+    NavierStokesSolverParameters<2> NSparam;
+    NSparam.declare(prm);
+    // Parsing of the file
+    prm.parse_input (argv[1]);
+    NSparam.parse(prm);
+
+    TaylorCouetteNavierStokes<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
+    problem_2d.run();
+  }
     catch (std::exception &exc)
     {
         std::cerr << std::endl << std::endl

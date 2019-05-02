@@ -25,19 +25,15 @@ template <int dim>
 class MMS3DNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  MMS3DNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure);
+  MMS3DNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
+    GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure)
+  {
+  }
   void runMMS_3D();
 
 private:
   std::vector<double>          wallTime_;
 };
-
-template <int dim>
-MMS3DNavierStokes<dim>::MMS3DNavierStokes(const std::string input_filename, const unsigned int degreeVelocity, const unsigned int degreePressure):
-  GLSNavierStokesSolver<dim>(input_filename,degreeVelocity,degreePressure)
-{
-
-}
 
 template<int dim>
 void MMS3DNavierStokes<dim>::runMMS_3D()
@@ -97,9 +93,15 @@ int main (int argc, char *argv[])
     }
     Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
 
-    Parameters::FEM              fem;
-    fem=Parameters::getFEMParameters2D(argv[1]);
-    MMS3DNavierStokes<3> problem(argv[1],fem.velocityOrder,fem.pressureOrder);
+
+    ParameterHandler prm;
+    NavierStokesSolverParameters<3> NSparam;
+    NSparam.declare(prm);
+    // Parsing of the file
+    prm.parse_input (argv[1]);
+    NSparam.parse(prm);
+
+    MMS3DNavierStokes<3> problem(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
     problem.runMMS_3D();
   }
   catch (std::exception &exc)

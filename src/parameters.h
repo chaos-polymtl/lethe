@@ -11,10 +11,6 @@ using namespace dealii;
 
 namespace Parameters
 {
-
-  void declareAllParameters(ParameterHandler &prm);
-
-
   struct SimulationControl
   {
     // Method used for time progression (steady, unsteady)
@@ -442,17 +438,15 @@ namespace Parameters
   class InitialConditions
   {
   public:
-    InitialConditions():
-      uvwp(dim+1)
-    {}
+    InitialConditions():uvwp(dim+1){}
 
     InitialConditionType type;
 
+    // Velocity components
+    Functions::ParsedFunction<dim>  uvwp;
+
     // Artificial viscosity
     double viscosity;
-
-    // Velocity components
-    Functions::ParsedFunction<dim> uvwp;
 
     void declare_parameters (ParameterHandler &prm);
     void parse_parameters (ParameterHandler &prm);
@@ -504,6 +498,43 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
+
+  template <int dim>
+  void declareAllParameters(ParameterHandler &prm)
+  {
+    NonLinearSolver::declare_parameters (prm);
+    LinearSolver::declare_parameters (prm);
+    SimulationControl::declare_parameters (prm);
+    MeshAdaptation::declare_parameters (prm);
+    Mesh::declare_parameters(prm);
+    PhysicalProperties::declare_parameters(prm);
+    Timer::declare_parameters(prm);
+    FEM::declare_parameters(prm);
+    Forces::declare_parameters(prm);
+    AnalyticalSolution::declare_parameters(prm);
+    Parameters::BoundaryConditions<dim> bcs;
+    bcs.declare_parameters(prm);
+    Parameters::InitialConditions<dim> init;
+    init.declare_parameters(prm);
+ }
+
+
+  template <int dim>
+  void declareAllParameters(ParameterHandler &prm, Parameters::BoundaryConditions<dim> &bcs, Parameters::InitialConditions<dim> &init)
+  {
+    NonLinearSolver::declare_parameters (prm);
+    LinearSolver::declare_parameters (prm);
+    SimulationControl::declare_parameters (prm);
+    MeshAdaptation::declare_parameters (prm);
+    Mesh::declare_parameters(prm);
+    PhysicalProperties::declare_parameters(prm);
+    Timer::declare_parameters(prm);
+    FEM::declare_parameters(prm);
+    Forces::declare_parameters(prm);
+    AnalyticalSolution::declare_parameters(prm);
+    bcs.declare_parameters(prm);
+    init.declare_parameters(prm);
+ }
 
   FEM getFEMParameters2D(std::string);
   FEM getFEMParameters3D(std::string);
