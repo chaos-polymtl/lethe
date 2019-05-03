@@ -1,5 +1,7 @@
 #include "parameters.h"
 
+#ifndef LETHE_SIMULATIONCONTROL_H
+#define LETHE_SIMULATIONCONTROL_H
 
 class SimulationControl
 {
@@ -67,5 +69,5 @@ public:
 
 void printTime(ConditionalOStream pcout, SimulationControl control);
 
-
+#endif
 

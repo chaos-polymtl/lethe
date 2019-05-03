@@ -3,6 +3,8 @@
 #include <deal.II/lac/vector.h>
 
 using namespace dealii;
+#ifndef LETHE_EXACTSOLUTIONS_H
+#define LETHE_EXACTSOLUTIONS_H
 
 template<int dim>
 class ExactSolutionMMS : public Function<dim>
@@ -23,6 +25,8 @@ void ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
     values(0) = sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y);
     values(1) = -cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y);
 }
+
+#endif
 
 
 

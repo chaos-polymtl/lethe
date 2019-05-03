@@ -3,6 +3,9 @@
 // Finally, this is as in previous programs:
 using namespace dealii;
 
+#ifndef LETHE_FORCINGFUNCTIONS_H
+#define LETHE_FORCINGFUNCTIONS_H
+
 template<int dim>
 class MMSSineForcingFunction : public Function<dim>
 {
@@ -80,3 +83,5 @@ void NoForce<dim>::vector_value(const Point<dim> &/*p*/,
     values(1) = 0.;
 
 }
+
+#endif

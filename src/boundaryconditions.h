@@ -3,6 +3,193 @@
 
 using namespace dealii;
 
+#ifndef LETHE_BOUNDARYCONDITIONS_H
+#define LETHE_BOUNDARYCONDITIONS_H
+
+namespace BoundaryConditions
+{
+  enum BoundaryType {noslip, slip, function};
+
+  template <int dim>
+  class BoundaryFunction
+  {
+  public:
+    // Velocity components
+    Functions::ParsedFunction<dim> u;
+    Functions::ParsedFunction<dim> v;
+    Functions::ParsedFunction<dim> w;
+
+    // Point for the center of rotation
+    Point<dim>                     cor;
+  };
+
+  template <int dim>
+  class NSBoundaryConditions
+  {
+  public:
+    // List of boundary type for each number
+    std::vector<BoundaryType> type;
+
+    // Functions for (u,v,w) for all boundaries
+    BoundaryFunction<dim> *bcFunctions;
+
+    // Number of boundary conditions
+    unsigned int size;
+    unsigned int max_size;
+
+    void parse_boundary (ParameterHandler &prm, unsigned int i_bc);
+    void declareDefaultEntry (ParameterHandler &prm, unsigned int i_bc);
+    void declare_parameters (ParameterHandler &prm);
+    void parse_parameters (ParameterHandler &prm);
+  };
+  template <int dim>
+  void NSBoundaryConditions<dim>::declareDefaultEntry (ParameterHandler &prm, unsigned int i_bc)
+  {
+    prm.declare_entry("type", "noslip",
+                      Patterns::Selection("noslip|slip|function"),
+                      "Type of boundary conditoin"
+                      "Choices are <noslip|slip|function>.");
+
+    prm.enter_subsection("u");
+    bcFunctions[i_bc].u.declare_parameters(prm,1);
+    prm.set("Function expression","0");
+    prm.leave_subsection();
+
+    prm.enter_subsection("v");
+    bcFunctions[i_bc].v.declare_parameters(prm,1);
+    prm.set("Function expression","0");
+    prm.leave_subsection();
+
+    prm.enter_subsection("w");
+    bcFunctions[i_bc].w.declare_parameters(prm,1);
+    prm.set("Function expression","0");
+    prm.leave_subsection();
+
+    prm.enter_subsection("cor");
+    prm.declare_entry("x","0",Patterns::Double(),"X COR");
+    prm.declare_entry("y","0",Patterns::Double(),"Y COR");
+    prm.declare_entry("z","0",Patterns::Double(),"Z COR");
+    prm.leave_subsection();
+
+  }
+
+  template <int dim>
+  void NSBoundaryConditions<dim>::parse_boundary (ParameterHandler &prm, unsigned int i_bc)
+  {
+    const std::string op = prm.get("type");
+    if (op == "noslip")
+      type[i_bc] = noslip;
+    if (op == "slip")
+      type[i_bc] = slip;
+    if (op == "function")
+    {
+      type[i_bc] = function;
+      prm.enter_subsection("u");
+      bcFunctions[i_bc].u.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("v");
+      bcFunctions[i_bc].v.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("w");
+      bcFunctions[i_bc].w.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("cor");
+      bcFunctions[i_bc].cor[0]=prm.get_double("x");
+      bcFunctions[i_bc].cor[1]=prm.get_double("y");
+      if (dim==3) bcFunctions[i_bc].cor[2]=prm.get_double("z");
+      prm.leave_subsection();
+    }
+  }
+
+  template <int dim>
+  void NSBoundaryConditions<dim>::declare_parameters (ParameterHandler &prm)
+  {
+    max_size=4;
+
+    prm.enter_subsection("boundary conditions");
+    {
+      prm.declare_entry("number", "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+      type.resize(max_size);
+      bcFunctions = new BoundaryFunction<dim>[max_size];
+
+      prm.enter_subsection("bc 0");
+      {
+        declareDefaultEntry(prm,0);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 1");
+      {
+        declareDefaultEntry(prm,1);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 2");
+      {
+        declareDefaultEntry(prm,2);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 3");
+      {
+        declareDefaultEntry(prm,3);
+      }
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void NSBoundaryConditions<dim>::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions");
+    {
+      size = prm.get_integer("number");
+      type.resize(size);
+
+
+      if (size>=1)
+      {
+        prm.enter_subsection("bc 0");
+        {
+          parse_boundary(prm,0);
+        }
+        prm.leave_subsection();
+      }
+      if (size>=2)
+      {
+        prm.enter_subsection("bc 1");
+        {
+          parse_boundary(prm,1);
+        }
+        prm.leave_subsection();
+      }
+      if (size>=3)
+      {
+        prm.enter_subsection("bc 2");
+        {
+          parse_boundary(prm,2);
+        }
+        prm.leave_subsection();
+      }
+      if (size>=4)
+      {
+        prm.enter_subsection("bc 3");
+        {
+          parse_boundary(prm,3);
+        }
+        prm.leave_subsection();
+      }
+    }
+    prm.leave_subsection();
+  }
+}
+
 template <int dim>
 class FunctionDefined : public Function<dim>
 {
@@ -148,3 +335,4 @@ double ConstantXSlip<dim>::value (const Point<dim> &p,
         return 0.;
     return 0.;
 }
+#endif

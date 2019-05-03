@@ -7,10 +7,6 @@ public:
   VonKarmanNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
     GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure){}
   void run();
-
-private:
-
-  std::vector<double>          wallTime_;
 };
 
 template<int dim>

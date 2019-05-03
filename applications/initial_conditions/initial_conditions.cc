@@ -30,18 +30,42 @@ public:
     GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure)
   {
   }
+  void runTest();
   void run();
+
 };
-
-
 
 template<int dim>
 void InitialConditionsNavierStokes<dim>::run()
+{
+  GridIn<dim> grid_in;
+  grid_in.attach_triangulation (this->triangulation);
+  std::ifstream input_file(this->meshParameters.fileName);
+  grid_in.read_msh(input_file);
+  this->setup_dofs();
+  this->forcing_function = new NoForce<dim>;
+  this->setInitialCondition(this->initialConditionParameters->type);
+}
+
+
+template<int dim>
+void InitialConditionsNavierStokes<dim>::runTest()
 {
   const int initialSize=this->meshParameters.initialRefinement;
   this->make_cube_grid(initialSize);
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;
+  this->setInitialCondition(Parameters::L2projection);
+  double error_L2projection= this->calculateL2Error();
+  if (error_L2projection<1e-9)
+  {
+    this->pcout << "The L2projection initial condition is OK"<< std::endl;
+  }
+  else
+  {
+    throw "L2projection initial condition error";
+  }
+
   this->setInitialCondition(Parameters::nodal);
   double error_nodal= this->calculateL2Error();
   if (error_nodal<1e-9)
@@ -65,13 +89,15 @@ int main (int argc, char *argv[])
       }
         Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
         ParameterHandler prm;
-        NavierStokesSolverParameters<2> NSparam;
-        NSparam.declare(prm);
+        NavierStokesSolverParameters<2> nsparam;
+        nsparam.declare(prm);
         // Parsing of the file
         prm.parse_input (argv[1]);
-        NSparam.parse(prm);
-        InitialConditionsNavierStokes<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
-        problem_2d.run();
+        nsparam.parse(prm);
+
+        InitialConditionsNavierStokes<2> problem_2d(nsparam,nsparam.femParameters.velocityOrder,nsparam.femParameters.pressureOrder);
+        if (nsparam.test.enabled) problem_2d.runTest();
+        else problem_2d.run();
     }
     catch (std::exception &exc)
     {

@@ -2,33 +2,6 @@
 
 namespace Parameters
 {
-
-
-
-  // TODO : refactor this whole getFEM parameters...
-  FEM getFEMParameters2D(std::string file)
-  {
-    ParameterHandler prm;
-    Parameters::declareAllParameters<2>(prm);
-    //// Parsing of the file
-    prm.parse_input (file);
-    Parameters::FEM              fem;
-    fem.parse_parameters(prm);
-    return fem;
-  }
-
-  FEM getFEMParameters3D(std::string file)
-  {
-    ParameterHandler prm;
-    Parameters::declareAllParameters<3>(prm);
-    //// Parsing of the file
-    prm.parse_input (file);
-    Parameters::FEM              fem;
-    fem.parse_parameters(prm);
-    return fem;
-  }
-
-
   void SimulationControl::declare_parameters (ParameterHandler &prm)
   {
     prm.enter_subsection("simulation control");
@@ -470,5 +443,26 @@ namespace Parameters
       fractionRefinement = prm.get_double("fraction refinement");
     }
     prm.leave_subsection();
+  }
+
+  void Testing::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("test");
+    {
+      prm.declare_entry("enable", "false",
+                        Patterns::Bool(),
+                        "Enable testing mode of a solver");
+    }
+    prm.leave_subsection();
+  }
+
+  void Testing::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("test");
+    {
+      enabled = prm.get_bool("enable");
+    }
+    prm.leave_subsection();
+
   }
 }

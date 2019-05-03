@@ -88,6 +88,7 @@
 #include "boundaryconditions.h"
 #include "parameters.h"
 #include "simulationcontrol.h"
+#include "navierstokessolverparameters.h"
 
 #include <fstream>
 #include <iostream>
@@ -95,62 +96,8 @@
 // Finally, this is as in previous programs:
 using namespace dealii;
 
-template <int dim>
-class NavierStokesSolverParameters
-{
-public:
-
-  Parameters::LinearSolver              linearSolverParameters;
-  Parameters::NonLinearSolver           nonLinearSolverParameters;
-  Parameters::MeshAdaptation            meshAdaptationParameters;
-  Parameters::Mesh                      meshParameters;
-  Parameters::PhysicalProperties        physicalProperties;
-  Parameters::Timer                     clock;
-  Parameters::FEM                       femParameters;
-  Parameters::Forces                    forcesParameters;
-  Parameters::AnalyticalSolution        analyticalSolutionParameters;
-  Parameters::BoundaryConditions<dim>   boundaryConditions;
-  Parameters::InitialConditions<dim>    *initialConditionParameters;
-  SimulationControl                     simulationControl;
-
-
-  //NavierStokesSolverParameters(ParameterHandler &prm)
-  //{
-  //  parse(prm);
-  //}
-  void declare(ParameterHandler &prm)
-  {
-    initialConditionParameters = new Parameters::InitialConditions<dim>;
-    Parameters::NonLinearSolver::declare_parameters (prm);
-    Parameters::LinearSolver::declare_parameters (prm);
-    Parameters::SimulationControl::declare_parameters (prm);
-    Parameters::MeshAdaptation::declare_parameters (prm);
-    Parameters::Mesh::declare_parameters(prm);
-    Parameters::PhysicalProperties::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
-    Parameters::FEM::declare_parameters(prm);
-    Parameters::Forces::declare_parameters(prm);
-    Parameters::AnalyticalSolution::declare_parameters(prm);
-    boundaryConditions.declare_parameters(prm);
-    initialConditionParameters->declare_parameters(prm);
-  }
-
-  void parse(ParameterHandler &prm)
-  {
-    linearSolverParameters.parse_parameters (prm);
-    nonLinearSolverParameters.parse_parameters (prm);
-    meshAdaptationParameters.parse_parameters(prm);
-    meshParameters.parse_parameters(prm);
-    physicalProperties.parse_parameters(prm);
-    clock.parse_parameters(prm);
-    femParameters.parse_parameters(prm);
-    analyticalSolutionParameters.parse_parameters(prm);
-    forcesParameters.parse_parameters(prm);
-    initialConditionParameters->parse_parameters(prm);
-    boundaryConditions.parse_parameters(prm);
-    simulationControl.initialize(prm);
-  }
-};
+#ifndef LETHE_GLSNS_H
+#define LETHE_GLSNS_H
 
 template <int dim>
 class GLSNavierStokesSolver
@@ -264,18 +211,18 @@ protected:
 
   NavierStokesSolverParameters<dim>     nsparam;
 
-  SimulationControl                     simulationControl;
-  Parameters::LinearSolver              linearSolverParameters;
-  Parameters::NonLinearSolver           nonLinearSolverParameters;
-  Parameters::MeshAdaptation            meshAdaptationParameters;
-  Parameters::Mesh                      meshParameters;
-  Parameters::PhysicalProperties        physicalProperties;
-  Parameters::Timer                     clock;
-  Parameters::FEM                       femParameters;
-  Parameters::Forces                    forcesParameters;
-  Parameters::AnalyticalSolution        analyticalSolutionParameters;
-  Parameters::BoundaryConditions<dim>   boundaryConditions;
-  Parameters::InitialConditions<dim>    *initialConditionParameters;
+  SimulationControl                               simulationControl;
+  Parameters::LinearSolver                        linearSolverParameters;
+  Parameters::NonLinearSolver                     nonLinearSolverParameters;
+  Parameters::MeshAdaptation                      meshAdaptationParameters;
+  Parameters::Mesh                                meshParameters;
+  Parameters::PhysicalProperties                  physicalProperties;
+  Parameters::Timer                               clock;
+  Parameters::FEM                                 femParameters;
+  Parameters::Forces                              forcesParameters;
+  Parameters::AnalyticalSolution                  analyticalSolutionParameters;
+  BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
+  Parameters::InitialConditions<dim>              *initialConditionParameters;
 };
 
 // Constructor
@@ -294,15 +241,15 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<d
     nsparam(p_nsparam)
 {
   boundaryConditions           = nsparam.boundaryConditions;
-  initialConditionParameters   = nsparam.initialConditionParameters;
+  initialConditionParameters   = nsparam.initialCondition;
   meshParameters               = nsparam.meshParameters;
-  linearSolverParameters       = nsparam.linearSolverParameters;
-  nonLinearSolverParameters    = nsparam.nonLinearSolverParameters;
-  meshAdaptationParameters     = nsparam.meshAdaptationParameters;
+  linearSolverParameters       = nsparam.linearSolver;
+  nonLinearSolverParameters    = nsparam.nonLinearSolver;
+  meshAdaptationParameters     = nsparam.meshAdaptation;
   physicalProperties           = nsparam.physicalProperties;
   clock                        = nsparam.clock;
   femParameters                = nsparam.femParameters;
-  analyticalSolutionParameters = nsparam.analyticalSolutionParameters;
+  analyticalSolutionParameters = nsparam.analyticalSolution;
   forcesParameters             = nsparam.forcesParameters;
   simulationControl            = nsparam.simulationControl;
 
@@ -385,12 +332,12 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
     DoFTools::make_hanging_node_constraints(dof_handler, nonzero_constraints);
     for (unsigned int i_bc=0 ; i_bc < boundaryConditions.size ; ++i_bc)
       {
-        if(boundaryConditions.type[i_bc]==Parameters::noslip)
+        if(boundaryConditions.type[i_bc]==BoundaryConditions::noslip)
           {
                 VectorTools::interpolate_boundary_values(mapping, dof_handler, i_bc, ZeroFunction<dim>(dim+1), nonzero_constraints,
                                                          fe.component_mask(velocities));
           }
-        else if(boundaryConditions.type[i_bc]==Parameters::slip)
+        else if(boundaryConditions.type[i_bc]==BoundaryConditions::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert (i_bc);
@@ -399,7 +346,7 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
                                                              nonzero_constraints
                                                              );
           }
-        else if(boundaryConditions.type[i_bc]==Parameters::function)
+        else if(boundaryConditions.type[i_bc]==BoundaryConditions::function)
           {
             VectorTools::interpolate_boundary_values(mapping,
                                                      dof_handler,
@@ -421,7 +368,7 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
 
     for (unsigned int i_bc=0 ; i_bc < boundaryConditions.size ; ++i_bc)
       {
-        if(boundaryConditions.type[i_bc]==Parameters::slip)
+        if(boundaryConditions.type[i_bc]==BoundaryConditions::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert (i_bc);
@@ -827,7 +774,6 @@ void GLSNavierStokesSolver<dim>::assemble_L2_projection()
   double  rhs_initial_pressure;
 
 
-  std::vector<Tensor<1, dim+1> >  phi                     (dofs_per_cell);
   std::vector<Tensor<1, dim> >  phi_u                     (dofs_per_cell);
   std::vector<double>           phi_p                     (dofs_per_cell);
 
@@ -846,11 +792,8 @@ void GLSNavierStokesSolver<dim>::assemble_L2_projection()
       {
         for (unsigned int k=0; k<dofs_per_cell; ++k)
         {
-          phi[k]      =  fe_values.shape_value(k, q);
-          phi_p[k]      =  fe_values[pressure]  .value(k, q);
-          phi_u[k]      =  fe_values[velocities].value(k, q);
-
-
+          phi_p[k]  =  fe_values[pressure]  .value(k, q);
+          phi_u[k]  =  fe_values[velocities].value(k, q);
         }
 
         // Establish the rhs tensor operator
@@ -903,7 +846,7 @@ void GLSNavierStokesSolver<dim>::set_nodal_values()
                            initialConditionParameters->uvwp,
                            newton_update,
                            fe.component_mask(pressure));
-  present_solution+=newton_update;
+  present_solution=newton_update;
 }
 
 template <int dim>
@@ -1672,3 +1615,4 @@ void GLSNavierStokesSolver<dim>::calculate_torques()
   }
 }
 
+#endif

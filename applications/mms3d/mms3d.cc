@@ -30,9 +30,6 @@ public:
   {
   }
   void runMMS_3D();
-
-private:
-  std::vector<double>          wallTime_;
 };
 
 template<int dim>
