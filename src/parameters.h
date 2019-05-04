@@ -223,6 +223,9 @@ namespace Parameters
     enum Type {none, uniform,kelly};
     Type type;
 
+    enum Variable {velocity, pressure};
+    Variable variable;
+
     // Decision factor for KELLY refinement (number or fraction)
     enum FractionType {number,fraction};
     FractionType fractionType;

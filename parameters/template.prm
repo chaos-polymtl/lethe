@@ -8,7 +8,8 @@ subsection simulation control
   set number mesh adapt       = 2       # If steady, nb mesh adaptation
   set time step               = 0.01    # Time step
   set time end                = 20      # End time of simulation
-  set output name              = mms3d_ # Prefix for VTU outputs
+  set output path             = output/ # Path to where the output results are made
+  set output name             = mms3d_ # Prefix for VTU outputs
   set output frequency        = 1       # Frequency of simulation output
   set subdivision             = 1       # Mesh subdivision when output
 end
@@ -18,6 +19,13 @@ end
 #---------------------------------------------------
 subsection physical properties
     set kinematic viscosity            = 1.000 # kinematic viscosity (L^2/s)
+end
+#---------------------------------------------------
+# Test
+#---------------------------------------------------
+subsection test
+    set enable = false                         # Enable testing mode of the solver.
+                                               # This is generally a small variant for tests
 end
 
 #---------------------------------------------------
@@ -96,6 +104,7 @@ end
 #---------------------------------------------------
 subsection mesh adaptation
   set type                    = uniform  # <none|uniform|kelly>
+  set variable                = velocity # Variable used for mesh adaptation <velocity|pressurer>
   set fraction type           = fraction # <fraction|number>
   set max number elements     = 20000    # maximum number of elements
   set max refinement level    = 3        # maximal refinement level of a cell

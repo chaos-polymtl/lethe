@@ -390,8 +390,12 @@ namespace Parameters
       prm.declare_entry("type", "none",
                         Patterns::Selection("none|uniform|kelly"),
                         "Type of mesh adaptation"
-
                         "Choices are <none|uniform|kelly>.");
+
+      prm.declare_entry("variable", "velocity",
+                        Patterns::Selection("velocity|pressure"),
+                        "Variable for kelly estimation"
+                        "Choices are <velocity|pressure>.");
       prm.declare_entry("fraction type", "number",
                         Patterns::Selection("number|fraction"),
                         "How the fraction of refinement/coarsening are interepreted"
@@ -429,6 +433,12 @@ namespace Parameters
         type = uniform;
       if (op == "kelly")
         type = kelly;
+
+      const std::string vop = prm.get("variable");
+      if (vop == "velocity")
+        variable = velocity;
+      if (vop == "pressure")
+        variable = pressure;
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")

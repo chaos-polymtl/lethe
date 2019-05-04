@@ -187,11 +187,6 @@ private:
   const  unsigned int            degreePressure_;
   const  unsigned int            degreeQuadrature_;
 
-  // Force analysis
-  std::vector<Tensor<1,dim>>     forces_;
-  std::vector<Tensor<1,3>>       torques_;
-  std::vector<TableHandler>      forces_tables;
-  std::vector<TableHandler>      torques_tables;
 
   double                         globalVolume_;
   const bool                     SUPG=true;
@@ -208,6 +203,13 @@ protected:
 
   ConditionalOStream                    pcout;
   TimerOutput                           computing_timer;
+
+  // Force analysis
+  std::vector<Tensor<1,dim>>     forces_;
+  std::vector<Tensor<1,3>>       torques_;
+  std::vector<TableHandler>      forces_tables;
+  std::vector<TableHandler>      torques_tables;
+
 
   NavierStokesSolverParameters<dim>     nsparam;
 
@@ -1089,13 +1091,29 @@ void GLSNavierStokesSolver<dim>::refine_mesh_Kelly ()
   TimerOutput::Scope t(computing_timer, "refine");
 
   Vector<float> estimated_error_per_cell (triangulation.n_active_cells());
-  FEValuesExtractors::Vector velocity(0);
-  KellyErrorEstimator<dim>::estimate (dof_handler,
-                                      QGauss<dim-1>(degreeQuadrature_+1),
-                                      typename std::map<types::boundary_id, const Function<dim, double> *>(),
-                                      present_solution,
-                                      estimated_error_per_cell,
-                                      fe.component_mask(velocity));
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  const FEValuesExtractors::Vector velocity(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+  if (meshAdaptationParameters.variable==Parameters::MeshAdaptation::pressure)
+  {
+    KellyErrorEstimator<dim>::estimate (mapping,
+                                        dof_handler,
+                                        QGauss<dim-1>(degreeQuadrature_+1),
+                                        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+                                        present_solution,
+                                        estimated_error_per_cell,
+                                        fe.component_mask(pressure));
+  }
+  if (meshAdaptationParameters.variable==Parameters::MeshAdaptation::velocity)
+  {
+    KellyErrorEstimator<dim>::estimate (mapping,
+                                        dof_handler,
+                                        QGauss<dim-1>(degreeQuadrature_+1),
+                                        typename std::map<types::boundary_id, const Function<dim, double> *>(),
+                                        present_solution,
+                                        estimated_error_per_cell,
+                                        fe.component_mask(velocity));
+  }
   if (meshAdaptationParameters.fractionType==Parameters::MeshAdaptation::number)
   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(triangulation,estimated_error_per_cell,
                                                     meshAdaptationParameters.fractionRefinement, meshAdaptationParameters.fractionCoarsening,
@@ -1186,7 +1204,11 @@ void GLSNavierStokesSolver<dim>::newton_iteration( const bool  is_initial_step)
             {
               evaluation_point = present_solution;
               assemble_system(first_step);
-              if (outer_iteration==0) current_res = system_rhs.l2_norm();
+              if (outer_iteration==0)
+              {
+                current_res = system_rhs.l2_norm();
+                last_res = current_res;
+              }
               if (nonLinearSolverParameters.verbosity != nonLinearSolverParameters.quiet)
                 pcout  << "Newton iteration: " << outer_iteration << "  - Residual:  " << current_res << std::endl;
               solve(first_step,linearSolverParameters.relative_residual,linearSolverParameters.minimum_residual);
@@ -1201,7 +1223,7 @@ void GLSNavierStokesSolver<dim>::newton_iteration( const bool  is_initial_step)
                   if (nonLinearSolverParameters.verbosity != nonLinearSolverParameters.quiet)
                     pcout << "\t\talpha = " << std::setw(6) << alpha << std::setw(0)
                             << " res = " << std::setprecision(nonLinearSolverParameters.display_precision) << current_res << std::endl;
-                  if (current_res < 0.9*last_res)
+                  if (current_res < 0.9*last_res || last_res < nonLinearSolverParameters.tolerance)
                     break;
                 }
               {
@@ -1476,11 +1498,6 @@ void GLSNavierStokesSolver<dim>::calculate_forces()
         table.set_precision("f_z" ,forcesParameters.display_precision);
       }
     }
-
-    std::cout << "+--------------------------------+"  << std::endl;
-    std::cout << "|  Force summary                 |" << std::endl;
-    std::cout << "+--------------------------------+"  << std::endl;
-    table.write_text(std::cout);
   }
 
   for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)

@@ -1,0 +1,3 @@
+SET(TEST_TARGET cylinder)
+file(COPY cylinder_structured.msh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+DEAL_II_PICKUP_TESTS()
