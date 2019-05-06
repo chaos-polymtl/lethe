@@ -8,7 +8,7 @@ using namespace dealii;
 
 namespace BoundaryConditions
 {
-  enum BoundaryType {noslip, slip, function};
+  enum BoundaryType {noslip, slip, function, periodic};
 
   template <int dim>
   class BoundaryFunction
@@ -27,6 +27,9 @@ namespace BoundaryConditions
   class NSBoundaryConditions
   {
   public:
+    // ID of boundary condition
+    std::vector<unsigned int> id;
+
     // List of boundary type for each number
     std::vector<BoundaryType> type;
 
@@ -37,6 +40,10 @@ namespace BoundaryConditions
     unsigned int size;
     unsigned int max_size;
 
+    // Periodic boundary condition matching
+    std::vector<unsigned int> periodic_id;
+    std::vector<unsigned int> periodic_direction;
+
     void parse_boundary (ParameterHandler &prm, unsigned int i_bc);
     void declareDefaultEntry (ParameterHandler &prm, unsigned int i_bc);
     void declare_parameters (ParameterHandler &prm);
@@ -46,9 +53,21 @@ namespace BoundaryConditions
   void NSBoundaryConditions<dim>::declareDefaultEntry (ParameterHandler &prm, unsigned int i_bc)
   {
     prm.declare_entry("type", "noslip",
-                      Patterns::Selection("noslip|slip|function"),
+                      Patterns::Selection("noslip|slip|function|periodic"),
                       "Type of boundary conditoin"
                       "Choices are <noslip|slip|function>.");
+
+    prm.declare_entry("id", Utilities::int_to_string(i_bc,2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
+
+    prm.declare_entry("periodic_id", "0",
+                      Patterns::Integer(),
+                      "Mesh id for periodic face matching");
+
+    prm.declare_entry("periodic_direction", "0",
+                      Patterns::Integer(),
+                      "Direction for periodic boundary condition");
 
     prm.enter_subsection("u");
     bcFunctions[i_bc].u.declare_parameters(prm,1);
@@ -102,6 +121,17 @@ namespace BoundaryConditions
       if (dim==3) bcFunctions[i_bc].cor[2]=prm.get_double("z");
       prm.leave_subsection();
     }
+    if (op == "periodic")
+    {
+      type[i_bc] = periodic;
+      periodic_id[i_bc]=prm.get_integer("periodic_id");
+      periodic_direction[i_bc]=prm.get_integer("periodic_direction");
+    }
+
+
+    id[i_bc]=prm.get_integer("id");
+
+
   }
 
   template <int dim>
@@ -114,6 +144,9 @@ namespace BoundaryConditions
       prm.declare_entry("number", "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
+      id.resize(max_size);
+      periodic_id.resize(max_size);
+      periodic_direction.resize(max_size);
       type.resize(max_size);
       bcFunctions = new BoundaryFunction<dim>[max_size];
 
@@ -140,6 +173,12 @@ namespace BoundaryConditions
         declareDefaultEntry(prm,3);
       }
       prm.leave_subsection();
+
+      prm.enter_subsection("bc 3");
+      {
+        declareDefaultEntry(prm,3);
+      }
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -151,6 +190,9 @@ namespace BoundaryConditions
     {
       size = prm.get_integer("number");
       type.resize(size);
+      id.resize(size);
+      periodic_direction.resize(size);
+      periodic_id.resize(size);
 
 
       if (size>=1)
@@ -335,4 +377,6 @@ double ConstantXSlip<dim>::value (const Point<dim> &p,
         return 0.;
     return 0.;
 }
+
+
 #endif

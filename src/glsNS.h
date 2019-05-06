@@ -165,6 +165,7 @@ private:
   AffineConstraints<double>        zero_constraints;
   AffineConstraints<double>        nonzero_constraints;
 
+
   SparsityPattern                  sparsity_pattern;
   TrilinosWrappers::SparseMatrix   system_matrix;
 
@@ -301,9 +302,6 @@ void GLSNavierStokesSolver<dim>::setSolutionVector(double value)
   present_solution=value;
 }
 
-
-
-
 template <int dim>
 void GLSNavierStokesSolver<dim>::setup_dofs ()
 {
@@ -312,8 +310,8 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
   system_matrix.clear();
 
   dof_handler.distribute_dofs(fe);
-//  DoFRenumbering::boost::Cuthill_McKee(dof_handler);
   DoFRenumbering::Cuthill_McKee(dof_handler);
+
 
   locally_owned_dofs = dof_handler.locally_owned_dofs ();
   DoFTools::extract_locally_relevant_dofs (dof_handler,
@@ -328,6 +326,8 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
+
+  // Non-zero constraints
   {
     nonzero_constraints.clear();
 
@@ -336,13 +336,13 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
       {
         if(boundaryConditions.type[i_bc]==BoundaryConditions::noslip)
           {
-                VectorTools::interpolate_boundary_values(mapping, dof_handler, i_bc, ZeroFunction<dim>(dim+1), nonzero_constraints,
+                VectorTools::interpolate_boundary_values(mapping, dof_handler, boundaryConditions.id[i_bc], ZeroFunction<dim>(dim+1), nonzero_constraints,
                                                          fe.component_mask(velocities));
           }
         else if(boundaryConditions.type[i_bc]==BoundaryConditions::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert (i_bc);
+            no_normal_flux_boundaries.insert ( boundaryConditions.id[i_bc]);
             VectorTools::compute_no_normal_flux_constraints (dof_handler, 0,
                                                              no_normal_flux_boundaries,
                                                              nonzero_constraints
@@ -352,7 +352,7 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
           {
             VectorTools::interpolate_boundary_values(mapping,
                                                      dof_handler,
-                                                     i_bc,
+                                                      boundaryConditions.id[i_bc],
                                                      FunctionDefined<dim>(&boundaryConditions.bcFunctions[i_bc].u,
                                                                           &boundaryConditions.bcFunctions[i_bc].v,
                                                                           &boundaryConditions.bcFunctions[i_bc].w
@@ -360,6 +360,15 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
                                                      nonzero_constraints,
                                                      fe.component_mask(velocities));
           }
+
+        else if(boundaryConditions.type[i_bc]==BoundaryConditions::periodic)
+        {
+          DoFTools::make_periodicity_constraints<DoFHandler<dim> >( dof_handler,
+                                                                    boundaryConditions.id[i_bc],
+                                                                    boundaryConditions.periodic_id[i_bc],
+                                                                    boundaryConditions.periodic_direction[i_bc],
+                                                                    nonzero_constraints);
+        }
       }
   }
   nonzero_constraints.close();
@@ -373,17 +382,25 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
         if(boundaryConditions.type[i_bc]==BoundaryConditions::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert (i_bc);
+            no_normal_flux_boundaries.insert ( boundaryConditions.id[i_bc]);
             VectorTools::compute_no_normal_flux_constraints (dof_handler, 0,
                                                              no_normal_flux_boundaries,
                                                              zero_constraints
                                                              );
           }
+        else if(boundaryConditions.type[i_bc]==BoundaryConditions::periodic)
+        {
+          DoFTools::make_periodicity_constraints<DoFHandler<dim> >( dof_handler,
+                                                                    boundaryConditions.id[i_bc],
+                                                                    boundaryConditions.periodic_id[i_bc],
+                                                                    boundaryConditions.periodic_direction[i_bc],
+                                                                    zero_constraints);
+        }
         else //if(boundaryConditions.boundaries[i_bc].type==Parameters::noslip || Parameters::function)
           {
             VectorTools::interpolate_boundary_values(mapping,
                                                      dof_handler,
-                                                     i_bc,
+                                                     boundaryConditions.id[i_bc],
                                                      ZeroFunction<dim>(dim+1),
                                                      zero_constraints,
                                                      fe.component_mask(velocities));

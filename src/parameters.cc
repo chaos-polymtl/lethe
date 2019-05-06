@@ -19,7 +19,7 @@ namespace Parameters
       prm.declare_entry("adapt", "false",
                         Patterns::Bool(),
                         "Adaptative time-stepping <true|false>");
-      prm.declare_entry("number mesh adapt", "1",
+      prm.declare_entry("number mesh adapt", "0",
                         Patterns::Integer(),
                         "Number of mesh adaptation (for steady simulations)");
       prm.declare_entry("max cfl", "1",
