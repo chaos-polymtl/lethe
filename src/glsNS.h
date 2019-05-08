@@ -128,10 +128,6 @@ protected:
   const unsigned int this_mpi_process;
   parallel::distributed::Triangulation<dim> triangulation;
 
-
-
-
-
 private:
   template <Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step,
                                                                                        const bool assemble_matrix);
@@ -272,6 +268,15 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<d
 template <int dim>
 GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver ()
 {
+  if(forcesParameters.calculate_force)
+  {
+      write_output_forces();
+  }
+
+  if(forcesParameters.calculate_torque)
+  {
+      write_output_torques();
+  }
     dof_handler.clear ();
 }
 
@@ -865,6 +870,7 @@ void GLSNavierStokesSolver<dim>::set_nodal_values()
                            initialConditionParameters->uvwp,
                            newton_update,
                            fe.component_mask(pressure));
+  nonzero_constraints.distribute(newton_update);
   present_solution=newton_update;
 }
 
@@ -1497,7 +1503,7 @@ void GLSNavierStokesSolver<dim>::calculate_forces()
     forces_[boundary_id]=Utilities::MPI::sum(force,mpi_communicator);
   }
 
-  if(forcesParameters.verbosity==forcesParameters.verbose &&  this_mpi_process==0)
+  if(forcesParameters.verbosity==Parameters::Forces::verbose &&  this_mpi_process==0)
   {
     pcout << std::endl;
     TableHandler table;
@@ -1515,6 +1521,10 @@ void GLSNavierStokesSolver<dim>::calculate_forces()
         table.set_precision("f_z" ,forcesParameters.display_precision);
       }
     }
+    std::cout << "+------------------------------------------+"  << std::endl;
+    std::cout << "|  Force  summary                          |" << std::endl;
+    std::cout << "+------------------------------------------+"  << std::endl;
+    table.write_text(std::cout);
   }
 
   for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)
