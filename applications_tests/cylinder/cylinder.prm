@@ -61,15 +61,6 @@ subsection physical properties
     set kinematic viscosity            = 1.0000
 end
 #---------------------------------------------------
-# Force
-#---------------------------------------------------
-subsection forces
-    set verbosity           = verbose 
-    set force name          = force
-    set torque name         = torque
-    set output frequency    = 1
-end
-#---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh

@@ -1505,7 +1505,6 @@ void GLSNavierStokesSolver<dim>::calculate_forces()
 
   if(forcesParameters.verbosity==Parameters::Forces::verbose &&  this_mpi_process==0)
   {
-    pcout << std::endl;
     TableHandler table;
 
     for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)

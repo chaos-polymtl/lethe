@@ -3,11 +3,9 @@ Running on 1 MPI rank(s)...
    Number of degrees of freedom: 3750
    Volume of triangulation:      511.219
 
-
 ***********************************************************************************
 Steady iteration :        1/4
 ***********************************************************************************
-
    Number of active cells:       2253
    Number of degrees of freedom: 7152
    Volume of triangulation:      511.216
@@ -18,7 +16,6 @@ Steady iteration :        1/4
 ***********************************************************************************
 Steady iteration :        2/4
 ***********************************************************************************
-
    Number of active cells:       4296
    Number of degrees of freedom: 13641
    Volume of triangulation:      511.215
@@ -29,7 +26,6 @@ Steady iteration :        2/4
 ***********************************************************************************
 Steady iteration :        3/4
 ***********************************************************************************
-
    Number of active cells:       8268
    Number of degrees of freedom: 26067
    Volume of triangulation:      511.215
@@ -40,7 +36,6 @@ Steady iteration :        3/4
 ***********************************************************************************
 Steady iteration :        4/4
 ***********************************************************************************
-
    Number of active cells:       15975
    Number of degrees of freedom: 49932
    Volume of triangulation:      511.215
