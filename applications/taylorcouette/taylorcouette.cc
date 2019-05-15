@@ -39,10 +39,6 @@ class TaylorCouetteNavierStokes : public GLSNavierStokesSolver<dim>
 public:
   TaylorCouetteNavierStokes(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure);
   void run();
-
-private:
-
-  std::vector<double>          wallTime_;
 };
 
 template <int dim>

@@ -44,7 +44,7 @@ void InitialConditionsNavierStokes<dim>::run()
   grid_in.read_msh(input_file);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
-  this->setInitialCondition(this->initialConditionParameters->type);
+  this->setInitialCondition(this->initialConditionParameters->type,this->restartParameters.restart);
 }
 
 

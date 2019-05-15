@@ -1,0 +1,7 @@
+# top level CMakeLists.txt
+
+ENABLE_TESTING()
+ADD_SUBDIRECTORY(pvdhandler)
+ADD_SUBDIRECTORY(simulationcontrol)
+ADD_SUBDIRECTORY(restart)
+

@@ -48,7 +48,17 @@ namespace BoundaryConditions
     void declareDefaultEntry (ParameterHandler &prm, unsigned int i_bc);
     void declare_parameters (ParameterHandler &prm);
     void parse_parameters (ParameterHandler &prm);
+    void createDefaultNoSlip();
   };
+
+  template <int dim>
+  void NSBoundaryConditions<dim>::createDefaultNoSlip()
+  {
+    id.resize(1); id[0]=0;
+    type.resize(1); type[0]= noslip;
+    size=1;
+  }
+
   template <int dim>
   void NSBoundaryConditions<dim>::declareDefaultEntry (ParameterHandler &prm, unsigned int i_bc)
   {

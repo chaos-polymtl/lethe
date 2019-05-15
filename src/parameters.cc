@@ -475,4 +475,37 @@ namespace Parameters
     prm.leave_subsection();
 
   }
+
+  void Restart::declare_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("restart");
+    {
+      prm.declare_entry("filename", "restart",
+                        Patterns::FileName(),
+                        "Prefix for the filename of checkpoints");
+      prm.declare_entry("restart", "false",
+                        Patterns::Bool(),
+                        "Frequency for checkpointing");
+      prm.declare_entry("checkpoint", "false",
+                        Patterns::Bool(),
+                        "Frequency for checkpointing");
+      prm.declare_entry("frequency", "1",
+                        Patterns::Integer(),
+                        "Frequency for checkpointing");
+    }
+    prm.leave_subsection();
+  }
+
+  void Restart::parse_parameters (ParameterHandler &prm)
+  {
+    prm.enter_subsection("restart");
+    {
+      filename = prm.get("filename");
+      checkpoint = prm.get_bool("checkpoint");
+      restart = prm.get_bool("restart");
+      frequency = prm.get_integer("frequency");
+    }
+    prm.leave_subsection();
+
+  }
 }

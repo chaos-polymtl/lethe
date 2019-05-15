@@ -17,12 +17,13 @@ public:
   Parameters::LinearSolver              linearSolver;
   Parameters::NonLinearSolver           nonLinearSolver;
   Parameters::MeshAdaptation            meshAdaptation;
-  Parameters::Mesh                      meshParameters;
+  Parameters::Mesh                      mesh;
   Parameters::PhysicalProperties        physicalProperties;
-  Parameters::Timer                     clock;
+  Parameters::Timer                     timer;
   Parameters::FEM                       femParameters;
   Parameters::Forces                    forcesParameters;
   Parameters::AnalyticalSolution        analyticalSolution;
+  Parameters::Restart                   restartParameters;
   BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
   Parameters::InitialConditions<dim>    *initialCondition;
   SimulationControl                     simulationControl;
@@ -41,6 +42,7 @@ public:
     Parameters::FEM::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::AnalyticalSolution::declare_parameters(prm);
+    Parameters::Restart::declare_parameters(prm);
     boundaryConditions.declare_parameters(prm);
     initialCondition->declare_parameters(prm);
   }
@@ -51,14 +53,15 @@ public:
     linearSolver.parse_parameters (prm);
     nonLinearSolver.parse_parameters (prm);
     meshAdaptation.parse_parameters(prm);
-    meshParameters.parse_parameters(prm);
+    mesh.parse_parameters(prm);
     physicalProperties.parse_parameters(prm);
-    clock.parse_parameters(prm);
+    timer.parse_parameters(prm);
     femParameters.parse_parameters(prm);
-    analyticalSolution.parse_parameters(prm);
     forcesParameters.parse_parameters(prm);
-    initialCondition->parse_parameters(prm);
+    analyticalSolution.parse_parameters(prm);
+    restartParameters.parse_parameters(prm);
     boundaryConditions.parse_parameters(prm);
+    initialCondition->parse_parameters(prm);
     simulationControl.initialize(prm);
   }
 };

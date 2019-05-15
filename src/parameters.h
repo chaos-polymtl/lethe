@@ -260,6 +260,17 @@ namespace Parameters
     void parse_parameters (ParameterHandler &prm);
   };
 
+  struct Restart
+  {
+    // Time measurement in the simulation. None, at each iteration, only at the end
+    std::string filename;
+    bool restart;
+    bool checkpoint;
+    unsigned int frequency;
+    static void declare_parameters (ParameterHandler &prm);
+    void parse_parameters (ParameterHandler &prm);
+  };
+
 
 
 

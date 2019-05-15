@@ -26,18 +26,9 @@ class SimulationControl
   // Parameters from the parser that do not change during the simulation (names, etc.)
   Parameters::SimulationControl parameterControl;
 public:
-  void initialize(ParameterHandler &prm)
-  {
-    parameterControl.parse_parameters (prm);
-    method     = parameterControl.method;
-    dt         = parameterControl.dt;
-    endTime    = parameterControl.timeEnd;
-    maxCFL     = parameterControl.maxCFL;
-    nbMeshAdapt= parameterControl.nbMeshAdapt;
-    time=0;
-    iter=0;
-    CFL=0;
-  }
+  void initialize(ParameterHandler &prm);
+  void initialize(Parameters::SimulationControl param);
+
   Parameters::SimulationControl::TimeSteppingMethod getMethod(){return method;}
   void setMethod(Parameters::SimulationControl::TimeSteppingMethod  p_method){ method=p_method;}
 
@@ -46,25 +37,23 @@ public:
 
   double getTimeStep(){return dt;}
   double getTime(){return time;}
+  double getEndTime(){return endTime;}
   unsigned int getIter(){return iter;}
   bool         firstIter(){return iter==1;}
-  unsigned int getCFL(){return CFL;}
+  double       getCFL(){return CFL;}
+  void         setCFL(double p_CFL) {CFL=p_CFL;}
+  double       getMaxCFL(){return maxCFL;}
   unsigned int getNbMeshAdapt(){return nbMeshAdapt;}
   unsigned int getSubdivision(){return parameterControl.subdivision;}
 
 
   bool isOutputIteration() {return (iter%parameterControl.outputFrequency==0);}
 
-  bool integrate()
-  {
-    if ( (parameterControl.method==parameterControl.steady && iter>=(nbMeshAdapt+1)) || (parameterControl.method==parameterControl.backward && time >=(endTime-1e-6*dt))) return false;
-    else
-    {
-      iter++;
-      time += dt;
-      return true;
-    }
-  }
+  bool integrate();
+
+  void save(std::string filename);
+  void read(std::string filename);
+
 };
 
 void printTime(ConditionalOStream pcout, SimulationControl control);

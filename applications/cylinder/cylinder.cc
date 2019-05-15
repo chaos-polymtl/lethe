@@ -26,7 +26,7 @@ void VonKarmanNavierStokes<dim>::run()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->setInitialCondition(this->initialConditionParameters->type);
+  this->setInitialCondition(this->initialConditionParameters->type, this->restartParameters.restart);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
@@ -53,7 +53,7 @@ void VonKarmanNavierStokes<dim>::runTest()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->setInitialCondition(this->initialConditionParameters->type);
+  this->setInitialCondition(this->initialConditionParameters->type,this->restartParameters.restart);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);

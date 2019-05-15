@@ -88,6 +88,7 @@
 #include "boundaryconditions.h"
 #include "parameters.h"
 #include "simulationcontrol.h"
+#include "pvdhandler.h"
 #include "navierstokessolverparameters.h"
 
 #include <fstream>
@@ -111,10 +112,11 @@ public:
   void refine_mesh();
   void setup_dofs();
   double calculateL2Error();
-  void setInitialCondition(Parameters::InitialConditionType initial_condition_type );
+  void setInitialCondition(Parameters::InitialConditionType initial_condition_type, bool restart=false);
   void postprocess();
   void finishTimeStep();
   void setSolutionVector(double value);
+
 
   void newton_iteration(const bool is_initial_step);
   void make_cube_grid(int refinementLevel);
@@ -136,17 +138,22 @@ private:
   void set_nodal_values();
   void refine_mesh_Kelly();
   void refine_mesh_uniform();
-  void projectRHSPressureConstant();
-  void projectNewtonUpdatePressureConstant();
-  void initializePressureRHSCorrection();
+
   void calculate_forces();
   void calculate_torques();
+  double calculate_CFL();
+
   void assemble_system(const bool initial_step);
   void assemble_rhs(const bool initial_step);
+
   void solve(bool initial_step, double relative_residual, double minimum_residual); // Interface function
   void solveGMRES(bool initial_step, double absolute_residual, double relative_residual);
   void solveBiCGStab(bool initial_step, double absolute_residual, double relative_residual);
   void solveAMG(bool initial_step, double absolute_residual, double relative_residual);
+
+  void write_checkpoint();
+  void read_checkpoint();
+
   void write_output_forces();
   void write_output_torques();
   void write_output_results(const std::string folder, const std::string solutionName, const unsigned int cycle, const double time);
@@ -173,8 +180,8 @@ private:
   TrilinosWrappers::MPI::Vector    pressure_shape_function_integrals;
   TrilinosWrappers::MPI::Vector    pressure_projection;
 
-  TrilinosWrappers::MPI::Vector    p1_solution;
-  TrilinosWrappers::MPI::Vector    p2_solution;
+  TrilinosWrappers::MPI::Vector    solution_m1;
+  TrilinosWrappers::MPI::Vector    solution_m2;
 
 
   std::vector<types::global_dof_index> dofs_per_block;
@@ -188,9 +195,7 @@ private:
   double                         globalVolume_;
   const bool                     SUPG=true;
   const double                   GLS_u_scale=1;
-  std::vector<std::pair<double,std::string> > times_and_names_;
-
-
+  PVDHandler                     pvdhandler;
 
 protected:
 
@@ -222,6 +227,7 @@ protected:
   Parameters::AnalyticalSolution                  analyticalSolutionParameters;
   BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
   Parameters::InitialConditions<dim>              *initialConditionParameters;
+  Parameters::Restart                             restartParameters;
 };
 
 // Constructor
@@ -241,16 +247,17 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<d
 {
   boundaryConditions           = nsparam.boundaryConditions;
   initialConditionParameters   = nsparam.initialCondition;
-  meshParameters               = nsparam.meshParameters;
+  meshParameters               = nsparam.mesh;
   linearSolverParameters       = nsparam.linearSolver;
   nonLinearSolverParameters    = nsparam.nonLinearSolver;
   meshAdaptationParameters     = nsparam.meshAdaptation;
   physicalProperties           = nsparam.physicalProperties;
-  clock                        = nsparam.clock;
+  clock                        = nsparam.timer;
   femParameters                = nsparam.femParameters;
   analyticalSolutionParameters = nsparam.analyticalSolution;
   forcesParameters             = nsparam.forcesParameters;
   simulationControl            = nsparam.simulationControl;
+  restartParameters            = nsparam.restartParameters;
 
   // Change the behavior of the timer for situations when you don't want outputs
   if (clock.type==Parameters::Timer::none)
@@ -293,7 +300,16 @@ template <int dim>
 void GLSNavierStokesSolver<dim>::finishTimeStep()
 {
   if (simulationControl.getMethod()!=Parameters::SimulationControl::steady)
-    p1_solution=present_solution;
+  {
+    solution_m1=present_solution;
+    const double CFL = calculate_CFL();
+    simulationControl.setCFL(CFL);
+  }
+  if (simulationControl.getIter()%restartParameters.frequency==0)
+  {
+    write_checkpoint();
+  }
+
   if (this->clock.type==Parameters::Timer::iteration)
   {
     this->computing_timer.print_summary ();
@@ -416,8 +432,8 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
 
 
   present_solution.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
-  p1_solution.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
-  p2_solution.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
+  solution_m1.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
+  solution_m2.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
 
   newton_update.reinit (locally_owned_dofs, mpi_communicator);
   system_rhs.reinit (locally_owned_dofs, mpi_communicator);
@@ -443,55 +459,8 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
 
   pressure_shape_function_integrals.reinit (locally_owned_dofs, mpi_communicator);
   pressure_projection.reinit (locally_owned_dofs, mpi_communicator);
-  if (linearSolverParameters.rhsCorr)  initializePressureRHSCorrection();
 }
 
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::initializePressureRHSCorrection()
-{
-  TimerOutput::Scope t(computing_timer, "pressure_RHS_projector");
-  pressure_shape_function_integrals=0;
-  QGauss<dim>   quadrature_formula(degreeQuadrature_);
-  FEValues<dim> fe_values (fe,
-                           quadrature_formula,
-                           update_values |
-                           update_quadrature_points |
-                           update_JxW_values );
-
-  const unsigned int                    dofs_per_cell = fe.dofs_per_cell;
-  const unsigned int                    n_q_points    = quadrature_formula.size();
-  const FEValuesExtractors::Scalar      pressure (dim);
-  Vector<double>                        local_pressure_shape_function_integrals(dofs_per_cell);
-  std::vector<types::global_dof_index>  local_dof_indices (dofs_per_cell);
-
-
-  typename DoFHandler<dim>::active_cell_iterator
-  cell = dof_handler.begin_active(),
-  endc = dof_handler.end();
-  for (; cell!=endc; ++cell)
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          local_pressure_shape_function_integrals=0;
-          for (unsigned int i=0; i<dofs_per_cell;++i)
-            {
-              for (unsigned int q=0; q<n_q_points; ++q)
-                {
-                  const double phi_p = fe_values[pressure].value(i, q);
-                  local_pressure_shape_function_integrals(i) += phi_p * fe_values.JxW(q);
-                }
-            }
-          cell->get_dof_indices (local_dof_indices);
-          zero_constraints.distribute_local_to_global(local_pressure_shape_function_integrals,
-                                                      local_dof_indices,
-                                                      pressure_shape_function_integrals);
-        }
-    }
-  pressure_shape_function_integrals.compress (VectorOperation::add);
-}
 
 template <int dim>
 template<Parameters::SimulationControl::TimeSteppingMethod scheme>
@@ -568,7 +537,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
           forcing_function->vector_value_list(fe_values.get_quadrature_points(), rhs_force);
 
           if (scheme != Parameters::SimulationControl::steady)
-            fe_values[velocities].get_function_values(p1_solution,p1_velocity_values);
+            fe_values[velocities].get_function_values(solution_m1,p1_velocity_values);
 
 
           for (unsigned int q=0; q<n_q_points; ++q)
@@ -734,9 +703,18 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
  * Set the initial condition using a L2 or a viscous solver
 **/
 template <int dim>
-void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditionType initial_condition_type)
+void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditionType initial_condition_type, bool restart)
 {
-  if (initial_condition_type == Parameters::InitialConditionType::L2projection)
+  if (restart)
+  {
+    pcout << "************************" << std::endl;
+    pcout << "---> Simulation Restart " << std::endl;
+    pcout << "************************" << std::endl;
+    read_checkpoint();
+    finishTimeStep();
+    //postprocess();
+  }
+  else if (initial_condition_type == Parameters::InitialConditionType::L2projection)
   {
     assemble_L2_projection();
     solve(true,1e-12,1e-12);
@@ -854,6 +832,59 @@ void GLSNavierStokesSolver<dim>::assemble_L2_projection()
   system_rhs.compress (VectorOperation::add);
 }
 
+
+template <int dim>
+double GLSNavierStokesSolver<dim>::calculate_CFL()
+{
+  QGauss<dim>              quadrature_formula(1);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  FEValues<dim> fe_values (mapping,
+                           fe,
+                           quadrature_formula,
+                           update_values |
+                           update_quadrature_points
+                           );
+  const unsigned int   dofs_per_cell = fe.dofs_per_cell;
+  const unsigned int   n_q_points    = quadrature_formula.size();
+  std::vector<Vector<double> >      initial_velocity (n_q_points, Vector<double>(dim+1));
+  std::vector<types::global_dof_index> local_dof_indices (dofs_per_cell);
+  const FEValuesExtractors::Vector velocities (0);
+  const FEValuesExtractors::Scalar pressure (dim);
+
+  std::vector<Tensor<1, dim> >  present_velocity_values      (n_q_points);
+
+  // Element size
+  double h ;
+
+  // Current time step
+  double timeStep = simulationControl.getTimeStep();
+
+  // CFL
+  double CFL=0;
+
+  typename DoFHandler<dim>::active_cell_iterator
+  cell = dof_handler.begin_active(),
+  endc = dof_handler.end();
+  for (; cell!=endc; ++cell)
+  {
+    if (cell->is_locally_owned())
+    {
+      if (dim==2) h = std::sqrt(4.* cell->measure() / M_PI) / degreeVelocity_;
+      else if (dim==3) h = pow(6*cell->measure()/M_PI,1./3.) / degreeVelocity_;
+      fe_values.reinit(cell);
+      fe_values[velocities].get_function_values(present_solution, present_velocity_values);
+      for (unsigned int q=0; q<n_q_points; ++q)
+      {
+        const double localCFL=present_velocity_values[q].norm() / h * timeStep;
+        CFL = std::max(CFL,localCFL);
+      }
+    }
+  }
+  CFL=Utilities::MPI::max(CFL,mpi_communicator);
+
+  return CFL;
+}
+
 template <int dim>
 void GLSNavierStokesSolver<dim>::set_nodal_values()
 {
@@ -893,28 +924,6 @@ void GLSNavierStokesSolver<dim>::assemble_rhs(const bool initial_step)
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::projectRHSPressureConstant()
-{
-  // calculate projection of system_rhs on pressure_shape_function_integrals
-  for (unsigned int dof_i=0 ; dof_i < pressure_shape_function_integrals.size() ; ++dof_i)
-    pressure_projection[dof_i] = pressure_shape_function_integrals[dof_i]*system_rhs[dof_i];
-
-  // Add it to RHS
-  system_rhs.add(-1.,pressure_projection);
-}
-
-template <int dim>
-void GLSNavierStokesSolver<dim>::projectNewtonUpdatePressureConstant()
-{
-  // calculate projection of system_rhs on pressure_shape_function_integrals
-  for (unsigned int dof_i=0 ; dof_i < pressure_shape_function_integrals.size() ; ++dof_i)
-    pressure_projection[dof_i] = pressure_shape_function_integrals[dof_i]*newton_update[dof_i];
-
-  // Add it to RHS
-  newton_update.add(-1.,pressure_projection);
-}
-
-template <int dim>
 void GLSNavierStokesSolver<dim>::solve(const bool initial_step, double relative_residual, double minimum_residual)
 {
   if (linearSolverParameters.solver==linearSolverParameters.gmres)         solveGMRES(initial_step,minimum_residual,relative_residual);
@@ -928,7 +937,6 @@ template <int dim>
 void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
-  if (linearSolverParameters.rhsCorr) projectRHSPressureConstant();
   const AffineConstraints<double> &constraints_used = initial_step ? nonzero_constraints : zero_constraints;
   const double linear_solver_tolerance = std::max(relative_residual*system_rhs.l2_norm(),absolute_residual);
 
@@ -965,14 +973,12 @@ void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step, double abs
 
   constraints_used.distribute(completely_distributed_solution);
   newton_update = completely_distributed_solution;
-  if (linearSolverParameters.rhsCorr) projectNewtonUpdatePressureConstant();
 }
 
 template <int dim>
 void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
-  if (linearSolverParameters.rhsCorr) projectRHSPressureConstant();
 
   const AffineConstraints<double> &constraints_used = initial_step ? nonzero_constraints : zero_constraints;
   const double linear_solver_tolerance = std::max(relative_residual*system_rhs.l2_norm(),absolute_residual);
@@ -1008,7 +1014,6 @@ void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step, double a
   }
   constraints_used.distribute(completely_distributed_solution);
   newton_update = completely_distributed_solution;
-  if (linearSolverParameters.rhsCorr) projectNewtonUpdatePressureConstant();
 }
 
 template <int dim>
@@ -1283,6 +1288,68 @@ void GLSNavierStokesSolver<dim>::postprocess()
 }
 
 template <int dim>
+void GLSNavierStokesSolver<dim>::write_checkpoint()
+{
+  TimerOutput::Scope timer (computing_timer, "write_checkpoint");
+  std::string prefix =restartParameters.filename;
+  simulationControl.save(prefix);
+  pvdhandler.save(prefix);
+
+  std::vector<unsigned int> var_indices;
+  var_indices.push_back(0);
+  var_indices.push_back(1);
+  std::vector<const TrilinosWrappers::MPI::Vector*> sol_set_transfer;
+  sol_set_transfer.push_back(&present_solution);
+  sol_set_transfer.push_back(&solution_m1);
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector> system_trans_vectors(dof_handler);
+  system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  std::string triangulationName = prefix + ".triangulation";
+  triangulation.save(prefix + ".triangulation");
+}
+
+template <int dim>
+void GLSNavierStokesSolver<dim>::read_checkpoint()
+{
+  TimerOutput::Scope timer (computing_timer, "read_checkpoint");
+  std::string prefix =restartParameters.filename;
+  simulationControl.read(prefix);
+  pvdhandler.read(prefix);
+
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream in (filename.c_str());
+  if (!in)
+    AssertThrow (false,
+                 ExcMessage (std::string("You are trying to restart a previous computation, "
+                                         "but the restart file <")
+                             +
+                             filename
+                             +
+                             "> does not appear to exist!"));
+
+  try
+    {
+      triangulation.load (filename.c_str());
+    }
+  catch (...)
+    {
+      AssertThrow(false, ExcMessage("Cannot open snapshot mesh file or read the triangulation stored there."));
+    }
+  setup_dofs();
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system (2);
+
+  TrilinosWrappers::MPI::Vector distributed_system (system_rhs);
+  TrilinosWrappers::MPI::Vector distributed_system_m1 (system_rhs);
+  x_system[0] = & (distributed_system);
+  x_system[1] = & (distributed_system_m1);
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector> system_trans_vectors(dof_handler);
+  system_trans_vectors.deserialize(x_system);
+  present_solution=distributed_system;
+  solution_m1=distributed_system_m1;
+}
+
+
+template <int dim>
 void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder, const std::string solutionName, const unsigned int iter, const double time)
 {
   TimerOutput::Scope t(computing_timer, "output");
@@ -1334,9 +1401,9 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder,
     data_out.write_pvtu_record (master_output, filenames);
 
     const std::string pvdPrefix= (folder + solutionName );
-    times_and_names_.push_back (std::pair<double,std::string> (time, pvtu_filename));
+    pvdhandler.append(time,pvtu_filename);
     std::ofstream pvd_output (pvdPrefix+".pvd");
-    DataOutBase::write_pvd_record (pvd_output, times_and_names_);
+    DataOutBase::write_pvd_record (pvd_output, pvdhandler.times_and_names_);
   }
 }
 
@@ -1505,6 +1572,7 @@ void GLSNavierStokesSolver<dim>::calculate_forces()
 
   if(forcesParameters.verbosity==Parameters::Forces::verbose &&  this_mpi_process==0)
   {
+    std::cout << std::endl;
     TableHandler table;
 
     for (unsigned int boundary_id=0 ; boundary_id<boundaryConditions.size ; ++boundary_id)

@@ -4,15 +4,25 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  = steady  # <steady|backward>
-  set number mesh adapt       = 2       # If steady, nb mesh adaptation
-  set time step               = 0.01    # Time step
-  set time end                = 20      # End time of simulation
-  set output path             = output/ # Path to where the output results are made
-  set output name             = mms3d_ # Prefix for VTU outputs
-  set output frequency        = 1       # Frequency of simulation output
-  set subdivision             = 1       # Mesh subdivision when output
+    set method                  = steady  # <steady|backward>
+    set number mesh adapt       = 2       # If steady, nb mesh adaptation
+    set time step               = 0.01    # Time step
+    set time end                = 20      # End time of simulation
+    set output path             = output/ # Path to where the output results are made
+    set output name             = mms3d_ # Prefix for VTU outputs
+    set output frequency        = 1       # Frequency of simulation output
+    set subdivision             = 1       # Mesh subdivision when output
 end
+
+#---------------------------------------------------
+# Restart
+#---------------------------------------------------
+subsection restart
+    set restart = false
+    set frequency = 1
+    set checkpoint = false
+    set filename = restart
+end 
 
 #---------------------------------------------------
 # Physical Properties
