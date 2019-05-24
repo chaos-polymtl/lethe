@@ -13,6 +13,8 @@ public:
     ExactSolutionMMS() : Function<dim>(3) {}
     virtual void vector_value(const Point<dim> &p,
                               Vector<double> &values) const;
+private:
+    double time;
 };
 template<int dim>
 void ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
@@ -25,6 +27,7 @@ void ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
     values(0) = sin(a*x)*sin(a*x)*cos(a*y)*sin(a*y);
     values(1) = -cos(a*x)*sin(a*x)*sin(a*y)*sin(a*y);
 }
+
 
 #endif
 

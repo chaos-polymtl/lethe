@@ -116,6 +116,7 @@ public:
   void postprocess();
   void finishTimeStep();
   void setSolutionVector(double value);
+  void setPeriodicity();
 
 
   void newton_iteration(const bool is_initial_step);
@@ -305,7 +306,7 @@ void GLSNavierStokesSolver<dim>::finishTimeStep()
     const double CFL = calculate_CFL();
     simulationControl.setCFL(CFL);
   }
-  if (simulationControl.getIter()%restartParameters.frequency==0)
+  if ( restartParameters.checkpoint && simulationControl.getIter()%restartParameters.frequency==0)
   {
     write_checkpoint();
   }
@@ -321,6 +322,26 @@ template <int dim>
 void GLSNavierStokesSolver<dim>::setSolutionVector(double value)
 {
   present_solution=value;
+}
+
+template <int dim>
+void GLSNavierStokesSolver<dim>::setPeriodicity()
+{
+  // Setup parallelism for periodic boundary conditions
+  for (unsigned int i_bc=0 ; i_bc < boundaryConditions.size ; ++i_bc)
+  {
+    if(boundaryConditions.type[i_bc]==BoundaryConditions::periodic)
+    {
+      std::vector<GridTools::PeriodicFacePair<typename parallel::distributed::Triangulation<dim>::cell_iterator> >     periodicity_vector;
+      GridTools::collect_periodic_faces(triangulation,
+                                        boundaryConditions.id[i_bc],
+                                        boundaryConditions.periodic_id[i_bc],
+                                        boundaryConditions.periodic_direction[i_bc],
+                                        periodicity_vector
+                                        );
+      triangulation.add_periodicity(periodicity_vector);
+    }
+  }
 }
 
 template <int dim>
@@ -384,6 +405,7 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
 
         else if(boundaryConditions.type[i_bc]==BoundaryConditions::periodic)
         {
+
           DoFTools::make_periodicity_constraints<DoFHandler<dim> >( dof_handler,
                                                                     boundaryConditions.id[i_bc],
                                                                     boundaryConditions.periodic_id[i_bc],
@@ -411,6 +433,7 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
           }
         else if(boundaryConditions.type[i_bc]==BoundaryConditions::periodic)
         {
+
           DoFTools::make_periodicity_constraints<DoFHandler<dim> >( dof_handler,
                                                                     boundaryConditions.id[i_bc],
                                                                     boundaryConditions.periodic_id[i_bc],
@@ -528,6 +551,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
 
           fe_values.reinit(cell);
           local_matrix = 0;
+
           local_rhs    = 0;
           fe_values[velocities].get_function_values(evaluation_point, present_velocity_values);
           fe_values[velocities].get_function_gradients(evaluation_point, present_velocity_gradients);
@@ -717,7 +741,7 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
   else if (initial_condition_type == Parameters::InitialConditionType::L2projection)
   {
     assemble_L2_projection();
-    solve(true,1e-12,1e-12);
+    solve(true,1e-15,1e-15);
     present_solution=newton_update;
     finishTimeStep();
     postprocess();

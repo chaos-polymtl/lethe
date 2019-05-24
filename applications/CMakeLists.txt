@@ -9,4 +9,4 @@ ADD_SUBDIRECTORY(poiseuille)
 ADD_SUBDIRECTORY(cylinder)
 ADD_SUBDIRECTORY(taylorcouette)
 ADD_SUBDIRECTORY(taylorcouette_unstructured)
-
+ADD_SUBDIRECTORY(tg_vortex)

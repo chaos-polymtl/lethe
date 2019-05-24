@@ -122,6 +122,9 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
+      prm.declare_entry("dimension", "2",
+                        Patterns::Integer(),
+                        "Dimension of the problem");
       prm.declare_entry("velocity order", "1",
                         Patterns::Integer(),
                         "interpolation order velocity");
@@ -139,6 +142,7 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
+      dimension       = prm.get_integer("dimension");
       velocityOrder   = prm.get_integer("velocity order");
       pressureOrder   = prm.get_integer("pressure order");
       qmapping_all    = prm.get_bool("qmapping all");
@@ -488,7 +492,7 @@ namespace Parameters
                         "Frequency for checkpointing");
       prm.declare_entry("checkpoint", "false",
                         Patterns::Bool(),
-                        "Frequency for checkpointing");
+                        "Enable checkpointing");
       prm.declare_entry("frequency", "1",
                         Patterns::Integer(),
                         "Frequency for checkpointing");

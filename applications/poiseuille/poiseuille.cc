@@ -60,6 +60,7 @@ void PeriodicPoiseuille<dim>::run()
   grid_in.attach_triangulation (this->triangulation);
   std::ifstream input_file(this->meshParameters.fileName);
   grid_in.read_msh(input_file);
+  this->setPeriodicity();
   this->setup_dofs();
   this->forcing_function = new ConstantXForce<dim>;
   this->exact_solution = new ExactSolutionPoiseuille<dim>;

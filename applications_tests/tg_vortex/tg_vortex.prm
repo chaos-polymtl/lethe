@@ -1,0 +1,111 @@
+# Listing of Parameters
+# ---------------------
+
+
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = backward
+  set time step               = 0.01    # Time step
+    set number mesh adapt     = 0       # If steady, nb mesh adaptation
+  set time end                = 1.00      # End time of simulation
+  set output path             =  # Path to where the output results are made
+  set output name             = tgv # Prefix for VTU outputs
+  set output frequency        = 100       # Frequency of simulation output
+  set subdivision             = 1       # Mesh subdivision when outputend
+end
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+end
+
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+    set type    = none                                  # <none|iteration|end>
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = L2projection
+    subsection uvwp
+            set Function expression = cos(x)*sin(y); -sin(x)*cos(y); -1./4*(cos(2*x)+cos(2*y));
+    end
+end
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+    set kinematic viscosity            = 1.000
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = primitive
+    set initial refinement   = 5                        # initial mesh refinement
+end
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                    = none
+  set max number elements     = 20000
+  set max refinement level    = 3
+  set min refinement level    = 0
+  set frequency               = 1
+  set fraction refinement     = 0.1
+  set fraction coarsening     = 0.1
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 2
+    subsection bc 0
+        set type                = periodic
+        set id                  = 0
+        set periodic_id         = 1
+        set periodic_direction  = 0
+    end
+    subsection bc 1
+        set type                = periodic
+        set id                  = 2
+        set periodic_id         = 3
+        set periodic_direction  = 1
+    end
+end
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set verbosity               = quiet
+  set tolerance               = 1e-6
+  set max iterations          = 5
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set verbosity               = quiet
+  set method                  = gmres
+  set max iters               = 5000
+  set relative residual       = 1e-4
+  set minimum residual        = 1e-9
+  set ilu fill               = 1
+  set ilu absolute tolerance = 1e-5
+  set ilu relative tolerance = 1.00
+end

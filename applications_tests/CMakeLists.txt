@@ -8,4 +8,5 @@ ADD_SUBDIRECTORY(mms2d_unstructured)
 ADD_SUBDIRECTORY(poiseuille)
 ADD_SUBDIRECTORY(taylorcouette)
 ADD_SUBDIRECTORY(taylorcouette_unstructured)
+ADD_SUBDIRECTORY(tg_vortex)
 

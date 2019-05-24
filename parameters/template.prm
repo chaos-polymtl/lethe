@@ -18,10 +18,10 @@ end
 # Restart
 #---------------------------------------------------
 subsection restart
-    set restart = false
-    set frequency = 1
-    set checkpoint = false
-    set filename = restart
+    set restart = false                   # Restart simulation
+    set frequency = 1                     # Frequency of checkpointing
+    set checkpoint = false                # Enable checkpointing
+    set filename = restart                # Restart file filename
 end 
 
 #---------------------------------------------------
@@ -48,7 +48,7 @@ end
 # Initial condition
 #---------------------------------------------------
 subsection initial conditions
-    set type = none     # Type of ways to set initial conditions <none|L2Projection|nodal|viscous>
+    set type = none     # Type of ways to set initial conditions <none|L2projection|nodal|viscous>
     set viscosity = 1   # Viscosity used for viscous solution
     subsection uvw
             set Function expression = 1; 0; 0 # Analytical formula for the L2 projection or nodal
@@ -75,6 +75,7 @@ end
 subsection mesh
     set type                 = primitive                # <primitive|gmsh>
     set file name            = vonKarman_structured.msh # file name if gmsh
+    set initial refinement   = 1                        # initial mesh refinement
 end
 
 # --------------------------------------------------
