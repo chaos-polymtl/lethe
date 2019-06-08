@@ -33,16 +33,16 @@ main()
 
     if(simulationControl.getIter()!=10)                                 std::runtime_error("Iteration number is wrong - before");
     if(!approximatelyEqual(simulationControl.getTime(),0.1,1e-10))      std::runtime_error("Run time is wrong - before");
-    if(!approximatelyEqual(simulationControl.getTimeStep(),0.01,1e-10)) std::runtime_error("Time step is wrong - before");
+    if(!approximatelyEqual(simulationControl.getCurrentTimeStep(),0.01,1e-10)) std::runtime_error("Time step is wrong - before");
 
     simulationControl.save("testFile");
     simulationControl.read("testFile");
 
     if(simulationControl.getIter()!=10)                                 std::runtime_error("Iteration number is wrong - after");
     if(!approximatelyEqual(simulationControl.getTime(),0.1,1e-10))      std::runtime_error("Run time is wrong - after");
-    if(!approximatelyEqual(simulationControl.getTimeStep(),0.01,1e-10)) std::runtime_error("Time step is wrong - after");
+    if(!approximatelyEqual(simulationControl.getCurrentTimeStep(),0.01,1e-10)) std::runtime_error("Time step is wrong - after");
 
-    deallog << "dt                  : " << simulationControl.getTimeStep()    << std::endl;
+    deallog << "dt                  : " << simulationControl.getCurrentTimeStep()    << std::endl;
     deallog << "CFL                 : " << simulationControl.getCFL()         << std::endl;
     deallog << "time                : " << simulationControl.getTime()        << std::endl;
     deallog << "iter                : " << simulationControl.getIter()        << std::endl;

@@ -14,7 +14,7 @@ namespace Parameters
   struct SimulationControl
   {
     // Method used for time progression (steady, unsteady)
-    enum TimeSteppingMethod { steady, backward, bdf2};
+    enum TimeSteppingMethod { steady, backward, bdf2, bdf3};
     TimeSteppingMethod method;
 
     // Initial time step
@@ -28,6 +28,9 @@ namespace Parameters
 
     // Max CFL
     double maxCFL;
+
+    // BDF startup time scaling
+    double startup_timestep_scaling;
 
     // Number of mesh adaptation (steady simulations)
     unsigned int nbMeshAdapt;
@@ -161,9 +164,6 @@ namespace Parameters
     // Residual precision
     unsigned int residual_precision;
 
-    //Right hand side correction for constant pressure, does not work well right now
-    bool   rhsCorr;
-
     // Relative residual of the iterative solver
     double relative_residual;
 
@@ -174,13 +174,22 @@ namespace Parameters
     int max_iterations;
 
     // ILU or ILUT fill
-    double ilu_fill;
+    double ilu_precond_fill;
 
-    // ILU or ILUT absolute tolerance (1e-3 works well)
-    double ilu_atol;
+    // ILU or ILUT absolute tolerance
+    double ilu_precond_atol;
 
-    // ILU or ILUT relative tolerance (1.00 works well)
-    double ilu_rtol;
+    // ILU or ILUT relative tolerance
+    double ilu_precond_rtol;
+
+    // ILU or ILUT fill
+    double amg_precond_ilu_fill;
+
+    // ILU or ILUT absolute tolerance
+    double amg_precond_ilu_atol;
+
+    // ILU or ILUT relative tolerance
+    double amg_precond_ilu_rtol;
 
     // AMG aggregation threshold
     double amg_aggregation_threshold;

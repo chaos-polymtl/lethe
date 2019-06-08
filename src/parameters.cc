@@ -7,15 +7,19 @@ namespace Parameters
     prm.enter_subsection("simulation control");
     {
       prm.declare_entry("method", "steady",
-                        Patterns::Selection("steady|backward"),
+                        Patterns::Selection("steady|backward|bdf2|bdf3"),
                         "The kind of solver for the linear system. "
-                        "Choices are <steady|backward>.");
+                        "Choices are <steady|backward|bdf2|bdf3>.");
       prm.declare_entry("time step", "1.",
                         Patterns::Double(),
                         "Time step value");
       prm.declare_entry("time end", "1",
                         Patterns::Double(),
                         "Time step value");
+      prm.declare_entry("startup time scaling", "0.1",
+                        Patterns::Double(),
+                        "Scaling factor used in the iterations necessary to start-up the BDF schemes.");
+
       prm.declare_entry("adapt", "false",
                         Patterns::Bool(),
                         "Adaptative time-stepping <true|false>");
@@ -55,15 +59,18 @@ namespace Parameters
         method = backward;
       else if (sv == "bdf2")
         method = bdf2;
-      dt              = prm.get_double("time step");
-      timeEnd         = prm.get_double("time end");
-      adapt           = prm.get_bool("adapt");
-      maxCFL          = prm.get_double("max cfl");
-      nbMeshAdapt     = prm.get_integer("number mesh adapt");
-      output_folder   = prm.get("output path");
-      output_name     = prm.get("output name");
-      outputFrequency = prm.get_integer("output frequency");
-      subdivision     = prm.get_integer("subdivision");
+      else if (sv == "bdf3")
+        method = bdf3;
+      dt                       = prm.get_double("time step");
+      timeEnd                  = prm.get_double("time end");
+      adapt                    = prm.get_bool("adapt");
+      maxCFL                   = prm.get_double("max cfl");
+      startup_timestep_scaling = prm.get_double("startup time scaling");
+      nbMeshAdapt              = prm.get_integer("number mesh adapt");
+      output_folder            = prm.get("output path");
+      output_name              = prm.get("output name");
+      outputFrequency          = prm.get_integer("output frequency");
+      subdivision              = prm.get_integer("subdivision");
 
     }
     prm.leave_subsection();
@@ -307,18 +314,16 @@ namespace Parameters
                         Patterns::Selection("quiet|verbose"),
                         "State whether output from solver runs should be printed. "
                         "Choices are <quiet|verbose>.");
-      prm.declare_entry("residual precision", "4",
+      prm.declare_entry("residual precision", "6",
                         Patterns::Integer(),
-                        "Residual precision");
-      prm.declare_entry("pressure rhs", "false",
-                        Patterns::Bool(),
-                        "State if pressure RHS projection is to be used. "
-                        "Choices are <false|true>.");
+                        "Number of digits used when outputing the residual in the terminal");
       prm.declare_entry("method", "gmres",
                         Patterns::Selection("gmres|bicgstab|amg"),
-                        "The kind of solver for the linear system. "
-                        "Choices are <gmres|bicgstab|amg>.");
-      prm.declare_entry("relative residual", "1e-2",
+                        "The iterative solver for the linear system of equations. "
+                        "Choices are <gmres|bicgstab|amg>. gmres is a GMRES iterative solver with ILU preconditioning. bicgstab is a BICGSTAB iterative solver with ILU preconditioning. "
+                        "amg is GMRES + AMG preconditioning with an ILU coarsener and smoother. On coarse meshes, the gmres/bicgstab solver with ILU preconditioning is more efficient. "
+                        "As the number of mesh elements increase, the amg solver is the most efficient. Generally, at 1M elements, the amg solver always outperforms the gmres or bicgstab");
+      prm.declare_entry("relative residual", "1e-3",
                         Patterns::Double(),
                         "Linear solver residual");
       prm.declare_entry("minimum residual", "1e-8",
@@ -327,16 +332,32 @@ namespace Parameters
       prm.declare_entry("max iters", "1000",
                         Patterns::Integer(),
                         "Maximum solver iterations");
-      prm.declare_entry("ilu fill", "4",
+
+      prm.declare_entry("ilu preconditioner fill", "1",
                         Patterns::Double(),
                         "Ilu preconditioner fill");
-      prm.declare_entry("ilu absolute tolerance", "1e-3",
+
+      prm.declare_entry("ilu preconditioner absolute tolerance", "1e-6",
                         Patterns::Double(),
                         "Ilu preconditioner tolerance");
-      prm.declare_entry("ilu relative tolerance", "1.00",
+
+      prm.declare_entry("ilu preconditioner relative tolerance", "1.00",
                         Patterns::Double(),
                         "Ilu relative tolerance");
-      prm.declare_entry("amg aggregation threshold", "1e-10",
+
+      prm.declare_entry("amg preconditioner ilu fill", "1",
+                        Patterns::Double(),
+                        "amg preconditioner ilu smoother/coarsener fill");
+
+      prm.declare_entry("amg preconditioner ilu absolute tolerance", "1e-12",
+                        Patterns::Double(),
+                        "amg preconditioner ilu smoother/coarsener absolute tolerance");
+
+      prm.declare_entry("amg preconditioner ilu relative tolerance", "1.00",
+                        Patterns::Double(),
+                        "amg preconditioner ilu smoother/coarsener relative tolerance");
+
+      prm.declare_entry("amg aggregation threshold", "1e-14",
                         Patterns::Double(),
                         "amg aggregation threshold");
       prm.declare_entry("amg n cycles", "1",
@@ -344,7 +365,7 @@ namespace Parameters
                         "amg number of cycles");
       prm.declare_entry("amg w cycles", "false",
                         Patterns::Bool(),
-                        "amg w cycling");
+                        "amg w cycling. If this is set to true, W cycling is used. Otherwise, V cycling is used.");
       prm.declare_entry("amg smoother sweeps", "2",
                         Patterns::Integer(),
                         "amg smoother sweeps");
@@ -371,14 +392,16 @@ namespace Parameters
         solver = gmres;
       else if (sv == "bicgstab")
         solver = bicgstab;
-      rhsCorr                           = prm.get_bool("pressure rhs");
       residual_precision                = prm.get_integer("residual precision");
       relative_residual                 = prm.get_double("relative residual");
       minimum_residual                  = prm.get_double("minimum residual");
       max_iterations                    = prm.get_integer("max iters");
-      ilu_fill                          = prm.get_double("ilu fill");
-      ilu_atol                          = prm.get_double("ilu absolute tolerance");
-      ilu_rtol                          = prm.get_double("ilu relative tolerance");
+      ilu_precond_fill                  = prm.get_double("ilu preconditioner fill");
+      ilu_precond_atol                  = prm.get_double("ilu preconditioner absolute tolerance");
+      ilu_precond_rtol                  = prm.get_double("ilu preconditioner relative tolerance");
+      amg_precond_ilu_fill              = prm.get_double("amg preconditioner ilu fill");
+      amg_precond_ilu_atol              = prm.get_double("amg preconditioner ilu absolute tolerance");
+      amg_precond_ilu_rtol              = prm.get_double("amg preconditioner ilu relative tolerance");
       amg_aggregation_threshold         = prm.get_double("amg aggregation threshold");
       amg_n_cycles                      = prm.get_integer("amg n cycles");
       amg_w_cycles                      = prm.get_bool("amg w cycles");

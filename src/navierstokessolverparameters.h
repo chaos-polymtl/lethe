@@ -1,3 +1,23 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 -  by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+
+ *
+ * Author: Bruno Blais, Polytechnique Montreal, 2019 -
+ */
+
+
 #include "exactsolutions.h"
 #include "forcingfunctions.h"
 #include "boundaryconditions.h"
@@ -31,20 +51,20 @@ public:
   void declare(ParameterHandler &prm)
   {
     initialCondition = new Parameters::InitialConditions<dim>;
-    Parameters::Testing::declare_parameters(prm);
-    Parameters::NonLinearSolver::declare_parameters (prm);
-    Parameters::LinearSolver::declare_parameters (prm);
     Parameters::SimulationControl::declare_parameters (prm);
-    Parameters::MeshAdaptation::declare_parameters (prm);
-    Parameters::Mesh::declare_parameters(prm);
     Parameters::PhysicalProperties::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
-    Parameters::FEM::declare_parameters(prm);
-    Parameters::Forces::declare_parameters(prm);
-    Parameters::AnalyticalSolution::declare_parameters(prm);
+    Parameters::Mesh::declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
     boundaryConditions.declare_parameters(prm);
     initialCondition->declare_parameters(prm);
+    Parameters::FEM::declare_parameters(prm);
+    Parameters::Timer::declare_parameters(prm);
+    Parameters::Forces::declare_parameters(prm);
+    Parameters::MeshAdaptation::declare_parameters (prm);
+    Parameters::NonLinearSolver::declare_parameters (prm);
+    Parameters::LinearSolver::declare_parameters (prm);
+    Parameters::AnalyticalSolution::declare_parameters(prm);
+    Parameters::Testing::declare_parameters(prm);
   }
 
   void parse(ParameterHandler &prm)

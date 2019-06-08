@@ -59,12 +59,6 @@ end
 #---------------------------------------------------
 subsection mesh adaptation
   set type                    = none
-  set max number elements     = 20000
-  set max refinement level    = 3
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.1
-  set fraction coarsening     = 0.1
 end
 
 # --------------------------------------------------
@@ -100,12 +94,12 @@ end
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-  set verbosity               = quiet
-  set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-9
-  set ilu fill               = 1
-  set ilu absolute tolerance = 1e-5
-  set ilu relative tolerance = 1.00
+  set verbosity                             = quiet
+  set method                                = gmres
+  set max iters                             = 5000
+  set relative residual                     = 1e-4
+  set minimum residual                      = 1e-9
+  set ilu preconditioner fill               = 1
+  set ilu preconditioner absolute tolerance = 1e-5
+  set ilu preconditioner relative tolerance = 1.00
 end

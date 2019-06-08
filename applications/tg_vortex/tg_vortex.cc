@@ -56,7 +56,7 @@ void TaylorGreenVortex<dim>::run2DTGV()
     printTime(this->pcout,this->simulationControl);
     timer.start ();
     this->refine_mesh();
-    this->newton_iteration(false);
+    this->iterate(this->simulationControl.firstIter());
     this->postprocess();
     {
       delete this->exact_solution;

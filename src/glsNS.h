@@ -1,20 +1,20 @@
 ﻿/* ---------------------------------------------------------------------
  *
- * Copyright (C) 2000 - 2016 by the deal.II authors
+ * Copyright (C) 2000 - 2016 by the Lethe authors
  *
- * This file is part of the deal.II library.
+ * This file is part of the Lethe library
  *
- * The deal.II library is free software; you can use it, redistribute
+ * The Lethe library is free software; you can use it, redistribute
  * it, and/or modify it under the terms of the GNU Lesser General
  * Public License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
  * The full text of the license can be found in the file LICENSE at
- * the top level of the deal.II distribution.
+ * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
 
  *
- * Author: Wolfgang Bangerth, University of Heidelberg, 2000
+ * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
 
@@ -40,8 +40,9 @@
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/sparse_ilu.h>
 #include <deal.II/lac/affine_constraints.h>
-#include <deal.II/lac/trilinos_solver.h>
+
 // Trilinos includes
+#include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
@@ -89,6 +90,7 @@
 #include "parameters.h"
 #include "simulationcontrol.h"
 #include "pvdhandler.h"
+#include "bdf.h"
 #include "navierstokessolverparameters.h"
 
 #include <fstream>
@@ -109,6 +111,7 @@ public:
 
   ~GLSNavierStokesSolver();
 
+protected:
   void refine_mesh();
   void setup_dofs();
   double calculateL2Error();
@@ -117,6 +120,7 @@ public:
   void finishTimeStep();
   void setSolutionVector(double value);
   void setPeriodicity();
+  void iterate(bool firstIteration);
 
 
   void newton_iteration(const bool is_initial_step);
@@ -125,7 +129,6 @@ public:
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
 
-protected:
   MPI_Comm                         mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
@@ -183,6 +186,7 @@ private:
 
   TrilinosWrappers::MPI::Vector    solution_m1;
   TrilinosWrappers::MPI::Vector    solution_m2;
+  TrilinosWrappers::MPI::Vector    solution_m3;
 
 
   std::vector<types::global_dof_index> dofs_per_block;
@@ -302,6 +306,8 @@ void GLSNavierStokesSolver<dim>::finishTimeStep()
 {
   if (simulationControl.getMethod()!=Parameters::SimulationControl::steady)
   {
+    solution_m3=solution_m2;
+    solution_m2=solution_m1;
     solution_m1=present_solution;
     const double CFL = calculate_CFL();
     simulationControl.setCFL(CFL);
@@ -457,6 +463,7 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
   present_solution.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   solution_m1.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
   solution_m2.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
+  solution_m3.reinit (locally_owned_dofs,locally_relevant_dofs, mpi_communicator);
 
   newton_update.reinit (locally_owned_dofs, mpi_communicator);
   system_rhs.reinit (locally_owned_dofs, mpi_communicator);
@@ -529,12 +536,26 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
   std::vector<double>           phi_p                     (dofs_per_cell);
   std::vector<Tensor<1, dim> >  grad_phi_p                (dofs_per_cell);
 
-  // Time stepping. Will not be used if steady.
-  const double dt=simulationControl.getTimeStep();
-  const double sdt=1./dt;
+  // Get the BDF coefficients
+  Vector<double> alpha_bdf;
+
+  if (scheme == Parameters::SimulationControl::backward)
+    alpha_bdf=bdf_coefficients(1,simulationControl.getTimeSteps());
+
+  if (scheme == Parameters::SimulationControl::bdf2)
+    alpha_bdf=bdf_coefficients(2,simulationControl.getTimeSteps());
+
+  if (scheme == Parameters::SimulationControl::bdf3)
+    alpha_bdf=bdf_coefficients(3,simulationControl.getTimeSteps());
+
+
+  //if (scheme == Parameters::SimulationControl::bdf2) alpha_bdf=bdf_coefficients(2,simulationControl.getTimeStep())
 
   // Values at previous time step for backward Euler scheme
   std::vector<Tensor<1, dim> >  p1_velocity_values           (n_q_points);
+  std::vector<Tensor<1, dim> >  p2_velocity_values           (n_q_points);
+  std::vector<Tensor<1, dim> >  p3_velocity_values           (n_q_points);
+  std::vector<Tensor<1, dim> >  p4_velocity_values           (n_q_points);
 
   // Element size
   double h ;
@@ -562,6 +583,14 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
 
           if (scheme != Parameters::SimulationControl::steady)
             fe_values[velocities].get_function_values(solution_m1,p1_velocity_values);
+          if (scheme== Parameters::SimulationControl::bdf2 ||
+              scheme== Parameters::SimulationControl::bdf3
+              )
+            fe_values[velocities].get_function_values(solution_m2,p2_velocity_values);
+          if (scheme== Parameters::SimulationControl::bdf3
+              )
+            fe_values[velocities].get_function_values(solution_m3,p3_velocity_values);
+
 
 
           for (unsigned int q=0; q<n_q_points; ++q)
@@ -607,8 +636,11 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                   * fe_values.JxW(q);
 
                           // Mass matrix
-                          if (scheme == Parameters::SimulationControl::backward)
-                              local_matrix(i, j) += phi_u[j]*phi_u[i] *sdt * fe_values.JxW(q);
+                          if (scheme== Parameters::SimulationControl::backward||
+                              scheme== Parameters::SimulationControl::bdf2 ||
+                              scheme== Parameters::SimulationControl::bdf3
+                              )
+                              local_matrix(i, j) += phi_u[j]*phi_u[i] *alpha_bdf[0] * fe_values.JxW(q);
 
                           //PSPG GLS term
                           local_matrix(i, j) += tau*
@@ -619,8 +651,11 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                  )
                                   * fe_values.JxW(q);
 
-                          if (scheme == Parameters::SimulationControl::backward)
-                              local_matrix(i, j) += -tau * sdt * phi_u[j] * grad_phi_p[i] *  fe_values.JxW(q);
+                          if (scheme== Parameters::SimulationControl::backward||
+                              scheme== Parameters::SimulationControl::bdf2 ||
+                              scheme== Parameters::SimulationControl::bdf3
+                              )
+                              local_matrix(i, j) += -tau * alpha_bdf[0] * phi_u[j] * grad_phi_p[i] *  fe_values.JxW(q);
 
                           // Jacobian is currently incomplete
                           if (SUPG)
@@ -644,9 +679,21 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
 
                               if (scheme == Parameters::SimulationControl::backward)
                                   local_matrix(i, j) +=
-                                      -tau*sdt*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
-                                      - tau*sdt*(present_velocity_values[q]-p1_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
+                                      -tau*alpha_bdf[0]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
+                                      - tau*alpha_bdf[0]*(present_velocity_values[q]-p1_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
 
+                              if (scheme == Parameters::SimulationControl::bdf2)
+                                  local_matrix(i, j) +=
+                                      -tau*alpha_bdf[0]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
+                                      - tau*(alpha_bdf[0]*present_velocity_values[q]+alpha_bdf[1]*p1_velocity_values[q]+alpha_bdf[2]*p2_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
+
+                              if (scheme == Parameters::SimulationControl::bdf3)
+                                  local_matrix(i, j) +=
+                                      -tau*alpha_bdf[0]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
+                                      - tau*(alpha_bdf[0]*present_velocity_values[q]
+                                            +alpha_bdf[1]*p1_velocity_values[q]
+                                            +alpha_bdf[2]*p2_velocity_values[q]
+                                            +alpha_bdf[3]*p3_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
                           }
                       }
                   }
@@ -662,8 +709,20 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                           * fe_values.JxW(q);
 
                   if (scheme == Parameters::SimulationControl::backward)
-                   local_rhs(i) += -sdt* (present_velocity_values[q]-p1_velocity_values[q])*phi_u[i]* fe_values.JxW(q);
+                   local_rhs(i) -= alpha_bdf[0]* (present_velocity_values[q]-p1_velocity_values[q])*phi_u[i]* fe_values.JxW(q);
 
+                  if (scheme == Parameters::SimulationControl::bdf2)
+                   local_rhs(i) -= ( alpha_bdf[0]*(present_velocity_values[q]*phi_u[i])
+                                    +alpha_bdf[1]*(p1_velocity_values[q]*phi_u[i])
+                                    +alpha_bdf[2]*(p2_velocity_values[q]*phi_u[i])
+                                   )*fe_values.JxW(q);
+
+                  if (scheme == Parameters::SimulationControl::bdf3)
+                   local_rhs(i) -= ( alpha_bdf[0]*(present_velocity_values[q]*phi_u[i])
+                                    +alpha_bdf[1]*(p1_velocity_values[q]*phi_u[i])
+                                    +alpha_bdf[2]*(p2_velocity_values[q]*phi_u[i])
+                                    +alpha_bdf[3]*(p3_velocity_values[q]*phi_u[i])
+                                   )*fe_values.JxW(q);
 
                   // PSPG GLS term
                   local_rhs(i) +=  tau*
@@ -676,8 +735,26 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                           * fe_values.JxW(q);
 
                   if (scheme == Parameters::SimulationControl::backward)
-                   local_rhs(i) += tau * sdt* (present_velocity_values[q]-p1_velocity_values[q])*grad_phi_p[i]* fe_values.JxW(q);
+                   local_rhs(i) += tau * alpha_bdf[0]* (present_velocity_values[q]-p1_velocity_values[q])*grad_phi_p[i]* fe_values.JxW(q);
 
+                  if (scheme == Parameters::SimulationControl::bdf2)
+                  {
+                   local_rhs(i) += tau * (
+                                      alpha_bdf[0]* (present_velocity_values[q]*grad_phi_p[i])
+                                     +alpha_bdf[1]* (p1_velocity_values[q]*grad_phi_p[i])
+                                     +alpha_bdf[2]* (p2_velocity_values[q]*grad_phi_p[i])
+                                      ) * fe_values.JxW(q);
+                  }
+
+                  if (scheme == Parameters::SimulationControl::bdf3)
+                  {
+                   local_rhs(i) += tau * (
+                                      alpha_bdf[0]* (present_velocity_values[q]*grad_phi_p[i])
+                                     +alpha_bdf[1]* (p1_velocity_values[q]*grad_phi_p[i])
+                                     +alpha_bdf[2]* (p2_velocity_values[q]*grad_phi_p[i])
+                                     +alpha_bdf[3]* (p3_velocity_values[q]*grad_phi_p[i])
+                                      ) * fe_values.JxW(q);
+                  }
                   ////             SUPG GLS term
                   if (SUPG)
                   {
@@ -690,7 +767,29 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                   )* fe_values.JxW(q);
 
                       if (scheme == Parameters::SimulationControl::backward)
-                       local_rhs(i) += tau * sdt* (present_velocity_values[q]-p1_velocity_values[q])* (present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q);
+                       local_rhs(i) += tau * alpha_bdf[0]* (present_velocity_values[q]-p1_velocity_values[q])* (present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q);
+
+                      if (scheme == Parameters::SimulationControl::bdf2)
+                      {
+                        auto velocity_grad_phi_u = present_velocity_values[q]* grad_phi_u[i];
+                        local_rhs(i) += tau *(
+                                               alpha_bdf[0]* (present_velocity_values[q])* (velocity_grad_phi_u)
+                                              +alpha_bdf[1]* (p1_velocity_values[q])* (velocity_grad_phi_u)
+                                              +alpha_bdf[2]* (p2_velocity_values[q])* (velocity_grad_phi_u)
+                                              ) * fe_values.JxW(q);
+                      }
+
+                      if (scheme == Parameters::SimulationControl::bdf3)
+                      {
+                        auto velocity_grad_phi_u = present_velocity_values[q]* grad_phi_u[i];
+                        local_rhs(i) += tau *(
+                                               alpha_bdf[0]* (present_velocity_values[q])* (velocity_grad_phi_u)
+                                              +alpha_bdf[1]* (p1_velocity_values[q])* (velocity_grad_phi_u)
+                                              +alpha_bdf[2]* (p2_velocity_values[q])* (velocity_grad_phi_u)
+                                              +alpha_bdf[3]* (p3_velocity_values[q])* (velocity_grad_phi_u)
+                                              ) * fe_values.JxW(q);
+                      }
+
                   }
                   //local_rhs(i) += fe_values.shape_value(i,q) *
                   //        rhs_force[q](component_i) *
@@ -769,6 +868,73 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
   {
     finishTimeStep();
     postprocess();
+  }
+}
+
+// Do an iteration with the GLS NavierStokes Solver
+// Handles the fact that we may or may not be at a first
+// iteration with the solver and sets the initial condition
+template <int dim>
+void GLSNavierStokesSolver<dim>::iterate (bool firstIteration)
+{
+  // Carry out the integration normally
+  if (!firstIteration)
+  {
+    newton_iteration(false);
+  }
+  // This is the first iteration
+  else
+  {
+    if (simulationControl.getMethod() == Parameters::SimulationControl::steady)
+    {
+      newton_iteration(false);
+    }
+    else if(simulationControl.getMethod() == Parameters::SimulationControl::backward)
+    {
+      newton_iteration(false);
+    }
+    else if(simulationControl.getMethod() == Parameters::SimulationControl::bdf2)
+    {
+      Parameters::SimulationControl timeParameters = simulationControl.getParameters();
+
+      // Start the BDF2 with a single Euler time step with a lower time step
+      simulationControl.setTimeStep(timeParameters.dt*timeParameters.startup_timestep_scaling);
+      simulationControl.setMethod(Parameters::SimulationControl::backward);
+      newton_iteration(false);
+      solution_m2=solution_m1;
+      solution_m1=present_solution;
+
+      // Reset the time step and do a bdf 2 newton iteration using the two steps to complete the full step
+      simulationControl.setMethod(Parameters::SimulationControl::bdf2);
+      simulationControl.setTimeStep(timeParameters.dt*(1.-timeParameters.startup_timestep_scaling));
+      newton_iteration(false);
+    }
+
+    else if(simulationControl.getMethod() == Parameters::SimulationControl::bdf3)
+    {
+      Parameters::SimulationControl timeParameters = simulationControl.getParameters();
+
+      // Start the BDF2 with a single Euler time step with a lower time step
+      simulationControl.setTimeStep(timeParameters.dt*timeParameters.startup_timestep_scaling);
+      simulationControl.setMethod(Parameters::SimulationControl::backward);
+      newton_iteration(false);
+      solution_m2=solution_m1;
+      solution_m1=present_solution;
+
+      // Reset the time step and do a bdf 2 newton iteration using the two steps
+      simulationControl.setMethod(Parameters::SimulationControl::backward);
+      simulationControl.setTimeStep(timeParameters.dt*timeParameters.startup_timestep_scaling);
+      newton_iteration(false);
+      solution_m3=solution_m2;
+      solution_m2=solution_m1;
+      solution_m1=present_solution;
+
+      // Reset the time step and do a bdf 3 newton iteration using the two steps to complete the full step
+      simulationControl.setMethod(Parameters::SimulationControl::bdf3);
+      simulationControl.setTimeStep(timeParameters.dt*(1.-2.*timeParameters.startup_timestep_scaling));
+      newton_iteration(false);
+    }
+
   }
 }
 
@@ -881,7 +1047,7 @@ double GLSNavierStokesSolver<dim>::calculate_CFL()
   double h ;
 
   // Current time step
-  double timeStep = simulationControl.getTimeStep();
+  double timeStep = simulationControl.getCurrentTimeStep();
 
   // CFL
   double CFL=0;
@@ -934,6 +1100,10 @@ void GLSNavierStokesSolver<dim>::assemble_system(const bool initial_step)
 {
   if (simulationControl.getMethod()==Parameters::SimulationControl::backward)
      assembleGLS<Parameters::SimulationControl::backward>(initial_step,true);
+  else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf2)
+      assembleGLS<Parameters::SimulationControl::bdf2>(initial_step,true);
+  else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf3)
+      assembleGLS<Parameters::SimulationControl::bdf3>(initial_step,true);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::steady)
       assembleGLS<Parameters::SimulationControl::steady>(initial_step,true);
 
@@ -943,6 +1113,10 @@ void GLSNavierStokesSolver<dim>::assemble_rhs(const bool initial_step)
 {
   if (simulationControl.getMethod()==Parameters::SimulationControl::backward)
     assembleGLS<Parameters::SimulationControl::backward>(initial_step,false);
+  else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf2)
+    assembleGLS<Parameters::SimulationControl::bdf2>(initial_step,false);
+  else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf3)
+    assembleGLS<Parameters::SimulationControl::bdf3>(initial_step,false);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::steady)
     assembleGLS<Parameters::SimulationControl::steady>(initial_step,false);
 }
@@ -976,9 +1150,9 @@ void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step, double abs
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill=linearSolverParameters.ilu_fill;
-  const double ilu_atol=linearSolverParameters.ilu_atol ;
-  const double ilu_rtol=linearSolverParameters.ilu_rtol;
+  const double ilu_fill=linearSolverParameters.ilu_precond_fill;
+  const double ilu_atol=linearSolverParameters.ilu_precond_atol ;
+  const double ilu_rtol=linearSolverParameters.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(ilu_fill,ilu_atol,ilu_rtol,0);
   TrilinosWrappers::PreconditionILU preconditioner;
 
@@ -1018,9 +1192,9 @@ void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step, double a
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill=linearSolverParameters.ilu_fill;
-  const double ilu_atol=linearSolverParameters.ilu_atol ;
-  const double ilu_rtol=linearSolverParameters.ilu_rtol;
+  const double ilu_fill=linearSolverParameters.ilu_precond_fill;
+  const double ilu_atol=linearSolverParameters.ilu_precond_atol ;
+  const double ilu_rtol=linearSolverParameters.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(ilu_fill,ilu_atol,ilu_rtol,0);
   TrilinosWrappers::PreconditionILU preconditioner;
 
@@ -1069,17 +1243,17 @@ void GLSNavierStokesSolver<dim>::solveAMG (const bool initial_step, double absol
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
   amg_data.constant_modes = constant_modes;
 
-  const bool            elliptic=false;
-  bool            higher_order_elements = false;
+  const bool             elliptic=false;
+  bool                   higher_order_elements = false;
   if (degreeVelocity_>1) higher_order_elements = true;
-  const unsigned int  	n_cycles = linearSolverParameters.amg_n_cycles;
-  const bool            w_cycle = linearSolverParameters.amg_w_cycles;
-  const double  	aggregation_threshold = linearSolverParameters.amg_aggregation_threshold;
-  const unsigned int  	smoother_sweeps = linearSolverParameters.amg_smoother_sweeps;
-  const unsigned int  	smoother_overlap = linearSolverParameters.amg_smoother_overlap;
-  const bool            output_details = false;
-  const char *  	smoother_type = "ILU";
-  const char *  	coarse_type  =  "ILU";
+  const unsigned int  	 n_cycles = linearSolverParameters.amg_n_cycles;
+  const bool             w_cycle = linearSolverParameters.amg_w_cycles;
+  const double  	 aggregation_threshold = linearSolverParameters.amg_aggregation_threshold;
+  const unsigned int  	 smoother_sweeps = linearSolverParameters.amg_smoother_sweeps;
+  const unsigned int  	 smoother_overlap = linearSolverParameters.amg_smoother_overlap;
+  const bool             output_details = false;
+  const char *  	 smoother_type = "ILU";
+  const char *  	 coarse_type  =  "ILU";
   TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
         elliptic,
         higher_order_elements,
@@ -1097,9 +1271,9 @@ void GLSNavierStokesSolver<dim>::solveAMG (const bool initial_step, double absol
   Teuchos::ParameterList            parameter_ml;
   std::unique_ptr< Epetra_MultiVector > distributed_constant_modes;
   preconditionerOptions.set_parameters(parameter_ml, distributed_constant_modes, system_matrix);
-  const double ilu_fill=linearSolverParameters.ilu_fill;
-  const double ilu_atol=linearSolverParameters.ilu_atol ;
-  const double ilu_rtol=linearSolverParameters.ilu_rtol;
+  const double ilu_fill=linearSolverParameters.amg_precond_ilu_fill;
+  const double ilu_atol=linearSolverParameters.amg_precond_ilu_atol ;
+  const double ilu_rtol=linearSolverParameters.amg_precond_ilu_rtol;
   parameter_ml.set("smoother: ifpack level-of-fill",ilu_fill);
   parameter_ml.set("smoother: ifpack absolute threshold",ilu_atol);
   parameter_ml.set("smoother: ifpack relative threshold",ilu_rtol);
@@ -1325,6 +1499,8 @@ void GLSNavierStokesSolver<dim>::write_checkpoint()
   std::vector<const TrilinosWrappers::MPI::Vector*> sol_set_transfer;
   sol_set_transfer.push_back(&present_solution);
   sol_set_transfer.push_back(&solution_m1);
+  sol_set_transfer.push_back(&solution_m2);
+  sol_set_transfer.push_back(&solution_m3);
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector> system_trans_vectors(dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
@@ -1360,16 +1536,23 @@ void GLSNavierStokesSolver<dim>::read_checkpoint()
       AssertThrow(false, ExcMessage("Cannot open snapshot mesh file or read the triangulation stored there."));
     }
   setup_dofs();
-  std::vector<TrilinosWrappers::MPI::Vector *> x_system (2);
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system (4);
 
   TrilinosWrappers::MPI::Vector distributed_system (system_rhs);
   TrilinosWrappers::MPI::Vector distributed_system_m1 (system_rhs);
+  TrilinosWrappers::MPI::Vector distributed_system_m2 (system_rhs);
+  TrilinosWrappers::MPI::Vector distributed_system_m3 (system_rhs);
+  TrilinosWrappers::MPI::Vector distributed_system_m4 (system_rhs);
   x_system[0] = & (distributed_system);
   x_system[1] = & (distributed_system_m1);
+  x_system[2] = & (distributed_system_m2);
+  x_system[3] = & (distributed_system_m3);
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector> system_trans_vectors(dof_handler);
   system_trans_vectors.deserialize(x_system);
   present_solution=distributed_system;
   solution_m1=distributed_system_m1;
+  solution_m2=distributed_system_m2;
+  solution_m3=distributed_system_m3;
 }
 
 
