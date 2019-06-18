@@ -6,7 +6,7 @@ template<int dim>
 class ExactSolutionTGV : public Function<dim>
 {
 public:
-    ExactSolutionTGV(double p_viscosity, double p_time) : Function<dim>(3),viscosity(p_viscosity),time(p_time) {}
+    ExactSolutionTGV(double p_viscosity, double p_time) : Function<dim>(dim+1),viscosity(p_viscosity),time(p_time) {}
     virtual void vector_value(const Point<dim> &p,
                               Vector<double> &values) const;
 private:
@@ -40,6 +40,9 @@ public:
 template<int dim>
 void TaylorGreenVortex<dim>::run2DTGV()
 {
+  std::vector<double>  kevalues;
+  std::vector<double>  timeTaken;
+  std::vector<double>  enstrophyvalues;
   const int initialSize=this->meshParameters.initialRefinement;
   GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
   this->setPeriodicity();
@@ -63,8 +66,37 @@ void TaylorGreenVortex<dim>::run2DTGV()
       this->exact_solution = new ExactSolutionTGV<dim>(this->viscosity_, this->simulationControl.getTime());
       double error = this->calculateL2Error() / std::exp(-2*this->viscosity_*this->simulationControl.getTime());
       this->pcout << "L2 error : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << error << std::endl;
+      double kE    = this->calculate_average_KE();
+      this->pcout << "Kinetic energy : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << kE << std::endl;
+      kevalues.push_back(kE);
+      timeTaken.push_back((this->simulationControl.getTime()));
+      double enstrophy = this->calculate_average_enstrophy();
+      this->pcout << "Enstrophy  : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << enstrophy << std::endl;
+      enstrophyvalues.push_back(enstrophy);
     }
     this->finishTimeStep();
+  }
+  if(this->this_mpi_process==0)
+  {
+    assert (timeTaken.size()==kevalues.size());
+    std::ofstream output_file("./KE-2D.dat");
+    for (unsigned int i=0 ; i < kevalues.size() ; ++i)
+    {
+
+      output_file <<timeTaken[i]<<" "<<kevalues[i]<< std::endl;
+    }
+      output_file.close();
+  }
+  if(this->this_mpi_process==0)
+  {
+    assert (timeTaken.size()==enstrophyvalues.size());
+    std::ofstream output_file("./Enstrophy-2D.dat");
+    for (unsigned int i=0 ; i < enstrophyvalues.size() ; ++i)
+    {
+
+      output_file<<timeTaken[i]<< " "<<enstrophyvalues[i]<< std::endl;
+    }
+      output_file.close();
   }
 }
 

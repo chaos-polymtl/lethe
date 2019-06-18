@@ -98,10 +98,9 @@ template<int dim>
 void NoForce<dim>::vector_value(const Point<dim> &/*p*/,
                                 Vector<double> &values) const
 {
-    assert(dim==2);
     values(0) = 0.;
     values(1) = 0.;
-
+    if(dim==3) values(2)=0.;
 }
 
 #endif

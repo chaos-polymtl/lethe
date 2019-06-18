@@ -3,6 +3,8 @@
 #ifndef LETHE_PSDHANDLING_H
 #define LETHE_PSDHANDLING_H
 
+using namespace dealii;
+
 class PVDHandler
 {
 public:

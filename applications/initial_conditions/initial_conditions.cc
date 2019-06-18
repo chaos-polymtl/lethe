@@ -6,7 +6,7 @@ template<int dim>
 class ExactInitialSolution : public Function<dim>
 {
 public:
-    ExactInitialSolution() : Function<dim>(3)
+    ExactInitialSolution() : Function<dim>(2)
     {}
     virtual void vector_value(const Point<dim> &p,
                               Vector<double> &values) const;
@@ -19,7 +19,7 @@ void ExactInitialSolution<dim>::vector_value(const Point<dim> &p,
     double y = p[1];
     values(0) = x;
     values(1) = y;
-    values(2) = 0.;
+    if (dim==3) values(2) = 0.;
 }
 
 template <int dim>

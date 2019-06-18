@@ -105,7 +105,6 @@ using namespace dealii;
 template <int dim>
 class GLSNavierStokesSolver
 {
-
 public:
   GLSNavierStokesSolver(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure);
 
@@ -115,13 +114,15 @@ protected:
   void refine_mesh();
   void setup_dofs();
   double calculateL2Error();
+  double calculate_average_KE();
+  double calculate_average_enstrophy();
+  double calculateKErate(std::vector<double> arr1);
   void setInitialCondition(Parameters::InitialConditionType initial_condition_type, bool restart=false);
   void postprocess();
   void finishTimeStep();
   void setSolutionVector(double value);
   void setPeriodicity();
   void iterate(bool firstIteration);
-
 
   void newton_iteration(const bool is_initial_step);
   void make_cube_grid(int refinementLevel);
@@ -146,6 +147,7 @@ private:
   void calculate_forces();
   void calculate_torques();
   double calculate_CFL();
+
 
   void assemble_system(const bool initial_step);
   void assemble_rhs(const bool initial_step);
@@ -181,15 +183,11 @@ private:
   TrilinosWrappers::MPI::Vector    system_rhs;
   TrilinosWrappers::MPI::Vector    evaluation_point;
   TrilinosWrappers::MPI::Vector    local_evaluation_point;
-  TrilinosWrappers::MPI::Vector    pressure_shape_function_integrals;
-  TrilinosWrappers::MPI::Vector    pressure_projection;
 
   TrilinosWrappers::MPI::Vector    solution_m1;
   TrilinosWrappers::MPI::Vector    solution_m2;
   TrilinosWrappers::MPI::Vector    solution_m3;
 
-
-  std::vector<types::global_dof_index> dofs_per_block;
 
   // Finite element order used
   const  unsigned int            degreeVelocity_;
@@ -203,7 +201,6 @@ private:
   PVDHandler                     pvdhandler;
 
 protected:
-
   // Physical Properties
   double                                viscosity_;
   std::vector<double>                   L2ErrorU_;
@@ -233,9 +230,80 @@ protected:
   BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
   Parameters::InitialConditions<dim>              *initialConditionParameters;
   Parameters::Restart                             restartParameters;
-};
 
-// Constructor
+  class vorticity_postprocessor: public DataPostprocessorVector<dim>
+  {
+  public:
+    vorticity_postprocessor():
+      DataPostprocessorVector<dim> ("vorticity",
+                                    update_gradients)
+    {}
+    virtual
+    void
+    evaluate_vector_field (const DataPostprocessorInputs::Vector<dim>&      input_data,
+                           std::vector<Vector<double> >               &computed_quantities) const
+    {
+      AssertDimension (input_data.solution_gradients.size(),
+                       computed_quantities.size());
+      for (unsigned int p=0; p<input_data.solution_gradients.size(); ++p)
+      {
+        AssertDimension (computed_quantities[p].size(), dim);
+        if (dim==3)
+        {
+          computed_quantities[p](0) = (input_data.solution_gradients[p][2][1]-input_data.solution_gradients[p][1][2]);
+          computed_quantities[p](1) = (input_data.solution_gradients[p][0][2]-input_data.solution_gradients[p][2][0]);
+          computed_quantities[p](2) = (input_data.solution_gradients[p][1][0]-input_data.solution_gradients[p][0][1]);
+        }
+        else
+        {
+          computed_quantities[p][0] =  (input_data.solution_gradients[p][1][0]-input_data.solution_gradients[p][0][1]);
+        }
+      }
+    }
+  };
+  class qcriterion_postprocessor: public DataPostprocessorScalar<dim>
+  {
+  public:
+    qcriterion_postprocessor():
+      DataPostprocessorScalar<dim> ("Q-criterion",
+                                    update_gradients)
+    {}
+    virtual
+    void
+    evaluate_vector_field 	( 	const DataPostprocessorInputs::Vector< dim > &  	input_data,
+                                        std::vector< Vector< double > > &  	computed_quantities  ) 		const
+    {
+      AssertDimension (input_data.solution_gradients.size(),
+                       computed_quantities.size());
+      for (unsigned int p=0; p<input_data.solution_gradients.size(); ++p)
+      {
+        AssertDimension (computed_quantities[p].size(), dim);
+        double p1=0.0,r1=0.0;
+        std::vector<Tensor<2,dim>> vorticity_vector (input_data.solution_gradients.size());
+        std::vector<Tensor<2,dim>> strain_rate_tensor(input_data.solution_gradients.size());
+        for(unsigned int j=0;j<dim;j++)
+        {
+          for(unsigned int k=0;k<dim;k++)
+          {
+            vorticity_vector[p][j][k]=0.5*((input_data.solution_gradients[p][j][k])-input_data.solution_gradients[p][k][j]);
+            strain_rate_tensor[p][j][k]=0.5*((input_data.solution_gradients[p][j][k])+input_data.solution_gradients[p][k][j]);
+          }
+        }
+        for (unsigned int m=0;m<dim;m++)
+        {
+          for (unsigned int n=0;n<dim;n++)
+          {
+            p1 += (vorticity_vector[p][m][n])*(vorticity_vector[p][m][n]);
+            r1 += (strain_rate_tensor[p][m][n])*(strain_rate_tensor[p][m][n]);
+          }
+        }
+        computed_quantities[p] = 0.5*(p1-r1);
+
+      }
+    }
+  };
+};
+// Constructor for class GLSNavierStokesSolver
 template<int dim>
 GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<dim> p_nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
     mpi_communicator (MPI_COMM_WORLD),
@@ -366,11 +434,6 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
                                            locally_relevant_dofs);
 
 
-  std::vector<unsigned int> block_component(dim+1, 0);
-  block_component[dim] = 1;
-  dofs_per_block.resize (2);
-  DoFTools::count_dofs_per_block (dof_handler, dofs_per_block, block_component);
-
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
@@ -487,8 +550,6 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
         << "   Number of degrees of freedom: " << dof_handler.n_dofs() << std::endl;
   pcout << "   Volume of triangulation:      " << globalVolume_ << std::endl;
 
-  pressure_shape_function_integrals.reinit (locally_owned_dofs, mpi_communicator);
-  pressure_projection.reinit (locally_owned_dofs, mpi_communicator);
 }
 
 
@@ -548,6 +609,8 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
   if (scheme == Parameters::SimulationControl::bdf3)
     alpha_bdf=bdf_coefficients(3,simulationControl.getTimeSteps());
 
+  double sdt = 1./simulationControl.getTimeSteps()[0];
+
   // Values at previous time step for backward Euler scheme
   std::vector<Tensor<1, dim> >  p1_velocity_values           (n_q_points);
   std::vector<Tensor<1, dim> >  p2_velocity_values           (n_q_points);
@@ -576,7 +639,8 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
           fe_values[pressure].get_function_values(evaluation_point,present_pressure_values);
           fe_values[pressure].get_function_gradients(evaluation_point,present_pressure_gradients);
           fe_values[velocities].get_function_laplacians(evaluation_point,present_velocity_laplacians);
-          forcing_function->vector_value_list(fe_values.get_quadrature_points(), rhs_force);
+          if (forcing_function)
+            forcing_function->vector_value_list(fe_values.get_quadrature_points(), rhs_force);
 
           if (scheme != Parameters::SimulationControl::steady)
             fe_values[velocities].get_function_values(solution_m1,p1_velocity_values);
@@ -593,9 +657,9 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
           for (unsigned int q=0; q<n_q_points; ++q)
           {
               const double u_mag= std::max(present_velocity_values[q].norm(),1e-3*GLS_u_scale);
-               double tau = 1./ std::sqrt(std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
+              double tau = 1./ std::sqrt(std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
               if (scheme != Parameters::SimulationControl::steady)
-                tau = 1./ std::sqrt(std::pow(2*alpha_bdf[0],2)+std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
+                tau = 1./ std::sqrt(std::pow(2*sdt,2)+std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
 
               for (unsigned int k=0; k<dofs_per_cell; ++k)
               {
@@ -1426,8 +1490,10 @@ void GLSNavierStokesSolver<dim>::write_checkpoint()
 {
   TimerOutput::Scope timer (computing_timer, "write_checkpoint");
   std::string prefix =restartParameters.filename;
-  simulationControl.save(prefix);
-  pvdhandler.save(prefix);
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    simulationControl.save(prefix);
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    pvdhandler.save(prefix);
 
   std::vector<unsigned int> var_indices;
   var_indices.push_back(0);
@@ -1497,7 +1563,8 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder,
 {
   TimerOutput::Scope t(computing_timer, "output");
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
-
+  vorticity_postprocessor ob;
+  qcriterion_postprocessor ob1;
   std::vector<std::string> solution_names (dim, "velocity");
   solution_names.push_back ("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1507,13 +1574,13 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder,
   DataOut<dim> data_out;
   data_out.attach_dof_handler (dof_handler);
   data_out.add_data_vector (present_solution, solution_names, DataOut<dim>::type_dof_data, data_component_interpretation);
-
+  data_out.add_data_vector(present_solution,ob);
+  data_out.add_data_vector(present_solution,ob1);
   Vector<float> subdomain (triangulation.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)
     subdomain(i) = triangulation.locally_owned_subdomain();
   data_out.add_data_vector (subdomain, "subdomain");
-
-
+  //data_out.add_data_vector (rot_u,"vorticity");
   data_out.build_patches (mapping,simulationControl.getSubdivision());
 
   const std::string filename = (folder+ solutionName + "." +
@@ -1604,6 +1671,7 @@ double GLSNavierStokesSolver<dim>::calculateL2Error()
   std::vector<Tensor<1,dim> > local_velocity_values (n_q_points);
   std::vector<double > local_pressure_values (n_q_points);
 
+
   double l2errorU=0.;
 
   //loop over elements
@@ -1649,10 +1717,126 @@ double GLSNavierStokesSolver<dim>::calculateL2Error()
     }
   }
   l2errorU=Utilities::MPI::sum(l2errorU,mpi_communicator);
-
   return std::sqrt(l2errorU);
 }
 
+//kinetic energy calculation
+template <int dim>
+double GLSNavierStokesSolver<dim>::calculate_average_KE()
+{
+  TimerOutput::Scope t(computing_timer, "KE");
+
+  QGauss<dim>  quadrature_formula(degreeQuadrature_+1);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  FEValues<dim> fe_values (mapping,
+                           fe, quadrature_formula,
+                           update_values   | update_gradients |
+                           update_quadrature_points | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities (0);
+  const unsigned int   n_q_points    = quadrature_formula.size();
+
+  std::vector<Tensor<1,dim> > local_velocity_values (n_q_points);
+  double KEU=0.0;
+
+  //loop over elements
+  typename DoFHandler<dim>::active_cell_iterator
+      cell = dof_handler.begin_active(),
+      endc = dof_handler.end();
+  for (; cell!=endc; ++cell)
+  {
+    if (cell->is_locally_owned())
+    {
+      fe_values.reinit (cell);
+      fe_values[velocities].get_function_values (present_solution,
+                                                 local_velocity_values);
+
+      for(unsigned int q=0; q<n_q_points; q++)
+      {
+        //Find the values of x and u_h (the finite element solution) at the quadrature points
+        double ux_sim=local_velocity_values[q][0];
+        double uy_sim=local_velocity_values[q][1];
+
+        if (dim==2)
+        {
+            KEU      += 0.5*((ux_sim)*(ux_sim)* fe_values.JxW(q))*(1/globalVolume_);
+            KEU      += 0.5*((uy_sim)*(uy_sim)* fe_values.JxW(q))*(1/globalVolume_);
+        }
+        else
+        {
+            double uz_sim = local_velocity_values[q][2];
+            KEU      += 0.5*((ux_sim)*(ux_sim)* fe_values.JxW(q))*(1/globalVolume_);
+            KEU      += 0.5*((uy_sim)*(uy_sim)* fe_values.JxW(q))*(1/globalVolume_);
+            KEU      += 0.5*((uz_sim)*(uz_sim)* fe_values.JxW(q))*(1/globalVolume_);
+        }
+      }   
+    }
+  }
+  KEU=Utilities::MPI::sum(KEU,mpi_communicator);
+  return (KEU);
+}
+
+//enstrophy calculation
+template <int dim>
+double GLSNavierStokesSolver<dim>::calculate_average_enstrophy()
+{
+  TimerOutput::Scope t(computing_timer, "Entrosphy");
+
+  QGauss<dim>  quadrature_formula(degreeQuadrature_+1);
+  const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
+  FEValues<dim> fe_values (mapping,
+                           fe, quadrature_formula,
+                           update_values   | update_gradients |
+                           update_quadrature_points | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities (0);
+
+  const unsigned int   n_q_points    = quadrature_formula.size();
+
+  std::vector<Tensor<2,dim> > present_velocity_gradients (n_q_points);
+  double en=0.0;
+
+  //loop over elements
+  typename DoFHandler<dim>::active_cell_iterator
+      cell = dof_handler.begin_active(),
+      endc = dof_handler.end();
+  for (; cell!=endc; ++cell)
+  {
+    if (cell->is_locally_owned())
+    {
+      fe_values.reinit (cell);
+
+      fe_values[velocities].get_function_gradients(evaluation_point, present_velocity_gradients );
+
+      for(unsigned int q=0; q<n_q_points; q++)
+      {
+//        en += 0.5*(present_velocity_curl[q]*present_velocity_curl[q])*fe_values.JxW(q) / globalVolume_;
+
+        //Find the values of gradient of ux and uy (the finite element solution) at the quadrature points
+        double ux_y =present_velocity_gradients[q][0][1];
+        double uy_x =present_velocity_gradients[q][1][0];
+
+        if(dim==2)
+        {
+            en       +=  0.5 * (uy_x - ux_y)*(uy_x - ux_y)*fe_values.JxW(q)*(1/globalVolume_);
+        }
+        else
+        {
+            double uz_y = present_velocity_gradients[q][2][1];
+            double uy_z = present_velocity_gradients[q][1][2];
+            double ux_z = present_velocity_gradients[q][0][2];
+            double uz_x = present_velocity_gradients[q][2][0];
+            en       +=  0.5*(uz_y-uy_z)*(uz_y-uy_z)*fe_values.JxW(q)*(1/globalVolume_);
+            en       +=  0.5*(ux_z-uz_x)*(ux_z-uz_x)*fe_values.JxW(q)*(1/globalVolume_);
+            en       +=  0.5*(uy_x-ux_y)*(uy_x-ux_y)*fe_values.JxW(q)*(1/globalVolume_);
+        }
+      }
+    }
+  }
+  en=Utilities::MPI::sum(en,mpi_communicator);
+
+  return (en);
+}
 // This is a primitive first implementation that could be greatly improved by doing a single pass instead of
 // N boundary passes
 template<int dim>

@@ -1,156 +1,907 @@
 # Listing of Parameters
 # ---------------------
-# --------------------------------------------------
-# Simulation and IO Control
-#---------------------------------------------------
-subsection simulation control
-    set method                  = steady  # <steady|backward>
-    set number mesh adapt       = 2       # If steady, nb mesh adaptation
-    set time step               = 0.01    # Time step
-    set time end                = 20      # End time of simulation
-    set output path             = output/ # Path to where the output results are made
-    set output name             = mms3d_ # Prefix for VTU outputs
-    set output frequency        = 1       # Frequency of simulation output
-    set subdivision             = 1       # Mesh subdivision when output
+subsection FEM
+  # Dimension of the problem
+  set dimension      = 2
+
+  # interpolation order pressure
+  set pressure order = 1
+
+  # Apply high order mapping everywhere
+  set qmapping all   = false
+
+  # interpolation order velocity
+  set velocity order = 1
 end
 
-#---------------------------------------------------
-# Restart
-#---------------------------------------------------
-subsection restart
-    set restart = false                   # Restart simulation
-    set frequency = 1                     # Frequency of checkpointing
-    set checkpoint = false                # Enable checkpointing
-    set filename = restart                # Restart file filename
-end 
 
-#---------------------------------------------------
-# Physical Properties
-#---------------------------------------------------
-subsection physical properties
-    set kinematic viscosity            = 1.000 # kinematic viscosity (L^2/s)
-end
-#---------------------------------------------------
-# Test
-#---------------------------------------------------
-subsection test
-    set enable = false                         # Enable testing mode of the solver.
-                                               # This is generally a small variant for tests
+subsection analytical solution
+  # Number of digits displayed when showing residuals
+  set error precision = 3
 end
 
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-subsection timer
-    set type    = none                                  # <none|iteration|end>
-end
-#---------------------------------------------------
-# Initial condition
-#---------------------------------------------------
-subsection initial conditions
-    set type = none     # Type of ways to set initial conditions <none|L2projection|nodal|viscous>
-    set viscosity = 1   # Viscosity used for viscous solution
-    subsection uvw
-            set Function expression = 1; 0; 0 # Analytical formula for the L2 projection or nodal
-    end
-end
-#---------------------------------------------------
-# Force
-#---------------------------------------------------
-subsection forces
-    set verbosity             = verbose   # Output force and torques in log <quiet|verbose>
-    set calculate forces      = false     # Enable force calculation
-    set calculate torques     = false     # Enable torque calculation
-    set force name            = force     # Name prefix of force files
-    set torque name           = torque    # Name prefix of torque files
-    set output precision      = 10        # Output precision
-    set display precision     = 6         # Log precision
-    set calculation frequency = 1         # Frequency of the force calculation
-    set output frequency      = 1         # Frequency of file update
-end
 
-#---------------------------------------------------
-# Mesh
-#---------------------------------------------------
-subsection mesh
-    set type                 = primitive                # <primitive|gmsh>
-    set file name            = vonKarman_structured.msh # file name if gmsh
-    set initial refinement   = 1                        # initial mesh refinement
-end
-
-# --------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
 subsection boundary conditions
-  set number                  = 3
-    subsection bc 0
-        set type              = noslip    # <slip|noslip|function>
-    end
-    subsection bc 1
-        set type              = function
+  # Number of boundary conditions
+  set number = 0
 
-        subsection cor # Center of rotation
-            set x = 0  
-            set y = 0
-            set z = 0 
-        end
 
-        subsection u                      # x component
-            set Function expression = 1
-        end
-        subsection v                      # y component
-            set Function expression = 0
-        end
-        subsection w                      # z component
-            set Function expression = 0
-        end
+  subsection bc 0
+    # Mesh id for boundary conditions
+    set id                 = 00
+
+    # Direction for periodic boundary condition
+    set periodic_direction = 0
+
+    # Mesh id for periodic face matching
+    set periodic_id        = 0
+
+    # Type of boundary conditoinChoices are <noslip|slip|function>.
+    set type               = noslip
+
+
+    subsection cor
+      # X COR
+      set x = 0
+
+      # Y COR
+      set y = 0
+
+      # Z COR
+      set z = 0
     end
-    subsection bc 2
-        set type              = slip
+
+    subsection u
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
     end
+
+    subsection v
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection w
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+  end
+
+  subsection bc 1
+    # Mesh id for boundary conditions
+    set id                 = 01
+
+    # Direction for periodic boundary condition
+    set periodic_direction = 0
+
+    # Mesh id for periodic face matching
+    set periodic_id        = 0
+
+    # Type of boundary conditoinChoices are <noslip|slip|function>.
+    set type               = noslip
+
+
+    subsection cor
+      # X COR
+      set x = 0
+
+      # Y COR
+      set y = 0
+
+      # Z COR
+      set z = 0
+    end
+
+    subsection u
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection v
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection w
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+  end
+
+  subsection bc 2
+    # Mesh id for boundary conditions
+    set id                 = 02
+
+    # Direction for periodic boundary condition
+    set periodic_direction = 0
+
+    # Mesh id for periodic face matching
+    set periodic_id        = 0
+
+    # Type of boundary conditoinChoices are <noslip|slip|function>.
+    set type               = noslip
+
+
+    subsection cor
+      # X COR
+      set x = 0
+
+      # Y COR
+      set y = 0
+
+      # Z COR
+      set z = 0
+    end
+
+    subsection u
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection v
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection w
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+  end
+
+  subsection bc 3
+    # Mesh id for boundary conditions
+    set id                 = 03
+
+    # Direction for periodic boundary condition
+    set periodic_direction = 0
+
+    # Mesh id for periodic face matching
+    set periodic_id        = 0
+
+    # Type of boundary conditoinChoices are <noslip|slip|function>.
+    set type               = noslip
+
+
+    subsection cor
+      # X COR
+      set x = 0
+
+      # Y COR
+      set y = 0
+
+      # Z COR
+      set z = 0
+    end
+
+    subsection u
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection v
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+    subsection w
+      # Sometimes it is convenient to use symbolic constants in the expression
+      # that describes the function, rather than having to use its numeric
+      # value everywhere the constant appears. These values can be defined
+      # using this parameter, in the form `var1=value1, var2=value2, ...'.
+      # 
+      # A typical example would be to set this runtime parameter to
+      # `pi=3.1415926536' and then use `pi' in the expression of the actual
+      # formula. (That said, for convenience this class actually defines both
+      # `pi' and `Pi' by default, but you get the idea.)
+      set Function constants  = 
+
+      # The formula that denotes the function you want to evaluate for
+      # particular values of the independent variables. This expression may
+      # contain any of the usual operations such as addition or
+      # multiplication, as well as all of the common functions such as `sin'
+      # or `cos'. In addition, it may contain expressions like `if(x>0, 1,
+      # -1)' where the expression evaluates to the second argument if the
+      # first argument is true, and to the third argument otherwise. For a
+      # full overview of possible expressions accepted see the documentation
+      # of the muparser library at http://muparser.beltoforion.de/.
+      # 
+      # If the function you are describing represents a vector-valued function
+      # with multiple components, then separate the expressions for individual
+      # components by a semicolon.
+      set Function expression = 0
+
+      # The names of the variables as they will be used in the function,
+      # separated by commas. By default, the names of variables at which the
+      # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z'
+      # (in 3d) for spatial coordinates and `t' for time. You can then use
+      # these variable names in your function expression and they will be
+      # replaced by the values of these variables at which the function is
+      # currently evaluated. However, you can also choose a different set of
+      # names for the independent variables at which to evaluate your function
+      # expression. For example, if you work in spherical coordinates, you may
+      # wish to set this input parameter to `r,phi,theta,t' and then use these
+      # variable names in your function expression.
+      set Variable names      = x,y,t
+    end
+
+  end
+
 end
 
-# --------------------------------------------------
-# Mesh Adaptation Control
-#---------------------------------------------------
-subsection mesh adaptation
-  set type                    = uniform  # <none|uniform|kelly>
-  set variable                = velocity # Variable used for mesh adaptation <velocity|pressurer>
-  set fraction type           = fraction # <fraction|number>
-  set max number elements     = 20000    # maximum number of elements
-  set max refinement level    = 3        # maximal refinement level of a cell
-  set min refinement level    = 0        # minimal refinement level of a cell
-  set frequency               = 1        # mesh refinement frequency
-  set fraction refinement     = 0.1      # fraction of cells to refine
-  set fraction coarsening     = 0.1      # fraction of cells to coarsen
+
+subsection forces
+  # Enable calculation of forces
+  set calculate forces      = false
+
+  # Enable calculation of torques
+  set calculate torques     = false
+
+  # Calculation frequency
+  set calculation frequency = 1
+
+  # Output frequency
+  set display precision     = 4
+
+  # File output force prefix
+  set force name            = force
+
+  # Output frequency
+  set output frequency      = 1
+
+  # Calculation frequency
+  set output precision      = 10
+
+  # File output force prefix
+  set torque name           = torque
+
+  # State whether from the non-linear solver should be printed Choices are
+  # <quiet|verbose>.
+  set verbosity             = quiet
 end
 
 
-# --------------------------------------------------
-# Non-Linear Solver Control
-#---------------------------------------------------
-subsection non-linear solver
-  set tolerance               = 1e-8 # Tolerance
-  set max iterations          = 10   # Number of iterations
-  set verbosity               = quiet  # Verbosity of iterative solver
+subsection initial conditions
+  # Type of initial conditionChoices are <none|L2projection|viscous|nodal>.
+  set type      = none
+
+  # viscosity for viscous initial conditions
+  set viscosity = 1
+
+
+  subsection uvwp
+    # Sometimes it is convenient to use symbolic constants in the expression
+    # that describes the function, rather than having to use its numeric value
+    # everywhere the constant appears. These values can be defined using this
+    # parameter, in the form `var1=value1, var2=value2, ...'.
+    # 
+    # A typical example would be to set this runtime parameter to
+    # `pi=3.1415926536' and then use `pi' in the expression of the actual
+    # formula. (That said, for convenience this class actually defines both
+    # `pi' and `Pi' by default, but you get the idea.)
+    set Function constants  = 
+
+    # The formula that denotes the function you want to evaluate for
+    # particular values of the independent variables. This expression may
+    # contain any of the usual operations such as addition or multiplication,
+    # as well as all of the common functions such as `sin' or `cos'. In
+    # addition, it may contain expressions like `if(x>0, 1, -1)' where the
+    # expression evaluates to the second argument if the first argument is
+    # true, and to the third argument otherwise. For a full overview of
+    # possible expressions accepted see the documentation of the muparser
+    # library at http://muparser.beltoforion.de/.
+    # 
+    # If the function you are describing represents a vector-valued function
+    # with multiple components, then separate the expressions for individual
+    # components by a semicolon.
+    set Function expression = 0; 0; 0 # default: 0; 0
+
+    # The names of the variables as they will be used in the function,
+    # separated by commas. By default, the names of variables at which the
+    # function will be evaluated are `x' (in 1d), `x,y' (in 2d) or `x,y,z' (in
+    # 3d) for spatial coordinates and `t' for time. You can then use these
+    # variable names in your function expression and they will be replaced by
+    # the values of these variables at which the function is currently
+    # evaluated. However, you can also choose a different set of names for the
+    # independent variables at which to evaluate your function expression. For
+    # example, if you work in spherical coordinates, you may wish to set this
+    # input parameter to `r,phi,theta,t' and then use these variable names in
+    # your function expression.
+    set Variable names      = x,y,t
+  end
+
 end
 
-# --------------------------------------------------
-# Linear Solver Control
-#---------------------------------------------------
+
 subsection linear solver
-  set pressure rhs              = false  # This is a work in progress
-  set verbosity                 = quiet  # Verbosity of iterative solver
-  set method                    = amg    # <amg|gmres|bicgstab>
-  set max iters                 = 5000   # Number of iterations
-  set relative residual         = 1e-4   # Relative residual decrease
-  set minimum residual          = 1e-9   # Minimal lin solver residual
-  set ilu fill                  = 0      # Fill level
-  set ilu absolute tolerance    = 1e-8   # Absolute tolerance
-  set ilu relative tolerance    = 1.00   # Relative tolerance
-  set amg aggregation threshold = 1e-10  # Aggregation
-  set amg n cycles              = 1      # Number of AMG cycles
-  set amg w cycles              = false  # W cycles, otherwise V cycles
-  set amg smoother sweeps       = 2      # Sweeps
-  set amg smoother overlap      = 1      # Overlap
+  # amg aggregation threshold
+  set amg aggregation threshold                 = 1e-14
+
+  # amg number of cycles
+  set amg n cycles                              = 1
+
+  # amg preconditioner ilu smoother/coarsener absolute tolerance
+  set amg preconditioner ilu absolute tolerance = 1e-12
+
+  # amg preconditioner ilu smoother/coarsener fill
+  set amg preconditioner ilu fill               = 1
+
+  # amg preconditioner ilu smoother/coarsener relative tolerance
+  set amg preconditioner ilu relative tolerance = 1.00
+
+  # amg smoother overlap
+  set amg smoother overlap                      = 1
+
+  # amg smoother sweeps
+  set amg smoother sweeps                       = 2
+
+  # amg w cycling. If this is set to true, W cycling is used. Otherwise, V
+  # cycling is used.
+  set amg w cycles                              = false
+
+  # Ilu preconditioner tolerance
+  set ilu preconditioner absolute tolerance     = 1e-6
+
+  # Ilu preconditioner fill
+  set ilu preconditioner fill                   = 1
+
+  # Ilu relative tolerance
+  set ilu preconditioner relative tolerance     = 1.00
+
+  # Maximum solver iterations
+  set max iters                                 = 1000
+
+  # The iterative solver for the linear system of equations. Choices are
+  # <gmres|bicgstab|amg>. gmres is a GMRES iterative solver with ILU
+  # preconditioning. bicgstab is a BICGSTAB iterative solver with ILU
+  # preconditioning. amg is GMRES + AMG preconditioning with an ILU coarsener
+  # and smoother. On coarse meshes, the gmres/bicgstab solver with ILU
+  # preconditioning is more efficient. As the number of mesh elements
+  # increase, the amg solver is the most efficient. Generally, at 1M elements,
+  # the amg solver always outperforms the gmres or bicgstab
+  set method                                    = gmres
+
+  # Linear solver minimum residual
+  set minimum residual                          = 1e-8
+
+  # Linear solver residual
+  set relative residual                         = 1e-3
+
+  # Number of digits used when outputing the residual in the terminal
+  set residual precision                        = 6
+
+  # State whether output from solver runs should be printed. Choices are
+  # <quiet|verbose>.
+  set verbosity                                 = verbose
 end
+
+
+subsection mesh
+  # GMSH file name
+  set file name          = none
+
+  # Initial refinement of primitive mesh
+  set initial refinement = 0
+
+  # Type of mesh Choices are <gmsh|primitive>.
+  set type               = gmsh
+end
+
+
+subsection mesh adaptation
+  # Fraction of coarsened elements
+  set fraction coarsening  = 0.05
+
+  # Fraction of refined elements
+  set fraction refinement  = 0.1
+
+  # How the fraction of refinement/coarsening are interepretedChoices are
+  # <number|fraction>.
+  set fraction type        = number
+
+  # Frequency of the mesh refinement
+  set frequency            = 1
+
+  # Maximum number of elements
+  set max number elements  = 100000000
+
+  # Maximum refinement level
+  set max refinement level = 10
+
+  # Minimum refinement level
+  set min refinement level = 1
+
+  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  set type                 = none
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable             = velocity
+end
+
+
+subsection non-linear solver
+  # Maximum number of Newton Iterations
+  set max iterations     = 10
+
+  # Number of digits displayed when showing residuals
+  set residual precision = 4
+
+  # Newton solver tolerance
+  set tolerance          = 1e-6
+
+  # State whether from the non-linear solver should be printed Choices are
+  # <quiet|verbose>.
+  set verbosity          = verbose
+end
+
+
+subsection physical properties
+  # Kinematic viscosity
+  set kinematic viscosity = 1
+end
+
+
+subsection restart
+  # Enable checkpointing
+  set checkpoint = false
+
+  # Prefix for the filename of checkpoints
+  set filename   = restart
+
+  # Frequency for checkpointing
+  set frequency  = 1
+
+  # Frequency for checkpointing
+  set restart    = false
+end
+
+
+subsection simulation control
+  # Adaptative time-stepping <true|false>
+  set adapt                = false
+
+  # Maximum CFL value
+  set max cfl              = 1
+
+  # The kind of solver for the linear system. Choices are
+  # <steady|backward|bdf2|bdf3>.
+  set method               = steady
+
+  # Number of mesh adaptation (for steady simulations)
+  set number mesh adapt    = 0
+
+  # Output frequency
+  set output frequency     = 1
+
+  # File output prefix
+  set output name          = out
+
+  # File output prefix
+  set output path          = ./
+
+  # Scaling factor used in the iterations necessary to start-up the BDF
+  # schemes.
+  set startup time scaling = 0.1
+
+  # Subdivision of mesh cell in postprocessing
+  set subdivision          = 1
+
+  # Time step value
+  set time end             = 1
+
+  # Time step value
+  set time step            = 1.
+end
+
+
+subsection test
+  # Enable testing mode of a solver
+  set enable = false
+end
+
+
+subsection timer
+  # Clock monitoring methods Choices are <none|iteration|end>.
+  set type = none
+end
+
+
