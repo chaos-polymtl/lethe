@@ -548,9 +548,6 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
   if (scheme == Parameters::SimulationControl::bdf3)
     alpha_bdf=bdf_coefficients(3,simulationControl.getTimeSteps());
 
-
-  //if (scheme == Parameters::SimulationControl::bdf2) alpha_bdf=bdf_coefficients(2,simulationControl.getTimeStep())
-
   // Values at previous time step for backward Euler scheme
   std::vector<Tensor<1, dim> >  p1_velocity_values           (n_q_points);
   std::vector<Tensor<1, dim> >  p2_velocity_values           (n_q_points);
@@ -597,8 +594,8 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
           {
               const double u_mag= std::max(present_velocity_values[q].norm(),1e-3*GLS_u_scale);
                double tau = 1./ std::sqrt(std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
-//              if (scheme == Parameters::SimulationControl::backward)
-//                tau = 1./ std::sqrt(std::pow(2*sdt,2)+std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
+              if (scheme != Parameters::SimulationControl::steady)
+                tau = 1./ std::sqrt(std::pow(2*alpha_bdf[0],2)+std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
 
               for (unsigned int k=0; k<dofs_per_cell; ++k)
               {
@@ -620,83 +617,81 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                   force[i] = rhs_force[q](component_i);
               }
 
+              auto strong_residual= present_velocity_gradients[q]*present_velocity_values[q]
+                                    + present_pressure_gradients[q]
+                                    - viscosity_* present_velocity_laplacians[q]
+                                    - force ;
+
+              if (scheme == Parameters::SimulationControl::backward)
+                strong_residual += alpha_bdf[0]*present_velocity_values[q]+alpha_bdf[1]*p1_velocity_values[q];
+
+              if (scheme == Parameters::SimulationControl::bdf2)
+                strong_residual +=alpha_bdf[0]*present_velocity_values[q]+alpha_bdf[1]*p1_velocity_values[q]+alpha_bdf[2]*p2_velocity_values[q];
+
+              if (scheme == Parameters::SimulationControl::bdf3)
+                strong_residual+= alpha_bdf[0]*present_velocity_values[q]
+                    +alpha_bdf[1]*p1_velocity_values[q]
+                    +alpha_bdf[2]*p2_velocity_values[q]
+                    +alpha_bdf[3]*p3_velocity_values[q];
+
+              if (assemble_matrix)
+              {
+                for (unsigned int j=0; j<dofs_per_cell; ++j)
+                {
+
+                  auto strong_jac = (  present_velocity_gradients[q]*phi_u[j]
+                                     + grad_phi_u[j]*present_velocity_values[q]
+                                     + grad_phi_p[j]
+                                     - viscosity_* laplacian_phi_u[j]
+                                    );
+
+                  if (scheme== Parameters::SimulationControl::backward||
+                      scheme== Parameters::SimulationControl::bdf2 ||
+                      scheme== Parameters::SimulationControl::bdf3
+                      )
+                    strong_jac += phi_u[j];
+
+                  for (unsigned int i=0; i<dofs_per_cell; ++i)
+                  {
+                    local_matrix(i, j) += (  viscosity_*scalar_product(grad_phi_u[j], grad_phi_u[i])
+                                             + present_velocity_gradients[q]*phi_u[j]*phi_u[i]
+                                             + grad_phi_u[j]*present_velocity_values[q]*phi_u[i]
+                                             - div_phi_u[i]*phi_p[j]
+                                             + phi_p[i]*div_phi_u[j]
+                                             )
+                                          * fe_values.JxW(q);
+
+                    // Mass matrix
+                    if (scheme== Parameters::SimulationControl::backward||
+                        scheme== Parameters::SimulationControl::bdf2 ||
+                        scheme== Parameters::SimulationControl::bdf3
+                        )
+                      local_matrix(i, j) += phi_u[j]*phi_u[i] *alpha_bdf[0] * fe_values.JxW(q);
+
+                    //PSPG GLS term
+                    local_matrix(i, j) += tau*
+                                          strong_jac* grad_phi_p[i]
+                                          * fe_values.JxW(q);
+
+                    // Jacobian is currently incomplete
+                    if (SUPG)
+                    {
+                      local_matrix(i, j) +=
+                          tau*
+                          (
+                            strong_jac*(present_velocity_values[q]* grad_phi_u[i])
+                            +
+                            strong_residual* (phi_u[j]*grad_phi_u[i])
+                            )
+                          * fe_values.JxW(q)
+                          ;
+                    }
+                  }
+                }
+              }
               for (unsigned int i=0; i<dofs_per_cell; ++i)
               {
 
-                  if (assemble_matrix)
-                  {
-                      for (unsigned int j=0; j<dofs_per_cell; ++j)
-                      {
-                          local_matrix(i, j) += (  viscosity_*scalar_product(grad_phi_u[j], grad_phi_u[i])
-                                                   + present_velocity_gradients[q]*phi_u[j]*phi_u[i]
-                                                   + grad_phi_u[j]*present_velocity_values[q]*phi_u[i]
-                                                   - div_phi_u[i]*phi_p[j]
-                                                   + phi_p[i]*div_phi_u[j]
-                                                   )
-                                  * fe_values.JxW(q);
-
-                          // Mass matrix
-                          if (scheme== Parameters::SimulationControl::backward||
-                              scheme== Parameters::SimulationControl::bdf2 ||
-                              scheme== Parameters::SimulationControl::bdf3
-                              )
-                              local_matrix(i, j) += phi_u[j]*phi_u[i] *alpha_bdf[0] * fe_values.JxW(q);
-
-                          //PSPG GLS term
-                          local_matrix(i, j) += tau*
-                              (  present_velocity_gradients[q]*phi_u[j]*grad_phi_p[i]
-                                 + grad_phi_u[j]*present_velocity_values[q]*grad_phi_p[i]
-                                 + grad_phi_p[j]*grad_phi_p[i]
-                                 - viscosity_* laplacian_phi_u[j] * grad_phi_p[i]
-                                 )
-                                  * fe_values.JxW(q);
-
-                          if (scheme== Parameters::SimulationControl::backward||
-                              scheme== Parameters::SimulationControl::bdf2 ||
-                              scheme== Parameters::SimulationControl::bdf3
-                              )
-                              local_matrix(i, j) += -tau * alpha_bdf[0] * phi_u[j] * grad_phi_p[i] *  fe_values.JxW(q);
-
-                          // Jacobian is currently incomplete
-                          if (SUPG)
-                          {
-                              local_matrix(i, j) +=
-                                     tau*
-                                      (  present_velocity_gradients[q]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])
-                                         + grad_phi_u[j]*present_velocity_values[q]*(present_velocity_values[q]* grad_phi_u[i])
-                                         + grad_phi_p[j]*(present_velocity_values[q]* grad_phi_u[i])
-                                         - viscosity_* laplacian_phi_u[j] * (present_velocity_values[q]* grad_phi_u[i])
-                                         )
-                                      * fe_values.JxW(q)
-                                      + tau*
-                                      (    present_velocity_gradients[q]*present_velocity_values[q]*(phi_u[j]*grad_phi_u[i])
-                                           + present_pressure_gradients[q]*(phi_u[j]*grad_phi_u[i])
-                                           - viscosity_* present_velocity_laplacians[q] * (phi_u[j]*grad_phi_u[i])
-                                           - force * (phi_u[j]*grad_phi_u[i])
-                                           )
-                                      * fe_values.JxW(q)
-                                      ;
-
-                              if (scheme == Parameters::SimulationControl::backward)
-                                  local_matrix(i, j) +=
-                                      -tau*alpha_bdf[0]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
-                                      - tau*alpha_bdf[0]*(present_velocity_values[q]-p1_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
-
-                              if (scheme == Parameters::SimulationControl::bdf2)
-                                  local_matrix(i, j) +=
-                                      -tau*alpha_bdf[0]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
-                                      - tau*(alpha_bdf[0]*present_velocity_values[q]+alpha_bdf[1]*p1_velocity_values[q]+alpha_bdf[2]*p2_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
-
-                              if (scheme == Parameters::SimulationControl::bdf3)
-                                  local_matrix(i, j) +=
-                                      -tau*alpha_bdf[0]*phi_u[j]*(present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q)
-                                      - tau*(alpha_bdf[0]*present_velocity_values[q]
-                                            +alpha_bdf[1]*p1_velocity_values[q]
-                                            +alpha_bdf[2]*p2_velocity_values[q]
-                                            +alpha_bdf[3]*p3_velocity_values[q])*(phi_u[j]*grad_phi_u[i])* fe_values.JxW(q);
-                          }
-                      }
-                  }
 //                  const unsigned int component_i = fe.system_to_component_index(i).first;
 
                   double present_velocity_divergence =  trace(present_velocity_gradients[q]);
@@ -725,76 +720,17 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                    )*fe_values.JxW(q);
 
                   // PSPG GLS term
-                  local_rhs(i) +=  tau*
-                          (
-                              - present_velocity_gradients[q]*present_velocity_values[q]* grad_phi_p[i]
-                              - present_pressure_gradients[q]*grad_phi_p[i]
-                              + viscosity_* present_velocity_laplacians[q] * grad_phi_p[i]
-                              + force * grad_phi_p[i]
-                              )
-                          * fe_values.JxW(q);
+                  local_rhs(i) +=  - tau
+                                   * (strong_residual*grad_phi_p[i])
+                                   * fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::backward)
-                   local_rhs(i) += tau * alpha_bdf[0]* (present_velocity_values[q]-p1_velocity_values[q])*grad_phi_p[i]* fe_values.JxW(q);
-
-                  if (scheme == Parameters::SimulationControl::bdf2)
-                  {
-                   local_rhs(i) += tau * (
-                                      alpha_bdf[0]* (present_velocity_values[q]*grad_phi_p[i])
-                                     +alpha_bdf[1]* (p1_velocity_values[q]*grad_phi_p[i])
-                                     +alpha_bdf[2]* (p2_velocity_values[q]*grad_phi_p[i])
-                                      ) * fe_values.JxW(q);
-                  }
-
-                  if (scheme == Parameters::SimulationControl::bdf3)
-                  {
-                   local_rhs(i) += tau * (
-                                      alpha_bdf[0]* (present_velocity_values[q]*grad_phi_p[i])
-                                     +alpha_bdf[1]* (p1_velocity_values[q]*grad_phi_p[i])
-                                     +alpha_bdf[2]* (p2_velocity_values[q]*grad_phi_p[i])
-                                     +alpha_bdf[3]* (p3_velocity_values[q]*grad_phi_p[i])
-                                      ) * fe_values.JxW(q);
-                  }
-                  ////             SUPG GLS term
+                  //SUPG GLS term
                   if (SUPG)
                   {
-                      local_rhs(i) += tau*
-                              (
-                                  - present_velocity_gradients[q] *present_velocity_values[q]* (present_velocity_values[q]* grad_phi_u[i])
-                                  - present_pressure_gradients[q]* (present_velocity_values[q]* grad_phi_u[i])
-                                  + viscosity_* present_velocity_laplacians[q] * (present_velocity_values[q]* grad_phi_u[i])
-                                  + force *(present_velocity_values[q]* grad_phi_u[i])
-                                  )* fe_values.JxW(q);
-
-                      if (scheme == Parameters::SimulationControl::backward)
-                       local_rhs(i) += tau * alpha_bdf[0]* (present_velocity_values[q]-p1_velocity_values[q])* (present_velocity_values[q]* grad_phi_u[i])* fe_values.JxW(q);
-
-                      if (scheme == Parameters::SimulationControl::bdf2)
-                      {
-                        auto velocity_grad_phi_u = present_velocity_values[q]* grad_phi_u[i];
-                        local_rhs(i) += tau *(
-                                               alpha_bdf[0]* (present_velocity_values[q])* (velocity_grad_phi_u)
-                                              +alpha_bdf[1]* (p1_velocity_values[q])* (velocity_grad_phi_u)
-                                              +alpha_bdf[2]* (p2_velocity_values[q])* (velocity_grad_phi_u)
-                                              ) * fe_values.JxW(q);
-                      }
-
-                      if (scheme == Parameters::SimulationControl::bdf3)
-                      {
-                        auto velocity_grad_phi_u = present_velocity_values[q]* grad_phi_u[i];
-                        local_rhs(i) += tau *(
-                                               alpha_bdf[0]* (present_velocity_values[q])* (velocity_grad_phi_u)
-                                              +alpha_bdf[1]* (p1_velocity_values[q])* (velocity_grad_phi_u)
-                                              +alpha_bdf[2]* (p2_velocity_values[q])* (velocity_grad_phi_u)
-                                              +alpha_bdf[3]* (p3_velocity_values[q])* (velocity_grad_phi_u)
-                                              ) * fe_values.JxW(q);
-                      }
-
+                      local_rhs(i) += - tau
+                                      *(strong_residual*(present_velocity_values[q]* grad_phi_u[i]))
+                                      * fe_values.JxW(q);
                   }
-                  //local_rhs(i) += fe_values.shape_value(i,q) *
-                  //        rhs_force[q](component_i) *
-                  //        fe_values.JxW(q);
-
               }
           }
 
