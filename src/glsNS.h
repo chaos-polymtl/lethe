@@ -265,7 +265,7 @@ protected:
   {
   public:
     qcriterion_postprocessor():
-      DataPostprocessorScalar<dim> ("Q-criterion",
+      DataPostprocessorScalar<dim> ("q_criterion",
                                     update_gradients)
     {}
     virtual
@@ -273,11 +273,9 @@ protected:
     evaluate_vector_field 	( 	const DataPostprocessorInputs::Vector< dim > &  	input_data,
                                         std::vector< Vector< double > > &  	computed_quantities  ) 		const
     {
-      AssertDimension (input_data.solution_gradients.size(),
-                       computed_quantities.size());
       for (unsigned int p=0; p<input_data.solution_gradients.size(); ++p)
       {
-        AssertDimension (computed_quantities[p].size(), dim);
+        AssertDimension (computed_quantities[p].size(), 1);
         double p1=0.0,r1=0.0;
         std::vector<Tensor<2,dim>> vorticity_vector (input_data.solution_gradients.size());
         std::vector<Tensor<2,dim>> strain_rate_tensor(input_data.solution_gradients.size());

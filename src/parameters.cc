@@ -16,7 +16,7 @@ namespace Parameters
       prm.declare_entry("time end", "1",
                         Patterns::Double(),
                         "Time step value");
-      prm.declare_entry("startup time scaling", "0.1",
+      prm.declare_entry("startup time scaling", "0.4",
                         Patterns::Double(),
                         "Scaling factor used in the iterations necessary to start-up the BDF schemes.");
 
@@ -129,9 +129,6 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      prm.declare_entry("dimension", "2",
-                        Patterns::Integer(),
-                        "Dimension of the problem");
       prm.declare_entry("velocity order", "1",
                         Patterns::Integer(),
                         "interpolation order velocity");
@@ -149,7 +146,6 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      dimension       = prm.get_integer("dimension");
       velocityOrder   = prm.get_integer("velocity order");
       pressureOrder   = prm.get_integer("pressure order");
       qmapping_all    = prm.get_bool("qmapping all");

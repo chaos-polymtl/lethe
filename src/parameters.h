@@ -115,9 +115,6 @@ namespace Parameters
 
   struct FEM
   {
-    // Dimension of the simulation
-    unsigned int dimension;
-
     // Interpolation order velocity
     unsigned int velocityOrder;
 

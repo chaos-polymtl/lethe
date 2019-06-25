@@ -118,15 +118,8 @@ int main (int argc, char *argv[])
         prm.parse_input (argv[1]);
         NSparam.parse(prm);
 
-        if (NSparam.femParameters.dimension==2)
-        {
-          TaylorGreenVortex<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
-          problem_2d.run2DTGV();
-        }
-        else
-        {
-          throw std::runtime_error("3D has not been implemented yet for this case");
-        }
+        TaylorGreenVortex<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
+        problem_2d.run2DTGV();
     }
     catch (std::exception &exc)
     {
