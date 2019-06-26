@@ -652,8 +652,6 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
               )
             fe_values[velocities].get_function_values(solution_m3,p3_velocity_values);
 
-
-
           for (unsigned int q=0; q<n_q_points; ++q)
           {
               const double u_mag= std::max(present_velocity_values[q].norm(),1e-3*GLS_u_scale);
@@ -834,7 +832,7 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
     pcout << "---> Simulation Restart " << std::endl;
     pcout << "************************" << std::endl;
     read_checkpoint();
-    finishTimeStep();
+//    finishTimeStep();
     //postprocess();
   }
   else if (initial_condition_type == Parameters::InitialConditionType::L2projection)
@@ -1495,9 +1493,6 @@ void GLSNavierStokesSolver<dim>::write_checkpoint()
   if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
     pvdhandler.save(prefix);
 
-  std::vector<unsigned int> var_indices;
-  var_indices.push_back(0);
-  var_indices.push_back(1);
   std::vector<const TrilinosWrappers::MPI::Vector*> sol_set_transfer;
   sol_set_transfer.push_back(&present_solution);
   sol_set_transfer.push_back(&solution_m1);
@@ -1544,7 +1539,6 @@ void GLSNavierStokesSolver<dim>::read_checkpoint()
   TrilinosWrappers::MPI::Vector distributed_system_m1 (system_rhs);
   TrilinosWrappers::MPI::Vector distributed_system_m2 (system_rhs);
   TrilinosWrappers::MPI::Vector distributed_system_m3 (system_rhs);
-  TrilinosWrappers::MPI::Vector distributed_system_m4 (system_rhs);
   x_system[0] = & (distributed_system);
   x_system[1] = & (distributed_system_m1);
   x_system[2] = & (distributed_system_m2);
@@ -1552,6 +1546,7 @@ void GLSNavierStokesSolver<dim>::read_checkpoint()
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector> system_trans_vectors(dof_handler);
   system_trans_vectors.deserialize(x_system);
   present_solution=distributed_system;
+  evaluation_point=distributed_system;
   solution_m1=distributed_system_m1;
   solution_m2=distributed_system_m2;
   solution_m3=distributed_system_m3;
