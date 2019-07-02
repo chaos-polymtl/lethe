@@ -1547,7 +1547,6 @@ void GLSNavierStokesSolver<dim>::read_checkpoint()
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector> system_trans_vectors(dof_handler);
   system_trans_vectors.deserialize(x_system);
   present_solution=distributed_system;
-  evaluation_point=distributed_system;
   solution_m1=distributed_system_m1;
   solution_m2=distributed_system_m2;
   solution_m3=distributed_system_m3;
