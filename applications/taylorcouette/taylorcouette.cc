@@ -79,12 +79,12 @@ void TaylorCouetteNavierStokes<dim>::run()
       printTime(this->pcout,this->simulationControl);
       if (this->simulationControl.firstIter())
       {
-        this->newton_iteration(true);
+        this->iterate(this->simulationControl.firstIter());
       }
       else
       {
         this->refine_mesh();
-        this->newton_iteration(false);
+        this->iterate(this->simulationControl.firstIter());
       }
       this->postprocess();
       table.add_value("cells", this->triangulation.n_global_active_cells());

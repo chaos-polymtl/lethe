@@ -73,7 +73,7 @@ void PeriodicPoiseuille<dim>::run()
   {
     printTime(this->pcout,this->simulationControl);
     if (this->simulationControl.getIter() !=1) this->refine_mesh();
-    this->newton_iteration(false);
+    this->iterate(this->simulationControl.firstIter());
     this->postprocess();
     table.add_value("cells", this->triangulation.n_global_active_cells());
     const double error = this->calculateL2Error();

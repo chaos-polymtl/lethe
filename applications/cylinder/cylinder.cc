@@ -30,7 +30,7 @@ void VonKarmanNavierStokes<dim>::run()
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
-      this->newton_iteration(false);
+      this->iterate(this->simulationControl.firstIter());
       this->postprocess();
       this->refine_mesh();
       this->finishTimeStep();
