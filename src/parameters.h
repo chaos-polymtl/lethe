@@ -121,6 +121,9 @@ namespace Parameters
     // Interpolation order pressure
     unsigned int pressureOrder;
 
+    // Number of quadrature points
+    unsigned int quadraturePoints;
+
     // Apply high order mapping everywhere
     bool qmapping_all;
 

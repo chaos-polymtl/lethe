@@ -192,7 +192,7 @@ private:
   // Finite element order used
   const  unsigned int            degreeVelocity_;
   const  unsigned int            degreePressure_;
-  const  unsigned int            degreeQuadrature_;
+  unsigned int            degreeQuadrature_;
 
 
   double                         globalVolume_;
@@ -329,6 +329,9 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<d
   forcesParameters             = nsparam.forcesParameters;
   simulationControl            = nsparam.simulationControl;
   restartParameters            = nsparam.restartParameters;
+
+  //Overide default value of quadrature point if they are specified
+  if (femParameters.quadraturePoints>0) degreeQuadrature_=femParameters.quadraturePoints;
 
   // Change the behavior of the timer for situations when you don't want outputs
   if (clock.type==Parameters::Timer::none)

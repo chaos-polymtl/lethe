@@ -135,6 +135,9 @@ namespace Parameters
       prm.declare_entry("pressure order", "1",
                         Patterns::Integer(),
                         "interpolation order pressure");
+      prm.declare_entry("quadrature points", "0",
+                        Patterns::Integer(),
+                        "interpolation order pressure");
       prm.declare_entry("qmapping all", "false",
                         Patterns::Bool(),
                         "Apply high order mapping everywhere");
@@ -146,9 +149,10 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocityOrder   = prm.get_integer("velocity order");
-      pressureOrder   = prm.get_integer("pressure order");
-      qmapping_all    = prm.get_bool("qmapping all");
+      velocityOrder     = prm.get_integer("velocity order");
+      pressureOrder     = prm.get_integer("pressure order");
+      quadraturePoints  = prm.get_integer("quadrature points");
+      qmapping_all      = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
   }
