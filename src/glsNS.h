@@ -1361,37 +1361,88 @@ void GLSNavierStokesSolver<dim>::refine_mesh_Kelly ()
 
 
   triangulation.prepare_coarsening_and_refinement();
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer(dof_handler);
-  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-  triangulation.execute_coarsening_and_refinement ();
 
+  // Solution transfer objects for all the solutions
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer(dof_handler);
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer_m1(dof_handler);
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer_m2(dof_handler);
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer_m3(dof_handler);
+  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer_m1.prepare_for_coarsening_and_refinement(solution_m1);
+  solution_transfer_m2.prepare_for_coarsening_and_refinement(solution_m2);
+  solution_transfer_m3.prepare_for_coarsening_and_refinement(solution_m3);
+
+  triangulation.execute_coarsening_and_refinement ();
   setup_dofs();
 
   // Set up the vectors for the transfer
   TrilinosWrappers::MPI::Vector tmp (locally_owned_dofs, mpi_communicator);
+  TrilinosWrappers::MPI::Vector tmp_m1 (locally_owned_dofs, mpi_communicator);
+  TrilinosWrappers::MPI::Vector tmp_m2 (locally_owned_dofs, mpi_communicator);
+  TrilinosWrappers::MPI::Vector tmp_m3 (locally_owned_dofs, mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate( tmp);
+  solution_transfer_m1.interpolate( tmp_m1);
+  solution_transfer_m2.interpolate( tmp_m2);
+  solution_transfer_m3.interpolate( tmp_m3);
 
   // Distribute constraints
   nonzero_constraints.distribute(tmp);
+  nonzero_constraints.distribute(tmp_m1);
+  nonzero_constraints.distribute(tmp_m2);
+  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
   present_solution = tmp;
+  solution_m1      = tmp_m1;
+  solution_m2      = tmp_m2;
+  solution_m3      = tmp_m3;
 }
 
 template <int dim>
 void GLSNavierStokesSolver<dim>::refine_mesh_uniform ()
 {
     TimerOutput::Scope t(computing_timer, "refine");
+
+    // Solution transfer objects for all the solutions
     parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer(dof_handler);
+    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer_m1(dof_handler);
+    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer_m2(dof_handler);
+    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector > solution_transfer_m3(dof_handler);
     solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
+    solution_transfer_m1.prepare_for_coarsening_and_refinement(solution_m1);
+    solution_transfer_m2.prepare_for_coarsening_and_refinement(solution_m2);
+    solution_transfer_m3.prepare_for_coarsening_and_refinement(solution_m3);
+
+    // Refine
     triangulation.refine_global(1);
+
     setup_dofs();
+
+    // Set up the vectors for the transfer
     TrilinosWrappers::MPI::Vector tmp (locally_owned_dofs, mpi_communicator);
-    solution_transfer.interpolate(tmp);
+    TrilinosWrappers::MPI::Vector tmp_m1 (locally_owned_dofs, mpi_communicator);
+    TrilinosWrappers::MPI::Vector tmp_m2 (locally_owned_dofs, mpi_communicator);
+    TrilinosWrappers::MPI::Vector tmp_m3 (locally_owned_dofs, mpi_communicator);
+
+    // Interpolate the solution at time and previous time
+    solution_transfer.interpolate( tmp);
+    solution_transfer_m1.interpolate( tmp_m1);
+    solution_transfer_m2.interpolate( tmp_m2);
+    solution_transfer_m3.interpolate( tmp_m3);
+
+    // Distribute constraints
     nonzero_constraints.distribute(tmp);
+    nonzero_constraints.distribute(tmp_m1);
+    nonzero_constraints.distribute(tmp_m2);
+    nonzero_constraints.distribute(tmp_m3);
+
+    // Fix on the new mesh
     present_solution = tmp;
+    solution_m1      = tmp_m1;
+    solution_m2      = tmp_m2;
+    solution_m3      = tmp_m3;
 }
 
 
