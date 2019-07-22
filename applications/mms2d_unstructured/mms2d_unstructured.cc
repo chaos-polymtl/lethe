@@ -28,19 +28,20 @@ void MMSUnstructuredNavierStokes<dim>::runMMSUnstructured()
   this->viscosity_=this->physicalProperties.viscosity;
 
   Timer timer;
+  this->setInitialCondition(this->initialConditionParameters->type, this->restartParameters.restart);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);
     timer.start ();
     if (this->simulationControl.getIter() !=1) this->refine_mesh();
-    // Force restart from scratch of the solution
-    this->newton_iteration(true);
+    this->iterate(this->simulationControl.firstIter());
     this->postprocess();
-    double L2Error= this->calculateL2Error();
-    this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
-    ErrorLog.push_back(L2Error);
-
-    wallTime.push_back((timer.wall_time()));
+    {
+      double L2Error= this->calculateL2Error();
+      this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+      ErrorLog.push_back(L2Error);
+      wallTime.push_back((timer.wall_time()));
+    }
     this->finishTimeStep();
   }
 
@@ -69,7 +70,6 @@ int main (int argc, char *argv[])
         ParameterHandler prm;
         NavierStokesSolverParameters<2> NSparam;
         NSparam.declare(prm);
-        // Parsing of the file
         prm.parse_input (argv[1]);
         NSparam.parse(prm);
 

@@ -64,10 +64,10 @@ void InitialConditions<dim>::declare_parameters (ParameterHandler &prm)
 {
   prm.enter_subsection("initial conditions");
   {
-    prm.declare_entry("type", "none",
-                      Patterns::Selection("none|L2projection|viscous|nodal"),
+    prm.declare_entry("type", "nodal",
+                      Patterns::Selection("L2projection|viscous|nodal"),
                       "Type of initial condition"
-                      "Choices are <none|L2projection|viscous|nodal>.");
+                      "Choices are <L2projection|viscous|nodal>.");
     prm.enter_subsection("uvwp");
     uvwp.declare_parameters(prm,dim);
     if (dim==2) prm.set("Function expression","0; 0; 0");
@@ -85,13 +85,11 @@ void InitialConditions<dim>::parse_parameters (ParameterHandler &prm)
   prm.enter_subsection("initial conditions");
   {
     const std::string op = prm.get("type");
-    if (op == "none")
-      type = none;
     if (op == "L2projection")
       type = L2projection;
-    if (op == "viscous")
+    else if (op == "viscous")
       type = viscous;
-    if (op== "nodal")
+    else if (op== "nodal")
       type = nodal;
 
     viscosity = prm.get_double("viscosity");

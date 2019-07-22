@@ -77,6 +77,7 @@ void TaylorCouetteNavierStokes<dim>::run()
 
   ConvergenceTable table;
 
+  this->iterate(this->simulationControl.firstIter());
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
@@ -119,8 +120,7 @@ int main (int argc, char *argv[])
     ParameterHandler prm;
     NavierStokesSolverParameters<2> NSparam;
     NSparam.declare(prm);
-    // Parsing of the file
-    prm.parse_input (argv[1]);
+    prm.parse_input(argv[1]);
     NSparam.parse(prm);
 
     TaylorCouetteNavierStokes<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);

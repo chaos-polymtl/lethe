@@ -136,8 +136,7 @@ protected:
   parallel::distributed::Triangulation<dim> triangulation;
 
 private:
-  template <Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step,
-                                                                                       const bool assemble_matrix);
+  template <bool assemble_matrix, Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step);
 
   void assemble_L2_projection();
   void set_nodal_values();
@@ -555,11 +554,9 @@ void GLSNavierStokesSolver<dim>::setup_dofs ()
 
 
 template <int dim>
-template<Parameters::SimulationControl::TimeSteppingMethod scheme>
-void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
-                                                const bool assemble_matrix)
+template<bool assemble_matrix, Parameters::SimulationControl::TimeSteppingMethod scheme>
+void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step)
 {
-  TimerOutput::Scope t(computing_timer, "assemble");
 
   if (assemble_matrix) system_matrix    = 0;
   system_rhs       = 0;
@@ -601,7 +598,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
   // Get the BDF coefficients
   Vector<double> alpha_bdf;
 
-  if (scheme == Parameters::SimulationControl::backward)
+  if (scheme == Parameters::SimulationControl::bdf1)
     alpha_bdf=bdf_coefficients(1,simulationControl.getTimeSteps());
 
   if (scheme == Parameters::SimulationControl::bdf2)
@@ -656,9 +653,11 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
           for (unsigned int q=0; q<n_q_points; ++q)
           {
               const double u_mag= std::max(present_velocity_values[q].norm(),1e-3*GLS_u_scale);
-              double tau = 1./ std::sqrt(std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
-              if (scheme != Parameters::SimulationControl::steady)
-                tau = 1./ std::sqrt(std::pow(2*sdt,2)+std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
+              double tau;
+              if (scheme == Parameters::SimulationControl::steady)
+                tau = 1./ std::sqrt(std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
+              else
+                tau = 1./ std::sqrt(std::pow(sdt,2)+std::pow(2.*u_mag/h,2)+9*std::pow(4*viscosity_/(h*h),2));
 
               for (unsigned int k=0; k<dofs_per_cell; ++k)
               {
@@ -685,7 +684,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                     - viscosity_* present_velocity_laplacians[q]
                                     - force ;
 
-              if (scheme == Parameters::SimulationControl::backward)
+              if (scheme == Parameters::SimulationControl::bdf1)
                 strong_residual += alpha_bdf[0]*present_velocity_values[q]+alpha_bdf[1]*p1_velocity_values[q];
 
               if (scheme == Parameters::SimulationControl::bdf2)
@@ -708,7 +707,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                      - viscosity_* laplacian_phi_u[j]
                                     );
 
-                  if (scheme== Parameters::SimulationControl::backward||
+                  if (scheme== Parameters::SimulationControl::bdf1||
                       scheme== Parameters::SimulationControl::bdf2 ||
                       scheme== Parameters::SimulationControl::bdf3
                       )
@@ -725,7 +724,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                           * fe_values.JxW(q);
 
                     // Mass matrix
-                    if (scheme== Parameters::SimulationControl::backward||
+                    if (scheme== Parameters::SimulationControl::bdf1||
                         scheme== Parameters::SimulationControl::bdf2 ||
                         scheme== Parameters::SimulationControl::bdf3
                         )
@@ -766,7 +765,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                                     )
                           * fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::backward)
+                  if (scheme == Parameters::SimulationControl::bdf1)
                    local_rhs(i) -= alpha_bdf[0]* (present_velocity_values[q]-p1_velocity_values[q])*phi_u[i]* fe_values.JxW(q);
 
                   if (scheme == Parameters::SimulationControl::bdf2)
@@ -833,8 +832,6 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
     pcout << "---> Simulation Restart " << std::endl;
     pcout << "************************" << std::endl;
     read_checkpoint();
-//    finishTimeStep();
-    //postprocess();
   }
   else if (initial_condition_type == Parameters::InitialConditionType::L2projection)
   {
@@ -865,8 +862,7 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
   }
   else
   {
-    finishTimeStep();
-    postprocess();
+    throw std::runtime_error("GLSNS - Initial condition could not be set");
   }
 }
 
@@ -888,7 +884,7 @@ void GLSNavierStokesSolver<dim>::iterate (bool firstIteration)
     {
       newton_iteration(false);
     }
-    else if(simulationControl.getMethod() == Parameters::SimulationControl::backward)
+    else if(simulationControl.getMethod() == Parameters::SimulationControl::bdf1)
     {
       newton_iteration(false);
     }
@@ -898,7 +894,7 @@ void GLSNavierStokesSolver<dim>::iterate (bool firstIteration)
 
       // Start the BDF2 with a single Euler time step with a lower time step
       simulationControl.setTimeStep(timeParameters.dt*timeParameters.startup_timestep_scaling);
-      simulationControl.setMethod(Parameters::SimulationControl::backward);
+      simulationControl.setMethod(Parameters::SimulationControl::bdf1);
       newton_iteration(false);
       solution_m2=solution_m1;
       solution_m1=present_solution;
@@ -915,13 +911,13 @@ void GLSNavierStokesSolver<dim>::iterate (bool firstIteration)
 
       // Start the BDF2 with a single Euler time step with a lower time step
       simulationControl.setTimeStep(timeParameters.dt*timeParameters.startup_timestep_scaling);
-      simulationControl.setMethod(Parameters::SimulationControl::backward);
+      simulationControl.setMethod(Parameters::SimulationControl::bdf1);
       newton_iteration(false);
       solution_m2=solution_m1;
       solution_m1=present_solution;
 
       // Reset the time step and do a bdf 2 newton iteration using the two steps
-      simulationControl.setMethod(Parameters::SimulationControl::backward);
+      simulationControl.setMethod(Parameters::SimulationControl::bdf1);
       simulationControl.setTimeStep(timeParameters.dt*timeParameters.startup_timestep_scaling);
       newton_iteration(false);
       solution_m3=solution_m2;
@@ -1097,27 +1093,31 @@ void GLSNavierStokesSolver<dim>::set_nodal_values()
 template <int dim>
 void GLSNavierStokesSolver<dim>::assemble_system(const bool initial_step)
 {
-  if (simulationControl.getMethod()==Parameters::SimulationControl::backward)
-     assembleGLS<Parameters::SimulationControl::backward>(initial_step,true);
+  TimerOutput::Scope t(computing_timer, "assemble_system");
+
+  if (simulationControl.getMethod()==Parameters::SimulationControl::bdf1)
+    assembleGLS<true, Parameters::SimulationControl::bdf1>(initial_step);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf2)
-      assembleGLS<Parameters::SimulationControl::bdf2>(initial_step,true);
+    assembleGLS<true, Parameters::SimulationControl::bdf2>(initial_step);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf3)
-      assembleGLS<Parameters::SimulationControl::bdf3>(initial_step,true);
+    assembleGLS<true, Parameters::SimulationControl::bdf3>(initial_step);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::steady)
-      assembleGLS<Parameters::SimulationControl::steady>(initial_step,true);
+    assembleGLS<true,Parameters::SimulationControl::steady>(initial_step);
 
 }
 template <int dim>
 void GLSNavierStokesSolver<dim>::assemble_rhs(const bool initial_step)
 {
-  if (simulationControl.getMethod()==Parameters::SimulationControl::backward)
-    assembleGLS<Parameters::SimulationControl::backward>(initial_step,false);
+  TimerOutput::Scope t(computing_timer, "assemble_rhs");
+
+  if (simulationControl.getMethod()==Parameters::SimulationControl::bdf1)
+    assembleGLS<false, Parameters::SimulationControl::bdf1>(initial_step);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf2)
-    assembleGLS<Parameters::SimulationControl::bdf2>(initial_step,false);
+    assembleGLS<false, Parameters::SimulationControl::bdf2>(initial_step);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::bdf3)
-    assembleGLS<Parameters::SimulationControl::bdf3>(initial_step,false);
+    assembleGLS<false, Parameters::SimulationControl::bdf3>(initial_step);
   else if (simulationControl.getMethod()==Parameters::SimulationControl::steady)
-    assembleGLS<Parameters::SimulationControl::steady>(initial_step,false);
+    assembleGLS<false, Parameters::SimulationControl::steady>(initial_step);
 }
 
 template <int dim>

@@ -7,9 +7,9 @@ namespace Parameters
     prm.enter_subsection("simulation control");
     {
       prm.declare_entry("method", "steady",
-                        Patterns::Selection("steady|backward|bdf2|bdf3"),
+                        Patterns::Selection("steady|bdf1|bdf2|bdf3"),
                         "The kind of solver for the linear system. "
-                        "Choices are <steady|backward|bdf2|bdf3>.");
+                        "Choices are <steady|bdf1|bdf2|bdf3>.");
       prm.declare_entry("time step", "1.",
                         Patterns::Double(),
                         "Time step value");
@@ -55,8 +55,8 @@ namespace Parameters
       const std::string sv = prm.get("method");
       if (sv == "steady")
         method = steady;
-      else if (sv == "backward")
-        method = backward;
+      else if (sv == "bdf1")
+        method = bdf1;
       else if (sv == "bdf2")
         method = bdf2;
       else if (sv == "bdf3")

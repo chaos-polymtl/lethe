@@ -6,7 +6,7 @@
 # Simulation Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  = backward
+  set method                  = bdf1
   set time step               = 0.01    # Time step
     set number mesh adapt     = 0       # If steady, nb mesh adaptation
   set time end                = 1.00      # End time of simulation

@@ -9,11 +9,11 @@ public:
     GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure)
   {
   }
-  void runMMS();
+  void run();
 };
 
 template<int dim>
-void MMSNavierStokes<dim>::runMMS()
+void MMSNavierStokes<dim>::run()
 {
   std::vector<double>                   ErrorLog;
   std::vector<double>                   wallTime;
@@ -25,19 +25,20 @@ void MMSNavierStokes<dim>::runMMS()
   this->viscosity_=this->physicalProperties.viscosity;
 
   Timer timer;
+  this->setInitialCondition(this->initialConditionParameters->type, this->restartParameters.restart);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);
-    timer.start ();
+    timer.start();
     if (this->simulationControl.getIter() !=1) this->refine_mesh();
-    // Force restart from scratch of the solution
-    this->newton_iteration(true);
+    this->iterate(this->simulationControl.firstIter());
     this->postprocess();
-    double L2Error= this->calculateL2Error();
-    this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
-    ErrorLog.push_back(L2Error);
-
-    wallTime.push_back((timer.wall_time()));
+    {
+      double L2Error= this->calculateL2Error();
+      this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+      ErrorLog.push_back(L2Error);
+      wallTime.push_back((timer.wall_time()));
+    }
     this->finishTimeStep();
   }
 
@@ -72,7 +73,7 @@ int main (int argc, char *argv[])
         NSparam.parse(prm);
 
         MMSNavierStokes<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);
-        problem_2d.runMMS();
+        problem_2d.run();
     }
     catch (std::exception &exc)
     {

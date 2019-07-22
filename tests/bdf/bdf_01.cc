@@ -38,7 +38,7 @@ main(int argc, char* argv[])
     if(!approximatelyEqual(order3_coefficients[1],-18.0000000000000  , 1e-8))  throw std::runtime_error("Error order 3 term 1");
     if(!approximatelyEqual(order3_coefficients[2],3.33333333333333   , 1e-8))  throw std::runtime_error("Error order 3 term 2");
     if(!approximatelyEqual(order3_coefficients[3],-0.333333333333333 , 1e-8))  throw std::runtime_error("Error order 3 term 3");
-     deallog << "Order 3 : " << order3_coefficients << std::endl;
+    deallog << "Order 3 : " << order3_coefficients << std::endl;
   }
   catch (std::exception &exc)
   {

@@ -14,7 +14,7 @@ namespace Parameters
   struct SimulationControl
   {
     // Method used for time progression (steady, unsteady)
-    enum TimeSteppingMethod { steady, backward, bdf2, bdf3};
+    enum TimeSteppingMethod { steady, bdf1, bdf2, bdf3};
     TimeSteppingMethod method;
 
     // Initial time step

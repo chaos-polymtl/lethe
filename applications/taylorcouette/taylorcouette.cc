@@ -74,6 +74,7 @@ void TaylorCouetteNavierStokes<dim>::run()
 
   ConvergenceTable table;
 
+  this->iterate(this->simulationControl.firstIter());
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);

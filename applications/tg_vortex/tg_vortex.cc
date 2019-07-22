@@ -40,9 +40,9 @@ public:
 template<int dim>
 void TaylorGreenVortex<dim>::run2DTGV()
 {
-  std::vector<double>  kevalues;
+  std::vector<double>  ke_values;
   std::vector<double>  timeTaken;
-  std::vector<double>  enstrophyvalues;
+  std::vector<double>  enstrophy_values;
   const int initialSize=this->meshParameters.initialRefinement;
   GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
   this->setPeriodicity();
@@ -61,6 +61,7 @@ void TaylorGreenVortex<dim>::run2DTGV()
     this->refine_mesh();
     this->iterate(this->simulationControl.firstIter());
     this->postprocess();
+
     {
       delete this->exact_solution;
       this->exact_solution = new ExactSolutionTGV<dim>(this->viscosity_, this->simulationControl.getTime());
@@ -68,33 +69,34 @@ void TaylorGreenVortex<dim>::run2DTGV()
       this->pcout << "L2 error : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << error << std::endl;
       double kE    = this->calculate_average_KE();
       this->pcout << "Kinetic energy : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << kE << std::endl;
-      kevalues.push_back(kE);
+      ke_values.push_back(kE);
       timeTaken.push_back((this->simulationControl.getTime()));
       double enstrophy = this->calculate_average_enstrophy();
       this->pcout << "Enstrophy  : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << enstrophy << std::endl;
-      enstrophyvalues.push_back(enstrophy);
+      enstrophy_values.push_back(enstrophy);
     }
+
     this->finishTimeStep();
   }
   if(this->this_mpi_process==0)
   {
-    assert (timeTaken.size()==kevalues.size());
+    assert (timeTaken.size()==ke_values.size());
     std::ofstream output_file("./KE-2D.dat");
-    for (unsigned int i=0 ; i < kevalues.size() ; ++i)
+    for (unsigned int i=0 ; i < ke_values.size() ; ++i)
     {
 
-      output_file <<timeTaken[i]<<" "<<kevalues[i]<< std::endl;
+      output_file <<timeTaken[i]<<" "<<ke_values[i]<< std::endl;
     }
       output_file.close();
   }
   if(this->this_mpi_process==0)
   {
-    assert (timeTaken.size()==enstrophyvalues.size());
+    assert (timeTaken.size()==enstrophy_values.size());
     std::ofstream output_file("./Enstrophy-2D.dat");
-    for (unsigned int i=0 ; i < enstrophyvalues.size() ; ++i)
+    for (unsigned int i=0 ; i < enstrophy_values.size() ; ++i)
     {
 
-      output_file<<timeTaken[i]<< " "<<enstrophyvalues[i]<< std::endl;
+      output_file<<timeTaken[i]<< " "<<enstrophy_values[i]<< std::endl;
     }
       output_file.close();
   }
@@ -114,8 +116,7 @@ int main (int argc, char *argv[])
         ParameterHandler prm;
         NavierStokesSolverParameters<2> NSparam;
         NSparam.declare(prm);
-        // Parsing of the file
-        prm.parse_input (argv[1]);
+        prm.parse_input(argv[1]);
         NSparam.parse(prm);
 
         TaylorGreenVortex<2> problem_2d(NSparam,NSparam.femParameters.velocityOrder,NSparam.femParameters.pressureOrder);

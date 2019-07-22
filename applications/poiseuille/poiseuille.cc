@@ -66,8 +66,6 @@ void PeriodicPoiseuille<dim>::run()
   this->exact_solution = new ExactSolutionPoiseuille<dim>;
 
   ConvergenceTable table;
-
-
   this->setInitialCondition(this->initialConditionParameters->type);
   while(this->simulationControl.integrate())
   {
@@ -80,6 +78,7 @@ void PeriodicPoiseuille<dim>::run()
     table.add_value("error",   error);
     this->finishTimeStep();
   }
+
   table.omit_column_from_convergence_rate_evaluation("cells");
   table.evaluate_all_convergence_rates(ConvergenceTable::reduction_rate_log2);
   table.set_scientific("error", true);
