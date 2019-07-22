@@ -45,13 +45,13 @@ void TaylorGreenVortex<dim>::run2DTGV()
   std::vector<double>  enstrophy_values;
   const int initialSize=this->meshParameters.initialRefinement;
   GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
-  this->setPeriodicity();
+  this->set_periodicity();
   this->triangulation.refine_global (initialSize);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
   this->viscosity_=this->physicalProperties.viscosity;
   this->exact_solution = new ExactSolutionTGV<dim>(this->viscosity_,0.);
-  this->setInitialCondition(this->initialConditionParameters->type,this->restartParameters.restart);
+  this->set_initial_condition(this->initialConditionParameters->type,this->restartParameters.restart);
 
   Timer timer;
   while(this->simulationControl.integrate())
@@ -65,7 +65,7 @@ void TaylorGreenVortex<dim>::run2DTGV()
     {
       delete this->exact_solution;
       this->exact_solution = new ExactSolutionTGV<dim>(this->viscosity_, this->simulationControl.getTime());
-      double error = this->calculateL2Error() / std::exp(-2*this->viscosity_*this->simulationControl.getTime());
+      double error = this->calculate_L2_error() / std::exp(-2*this->viscosity_*this->simulationControl.getTime());
       this->pcout << "L2 error : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << error << std::endl;
       double kE    = this->calculate_average_KE();
       this->pcout << "Kinetic energy : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << kE << std::endl;
@@ -76,7 +76,7 @@ void TaylorGreenVortex<dim>::run2DTGV()
       enstrophy_values.push_back(enstrophy);
     }
 
-    this->finishTimeStep();
+    this->finish_time_step();
   }
   if(this->this_mpi_process==0)
   {

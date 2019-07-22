@@ -90,10 +90,10 @@ void TaylorCouetteNavierStokes<dim>::run()
       this->postprocess();
       table.add_value("cells", this->triangulation.n_global_active_cells());
 
-      const double error = this->calculateL2Error();
+      const double error = this->calculate_L2_error();
       table.add_value("error",   error);
 
-      this->finishTimeStep();
+      this->finish_time_step();
     }
   table.omit_column_from_convergence_rate_evaluation("cells");
   table.evaluate_all_convergence_rates(ConvergenceTable::reduction_rate_log2);

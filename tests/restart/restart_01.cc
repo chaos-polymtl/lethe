@@ -29,14 +29,14 @@ void RestartNavierStokes<dim>::run()
   this->viscosity_=1;
 
   printTime(this->pcout,this->simulationControl);
-  this->newton_iteration(true);
+  this->iterate(false);
   this->postprocess();
-  double error1 = this->calculateL2Error();
+  double error1 = this->calculate_L2_error();
   deallog << "Error 1 : " << error1 << std::endl;
-  this->finishTimeStep();
+  this->finish_time_step();
 
-  this->setSolutionVector(0.);
-  double error2 = this->calculateL2Error();
+  this->set_solution_vector(0.);
+  double error2 = this->calculate_L2_error();
 
   deallog << "Error 2 : " << error2 << std::endl;
   if(error2<error1) std::runtime_error("Zeroed solution has a lower error");
@@ -45,9 +45,9 @@ void RestartNavierStokes<dim>::run()
   this->triangulation.clear();
   this->make_cube_grid(0);
 
-  this->setInitialCondition(this->initialConditionParameters->type,true);
+  this->set_initial_condition(this->initialConditionParameters->type,true);
 
-  double error3 = this->calculateL2Error();
+  double error3 = this->calculate_L2_error();
   deallog << "Error 3 : " << error3 << std::endl;
   if(!approximatelyEqual(error1,error3,1e-10)) std::runtime_error("Reloaded solution is not the same");
 }

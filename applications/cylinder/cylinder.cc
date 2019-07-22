@@ -26,14 +26,14 @@ void VonKarmanNavierStokes<dim>::run()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->setInitialCondition(this->initialConditionParameters->type, this->restartParameters.restart);
+  this->set_initial_condition(this->initialConditionParameters->type, this->restartParameters.restart);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
       this->refine_mesh();
       this->iterate(this->simulationControl.firstIter());
       this->postprocess();
-      this->finishTimeStep();
+      this->finish_time_step();
     }
 }
 
@@ -53,14 +53,14 @@ void VonKarmanNavierStokes<dim>::runTest()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->setInitialCondition(this->initialConditionParameters->type,this->restartParameters.restart);
+  this->set_initial_condition(this->initialConditionParameters->type,this->restartParameters.restart);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
       this->iterate(this->simulationControl.firstIter());
       this->postprocess();
       this->refine_mesh();
-      this->finishTimeStep();
+      this->finish_time_step();
       for (unsigned int i =0 ; i < this->forces_.size() ; ++i)
       {
         this->pcout << " fx : " << this->forces_[i][0] << std::endl;

@@ -113,18 +113,16 @@ public:
 protected:
   void refine_mesh();
   void setup_dofs();
-  double calculateL2Error();
+  double calculate_L2_error();
   double calculate_average_KE();
   double calculate_average_enstrophy();
-  double calculateKErate(std::vector<double> arr1);
-  void setInitialCondition(Parameters::InitialConditionType initial_condition_type, bool restart=false);
+  void set_initial_condition(Parameters::InitialConditionType initial_condition_type, bool restart=false);
   void postprocess();
-  void finishTimeStep();
-  void setSolutionVector(double value);
-  void setPeriodicity();
+  void finish_time_step();
+  void set_solution_vector(double value);
+  void set_periodicity();
   void iterate(bool firstIteration);
 
-  void newton_iteration(const bool is_initial_step);
   void make_cube_grid(int refinementLevel);
 
   Function<dim> *exact_solution;
@@ -138,6 +136,7 @@ protected:
 private:
   template <bool assemble_matrix, Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step);
 
+  void newton_iteration(const bool is_initial_step);
   void assemble_L2_projection();
   void set_nodal_values();
   void refine_mesh_Kelly();
@@ -152,9 +151,9 @@ private:
   void assemble_rhs(const bool initial_step);
 
   void solve(bool initial_step, double relative_residual, double minimum_residual); // Interface function
-  void solveGMRES(bool initial_step, double absolute_residual, double relative_residual);
-  void solveBiCGStab(bool initial_step, double absolute_residual, double relative_residual);
-  void solveAMG(bool initial_step, double absolute_residual, double relative_residual);
+  void solve_GMRES(bool initial_step, double absolute_residual, double relative_residual);
+  void solve_BiCGStab(bool initial_step, double absolute_residual, double relative_residual);
+  void solve_AMG(bool initial_step, double absolute_residual, double relative_residual);
 
   void write_checkpoint();
   void read_checkpoint();
@@ -191,7 +190,7 @@ private:
   // Finite element order used
   const  unsigned int            degreeVelocity_;
   const  unsigned int            degreePressure_;
-  unsigned int            degreeQuadrature_;
+  unsigned int                   degreeQuadrature_;
 
 
   double                         globalVolume_;
@@ -199,22 +198,24 @@ private:
   const double                   GLS_u_scale=1;
   PVDHandler                     pvdhandler;
 
-protected:
-  // Physical Properties
-  double                                viscosity_;
-  std::vector<double>                   L2ErrorU_;
-
-  ConditionalOStream                    pcout;
-  TimerOutput                           computing_timer;
+  TimerOutput                    computing_timer;
 
   // Force analysis
-  std::vector<Tensor<1,dim>>     forces_;
-  std::vector<Tensor<1,3>>       torques_;
   std::vector<TableHandler>      forces_tables;
   std::vector<TableHandler>      torques_tables;
 
 
-  NavierStokesSolverParameters<dim>     nsparam;
+protected:
+  // Physical Properties
+  double                                viscosity_;
+
+  ConditionalOStream                    pcout;
+
+  // Force analysis
+  std::vector<Tensor<1,dim>>     forces_;
+  std::vector<Tensor<1,3>>       torques_;
+
+  NavierStokesSolverParameters<dim>               nsparam;
 
   SimulationControl                               simulationControl;
   Parameters::LinearSolver                        linearSolverParameters;
@@ -260,6 +261,7 @@ protected:
       }
     }
   };
+
   class qcriterion_postprocessor: public DataPostprocessorScalar<dim>
   {
   public:
@@ -370,7 +372,7 @@ void GLSNavierStokesSolver<dim>::make_cube_grid (int refinementLevel)
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::finishTimeStep()
+void GLSNavierStokesSolver<dim>::finish_time_step()
 {
   if (simulationControl.getMethod()!=Parameters::SimulationControl::steady)
   {
@@ -393,13 +395,13 @@ void GLSNavierStokesSolver<dim>::finishTimeStep()
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::setSolutionVector(double value)
+void GLSNavierStokesSolver<dim>::set_solution_vector(double value)
 {
   present_solution=value;
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::setPeriodicity()
+void GLSNavierStokesSolver<dim>::set_periodicity()
 {
   // Setup parallelism for periodic boundary conditions
   for (unsigned int i_bc=0 ; i_bc < boundaryConditions.size ; ++i_bc)
@@ -824,7 +826,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step)
  * Set the initial condition using a L2 or a viscous solver
 **/
 template <int dim>
-void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditionType initial_condition_type, bool restart)
+void GLSNavierStokesSolver<dim>::set_initial_condition (Parameters::InitialConditionType initial_condition_type, bool restart)
 {
   if (restart)
   {
@@ -838,13 +840,13 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
     assemble_L2_projection();
     solve(true,1e-15,1e-15);
     present_solution=newton_update;
-    finishTimeStep();
+    finish_time_step();
     postprocess();
   }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
   {
     set_nodal_values();
-    finishTimeStep();
+    finish_time_step();
     postprocess();
   }
 
@@ -855,7 +857,7 @@ void GLSNavierStokesSolver<dim>::setInitialCondition (Parameters::InitialConditi
     simulationControl.setMethod(Parameters::SimulationControl::steady);
     newton_iteration(true);
     simulationControl.setMethod(previousControl);
-    finishTimeStep();
+    finish_time_step();
     postprocess();
     simulationControl.setMethod(previousControl);
     viscosity_=this->physicalProperties.viscosity;
@@ -1123,15 +1125,15 @@ void GLSNavierStokesSolver<dim>::assemble_rhs(const bool initial_step)
 template <int dim>
 void GLSNavierStokesSolver<dim>::solve(const bool initial_step, double relative_residual, double minimum_residual)
 {
-  if (linearSolverParameters.solver==linearSolverParameters.gmres)         solveGMRES(initial_step,minimum_residual,relative_residual);
-  else if (linearSolverParameters.solver==linearSolverParameters.bicgstab) solveBiCGStab(initial_step,minimum_residual,relative_residual);
-  else if (linearSolverParameters.solver==linearSolverParameters.amg)      solveAMG(initial_step,minimum_residual,relative_residual);
+  if (linearSolverParameters.solver==linearSolverParameters.gmres)         solve_GMRES(initial_step,minimum_residual,relative_residual);
+  else if (linearSolverParameters.solver==linearSolverParameters.bicgstab) solve_BiCGStab(initial_step,minimum_residual,relative_residual);
+  else if (linearSolverParameters.solver==linearSolverParameters.amg)      solve_AMG(initial_step,minimum_residual,relative_residual);
   else throw("This solver is not allowed");
 }
 
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step, double absolute_residual, double relative_residual)
+void GLSNavierStokesSolver<dim>::solve_GMRES (const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
   const AffineConstraints<double> &constraints_used = initial_step ? nonzero_constraints : zero_constraints;
@@ -1173,7 +1175,7 @@ void GLSNavierStokesSolver<dim>::solveGMRES (const bool initial_step, double abs
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step, double absolute_residual, double relative_residual)
+void GLSNavierStokesSolver<dim>::solve_BiCGStab(const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -1214,7 +1216,7 @@ void GLSNavierStokesSolver<dim>::solveBiCGStab(const bool initial_step, double a
 }
 
 template <int dim>
-void GLSNavierStokesSolver<dim>::solveAMG (const bool initial_step, double absolute_residual, double relative_residual)
+void GLSNavierStokesSolver<dim>::solve_AMG (const bool initial_step, double absolute_residual, double relative_residual)
 {
   TimerOutput::Scope t(computing_timer, "solve");
 
@@ -1691,7 +1693,7 @@ void GLSNavierStokesSolver<dim>::write_output_torques ()
 
 //Find the l2 norm of the error between the finite element sol'n and the exact sol'n
 template <int dim>
-double GLSNavierStokesSolver<dim>::calculateL2Error()
+double GLSNavierStokesSolver<dim>::calculate_L2_error()
 {
   TimerOutput::Scope t(computing_timer, "error");
 

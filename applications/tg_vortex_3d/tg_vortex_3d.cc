@@ -82,12 +82,12 @@ void TaylorGreenVortex<dim>::run3DTGV()
 {
   const int initialSize=this->meshParameters.initialRefinement;
   GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
-  this->setPeriodicity();
+  this->set_periodicity();
   this->triangulation.refine_global (initialSize);
   this->setup_dofs();
   this->viscosity_=this->physicalProperties.viscosity;
   this->forcing_function = new NoForce<dim>;
-  this->setInitialCondition(this->initialConditionParameters->type,this->restartParameters.restart);
+  this->set_initial_condition(this->initialConditionParameters->type,this->restartParameters.restart);
 
   double kE = this->calculate_average_KE();
   double enstrophy = this->calculate_average_enstrophy();
@@ -136,7 +136,7 @@ void TaylorGreenVortex<dim>::run3DTGV()
         }
       }
     }
-    this->finishTimeStep();
+    this->finish_time_step();
   }
 }
 int main (int argc, char *argv[])

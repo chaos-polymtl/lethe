@@ -60,13 +60,13 @@ void PeriodicPoiseuille<dim>::run()
   grid_in.attach_triangulation (this->triangulation);
   std::ifstream input_file(this->meshParameters.fileName);
   grid_in.read_msh(input_file);
-  this->setPeriodicity();
+  this->set_periodicity();
   this->setup_dofs();
   this->forcing_function = new ConstantXForce<dim>;
   this->exact_solution = new ExactSolutionPoiseuille<dim>;
 
   ConvergenceTable table;
-  this->setInitialCondition(this->initialConditionParameters->type);
+  this->set_initial_condition(this->initialConditionParameters->type);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);
@@ -74,9 +74,9 @@ void PeriodicPoiseuille<dim>::run()
     this->iterate(this->simulationControl.firstIter());
     this->postprocess();
     table.add_value("cells", this->triangulation.n_global_active_cells());
-    const double error = this->calculateL2Error();
+    const double error = this->calculate_L2_error();
     table.add_value("error",   error);
-    this->finishTimeStep();
+    this->finish_time_step();
   }
 
   table.omit_column_from_convergence_rate_evaluation("cells");

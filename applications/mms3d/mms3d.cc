@@ -48,7 +48,7 @@ void MMS3DNavierStokes<dim>::runMMS_3D()
   this->viscosity_=this->physicalProperties.viscosity;
 
   Timer timer;
-  this->setInitialCondition(this->initialConditionParameters->type, this->restartParameters.restart);
+  this->set_initial_condition(this->initialConditionParameters->type, this->restartParameters.restart);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);
@@ -60,12 +60,12 @@ void MMS3DNavierStokes<dim>::runMMS_3D()
     this->iterate(this->simulationControl.firstIter());
     this->postprocess();
     {
-      double L2Error= this->calculateL2Error();
+      double L2Error= this->calculate_L2_error();
       this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
       ErrorLog.push_back(L2Error);
       wallTime.push_back((timer.wall_time()));
     }
-    this->finishTimeStep();
+    this->finish_time_step();
   }
 
   if(this->this_mpi_process==0)

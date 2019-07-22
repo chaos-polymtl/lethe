@@ -44,7 +44,7 @@ void InitialConditionsNavierStokes<dim>::run()
   grid_in.read_msh(input_file);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
-  this->setInitialCondition(this->initialConditionParameters->type,this->restartParameters.restart);
+  this->set_initial_condition(this->initialConditionParameters->type,this->restartParameters.restart);
 }
 
 
@@ -55,8 +55,8 @@ void InitialConditionsNavierStokes<dim>::runTest()
   this->make_cube_grid(initialSize);
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;
-  this->setInitialCondition(Parameters::L2projection);
-  double error_L2projection= this->calculateL2Error();
+  this->set_initial_condition(Parameters::L2projection);
+  double error_L2projection= this->calculate_L2_error();
   if (error_L2projection<1e-9)
   {
     this->pcout << "The L2projection initial condition is OK"<< std::endl;
@@ -66,8 +66,8 @@ void InitialConditionsNavierStokes<dim>::runTest()
     throw "L2projection initial condition error";
   }
 
-  this->setInitialCondition(Parameters::nodal);
-  double error_nodal= this->calculateL2Error();
+  this->set_initial_condition(Parameters::nodal);
+  double error_nodal= this->calculate_L2_error();
   if (error_nodal<1e-9)
   {
     this->pcout << "The nodal initial condition is OK"<< std::endl;
