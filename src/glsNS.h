@@ -742,9 +742,9 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                       local_matrix(i, j) +=
                           tau*
                           (
-                            strong_jac*(present_velocity_values[q]* grad_phi_u[i])
+                            strong_jac*(grad_phi_u[i]*present_velocity_values[q])
                             +
-                            strong_residual* (phi_u[j]*grad_phi_u[i])
+                            strong_residual* (grad_phi_u[i]*phi_u[j])
                             )
                           * fe_values.JxW(q)
                           ;
@@ -791,7 +791,7 @@ void GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step,
                   if (SUPG)
                   {
                       local_rhs(i) += - tau
-                                      *(strong_residual*(present_velocity_values[q]* grad_phi_u[i]))
+                                      *(strong_residual*(grad_phi_u[i]*present_velocity_values[q]))
                                       * fe_values.JxW(q);
                   }
               }
