@@ -1,6 +1,6 @@
 ﻿/* ---------------------------------------------------------------------
  *
- * Copyright (C) 2000 - 2016 by the Lethe authors
+ * Copyright (C) 2019 - 2019 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -17,10 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+// Dealii Includes
 
-// @sect3{Include files}
-
-//BASE
+// Base
 #include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/utilities.h>
@@ -29,8 +28,7 @@
 #include <deal.II/base/timer.h>
 #include <deal.II/base/table_handler.h>
 
-
-//LAC
+// Lac
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/full_matrix.h>
@@ -41,15 +39,14 @@
 #include <deal.II/lac/sparse_ilu.h>
 #include <deal.II/lac/affine_constraints.h>
 
-// Trilinos includes
+// Lac - Trilinos includes
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_precondition.h>
 
-
-//GRID
+// Grid
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/tria_accessor.h>
@@ -60,20 +57,19 @@
 #include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/grid_tools.h>
 
-
-//DOFS
+// Dofs
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_tools.h>
 
-//FE
+// Fe
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q.h>
 
-//Numerics
+// Numerics
 #include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/data_out.h>
@@ -84,6 +80,7 @@
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/grid_refinement.h>
 
+// Lethe Includes
 #include "exactsolutions.h"
 #include "forcingfunctions.h"
 #include "boundaryconditions.h"
@@ -92,22 +89,33 @@
 #include "pvdhandler.h"
 #include "bdf.h"
 #include "navierstokessolverparameters.h"
+#include "postprocessors.h"
 
+// Std
 #include <fstream>
 #include <iostream>
 
-// Finally, this is as in previous programs:
 using namespace dealii;
 
 #ifndef LETHE_GLSNS_H
 #define LETHE_GLSNS_H
+
+
+/**
+ * A solver class for the Navier-Stokes equation using GLS stabilization
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the flow is solved
+ *
+ * @ingroup solvers
+ * @author Bruno Blais, 2019
+ */
 
 template <int dim>
 class GLSNavierStokesSolver
 {
 public:
   GLSNavierStokesSolver(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure);
-
   ~GLSNavierStokesSolver();
 
 protected:
@@ -128,10 +136,34 @@ protected:
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
 
-  MPI_Comm                         mpi_communicator;
+  MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
   parallel::distributed::Triangulation<dim> triangulation;
+  ConditionalOStream                    pcout;
+
+  // Physical Properties
+  double                                viscosity_;
+
+  // Force analysis
+  std::vector<Tensor<1,dim>>     forces_;
+  std::vector<Tensor<1,3>>       torques_;
+
+  // Solver parameters
+  NavierStokesSolverParameters<dim>               nsparam;
+
+  SimulationControl                               simulationControl;
+  Parameters::LinearSolver                        linearSolverParameters;
+  Parameters::NonLinearSolver                     nonLinearSolverParameters;
+  Parameters::Mesh                                meshParameters;
+  Parameters::PhysicalProperties                  physicalProperties;
+  Parameters::Timer                               clock;
+  Parameters::FEM                                 femParameters;
+  Parameters::Forces                              forcesParameters;
+  Parameters::AnalyticalSolution                  analyticalSolutionParameters;
+  BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
+  Parameters::Restart                             restartParameters;
+
 
 private:
   template <bool assemble_matrix, Parameters::SimulationControl::TimeSteppingMethod scheme> void assembleGLS(const bool initial_step);
@@ -142,25 +174,55 @@ private:
   void refine_mesh_Kelly();
   void refine_mesh_uniform();
 
-  void calculate_forces();
-  void calculate_torques();
+  void   calculate_forces();
+  void   calculate_torques();
   double calculate_CFL();
-
 
   void assemble_system(const bool initial_step);
   void assemble_rhs(const bool initial_step);
 
+  /**
+   * Interface for the solver for the linear system of equations
+   */
+
   void solve(bool initial_step, double relative_residual, double minimum_residual); // Interface function
+
+  /**
+   * GMRES solver with ILU(N) preconditioning
+   */
   void solve_GMRES(bool initial_step, double absolute_residual, double relative_residual);
+
+  /**
+   * BiCGStab solver with ILU(N) preconditioning
+   */
   void solve_BiCGStab(bool initial_step, double absolute_residual, double relative_residual);
+
+  /**
+   * AMG preconditioner with ILU smoother and coarsener and GMRES final solver
+   */
   void solve_AMG(bool initial_step, double absolute_residual, double relative_residual);
 
+  /**
+   * Checkpointing writer of the solutions vector of the GLS solver
+   */
   void write_checkpoint();
+
+  /**
+   * Checkpointing reader of the solutions vector of the GLS solver
+   */
   void read_checkpoint();
 
   void write_output_forces();
   void write_output_torques();
+
+  /**
+   * Post-processing as parallel VTU files
+   */
   void write_output_results(const std::string folder, const std::string solutionName, const unsigned int cycle, const double time);
+
+  /**
+   * Members
+   */
 
   DoFHandler<dim>                  dof_handler;
   FESystem<dim>                    fe;
@@ -168,10 +230,8 @@ private:
   IndexSet                         locally_owned_dofs;
   IndexSet                         locally_relevant_dofs;
 
-
   AffineConstraints<double>        zero_constraints;
   AffineConstraints<double>        nonzero_constraints;
-
 
   SparsityPattern                  sparsity_pattern;
   TrilinosWrappers::SparseMatrix   system_matrix;
@@ -186,12 +246,10 @@ private:
   TrilinosWrappers::MPI::Vector    solution_m2;
   TrilinosWrappers::MPI::Vector    solution_m3;
 
-
   // Finite element order used
   const  unsigned int            degreeVelocity_;
   const  unsigned int            degreePressure_;
   unsigned int                   degreeQuadrature_;
-
 
   double                         globalVolume_;
   const bool                     SUPG=true;
@@ -203,105 +261,8 @@ private:
   // Force analysis
   std::vector<TableHandler>      forces_tables;
   std::vector<TableHandler>      torques_tables;
-
-
-protected:
-  // Physical Properties
-  double                                viscosity_;
-
-  ConditionalOStream                    pcout;
-
-  // Force analysis
-  std::vector<Tensor<1,dim>>     forces_;
-  std::vector<Tensor<1,3>>       torques_;
-
-  NavierStokesSolverParameters<dim>               nsparam;
-
-  SimulationControl                               simulationControl;
-  Parameters::LinearSolver                        linearSolverParameters;
-  Parameters::NonLinearSolver                     nonLinearSolverParameters;
-  Parameters::MeshAdaptation                      meshAdaptationParameters;
-  Parameters::Mesh                                meshParameters;
-  Parameters::PhysicalProperties                  physicalProperties;
-  Parameters::Timer                               clock;
-  Parameters::FEM                                 femParameters;
-  Parameters::Forces                              forcesParameters;
-  Parameters::AnalyticalSolution                  analyticalSolutionParameters;
-  BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
-  Parameters::InitialConditions<dim>              *initialConditionParameters;
-  Parameters::Restart                             restartParameters;
-
-  class vorticity_postprocessor: public DataPostprocessorVector<dim>
-  {
-  public:
-    vorticity_postprocessor():
-      DataPostprocessorVector<dim> ("vorticity",
-                                    update_gradients)
-    {}
-    virtual
-    void
-    evaluate_vector_field (const DataPostprocessorInputs::Vector<dim>&      input_data,
-                           std::vector<Vector<double> >               &computed_quantities) const
-    {
-      AssertDimension (input_data.solution_gradients.size(),
-                       computed_quantities.size());
-      for (unsigned int p=0; p<input_data.solution_gradients.size(); ++p)
-      {
-        AssertDimension (computed_quantities[p].size(), dim);
-        if (dim==3)
-        {
-          computed_quantities[p](0) = (input_data.solution_gradients[p][2][1]-input_data.solution_gradients[p][1][2]);
-          computed_quantities[p](1) = (input_data.solution_gradients[p][0][2]-input_data.solution_gradients[p][2][0]);
-          computed_quantities[p](2) = (input_data.solution_gradients[p][1][0]-input_data.solution_gradients[p][0][1]);
-        }
-        else
-        {
-          computed_quantities[p][0] =  (input_data.solution_gradients[p][1][0]-input_data.solution_gradients[p][0][1]);
-        }
-      }
-    }
-  };
-
-  class qcriterion_postprocessor: public DataPostprocessorScalar<dim>
-  {
-  public:
-    qcriterion_postprocessor():
-      DataPostprocessorScalar<dim> ("q_criterion",
-                                    update_gradients)
-    {}
-    virtual
-    void
-    evaluate_vector_field 	( 	const DataPostprocessorInputs::Vector< dim > &  	input_data,
-                                        std::vector< Vector< double > > &  	computed_quantities  ) 		const
-    {
-      for (unsigned int p=0; p<input_data.solution_gradients.size(); ++p)
-      {
-        AssertDimension (computed_quantities[p].size(), 1);
-        double p1=0.0,r1=0.0;
-        std::vector<Tensor<2,dim>> vorticity_vector (input_data.solution_gradients.size());
-        std::vector<Tensor<2,dim>> strain_rate_tensor(input_data.solution_gradients.size());
-        for(unsigned int j=0;j<dim;j++)
-        {
-          for(unsigned int k=0;k<dim;k++)
-          {
-            vorticity_vector[p][j][k]=0.5*((input_data.solution_gradients[p][j][k])-input_data.solution_gradients[p][k][j]);
-            strain_rate_tensor[p][j][k]=0.5*((input_data.solution_gradients[p][j][k])+input_data.solution_gradients[p][k][j]);
-          }
-        }
-        for (unsigned int m=0;m<dim;m++)
-        {
-          for (unsigned int n=0;n<dim;n++)
-          {
-            p1 += (vorticity_vector[p][m][n])*(vorticity_vector[p][m][n]);
-            r1 += (strain_rate_tensor[p][m][n])*(strain_rate_tensor[p][m][n]);
-          }
-        }
-        computed_quantities[p] = 0.5*(p1-r1);
-
-      }
-    }
-  };
 };
+
 // Constructor for class GLSNavierStokesSolver
 template<int dim>
 GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<dim> p_nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
@@ -310,19 +271,17 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(NavierStokesSolverParameters<d
     this_mpi_process (Utilities::MPI::this_mpi_process(mpi_communicator)),
     triangulation (mpi_communicator, typename Triangulation<dim>::MeshSmoothing
                    (Triangulation<dim>::smoothing_on_refinement | Triangulation<dim>::smoothing_on_coarsening)),
+    pcout (std::cout, (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)),
+    nsparam(p_nsparam),
     dof_handler (triangulation),
     fe(FE_Q<dim>(degreeVelocity), dim, FE_Q<dim>(degreePressure), 1),
     degreeVelocity_(degreeVelocity),degreePressure_(degreePressure),degreeQuadrature_(degreeVelocity+1),
-    pcout (std::cout, (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)),
-    computing_timer (mpi_communicator, pcout, TimerOutput::summary, TimerOutput::wall_times),
-    nsparam(p_nsparam)
+    computing_timer (mpi_communicator, pcout, TimerOutput::summary, TimerOutput::wall_times)
 {
   boundaryConditions           = nsparam.boundaryConditions;
-  initialConditionParameters   = nsparam.initialCondition;
   meshParameters               = nsparam.mesh;
   linearSolverParameters       = nsparam.linearSolver;
   nonLinearSolverParameters    = nsparam.nonLinearSolver;
-  meshAdaptationParameters     = nsparam.meshAdaptation;
   physicalProperties           = nsparam.physicalProperties;
   clock                        = nsparam.timer;
   femParameters                = nsparam.femParameters;
@@ -976,7 +935,7 @@ void GLSNavierStokesSolver<dim>::assemble_L2_projection()
       fe_values.reinit(cell);
       local_matrix = 0;
       local_rhs    = 0;
-      initialConditionParameters->uvwp.vector_value_list(fe_values.get_quadrature_points(), initial_velocity);
+      nsparam.initialCondition->uvwp.vector_value_list(fe_values.get_quadrature_points(), initial_velocity);
       for (unsigned int q=0; q<n_q_points; ++q)
       {
         for (unsigned int k=0; k<dofs_per_cell; ++k)
@@ -1080,12 +1039,12 @@ void GLSNavierStokesSolver<dim>::set_nodal_values()
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
   VectorTools::interpolate(mapping,
                            dof_handler,
-                           initialConditionParameters->uvwp,
+                           nsparam.initialCondition->uvwp,
                            newton_update,
                            fe.component_mask(velocities));
   VectorTools::interpolate(mapping,
                            dof_handler,
-                           initialConditionParameters->uvwp,
+                           nsparam.initialCondition->uvwp,
                            newton_update,
                            fe.component_mask(pressure));
   nonzero_constraints.distribute(newton_update);
@@ -1304,10 +1263,10 @@ void GLSNavierStokesSolver<dim>::solve_AMG (const bool initial_step, double abso
 template <int dim>
 void GLSNavierStokesSolver<dim>::refine_mesh ()
 {
-  if ( simulationControl.getIter()%meshAdaptationParameters.frequency==0)
+  if ( simulationControl.getIter()%nsparam.meshAdaptation.frequency==0)
   {
-    if (meshAdaptationParameters.type==meshAdaptationParameters.kelly) refine_mesh_Kelly();
-    if (meshAdaptationParameters.type==meshAdaptationParameters.uniform) refine_mesh_uniform();
+    if (nsparam.meshAdaptation.type==nsparam.meshAdaptation.kelly) refine_mesh_Kelly();
+    if (nsparam.meshAdaptation.type==nsparam.meshAdaptation.uniform) refine_mesh_uniform();
   }
 }
 
@@ -1321,7 +1280,7 @@ void GLSNavierStokesSolver<dim>::refine_mesh_Kelly ()
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  if (meshAdaptationParameters.variable==Parameters::MeshAdaptation::pressure)
+  if (nsparam.meshAdaptation.variable==Parameters::MeshAdaptation::pressure)
   {
     KellyErrorEstimator<dim>::estimate (mapping,
                                         dof_handler,
@@ -1331,7 +1290,7 @@ void GLSNavierStokesSolver<dim>::refine_mesh_Kelly ()
                                         estimated_error_per_cell,
                                         fe.component_mask(pressure));
   }
-  if (meshAdaptationParameters.variable==Parameters::MeshAdaptation::velocity)
+  if (nsparam.meshAdaptation.variable==Parameters::MeshAdaptation::velocity)
   {
     KellyErrorEstimator<dim>::estimate (mapping,
                                         dof_handler,
@@ -1341,24 +1300,24 @@ void GLSNavierStokesSolver<dim>::refine_mesh_Kelly ()
                                         estimated_error_per_cell,
                                         fe.component_mask(velocity));
   }
-  if (meshAdaptationParameters.fractionType==Parameters::MeshAdaptation::number)
+  if (nsparam.meshAdaptation.fractionType==Parameters::MeshAdaptation::number)
   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(triangulation,estimated_error_per_cell,
-                                                    meshAdaptationParameters.fractionRefinement, meshAdaptationParameters.fractionCoarsening,
-                                                    meshAdaptationParameters.maxNbElements);
+                                                    nsparam.meshAdaptation.fractionRefinement, nsparam.meshAdaptation.fractionCoarsening,
+                                                    nsparam.meshAdaptation.maxNbElements);
 
-  if (meshAdaptationParameters.fractionType==Parameters::MeshAdaptation::fraction)
+  if (nsparam.meshAdaptation.fractionType==Parameters::MeshAdaptation::fraction)
   parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(triangulation,estimated_error_per_cell,
-                                                    meshAdaptationParameters.fractionRefinement, meshAdaptationParameters.fractionCoarsening);
+                                                    nsparam.meshAdaptation.fractionRefinement, nsparam.meshAdaptation.fractionCoarsening);
 
 
-  if (triangulation.n_levels() > meshAdaptationParameters.maxRefLevel)
+  if (triangulation.n_levels() > nsparam.meshAdaptation.maxRefLevel)
     for (typename Triangulation<dim>::active_cell_iterator
-         cell = triangulation.begin_active(meshAdaptationParameters.maxRefLevel);
+         cell = triangulation.begin_active(nsparam.meshAdaptation.maxRefLevel);
          cell != triangulation.end(); ++cell)
       cell->clear_refine_flag ();
   for (typename Triangulation<dim>::active_cell_iterator
-       cell = triangulation.begin_active(meshAdaptationParameters.minRefLevel);
-       cell != triangulation.end_active(meshAdaptationParameters.minRefLevel); ++cell)
+       cell = triangulation.begin_active(nsparam.meshAdaptation.minRefLevel);
+       cell != triangulation.end_active(nsparam.meshAdaptation.minRefLevel); ++cell)
     cell->clear_coarsen_flag ();
 
 
@@ -1611,8 +1570,8 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder,
 {
   TimerOutput::Scope t(computing_timer, "output");
   const MappingQ<dim>      mapping (degreeVelocity_,femParameters.qmapping_all);
-  vorticity_postprocessor ob;
-  qcriterion_postprocessor ob1;
+  vorticity_postprocessor<dim> vorticity;
+  qcriterion_postprocessor<dim> ob1;
   std::vector<std::string> solution_names (dim, "velocity");
   solution_names.push_back ("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1622,7 +1581,7 @@ void GLSNavierStokesSolver<dim>::write_output_results (const std::string folder,
   DataOut<dim> data_out;
   data_out.attach_dof_handler (dof_handler);
   data_out.add_data_vector (present_solution, solution_names, DataOut<dim>::type_dof_data, data_component_interpretation);
-  data_out.add_data_vector(present_solution,ob);
+  data_out.add_data_vector(present_solution,vorticity);
   data_out.add_data_vector(present_solution,ob1);
   Vector<float> subdomain (triangulation.n_active_cells());
   for (unsigned int i=0; i<subdomain.size(); ++i)

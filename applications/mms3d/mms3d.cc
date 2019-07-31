@@ -48,7 +48,7 @@ void MMS3DNavierStokes<dim>::runMMS_3D()
   this->viscosity_=this->physicalProperties.viscosity;
 
   Timer timer;
-  this->set_initial_condition(this->initialConditionParameters->type, this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type, this->restartParameters.restart);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);

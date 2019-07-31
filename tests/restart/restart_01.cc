@@ -45,7 +45,7 @@ void RestartNavierStokes<dim>::run()
   this->triangulation.clear();
   this->make_cube_grid(0);
 
-  this->set_initial_condition(this->initialConditionParameters->type,true);
+  this->set_initial_condition(this->nsparam.initialCondition->type,true);
 
   double error3 = this->calculate_L2_error();
   deallog << "Error 3 : " << error3 << std::endl;

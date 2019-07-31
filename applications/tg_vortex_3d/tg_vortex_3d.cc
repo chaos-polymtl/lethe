@@ -87,7 +87,7 @@ void TaylorGreenVortex<dim>::run3DTGV()
   this->setup_dofs();
   this->viscosity_=this->physicalProperties.viscosity;
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->initialConditionParameters->type,this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type,this->restartParameters.restart);
 
   double kE = this->calculate_average_KE();
   double enstrophy = this->calculate_average_enstrophy();

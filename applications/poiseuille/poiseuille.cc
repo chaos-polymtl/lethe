@@ -66,7 +66,7 @@ void PeriodicPoiseuille<dim>::run()
   this->exact_solution = new ExactSolutionPoiseuille<dim>;
 
   ConvergenceTable table;
-  this->set_initial_condition(this->initialConditionParameters->type);
+  this->set_initial_condition(this->nsparam.initialCondition->type);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);

@@ -51,7 +51,7 @@ void TaylorGreenVortex<dim>::run2DTGV()
   this->forcing_function = new NoForce<dim>;
   this->viscosity_=this->physicalProperties.viscosity;
   this->exact_solution = new ExactSolutionTGV<dim>(this->viscosity_,0.);
-  this->set_initial_condition(this->initialConditionParameters->type,this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type,this->restartParameters.restart);
 
   Timer timer;
   while(this->simulationControl.integrate())
