@@ -9,7 +9,7 @@ public:
   TaylorGreenVortex(NavierStokesSolverParameters<dim> nsparam, const unsigned int degreeVelocity, const unsigned int degreePressure):
     GLSNavierStokesSolver<dim>(nsparam, degreeVelocity,degreePressure)
   {
-    if (this->restartParameters.restart && this->this_mpi_process==0)
+    if (this->nsparam.restartParameters.restart && this->this_mpi_process==0)
     {
       read_ke();
       read_enstrophy();
@@ -80,18 +80,17 @@ void TaylorGreenVortex<dim>::read_enstrophy()
 template<int dim>
 void TaylorGreenVortex<dim>::run3DTGV()
 {
-  const int initialSize=this->meshParameters.initialRefinement;
+  const int initialSize=this->nsparam.mesh.initialRefinement;
   GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
   this->set_periodicity();
   this->triangulation.refine_global (initialSize);
   this->setup_dofs();
-  this->viscosity_=this->physicalProperties.viscosity;
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->nsparam.initialCondition->type,this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type,this->nsparam.restartParameters.restart);
 
   double kE = this->calculate_average_KE();
   double enstrophy = this->calculate_average_enstrophy();
-  if(this->this_mpi_process==0 && !this->restartParameters.restart)
+  if(this->this_mpi_process==0 && !this->nsparam.restartParameters.restart)
   {
     time.push_back(0.);
     ke_values.push_back(kE);

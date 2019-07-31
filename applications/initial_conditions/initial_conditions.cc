@@ -40,18 +40,18 @@ void InitialConditionsNavierStokes<dim>::run()
 {
   GridIn<dim> grid_in;
   grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->meshParameters.fileName);
+  std::ifstream input_file(this->nsparam.mesh.fileName);
   grid_in.read_msh(input_file);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->nsparam.initialCondition->type,this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type,this->nsparam.restartParameters.restart);
 }
 
 
 template<int dim>
 void InitialConditionsNavierStokes<dim>::runTest()
 {
-  const int initialSize=this->meshParameters.initialRefinement;
+  const int initialSize=this->nsparam.mesh.initialRefinement;
   this->make_cube_grid(initialSize);
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;

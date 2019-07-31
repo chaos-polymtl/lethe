@@ -20,15 +20,14 @@ void MMSUnstructuredNavierStokes<dim>::runMMSUnstructured()
   std::vector<double>                   wallTime;
   GridIn<dim> grid_in;
   grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->meshParameters.fileName);
+  std::ifstream input_file(this->nsparam.mesh.fileName);
   grid_in.read_msh(input_file);
   this->setup_dofs();
   this->exact_solution = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;
-  this->viscosity_=this->physicalProperties.viscosity;
 
   Timer timer;
-  this->set_initial_condition(this->nsparam.initialCondition->type, this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type, this->nsparam.restartParameters.restart);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);
@@ -38,7 +37,7 @@ void MMSUnstructuredNavierStokes<dim>::runMMSUnstructured()
     this->postprocess();
     {
       double L2Error= this->calculate_L2_error();
-      this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+      this->pcout << "L2Error U is : " << std::setprecision(this->nsparam.analyticalSolution.errorPrecision) << L2Error << std::endl;
       ErrorLog.push_back(L2Error);
       wallTime.push_back((timer.wall_time()));
     }

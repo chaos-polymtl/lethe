@@ -17,15 +17,14 @@ void MMSNavierStokes<dim>::run()
 {
   std::vector<double>                   ErrorLog;
   std::vector<double>                   wallTime;
-  const int initialSize=this->meshParameters.initialRefinement;
+  const int initialSize=this->nsparam.mesh.initialRefinement;
   this->make_cube_grid(initialSize);
   this->setup_dofs();
   this->exact_solution = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;
-  this->viscosity_=this->physicalProperties.viscosity;
 
   Timer timer;
-  this->set_initial_condition(this->nsparam.initialCondition->type, this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type, this->nsparam.restartParameters.restart);
   while(this->simulationControl.integrate())
   {
     printTime(this->pcout,this->simulationControl);
@@ -35,7 +34,7 @@ void MMSNavierStokes<dim>::run()
     this->postprocess();
     {
       double L2Error= this->calculate_L2_error();
-      this->pcout << "L2Error U is : " << std::setprecision(this->analyticalSolutionParameters.errorPrecision) << L2Error << std::endl;
+      this->pcout << "L2Error U is : " << std::setprecision(this->nsparam.analyticalSolution.errorPrecision) << L2Error << std::endl;
       ErrorLog.push_back(L2Error);
       wallTime.push_back((timer.wall_time()));
     }

@@ -15,7 +15,7 @@ void VonKarmanNavierStokes<dim>::run()
 {
   GridIn<dim> grid_in;
   grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->meshParameters.fileName);
+  std::ifstream input_file(this->nsparam.mesh.fileName);
   grid_in.read_msh(input_file);
 
 
@@ -26,7 +26,7 @@ void VonKarmanNavierStokes<dim>::run()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->set_initial_condition(this->nsparam.initialCondition->type, this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type, this->nsparam.restartParameters.restart);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);
@@ -42,7 +42,7 @@ void VonKarmanNavierStokes<dim>::runTest()
 {
   GridIn<dim> grid_in;
   grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->meshParameters.fileName);
+  std::ifstream input_file(this->nsparam.mesh.fileName);
   grid_in.read_msh(input_file);
 
 
@@ -53,7 +53,7 @@ void VonKarmanNavierStokes<dim>::runTest()
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
 
-  this->set_initial_condition(this->nsparam.initialCondition->type,this->restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initialCondition->type,this->nsparam.restartParameters.restart);
   while(this->simulationControl.integrate())
     {
       printTime(this->pcout,this->simulationControl);

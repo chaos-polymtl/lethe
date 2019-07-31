@@ -58,7 +58,7 @@ void PeriodicPoiseuille<dim>::run()
 {
   GridIn<dim> grid_in;
   grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->meshParameters.fileName);
+  std::ifstream input_file(this->nsparam.mesh.fileName);
   grid_in.read_msh(input_file);
   this->set_periodicity();
   this->setup_dofs();

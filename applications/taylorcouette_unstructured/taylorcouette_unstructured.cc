@@ -62,14 +62,14 @@ void TaylorCouetteNavierStokes<dim>::run()
 
   GridIn<dim> grid_in;
   grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->meshParameters.fileName);
+  std::ifstream input_file(this->nsparam.mesh.fileName);
   grid_in.read_msh(input_file);
 
   static const SphericalManifold<dim> manifold_description(circleCenter);
   this->triangulation.set_manifold (0, manifold_description);
   this->triangulation.set_all_manifold_ids_on_boundary(0);
 
-  this->triangulation.refine_global(this->meshParameters.initialRefinement);
+  this->triangulation.refine_global(this->nsparam.mesh.initialRefinement);
 
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;

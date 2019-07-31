@@ -66,7 +66,7 @@ void TaylorCouetteNavierStokes<dim>::run()
   this->triangulation.set_manifold (0, manifold_description);
   this->triangulation.set_all_manifold_ids_on_boundary(0);
 
-  this->triangulation.refine_global(this->meshParameters.initialRefinement);
+  this->triangulation.refine_global(this->nsparam.mesh.initialRefinement);
 
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;

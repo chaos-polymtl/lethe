@@ -26,7 +26,7 @@ void RestartNavierStokes<dim>::run()
   this->setup_dofs();
   this->exact_solution = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;
-  this->viscosity_=1;
+  this->nsparam.physicalProperties.viscosity=1.;
 
   printTime(this->pcout,this->simulationControl);
   this->iterate(false);
