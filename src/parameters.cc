@@ -280,9 +280,16 @@ namespace Parameters
                         Patterns::Selection("gmsh|primitive"),
                         "Type of mesh "
                         "Choices are <gmsh|primitive>.");
+
       prm.declare_entry("file name", "none",
                         Patterns::FileName(),
                         "GMSH file name");
+
+      prm.declare_entry("primitive type", "hyper cube",
+                        Patterns::Selection("hyper cube|hyper shell"),
+                        "Type of primitive "
+                        "Choices are <hyper cube|hyper shell>.");
+
       prm.declare_entry("initial refinement", "0",
                         Patterns::Integer(),
                         "Initial refinement of primitive mesh");
@@ -297,10 +304,15 @@ namespace Parameters
       const std::string op = prm.get("type");
       if (op == "gmsh")
         type = gmsh;
-      if (op == "uniform")
+      if (op == "primitive")
         type = primitive;
       fileName      = prm.get("file name");
       initialRefinement = prm.get_integer("initial refinement");
+      const std::string prim_type = prm.get("primitive type");
+      if (op == "hyper cube")
+        primitiveType = hyper_cube;
+      if (op == "hyper shell")
+        primitiveType = hyper_shell;
     }
     prm.leave_subsection();
   }

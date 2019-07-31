@@ -216,6 +216,20 @@ namespace Parameters
     enum Type {gmsh, primitive};
     Type type;
 
+    // Primitive types
+    enum PrimitiveType {hyper_cube, hyper_shell};
+    PrimitiveType primitiveType;
+
+    bool colorize;
+
+    // Parameters for the hyper shell
+    double hs_inner_radius;
+    double hs_outer_radius;
+
+    // Parameters for the hyper cube
+    double hc_left;
+    double hc_right;
+
     // File name of the mesh
     std::string fileName;
 

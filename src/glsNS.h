@@ -2051,7 +2051,40 @@ void GLSNavierStokesSolver<dim>::calculate_torques()
 template<int dim>
 void GLSNavierStokesSolver<dim>::read_mesh()
 {
+  // GMSH input
+  if (nsparam.mesh.type== Parameters::Mesh::gmsh)
+  {
+    GridIn<dim> grid_in;
+    grid_in.attach_triangulation (this->triangulation);
+    std::ifstream input_file(this->nsparam.mesh.fileName);
+    grid_in.read_msh(input_file);
+    this->set_periodicity();
+  }
+  // Primitive input
+  else if (nsparam.mesh.type== Parameters::Mesh::primitive)
+  {
+    const int initialSize=this->nsparam.mesh.initialRefinement;
 
+    if (nsparam.mesh.primitiveType == Parameters::Mesh::hyper_cube)
+    {
+      GridGenerator::hyper_cube (this->triangulation, this->nsparam.mesh.left, this->nsparam.mesh.right,this->nsparam.mesh.colorize);
+    }
+    else if (nsparam.mesh.primitiveType == Parameters::Mesh::hyper_shell)
+    {
+      Point<dim>           circleCenter;
+      if (dim==2) circleCenter = Point<dim>(0,0);
+
+      if (dim==3) circleCenter = Point<dim>(0,0,0);
+
+      GridGenerator::hyper_shell (this->triangulation,
+                                  circleCenter, this->nsparam.mesh.inner_radius, this->nsparam.mesh.outer_radius,
+                                  4, this->nsparam.mesh.colorize);
+    }
+    this->set_periodicity();
+    this->triangulation.refine_global (initialSize);
+  }
+  else
+    throw std::runtime_error("Unsupported mesh type - mesh will not be created");
 }
 
 /*
@@ -2060,10 +2093,7 @@ void GLSNavierStokesSolver<dim>::read_mesh()
 template<int dim>
 void GLSNavierStokesSolver<dim>::solve()
 {
-  const int initialSize=this->nsparam.mesh.initialRefinement;
-  GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
-  this->set_periodicity();
-  this->triangulation.refine_global (initialSize);
+  this->read_mesh();
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(this->nsparam.initialCondition->type,this->nsparam.restartParameters.restart);
