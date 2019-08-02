@@ -1,5 +1,9 @@
-//DEALII INCLUDES
 
+#ifndef LETHE_POSTPROCESSORS_H
+#define LETHE_POSTPROCESSORS_H
+
+
+//DEALII INCLUDES
 // Base
 #include <deal.II/base/tensor.h>
 
@@ -12,6 +16,11 @@
 // STD includes
 #include <vector>
 
+
+
+using namespace dealii;
+
+// Calculates the vorticity within each element using the velocity vector
 template <int dim>
 class vorticity_postprocessor: public DataPostprocessorVector<dim>
 {
@@ -44,6 +53,7 @@ public:
   }
 };
 
+// Calculate the Q criterion within each element
 template <int dim>
 class qcriterion_postprocessor: public DataPostprocessorScalar<dim>
 {
@@ -84,3 +94,5 @@ public:
     }
   }
 };
+
+#endif

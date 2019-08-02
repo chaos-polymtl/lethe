@@ -17,14 +17,13 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
+#ifndef LETHE_BOUNDARYCONDITIONS_H
+#define LETHE_BOUNDARYCONDITIONS_H
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
 
 using namespace dealii;
-
-#ifndef LETHE_BOUNDARYCONDITIONS_H
-#define LETHE_BOUNDARYCONDITIONS_H
 
 namespace BoundaryConditions
 {

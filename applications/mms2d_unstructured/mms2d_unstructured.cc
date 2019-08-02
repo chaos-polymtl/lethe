@@ -18,10 +18,7 @@ void MMSUnstructuredNavierStokes<dim>::runMMSUnstructured()
 {
   std::vector<double>                   ErrorLog;
   std::vector<double>                   wallTime;
-  GridIn<dim> grid_in;
-  grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->nsparam.mesh.fileName);
-  grid_in.read_msh(input_file);
+  this->read_mesh();
   this->setup_dofs();
   this->exact_solution = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;

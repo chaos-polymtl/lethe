@@ -17,13 +17,11 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
+#ifndef LETHE_BDF_H
+#define LETHE_BDF_H
 
 #include <deal.II/lac/vector.h>
 #include <vector>
-
-
-#ifndef LETHE_BDF_H
-#define LETHE_BDF_H
 
 using namespace dealii;
 

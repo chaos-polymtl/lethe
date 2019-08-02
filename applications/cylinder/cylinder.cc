@@ -13,12 +13,7 @@ public:
 template<int dim>
 void VonKarmanNavierStokes<dim>::run()
 {
-  GridIn<dim> grid_in;
-  grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->nsparam.mesh.fileName);
-  grid_in.read_msh(input_file);
-
-
+  this->read_mesh();
   Point<dim,double> circleCenter(8,8);
   static const SphericalManifold<dim> boundary(circleCenter);
   this->triangulation.set_all_manifold_ids_on_boundary(0,0);

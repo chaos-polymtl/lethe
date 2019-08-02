@@ -18,16 +18,14 @@
  */
 
 
+#ifndef LETHE_INITIALCONDITIONS_H
+#define LETHE_INITIALCONDITIONS_H
+
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parsed_function.h>
 #include <deal.II/base/conditional_ostream.h>
-
-
-
-#ifndef LETHE_INITIALCONDITIONS_H
-#define LETHE_INITIALCONDITIONS_H
 
 using namespace dealii;
 

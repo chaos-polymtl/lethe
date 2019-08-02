@@ -285,14 +285,34 @@ namespace Parameters
                         Patterns::FileName(),
                         "GMSH file name");
 
-      prm.declare_entry("primitive type", "hyper cube",
-                        Patterns::Selection("hyper cube|hyper shell"),
+      prm.declare_entry("primitive type", "hyper_cube",
+                        Patterns::Selection("hyper_cube|hyper_shell"),
                         "Type of primitive "
-                        "Choices are <hyper cube|hyper shell>.");
+                        "Choices are <hyper_cube|hyper_shell>.");
 
       prm.declare_entry("initial refinement", "0",
                         Patterns::Integer(),
                         "Initial refinement of primitive mesh");
+
+      prm.declare_entry("hs inner radius", "1",
+                        Patterns::Double(),
+                        "Inner radius for hyper shell");
+
+      prm.declare_entry("hs outer radius", "2",
+                        Patterns::Double(),
+                        "Outer radius for hyper shell");
+
+      prm.declare_entry("hc left", "0",
+                        Patterns::Double(),
+                        "Left position of hyper cube");
+
+      prm.declare_entry("hc right", "1",
+                        Patterns::Double(),
+                        "Right position of hyper cube");
+
+      prm.declare_entry("colorize", "false",
+                        Patterns::Bool(),
+                        "Colorize boundary conditions");
     }
     prm.leave_subsection();
   }
@@ -301,18 +321,31 @@ namespace Parameters
   {
     prm.enter_subsection("mesh");
     {
-      const std::string op = prm.get("type");
-      if (op == "gmsh")
-        type = gmsh;
-      if (op == "primitive")
-        type = primitive;
+      {
+        const std::string op = prm.get("type");
+        if (op == "gmsh")
+          type = gmsh;
+        if (op == "primitive")
+          type = primitive;
+      }
+
       fileName      = prm.get("file name");
+
       initialRefinement = prm.get_integer("initial refinement");
+
       const std::string prim_type = prm.get("primitive type");
-      if (op == "hyper cube")
+      if (prim_type == "hyper_cube")
         primitiveType = hyper_cube;
-      if (op == "hyper shell")
+      else if (prim_type == "hyper_shell")
         primitiveType = hyper_shell;
+      else throw std::runtime_error("Unsupported primitive - Program will abort");
+
+      hc_left     = prm.get_double("hc left");
+      hc_right    = prm.get_double("hc right");
+      hs_inner_radius    = prm.get_double("hs inner radius");
+      hs_outer_radius    = prm.get_double("hs outer radius");
+
+      colorize = prm.get_bool("colorize");
     }
     prm.leave_subsection();
   }

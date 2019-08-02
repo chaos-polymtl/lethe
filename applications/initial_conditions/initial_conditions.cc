@@ -38,10 +38,7 @@ public:
 template<int dim>
 void InitialConditionsNavierStokes<dim>::run()
 {
-  GridIn<dim> grid_in;
-  grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->nsparam.mesh.fileName);
-  grid_in.read_msh(input_file);
+  this->read_mesh();
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(this->nsparam.initialCondition->type,this->nsparam.restartParameters.restart);

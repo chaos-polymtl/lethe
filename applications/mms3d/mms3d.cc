@@ -37,10 +37,9 @@ void MMS3DNavierStokes<dim>::runMMS_3D()
 {
   std::vector<double>                   ErrorLog;
   std::vector<double>                   wallTime;
-  assert(dim==3);
   const int initialSize=this->nsparam.mesh.initialRefinement;
+  this->read_mesh();
 
-  this->make_cube_grid(initialSize);
   this->setup_dofs();
 
   this->exact_solution = new ExactSolutionMMS3D<dim>;

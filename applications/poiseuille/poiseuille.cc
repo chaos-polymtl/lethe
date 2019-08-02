@@ -56,11 +56,7 @@ public:
 template<int dim>
 void PeriodicPoiseuille<dim>::run()
 {
-  GridIn<dim> grid_in;
-  grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->nsparam.mesh.fileName);
-  grid_in.read_msh(input_file);
-  this->set_periodicity();
+  this->read_mesh();
   this->setup_dofs();
   this->forcing_function = new ConstantXForce<dim>;
   this->exact_solution = new ExactSolutionPoiseuille<dim>;

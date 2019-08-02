@@ -17,8 +17,7 @@ void MMSNavierStokes<dim>::run()
 {
   std::vector<double>                   ErrorLog;
   std::vector<double>                   wallTime;
-  const int initialSize=this->nsparam.mesh.initialRefinement;
-  this->make_cube_grid(initialSize);
+  this->read_mesh();
   this->setup_dofs();
   this->exact_solution = new ExactSolutionMMS<dim>;
   this->forcing_function = new MMSSineForcingFunction<dim>;
@@ -44,6 +43,7 @@ void MMSNavierStokes<dim>::run()
   if(this->this_mpi_process==0)
   {
     assert (wallTime.size()==ErrorLog.size());
+    const int initialSize=this->nsparam.mesh.initialRefinement;
     std::ofstream output_file("./L2Error-2D.dat");
     for (unsigned int i=0 ; i < ErrorLog.size() ; ++i)
     {

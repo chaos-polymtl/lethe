@@ -17,14 +17,13 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
+#ifndef LETHE_FORCINGFUNCTIONS_H
+#define LETHE_FORCINGFUNCTIONS_H
 
 #include <deal.II/base/function.h>
 
 // Finally, this is as in previous programs:
 using namespace dealii;
-
-#ifndef LETHE_FORCINGFUNCTIONS_H
-#define LETHE_FORCINGFUNCTIONS_H
 
 template<int dim>
 class MMSSineForcingFunction : public Function<dim>

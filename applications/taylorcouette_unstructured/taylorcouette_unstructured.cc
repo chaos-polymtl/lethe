@@ -60,10 +60,7 @@ void TaylorCouetteNavierStokes<dim>::run()
 
   if (dim==2) circleCenter = Point<dim>(0,0);
 
-  GridIn<dim> grid_in;
-  grid_in.attach_triangulation (this->triangulation);
-  std::ifstream input_file(this->nsparam.mesh.fileName);
-  grid_in.read_msh(input_file);
+  this->read_mesh();
 
   static const SphericalManifold<dim> manifold_description(circleCenter);
   this->triangulation.set_manifold (0, manifold_description);

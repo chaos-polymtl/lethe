@@ -1,7 +1,9 @@
-#include "parameters.h"
 
 #ifndef LETHE_PSDHANDLING_H
 #define LETHE_PSDHANDLING_H
+
+#include "parameters.h"
+
 
 using namespace dealii;
 

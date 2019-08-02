@@ -52,21 +52,9 @@ TaylorCouetteNavierStokes<dim>::TaylorCouetteNavierStokes(NavierStokesSolverPara
 template<int dim>
 void TaylorCouetteNavierStokes<dim>::run()
 {
-  const double inner_radius = 0.25,
-               outer_radius = 1.0;
   Point<dim>           circleCenter;
-
   if (dim==2) circleCenter = Point<dim>(0,0);
-
-  GridGenerator::hyper_shell (this->triangulation,
-                              circleCenter, inner_radius, outer_radius,
-                              4, true);
-
-  static const SphericalManifold<dim> manifold_description(circleCenter);
-  this->triangulation.set_manifold (0, manifold_description);
-  this->triangulation.set_all_manifold_ids_on_boundary(0);
-
-  this->triangulation.refine_global(this->nsparam.mesh.initialRefinement);
+  this->read_mesh();
 
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;

@@ -18,6 +18,9 @@
  */
 
 
+#ifndef LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
+#define LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
+
 #include "exactsolutions.h"
 #include "forcingfunctions.h"
 #include "boundaryconditions.h"
@@ -25,8 +28,7 @@
 #include "parameters.h"
 #include "simulationcontrol.h"
 
-#ifndef LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
-#define LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
+
 
 template <int dim>
 class NavierStokesSolverParameters

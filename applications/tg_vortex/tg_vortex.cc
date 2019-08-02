@@ -43,10 +43,7 @@ void TaylorGreenVortex<dim>::run2DTGV()
   std::vector<double>  ke_values;
   std::vector<double>  timeTaken;
   std::vector<double>  enstrophy_values;
-  const int initialSize=this->nsparam.mesh.initialRefinement;
-  GridGenerator::hyper_cube (this->triangulation, 0, 2.*M_PI,true);
-  this->set_periodicity();
-  this->triangulation.refine_global (initialSize);
+  this->read_mesh();
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
   this->exact_solution = new ExactSolutionTGV<dim>(this->nsparam.physicalProperties.viscosity,0.);

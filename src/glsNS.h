@@ -17,6 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#ifndef LETHE_GLSNS_H
+#define LETHE_GLSNS_H
+
 // Dealii Includes
 
 // Base
@@ -96,10 +99,6 @@
 #include <iostream>
 
 using namespace dealii;
-
-#ifndef LETHE_GLSNS_H
-#define LETHE_GLSNS_H
-
 
 /**
  * A solver class for the Navier-Stokes equation using GLS stabilization
@@ -2067,7 +2066,7 @@ void GLSNavierStokesSolver<dim>::read_mesh()
 
     if (nsparam.mesh.primitiveType == Parameters::Mesh::hyper_cube)
     {
-      GridGenerator::hyper_cube (this->triangulation, this->nsparam.mesh.left, this->nsparam.mesh.right,this->nsparam.mesh.colorize);
+      GridGenerator::hyper_cube (this->triangulation, this->nsparam.mesh.hc_left, this->nsparam.mesh.hc_right,this->nsparam.mesh.colorize);
     }
     else if (nsparam.mesh.primitiveType == Parameters::Mesh::hyper_shell)
     {
@@ -2077,8 +2076,16 @@ void GLSNavierStokesSolver<dim>::read_mesh()
       if (dim==3) circleCenter = Point<dim>(0,0,0);
 
       GridGenerator::hyper_shell (this->triangulation,
-                                  circleCenter, this->nsparam.mesh.inner_radius, this->nsparam.mesh.outer_radius,
+                                  circleCenter, this->nsparam.mesh.hs_inner_radius, this->nsparam.mesh.hs_outer_radius,
                                   4, this->nsparam.mesh.colorize);
+
+      static const SphericalManifold<dim> manifold_description(circleCenter);
+      this->triangulation.set_manifold (0, manifold_description);
+      this->triangulation.set_all_manifold_ids_on_boundary(0);
+    }
+    else
+    {
+      throw std::runtime_error("Unsupported primitive type - mesh will not be created");
     }
     this->set_periodicity();
     this->triangulation.refine_global (initialSize);
