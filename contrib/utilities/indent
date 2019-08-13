@@ -1,0 +1,76 @@
+#!/bin/bash
+## ---------------------------------------------------------------------
+##
+## Copyright (C) 2018 - 2019 by the deal.II authors
+##
+## This file is part of the deal.II library.
+##
+## The deal.II library is free software; you can use it, redistribute
+## it, and/or modify it under the terms of the GNU Lesser General
+## Public License as published by the Free Software Foundation; either
+## version 2.1 of the License, or (at your option) any later version.
+## The full text of the license can be found in the file LICENSE at
+## the top level of the deal.II distribution.
+##
+## ---------------------------------------------------------------------
+
+##---------------------------------------------------------------------
+#
+# This file has adapted from the dealii library to be used within Lethe
+#
+##---------------------------------------------------------------------
+
+#
+# This script does the same thing as contrib/utilities/indent-all but only
+# reformats files which have changed (or have been added but neither
+# staged/committed) since the last merge commit to the master branch.
+#
+# The script needs to be executed as
+#   ./contrib/utilities/indent
+# from the top-level directory of the source tree, or via
+#   make indent
+# from a build directory.
+#
+# The script can be invoked with DEAL_II_CLANG_FORMAT to change
+# the default version of clang-format. For example:
+#   DEAL_II_CLANG_FORMAT=clang-format-6.0 ./contrib/utilities/indent
+# or,
+#   make DEAL_II_CLANG_FORMAT="clang-format-6.0" indent
+#
+# Note: If the script is invoked with REPORT_ONLY=true set,
+#   REPORT_ONLY=true ./contrib/utilities/indent
+# or,
+#   make REPORT_ONLY=true indent
+# then indentation errors will only be reported without any actual file
+# changes.
+#
+
+if [ ! -f contrib/utilities/indent_common.sh ]; then
+  echo "*** This script must be run from the top-level directory of deal.II."
+  exit 1
+fi
+
+source contrib/utilities/indent_common.sh
+
+#
+# Run sanity checks:
+#
+
+checks
+
+#
+# Process all source and header files:
+#
+
+process_changed "tests include source examples" ".*\.(cc|h|cu|cuh)" format_file
+process_changed "source" ".*\.inst.in" format_inst
+
+#
+# Fix permissions and convert to unix line ending if necessary:
+#
+
+process_changed "tests include source examples" \
+  ".*\.(cc|h|cu|cuh|inst.in|output.*|cmake)" fix_permissions
+
+process_changed "tests include source examples" \
+  ".*\.(cc|h|cu|cuh|inst.in|cmake)" dos_to_unix

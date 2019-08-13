@@ -25,7 +25,6 @@
 
 using namespace dealii;
 
-
 /**
  * Calculate the coefficients required for BDF integration of order n
  * from order $n=1$ to order $n=5$.
@@ -33,6 +32,7 @@ using namespace dealii;
  * Could also be determined through recursion on the fly.
  */
 Vector<double> bdf_coefficients(unsigned int order, std::vector<double> dt);
-Vector<double> delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
+Vector<double> delta(unsigned int order, unsigned int n, unsigned int j,
+                     Vector<double> times);
 
 #endif

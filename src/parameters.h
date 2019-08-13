@@ -1,304 +1,286 @@
-#include <deal.II/base/function.h>
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parameter_acceptor.h>
-#include <deal.II/base/parsed_function.h>
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/function.h>
+#include <deal.II/base/parameter_acceptor.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 
 #ifndef LETHE_GLS_PARAMETERS_H
 #define LETHE_GLS_PARAMETERS_H
 
 using namespace dealii;
 
-namespace Parameters
-{
-  struct SimulationControl
-  {
-    // Method used for time progression (steady, unsteady)
-    enum TimeSteppingMethod { steady, bdf1, bdf2, bdf3};
-    TimeSteppingMethod method;
+namespace Parameters {
+struct SimulationControl {
+  // Method used for time progression (steady, unsteady)
+  enum TimeSteppingMethod { steady, bdf1, bdf2, bdf3 };
+  TimeSteppingMethod method;
 
-    // Initial time step
-    double dt;
+  // Initial time step
+  double dt;
 
-    // End time
-    double timeEnd;
+  // End time
+  double timeEnd;
 
-    // Adaptative time stepping
-    bool   adapt;
+  // Adaptative time stepping
+  bool adapt;
 
-    // Max CFL
-    double maxCFL;
+  // Max CFL
+  double maxCFL;
 
-    // BDF startup time scaling
-    double startup_timestep_scaling;
+  // BDF startup time scaling
+  double startup_timestep_scaling;
 
-    // Number of mesh adaptation (steady simulations)
-    unsigned int nbMeshAdapt;
+  // Number of mesh adaptation (steady simulations)
+  unsigned int nbMeshAdapt;
 
-    // Folder for simulation output
-    std::string output_folder;
+  // Folder for simulation output
+  std::string output_folder;
 
-    // Prefix for simulation output
-    std::string output_name;
+  // Prefix for simulation output
+  std::string output_name;
 
-    // Frequency of the output
-    unsigned int outputFrequency;
+  // Frequency of the output
+  unsigned int outputFrequency;
 
-    // Subdivsions of the results in the output
-    unsigned int subdivision;
+  // Subdivsions of the results in the output
+  unsigned int subdivision;
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
+struct PhysicalProperties {
+  // Kinematic viscosity (mu/rho)
+  double viscosity;
 
-  struct PhysicalProperties
-  {
-    // Kinematic viscosity (mu/rho)
-    double viscosity;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+struct Timer {
+  // Time measurement in the simulation. None, at each iteration, only at the
+  // end
+  enum Type { none, iteration, end };
+  Type type;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
+struct AnalyticalSolution {
+  // Residual precision
+  unsigned int errorPrecision;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-  struct Timer
-  {
-    // Time measurement in the simulation. None, at each iteration, only at the end
-    enum Type { none, iteration, end};
-    Type type;
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+struct Forces {
+  // Type of verbosity for the iterative solver
+  enum Verbosity { quiet, verbose };
+  Verbosity verbosity;
 
-  struct AnalyticalSolution
-  {
-    // Residual precision
-    unsigned int errorPrecision;
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  // Enable force post-processing
+  bool calculate_force;
 
-  struct Forces
-  {
-    // Type of verbosity for the iterative solver
-    enum  Verbosity { quiet, verbose };
-    Verbosity verbosity;
+  // Enable torque post-processing
+  bool calculate_torque;
 
-    // Enable force post-processing
-    bool calculate_force;
+  // Frequency of the output
+  unsigned int calculation_frequency;
 
-    // Enable torque post-processing
-    bool calculate_torque;
+  // Frequency of the output
+  unsigned int output_frequency;
 
-    // Frequency of the output
-    unsigned int calculation_frequency;
+  // Output precision
+  unsigned int output_precision;
 
-    // Frequency of the output
-    unsigned int output_frequency;
+  // Display precision
+  unsigned int display_precision;
 
-    // Output precision
-    unsigned int output_precision;
+  // Prefix for simulation output
+  std::string force_output_name;
 
-    // Display precision
-    unsigned int display_precision;
+  // Prefix for the torque output
+  std::string torque_output_name;
 
-    // Prefix for simulation output
-    std::string force_output_name;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // Prefix for the torque output
-    std::string torque_output_name;
+struct FEM {
+  // Interpolation order velocity
+  unsigned int velocityOrder;
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  // Interpolation order pressure
+  unsigned int pressureOrder;
 
-  struct FEM
-  {
-    // Interpolation order velocity
-    unsigned int velocityOrder;
+  // Number of quadrature points
+  unsigned int quadraturePoints;
 
-    // Interpolation order pressure
-    unsigned int pressureOrder;
+  // Apply high order mapping everywhere
+  bool qmapping_all;
 
-    // Number of quadrature points
-    unsigned int quadraturePoints;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // Apply high order mapping everywhere
-    bool qmapping_all;
+struct NonLinearSolver {
+  // Type of verbosity for the iterative solver
+  enum Verbosity { quiet, verbose };
+  Verbosity verbosity;
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  // Tolerance
+  double tolerance;
 
-  struct NonLinearSolver
-  {
-    // Type of verbosity for the iterative solver
-    enum  Verbosity { quiet, verbose };
-    Verbosity verbosity;
+  // Maximal number of iterations for the Newton solver
+  unsigned int maxIterations;
 
-    // Tolerance
-    double tolerance;
+  // Residual precision
+  unsigned int display_precision;
 
-    // Maximal number of iterations for the Newton solver
-    unsigned int maxIterations;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // Residual precision
-    unsigned int display_precision;
+struct LinearSolver {
+  // Type of linear solver
+  enum SolverType { gmres, bicgstab, amg };
+  SolverType solver;
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  // Type of verbosity for the iterative solver
+  enum Verbosity { quiet, verbose };
+  Verbosity verbosity;
 
+  // Residual precision
+  unsigned int residual_precision;
 
-  struct LinearSolver
-  {
-    // Type of linear solver
-    enum SolverType { gmres, bicgstab, amg};
-    SolverType solver;
+  // Relative residual of the iterative solver
+  double relative_residual;
 
-    // Type of verbosity for the iterative solver
-    enum  Verbosity { quiet, verbose };
-    Verbosity verbosity;
+  // Minimum residual of the iterative solver
+  double minimum_residual;
 
-    // Residual precision
-    unsigned int residual_precision;
+  // Maximum number of iterations
+  int max_iterations;
 
-    // Relative residual of the iterative solver
-    double relative_residual;
+  // ILU or ILUT fill
+  double ilu_precond_fill;
 
-    // Minimum residual of the iterative solver
-    double minimum_residual;
+  // ILU or ILUT absolute tolerance
+  double ilu_precond_atol;
 
-    // Maximum number of iterations
-    int max_iterations;
+  // ILU or ILUT relative tolerance
+  double ilu_precond_rtol;
 
-    // ILU or ILUT fill
-    double ilu_precond_fill;
+  // ILU or ILUT fill
+  double amg_precond_ilu_fill;
 
-    // ILU or ILUT absolute tolerance
-    double ilu_precond_atol;
+  // ILU or ILUT absolute tolerance
+  double amg_precond_ilu_atol;
 
-    // ILU or ILUT relative tolerance
-    double ilu_precond_rtol;
+  // ILU or ILUT relative tolerance
+  double amg_precond_ilu_rtol;
 
-    // ILU or ILUT fill
-    double amg_precond_ilu_fill;
+  // AMG aggregation threshold
+  double amg_aggregation_threshold;
 
-    // ILU or ILUT absolute tolerance
-    double amg_precond_ilu_atol;
+  // AMG number of cycles
+  unsigned int amg_n_cycles;
 
-    // ILU or ILUT relative tolerance
-    double amg_precond_ilu_rtol;
+  // AMG W_cycle
+  bool amg_w_cycles;
 
-    // AMG aggregation threshold
-    double amg_aggregation_threshold;
+  // AMG Smoother sweeps
+  unsigned int amg_smoother_sweeps;
 
-    // AMG number of cycles
-    unsigned int amg_n_cycles;
+  // AMG Smoother overalp
+  unsigned int amg_smoother_overlap;
 
-    // AMG W_cycle
-    bool amg_w_cycles;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // AMG Smoother sweeps
-    unsigned int amg_smoother_sweeps;
+struct Mesh {
+  // GMSH or dealii primitive
+  enum Type { gmsh, primitive };
+  Type type;
 
-    // AMG Smoother overalp
-    unsigned int amg_smoother_overlap;
+  // Primitive types
+  enum PrimitiveType { hyper_cube, hyper_shell };
+  PrimitiveType primitiveType;
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  bool colorize;
 
-  struct Mesh
-  {
-    // GMSH or dealii primitive
-    enum Type {gmsh, primitive};
-    Type type;
+  // Parameters for the hyper shell
+  double hs_inner_radius;
+  double hs_outer_radius;
 
-    // Primitive types
-    enum PrimitiveType {hyper_cube, hyper_shell};
-    PrimitiveType primitiveType;
+  // Parameters for the hyper cube
+  double hc_left;
+  double hc_right;
 
-    bool colorize;
+  // File name of the mesh
+  std::string fileName;
 
-    // Parameters for the hyper shell
-    double hs_inner_radius;
-    double hs_outer_radius;
+  // Initial refinement level of primitive mesh
+  unsigned int initialRefinement;
 
-    // Parameters for the hyper cube
-    double hc_left;
-    double hc_right;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // File name of the mesh
-    std::string fileName;
+struct MeshAdaptation {
 
-    // Initial refinement level of primitive mesh
-    unsigned int initialRefinement;
+  // Type of mesh adaptation
+  enum Type { none, uniform, kelly };
+  Type type;
 
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
+  enum Variable { velocity, pressure };
+  Variable variable;
 
+  // Decision factor for KELLY refinement (number or fraction)
+  enum FractionType { number, fraction };
+  FractionType fractionType;
 
+  // Maximum number of elements
+  unsigned int maxNbElements;
 
-  struct MeshAdaptation
-  {
+  // Maximum refinement level
+  unsigned int maxRefLevel;
 
-    // Type of mesh adaptation
-    enum Type {none, uniform,kelly};
-    Type type;
+  // Maximum refinement level
+  unsigned int minRefLevel;
 
-    enum Variable {velocity, pressure};
-    Variable variable;
+  // Refinement after frequency iter
+  unsigned int frequency;
 
-    // Decision factor for KELLY refinement (number or fraction)
-    enum FractionType {number,fraction};
-    FractionType fractionType;
+  // Refinement fractioni havent used ILUT much)
+  double fractionRefinement;
 
-    // Maximum number of elements
-    unsigned int maxNbElements;
+  // Coarsening fraction
+  double fractionCoarsening;
 
-    // Maximum refinement level
-    unsigned int maxRefLevel;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // Maximum refinement level
-    unsigned int minRefLevel;
+struct Testing {
+  // Time measurement in the simulation. None, at each iteration, only at the
+  // end
+  bool enabled;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // Refinement after frequency iter
-    unsigned int frequency;
+struct Restart {
+  // Time measurement in the simulation. None, at each iteration, only at the
+  // end
+  std::string filename;
+  bool restart;
+  bool checkpoint;
+  unsigned int frequency;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-    // Refinement fractioni havent used ILUT much)
-    double fractionRefinement;
-
-    // Coarsening fraction
-    double fractionCoarsening;
-
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
-
-  struct Testing
-  {
-    // Time measurement in the simulation. None, at each iteration, only at the end
-    bool enabled;
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
-
-  struct Restart
-  {
-    // Time measurement in the simulation. None, at each iteration, only at the end
-    std::string filename;
-    bool restart;
-    bool checkpoint;
-    unsigned int frequency;
-    static void declare_parameters (ParameterHandler &prm);
-    void parse_parameters (ParameterHandler &prm);
-  };
-
-
-
-
-}
+} // namespace Parameters
 #endif
