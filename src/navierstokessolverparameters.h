@@ -27,24 +27,28 @@
 #include "parameters.h"
 #include "simulationcontrol.h"
 
-template <int dim> class NavierStokesSolverParameters {
+template <int dim>
+class NavierStokesSolverParameters
+{
 public:
-  Parameters::Testing test;
-  Parameters::LinearSolver linearSolver;
-  Parameters::NonLinearSolver nonLinearSolver;
-  Parameters::MeshAdaptation meshAdaptation;
-  Parameters::Mesh mesh;
-  Parameters::PhysicalProperties physicalProperties;
-  Parameters::Timer timer;
-  Parameters::FEM femParameters;
-  Parameters::Forces forcesParameters;
-  Parameters::AnalyticalSolution analyticalSolution;
-  Parameters::Restart restartParameters;
+  Parameters::Testing                           test;
+  Parameters::LinearSolver                      linearSolver;
+  Parameters::NonLinearSolver                   nonLinearSolver;
+  Parameters::MeshAdaptation                    meshAdaptation;
+  Parameters::Mesh                              mesh;
+  Parameters::PhysicalProperties                physicalProperties;
+  Parameters::Timer                             timer;
+  Parameters::FEM                               femParameters;
+  Parameters::Forces                            forcesParameters;
+  Parameters::AnalyticalSolution                analyticalSolution;
+  Parameters::Restart                           restartParameters;
   BoundaryConditions::NSBoundaryConditions<dim> boundaryConditions;
-  Parameters::InitialConditions<dim> *initialCondition;
-  SimulationControl simulationControl;
+  Parameters::InitialConditions<dim> *          initialCondition;
+  SimulationControl                             simulationControl;
 
-  void declare(ParameterHandler &prm) {
+  void
+  declare(ParameterHandler &prm)
+  {
     initialCondition = new Parameters::InitialConditions<dim>;
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::PhysicalProperties::declare_parameters(prm);
@@ -62,7 +66,9 @@ public:
     Parameters::Testing::declare_parameters(prm);
   }
 
-  void parse(ParameterHandler &prm) {
+  void
+  parse(ParameterHandler &prm)
+  {
     test.parse_parameters(prm);
     linearSolver.parse_parameters(prm);
     nonLinearSolver.parse_parameters(prm);

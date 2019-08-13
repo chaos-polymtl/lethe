@@ -28,68 +28,87 @@
 
 using namespace dealii;
 
-namespace Parameters {
-
-// Type of initial conditions
-enum InitialConditionType { none, L2projection, viscous, nodal };
-
-template <int dim> class InitialConditions {
-public:
-  InitialConditions() : uvwp(dim + 1) {}
-
-  InitialConditionType type;
-
-  // Velocity components
-  Functions::ParsedFunction<dim> uvwp;
-
-  // Artificial viscosity
-  double viscosity;
-
-  void declare_parameters(ParameterHandler &prm);
-  void parse_parameters(ParameterHandler &prm);
-};
-
-template <int dim>
-void InitialConditions<dim>::declare_parameters(ParameterHandler &prm) {
-  prm.enter_subsection("initial conditions");
+namespace Parameters
+{
+  // Type of initial conditions
+  enum InitialConditionType
   {
-    prm.declare_entry("type", "nodal",
-                      Patterns::Selection("L2projection|viscous|nodal"),
-                      "Type of initial condition"
-                      "Choices are <L2projection|viscous|nodal>.");
-    prm.enter_subsection("uvwp");
-    uvwp.declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0; 0");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0; 0");
-    prm.leave_subsection();
+    none,
+    L2projection,
+    viscous,
+    nodal
+  };
 
-    prm.declare_entry("viscosity", "1", Patterns::Double(),
-                      "viscosity for viscous initial conditions");
-  }
-  prm.leave_subsection();
-}
-
-template <int dim>
-void InitialConditions<dim>::parse_parameters(ParameterHandler &prm) {
-  prm.enter_subsection("initial conditions");
+  template <int dim>
+  class InitialConditions
   {
-    const std::string op = prm.get("type");
-    if (op == "L2projection")
-      type = L2projection;
-    else if (op == "viscous")
-      type = viscous;
-    else if (op == "nodal")
-      type = nodal;
+  public:
+    InitialConditions()
+      : uvwp(dim + 1)
+    {}
 
-    viscosity = prm.get_double("viscosity");
-    prm.enter_subsection("uvwp");
-    uvwp.parse_parameters(prm);
+    InitialConditionType type;
+
+    // Velocity components
+    Functions::ParsedFunction<dim> uvwp;
+
+    // Artificial viscosity
+    double viscosity;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  template <int dim>
+  void
+  InitialConditions<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("initial conditions");
+    {
+      prm.declare_entry("type",
+                        "nodal",
+                        Patterns::Selection("L2projection|viscous|nodal"),
+                        "Type of initial condition"
+                        "Choices are <L2projection|viscous|nodal>.");
+      prm.enter_subsection("uvwp");
+      uvwp.declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0; 0");
+      prm.leave_subsection();
+
+      prm.declare_entry("viscosity",
+                        "1",
+                        Patterns::Double(),
+                        "viscosity for viscous initial conditions");
+    }
     prm.leave_subsection();
   }
-  prm.leave_subsection();
-}
+
+  template <int dim>
+  void
+  InitialConditions<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("initial conditions");
+    {
+      const std::string op = prm.get("type");
+      if (op == "L2projection")
+        type = L2projection;
+      else if (op == "viscous")
+        type = viscous;
+      else if (op == "nodal")
+        type = nodal;
+
+      viscosity = prm.get_double("viscosity");
+      prm.enter_subsection("uvwp");
+      uvwp.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
 } // namespace Parameters
 
 #endif

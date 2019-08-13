@@ -21,6 +21,7 @@
 #define LETHE_BDF_H
 
 #include <deal.II/lac/vector.h>
+
 #include <vector>
 
 using namespace dealii;
@@ -31,8 +32,9 @@ using namespace dealii;
  * The formulas are derived analytically, but the coefficients
  * Could also be determined through recursion on the fly.
  */
-Vector<double> bdf_coefficients(unsigned int order, std::vector<double> dt);
-Vector<double> delta(unsigned int order, unsigned int n, unsigned int j,
-                     Vector<double> times);
+Vector<double>
+bdf_coefficients(unsigned int order, std::vector<double> dt);
+Vector<double>
+delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
 
 #endif
