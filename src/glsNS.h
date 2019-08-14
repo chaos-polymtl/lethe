@@ -24,6 +24,7 @@
 
 // Base
 #include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/index_set.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -86,8 +87,7 @@
 // Lethe Includes
 #include "bdf.h"
 #include "boundaryconditions.h"
-#include "exactsolutions.h"
-#include "forcingfunctions.h"
+#include "manifolds.h"
 #include "navierstokessolverparameters.h"
 #include "parameters.h"
 #include "postprocessors.h"
@@ -119,11 +119,14 @@ public:
                         const unsigned int                degreePressure);
   ~GLSNavierStokesSolver();
 
-protected:
   void
   solve();
+
+protected:
   void
   read_mesh();
+  void
+  create_manifolds();
   void
   refine_mesh();
   void
@@ -138,7 +141,10 @@ protected:
   set_initial_condition(Parameters::InitialConditionType initial_condition_type,
                         bool                             restart = false);
   void
-  postprocess();
+  postprocess(bool firstIter);
+  void
+  finish_simulation();
+
   void
   finish_time_step();
   void
@@ -175,7 +181,7 @@ private:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>
   void
-  assembleGLS(const bool initial_step);
+  assembleGLS();
 
   void
   newton_iteration(const bool is_initial_step);
@@ -196,9 +202,9 @@ private:
   calculate_CFL();
 
   void
-  assemble_system(const bool initial_step);
+  assemble_system();
   void
-  assemble_rhs(const bool initial_step);
+  assemble_rhs();
 
   /**
    * Interface for the solver for the linear system of equations
@@ -300,6 +306,13 @@ private:
   // Force analysis
   std::vector<TableHandler> forces_tables;
   std::vector<TableHandler> torques_tables;
+
+  // Other post-processing variables
+  TableHandler enstrophy_table;
+  TableHandler kinetic_energy_table;
+
+  // Convergence Analysis
+  ConvergenceTable table;
 };
 
 // Constructor for class GLSNavierStokesSolver
@@ -337,10 +350,26 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
   if (nsparam.timer.type == Parameters::Timer::none)
     computing_timer.disable_output();
 
+  // Pre-allocate the force tables to match the number of boundary conditions
   forces_.resize(nsparam.boundaryConditions.size);
   torques_.resize(nsparam.boundaryConditions.size);
   forces_tables.resize(nsparam.boundaryConditions.size);
   torques_tables.resize(nsparam.boundaryConditions.size);
+
+  // Get the exact solution from the parser
+  exact_solution = &nsparam.analyticalSolution->velocity;
+
+  // If there is a forcing function, get it from the parser
+  if (nsparam.sourceTerm->source_term())
+    {
+      forcing_function = &nsparam.sourceTerm->source;
+    }
+  else
+    {
+      forcing_function = new NoForce<dim>;
+    }
+
+
 
   pcout << "Running on " << Utilities::MPI::n_mpi_processes(mpi_communicator)
         << " MPI rank(s)..." << std::endl;
@@ -349,15 +378,6 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
 template <int dim>
 GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver()
 {
-  if (nsparam.forcesParameters.calculate_force)
-    {
-      write_output_forces();
-    }
-
-  if (nsparam.forcesParameters.calculate_torque)
-    {
-      write_output_torques();
-    }
   dof_handler.clear();
 }
 
@@ -557,7 +577,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   DoFTools::make_sparsity_pattern(dof_handler, dsp, nonzero_constraints, false);
   SparsityTools::distribute_sparsity_pattern(
     dsp,
-    dof_handler.n_locally_owned_dofs_per_processor(),
+    dof_handler.compute_n_locally_owned_dofs_per_processor(),
     mpi_communicator,
     locally_relevant_dofs);
   system_matrix.reinit(locally_owned_dofs,
@@ -578,7 +598,7 @@ template <int dim>
 template <bool                                              assemble_matrix,
           Parameters::SimulationControl::TimeSteppingMethod scheme>
 void
-GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step)
+GLSNavierStokesSolver<dim>::assembleGLS()
 {
   if (assemble_matrix)
     system_matrix = 0;
@@ -669,6 +689,7 @@ GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step)
             evaluation_point, present_pressure_gradients);
           fe_values[velocities].get_function_laplacians(
             evaluation_point, present_velocity_laplacians);
+
           if (forcing_function)
             forcing_function->vector_value_list(
               fe_values.get_quadrature_points(), rhs_force);
@@ -792,9 +813,6 @@ GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step)
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
-                  //                  const unsigned int component_i =
-                  //                  fe.system_to_component_index(i).first;
-
                   double present_velocity_divergence =
                     trace(present_velocity_gradients[q]);
                   local_rhs(i) +=
@@ -845,8 +863,10 @@ GLSNavierStokesSolver<dim>::assembleGLS(const bool initial_step)
             }
 
           cell->get_dof_indices(local_dof_indices);
-          const AffineConstraints<double> &constraints_used =
-            initial_step ? nonzero_constraints : zero_constraints;
+          // The non-linear solver assumes that the nonzero constraints have
+          // already been applied to the solution
+          const AffineConstraints<double> &constraints_used = zero_constraints;
+          // initial_step ? nonzero_constraints : zero_constraints;
           if (assemble_matrix)
             {
               constraints_used.distribute_local_to_global(local_matrix,
@@ -890,27 +910,28 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       solve_system(true, 1e-15, 1e-15);
       present_solution = newton_update;
       finish_time_step();
-      postprocess();
+      postprocess(true);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
       set_nodal_values();
       finish_time_step();
-      postprocess();
+      postprocess(true);
     }
 
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
+      set_nodal_values();
       double viscosity = this->nsparam.physicalProperties.viscosity;
       this->nsparam.physicalProperties.viscosity =
         nsparam.initialCondition->viscosity;
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         simulationControl.getMethod();
       simulationControl.setMethod(Parameters::SimulationControl::steady);
-      newton_iteration(true);
+      newton_iteration(false);
       simulationControl.setMethod(previousControl);
       finish_time_step();
-      postprocess();
+      postprocess(true);
       simulationControl.setMethod(previousControl);
       this->nsparam.physicalProperties.viscosity = viscosity;
     }
@@ -1173,35 +1194,35 @@ GLSNavierStokesSolver<dim>::set_nodal_values()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_system(const bool initial_step)
+GLSNavierStokesSolver<dim>::assemble_system()
 {
   TimerOutput::Scope t(computing_timer, "assemble_system");
 
   if (simulationControl.getMethod() == Parameters::SimulationControl::bdf1)
-    assembleGLS<true, Parameters::SimulationControl::bdf1>(initial_step);
+    assembleGLS<true, Parameters::SimulationControl::bdf1>();
   else if (simulationControl.getMethod() == Parameters::SimulationControl::bdf2)
-    assembleGLS<true, Parameters::SimulationControl::bdf2>(initial_step);
+    assembleGLS<true, Parameters::SimulationControl::bdf2>();
   else if (simulationControl.getMethod() == Parameters::SimulationControl::bdf3)
-    assembleGLS<true, Parameters::SimulationControl::bdf3>(initial_step);
+    assembleGLS<true, Parameters::SimulationControl::bdf3>();
   else if (simulationControl.getMethod() ==
            Parameters::SimulationControl::steady)
-    assembleGLS<true, Parameters::SimulationControl::steady>(initial_step);
+    assembleGLS<true, Parameters::SimulationControl::steady>();
 }
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_rhs(const bool initial_step)
+GLSNavierStokesSolver<dim>::assemble_rhs()
 {
   TimerOutput::Scope t(computing_timer, "assemble_rhs");
 
   if (simulationControl.getMethod() == Parameters::SimulationControl::bdf1)
-    assembleGLS<false, Parameters::SimulationControl::bdf1>(initial_step);
+    assembleGLS<false, Parameters::SimulationControl::bdf1>();
   else if (simulationControl.getMethod() == Parameters::SimulationControl::bdf2)
-    assembleGLS<false, Parameters::SimulationControl::bdf2>(initial_step);
+    assembleGLS<false, Parameters::SimulationControl::bdf2>();
   else if (simulationControl.getMethod() == Parameters::SimulationControl::bdf3)
-    assembleGLS<false, Parameters::SimulationControl::bdf3>(initial_step);
+    assembleGLS<false, Parameters::SimulationControl::bdf3>();
   else if (simulationControl.getMethod() ==
            Parameters::SimulationControl::steady)
-    assembleGLS<false, Parameters::SimulationControl::steady>(initial_step);
+    assembleGLS<false, Parameters::SimulationControl::steady>();
 }
 
 template <int dim>
@@ -1232,7 +1253,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (nsparam.linearSolver.verbosity != Parameters::LinearSolver::quiet)
+  if (nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       pcout << "  -Tolerance of iterative solver is : "
             << std::setprecision(nsparam.linearSolver.residual_precision)
@@ -1264,7 +1285,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
                system_rhs,
                preconditioner);
 
-  if (nsparam.linearSolver.verbosity != Parameters::LinearSolver::quiet)
+  if (nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       pcout << "  -Iterative solver took : " << solver_control.last_step()
             << " steps " << std::endl;
@@ -1286,7 +1307,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
     initial_step ? nonzero_constraints : zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-  if (nsparam.linearSolver.verbosity != Parameters::LinearSolver::quiet)
+  if (nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       pcout << "  -Tolerance of iterative solver is : "
             << std::setprecision(nsparam.linearSolver.residual_precision)
@@ -1318,7 +1339,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
                system_rhs,
                preconditioner);
 
-  if (nsparam.linearSolver.verbosity != Parameters::LinearSolver::quiet)
+  if (nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       pcout << "  -Iterative solver took : " << solver_control.last_step()
             << " steps " << std::endl;
@@ -1340,7 +1361,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-  if (nsparam.linearSolver.verbosity != Parameters::LinearSolver::quiet)
+  if (nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       pcout << "  -Tolerance of iterative solver is : "
             << std::setprecision(nsparam.linearSolver.residual_precision)
@@ -1417,7 +1438,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
                system_rhs,
                preconditioner);
 
-  if (nsparam.linearSolver.verbosity != Parameters::LinearSolver::quiet)
+  if (nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       pcout << "  -Iterative solver took : " << solver_control.last_step()
             << " steps " << std::endl;
@@ -1464,7 +1485,8 @@ GLSNavierStokesSolver<dim>::refine_mesh_Kelly()
         estimated_error_per_cell,
         fe.component_mask(pressure));
     }
-  else if (nsparam.meshAdaptation.variable == Parameters::MeshAdaptation::velocity)
+  else if (nsparam.meshAdaptation.variable ==
+           Parameters::MeshAdaptation::velocity)
     {
       KellyErrorEstimator<dim>::estimate(
         mapping,
@@ -1485,7 +1507,7 @@ GLSNavierStokesSolver<dim>::refine_mesh_Kelly()
       nsparam.meshAdaptation.maxNbElements);
 
   else if (nsparam.meshAdaptation.fractionType ==
-      Parameters::MeshAdaptation::fraction)
+           Parameters::MeshAdaptation::fraction)
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
       triangulation,
       estimated_error_per_cell,
@@ -1609,112 +1631,49 @@ GLSNavierStokesSolver<dim>::newton_iteration(const bool is_initial_step)
     unsigned int outer_iteration = 0;
     last_res                     = 1.0;
     current_res                  = 1.0;
-    while ((first_step || (current_res > nsparam.nonLinearSolver.tolerance)) &&
+    while ((current_res > nsparam.nonLinearSolver.tolerance) &&
            outer_iteration < nsparam.nonLinearSolver.maxIterations)
       {
-        if (first_step)
+        evaluation_point = present_solution;
+        assemble_system();
+        if (outer_iteration == 0)
           {
-            evaluation_point = present_solution; // local_evaluation_point;
-            assemble_system(first_step);
-            current_res = system_rhs.l2_norm();
-            if (nsparam.nonLinearSolver.verbosity !=
-                nsparam.nonLinearSolver.quiet)
-              pcout << "Initial Newton iteration: " << outer_iteration
-                    << "  - Residual:  "
-                    << std::setprecision(
-                         nsparam.nonLinearSolver.display_precision)
-                    << current_res << std::endl;
-            solve_system(first_step,
-                         nsparam.linearSolver.relative_residual,
-                         nsparam.linearSolver.minimum_residual);
-            local_evaluation_point = newton_update;
-            nonzero_constraints.distribute(local_evaluation_point);
-            evaluation_point = local_evaluation_point;
-            present_solution = evaluation_point;
-            first_step       = false;
-            assemble_rhs(first_step);
             current_res = system_rhs.l2_norm();
             last_res    = current_res;
           }
-        else
+        if (nsparam.nonLinearSolver.verbosity != Parameters::quiet)
+          pcout << "Newton iteration: " << outer_iteration
+                << "  - Residual:  " << current_res << std::endl;
+        solve_system(first_step,
+                     nsparam.linearSolver.relative_residual,
+                     nsparam.linearSolver.minimum_residual);
+
+        for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
           {
-            evaluation_point = present_solution;
-            assemble_system(first_step);
-            if (outer_iteration == 0)
-              {
-                current_res = system_rhs.l2_norm();
-                last_res    = current_res;
-              }
-            if (nsparam.nonLinearSolver.verbosity !=
-                nsparam.nonLinearSolver.quiet)
-              pcout << "Newton iteration: " << outer_iteration
-                    << "  - Residual:  " << current_res << std::endl;
-            solve_system(first_step,
-                         nsparam.linearSolver.relative_residual,
-                         nsparam.linearSolver.minimum_residual);
-            for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
-              {
-                local_evaluation_point = present_solution;
-                local_evaluation_point.add(alpha, newton_update);
-                nonzero_constraints.distribute(local_evaluation_point);
-                evaluation_point = local_evaluation_point;
-                assemble_rhs(first_step);
-                current_res = system_rhs.l2_norm();
-                if (nsparam.nonLinearSolver.verbosity !=
-                    nsparam.nonLinearSolver.quiet)
-                  pcout << "\t\talpha = " << std::setw(6) << alpha
-                        << std::setw(0) << " res = "
-                        << std::setprecision(
-                             nsparam.nonLinearSolver.display_precision)
-                        << current_res << std::endl;
-                if (current_res < 0.9 * last_res ||
-                    last_res < nsparam.nonLinearSolver.tolerance)
-                  break;
-              }
-            {
-              present_solution = evaluation_point;
-              last_res         = current_res;
-            }
+            local_evaluation_point = present_solution;
+            local_evaluation_point.add(alpha, newton_update);
+            nonzero_constraints.distribute(local_evaluation_point);
+            evaluation_point = local_evaluation_point;
+            assemble_rhs();
+            current_res = system_rhs.l2_norm();
+            if (nsparam.nonLinearSolver.verbosity != Parameters::quiet)
+              pcout << "\t\talpha = " << std::setw(6) << alpha << std::setw(0)
+                    << " res = "
+                    << std::setprecision(
+                         nsparam.nonLinearSolver.display_precision)
+                    << current_res << std::endl;
+            if (current_res < 0.9 * last_res ||
+                last_res < nsparam.nonLinearSolver.tolerance)
+              break;
           }
+        present_solution = evaluation_point;
+        last_res         = current_res;
         ++outer_iteration;
       }
   }
 }
 
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::postprocess()
-{
-  if (simulationControl.isOutputIteration())
-    write_output_results(simulationControl.getOutputFolder(),
-                         simulationControl.getOuputName(),
-                         simulationControl.getIter(),
-                         simulationControl.getTime());
 
-  if (nsparam.forcesParameters.calculate_force)
-    {
-      if (simulationControl.getIter() %
-            nsparam.forcesParameters.calculation_frequency ==
-          0)
-        calculate_forces();
-      if (simulationControl.getIter() %
-            nsparam.forcesParameters.output_frequency ==
-          0)
-        write_output_forces();
-    }
-
-  if (nsparam.forcesParameters.calculate_torque)
-    {
-      if (simulationControl.getIter() %
-            nsparam.forcesParameters.calculation_frequency ==
-          0)
-        calculate_torques();
-      if (simulationControl.getIter() %
-            nsparam.forcesParameters.output_frequency ==
-          0)
-        write_output_torques();
-    }
-}
 
 template <int dim>
 void
@@ -1919,6 +1878,7 @@ GLSNavierStokesSolver<dim>::calculate_L2_error()
   std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
   std::vector<double>         local_pressure_values(n_q_points);
 
+
   double l2errorU = 0.;
 
   // loop over elements
@@ -2070,14 +2030,10 @@ GLSNavierStokesSolver<dim>::calculate_average_enstrophy()
           fe_values.reinit(cell);
 
           fe_values[velocities].get_function_gradients(
-            evaluation_point, present_velocity_gradients);
+            present_solution, present_velocity_gradients);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              //        en +=
-              //        0.5*(present_velocity_curl[q]*present_velocity_curl[q])*fe_values.JxW(q)
-              //        / globalVolume_;
-
               // Find the values of gradient of ux and uy (the finite element
               // solution) at the quadrature points
               double ux_y = present_velocity_gradients[q][0][1];
@@ -2186,7 +2142,7 @@ GLSNavierStokesSolver<dim>::calculate_forces()
       forces_[boundary_id] = Utilities::MPI::sum(force, mpi_communicator);
     }
 
-  if (nsparam.forcesParameters.verbosity == Parameters::Forces::verbose &&
+  if (nsparam.forcesParameters.verbosity == Parameters::verbose &&
       this_mpi_process == 0)
     {
       std::cout << std::endl;
@@ -2340,7 +2296,7 @@ GLSNavierStokesSolver<dim>::calculate_torques()
       torques_[boundary_id] = Utilities::MPI::sum(torque, mpi_communicator);
     }
 
-  if (nsparam.forcesParameters.verbosity == nsparam.forcesParameters.verbose &&
+  if (nsparam.forcesParameters.verbosity == Parameters::verbose &&
       this_mpi_process == 0)
     {
       pcout << std::endl;
@@ -2433,11 +2389,6 @@ GLSNavierStokesSolver<dim>::read_mesh()
                                      this->nsparam.mesh.hs_outer_radius,
                                      4,
                                      this->nsparam.mesh.colorize);
-
-          static const SphericalManifold<dim> manifold_description(
-            circleCenter);
-          this->triangulation.set_manifold(0, manifold_description);
-          this->triangulation.set_all_manifold_ids_on_boundary(0);
         }
       else
         {
@@ -2453,26 +2404,178 @@ GLSNavierStokesSolver<dim>::read_mesh()
 }
 
 /*
- * Generic CFD Solver application that is generally appropriate for most CFD
- * problems
+ * Attaches manifold to the boundaries of the mesh
+ */
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::create_manifolds()
+{
+  Parameters::Manifolds manifolds = nsparam.manifoldsParameters;
+
+  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
+    {
+      if (manifolds.types[i] == Parameters::Manifolds::spherical)
+        {
+          Point<dim> circleCenter;
+          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
+          static const SphericalManifold<dim> manifold_description(
+            circleCenter);
+          triangulation.set_manifold(manifolds.id[i], manifold_description);
+          triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
+                                                         manifolds.id[i]);
+        }
+      else if (manifolds.types[i] == Parameters::Manifolds::none)
+        {}
+      else
+        throw std::runtime_error("Unsupported manifolds type");
+    }
+}
+
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::postprocess(bool firstIter)
+{
+  if (simulationControl.isOutputIteration())
+    write_output_results(simulationControl.getOutputFolder(),
+                         simulationControl.getOuputName(),
+                         simulationControl.getIter(),
+                         simulationControl.getTime());
+
+  if (nsparam.postProcessingParameters.calculate_enstrophy)
+    {
+      double enstrophy = this->calculate_average_enstrophy();
+      enstrophy_table.add_value("time", simulationControl.getTime());
+      enstrophy_table.add_value("enstrophy", enstrophy);
+      if (nsparam.postProcessingParameters.verbosity == Parameters::verbose)
+        {
+          this->pcout << "Enstrophy  : " << enstrophy << std::endl;
+        }
+    }
+
+  if (nsparam.postProcessingParameters.calculate_kinetic_energy)
+    {
+      double kE = this->calculate_average_KE();
+      kinetic_energy_table.add_value("time", simulationControl.getTime());
+      kinetic_energy_table.add_value("kinetic-energy", kE);
+      if (nsparam.postProcessingParameters.verbosity == Parameters::verbose)
+        {
+          this->pcout << "Kinetic energy : " << kE << std::endl;
+        }
+    }
+
+  if (!firstIter)
+    {
+      // Calculate forces on the boundary conditions
+      if (nsparam.forcesParameters.calculate_force)
+        {
+          if (simulationControl.getIter() %
+                nsparam.forcesParameters.calculation_frequency ==
+              0)
+            calculate_forces();
+          if (simulationControl.getIter() %
+                nsparam.forcesParameters.output_frequency ==
+              0)
+            write_output_forces();
+        }
+
+      // Calculate torques on the boundary conditions
+      if (nsparam.forcesParameters.calculate_torque)
+        {
+          if (simulationControl.getIter() %
+                nsparam.forcesParameters.calculation_frequency ==
+              0)
+            calculate_torques();
+          if (simulationControl.getIter() %
+                nsparam.forcesParameters.output_frequency ==
+              0)
+            write_output_torques();
+        }
+
+      // Calculate error with respect to analytical solution
+      if (nsparam.analyticalSolution->calculate_error())
+        {
+          // Update the time of the exact solution to the actual time
+          exact_solution->set_time(simulationControl.getTime());
+          const double error = this->calculate_L2_error();
+          if (simulationControl.getMethod() ==
+              Parameters::SimulationControl::steady)
+            {
+              table.add_value("cells", triangulation.n_global_active_cells());
+              table.add_value("error", error);
+            }
+          else
+            {
+              table.add_value("time", simulationControl.getTime());
+              table.add_value("error", error);
+            }
+          if (nsparam.analyticalSolution->verbosity == Parameters::verbose)
+            {
+              this->pcout << "L2 error : " << error << std::endl;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::finish_simulation()
+{
+  if (nsparam.forcesParameters.calculate_force)
+    {
+      write_output_forces();
+    }
+
+  if (nsparam.forcesParameters.calculate_torque)
+    {
+      write_output_torques();
+    }
+  if (nsparam.analyticalSolution->calculate_error())
+    {
+      if (simulationControl.getMethod() ==
+          Parameters::SimulationControl::steady)
+        {
+          table.omit_column_from_convergence_rate_evaluation("cells");
+          table.evaluate_all_convergence_rates(
+            ConvergenceTable::reduction_rate_log2);
+        }
+      table.set_scientific("error", true);
+
+      if (this->this_mpi_process == 0)
+        {
+          table.write_text(std::cout);
+        }
+    }
+}
+
+/*
+ * Generic CFD Solver application
+ * Handles the majority of the cases for the GLS-NS solver
  */
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve()
 {
   this->read_mesh();
+  this->create_manifolds();
+
   this->setup_dofs();
-  this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(this->nsparam.initialCondition->type,
                               this->nsparam.restartParameters.restart);
 
   while (this->simulationControl.integrate())
     {
-      this->refine_mesh();
+      printTime(this->pcout, this->simulationControl);
+      if (!this->simulationControl.firstIter())
+        {
+          this->refine_mesh();
+        }
       this->iterate(this->simulationControl.firstIter());
-      this->postprocess();
+      this->postprocess(false);
       this->finish_time_step();
     }
+
+  this->finish_simulation();
 }
 
 #endif

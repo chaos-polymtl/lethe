@@ -11,6 +11,12 @@ using namespace dealii;
 
 namespace Parameters
 {
+  enum Verbosity
+  {
+    quiet,
+    verbose
+  };
+
   struct SimulationControl
   {
     // Method used for time progression (steady, unsteady)
@@ -87,24 +93,10 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-  struct AnalyticalSolution
-  {
-    // Residual precision
-    unsigned int errorPrecision;
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  };
-
   struct Forces
   {
     // Type of verbosity for the iterative solver
-    enum Verbosity
-    {
-      quiet,
-      verbose
-    };
+
     Verbosity verbosity;
 
     // Enable force post-processing
@@ -137,6 +129,35 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
+  struct PostProcessing
+  {
+    Verbosity verbosity;
+
+    // Enable force post-processing
+    bool calculate_kinetic_energy;
+
+    // Enable torque post-processing
+    bool calculate_enstrophy;
+
+    // Frequency of the output
+    unsigned int calculation_frequency;
+
+    // Frequency of the output
+    unsigned int output_frequency;
+
+    // Prefix for kinectic energy output
+    std::string kinetic_energy_output_name;
+
+    // Prefix for the enstrophy output
+    std::string enstrophy_output_name;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   struct FEM
   {
     // Interpolation order velocity
@@ -159,12 +180,6 @@ namespace Parameters
 
   struct NonLinearSolver
   {
-    // Type of verbosity for the iterative solver
-    enum Verbosity
-    {
-      quiet,
-      verbose
-    };
     Verbosity verbosity;
 
     // Tolerance
@@ -193,12 +208,6 @@ namespace Parameters
     };
     SolverType solver;
 
-    // Type of verbosity for the iterative solver
-    enum Verbosity
-    {
-      quiet,
-      verbose
-    };
     Verbosity verbosity;
 
     // Residual precision

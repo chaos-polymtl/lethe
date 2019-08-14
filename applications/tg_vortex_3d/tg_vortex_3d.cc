@@ -114,7 +114,7 @@ TaylorGreenVortex<dim>::run3DTGV()
       timer.start();
       this->refine_mesh();
       this->iterate(this->simulationControl.firstIter());
-      this->postprocess();
+      this->postprocess(false);
 
       // Post-processing for Kinetic enegery and Enstrophy
       {

@@ -20,49 +20,63 @@
 #ifndef LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
 #define LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
 
+#include "analyticalsolutions.h"
 #include "boundaryconditions.h"
-#include "exactsolutions.h"
-#include "forcingfunctions.h"
 #include "initialconditions.h"
+#include "manifolds.h"
 #include "parameters.h"
 #include "simulationcontrol.h"
+#include "sourceterms.h"
 
 template <int dim>
 class NavierStokesSolverParameters
 {
 public:
-  Parameters::Testing                           test;
-  Parameters::LinearSolver                      linearSolver;
-  Parameters::NonLinearSolver                   nonLinearSolver;
-  Parameters::MeshAdaptation                    meshAdaptation;
-  Parameters::Mesh                              mesh;
-  Parameters::PhysicalProperties                physicalProperties;
-  Parameters::Timer                             timer;
-  Parameters::FEM                               femParameters;
-  Parameters::Forces                            forcesParameters;
-  Parameters::AnalyticalSolution                analyticalSolution;
-  Parameters::Restart                           restartParameters;
-  BoundaryConditions::NSBoundaryConditions<dim> boundaryConditions;
-  Parameters::InitialConditions<dim> *          initialCondition;
-  SimulationControl                             simulationControl;
+  Parameters::Testing                             test;
+  Parameters::LinearSolver                        linearSolver;
+  Parameters::NonLinearSolver                     nonLinearSolver;
+  Parameters::MeshAdaptation                      meshAdaptation;
+  Parameters::Mesh                                mesh;
+  Parameters::PhysicalProperties                  physicalProperties;
+  Parameters::Timer                               timer;
+  Parameters::FEM                                 femParameters;
+  Parameters::Forces                              forcesParameters;
+  Parameters::PostProcessing                      postProcessingParameters;
+  Parameters::Restart                             restartParameters;
+  Parameters::Manifolds                           manifoldsParameters;
+  BoundaryConditions::NSBoundaryConditions<dim>   boundaryConditions;
+  Parameters::InitialConditions<dim> *            initialCondition;
+  AnalyticalSolutions::NSAnalyticalSolution<dim> *analyticalSolution;
+  SourceTerms::NSSourceTerm<dim> *                sourceTerm;
+
+  SimulationControl simulationControl;
 
   void
   declare(ParameterHandler &prm)
   {
-    initialCondition = new Parameters::InitialConditions<dim>;
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::PhysicalProperties::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
     boundaryConditions.declare_parameters(prm);
+
+    initialCondition = new Parameters::InitialConditions<dim>;
     initialCondition->declare_parameters(prm);
+
     Parameters::FEM::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
     Parameters::NonLinearSolver::declare_parameters(prm);
     Parameters::LinearSolver::declare_parameters(prm);
-    Parameters::AnalyticalSolution::declare_parameters(prm);
+    Parameters::PostProcessing::declare_parameters(prm);
+    manifoldsParameters.declare_parameters(prm);
+
+    analyticalSolution = new AnalyticalSolutions::NSAnalyticalSolution<dim>;
+    analyticalSolution->declare_parameters(prm);
+
+    sourceTerm = new SourceTerms::NSSourceTerm<dim>;
+    sourceTerm->declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
   }
 
@@ -78,10 +92,13 @@ public:
     timer.parse_parameters(prm);
     femParameters.parse_parameters(prm);
     forcesParameters.parse_parameters(prm);
-    analyticalSolution.parse_parameters(prm);
+    postProcessingParameters.parse_parameters(prm);
     restartParameters.parse_parameters(prm);
     boundaryConditions.parse_parameters(prm);
+    manifoldsParameters.parse_parameters(prm);
     initialCondition->parse_parameters(prm);
+    analyticalSolution->parse_parameters(prm);
+    sourceTerm->parse_parameters(prm);
     simulationControl.initialize(prm);
   }
 };

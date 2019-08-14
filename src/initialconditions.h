@@ -26,6 +26,9 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
+// TODO : Refactor so the class itself is not a pointer, but contains a pointer
+//        to a function. This would be a lot more coherent...
+
 using namespace dealii;
 
 namespace Parameters

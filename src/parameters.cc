@@ -247,24 +247,60 @@ namespace Parameters
   }
 
   void
-  AnalyticalSolution::declare_parameters(ParameterHandler &prm)
+  PostProcessing::declare_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("analytical solution");
+    prm.enter_subsection("post-processing");
     {
-      prm.declare_entry("error precision",
-                        "3",
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the post-processing values should be printed "
+        "Choices are <quiet|verbose>.");
+      prm.declare_entry("calculate kinetic energy",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of total kinetic energy");
+      prm.declare_entry("calculate enstrophy",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of total enstrophy");
+      prm.declare_entry("kinetic energy name",
+                        "kinetic_energy",
+                        Patterns::FileName(),
+                        "File output force prefix");
+      prm.declare_entry("enstrophy name",
+                        "enstrophy",
+                        Patterns::FileName(),
+                        "File output force prefix");
+      prm.declare_entry("calculation frequency",
+                        "1",
                         Patterns::Integer(),
-                        "Number of digits displayed when showing residuals");
+                        "Calculation frequency");
+      prm.declare_entry("output frequency",
+                        "1",
+                        Patterns::Integer(),
+                        "Output frequency");
     }
     prm.leave_subsection();
   }
 
   void
-  AnalyticalSolution::parse_parameters(ParameterHandler &prm)
+  PostProcessing::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("analytical solution");
+    prm.enter_subsection("post-processing");
     {
-      errorPrecision = prm.get_integer("error precision");
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = verbose;
+      if (op == "quiet")
+        verbosity = quiet;
+      calculate_kinetic_energy   = prm.get_bool("calculate kinetic energy");
+      calculate_enstrophy        = prm.get_bool("calculate enstrophy");
+      kinetic_energy_output_name = prm.get("kinetic energy name");
+      enstrophy_output_name      = prm.get("enstrophy name");
+      calculation_frequency      = prm.get_integer("calculation frequency");
+      output_frequency           = prm.get_integer("output frequency");
     }
     prm.leave_subsection();
   }
@@ -573,7 +609,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Maximum refinement level");
       prm.declare_entry("min refinement level",
-                        "1",
+                        "0",
                         Patterns::Integer(),
                         "Minimum refinement level");
       prm.declare_entry("frequency",

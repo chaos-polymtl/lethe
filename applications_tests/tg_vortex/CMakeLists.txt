@@ -1,2 +1,0 @@
-SET(TEST_TARGET tg_vortex)
-DEAL_II_PICKUP_TESTS()

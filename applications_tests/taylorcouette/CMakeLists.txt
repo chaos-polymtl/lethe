@@ -1,2 +1,0 @@
-SET(TEST_TARGET taylorcouette)
-DEAL_II_PICKUP_TESTS()
