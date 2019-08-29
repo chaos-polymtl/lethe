@@ -60,10 +60,17 @@ namespace AnalyticalSolutions
       return enable;
     }
 
+    std::string
+    get_filename()
+    {
+      return filename;
+    }
+
     Parameters::Verbosity verbosity;
 
   protected:
-    bool enable;
+    bool        enable;
+    std::string filename;
   };
 
   template <int dim>
@@ -82,6 +89,12 @@ namespace AnalyticalSolutions
       Patterns::Selection("quiet|verbose"),
       "State whether from the post-processing values should be printed "
       "Choices are <quiet|verbose>.");
+
+    prm.declare_entry(
+      "filename",
+      "L2Error",
+      Patterns::FileName(),
+      "File name for the output for the L2Error table with respect to time or mesh ");
     prm.leave_subsection();
   }
 
@@ -91,6 +104,7 @@ namespace AnalyticalSolutions
   {
     prm.enter_subsection("analytical solution");
     enable               = prm.get_bool("enable");
+    filename             = prm.get("filename");
     const std::string op = prm.get("verbosity");
     if (op == "verbose")
       verbosity = Parameters::verbose;
