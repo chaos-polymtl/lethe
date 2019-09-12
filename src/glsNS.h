@@ -550,8 +550,8 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                                   false);
   SparsityTools::distribute_sparsity_pattern(
     dsp,
-    dof_handler.n_locally_owned_dofs_per_processor(),
-    mpi_communicator,
+    this->dof_handler.n_locally_owned_dofs_per_processor(),
+    this->mpi_communicator,
     locally_relevant_dofs);
   system_matrix.reinit(locally_owned_dofs,
                        locally_owned_dofs,
