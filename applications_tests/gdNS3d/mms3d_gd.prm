@@ -29,8 +29,8 @@ end
 subsection mesh
     set type                 = primitive
     set primitive type       = hyper_cube
-    set hc left              = -1
-    set hc right             = 1
+    set arg1                 = -1
+    set arg2                 = 1
     set initial refinement   = 2
 end
 

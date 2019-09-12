@@ -75,8 +75,8 @@ end
 subsection mesh
     set type                 = primitive
     set primitive type       = hyper_cube
-    set hc left              = 0
-    set hc right             = 6.28318530718
+    set arg1                 = 0
+    set arg2                 = 6.28318530718
     set colorize             = true
     set initial refinement   = 5                        # initial mesh refinement
 end

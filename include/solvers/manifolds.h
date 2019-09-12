@@ -33,14 +33,15 @@ namespace Parameters
     enum ManifoldType
     {
       none,
-      spherical
+      spherical,
+      cylindrical
     };
 
     // ID of boundary condition
     std::vector<unsigned int> id;
 
     // List of boundary type for each number
-    std::vector<ManifoldType> types;
+    std::vector<ManifoldType> types; 
 
     // Arguments of manifold
     std::vector<double> arg1;
@@ -48,6 +49,7 @@ namespace Parameters
     std::vector<double> arg3;
     std::vector<double> arg4;
     std::vector<double> arg5;
+    std::vector<double> arg6;
 
     // Number of boundary conditions
     unsigned int size;

@@ -275,19 +275,19 @@ namespace Parameters
     enum PrimitiveType
     {
       hyper_cube,
-      hyper_shell
+      hyper_shell,
+      cylinder
     };
     PrimitiveType primitiveType;
 
     bool colorize;
 
-    // Parameters for the hyper shell
-    double hs_inner_radius;
-    double hs_outer_radius;
-
-    // Parameters for the hyper cube
-    double hc_left;
-    double hc_right;
+    double arg1;
+    double arg2;
+    double arg3;
+    double arg4;
+    double arg5;
+    double arg6;
 
     // File name of the mesh
     std::string fileName;

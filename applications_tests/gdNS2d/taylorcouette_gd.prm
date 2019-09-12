@@ -62,8 +62,11 @@ end
 subsection mesh
     set type                 = primitive
     set primitive type       = hyper_shell
-    set hs inner radius      = 0.25
-    set hs outer radius      = 1
+    set arg1      = 0
+    set arg2      = 0
+    set arg3      = 0
+    set arg4      = 0.25
+    set arg5      = 1.
     set colorize             = true
     set initial refinement   = 2
 end

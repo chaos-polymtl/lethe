@@ -7,9 +7,9 @@ namespace Parameters
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|spherical"),
+                      Patterns::Selection("none|spherical|cylindrical"),
                       "Type of manifold description"
-                      "Choices are <none|spherical>.");
+                      "Choices are <none|spherical|cylindrical>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -36,6 +36,10 @@ namespace Parameters
                       "0",
                       Patterns::Double(),
                       "Argument of construction no. 5");
+    prm.declare_entry("arg6",
+                      "0",
+                      Patterns::Double(),
+                      "Argument of construction no. 6");
   }
 
   void
@@ -46,19 +50,28 @@ namespace Parameters
       types[i_bc] = none;
     else if (op == "spherical")
       types[i_bc] = spherical;
+    else if (op == "cylindrical")
+      types[i_bc] = cylindrical;
 
     id[i_bc] = prm.get_integer("id");
+    arg1[i_bc] = prm.get_double("arg1");
+    arg2[i_bc] = prm.get_double("arg2");
+    arg3[i_bc] = prm.get_double("arg3");
+    arg4[i_bc] = prm.get_double("arg4");
+    arg5[i_bc] = prm.get_double("arg5");
+    arg6[i_bc] = prm.get_double("arg6");
   }
 
   void
   Manifolds::declare_parameters(ParameterHandler &prm)
   {
-    max_size = 5;
+    max_size = 6;
     arg1.resize(max_size);
     arg2.resize(max_size);
     arg3.resize(max_size);
     arg4.resize(max_size);
     arg5.resize(max_size);
+    arg6.resize(max_size);
 
     prm.enter_subsection("manifolds");
     {

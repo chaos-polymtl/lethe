@@ -1078,8 +1078,8 @@ NavierStokesBase<dim, VectorType>::read_mesh()
       if (this->nsparam.mesh.primitiveType == Parameters::Mesh::hyper_cube)
         {
           GridGenerator::hyper_cube(this->triangulation,
-                                    this->nsparam.mesh.hc_left,
-                                    this->nsparam.mesh.hc_right,
+                                    this->nsparam.mesh.arg1,
+                                    this->nsparam.mesh.arg2,
                                     this->nsparam.mesh.colorize);
         }
       else if (this->nsparam.mesh.primitiveType ==
@@ -1087,17 +1087,27 @@ NavierStokesBase<dim, VectorType>::read_mesh()
         {
           Point<dim> circleCenter;
           if (dim == 2)
-            circleCenter = Point<dim>(0, 0);
+            circleCenter = Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2);
 
           if (dim == 3)
-            circleCenter = Point<dim>(0, 0, 0);
+            circleCenter = Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2, this->nsparam.mesh.arg3);
 
           GridGenerator::hyper_shell(this->triangulation,
                                      circleCenter,
-                                     this->nsparam.mesh.hs_inner_radius,
-                                     this->nsparam.mesh.hs_outer_radius,
+                                     this->nsparam.mesh.arg4,
+                                     this->nsparam.mesh.arg5,
                                      4,
                                      this->nsparam.mesh.colorize);
+        }
+      else if (nsparam.mesh.primitiveType == Parameters::Mesh::cylinder)
+        {
+          Point<dim> center;
+          if (dim != 3) throw std::runtime_error("Cylinder primitive can only be used in 3D");
+          center = Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2, this->nsparam.mesh.arg3);
+
+          GridGenerator::cylinder(this->triangulation,
+                                  this->nsparam.mesh.arg4,
+                                  this->nsparam.mesh.arg5);
         }
       else
         {
@@ -1134,6 +1144,36 @@ NavierStokesBase<dim, VectorType>::create_manifolds()
           this->triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
                                                                manifolds.id[i]);
         }
+
+      else if (manifolds.types[i] == Parameters::Manifolds::cylindrical)
+        {
+          if (dim!=3) throw (std::runtime_error("Cylindrical manifold can only be used in a 3D solver"));
+          Tensor<1,dim> direction;
+          Point<dim> point_on_axis;
+          direction[0]=manifolds.arg1[i];
+          direction[1]=manifolds.arg2[i];
+          direction[2]=manifolds.arg3[i];
+          point_on_axis =Point<dim>(manifolds.arg4[i],manifolds.arg5[i],manifolds.arg6[i]);
+          static const CylindricalManifold<dim> manifold_description(direction,
+                                               point_on_axis);
+          this->triangulation.set_manifold(manifolds.id[i],
+                                           manifold_description);
+
+//          this->triangulation.set_all_manifold_ids(manifolds.id[i]);
+          this->triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],manifolds.id[i]);
+
+//          this->pcout << "direction[0]: "      <<direction[0]<< std::endl;
+//          this->pcout << "direction[1]: "      <<direction[1]<< std::endl;
+//          this->pcout << "direction[2]: "      <<direction[2]<< std::endl;
+//          this->pcout << "manifolds.id[i]:   " <<manifolds.id[i]  << std::endl;
+//          this->pcout << "manifolds.arg1[i]: " <<manifolds.arg1[i]<< std::endl;
+//          this->pcout << "manifolds.arg2[i]: " <<manifolds.arg2[i]<< std::endl;
+//          this->pcout << "manifolds.arg3[i]: " <<manifolds.arg3[i]<< std::endl;
+//          this->pcout << "manifolds.arg4[i]: " <<manifolds.arg4[i]<< std::endl;
+//          this->pcout << "manifolds.arg5[i]: " <<manifolds.arg5[i]<< std::endl;
+//          this->pcout << "manifolds.arg6[i]: " <<manifolds.arg6[i]<< std::endl;
+//          this->pcout << "i  : "               << i << std::endl;
+       }
       else if (manifolds.types[i] == Parameters::Manifolds::none)
         {}
       else

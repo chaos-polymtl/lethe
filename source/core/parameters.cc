@@ -367,34 +367,40 @@ namespace Parameters
 
       prm.declare_entry("primitive type",
                         "hyper_cube",
-                        Patterns::Selection("hyper_cube|hyper_shell"),
+                        Patterns::Selection("hyper_cube|hyper_shell|cylinder"),
                         "Type of primitive "
-                        "Choices are <hyper_cube|hyper_shell>.");
+                        "Choices are <hyper_cube|hyper_shell|cylinder>.");
 
       prm.declare_entry("initial refinement",
                         "0",
                         Patterns::Integer(),
                         "Initial refinement of primitive mesh");
 
-      prm.declare_entry("hs inner radius",
-                        "1",
+      prm.declare_entry("arg1",
+                        "-1",
                         Patterns::Double(),
-                        "Inner radius for hyper shell");
+                        "Primitive argument 1");
+      prm.declare_entry("arg2",
+                        "-1",
+                        Patterns::Double(),
+                        "Primitive argument 2");
+      prm.declare_entry("arg3",
+                        "-1",
+                        Patterns::Double(),
+                        "Primitive argument 3");
+      prm.declare_entry("arg4",
+                        "-1",
+                        Patterns::Double(),
+                        "Primitive argument 4");
+      prm.declare_entry("arg5",
+                        "-1",
+                        Patterns::Double(),
+                        "Primitive argument 5");
 
-      prm.declare_entry("hs outer radius",
-                        "2",
+      prm.declare_entry("arg6",
+                        "-1",
                         Patterns::Double(),
-                        "Outer radius for hyper shell");
-
-      prm.declare_entry("hc left",
-                        "0",
-                        Patterns::Double(),
-                        "Left position of hyper cube");
-
-      prm.declare_entry("hc right",
-                        "1",
-                        Patterns::Double(),
-                        "Right position of hyper cube");
+                        "Primitive argument 6");
 
       prm.declare_entry("colorize",
                         "false",
@@ -426,13 +432,17 @@ namespace Parameters
         primitiveType = hyper_cube;
       else if (prim_type == "hyper_shell")
         primitiveType = hyper_shell;
+      else if (prim_type == "cylinder")
+        primitiveType = cylinder;
       else
         throw std::runtime_error("Unsupported primitive - Program will abort");
 
-      hc_left         = prm.get_double("hc left");
-      hc_right        = prm.get_double("hc right");
-      hs_inner_radius = prm.get_double("hs inner radius");
-      hs_outer_radius = prm.get_double("hs outer radius");
+      arg1=prm.get_double("arg1");
+      arg2=prm.get_double("arg2");
+      arg3=prm.get_double("arg3");
+      arg4=prm.get_double("arg4");
+      arg5=prm.get_double("arg5");
+      arg6=prm.get_double("arg6");
 
       colorize = prm.get_bool("colorize");
     }
