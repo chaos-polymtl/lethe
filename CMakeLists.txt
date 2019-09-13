@@ -22,6 +22,7 @@ ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(applications)
 ADD_SUBDIRECTORY(tests)
 ADD_SUBDIRECTORY(applications_tests)
+ADD_SUBDIRECTORY(prototypes)
 
 
 
