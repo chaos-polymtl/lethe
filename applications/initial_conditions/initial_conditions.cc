@@ -59,7 +59,7 @@ InitialConditionsNavierStokes<dim>::runTest()
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;
   this->set_initial_condition(Parameters::L2projection);
-  double error_L2projection = this->calculate_L2_error();
+  double error_L2projection = this->calculate_L2_error(this->present_solution);
   if (error_L2projection < 1e-9)
     {
       this->pcout << "The L2projection initial condition is OK" << std::endl;
@@ -70,7 +70,7 @@ InitialConditionsNavierStokes<dim>::runTest()
     }
 
   this->set_initial_condition(Parameters::nodal);
-  double error_nodal = this->calculate_L2_error();
+  double error_nodal = this->calculate_L2_error(this->present_solution);
   if (error_nodal < 1e-9)
     {
       this->pcout << "The nodal initial condition is OK" << std::endl;

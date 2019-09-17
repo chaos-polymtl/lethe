@@ -90,12 +90,12 @@ RestartNavierStokes<dim>::run()
   printTime(this->pcout, this->simulationControl);
   this->iterate(false);
   this->postprocess(false);
-  double error1 = this->calculate_L2_error();
+  double error1 = this->calculate_L2_error(this->present_solution);
   deallog << "Error 1 : " << error1 << std::endl;
   this->finish_time_step();
 
   this->set_solution_vector(0.);
-  double error2 = this->calculate_L2_error();
+  double error2 = this->calculate_L2_error(this->present_solution);
 
   deallog << "Error 2 : " << error2 << std::endl;
   if (error2 < error1)
@@ -107,7 +107,7 @@ RestartNavierStokes<dim>::run()
 
   this->set_initial_condition(this->nsparam.initialCondition->type, true);
 
-  double error3 = this->calculate_L2_error();
+  double error3 = this->calculate_L2_error(this->present_solution);
   deallog << "Error 3 : " << error3 << std::endl;
   if (!approximatelyEqual(error1, error3, 1e-10))
     std::runtime_error("Reloaded solution is not the same");

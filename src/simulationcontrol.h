@@ -84,23 +84,23 @@ public:
     return dt;
   }
   double
-  getTime()
+  getTime() const
   {
     return time;
   }
   double
-  getEndTime()
+  getEndTime() const
   {
     return endTime;
   }
 
   unsigned int
-  getIter()
+  getIter() const
   {
     return iter;
   }
   bool
-  firstIter()
+  firstIter() const
   {
     return iter == 1;
   }
