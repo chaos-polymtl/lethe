@@ -88,6 +88,7 @@
 #include <core/parameters.h>
 #include <core/pvdhandler.h>
 #include <core/simulationcontrol.h>
+
 #include "boundaryconditions.h"
 #include "manifolds.h"
 #include "navierstokessolverparameters.h"

@@ -38,7 +38,7 @@
 export DEAL_II_CLANG_FORMAT="${DEAL_II_CLANG_FORMAT:-clang-format}"
 
 checks() {
-  if test ! -d src -o ! -d tests  ; then
+  if test ! -d include -o ! -d tests  ; then
     echo "*** This script must be run from the top-level directory of Lethe."
     exit 1
   fi

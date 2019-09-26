@@ -22,6 +22,7 @@
 
 #include <core/parameters.h>
 #include <core/simulationcontrol.h>
+
 #include "analyticalsolutions.h"
 #include "boundaryconditions.h"
 #include "initialconditions.h"

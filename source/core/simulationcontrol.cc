@@ -1,7 +1,8 @@
-#include "core/parameters.h"
 #include "core/simulationcontrol.h"
 
 #include <fstream>
+
+#include "core/parameters.h"
 
 void
 printTime(ConditionalOStream pcout, SimulationControl control)

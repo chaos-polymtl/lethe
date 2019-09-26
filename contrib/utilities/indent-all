@@ -66,15 +66,15 @@ checks
 # Process all source and header files:
 #
 
-process "tests src applications applications_tests" ".*\.(cc|h|cu|cuh)" format_file
-process "src" ".*\.inst.in" format_inst
+process "tests include source applications applications_tests" ".*\.(cc|h|cu|cuh)" format_file
+#process "src" ".*\.inst.in" format_inst
 
 #
 # Fix permissions and convert to unix line ending if necessary:
 #
 
-process "tests src applications applications_tests" \
+process "tests include source applications applications_tests" \
   ".*\.(cc|h|cu|cuh|inst.in|output.*|cmake)" fix_permissions
 
-process "tests src applications applications_tests" \
+process "tests include source applications applications_tests" \
   ".*\.(cc|h|cu|cuh|inst.in|cmake)" dos_to_unix
