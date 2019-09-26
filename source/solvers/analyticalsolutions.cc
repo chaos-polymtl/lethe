@@ -17,9 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "glsNS.h"
+#include "solvers/analyticalsolutions.h"
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging
-template class GLSNavierStokesSolver<2>;
-template class GLSNavierStokesSolver<3>;
+template class AnalyticalSolutions::NSAnalyticalSolution<2>;
+template class AnalyticalSolutions::NSAnalyticalSolution<3>;

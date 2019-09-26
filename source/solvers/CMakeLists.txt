@@ -1,9 +1,6 @@
-##
-#  CMake script for the step-6 tutorial program:
-##
 
 # Set the name of the project and target:
-SET(TARGET "protype_template")
+SET(TARGET "lethe-solvers")
 
 # Declare all source files the target consists of. Here, this is only
 # the one step-X.cc file, but as you expand your project you may wish
@@ -17,33 +14,15 @@ SET(TARGET "protype_template")
 # page of the documentation.
 
 FILE(GLOB_RECURSE TARGET_SRC *.cc)
-FILE(GLOB_RECURSE TARGET_INC *.h)
+FILE(GLOB_RECURSE TARGET_INC ${CMAKE_SOURCE_DIR}/include/core/*.h)
+FILE(GLOB_RECURSE TARGET_INC ${CMAKE_SOURCE_DIR}/include/solvers/*.h)
 SET(TARGET_SRC ${TARGET_SRC}  ${TARGET_INC}) 
-
-
-#SET(TARGET_SRC
-#  ${TARGET}.cc
-#  )
 
 # Usually, you will not need to modify anything beyond this point...
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
-
-FIND_PACKAGE(deal.II 9.1.0 QUIET
-  HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
+ADD_LIBRARY(${TARGET}
+  ${TARGET_SRC}
   )
-IF(NOT ${deal.II_FOUND})
-  MESSAGE(FATAL_ERROR "\n"
-    "*** Could not locate a (sufficiently recent) version of deal.II. ***\n\n"
-    "You may want to either pass a flag -DDEAL_II_DIR=/path/to/deal.II to cmake\n"
-    "or set an environment variable \"DEAL_II_DIR\" that contains this path."
-    )
-ENDIF()
-
-INCLUDE_DIRECTORIES(
-  lethe
-  ${CMAKE_SOURCE_DIR}/src/
-  )
-ADD_EXECUTABLE(${TARGET} ${TARGET_SRC})
 DEAL_II_SETUP_TARGET(${TARGET})
-TARGET_LINK_LIBRARIES(${TARGET} lethe-core lethe-solvers)
+install(TARGETS lethe-solvers ARCHIVE DESTINATION lib)
+

@@ -17,7 +17,10 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "navierstokessolverparameters.h"
+#include "solvers/initialconditions.h"
 
-template class NavierStokesSolverParameters<2>;
-template class NavierStokesSolverParameters<3>;
+namespace Parameters
+{
+  extern template class InitialConditions<2>;
+  extern template class InitialConditions<3>;
+} // namespace Parameters

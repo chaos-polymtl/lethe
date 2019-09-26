@@ -6,10 +6,10 @@ SET(TARGET "simulationcontrol_01")
 
 INCLUDE_DIRECTORIES(
   lethe
-  ${CMAKE_SOURCE_DIR}/src/
+  ${CMAKE_SOURCE_DIR}/include
   )
 ADD_EXECUTABLE(simulationcontrol_01 simulationcontrol_01.cc)
 DEAL_II_SETUP_TARGET(simulationcontrol_01)
-TARGET_LINK_LIBRARIES(simulationcontrol_01 lethe)
+TARGET_LINK_LIBRARIES(simulationcontrol_01 lethe-core lethe-solvers)
 add_test( "SimulationControl" simulationcontrol_01)
 

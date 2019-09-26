@@ -1,5 +1,5 @@
-#include "glsNS.h"
-#include "parameters.h"
+#include "solvers/glsNS.h"
+#include "core/parameters.h"
 
 template <int dim>
 class ExactInitialSolution : public Function<dim>

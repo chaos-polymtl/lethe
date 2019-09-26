@@ -1,7 +1,7 @@
 // check the read and write of simulationcontrol
 
 #include "../tests.h"
-#include "bdf.h"
+#include "core/bdf.h"
 
 int
 main(int argc, char *argv[])

@@ -1,4 +1,4 @@
-#include "glsNS.h"
+#include "solvers/glsNS.h"
 
 int
 main(int argc, char *argv[])

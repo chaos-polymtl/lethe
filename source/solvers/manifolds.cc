@@ -1,4 +1,4 @@
-#include "manifolds.h"
+#include "solvers/manifolds.h"
 
 namespace Parameters
 {

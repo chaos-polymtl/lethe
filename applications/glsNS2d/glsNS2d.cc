@@ -1,6 +1,6 @@
 #include <deal.II/base/convergence_table.h>
 
-#include "glsNS.h"
+#include "solvers/glsNS.h"
 
 int
 main(int argc, char *argv[])

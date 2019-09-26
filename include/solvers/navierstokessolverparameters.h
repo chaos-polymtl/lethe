@@ -20,12 +20,12 @@
 #ifndef LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
 #define LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
 
+#include <core/parameters.h>
+#include <core/simulationcontrol.h>
 #include "analyticalsolutions.h"
 #include "boundaryconditions.h"
 #include "initialconditions.h"
 #include "manifolds.h"
-#include "parameters.h"
-#include "simulationcontrol.h"
 #include "sourceterms.h"
 
 template <int dim>

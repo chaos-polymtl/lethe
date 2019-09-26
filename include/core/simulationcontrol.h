@@ -2,7 +2,7 @@
 #ifndef LETHE_SIMULATIONCONTROL_H
 #define LETHE_SIMULATIONCONTROL_H
 
-#include "parameters.h"
+#include <core/parameters.h>
 
 class SimulationControl
 {

@@ -18,7 +18,7 @@
  */
 
 
-#include "bdf.h"
+#include "core/bdf.h"
 
 Vector<double>
 delta(unsigned int p, unsigned int n, unsigned int j, Vector<double> times)

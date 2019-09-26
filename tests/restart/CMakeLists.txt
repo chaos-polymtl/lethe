@@ -6,10 +6,10 @@ SET(TARGET "restart_01")
 
 INCLUDE_DIRECTORIES(
   lethe
-  ${CMAKE_SOURCE_DIR}/src/
+  ${CMAKE_SOURCE_DIR}/include
   )
 ADD_EXECUTABLE(restart_01 restart_01.cc)
 DEAL_II_SETUP_TARGET(restart_01)
-TARGET_LINK_LIBRARIES(restart_01 lethe)
+TARGET_LINK_LIBRARIES(restart_01 lethe-core lethe-solvers)
 add_test( "Restart" restart_01)
 

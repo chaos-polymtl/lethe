@@ -26,7 +26,7 @@
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
 
-#include "parameters.h"
+#include <core/parameters.h>
 
 using namespace dealii;
 /**

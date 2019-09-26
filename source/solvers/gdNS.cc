@@ -17,11 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "sourceterms.h"
+#include "solvers/gdNS.h"
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging
-template class SourceTerms::NSSourceTerm<2>;
-template class SourceTerms::NSSourceTerm<3>;
-template class NoForce<2>;
-template class NoForce<3>;
+template class GDNavierStokesSolver<2>;
+template class GDNavierStokesSolver<3>;

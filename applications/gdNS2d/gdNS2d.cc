@@ -1,6 +1,6 @@
 #include <deal.II/base/convergence_table.h>
 
-#include "gdNS.h"
+#include <solvers/gdNS.h>
 
 int
 main(int argc, char *argv[])

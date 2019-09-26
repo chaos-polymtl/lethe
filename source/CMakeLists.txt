@@ -1,0 +1,12 @@
+MESSAGE(STATUS "Setting up Lethe library")
+
+INCLUDE_DIRECTORIES(
+  ${CMAKE_BINARY_DIR}/include/
+  ${CMAKE_SOURCE_DIR}/include/
+  SYSTEM
+  ${LETHE_INCLUDE_DIRS}
+  )
+
+ADD_SUBDIRECTORY(core)
+ADD_SUBDIRECTORY(solvers)
+

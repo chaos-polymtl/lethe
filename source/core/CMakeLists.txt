@@ -1,6 +1,6 @@
 
 # Set the name of the project and target:
-SET(TARGET "lethe")
+SET(TARGET "lethe-core")
 
 # Declare all source files the target consists of. Here, this is only
 # the one step-X.cc file, but as you expand your project you may wish
@@ -14,7 +14,7 @@ SET(TARGET "lethe")
 # page of the documentation.
 
 FILE(GLOB_RECURSE TARGET_SRC *.cc)
-FILE(GLOB_RECURSE TARGET_INC *.h)
+FILE(GLOB_RECURSE TARGET_INC ${CMAKE_SOURCE_DIR}/include/core/*.h)
 SET(TARGET_SRC ${TARGET_SRC}  ${TARGET_INC}) 
 
 # Usually, you will not need to modify anything beyond this point...
@@ -22,6 +22,7 @@ SET(TARGET_SRC ${TARGET_SRC}  ${TARGET_INC})
 ADD_LIBRARY(${TARGET}
   ${TARGET_SRC}
   )
+
 DEAL_II_SETUP_TARGET(${TARGET})
-install(TARGETS lethe ARCHIVE DESTINATION lib)
+install(TARGETS lethe-core ARCHIVE DESTINATION lib)
 

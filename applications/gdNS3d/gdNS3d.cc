@@ -1,4 +1,4 @@
-#include "gdNS.h"
+#include "solvers/gdNS.h"
 
 int
 main(int argc, char *argv[])

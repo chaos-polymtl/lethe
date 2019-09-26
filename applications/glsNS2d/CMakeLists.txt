@@ -6,11 +6,11 @@ SET(TARGET "glsNS2d")
 
 INCLUDE_DIRECTORIES(
   lethe
-  ${CMAKE_SOURCE_DIR}/src/
+  ${CMAKE_SOURCE_DIR}/include/
   )
 ADD_EXECUTABLE(glsNS2d glsNS2d.cc)
 DEAL_II_SETUP_TARGET(glsNS2d)
-TARGET_LINK_LIBRARIES(glsNS2d lethe)
+TARGET_LINK_LIBRARIES(glsNS2d lethe-core lethe-solvers)
 
 install(TARGETS glsNS2d RUNTIME DESTINATION bin)
 

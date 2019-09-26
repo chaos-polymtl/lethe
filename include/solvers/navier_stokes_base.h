@@ -85,14 +85,13 @@
 #include <deal.II/distributed/solution_transfer.h>
 
 // Lethe Includes
-#include "bdf.h"
+#include <core/parameters.h>
+#include <core/pvdhandler.h>
+#include <core/simulationcontrol.h>
 #include "boundaryconditions.h"
 #include "manifolds.h"
 #include "navierstokessolverparameters.h"
-#include "parameters.h"
 #include "postprocessors.h"
-#include "pvdhandler.h"
-#include "simulationcontrol.h"
 
 // Std
 #include <fstream>

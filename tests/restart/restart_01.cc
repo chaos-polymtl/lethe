@@ -1,10 +1,10 @@
 // check the read and write of simulationcontrol
 
 #include "../tests.h"
-#include "glsNS.h"
-#include "navierstokessolverparameters.h"
-#include "parameters.h"
-#include "simulationcontrol.h"
+#include "core/parameters.h"
+#include "core/simulationcontrol.h"
+#include "solvers/glsNS.h"
+#include "solvers/navierstokessolverparameters.h"
 
 template <int dim>
 class ExactSolutionMMS : public Function<dim>
