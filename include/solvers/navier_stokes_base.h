@@ -89,9 +89,9 @@
 #include <core/pvdhandler.h>
 #include <core/simulationcontrol.h>
 
-#include "boundaryconditions.h"
+#include "boundary_conditions.h"
 #include "manifolds.h"
-#include "navierstokessolverparameters.h"
+#include "navier_stokes_solver_parameters.h"
 #include "postprocessors.h"
 
 // Std
@@ -203,11 +203,20 @@ protected:
   void
   iterate(const bool first_iteration);
 
+
+
+  /**
+   * @brief postprocess
+   * Post-process after an iteration
+   */
+  void
+  postprocess(bool firstIter);
+
   /**
    * @brief read_checkpoint
    */
   virtual void
-  read_checkpoint() = 0;
+  read_checkpoint();
 
   /**
    * @brief read_mesh
@@ -221,8 +230,24 @@ protected:
    *
    * Initialize the periodic boundary conditions
    */
+  virtual void
+  setup_dofs() = 0;
+
+  /**
+   * @brief set_periodicity
+   *
+   * Initialize the periodic boundary conditions
+   */
   void
   set_periodicity();
+
+  /**
+   * @brief set_nodal_values
+   *
+   * Set nodal values of the pressure and velocity
+   */
+  void
+  set_nodal_values();
 
   /**
    * @brief solve_nonlinear_system
@@ -236,7 +261,7 @@ protected:
    * @brief write_checkpoint
    */
   virtual void
-  write_checkpoint() = 0;
+  write_checkpoint();
 
   /**
    * @brief write_output_results
@@ -283,6 +308,12 @@ protected:
 
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
+
+  // Constraints for Dirichlet boundary conditions
+  AffineConstraints<double> zero_constraints;
+  AffineConstraints<double> nonzero_constraints;
+
+  VectorType newton_update;
 
   // Solution vectors
   VectorType present_solution;
@@ -511,104 +542,6 @@ NavierStokesBase<dim, VectorType>::calculate_average_enstrophy(
   return (en);
 }
 
-
-/*
- * Periodicity
- */
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::set_periodicity()
-{
-  // Setup parallelism for periodic boundary conditions
-  for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
-    {
-      if (nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::periodic)
-        {
-          std::vector<GridTools::PeriodicFacePair<
-            typename parallel::distributed::Triangulation<dim>::cell_iterator>>
-            periodicity_vector;
-          GridTools::collect_periodic_faces(
-            this->triangulation,
-            nsparam.boundaryConditions.id[i_bc],
-            nsparam.boundaryConditions.periodic_id[i_bc],
-            nsparam.boundaryConditions.periodic_direction[i_bc],
-            periodicity_vector);
-          this->triangulation.add_periodicity(periodicity_vector);
-        }
-    }
-}
-
-
-
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::write_output_results(
-  const VectorType & solution,
-  PVDHandler &       pvdhandler,
-  const std::string  folder,
-  const std::string  solutionName,
-  const unsigned int iter,
-  const double       time,
-  const unsigned int subdivision)
-{
-  TimerOutput::Scope            t(this->computing_timer, "output");
-  const MappingQ<dim>           mapping(this->degreeVelocity_,
-                              nsparam.femParameters.qmapping_all);
-  vorticity_postprocessor<dim>  vorticity;
-  qcriterion_postprocessor<dim> ob1;
-  std::vector<std::string>      solution_names(dim, "velocity");
-  solution_names.push_back("pressure");
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    data_component_interpretation(
-      dim, DataComponentInterpretation::component_is_part_of_vector);
-  data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
-
-  DataOut<dim> data_out;
-  data_out.attach_dof_handler(this->dof_handler);
-  data_out.add_data_vector(solution,
-                           solution_names,
-                           DataOut<dim>::type_dof_data,
-                           data_component_interpretation);
-  data_out.add_data_vector(solution, vorticity);
-  data_out.add_data_vector(solution, ob1);
-  Vector<float> subdomain(this->triangulation.n_active_cells());
-  for (unsigned int i = 0; i < subdomain.size(); ++i)
-    subdomain(i) = this->triangulation.locally_owned_subdomain();
-  data_out.add_data_vector(subdomain, "subdomain");
-  // data_out.add_data_vector (rot_u,"vorticity");
-  data_out.build_patches(mapping, subdivision);
-
-  const std::string filename =
-    (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
-     Utilities::int_to_string(this->triangulation.locally_owned_subdomain(),
-                              4));
-  std::ofstream output((filename + ".vtu").c_str());
-  data_out.write_vtu(output);
-
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    {
-      std::vector<std::string> filenames;
-      for (unsigned int i = 0;
-           i < Utilities::MPI::n_mpi_processes(this->mpi_communicator);
-           ++i)
-        filenames.push_back(solutionName + "." +
-                            Utilities::int_to_string(iter, 4) + "." +
-                            Utilities::int_to_string(i, 4) + ".vtu");
-
-      std::string pvtu_filename =
-        (solutionName + "." + Utilities::int_to_string(iter, 4) + ".pvtu");
-      std::ofstream master_output((folder + pvtu_filename).c_str());
-
-      data_out.write_pvtu_record(master_output, filenames);
-
-      const std::string pvdPrefix = (folder + solutionName);
-      pvdhandler.append(time, pvtu_filename);
-      std::ofstream pvd_output(pvdPrefix + ".pvd");
-      DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
-    }
-}
-
 template <int dim, typename VectorType>
 double
 NavierStokesBase<dim, VectorType>::calculate_CFL(
@@ -667,7 +600,6 @@ NavierStokesBase<dim, VectorType>::calculate_CFL(
 
   return CFL;
 }
-
 
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes
@@ -967,254 +899,6 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
     }
 }
 
-// Do an iteration with the GLS NavierStokes Solver
-// Handles the fact that we may or may not be at a first
-// iteration with the solver and sets the initial condition
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
-{
-  // Carry out the integration normally
-  if (!firstIteration)
-    {
-      solve_non_linear_system(false);
-    }
-  // This is the first iteration
-  else
-    {
-      if (this->simulationControl.getMethod() ==
-          Parameters::SimulationControl::steady)
-        {
-          solve_non_linear_system(false);
-        }
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::bdf1)
-        {
-          solve_non_linear_system(false);
-        }
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::bdf2)
-        {
-          Parameters::SimulationControl timeParameters =
-            this->simulationControl.getParameters();
-
-          // Start the BDF2 with a single Euler time step with a lower time step
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * timeParameters.startup_timestep_scaling);
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf1);
-          solve_non_linear_system(false);
-          this->solution_m2 = this->solution_m1;
-          this->solution_m1 = this->present_solution;
-
-          // Reset the time step and do a bdf 2 newton iteration using the two
-          // steps to complete the full step
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf2);
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
-          solve_non_linear_system(false);
-        }
-
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::bdf3)
-        {
-          Parameters::SimulationControl timeParameters =
-            this->simulationControl.getParameters();
-
-          // Start the BDF2 with a single Euler time step with a lower time step
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * timeParameters.startup_timestep_scaling);
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf1);
-          solve_non_linear_system(false);
-          this->solution_m2 = this->solution_m1;
-          this->solution_m1 = this->present_solution;
-
-          // Reset the time step and do a bdf 2 newton iteration using the two
-          // steps
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf1);
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * timeParameters.startup_timestep_scaling);
-          solve_non_linear_system(false);
-          this->solution_m3 = this->solution_m2;
-          this->solution_m2 = this->solution_m1;
-          this->solution_m1 = this->present_solution;
-
-          // Reset the time step and do a bdf 3 newton iteration using the two
-          // steps to complete the full step
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf3);
-          this->simulationControl.setTimeStep(
-            timeParameters.dt *
-            (1. - 2. * timeParameters.startup_timestep_scaling));
-          solve_non_linear_system(false);
-        }
-    }
-}
-
-/*
- * Reads a CFD Mesh from a GMSH file or generates a pre-defined primitive
- */
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::read_mesh()
-{
-  // GMSH input
-  if (this->nsparam.mesh.type == Parameters::Mesh::gmsh)
-    {
-      GridIn<dim> grid_in;
-      grid_in.attach_triangulation(this->triangulation);
-      std::ifstream input_file(this->nsparam.mesh.fileName);
-      grid_in.read_msh(input_file);
-      this->set_periodicity();
-    }
-  // Primitive input
-  else if (this->nsparam.mesh.type == Parameters::Mesh::primitive)
-    {
-      const int initialSize = this->nsparam.mesh.initialRefinement;
-
-      if (this->nsparam.mesh.primitiveType == Parameters::Mesh::hyper_cube)
-        {
-          GridGenerator::hyper_cube(this->triangulation,
-                                    this->nsparam.mesh.arg1,
-                                    this->nsparam.mesh.arg2,
-                                    this->nsparam.mesh.colorize);
-        }
-      else if (this->nsparam.mesh.primitiveType ==
-               Parameters::Mesh::hyper_shell)
-        {
-          Point<dim> circleCenter;
-          if (dim == 2)
-            circleCenter = Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2);
-
-          if (dim == 3)
-            circleCenter = Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2, this->nsparam.mesh.arg3);
-
-          GridGenerator::hyper_shell(this->triangulation,
-                                     circleCenter,
-                                     this->nsparam.mesh.arg4,
-                                     this->nsparam.mesh.arg5,
-                                     4,
-                                     this->nsparam.mesh.colorize);
-        }
-      else if (nsparam.mesh.primitiveType == Parameters::Mesh::cylinder)
-        {
-          Point<dim> center;
-          if (dim != 3) throw std::runtime_error("Cylinder primitive can only be used in 3D");
-          center = Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2, this->nsparam.mesh.arg3);
-
-          GridGenerator::cylinder(this->triangulation,
-                                  this->nsparam.mesh.arg4,
-                                  this->nsparam.mesh.arg5);
-        }
-      else
-        {
-          throw std::runtime_error(
-            "Unsupported primitive type - mesh will not be created");
-        }
-      this->set_periodicity();
-      this->triangulation.refine_global(initialSize);
-    }
-  else
-    throw std::runtime_error(
-      "Unsupported mesh type - mesh will not be created");
-}
-
-/*
- * Attaches manifold to the boundaries of the mesh
- */
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::create_manifolds()
-{
-  Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
-
-  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
-    {
-      if (manifolds.types[i] == Parameters::Manifolds::spherical)
-        {
-          Point<dim> circleCenter;
-          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
-          static const SphericalManifold<dim> manifold_description(
-            circleCenter);
-          this->triangulation.set_manifold(manifolds.id[i],
-                                           manifold_description);
-          this->triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
-                                                               manifolds.id[i]);
-        }
-
-      else if (manifolds.types[i] == Parameters::Manifolds::cylindrical)
-        {
-          if (dim!=3) throw (std::runtime_error("Cylindrical manifold can only be used in a 3D solver"));
-          Tensor<1,dim> direction;
-          Point<dim> point_on_axis;
-          direction[0]=manifolds.arg1[i];
-          direction[1]=manifolds.arg2[i];
-          direction[2]=manifolds.arg3[i];
-          point_on_axis =Point<dim>(manifolds.arg4[i],manifolds.arg5[i],manifolds.arg6[i]);
-          static const CylindricalManifold<dim> manifold_description(direction,
-                                               point_on_axis);
-          this->triangulation.set_manifold(manifolds.id[i],
-                                           manifold_description);
-
-//          this->triangulation.set_all_manifold_ids(manifolds.id[i]);
-          this->triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],manifolds.id[i]);
-
-//          this->pcout << "direction[0]: "      <<direction[0]<< std::endl;
-//          this->pcout << "direction[1]: "      <<direction[1]<< std::endl;
-//          this->pcout << "direction[2]: "      <<direction[2]<< std::endl;
-//          this->pcout << "manifolds.id[i]:   " <<manifolds.id[i]  << std::endl;
-//          this->pcout << "manifolds.arg1[i]: " <<manifolds.arg1[i]<< std::endl;
-//          this->pcout << "manifolds.arg2[i]: " <<manifolds.arg2[i]<< std::endl;
-//          this->pcout << "manifolds.arg3[i]: " <<manifolds.arg3[i]<< std::endl;
-//          this->pcout << "manifolds.arg4[i]: " <<manifolds.arg4[i]<< std::endl;
-//          this->pcout << "manifolds.arg5[i]: " <<manifolds.arg5[i]<< std::endl;
-//          this->pcout << "manifolds.arg6[i]: " <<manifolds.arg6[i]<< std::endl;
-//          this->pcout << "i  : "               << i << std::endl;
-       }
-      else if (manifolds.types[i] == Parameters::Manifolds::none)
-        {}
-      else
-        throw std::runtime_error("Unsupported manifolds type");
-    }
-}
-
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::write_output_forces()
-{
-  TimerOutput::Scope t(this->computing_timer, "output_forces");
-  for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundaryConditions.size;
-       ++boundary_id)
-    {
-      std::string filename = nsparam.forcesParameters.force_output_name + "." +
-                             Utilities::int_to_string(boundary_id, 2) + ".dat";
-      std::ofstream output(filename.c_str());
-
-      forces_tables[boundary_id].write_text(output);
-    }
-}
-
-template <int dim, typename VectorType>
-void
-NavierStokesBase<dim, VectorType>::write_output_torques()
-{
-  TimerOutput::Scope t(this->computing_timer, "output_torques");
-  for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundaryConditions.size;
-       ++boundary_id)
-    {
-      std::string filename = nsparam.forcesParameters.torque_output_name + "." +
-                             Utilities::int_to_string(boundary_id, 2) + ".dat";
-      std::ofstream output(filename.c_str());
-
-      this->torques_tables[boundary_id].write_text(output);
-    }
-}
-
 // Find the l2 norm of the error between the finite element sol'n and the exact
 // sol'n
 template <int dim, typename VectorType>
@@ -1303,31 +987,69 @@ NavierStokesBase<dim, VectorType>::calculate_L2_error(
   return std::sqrt(l2errorU);
 }
 
-
+/*
+ * Attaches manifold to the boundaries of the mesh
+ */
 template <int dim, typename VectorType>
 void
-NavierStokesBase<dim, VectorType>::finish_time_step()
+NavierStokesBase<dim, VectorType>::create_manifolds()
 {
-  if (this->simulationControl.getMethod() !=
-      Parameters::SimulationControl::steady)
-    {
-      solution_m3      = solution_m2;
-      solution_m2      = solution_m1;
-      solution_m1      = present_solution;
-      const double CFL = this->calculate_CFL(present_solution);
-      this->simulationControl.setCFL(CFL);
-    }
-  if (nsparam.restartParameters.checkpoint &&
-      this->simulationControl.getIter() % nsparam.restartParameters.frequency ==
-        0)
-    {
-      write_checkpoint();
-    }
+  Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
 
-  if (this->nsparam.timer.type == Parameters::Timer::iteration)
+  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
     {
-      this->computing_timer.print_summary();
-      this->computing_timer.reset();
+      if (manifolds.types[i] == Parameters::Manifolds::spherical)
+        {
+          Point<dim> circleCenter;
+          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
+          static const SphericalManifold<dim> manifold_description(
+            circleCenter);
+          this->triangulation.set_manifold(manifolds.id[i],
+                                           manifold_description);
+          this->triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
+                                                               manifolds.id[i]);
+        }
+
+      else if (manifolds.types[i] == Parameters::Manifolds::cylindrical)
+        {
+          if (dim != 3)
+            throw(std::runtime_error(
+              "Cylindrical manifold can only be used in a 3D solver"));
+          Tensor<1, dim> direction;
+          Point<dim>     point_on_axis;
+          direction[0] = manifolds.arg1[i];
+          direction[1] = manifolds.arg2[i];
+          direction[2] = manifolds.arg3[i];
+          point_on_axis =
+            Point<dim>(manifolds.arg4[i], manifolds.arg5[i], manifolds.arg6[i]);
+          static const CylindricalManifold<dim> manifold_description(
+            direction, point_on_axis);
+          this->triangulation.set_manifold(manifolds.id[i],
+                                           manifold_description);
+
+          //          this->triangulation.set_all_manifold_ids(manifolds.id[i]);
+          this->triangulation.set_all_manifold_ids_on_boundary(manifolds.id[i],
+                                                               manifolds.id[i]);
+
+          //          this->pcout << "direction[0]: "      <<direction[0]<<
+          //          std::endl; this->pcout << "direction[1]: "
+          //          <<direction[1]<< std::endl; this->pcout << "direction[2]:
+          //          "      <<direction[2]<< std::endl; this->pcout <<
+          //          "manifolds.id[i]:   " <<manifolds.id[i]  << std::endl;
+          //          this->pcout << "manifolds.arg1[i]: " <<manifolds.arg1[i]<<
+          //          std::endl; this->pcout << "manifolds.arg2[i]: "
+          //          <<manifolds.arg2[i]<< std::endl; this->pcout <<
+          //          "manifolds.arg3[i]: " <<manifolds.arg3[i]<< std::endl;
+          //          this->pcout << "manifolds.arg4[i]: " <<manifolds.arg4[i]<<
+          //          std::endl; this->pcout << "manifolds.arg5[i]: "
+          //          <<manifolds.arg5[i]<< std::endl; this->pcout <<
+          //          "manifolds.arg6[i]: " <<manifolds.arg6[i]<< std::endl;
+          //          this->pcout << "i  : "               << i << std::endl;
+        }
+      else if (manifolds.types[i] == Parameters::Manifolds::none)
+        {}
+      else
+        throw std::runtime_error("Unsupported manifolds type");
     }
 }
 
@@ -1364,6 +1086,518 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
           table.write_text(output);
         }
     }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::finish_time_step()
+{
+  if (this->simulationControl.getMethod() !=
+      Parameters::SimulationControl::steady)
+    {
+      this->solution_m3 = this->solution_m2;
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
+      const double CFL  = this->calculate_CFL(this->present_solution);
+      this->simulationControl.setCFL(CFL);
+    }
+  if (this->nsparam.restartParameters.checkpoint &&
+      this->simulationControl.getIter() %
+          this->nsparam.restartParameters.frequency ==
+        0)
+    {
+      this->write_checkpoint();
+    }
+
+  if (this->nsparam.timer.type == Parameters::Timer::iteration)
+    {
+      this->computing_timer.print_summary();
+      this->computing_timer.reset();
+    }
+}
+
+// Do an iteration with the GLS NavierStokes Solver
+// Handles the fact that we may or may not be at a first
+// iteration with the solver and sets the initial condition
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
+{
+  // Carry out the integration normally
+  if (!firstIteration)
+    {
+      solve_non_linear_system(false);
+    }
+  // This is the first iteration
+  else
+    {
+      if (this->simulationControl.getMethod() ==
+          Parameters::SimulationControl::steady)
+        {
+          solve_non_linear_system(false);
+        }
+      else if (this->simulationControl.getMethod() ==
+               Parameters::SimulationControl::bdf1)
+        {
+          solve_non_linear_system(false);
+        }
+      else if (this->simulationControl.getMethod() ==
+               Parameters::SimulationControl::bdf2)
+        {
+          Parameters::SimulationControl timeParameters =
+            this->simulationControl.getParameters();
+
+          // Start the BDF2 with a single Euler time step with a lower time step
+          this->simulationControl.setTimeStep(
+            timeParameters.dt * timeParameters.startup_timestep_scaling);
+          this->simulationControl.setMethod(
+            Parameters::SimulationControl::bdf1);
+          solve_non_linear_system(false);
+          this->solution_m2 = this->solution_m1;
+          this->solution_m1 = this->present_solution;
+
+          // Reset the time step and do a bdf 2 newton iteration using the two
+          // steps to complete the full step
+          this->simulationControl.setMethod(
+            Parameters::SimulationControl::bdf2);
+          this->simulationControl.setTimeStep(
+            timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
+          solve_non_linear_system(false);
+        }
+
+      else if (this->simulationControl.getMethod() ==
+               Parameters::SimulationControl::bdf3)
+        {
+          Parameters::SimulationControl timeParameters =
+            this->simulationControl.getParameters();
+
+          // Start the BDF2 with a single Euler time step with a lower time step
+          this->simulationControl.setTimeStep(
+            timeParameters.dt * timeParameters.startup_timestep_scaling);
+          this->simulationControl.setMethod(
+            Parameters::SimulationControl::bdf1);
+          solve_non_linear_system(false);
+          this->solution_m2 = this->solution_m1;
+          this->solution_m1 = this->present_solution;
+
+          // Reset the time step and do a bdf 2 newton iteration using the two
+          // steps
+          this->simulationControl.setMethod(
+            Parameters::SimulationControl::bdf1);
+          this->simulationControl.setTimeStep(
+            timeParameters.dt * timeParameters.startup_timestep_scaling);
+          solve_non_linear_system(false);
+          this->solution_m3 = this->solution_m2;
+          this->solution_m2 = this->solution_m1;
+          this->solution_m1 = this->present_solution;
+
+          // Reset the time step and do a bdf 3 newton iteration using the two
+          // steps to complete the full step
+          this->simulationControl.setMethod(
+            Parameters::SimulationControl::bdf3);
+          this->simulationControl.setTimeStep(
+            timeParameters.dt *
+            (1. - 2. * timeParameters.startup_timestep_scaling));
+          solve_non_linear_system(false);
+        }
+    }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
+{
+  if (this->simulationControl.isOutputIteration())
+    this->write_output_results(this->present_solution,
+                               this->pvdhandler,
+                               this->simulationControl.getOutputFolder(),
+                               this->simulationControl.getOuputName(),
+                               this->simulationControl.getIter(),
+                               this->simulationControl.getTime(),
+                               this->simulationControl.getSubdivision());
+
+  if (this->nsparam.postProcessingParameters.calculate_enstrophy)
+    {
+      double enstrophy =
+        this->calculate_average_enstrophy(this->present_solution);
+      this->enstrophy_table.add_value("time",
+                                      this->simulationControl.getTime());
+      this->enstrophy_table.add_value("enstrophy", enstrophy);
+      if (this->nsparam.postProcessingParameters.verbosity ==
+          Parameters::verbose)
+        {
+          this->pcout << "Enstrophy  : " << enstrophy << std::endl;
+        }
+    }
+
+  if (this->nsparam.postProcessingParameters.calculate_kinetic_energy)
+    {
+      double kE = this->calculate_average_KE(this->present_solution);
+      this->kinetic_energy_table.add_value("time",
+                                           this->simulationControl.getTime());
+      this->kinetic_energy_table.add_value("kinetic-energy", kE);
+      if (this->nsparam.postProcessingParameters.verbosity ==
+          Parameters::verbose)
+        {
+          this->pcout << "Kinetic energy : " << kE << std::endl;
+        }
+    }
+
+  if (!firstIter)
+    {
+      // Calculate forces on the boundary conditions
+      if (this->nsparam.forcesParameters.calculate_force)
+        {
+          if (this->simulationControl.getIter() %
+                this->nsparam.forcesParameters.calculation_frequency ==
+              0)
+            this->calculate_forces(this->present_solution,
+                                   this->simulationControl);
+          if (this->simulationControl.getIter() %
+                this->nsparam.forcesParameters.output_frequency ==
+              0)
+            this->write_output_forces();
+        }
+
+      // Calculate torques on the boundary conditions
+      if (this->nsparam.forcesParameters.calculate_torque)
+        {
+          if (this->simulationControl.getIter() %
+                this->nsparam.forcesParameters.calculation_frequency ==
+              0)
+            this->calculate_torques(this->present_solution,
+                                    this->simulationControl);
+          if (this->simulationControl.getIter() %
+                this->nsparam.forcesParameters.output_frequency ==
+              0)
+            this->write_output_torques();
+        }
+
+      // Calculate error with respect to analytical solution
+      if (this->nsparam.analyticalSolution->calculate_error())
+        {
+          // Update the time of the exact solution to the actual time
+          this->exact_solution->set_time(this->simulationControl.getTime());
+          const double error = this->calculate_L2_error(this->present_solution);
+          if (this->simulationControl.getMethod() ==
+              Parameters::SimulationControl::steady)
+            {
+              this->table.add_value(
+                "cells", this->triangulation.n_global_active_cells());
+              this->table.add_value("error", error);
+            }
+          else
+            {
+              this->table.add_value("time", this->simulationControl.getTime());
+              this->table.add_value("error", error);
+            }
+          if (this->nsparam.analyticalSolution->verbosity ==
+              Parameters::verbose)
+            {
+              this->pcout << "L2 error : " << error << std::endl;
+            }
+        }
+    }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::read_checkpoint()
+{
+  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
+  std::string        prefix = this->nsparam.restartParameters.filename;
+  this->simulationControl.read(prefix);
+  this->pvdhandler.read(prefix);
+
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  try
+    {
+      this->triangulation.load(filename.c_str());
+    }
+  catch (...)
+    {
+      AssertThrow(false,
+                  ExcMessage("Cannot open snapshot mesh file or read the "
+                             "triangulation stored there."));
+    }
+  setup_dofs();
+  std::vector<VectorType *> x_system(4);
+
+  VectorType distributed_system(newton_update);
+  VectorType distributed_system_m1(newton_update);
+  VectorType distributed_system_m2(newton_update);
+  VectorType distributed_system_m3(newton_update);
+  x_system[0] = &(distributed_system);
+  x_system[1] = &(distributed_system_m1);
+  x_system[2] = &(distributed_system_m2);
+  x_system[3] = &(distributed_system_m3);
+  parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
+    this->dof_handler);
+  system_trans_vectors.deserialize(x_system);
+  this->present_solution = distributed_system;
+  this->solution_m1      = distributed_system_m1;
+  this->solution_m2      = distributed_system_m2;
+  this->solution_m3      = distributed_system_m3;
+}
+
+/*
+ * Reads a CFD Mesh from a GMSH file or generates a pre-defined primitive
+ */
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::read_mesh()
+{
+  // GMSH input
+  if (this->nsparam.mesh.type == Parameters::Mesh::gmsh)
+    {
+      GridIn<dim> grid_in;
+      grid_in.attach_triangulation(this->triangulation);
+      std::ifstream input_file(this->nsparam.mesh.fileName);
+      grid_in.read_msh(input_file);
+      this->set_periodicity();
+    }
+  // Primitive input
+  else if (this->nsparam.mesh.type == Parameters::Mesh::primitive)
+    {
+      const int initialSize = this->nsparam.mesh.initialRefinement;
+
+      if (this->nsparam.mesh.primitiveType == Parameters::Mesh::hyper_cube)
+        {
+          GridGenerator::hyper_cube(this->triangulation,
+                                    this->nsparam.mesh.arg1,
+                                    this->nsparam.mesh.arg2,
+                                    this->nsparam.mesh.colorize);
+        }
+      else if (this->nsparam.mesh.primitiveType ==
+               Parameters::Mesh::hyper_shell)
+        {
+          Point<dim> circleCenter;
+          if (dim == 2)
+            circleCenter =
+              Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2);
+
+          if (dim == 3)
+            circleCenter = Point<dim>(this->nsparam.mesh.arg1,
+                                      this->nsparam.mesh.arg2,
+                                      this->nsparam.mesh.arg3);
+
+          GridGenerator::hyper_shell(this->triangulation,
+                                     circleCenter,
+                                     this->nsparam.mesh.arg4,
+                                     this->nsparam.mesh.arg5,
+                                     4,
+                                     this->nsparam.mesh.colorize);
+        }
+      else if (nsparam.mesh.primitiveType == Parameters::Mesh::cylinder)
+        {
+          Point<dim> center;
+          if (dim != 3)
+            throw std::runtime_error(
+              "Cylinder primitive can only be used in 3D");
+          center = Point<dim>(this->nsparam.mesh.arg1,
+                              this->nsparam.mesh.arg2,
+                              this->nsparam.mesh.arg3);
+
+          GridGenerator::cylinder(this->triangulation,
+                                  this->nsparam.mesh.arg4,
+                                  this->nsparam.mesh.arg5);
+        }
+      else
+        {
+          throw std::runtime_error(
+            "Unsupported primitive type - mesh will not be created");
+        }
+      this->set_periodicity();
+      this->triangulation.refine_global(initialSize);
+    }
+  else
+    throw std::runtime_error(
+      "Unsupported mesh type - mesh will not be created");
+}
+
+/*
+ * Periodicity
+ */
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::set_periodicity()
+{
+  // Setup parallelism for periodic boundary conditions
+  for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
+    {
+      if (nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::periodic)
+        {
+          std::vector<GridTools::PeriodicFacePair<
+            typename parallel::distributed::Triangulation<dim>::cell_iterator>>
+            periodicity_vector;
+          GridTools::collect_periodic_faces(
+            this->triangulation,
+            nsparam.boundaryConditions.id[i_bc],
+            nsparam.boundaryConditions.periodic_id[i_bc],
+            nsparam.boundaryConditions.periodic_direction[i_bc],
+            periodicity_vector);
+          this->triangulation.add_periodicity(periodicity_vector);
+        }
+    }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::set_nodal_values()
+{
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+  const MappingQ<dim>              mapping(this->degreeVelocity_,
+                              this->nsparam.femParameters.qmapping_all);
+  VectorTools::interpolate(mapping,
+                           this->dof_handler,
+                           this->nsparam.initialCondition->uvwp,
+                           newton_update,
+                           this->fe.component_mask(velocities));
+  VectorTools::interpolate(mapping,
+                           this->dof_handler,
+                           this->nsparam.initialCondition->uvwp,
+                           newton_update,
+                           this->fe.component_mask(pressure));
+  nonzero_constraints.distribute(newton_update);
+  this->present_solution = newton_update;
+}
+
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::write_output_results(
+  const VectorType & solution,
+  PVDHandler &       pvdhandler,
+  const std::string  folder,
+  const std::string  solutionName,
+  const unsigned int iter,
+  const double       time,
+  const unsigned int subdivision)
+{
+  TimerOutput::Scope            t(this->computing_timer, "output");
+  const MappingQ<dim>           mapping(this->degreeVelocity_,
+                              nsparam.femParameters.qmapping_all);
+  vorticity_postprocessor<dim>  vorticity;
+  qcriterion_postprocessor<dim> ob1;
+  std::vector<std::string>      solution_names(dim, "velocity");
+  solution_names.push_back("pressure");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    data_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
+  data_component_interpretation.push_back(
+    DataComponentInterpretation::component_is_scalar);
+
+  DataOut<dim> data_out;
+  data_out.attach_dof_handler(this->dof_handler);
+  data_out.add_data_vector(solution,
+                           solution_names,
+                           DataOut<dim>::type_dof_data,
+                           data_component_interpretation);
+  data_out.add_data_vector(solution, vorticity);
+  data_out.add_data_vector(solution, ob1);
+  Vector<float> subdomain(this->triangulation.n_active_cells());
+  for (unsigned int i = 0; i < subdomain.size(); ++i)
+    subdomain(i) = this->triangulation.locally_owned_subdomain();
+  data_out.add_data_vector(subdomain, "subdomain");
+  // data_out.add_data_vector (rot_u,"vorticity");
+  data_out.build_patches(mapping, subdivision);
+
+  const std::string filename =
+    (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
+     Utilities::int_to_string(this->triangulation.locally_owned_subdomain(),
+                              4));
+  std::ofstream output((filename + ".vtu").c_str());
+  data_out.write_vtu(output);
+
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    {
+      std::vector<std::string> filenames;
+      for (unsigned int i = 0;
+           i < Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+           ++i)
+        filenames.push_back(solutionName + "." +
+                            Utilities::int_to_string(iter, 4) + "." +
+                            Utilities::int_to_string(i, 4) + ".vtu");
+
+      std::string pvtu_filename =
+        (solutionName + "." + Utilities::int_to_string(iter, 4) + ".pvtu");
+      std::ofstream master_output((folder + pvtu_filename).c_str());
+
+      data_out.write_pvtu_record(master_output, filenames);
+
+      const std::string pvdPrefix = (folder + solutionName);
+      pvdhandler.append(time, pvtu_filename);
+      std::ofstream pvd_output(pvdPrefix + ".pvd");
+      DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
+    }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::write_output_forces()
+{
+  TimerOutput::Scope t(this->computing_timer, "output_forces");
+  for (unsigned int boundary_id = 0;
+       boundary_id < nsparam.boundaryConditions.size;
+       ++boundary_id)
+    {
+      std::string filename = nsparam.forcesParameters.force_output_name + "." +
+                             Utilities::int_to_string(boundary_id, 2) + ".dat";
+      std::ofstream output(filename.c_str());
+
+      forces_tables[boundary_id].write_text(output);
+    }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::write_output_torques()
+{
+  TimerOutput::Scope t(this->computing_timer, "output_torques");
+  for (unsigned int boundary_id = 0;
+       boundary_id < nsparam.boundaryConditions.size;
+       ++boundary_id)
+    {
+      std::string filename = nsparam.forcesParameters.torque_output_name + "." +
+                             Utilities::int_to_string(boundary_id, 2) + ".dat";
+      std::ofstream output(filename.c_str());
+
+      this->torques_tables[boundary_id].write_text(output);
+    }
+}
+
+template <int dim, typename VectorType>
+void
+NavierStokesBase<dim, VectorType>::write_checkpoint()
+{
+  TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
+  std::string        prefix = this->nsparam.restartParameters.filename;
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    this->simulationControl.save(prefix);
+  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    this->pvdhandler.save(prefix);
+
+  std::vector<const VectorType *> sol_set_transfer;
+  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.push_back(&this->solution_m1);
+  sol_set_transfer.push_back(&this->solution_m2);
+  sol_set_transfer.push_back(&this->solution_m3);
+  parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
+    this->dof_handler);
+  system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  std::string triangulationName = prefix + ".triangulation";
+  this->triangulation.save(prefix + ".triangulation");
 }
 
 #endif

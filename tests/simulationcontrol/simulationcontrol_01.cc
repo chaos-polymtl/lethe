@@ -4,7 +4,7 @@
 
 #include "../tests.h"
 #include "core/simulationcontrol.h"
-#include "solvers/navierstokessolverparameters.h"
+#include "solvers/navier_stokes_solver_parameters.h"
 
 int
 main()

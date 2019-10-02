@@ -4,7 +4,7 @@
 #include "core/parameters.h"
 #include "core/simulationcontrol.h"
 #include "solvers/glsNS.h"
-#include "solvers/navierstokessolverparameters.h"
+#include "solvers/navier_stokes_solver_parameters.h"
 
 template <int dim>
 class ExactSolutionMMS : public Function<dim>
@@ -81,7 +81,8 @@ void
 RestartNavierStokes<dim>::run()
 {
   const int initialSize = 4;
-  this->make_cube_grid(initialSize);
+  GridGenerator::hyper_cube(this->triangulation, -1, 1);
+  this->triangulation.refine_global(initialSize);
   this->setup_dofs();
   this->exact_solution                       = new ExactSolutionMMS<dim>;
   this->forcing_function                     = new MMSSineForcingFunction<dim>;
@@ -103,7 +104,8 @@ RestartNavierStokes<dim>::run()
 
   printTime(this->pcout, this->simulationControl);
   this->triangulation.clear();
-  this->make_cube_grid(0);
+  GridGenerator::hyper_cube(this->triangulation, -1, 1);
+  this->triangulation.refine_global(0);
 
   this->set_initial_condition(this->nsparam.initialCondition->type, true);
 

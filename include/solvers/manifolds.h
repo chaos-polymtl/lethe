@@ -41,7 +41,7 @@ namespace Parameters
     std::vector<unsigned int> id;
 
     // List of boundary type for each number
-    std::vector<ManifoldType> types; 
+    std::vector<ManifoldType> types;
 
     // Arguments of manifold
     std::vector<double> arg1;

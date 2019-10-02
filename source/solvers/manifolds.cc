@@ -53,7 +53,7 @@ namespace Parameters
     else if (op == "cylindrical")
       types[i_bc] = cylindrical;
 
-    id[i_bc] = prm.get_integer("id");
+    id[i_bc]   = prm.get_integer("id");
     arg1[i_bc] = prm.get_double("arg1");
     arg2[i_bc] = prm.get_double("arg2");
     arg3[i_bc] = prm.get_double("arg3");

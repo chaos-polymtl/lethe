@@ -17,13 +17,10 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "solvers/boundaryconditions.h"
+#include "solvers/initial_conditions.h"
 
-namespace BoundaryConditions
+namespace Parameters
 {
-  extern template class NSBoundaryConditions<2>;
-  extern template class NSBoundaryConditions<3>;
-} // namespace BoundaryConditions
-
-// extern template class PeriodicBoundaryValues<2>;
-// extern template class PeriodicBoundaryValues<3>;
+  extern template class InitialConditions<2>;
+  extern template class InitialConditions<3>;
+} // namespace Parameters

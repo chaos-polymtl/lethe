@@ -1,7 +1,7 @@
 // check the read and write of simulationcontrol
 
 #include "../tests.h"
-#include "solvers/navierstokessolverparameters.h"
+#include "solvers/navier_stokes_solver_parameters.h"
 
 int
 main()

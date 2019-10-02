@@ -23,9 +23,9 @@
 #include <core/parameters.h>
 #include <core/simulationcontrol.h>
 
-#include "analyticalsolutions.h"
-#include "boundaryconditions.h"
-#include "initialconditions.h"
+#include "analytical_solutions.h"
+#include "boundary_conditions.h"
+#include "initial_conditions.h"
 #include "manifolds.h"
 #include "sourceterms.h"
 

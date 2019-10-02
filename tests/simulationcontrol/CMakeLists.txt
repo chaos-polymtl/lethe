@@ -10,6 +10,6 @@ INCLUDE_DIRECTORIES(
   )
 ADD_EXECUTABLE(simulationcontrol_01 simulationcontrol_01.cc)
 DEAL_II_SETUP_TARGET(simulationcontrol_01)
-TARGET_LINK_LIBRARIES(simulationcontrol_01 lethe-core lethe-solvers)
+TARGET_LINK_LIBRARIES(simulationcontrol_01 lethe-core)
 add_test( "SimulationControl" simulationcontrol_01)
 

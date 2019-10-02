@@ -17,7 +17,13 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "solvers/navierstokessolverparameters.h"
+#include "solvers/boundary_conditions.h"
 
-template class NavierStokesSolverParameters<2>;
-template class NavierStokesSolverParameters<3>;
+namespace BoundaryConditions
+{
+  extern template class NSBoundaryConditions<2>;
+  extern template class NSBoundaryConditions<3>;
+} // namespace BoundaryConditions
+
+// extern template class PeriodicBoundaryValues<2>;
+// extern template class PeriodicBoundaryValues<3>;

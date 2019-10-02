@@ -437,12 +437,12 @@ namespace Parameters
       else
         throw std::runtime_error("Unsupported primitive - Program will abort");
 
-      arg1=prm.get_double("arg1");
-      arg2=prm.get_double("arg2");
-      arg3=prm.get_double("arg3");
-      arg4=prm.get_double("arg4");
-      arg5=prm.get_double("arg5");
-      arg6=prm.get_double("arg6");
+      arg1 = prm.get_double("arg1");
+      arg2 = prm.get_double("arg2");
+      arg3 = prm.get_double("arg3");
+      arg4 = prm.get_double("arg4");
+      arg5 = prm.get_double("arg5");
+      arg6 = prm.get_double("arg6");
 
       colorize = prm.get_bool("colorize");
     }
