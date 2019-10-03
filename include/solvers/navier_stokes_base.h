@@ -255,7 +255,8 @@ protected:
    * Interface for the solution of non-linear equations
    */
   virtual void
-  solve_non_linear_system(const bool first_iteration) = 0;
+  solve_non_linear_system(const Parameters::SimulationControl::TimeSteppingMethod,
+                          const bool first_iteration) = 0;
 
   /**
    * @brief write_checkpoint
@@ -1126,7 +1127,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
   // Carry out the integration normally
   if (!firstIteration)
     {
-      solve_non_linear_system(false);
+      solve_non_linear_system(this->simulationControl.getMethod(),false);
     }
   // This is the first iteration
   else
@@ -1134,12 +1135,12 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
       if (this->simulationControl.getMethod() ==
           Parameters::SimulationControl::steady)
         {
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
         }
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf1)
         {
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
         }
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf2)
@@ -1152,7 +1153,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           this->simulationControl.setMethod(
             Parameters::SimulationControl::bdf1);
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
 
@@ -1162,7 +1163,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             Parameters::SimulationControl::bdf2);
           this->simulationControl.setTimeStep(
             timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
         }
 
       else if (this->simulationControl.getMethod() ==
@@ -1176,7 +1177,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           this->simulationControl.setMethod(
             Parameters::SimulationControl::bdf1);
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
 
@@ -1186,7 +1187,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             Parameters::SimulationControl::bdf1);
           this->simulationControl.setTimeStep(
             timeParameters.dt * timeParameters.startup_timestep_scaling);
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
           this->solution_m3 = this->solution_m2;
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
@@ -1198,7 +1199,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
           this->simulationControl.setTimeStep(
             timeParameters.dt *
             (1. - 2. * timeParameters.startup_timestep_scaling));
-          solve_non_linear_system(false);
+          solve_non_linear_system(this->simulationControl.getMethod(),false);
         }
     }
 }

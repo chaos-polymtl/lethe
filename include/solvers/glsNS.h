@@ -144,15 +144,17 @@ private:
   assembleGLS();
 
   void
-  assemble_matrix_rhs();
+  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method);
+
   void
-  assemble_rhs();
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method);
 
   void
   assemble_L2_projection();
 
   void
-  newton_iteration(const bool is_initial_step);
+  newton_iteration(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
+                   const bool is_initial_step);
 
   void
   refine_mesh_Kelly();
@@ -172,9 +174,10 @@ private:
                       double minimum_residual); // Interface function
 
   virtual void
-  solve_non_linear_system(const bool first_iteration)
+  solve_non_linear_system(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
+                          const bool first_iteration)
   {
-    newton_iteration(first_iteration);
+    newton_iteration(time_stepping_method,first_iteration);
   }
 
   /**
@@ -750,7 +753,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-      newton_iteration(false);
+      newton_iteration(Parameters::SimulationControl::steady,false);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -879,39 +882,39 @@ GLSNavierStokesSolver<dim>::set_nodal_values()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_matrix_rhs()
+GLSNavierStokesSolver<dim>::assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (this->simulationControl.getMethod() ==
+  if (time_stepping_method ==
       Parameters::SimulationControl::bdf1)
     assembleGLS<true, Parameters::SimulationControl::bdf1>();
-  else if (this->simulationControl.getMethod() ==
+  else if (time_stepping_method ==
            Parameters::SimulationControl::bdf2)
     assembleGLS<true, Parameters::SimulationControl::bdf2>();
-  else if (this->simulationControl.getMethod() ==
+  else if (time_stepping_method ==
            Parameters::SimulationControl::bdf3)
     assembleGLS<true, Parameters::SimulationControl::bdf3>();
-  else if (this->simulationControl.getMethod() ==
+  else if (time_stepping_method ==
            Parameters::SimulationControl::steady)
     assembleGLS<true, Parameters::SimulationControl::steady>();
 }
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_rhs()
+GLSNavierStokesSolver<dim>::assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (this->simulationControl.getMethod() ==
+  if (time_stepping_method==
       Parameters::SimulationControl::bdf1)
     assembleGLS<false, Parameters::SimulationControl::bdf1>();
-  else if (this->simulationControl.getMethod() ==
+  else if (time_stepping_method ==
            Parameters::SimulationControl::bdf2)
     assembleGLS<false, Parameters::SimulationControl::bdf2>();
-  else if (this->simulationControl.getMethod() ==
+  else if (time_stepping_method ==
            Parameters::SimulationControl::bdf3)
     assembleGLS<false, Parameters::SimulationControl::bdf3>();
-  else if (this->simulationControl.getMethod() ==
+  else if (time_stepping_method ==
            Parameters::SimulationControl::steady)
     assembleGLS<false, Parameters::SimulationControl::steady>();
 }
@@ -1335,7 +1338,8 @@ GLSNavierStokesSolver<dim>::refine_mesh_uniform()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::newton_iteration(const bool is_initial_step)
+GLSNavierStokesSolver<dim>::newton_iteration(Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
+                                             const bool is_initial_step)
 {
   double current_res;
   double last_res;
@@ -1348,7 +1352,7 @@ GLSNavierStokesSolver<dim>::newton_iteration(const bool is_initial_step)
            outer_iteration < this->nsparam.nonLinearSolver.maxIterations)
       {
         evaluation_point = this->present_solution;
-        assemble_matrix_rhs();
+        assemble_matrix_rhs(time_stepping_method);
         if (outer_iteration == 0)
           {
             current_res = system_rhs.l2_norm();
@@ -1367,7 +1371,7 @@ GLSNavierStokesSolver<dim>::newton_iteration(const bool is_initial_step)
             local_evaluation_point.add(alpha, this->newton_update);
             this->nonzero_constraints.distribute(local_evaluation_point);
             evaluation_point = local_evaluation_point;
-            assemble_rhs();
+            assemble_rhs(time_stepping_method);
             current_res = system_rhs.l2_norm();
             if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
               this->pcout << "\t\talpha = " << std::setw(6) << alpha
