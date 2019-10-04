@@ -49,11 +49,11 @@ https://www.dealii.org/current/external-libs/trilinos.html
 
 Depending on how you have installed p4est and Trilinos, you may need to specify the installation folder of the two libraries
 
-`$ cmake ../dealii -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation  
+`$ cmake ../dealii -DDEAL_II_WITH_MPI=ON -DDEAL_II_WITH_TRILINOS=ON -DTRILINOS_DIR=path/to/your/trilinos/installation  
     -DDEAL_II_WITH_P4EST=ON -DP4EST_DIR=path/to/your/p4est/installation -DCMAKE_INSTALL_PREFIX=/path/to/desired/installation`
 
 * Compile dealii
-`$ make -j install`
+`$ make -j<nprocessor> install`
 
 * Create an environment variable for the DEALII directory.
 `$ export DEAL_II_DIR=/path/to/dealii/installation`
