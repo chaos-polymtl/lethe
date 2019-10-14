@@ -1342,6 +1342,8 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
+  // Set linear solver tolerance to absolute residual, otherwise convergence
+  // behavior is innapropriate
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
@@ -1419,8 +1421,8 @@ GDNavierStokesSolver<dim>::newton_iteration(const Parameters::SimulationControl:
           this->pcout << "Newton iteration: " << outer_iteration
                       << "  - Residual:  " << current_res << std::endl;
         solve_linear_system(first_step,
-                            this->nsparam.linearSolver.relative_residual,
-                            this->nsparam.linearSolver.minimum_residual);
+                            this->nsparam.linearSolver.minimum_residual,
+                            this->nsparam.linearSolver.relative_residual);
 
         for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
           {
