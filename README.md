@@ -15,9 +15,12 @@ Authors:
 Main developer :
 - Bruno Blais (https://www.polymtl.ca/expertises/en/blais-bruno)
 
-Contributors:
-- Rajeshwari Kamble
+Contributors (in alphabetical order):
 - Antoine Avrit
+- Lucka Barbeau
+- Simon Gauvin
+- Shahab Golshan
+- Rajeshwari Kamble
 
 Installation:
 ------------
