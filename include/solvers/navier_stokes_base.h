@@ -334,7 +334,7 @@ protected:
   TableHandler enstrophy_table;
   TableHandler kinetic_energy_table;
   // Convergence Analysis
-  ConvergenceTable table;
+  ConvergenceTable error_table;
 
   // Force analysis
   std::vector<Tensor<1, dim>> forces_;
@@ -1072,28 +1072,28 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
       if (simulationControl.getMethod() ==
           Parameters::SimulationControl::steady)
         {
-          table.omit_column_from_convergence_rate_evaluation("cells");
-          table.omit_column_from_convergence_rate_evaluation("total_time");
-          table.evaluate_all_convergence_rates(
+          error_table.omit_column_from_convergence_rate_evaluation("cells");
+          error_table.omit_column_from_convergence_rate_evaluation("total_time");
+          error_table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
-      table.set_scientific("error", true);
+      error_table.set_scientific("error", true);
 
       if (this->this_mpi_process == 0)
         {
           std::string filename =
             nsparam.analyticalSolution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
-          table.write_text(output);
+          error_table.write_text(output);
           std::vector<std::string> sub_columns;
           if (simulationControl.getMethod() ==
               Parameters::SimulationControl::steady)
             {
               sub_columns.push_back("cells");
               sub_columns.push_back("error");
-              table.set_column_order(sub_columns);
+              error_table.set_column_order(sub_columns);
             }
-          table.write_text(std::cout);
+          error_table.write_text(std::cout);
         }
     }
 }
@@ -1292,20 +1292,20 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
           if (this->simulationControl.getMethod() ==
               Parameters::SimulationControl::steady)
             {
-              this->table.add_value(
+              this->error_table.add_value(
                 "cells", this->triangulation.n_global_active_cells());
-              this->table.add_value("error", error);
+              this->error_table.add_value("error", error);
               auto summary = computing_timer.get_summary_data(computing_timer.total_wall_time);
               double total_time=0;
               for(auto it = summary.begin(); it != summary.end(); ++it) {
                 total_time +=  summary[it->first];
               }
-              this->table.add_value("total_time", total_time);
+              this->error_table.add_value("total_time", total_time);
             }
           else
             {
-              this->table.add_value("time", this->simulationControl.getTime());
-              this->table.add_value("error", error);
+              this->error_table.add_value("time", this->simulationControl.getTime());
+              this->error_table.add_value("error", error);
             }
           if (this->nsparam.analyticalSolution->verbosity ==
               Parameters::verbose)
