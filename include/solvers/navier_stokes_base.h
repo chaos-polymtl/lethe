@@ -1073,6 +1073,7 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
           Parameters::SimulationControl::steady)
         {
           table.omit_column_from_convergence_rate_evaluation("cells");
+          table.omit_column_from_convergence_rate_evaluation("total_time");
           table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
@@ -1080,11 +1081,19 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
 
       if (this->this_mpi_process == 0)
         {
-          table.write_text(std::cout);
           std::string filename =
             nsparam.analyticalSolution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
           table.write_text(output);
+          std::vector<std::string> sub_columns;
+          if (simulationControl.getMethod() ==
+              Parameters::SimulationControl::steady)
+            {
+              sub_columns.push_back("cells");
+              sub_columns.push_back("error");
+              table.set_column_order(sub_columns);
+            }
+          table.write_text(std::cout);
         }
     }
 }
@@ -1286,6 +1295,12 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
               this->table.add_value(
                 "cells", this->triangulation.n_global_active_cells());
               this->table.add_value("error", error);
+              auto summary = computing_timer.get_summary_data(computing_timer.total_wall_time);
+              double total_time=0;
+              for(auto it = summary.begin(); it != summary.end(); ++it) {
+                total_time +=  summary[it->first];
+              }
+              this->table.add_value("total_time", total_time);
             }
           else
             {
