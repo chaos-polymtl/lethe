@@ -22,7 +22,7 @@ class Visualization : public dealii::DataOutInterface<0,3>
 public:
 	Visualization();
 
-	void build_patches(const Particles::ParticleHandler<3,3> &);
+	void build_patches(const Particles::ParticleHandler<3,3> &, const unsigned int, const unsigned int, std::vector<std::tuple<std::string,int>>);
 
 	~Visualization();
 
