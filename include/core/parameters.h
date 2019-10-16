@@ -56,8 +56,11 @@ namespace Parameters
     // Frequency of the output
     unsigned int outputFrequency;
 
-    // Subdivsions of the results in the output
+    // Subdivisions of the results in the output
     unsigned int subdivision;
+
+    // Subdivisions of the results in the output
+    unsigned int group_files;
 
     static void
     declare_parameters(ParameterHandler &prm);

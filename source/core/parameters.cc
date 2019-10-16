@@ -54,6 +54,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Subdivision of mesh cell in postprocessing");
+
+      prm.declare_entry("group files",
+                        "1",
+                        Patterns::Integer(),
+                        "Maximal number of vtu output files");
     }
     prm.leave_subsection();
   }
@@ -82,6 +87,7 @@ namespace Parameters
       output_name              = prm.get("output name");
       outputFrequency          = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
+      group_files              = prm.get_integer("group files");
     }
     prm.leave_subsection();
   }
@@ -209,7 +215,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Calculation frequency");
       prm.declare_entry("display precision",
-                        "4",
+                        "6",
                         Patterns::Integer(),
                         "Output frequency");
       prm.declare_entry("calculation frequency",

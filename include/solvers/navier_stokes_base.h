@@ -255,8 +255,9 @@ protected:
    * Interface for the solution of non-linear equations
    */
   virtual void
-  solve_non_linear_system(const Parameters::SimulationControl::TimeSteppingMethod,
-                          const bool first_iteration) = 0;
+  solve_non_linear_system(
+    const Parameters::SimulationControl::TimeSteppingMethod,
+    const bool first_iteration) = 0;
 
   /**
    * @brief write_checkpoint
@@ -275,7 +276,8 @@ protected:
                        const std::string  solutionName,
                        const unsigned int cycle,
                        const double       time,
-                       const unsigned int subdivision);
+                       const unsigned int subdivision,
+                       const unsigned int group_files);
 
   /**
    * @brief write_output_forces
@@ -1073,7 +1075,8 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
           Parameters::SimulationControl::steady)
         {
           error_table.omit_column_from_convergence_rate_evaluation("cells");
-          error_table.omit_column_from_convergence_rate_evaluation("total_time");
+          error_table.omit_column_from_convergence_rate_evaluation(
+            "total_time");
           error_table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
@@ -1136,7 +1139,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
   // Carry out the integration normally
   if (!firstIteration)
     {
-      solve_non_linear_system(this->simulationControl.getMethod(),false);
+      solve_non_linear_system(this->simulationControl.getMethod(), false);
     }
   // This is the first iteration
   else
@@ -1144,12 +1147,12 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
       if (this->simulationControl.getMethod() ==
           Parameters::SimulationControl::steady)
         {
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
         }
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf1)
         {
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
         }
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf2)
@@ -1162,7 +1165,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           this->simulationControl.setMethod(
             Parameters::SimulationControl::bdf1);
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
 
@@ -1172,7 +1175,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             Parameters::SimulationControl::bdf2);
           this->simulationControl.setTimeStep(
             timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
         }
 
       else if (this->simulationControl.getMethod() ==
@@ -1186,7 +1189,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           this->simulationControl.setMethod(
             Parameters::SimulationControl::bdf1);
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
 
@@ -1196,7 +1199,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             Parameters::SimulationControl::bdf1);
           this->simulationControl.setTimeStep(
             timeParameters.dt * timeParameters.startup_timestep_scaling);
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
           this->solution_m3 = this->solution_m2;
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
@@ -1208,7 +1211,7 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
           this->simulationControl.setTimeStep(
             timeParameters.dt *
             (1. - 2. * timeParameters.startup_timestep_scaling));
-          solve_non_linear_system(this->simulationControl.getMethod(),false);
+          solve_non_linear_system(this->simulationControl.getMethod(), false);
         }
     }
 }
@@ -1224,7 +1227,8 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
                                this->simulationControl.getOuputName(),
                                this->simulationControl.getIter(),
                                this->simulationControl.getTime(),
-                               this->simulationControl.getSubdivision());
+                               this->simulationControl.getSubdivision(),
+                               this->simulationControl.getGroupFiles());
 
   if (this->nsparam.postProcessingParameters.calculate_enstrophy)
     {
@@ -1295,16 +1299,19 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
               this->error_table.add_value(
                 "cells", this->triangulation.n_global_active_cells());
               this->error_table.add_value("error", error);
-              auto summary = computing_timer.get_summary_data(computing_timer.total_wall_time);
-              double total_time=0;
-              for(auto it = summary.begin(); it != summary.end(); ++it) {
-                total_time +=  summary[it->first];
-              }
+              auto summary = computing_timer.get_summary_data(
+                computing_timer.total_wall_time);
+              double total_time = 0;
+              for (auto it = summary.begin(); it != summary.end(); ++it)
+                {
+                  total_time += summary[it->first];
+                }
               this->error_table.add_value("total_time", total_time);
             }
           else
             {
-              this->error_table.add_value("time", this->simulationControl.getTime());
+              this->error_table.add_value("time",
+                                          this->simulationControl.getTime());
               this->error_table.add_value("error", error);
             }
           if (this->nsparam.analyticalSolution->verbosity ==
@@ -1498,13 +1505,14 @@ NavierStokesBase<dim, VectorType>::write_output_results(
   const std::string  solutionName,
   const unsigned int iter,
   const double       time,
-  const unsigned int subdivision)
+  const unsigned int subdivision,
+  const unsigned int group_files)
 {
   TimerOutput::Scope            t(this->computing_timer, "output");
   const MappingQ<dim>           mapping(this->degreeVelocity_,
                               nsparam.femParameters.qmapping_all);
   vorticity_postprocessor<dim>  vorticity;
-  qcriterion_postprocessor<dim> ob1;
+  qcriterion_postprocessor<dim> qcriterion;
   std::vector<std::string>      solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1520,7 +1528,7 @@ NavierStokesBase<dim, VectorType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
   data_out.add_data_vector(solution, vorticity);
-  data_out.add_data_vector(solution, ob1);
+  data_out.add_data_vector(solution, qcriterion);
   Vector<float> subdomain(this->triangulation.n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation.locally_owned_subdomain();
@@ -1528,18 +1536,20 @@ NavierStokesBase<dim, VectorType>::write_output_results(
   // data_out.add_data_vector (rot_u,"vorticity");
   data_out.build_patches(mapping, subdivision);
 
-  const std::string filename =
-    (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
-     Utilities::int_to_string(this->triangulation.locally_owned_subdomain(),
-                              4));
-  std::ofstream output((filename + ".vtu").c_str());
-  data_out.write_vtu(output);
+  const int my_id = Utilities::MPI::this_mpi_process(this->mpi_communicator);
 
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+  // Write master files (.pvtu,.pvd,.visit) on the master process
+  if (my_id == 0)
     {
       std::vector<std::string> filenames;
+      const unsigned int       n_processes =
+        Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+      const unsigned int n_files =
+        (group_files == 0) ? n_processes : std::min(group_files, n_processes);
+
       for (unsigned int i = 0;
-           i < Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+           i <
+           n_files; // Utilities::MPI::n_mpi_processes(this->mpi_communicator);
            ++i)
         filenames.push_back(solutionName + "." +
                             Utilities::int_to_string(iter, 4) + "." +
@@ -1556,6 +1566,25 @@ NavierStokesBase<dim, VectorType>::write_output_results(
       std::ofstream pvd_output(pvdPrefix + ".pvd");
       DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
     }
+
+  const unsigned int n_processes =
+    Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+
+
+
+  const unsigned int my_file_id =
+    (group_files == 0 ? my_id : my_id % group_files);
+  int color = my_id % group_files;
+
+
+
+  MPI_Comm comm;
+  MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
+  const std::string filename =
+    (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
+     Utilities::int_to_string(my_file_id, 4) + ".vtu");
+  data_out.write_vtu_in_parallel(filename.c_str(), comm);
+  MPI_Comm_free(&comm);
 }
 
 template <int dim, typename VectorType>

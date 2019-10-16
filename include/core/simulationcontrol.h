@@ -68,6 +68,12 @@ public:
     return parameterControl.output_folder;
   }
 
+  unsigned int
+  getGroupFiles()
+  {
+    return parameterControl.group_files;
+  }
+
   void
   setTimeStep(double p_timestep)
   {

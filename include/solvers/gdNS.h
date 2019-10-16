@@ -131,10 +131,12 @@ public:
 
 private:
   void
-  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method);
+  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                        time_stepping_method);
 
   void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method);
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method);
 
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>
@@ -165,10 +167,12 @@ private:
   set_solution_vector(double value);
 
   virtual void
-  solve_non_linear_system(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-                          const bool first_iteration)
+  solve_non_linear_system(
+    const Parameters::SimulationControl::TimeSteppingMethod
+               time_stepping_method,
+    const bool first_iteration)
   {
-    newton_iteration(time_stepping_method,first_iteration);
+    newton_iteration(time_stepping_method, first_iteration);
   }
 
   void
@@ -905,7 +909,7 @@ GDNavierStokesSolver<dim>::set_initial_condition(
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-      newton_iteration(Parameters::SimulationControl::steady,false);
+      newton_iteration(Parameters::SimulationControl::steady, false);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -1032,40 +1036,34 @@ GDNavierStokesSolver<dim>::set_nodal_values()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GDNavierStokesSolver<dim>::assemble_matrix_rhs(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (time_stepping_method ==
-      Parameters::SimulationControl::bdf1)
+  if (time_stepping_method == Parameters::SimulationControl::bdf1)
     assembleGD<true, Parameters::SimulationControl::bdf1>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::bdf2)
+  else if (time_stepping_method == Parameters::SimulationControl::bdf2)
     assembleGD<true, Parameters::SimulationControl::bdf2>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::bdf3)
+  else if (time_stepping_method == Parameters::SimulationControl::bdf3)
     assembleGD<true, Parameters::SimulationControl::bdf3>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::steady)
+  else if (time_stepping_method == Parameters::SimulationControl::steady)
     assembleGD<true, Parameters::SimulationControl::steady>();
 }
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GDNavierStokesSolver<dim>::assemble_rhs(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (time_stepping_method ==
-      Parameters::SimulationControl::bdf1)
+  if (time_stepping_method == Parameters::SimulationControl::bdf1)
     assembleGD<false, Parameters::SimulationControl::bdf1>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::bdf2)
+  else if (time_stepping_method == Parameters::SimulationControl::bdf2)
     assembleGD<false, Parameters::SimulationControl::bdf2>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::bdf3)
+  else if (time_stepping_method == Parameters::SimulationControl::bdf3)
     assembleGD<false, Parameters::SimulationControl::bdf3>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::steady)
+  else if (time_stepping_method == Parameters::SimulationControl::steady)
     assembleGD<false, Parameters::SimulationControl::steady>();
 }
 
@@ -1342,8 +1340,6 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
-  // Set linear solver tolerance to absolute residual, otherwise convergence
-  // behavior is innapropriate
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
@@ -1397,8 +1393,9 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::newton_iteration(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-                                            const bool is_initial_step)
+GDNavierStokesSolver<dim>::newton_iteration(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
+  const bool                                              is_initial_step)
 {
   double current_res;
   double last_res;
