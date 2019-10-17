@@ -132,11 +132,11 @@ public:
 private:
   void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method);
+                        time_stepping_method) override;
 
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+                 time_stepping_method) override;
 
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>
@@ -195,7 +195,7 @@ private:
   void
   solve_linear_system(bool   initial_step,
                       double relative_residual,
-                      double minimum_residual);
+                      double minimum_residual) override;
 
   /**
    * GMRES solver with ILU preconditioning
@@ -1051,6 +1051,7 @@ GDNavierStokesSolver<dim>::assemble_matrix_rhs(
   else if (time_stepping_method == Parameters::SimulationControl::steady)
     assembleGD<true, Parameters::SimulationControl::steady>();
 }
+
 template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_rhs(

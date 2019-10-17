@@ -85,6 +85,7 @@
 #include <deal.II/distributed/solution_transfer.h>
 
 // Lethe Includes
+#include <core/non_linear_solver.h>
 #include <core/parameters.h>
 #include <core/pvdhandler.h>
 #include <core/simulationcontrol.h>
@@ -113,7 +114,7 @@ using namespace dealii;
  */
 
 template <int dim, typename VectorType>
-class NavierStokesBase
+class NavierStokesBase : public NonLinearSolver
 {
 protected:
   NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,
@@ -203,7 +204,18 @@ protected:
   void
   iterate(const bool first_iteration);
 
+  virtual void
+  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                        time_stepping_method) = 0;
 
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) = 0;
+
+  virtual void
+  solve_linear_system(const bool initial_step,
+                      double     absolute_residual,
+                      double     relative_residual) = 0;
 
   /**
    * @brief postprocess

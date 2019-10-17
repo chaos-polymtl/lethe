@@ -145,11 +145,11 @@ private:
 
   void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method);
+                        time_stepping_method) override;
 
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+                 time_stepping_method) override;
 
   void
   assemble_L2_projection();
@@ -174,7 +174,7 @@ private:
   void
   solve_linear_system(bool   initial_step,
                       double relative_residual,
-                      double minimum_residual); // Interface function
+                      double minimum_residual) override; // Interface function
 
   virtual void
   solve_non_linear_system(
