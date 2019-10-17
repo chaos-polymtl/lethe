@@ -85,8 +85,8 @@
 #include <deal.II/distributed/solution_transfer.h>
 
 // Lethe Includes
-#include <core/non_linear_solver.h>
 #include <core/parameters.h>
+#include <core/physics_solver.h>
 #include <core/pvdhandler.h>
 #include <core/simulationcontrol.h>
 
@@ -114,7 +114,7 @@ using namespace dealii;
  */
 
 template <int dim, typename VectorType>
-class NavierStokesBase : public NonLinearSolver
+class NavierStokesBase : public PhysicsSolver
 {
 protected:
   NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,

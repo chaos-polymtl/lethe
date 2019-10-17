@@ -172,9 +172,9 @@ private:
    */
 
   void
-  solve_linear_system(bool   initial_step,
-                      double relative_residual,
-                      double minimum_residual) override; // Interface function
+  solve_linear_system(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual) override; // Interface function
 
   virtual void
   solve_non_linear_system(
@@ -921,16 +921,16 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                double     relative_residual,
-                                                double     minimum_residual)
+                                                double     absolute_residual,
+                                                double     relative_residual)
 {
   if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
-    solve_system_GMRES(initial_step, minimum_residual, relative_residual);
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
   else if (this->nsparam.linearSolver.solver ==
            this->nsparam.linearSolver.bicgstab)
-    solve_system_BiCGStab(initial_step, minimum_residual, relative_residual);
+    solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
   else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
-    solve_system_AMG(initial_step, minimum_residual, relative_residual);
+    solve_system_AMG(initial_step, absolute_residual, relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
@@ -1363,8 +1363,8 @@ GLSNavierStokesSolver<dim>::newton_iteration(
           this->pcout << "Newton iteration: " << outer_iteration
                       << "  - Residual:  " << current_res << std::endl;
         solve_linear_system(first_step,
-                            this->nsparam.linearSolver.relative_residual,
-                            this->nsparam.linearSolver.minimum_residual);
+                            this->nsparam.linearSolver.minimum_residual,
+                            this->nsparam.linearSolver.relative_residual);
 
         for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
           {

@@ -14,15 +14,19 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2019-
+ * Author: Simon Gauvin, Polytechnique Montreal, 2019
  */
 
-#ifndef LETHE_NONLINEARSOLVER
-#define LETHE_NONLINEARSOLVER
+#ifndef LETHE_PHYSICSSOLVER
+#define LETHE_PHYSICSSOLVER
 
 #include "parameters.h"
 
-class NonLinearSolver
+/**
+ * An interface for all physics solver classes to derive from.
+ */
+
+class PhysicsSolver
 {
 public:
   virtual void
@@ -34,9 +38,9 @@ public:
                  time_stepping_method) = 0;
 
   virtual void
-  solve_linear_system(const bool initial_step,
-                      double     absolute_residual,
-                      double     relative_residual) = 0;
+  solve_linear_system(const bool       initial_step,
+                      const double     absolute_residual,
+                      const double     relative_residual) = 0;
 };
 
 #endif
