@@ -197,6 +197,21 @@ private:
                       double relative_residual,
                       double minimum_residual);
 
+  /**
+   * GMRES solver with ILU preconditioning
+   */
+  void
+  solve_system_GMRES(bool   initial_step,
+                     double relative_residual,
+                     double minimum_residual);
+  /**
+   * GMRES solver with AMG preconditioning
+   */
+  void
+  solve_system_AMG(bool   initial_step,
+                   double relative_residual,
+                   double minimum_residual);
+
 
   /**
    * Members
@@ -217,7 +232,7 @@ private:
   const double gamma = 1;
 };
 
-template <class PreconditionerMp>
+template <class BSPreconditioner>
 class BlockSchurPreconditioner : public Subscriptor
 {
 public:
@@ -225,8 +240,9 @@ public:
                            double                                     viscosity,
                            const TrilinosWrappers::BlockSparseMatrix &S,
                            const TrilinosWrappers::SparseMatrix &     P,
-                           const PreconditionerMp &Mppreconditioner,
-                           SolverControl &         A_parameters);
+                           const BSPreconditioner                    *p_amat_preconditioner,
+                           const BSPreconditioner                    *p_pmass_preconditioner,
+                           Parameters::LinearSolver solver_parameters);
 
   void
   vmult(TrilinosWrappers::MPI::BlockVector &      dst,
@@ -235,89 +251,77 @@ public:
 private:
   const double                               gamma;
   const double                               viscosity;
+  const Parameters::LinearSolver             linear_solver_parameters;
   const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
   const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
-  TrilinosWrappers::PreconditionILU          amat_preconditioner;
-  TrilinosWrappers::PreconditionILU          pmass_preconditioner;
-
-  const PreconditionerMp &                    mp_preconditioner;
-  SolverFGMRES<TrilinosWrappers::MPI::Vector> A_inverse;
+  const BSPreconditioner                     *amat_preconditioner;
+  const BSPreconditioner                     *pmass_preconditioner;
 };
 
 // We can notice that the initialization of the inverse of the matrix at the
 // top left corner is completed in the constructor. If so, every application
 // of the preconditioner then no longer requires the computation of the
 // matrix factors.
-template <class PreconditionerMp>
-BlockSchurPreconditioner<PreconditionerMp>::BlockSchurPreconditioner(
+template <typename BSPreconditioner>
+BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
   double                                     gamma,
   double                                     viscosity,
   const TrilinosWrappers::BlockSparseMatrix &S,
   const TrilinosWrappers::SparseMatrix &     P,
-  const PreconditionerMp &                   Mppreconditioner,
-  SolverControl &                            A_parameters)
+  const BSPreconditioner                    *p_amat_preconditioner,
+  const BSPreconditioner                    *p_pmass_preconditioner,
+
+  Parameters::LinearSolver p_solver_parameters)
   : gamma(gamma)
   , viscosity(viscosity)
+  , linear_solver_parameters(p_solver_parameters)
   , stokes_matrix(S)
   , pressure_mass_matrix(P)
-  , mp_preconditioner(Mppreconditioner)
-  , A_inverse(A_parameters)
+  , amat_preconditioner (p_amat_preconditioner)
+  , pmass_preconditioner(p_pmass_preconditioner)
 {
-  TrilinosWrappers::PreconditionILU::AdditionalData amat_preconditionerOptions(
-    0, 1e-10, 1, 0);
-  amat_preconditioner.initialize(stokes_matrix.block(0, 0),
-                                 amat_preconditionerOptions);
-
-  TrilinosWrappers::PreconditionILU::AdditionalData pmass_preconditionerOptions(
-    0, 1e-10, 1, 0);
-  TrilinosWrappers::PreconditionILU pmass_preconditioner;
-  pmass_preconditioner.initialize(pressure_mass_matrix,
-                                  pmass_preconditionerOptions);
 }
 
-template <class PreconditionerMp>
+template <class BSPreconditioner>
 void
-BlockSchurPreconditioner<PreconditionerMp>::vmult(
+BlockSchurPreconditioner<BSPreconditioner>::vmult(
   TrilinosWrappers::MPI::BlockVector &      dst,
   const TrilinosWrappers::MPI::BlockVector &src) const
 {
-  //  MPI_Comm   this->mpi_communicator(MPI_COMM_WORLD);
-  //  ConditionalOStream pcout(std::cout,
-  //  (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0));
-  //  TimerOutput computing_timer(this->mpi_communicator,
-  //                              pcout,
-  //                              TimerOutput::summary,
-  //                              TimerOutput::wall_times);
+//    TimerOutput computing_timer(std::cout,
+//                                TimerOutput::summary,
+//                                TimerOutput::wall_times);
 
   TrilinosWrappers::MPI::Vector utmp(src.block(0));
   {
-    //    computing_timer.enter_section("Pressure");
-    SolverControl              solver_control(100000,
-                                 std::max(1e-3 * src.block(0).l2_norm(),
-                                          1e-12));
+//        computing_timer.enter_section("Pressure");
+    SolverControl              solver_control(linear_solver_parameters.max_iterations,
+                               std::max(1e-8 * src.block(1).l2_norm(),
+                                                //linear_solver_parameters.relative_residual*src.block(0).l2_norm(),
+                                          linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverCG cg(solver_control);
 
     dst.block(1) = 0.0;
     cg.solve(pressure_mass_matrix,
              dst.block(1),
              src.block(1),
-             pmass_preconditioner);
+             *pmass_preconditioner);
     dst.block(1) *= -(viscosity + gamma);
-    //    computing_timer.exit_section("Pressure");
+//        computing_timer.exit_section("Pressure");
   }
 
   {
-    //    computing_timer.enter_section("Operations");
+//        computing_timer.enter_section("Operations");
     stokes_matrix.block(0, 1).vmult(utmp, dst.block(1));
     utmp *= -1.0;
     utmp += src.block(0);
-    //    computing_timer.exit_section("Operations");
+//        computing_timer.exit_section("Operations");
   }
   {
-    //    computing_timer.enter_section("A Matrix");
-    SolverControl solver_control(10000,
-                                 std::max(1e-2 * src.block(0).l2_norm(),
-                                          1e-12));
+//        computing_timer.enter_section("A Matrix");
+    SolverControl              solver_control(linear_solver_parameters.max_iterations,
+                               std::max(1e-1*src.block(0).l2_norm(),
+                                          linear_solver_parameters.minimum_residual));
 
 
 
@@ -328,18 +332,18 @@ BlockSchurPreconditioner<PreconditionerMp>::vmult(
     solver.solve(stokes_matrix.block(0, 0),
                  dst.block(0),
                  utmp,
-                 amat_preconditioner);
-    //    computing_timer.exit_section("A Matrix");
+                 *amat_preconditioner);
+//        computing_timer.exit_section("A Matrix");
   }
 }
 
+
+
 template <class PreconditionerMp>
-class BlockCGPreconditioner : public Subscriptor
+class BlockDiagPreconditioner : public Subscriptor
 {
 public:
-  BlockCGPreconditioner(double                                     gamma,
-                        double                                     viscosity,
-                        const TrilinosWrappers::BlockSparseMatrix &S,
+  BlockDiagPreconditioner(const TrilinosWrappers::BlockSparseMatrix &S,
                         const PreconditionerMp &Mppreconditioner,
                         SolverControl &         A_parameters);
 
@@ -348,8 +352,6 @@ public:
         const TrilinosWrappers::MPI::BlockVector &src) const;
 
 private:
-  const double                                gamma;
-  const double                                viscosity;
   const TrilinosWrappers::BlockSparseMatrix & stokes_matrix;
   TrilinosWrappers::PreconditionILU           amat_preconditioner;
   TrilinosWrappers::PreconditionILU           pmat_preconditioner;
@@ -358,15 +360,11 @@ private:
 };
 
 template <class PreconditionerMp>
-BlockCGPreconditioner<PreconditionerMp>::BlockCGPreconditioner(
-  double                                     gamma,
-  double                                     viscosity,
+BlockDiagPreconditioner<PreconditionerMp>::BlockDiagPreconditioner(
   const TrilinosWrappers::BlockSparseMatrix &S,
   const PreconditionerMp &                   Mppreconditioner,
-  SolverControl &                            A_parameters)
-  : gamma(gamma)
-  , viscosity(viscosity)
-  , stokes_matrix(S)
+  SolverControl &                            A_parameters):
+  stokes_matrix(S)
   , mp_preconditioner(Mppreconditioner)
   , A_inverse(A_parameters)
 {
@@ -386,7 +384,7 @@ BlockCGPreconditioner<PreconditionerMp>::BlockCGPreconditioner(
 
 template <class PreconditionerMp>
 void
-BlockCGPreconditioner<PreconditionerMp>::vmult(
+BlockDiagPreconditioner<PreconditionerMp>::vmult(
   TrilinosWrappers::MPI::BlockVector &      dst,
   const TrilinosWrappers::MPI::BlockVector &src) const
 {
@@ -1306,9 +1304,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   pmass_preconditioner.initialize(pressure_mass_matrix, preconditionerOptions);
 
 
-  const BlockCGPreconditioner<TrilinosWrappers::PreconditionILU> preconditioner(
-    gamma,
-    this->nsparam.physicalProperties.viscosity,
+  const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU> preconditioner(
     system_matrix,
     pmass_preconditioner,
     solver_control);
@@ -1336,8 +1332,21 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                double     absolute_residual,
                                                double     relative_residual)
 {
-  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+  if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+  else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
+    solve_system_AMG(initial_step, absolute_residual, relative_residual);
+  else
+    throw(std::runtime_error("This solver is not allowed"));
+}
 
+template <int dim>
+void
+GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
+                                                     double     absolute_residual,
+                                                     double     relative_residual)
+{
+  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
@@ -1350,6 +1359,20 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                        this->nsparam.linearSolver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
+  //**********************************************
+  // Trillinos Wrapper ILU Preconditioner
+  //*********************************************
+  const double ilu_fill = this->nsparam.linearSolver.ilu_precond_fill;
+  const double ilu_atol = this->nsparam.linearSolver.ilu_precond_atol;
+  const double ilu_rtol = this->nsparam.linearSolver.ilu_precond_rtol;
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+  TrilinosWrappers::PreconditionILU velocity_preconditioner;
+  velocity_preconditioner.initialize(system_matrix.block(0,0),preconditionerOptions);
+
+  TrilinosWrappers::PreconditionILU pressure_preconditioner;
+  pressure_preconditioner.initialize(system_matrix.block(1,1),preconditionerOptions);
+
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
     locally_owned_dofs, this->mpi_communicator);
 
@@ -1359,26 +1382,15 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                true);
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
-  TrilinosWrappers::PreconditionILU                pmass_preconditioner;
-
-  //**********************************************
-  // Trillinos Wrapper ILU Preconditioner
-  //*********************************************
-  const double ilu_fill = this->nsparam.linearSolver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linearSolver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linearSolver.ilu_precond_rtol;
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-
-  pmass_preconditioner.initialize(pressure_mass_matrix, preconditionerOptions);
 
   const BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>
     preconditioner(gamma,
                    this->nsparam.physicalProperties.viscosity,
                    system_matrix,
                    pressure_mass_matrix,
-                   pmass_preconditioner,
-                   solver_control);
+                   &velocity_preconditioner,
+                   &pressure_preconditioner,
+                   this->nsparam.linearSolver);
 
   solver.solve(system_matrix, this->newton_update, system_rhs, preconditioner);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
@@ -1390,6 +1402,142 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
   constraints_used.distribute(this->newton_update);
 }
 
+template <int dim>
+void
+GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
+                                            double     absolute_residual,
+                                            double     relative_residual)
+{
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << std::setprecision(
+                       this->nsparam.linearSolver.residual_precision)
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  //**********************************************
+  // Trillinos Wrapper AMG Preconditioner
+  //*********************************************
+  TrilinosWrappers::PreconditionAMG velocity_preconditioner;
+  TrilinosWrappers::PreconditionAMG pressure_preconditioner;
+
+  // Constant modes for velocity
+  std::vector<std::vector<bool>> velocity_constant_modes;
+  std::vector<bool> velocity_components(dim+1, true);
+  velocity_components[dim] = false;
+  DoFTools::extract_constant_modes(this->dof_handler,
+                                   velocity_components,
+                                   velocity_constant_modes);
+
+  // Constant modes for pressure
+  std::vector<std::vector<bool>> pressure_constant_modes;
+  std::vector<bool> pressure_components(dim, false);
+  velocity_components[dim] = true;
+  DoFTools::extract_constant_modes(this->dof_handler,
+                                   pressure_components,
+                                   pressure_constant_modes);
+
+  this->computing_timer.enter_section("AMG_velocity");
+  const bool elliptic_velocity              = false;
+  bool       higher_order_elements = false;
+  if (this->degreeVelocity_ > 1)
+    higher_order_elements = true;
+  const unsigned int n_cycles = this->nsparam.linearSolver.amg_n_cycles;
+  const bool         w_cycle  = this->nsparam.linearSolver.amg_w_cycles;
+  const double       aggregation_threshold =
+    this->nsparam.linearSolver.amg_aggregation_threshold;
+  const unsigned int smoother_sweeps =
+    this->nsparam.linearSolver.amg_smoother_sweeps;
+  const unsigned int smoother_overlap =
+    this->nsparam.linearSolver.amg_smoother_overlap;
+  const bool                                        output_details = false;
+  const char *                                      smoother_type  = "Chebyshev";//"ILU";
+  const char *                                      coarse_type    = "Amesos-KLU";//"ILU";
+
+  TrilinosWrappers::PreconditionAMG::AdditionalData velocity_preconditioner_options(
+    elliptic_velocity,
+    higher_order_elements,
+    n_cycles,
+    w_cycle,
+    aggregation_threshold,
+    velocity_constant_modes,
+    smoother_sweeps,
+    smoother_overlap,
+    output_details,
+    smoother_type,
+    coarse_type);
+
+  Teuchos::ParameterList              velocity_parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> velocity_distributed_constant_modes;
+  velocity_preconditioner_options.set_parameters(velocity_parameter_ml,
+                                                 velocity_distributed_constant_modes,
+                                                 system_matrix.block(0,0));
+  velocity_preconditioner.initialize(system_matrix.block(0,0), velocity_parameter_ml);
+  this->computing_timer.exit_section("AMG_velocity");
+
+
+  this->computing_timer.enter_section("AMG_pressure");
+  const bool elliptic_pressure = true;
+  higher_order_elements=false;
+  if (this->degreePressure_ > 1)
+    higher_order_elements = true;
+  TrilinosWrappers::PreconditionAMG::AdditionalData pressure_preconditioner_options(
+    elliptic_pressure,
+    higher_order_elements,
+    n_cycles,
+    w_cycle,
+    aggregation_threshold,
+    pressure_constant_modes,
+    smoother_sweeps,
+    smoother_overlap,
+    output_details,
+    smoother_type,
+    coarse_type);
+  Teuchos::ParameterList              pressure_parameter_ml;
+  std::unique_ptr<Epetra_MultiVector> pressure_distributed_constant_modes;
+  velocity_preconditioner_options.set_parameters(pressure_parameter_ml,
+                                                 pressure_distributed_constant_modes,
+                                                 system_matrix.block(0,0));
+  pressure_preconditioner.initialize(system_matrix.block(1,1), pressure_parameter_ml);
+  this->computing_timer.exit_section("AMG_pressure");
+
+
+
+  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+  TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
+    locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+
+  SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
+
+  const BlockSchurPreconditioner< TrilinosWrappers::PreconditionAMG >
+    preconditioner(gamma,
+                   this->nsparam.physicalProperties.viscosity,
+                   system_matrix,
+                   pressure_mass_matrix,
+                   &velocity_preconditioner,
+                   &pressure_preconditioner,
+                   this->nsparam.linearSolver);
+
+  solver.solve(system_matrix, this->newton_update, system_rhs, preconditioner);
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  constraints_used.distribute(this->newton_update);
+}
 
 template <int dim>
 void

@@ -932,7 +932,7 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
   else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
     solve_system_AMG(initial_step, minimum_residual, relative_residual);
   else
-    throw("This solver is not allowed");
+    throw(std::runtime_error("This solver is not allowed"));
 }
 
 template <int dim>
@@ -1083,6 +1083,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
                                    velocity_components,
                                    constant_modes);
 
+  // TODO remove this
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
   amg_data.constant_modes = constant_modes;
 
