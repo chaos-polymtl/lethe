@@ -29,6 +29,9 @@
 class PhysicsSolver
 {
 public:
+
+  PhysicsSolver(const Parameters::NonLinearSolver& params);
+
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method) = 0;
@@ -41,6 +44,20 @@ public:
   solve_linear_system(const bool       initial_step,
                       const double     absolute_residual,
                       const double     relative_residual) = 0;
+
+  const Parameters::NonLinearSolver& getParams() const;
+
+private:
+  const Parameters::NonLinearSolver& params;
 };
+
+PhysicsSolver::PhysicsSolver(const Parameters::NonLinearSolver& params)
+  : params(params)
+{}
+
+const Parameters::NonLinearSolver& PhysicsSolver::getParams() const
+{
+  return params;
+}
 
 #endif
