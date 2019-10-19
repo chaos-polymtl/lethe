@@ -21,19 +21,14 @@
 #define LETHE_PHYSICSSOLVER
 
 #include "parameters.h"
-#include "solvers/navier_stokes_solver_parameters.h"
 
 /**
  * An interface for all physics solver classes to derive from.
  */
 
-template <int dim>
 class PhysicsSolver
 {
 public:
-
-  PhysicsSolver(NavierStokesSolverParameters<dim> &p_nsparam);
-
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method) = 0;
@@ -46,16 +41,6 @@ public:
   solve_linear_system(const bool       initial_step,
                       const double     absolute_residual,
                       const double     relative_residual) = 0;
-
-protected:
-
-  NavierStokesSolverParameters<dim> nsparam;
 };
-
-template <int dim>
-PhysicsSolver<dim>::PhysicsSolver(NavierStokesSolverParameters<dim> &p_nsparam)
-  : nsparam(p_nsparam)
-  {}
-
 
 #endif

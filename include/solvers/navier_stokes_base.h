@@ -114,10 +114,10 @@ using namespace dealii;
  */
 
 template <int dim, typename VectorType>
-class NavierStokesBase : public PhysicsSolver<dim>
+class NavierStokesBase : public PhysicsSolver
 {
 protected:
-  NavierStokesBase(NavierStokesSolverParameters<dim> &p_nsparam,
+  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,
                    const unsigned int                 degreeVelocity,
                    const unsigned int                 degreePressure);
 
@@ -317,6 +317,7 @@ protected:
 
   TimerOutput computing_timer;
 
+  NavierStokesSolverParameters<dim> nsparam;
   PVDHandler                        pvdhandler;
 
 
@@ -367,8 +368,7 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver<dim>(p_nsparam)
-  , mpi_communicator(MPI_COMM_WORLD)
+  : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , triangulation(this->mpi_communicator,
@@ -383,33 +383,34 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
                     pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
+  , nsparam(p_nsparam)
   , degreeVelocity_(p_degreeVelocity)
   , degreePressure_(p_degreePressure)
   , degreeQuadrature_(p_degreeVelocity + 1)
 {
-  this->simulationControl = this->nsparam.simulationControl;
+  this->simulationControl = nsparam.simulationControl;
 
   // Overide default value of quadrature point if they are specified
-  if (this->nsparam.femParameters.quadraturePoints > 0)
-    degreeQuadrature_ = this->nsparam.femParameters.quadraturePoints;
+  if (nsparam.femParameters.quadraturePoints > 0)
+    degreeQuadrature_ = nsparam.femParameters.quadraturePoints;
 
   // Change the behavior of the timer for situations when you don't want outputs
-  if (this->nsparam.timer.type == Parameters::Timer::none)
+  if (nsparam.timer.type == Parameters::Timer::none)
     this->computing_timer.disable_output();
 
   // Pre-allocate the force tables to match the number of boundary conditions
-  forces_.resize(this->nsparam.boundaryConditions.size);
-  torques_.resize(this->nsparam.boundaryConditions.size);
-  forces_tables.resize(this->nsparam.boundaryConditions.size);
-  torques_tables.resize(this->nsparam.boundaryConditions.size);
+  forces_.resize(nsparam.boundaryConditions.size);
+  torques_.resize(nsparam.boundaryConditions.size);
+  forces_tables.resize(nsparam.boundaryConditions.size);
+  torques_tables.resize(nsparam.boundaryConditions.size);
 
   // Get the exact solution from the parser
-  exact_solution = &(this->nsparam.analyticalSolution->velocity);
+  exact_solution = &nsparam.analyticalSolution->velocity;
 
   // If there is a forcing function, get it from the parser
-  if (this->nsparam.sourceTerm->source_term())
+  if (nsparam.sourceTerm->source_term())
     {
-      forcing_function = &(this->nsparam.sourceTerm->source);
+      forcing_function = &nsparam.sourceTerm->source;
     }
   else
     {
@@ -434,7 +435,7 @@ NavierStokesBase<dim, VectorType>::calculate_average_KE(
 
   QGauss<dim>         quadrature_formula(this->degreeQuadrature_ + 1);
   const MappingQ<dim> mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -497,7 +498,7 @@ NavierStokesBase<dim, VectorType>::calculate_average_enstrophy(
 
   QGauss<dim>         quadrature_formula(this->degreeQuadrature_ + 1);
   const MappingQ<dim> mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -563,7 +564,7 @@ NavierStokesBase<dim, VectorType>::calculate_CFL(
 {
   QGauss<dim>                          quadrature_formula(1);
   const MappingQ<dim>                  mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   FEValues<dim>                        fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -628,7 +629,7 @@ NavierStokesBase<dim, VectorType>::calculate_forces(
 
   QGauss<dim - 1>     face_quadrature_formula(this->degreeQuadrature_ + 1);
   const MappingQ<dim> mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   const int           n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -647,7 +648,7 @@ NavierStokesBase<dim, VectorType>::calculate_forces(
                                      update_normal_vectors);
 
   for (unsigned int boundary_id = 0;
-       boundary_id < this->nsparam.boundaryConditions.size;
+       boundary_id < nsparam.boundaryConditions.size;
        ++boundary_id)
     {
       force                                               = 0;
@@ -697,28 +698,28 @@ NavierStokesBase<dim, VectorType>::calculate_forces(
         Utilities::MPI::sum(force, this->mpi_communicator);
     }
 
-  if (this->nsparam.forcesParameters.verbosity == Parameters::verbose &&
+  if (nsparam.forcesParameters.verbosity == Parameters::verbose &&
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
       TableHandler table;
 
       for (unsigned int boundary_id = 0;
-           boundary_id < this->nsparam.boundaryConditions.size;
+           boundary_id < nsparam.boundaryConditions.size;
            ++boundary_id)
         {
           table.add_value("Boundary ID", boundary_id);
           table.add_value("f_x", this->forces_[boundary_id][0]);
           table.add_value("f_y", this->forces_[boundary_id][1]);
           table.set_precision("f_x",
-                              this->nsparam.forcesParameters.display_precision);
+                              nsparam.forcesParameters.display_precision);
           table.set_precision("f_y",
-                              this->nsparam.forcesParameters.display_precision);
+                              nsparam.forcesParameters.display_precision);
           if (dim == 3)
             {
               table.add_value("f_z", this->forces_[boundary_id][2]);
               table.set_precision("f_z",
-                                  this->nsparam.forcesParameters.display_precision);
+                                  nsparam.forcesParameters.display_precision);
             }
         }
       std::cout << "+------------------------------------------+" << std::endl;
@@ -728,7 +729,7 @@ NavierStokesBase<dim, VectorType>::calculate_forces(
     }
 
   for (unsigned int boundary_id = 0;
-       boundary_id < this->nsparam.boundaryConditions.size;
+       boundary_id < nsparam.boundaryConditions.size;
        ++boundary_id)
     {
       this->forces_tables[boundary_id].add_value("time",
@@ -745,13 +746,13 @@ NavierStokesBase<dim, VectorType>::calculate_forces(
 
       // Precision
       this->forces_tables[boundary_id].set_precision(
-        "f_x", this->nsparam.forcesParameters.output_precision);
+        "f_x", nsparam.forcesParameters.output_precision);
       this->forces_tables[boundary_id].set_precision(
-        "f_y", this->nsparam.forcesParameters.output_precision);
+        "f_y", nsparam.forcesParameters.output_precision);
       this->forces_tables[boundary_id].set_precision(
-        "f_z", this->nsparam.forcesParameters.output_precision);
+        "f_z", nsparam.forcesParameters.output_precision);
       this->forces_tables[boundary_id].set_precision(
-        "time", this->nsparam.forcesParameters.output_precision);
+        "time", nsparam.forcesParameters.output_precision);
     }
 }
 
@@ -767,7 +768,7 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
 
   QGauss<dim - 1>     face_quadrature_formula(this->degreeQuadrature_ + 1);
   const MappingQ<dim> mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   const int           n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -790,12 +791,12 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
                                      update_normal_vectors);
 
   for (unsigned int boundary_id = 0;
-       boundary_id < this->nsparam.boundaryConditions.size;
+       boundary_id < nsparam.boundaryConditions.size;
        ++boundary_id)
     {
       torque = 0;
       Point<dim> center_of_rotation =
-        this->nsparam.boundaryConditions.bcFunctions[boundary_id].cor;
+        nsparam.boundaryConditions.bcFunctions[boundary_id].cor;
       typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
                                                               .begin_active(),
                                                      endc =
@@ -860,26 +861,26 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
         Utilities::MPI::sum(torque, this->mpi_communicator);
     }
 
-  if (this->nsparam.forcesParameters.verbosity == Parameters::verbose &&
+  if (nsparam.forcesParameters.verbosity == Parameters::verbose &&
       this->this_mpi_process == 0)
     {
       this->pcout << std::endl;
       TableHandler table;
 
       for (unsigned int boundary_id = 0;
-           boundary_id < this->nsparam.boundaryConditions.size;
+           boundary_id < nsparam.boundaryConditions.size;
            ++boundary_id)
         {
           table.add_value("Boundary ID", boundary_id);
           table.add_value("T_x", this->torques_[boundary_id][0]);
           table.add_value("T_y", this->torques_[boundary_id][1]);
           table.set_precision("T_x",
-                              this->nsparam.forcesParameters.display_precision);
+                              nsparam.forcesParameters.display_precision);
           table.set_precision("T_y",
-                              this->nsparam.forcesParameters.display_precision);
+                              nsparam.forcesParameters.display_precision);
           table.add_value("T_z", this->torques_[boundary_id][2]);
           table.set_precision("T_z",
-                              this->nsparam.forcesParameters.display_precision);
+                              nsparam.forcesParameters.display_precision);
         }
 
       std::cout << "+------------------------------------------+" << std::endl;
@@ -889,7 +890,7 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
     }
 
   for (unsigned int boundary_id = 0;
-       boundary_id < this->nsparam.boundaryConditions.size;
+       boundary_id < nsparam.boundaryConditions.size;
        ++boundary_id)
     {
       this->torques_tables[boundary_id].add_value("time",
@@ -903,13 +904,13 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
 
       // Precision
       this->torques_tables[boundary_id].set_precision(
-        "T_x", this->nsparam.forcesParameters.output_precision);
+        "T_x", nsparam.forcesParameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
-        "T_y", this->nsparam.forcesParameters.output_precision);
+        "T_y", nsparam.forcesParameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
-        "T_z", this->nsparam.forcesParameters.output_precision);
+        "T_z", nsparam.forcesParameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
-        "time", this->nsparam.forcesParameters.output_precision);
+        "time", nsparam.forcesParameters.output_precision);
     }
 }
 
@@ -924,7 +925,7 @@ NavierStokesBase<dim, VectorType>::calculate_L2_error(
 
   QGauss<dim>         quadrature_formula(this->degreeQuadrature_ + 1);
   const MappingQ<dim> mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -1071,16 +1072,16 @@ template <int dim, typename VectorType>
 void
 NavierStokesBase<dim, VectorType>::finish_simulation()
 {
-  if (this->nsparam.forcesParameters.calculate_force)
+  if (nsparam.forcesParameters.calculate_force)
     {
       this->write_output_forces();
     }
 
-  if (this->nsparam.forcesParameters.calculate_torque)
+  if (nsparam.forcesParameters.calculate_torque)
     {
       this->write_output_torques();
     }
-  if (this->nsparam.analyticalSolution->calculate_error())
+  if (nsparam.analyticalSolution->calculate_error())
     {
       if (simulationControl.getMethod() ==
           Parameters::SimulationControl::steady)
@@ -1096,7 +1097,7 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
       if (this->this_mpi_process == 0)
         {
           std::string filename =
-            this->nsparam.analyticalSolution->get_filename() + ".dat";
+            nsparam.analyticalSolution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
           error_table.write_text(output);
           std::vector<std::string> sub_columns;
@@ -1462,7 +1463,7 @@ NavierStokesBase<dim, VectorType>::read_mesh()
                                      4,
                                      this->nsparam.mesh.colorize);
         }
-      else if (this->nsparam.mesh.primitiveType == Parameters::Mesh::cylinder)
+      else if (nsparam.mesh.primitiveType == Parameters::Mesh::cylinder)
         {
           Point<dim> center;
           if (dim != 3)
@@ -1497,18 +1498,18 @@ void
 NavierStokesBase<dim, VectorType>::set_periodicity()
 {
   // Setup parallelism for periodic boundary conditions
-  for (unsigned int i_bc = 0; i_bc < this->nsparam.boundaryConditions.size; ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
     {
-      if (this->nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::periodic)
+      if (nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::periodic)
         {
           std::vector<GridTools::PeriodicFacePair<
             typename parallel::distributed::Triangulation<dim>::cell_iterator>>
             periodicity_vector;
           GridTools::collect_periodic_faces(
             this->triangulation,
-            this->nsparam.boundaryConditions.id[i_bc],
-            this->nsparam.boundaryConditions.periodic_id[i_bc],
-            this->nsparam.boundaryConditions.periodic_direction[i_bc],
+            nsparam.boundaryConditions.id[i_bc],
+            nsparam.boundaryConditions.periodic_id[i_bc],
+            nsparam.boundaryConditions.periodic_direction[i_bc],
             periodicity_vector);
           this->triangulation.add_periodicity(periodicity_vector);
         }
@@ -1552,7 +1553,7 @@ NavierStokesBase<dim, VectorType>::write_output_results(
 {
   TimerOutput::Scope            t(this->computing_timer, "output");
   const MappingQ<dim>           mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              nsparam.femParameters.qmapping_all);
   vorticity_postprocessor<dim>  vorticity;
   qcriterion_postprocessor<dim> qcriterion;
   std::vector<std::string>      solution_names(dim, "velocity");
@@ -1609,10 +1610,8 @@ NavierStokesBase<dim, VectorType>::write_output_results(
       DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
     }
 
-  /*
   const unsigned int n_processes =
     Utilities::MPI::n_mpi_processes(this->mpi_communicator);
-  */
 
 
 
@@ -1637,10 +1636,10 @@ NavierStokesBase<dim, VectorType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "output_forces");
   for (unsigned int boundary_id = 0;
-       boundary_id < this->nsparam.boundaryConditions.size;
+       boundary_id < nsparam.boundaryConditions.size;
        ++boundary_id)
     {
-      std::string filename = this->nsparam.forcesParameters.force_output_name + "." +
+      std::string filename = nsparam.forcesParameters.force_output_name + "." +
                              Utilities::int_to_string(boundary_id, 2) + ".dat";
       std::ofstream output(filename.c_str());
 
@@ -1654,10 +1653,10 @@ NavierStokesBase<dim, VectorType>::write_output_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "output_torques");
   for (unsigned int boundary_id = 0;
-       boundary_id < this->nsparam.boundaryConditions.size;
+       boundary_id < nsparam.boundaryConditions.size;
        ++boundary_id)
     {
-      std::string filename = this->nsparam.forcesParameters.torque_output_name + "." +
+      std::string filename = nsparam.forcesParameters.torque_output_name + "." +
                              Utilities::int_to_string(boundary_id, 2) + ".dat";
       std::ofstream output(filename.c_str());
 
@@ -1677,10 +1676,10 @@ NavierStokesBase<dim, VectorType>::write_checkpoint()
     this->pvdhandler.save(prefix);
 
   std::vector<const VectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&(this->present_solution));
-  sol_set_transfer.push_back(&(this->solution_m1));
-  sol_set_transfer.push_back(&(this->solution_m2));
-  sol_set_transfer.push_back(&(this->solution_m3));
+  sol_set_transfer.push_back(&this->present_solution);
+  sol_set_transfer.push_back(&this->solution_m1);
+  sol_set_transfer.push_back(&this->solution_m2);
+  sol_set_transfer.push_back(&this->solution_m3);
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
