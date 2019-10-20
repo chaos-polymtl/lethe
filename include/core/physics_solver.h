@@ -26,12 +26,11 @@
  * An interface for all physics solver classes to derive from.
  */
 
-template<typename VectorType>
 class PhysicsSolver
 {
 public:
 
-  PhysicsSolver(const Parameters::NonLinearSolver& params, ConditionalOStream pcout);
+  PhysicsSolver(const Parameters::NonLinearSolver& params);
 
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -46,27 +45,17 @@ public:
                       const double     absolute_residual,
                       const double     relative_residual) = 0;
 
-  const Parameters::NonLinearSolver& get_params() const;
-
-protected:
-  VectorType system_rhs;
-  VectorType evaluation_point;
-  VectorType local_evaluation_point;
-
-  ConditionalOStream pcout;
+  const Parameters::NonLinearSolver& getParams() const;
 
 private:
   const Parameters::NonLinearSolver& params;
 };
 
-template<typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(const Parameters::NonLinearSolver& params, ConditionalOStream pcout)
-  : pcout(pcout)
-  , params(params)
+PhysicsSolver::PhysicsSolver(const Parameters::NonLinearSolver& params)
+  : params(params)
 {}
 
-template<typename VectorType>
-const Parameters::NonLinearSolver& PhysicsSolver<VectorType>::get_params() const
+const Parameters::NonLinearSolver& PhysicsSolver::getParams() const
 {
   return params;
 }

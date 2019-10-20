@@ -225,6 +225,10 @@ private:
 
   std::vector<types::global_dof_index> dofs_per_block;
 
+  TrilinosWrappers::MPI::BlockVector system_rhs;
+  TrilinosWrappers::MPI::BlockVector evaluation_point;
+  TrilinosWrappers::MPI::BlockVector local_evaluation_point;
+
   const double gamma = 1;
 };
 
@@ -594,8 +598,8 @@ GDNavierStokesSolver<dim>::setup_dofs()
                            this->mpi_communicator);
 
   this->newton_update.reinit(locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(locally_owned_dofs, this->mpi_communicator);
+  system_rhs.reinit(locally_owned_dofs, this->mpi_communicator);
+  local_evaluation_point.reinit(locally_owned_dofs, this->mpi_communicator);
 
 
   sparsity_pattern.reinit(locally_owned_dofs,
@@ -648,7 +652,7 @@ GDNavierStokesSolver<dim>::assembleGD()
   if (assemble_matrix)
     system_matrix = 0;
 
-  this->system_rhs = 0;
+  system_rhs = 0;
 
   QGauss<dim>         quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim> mapping(this->degreeVelocity_,
@@ -716,13 +720,13 @@ GDNavierStokesSolver<dim>::assembleGD()
           local_matrix = 0;
           local_rhs    = 0;
 
-          fe_values[velocities].get_function_values(this->evaluation_point,
+          fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
 
           fe_values[velocities].get_function_gradients(
-            this->evaluation_point, present_velocity_gradients);
+            evaluation_point, present_velocity_gradients);
 
-          fe_values[pressure].get_function_values(this->evaluation_point,
+          fe_values[pressure].get_function_values(evaluation_point,
                                                   present_pressure_values);
 
           if (scheme != Parameters::SimulationControl::steady)
@@ -835,13 +839,13 @@ GDNavierStokesSolver<dim>::assembleGD()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           system_matrix,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
           else
             {
               constraints_used.distribute_local_to_global(local_rhs,
                                                           local_dof_indices,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
         }
     }
@@ -862,7 +866,7 @@ GDNavierStokesSolver<dim>::assembleGD()
       // zero. Luckily, FGMRES handles these rows without any problem.
       system_matrix.block(1, 1) = 0;
     }
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 /**
@@ -924,7 +928,7 @@ void
 GDNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix = 0;
-  this->system_rhs    = 0;
+  system_rhs    = 0;
   QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim>         mapping(this->degreeVelocity_,
                               this->nsparam.femParameters.qmapping_all);
@@ -1002,11 +1006,11 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
                                                       local_rhs,
                                                       local_dof_indices,
                                                       system_matrix,
-                                                      this->system_rhs);
+                                                      system_rhs);
         }
     }
   system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -1274,7 +1278,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
@@ -1311,7 +1315,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
 
   solver.solve(system_matrix,
                completely_distributed_solution,
-               this->system_rhs,
+               system_rhs,
                preconditioner);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
@@ -1348,7 +1352,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
@@ -1533,7 +1537,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
                    &pressure_preconditioner,
                    this->nsparam.linearSolver);
 
-  solver.solve(system_matrix, this->newton_update, this->system_rhs, preconditioner);
+  solver.solve(system_matrix, this->newton_update, system_rhs, preconditioner);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -1559,11 +1563,11 @@ GDNavierStokesSolver<dim>::newton_iteration(
     while ((current_res > this->nsparam.nonLinearSolver.tolerance) &&
            outer_iteration < this->nsparam.nonLinearSolver.maxIterations)
       {
-        this->evaluation_point = this->present_solution;
+        evaluation_point = this->present_solution;
         assemble_matrix_rhs(time_stepping_method);
         if (outer_iteration == 0)
           {
-            current_res = this->system_rhs.l2_norm();
+            current_res = system_rhs.l2_norm();
             last_res    = current_res;
           }
         if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
@@ -1575,12 +1579,12 @@ GDNavierStokesSolver<dim>::newton_iteration(
 
         for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
           {
-            this->local_evaluation_point = this->present_solution;
-            this->local_evaluation_point.add(alpha, this->newton_update);
-            this->nonzero_constraints.distribute(this->local_evaluation_point);
-            this->evaluation_point = this->local_evaluation_point;
+            local_evaluation_point = this->present_solution;
+            local_evaluation_point.add(alpha, this->newton_update);
+            this->nonzero_constraints.distribute(local_evaluation_point);
+            evaluation_point = local_evaluation_point;
             assemble_rhs(time_stepping_method);
-            current_res = this->system_rhs.l2_norm();
+            current_res = system_rhs.l2_norm();
             if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
               this->pcout << "\t\talpha = " << std::setw(6) << alpha
                           << std::setw(0) << " res = "
@@ -1591,7 +1595,7 @@ GDNavierStokesSolver<dim>::newton_iteration(
                 last_res < this->nsparam.nonLinearSolver.tolerance)
               break;
           }
-        this->present_solution = this->evaluation_point;
+        this->present_solution = evaluation_point;
         last_res               = current_res;
         ++outer_iteration;
       }
