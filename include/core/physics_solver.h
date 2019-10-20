@@ -31,7 +31,7 @@ class PhysicsSolver
 {
 public:
 
-  PhysicsSolver(const Parameters::NonLinearSolver& params);
+  PhysicsSolver(const Parameters::NonLinearSolver& params, const ConditionalOStream& conditionalOstream);
 
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -56,13 +56,16 @@ protected:
   VectorType evaluation_point;
   VectorType local_evaluation_point;
 
+  ConditionalOStream pcout;
+
 private:
   const Parameters::NonLinearSolver& params;
 };
 
 template <typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(const Parameters::NonLinearSolver& params)
-  : params(params)
+PhysicsSolver<VectorType>::PhysicsSolver(const Parameters::NonLinearSolver& params, const ConditionalOStream& conditionalOstream)
+  : pcout(conditionalOstream)
+  , params(params)
 {}
 
 template <typename VectorType>
