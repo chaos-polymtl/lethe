@@ -46,7 +46,10 @@ public:
                       const double     absolute_residual,
                       const double     relative_residual) = 0;
 
-  const Parameters::NonLinearSolver& getParams() const;
+  const Parameters::NonLinearSolver& get_params() const;
+  VectorType& get_system_rhs() const;
+  VectorType& get_evaluation_point() const;
+  VectorType& get_local_evaluation_point() const;
 
 protected:
   VectorType system_rhs;
@@ -63,9 +66,28 @@ PhysicsSolver<VectorType>::PhysicsSolver(const Parameters::NonLinearSolver& para
 {}
 
 template <typename VectorType>
-const Parameters::NonLinearSolver& PhysicsSolver<VectorType>::getParams() const
+const Parameters::NonLinearSolver& PhysicsSolver<VectorType>::get_params() const
 {
   return params;
 }
+
+template <typename VectorType>
+VectorType& PhysicsSolver<VectorType>::get_system_rhs() const
+{
+  return system_rhs;
+}
+
+template <typename VectorType>
+VectorType& PhysicsSolver<VectorType>::get_evaluation_point() const
+{
+  return evaluation_point;
+}
+
+template <typename VectorType>
+VectorType& PhysicsSolver<VectorType>::get_local_evaluation_point() const
+{
+  return local_evaluation_point;
+}
+
 
 #endif
