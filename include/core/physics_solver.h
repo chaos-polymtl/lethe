@@ -26,6 +26,7 @@
  * An interface for all physics solver classes to derive from.
  */
 
+template <typename VectorType>
 class PhysicsSolver
 {
 public:
@@ -47,15 +48,22 @@ public:
 
   const Parameters::NonLinearSolver& getParams() const;
 
+protected:
+  VectorType system_rhs;
+  VectorType evaluation_point;
+  VectorType local_evaluation_point;
+
 private:
   const Parameters::NonLinearSolver& params;
 };
 
-PhysicsSolver::PhysicsSolver(const Parameters::NonLinearSolver& params)
+template <typename VectorType>
+PhysicsSolver<VectorType>::PhysicsSolver(const Parameters::NonLinearSolver& params)
   : params(params)
 {}
 
-const Parameters::NonLinearSolver& PhysicsSolver::getParams() const
+template <typename VectorType>
+const Parameters::NonLinearSolver& PhysicsSolver<VectorType>::getParams() const
 {
   return params;
 }
