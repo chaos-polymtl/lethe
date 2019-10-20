@@ -114,7 +114,7 @@ using namespace dealii;
  */
 
 template <int dim, typename VectorType>
-class NavierStokesBase : public PhysicsSolver
+class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
   NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,
@@ -313,7 +313,7 @@ protected:
   parallel::distributed::Triangulation<dim> triangulation;
   DoFHandler<dim>                           dof_handler;
   FESystem<dim>                             fe;
-  ConditionalOStream                        pcout;
+  //ConditionalOStream                        pcout;
 
   TimerOutput computing_timer;
 
@@ -368,7 +368,7 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver(p_nsparam.nonLinearSolver)
+  : PhysicsSolver<VectorType>(p_nsparam.nonLinearSolver, {std::cout, Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0})
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -378,10 +378,8 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
                     Triangulation<dim>::smoothing_on_coarsening))
   , dof_handler(this->triangulation)
   , fe(FE_Q<dim>(p_degreeVelocity), dim, FE_Q<dim>(p_degreePressure), 1)
-  , pcout(std::cout,
-          (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0))
   , computing_timer(this->mpi_communicator,
-                    pcout,
+                    this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , nsparam(p_nsparam)
@@ -1611,8 +1609,8 @@ NavierStokesBase<dim, VectorType>::write_output_results(
       DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
     }
 
-  const unsigned int n_processes =
-    Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+  /*const unsigned int n_processes =
+    Utilities::MPI::n_mpi_processes(this->mpi_communicator);*/
 
 
 
