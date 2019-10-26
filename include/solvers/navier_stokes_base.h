@@ -367,7 +367,7 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver<VectorType>(p_nsparam.nonLinearSolver, {std::cout, Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0})
+  : PhysicsSolver<VectorType>(p_nsparam.nonLinearSolver)
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -386,6 +386,7 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
   , degreePressure_(p_degreePressure)
   , degreeQuadrature_(p_degreeVelocity + 1)
 {
+  this->pcout.set_condition(Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
   this->simulationControl = nsparam.simulationControl;
 
   // Overide default value of quadrature point if they are specified
