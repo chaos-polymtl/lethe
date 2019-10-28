@@ -325,12 +325,8 @@ protected:
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
-  AffineConstraints<double> nonzero_constraints;
-
-  VectorType newton_update;
 
   // Solution vectors
-  VectorType present_solution;
   VectorType solution_m1;
   VectorType solution_m2;
   VectorType solution_m3;
@@ -367,7 +363,7 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver<VectorType>(p_nsparam.nonLinearSolver)
+  : PhysicsSolver<VectorType>()
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -1397,10 +1393,10 @@ NavierStokesBase<dim, VectorType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(4);
 
-  VectorType distributed_system(newton_update);
-  VectorType distributed_system_m1(newton_update);
-  VectorType distributed_system_m2(newton_update);
-  VectorType distributed_system_m3(newton_update);
+  VectorType distributed_system(this->newton_update);
+  VectorType distributed_system_m1(this->newton_update);
+  VectorType distributed_system_m2(this->newton_update);
+  VectorType distributed_system_m3(this->newton_update);
   x_system[0] = &(distributed_system);
   x_system[1] = &(distributed_system_m1);
   x_system[2] = &(distributed_system_m2);
@@ -1526,15 +1522,15 @@ NavierStokesBase<dim, VectorType>::set_nodal_values()
   VectorTools::interpolate(mapping,
                            this->dof_handler,
                            this->nsparam.initialCondition->uvwp,
-                           newton_update,
+                           this->newton_update,
                            this->fe.component_mask(velocities));
   VectorTools::interpolate(mapping,
                            this->dof_handler,
                            this->nsparam.initialCondition->uvwp,
-                           newton_update,
+                           this->newton_update,
                            this->fe.component_mask(pressure));
-  nonzero_constraints.distribute(newton_update);
-  this->present_solution = newton_update;
+  this->nonzero_constraints.distribute(this->newton_update);
+  this->present_solution = this->newton_update;
 }
 
 
@@ -1609,8 +1605,8 @@ NavierStokesBase<dim, VectorType>::write_output_results(
       DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
     }
 
-  const unsigned int n_processes =
-    Utilities::MPI::n_mpi_processes(this->mpi_communicator);
+  /*const unsigned int n_processes =
+    Utilities::MPI::n_mpi_processes(this->mpi_communicator);*/
 
 
 

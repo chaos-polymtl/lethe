@@ -89,7 +89,9 @@
 
 // Lethe Includes
 #include <core/bdf.h>
+#include <core/non_linear_solver.h>
 #include <core/parameters.h>
+#include <core/physics_solver.h>
 #include <core/pvdhandler.h>
 #include <core/simulationcontrol.h>
 
@@ -705,7 +707,6 @@ GDNavierStokesSolver<dim>::assembleGD()
   std::vector<Tensor<1, dim>> p2_velocity_values(n_q_points);
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
   std::vector<Tensor<1, dim>> p4_velocity_values(n_q_points);
-
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -1549,6 +1550,17 @@ GDNavierStokesSolver<dim>::newton_iteration(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step)
 {
+  PhysicsSolver<TrilinosWrappers::MPI::BlockVector> *solver =
+    static_cast<PhysicsSolver<TrilinosWrappers::MPI::BlockVector> *>(this);
+  NonLinearSolver<TrilinosWrappers::MPI::BlockVector> non_linear_solver(
+    solver, this->nsparam.nonLinearSolver);
+  non_linear_solver.solve(time_stepping_method,
+                          is_initial_step,
+                          this->nsparam.linearSolver.minimum_residual,
+                          this->nsparam.linearSolver.relative_residual);
+
+
+  /*
   double current_res;
   double last_res;
   bool   first_step = is_initial_step;
@@ -1595,7 +1607,7 @@ GDNavierStokesSolver<dim>::newton_iteration(
         last_res               = current_res;
         ++outer_iteration;
       }
-  }
+  }*/
 }
 
 /*

@@ -20,6 +20,8 @@
 #ifndef LETHE_PHYSICSSOLVER
 #define LETHE_PHYSICSSOLVER
 
+#include <deal.II/lac/affine_constraints.h>
+
 #include "parameters.h"
 
 /**
@@ -30,8 +32,7 @@ template <typename VectorType>
 class PhysicsSolver
 {
 public:
-
-  PhysicsSolver(const Parameters::NonLinearSolver& params);
+  PhysicsSolver();
 
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -46,51 +47,140 @@ public:
                       const double     absolute_residual,
                       const double     relative_residual) = 0;
 
+  // Getters
   const Parameters::NonLinearSolver& get_params() const;
-  VectorType& get_system_rhs() const;
-  VectorType& get_evaluation_point() const;
-  VectorType& get_local_evaluation_point() const;
+  const VectorType &
+  get_system_rhs() const;
+  const VectorType &
+  get_evaluation_point() const;
+  VectorType &
+  get_local_evaluation_point();
+  const VectorType &
+  get_present_solution() const;
+  const VectorType &
+  get_newton_update() const;
+
+  AffineConstraints<double> &
+  get_nonzero_constraints();
+
+  ConditionalOStream &
+  get_ostream();
+
+  // Setters
+  void
+  set_system_rhs(const VectorType &system_rhs);
+  void
+  set_evaluation_point(const VectorType &evaluation_point);
+  void
+  set_local_evaluation_point(const VectorType &local_evaluation_point);
+  void
+  set_present_solution(const VectorType &present_solution);
+  void
+  set_newton_update(const VectorType &newton_update);
 
 protected:
   VectorType system_rhs;
   VectorType evaluation_point;
   VectorType local_evaluation_point;
+  VectorType present_solution;
+  VectorType newton_update;
+
+  AffineConstraints<double> nonzero_constraints;
 
   ConditionalOStream pcout;
 
-private:
-  const Parameters::NonLinearSolver& params;
 };
 
 template <typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(const Parameters::NonLinearSolver& params)
+PhysicsSolver<VectorType>::PhysicsSolver()
   : pcout({std::cout})
-  , params(params)
 {}
 
 template <typename VectorType>
-const Parameters::NonLinearSolver& PhysicsSolver<VectorType>::get_params() const
-{
-  return params;
-}
-
-template <typename VectorType>
-VectorType& PhysicsSolver<VectorType>::get_system_rhs() const
+const VectorType &
+PhysicsSolver<VectorType>::get_system_rhs() const
 {
   return system_rhs;
 }
 
 template <typename VectorType>
-VectorType& PhysicsSolver<VectorType>::get_evaluation_point() const
+const VectorType &
+PhysicsSolver<VectorType>::get_evaluation_point() const
 {
   return evaluation_point;
 }
 
 template <typename VectorType>
-VectorType& PhysicsSolver<VectorType>::get_local_evaluation_point() const
+VectorType &
+PhysicsSolver<VectorType>::get_local_evaluation_point()
 {
   return local_evaluation_point;
 }
 
+template <typename VectorType>
+const VectorType &
+PhysicsSolver<VectorType>::get_present_solution() const
+{
+  return present_solution;
+}
+
+template <typename VectorType>
+const VectorType &
+PhysicsSolver<VectorType>::get_newton_update() const
+{
+  return newton_update;
+}
+
+template <typename VectorType>
+AffineConstraints<double> &
+PhysicsSolver<VectorType>::get_nonzero_constraints()
+{
+  return nonzero_constraints;
+}
+
+template <typename VectorType>
+ConditionalOStream &
+PhysicsSolver<VectorType>::get_ostream()
+{
+  return pcout;
+}
+
+template <typename VectorType>
+void
+PhysicsSolver<VectorType>::set_system_rhs(const VectorType &system_rhs)
+{
+  this->system_rhs = system_rhs;
+}
+
+template <typename VectorType>
+void
+PhysicsSolver<VectorType>::set_evaluation_point(
+  const VectorType &evaluation_point)
+{
+  this->evaluation_point = evaluation_point;
+}
+
+template <typename VectorType>
+void
+PhysicsSolver<VectorType>::set_local_evaluation_point(
+  const VectorType &local_evaluation_point)
+{
+  this->local_evaluation_point = local_evaluation_point;
+}
+
+template <typename VectorType>
+void
+PhysicsSolver<VectorType>::set_present_solution(
+  const VectorType &present_solution)
+{
+  this->present_solution = present_solution;
+}
+
+template <typename VectorType>
+void
+PhysicsSolver<VectorType>::set_newton_update(const VectorType &newton_update)
+{
+  this->newton_update = newton_update;
+}
 
 #endif
