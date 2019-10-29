@@ -38,7 +38,7 @@ public:
         const double relative_residual);
 
 private:
-  std::shared_ptr<PhysicsSolver<VectorType>> physics_solver;
+  PhysicsSolver<VectorType>* physics_solver;
   Parameters::NonLinearSolver                params;
 };
 
