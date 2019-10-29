@@ -274,11 +274,11 @@ namespace Parameters
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
                         Patterns::FileName(),
-                        "File output force prefix");
+                        "File output kinetic energy");
       prm.declare_entry("enstrophy name",
                         "enstrophy",
                         Patterns::FileName(),
-                        "File output force prefix");
+                        "File output enstrophy");
       prm.declare_entry("calculation frequency",
                         "1",
                         Patterns::Integer(),

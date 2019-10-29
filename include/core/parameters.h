@@ -137,10 +137,10 @@ namespace Parameters
   {
     Verbosity verbosity;
 
-    // Enable force post-processing
+    // Enable total kinetic energy post-processing
     bool calculate_kinetic_energy;
 
-    // Enable torque post-processing
+    // Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
     // Frequency of the output

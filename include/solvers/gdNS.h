@@ -240,8 +240,8 @@ public:
                            double                                     viscosity,
                            const TrilinosWrappers::BlockSparseMatrix &S,
                            const TrilinosWrappers::SparseMatrix &     P,
-                           const BSPreconditioner                    *p_amat_preconditioner,
-                           const BSPreconditioner                    *p_pmass_preconditioner,
+                           const BSPreconditioner * p_amat_preconditioner,
+                           const BSPreconditioner * p_pmass_preconditioner,
                            Parameters::LinearSolver solver_parameters);
 
   void
@@ -254,8 +254,8 @@ private:
   const Parameters::LinearSolver             linear_solver_parameters;
   const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
   const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
-  const BSPreconditioner                     *amat_preconditioner;
-  const BSPreconditioner                     *pmass_preconditioner;
+  const BSPreconditioner *                   amat_preconditioner;
+  const BSPreconditioner *                   pmass_preconditioner;
 };
 
 // We can notice that the initialization of the inverse of the matrix at the
@@ -268,8 +268,8 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
   double                                     viscosity,
   const TrilinosWrappers::BlockSparseMatrix &S,
   const TrilinosWrappers::SparseMatrix &     P,
-  const BSPreconditioner                    *p_amat_preconditioner,
-  const BSPreconditioner                    *p_pmass_preconditioner,
+  const BSPreconditioner *                   p_amat_preconditioner,
+  const BSPreconditioner *                   p_pmass_preconditioner,
 
   Parameters::LinearSolver p_solver_parameters)
   : gamma(gamma)
@@ -277,10 +277,9 @@ BlockSchurPreconditioner<BSPreconditioner>::BlockSchurPreconditioner(
   , linear_solver_parameters(p_solver_parameters)
   , stokes_matrix(S)
   , pressure_mass_matrix(P)
-  , amat_preconditioner (p_amat_preconditioner)
+  , amat_preconditioner(p_amat_preconditioner)
   , pmass_preconditioner(p_pmass_preconditioner)
-{
-}
+{}
 
 template <class BSPreconditioner>
 void
@@ -288,17 +287,19 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
   TrilinosWrappers::MPI::BlockVector &      dst,
   const TrilinosWrappers::MPI::BlockVector &src) const
 {
-//    TimerOutput computing_timer(std::cout,
-//                                TimerOutput::summary,
-//                                TimerOutput::wall_times);
+  //    TimerOutput computing_timer(std::cout,
+  //                                TimerOutput::summary,
+  //                                TimerOutput::wall_times);
 
   TrilinosWrappers::MPI::Vector utmp(src.block(0));
   {
-//        computing_timer.enter_section("Pressure");
-    SolverControl              solver_control(linear_solver_parameters.max_iterations,
-                               std::max(1e-8 * src.block(1).l2_norm(),
-                                                //linear_solver_parameters.relative_residual*src.block(0).l2_norm(),
-                                          linear_solver_parameters.minimum_residual));
+    //        computing_timer.enter_section("Pressure");
+    SolverControl solver_control(
+      linear_solver_parameters.max_iterations,
+      std::max(
+        1e-8 * src.block(1).l2_norm(),
+        // linear_solver_parameters.relative_residual*src.block(0).l2_norm(),
+        linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverCG cg(solver_control);
 
     dst.block(1) = 0.0;
@@ -307,21 +308,22 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
              src.block(1),
              *pmass_preconditioner);
     dst.block(1) *= -(viscosity + gamma);
-//        computing_timer.exit_section("Pressure");
+    //        computing_timer.exit_section("Pressure");
   }
 
   {
-//        computing_timer.enter_section("Operations");
+    //        computing_timer.enter_section("Operations");
     stokes_matrix.block(0, 1).vmult(utmp, dst.block(1));
     utmp *= -1.0;
     utmp += src.block(0);
-//        computing_timer.exit_section("Operations");
+    //        computing_timer.exit_section("Operations");
   }
   {
-//        computing_timer.enter_section("A Matrix");
-    SolverControl              solver_control(linear_solver_parameters.max_iterations,
-                               std::max(1e-1*src.block(0).l2_norm(),
-                                          linear_solver_parameters.minimum_residual));
+    //        computing_timer.enter_section("A Matrix");
+    SolverControl solver_control(
+      linear_solver_parameters.max_iterations,
+      std::max(1e-1 * src.block(0).l2_norm(),
+               linear_solver_parameters.minimum_residual));
 
 
 
@@ -333,7 +335,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
                  dst.block(0),
                  utmp,
                  *amat_preconditioner);
-//        computing_timer.exit_section("A Matrix");
+    //        computing_timer.exit_section("A Matrix");
   }
 }
 
@@ -344,8 +346,8 @@ class BlockDiagPreconditioner : public Subscriptor
 {
 public:
   BlockDiagPreconditioner(const TrilinosWrappers::BlockSparseMatrix &S,
-                        const PreconditionerMp &Mppreconditioner,
-                        SolverControl &         A_parameters);
+                          const PreconditionerMp &Mppreconditioner,
+                          SolverControl &         A_parameters);
 
   void
   vmult(TrilinosWrappers::MPI::BlockVector &      dst,
@@ -363,8 +365,8 @@ template <class PreconditionerMp>
 BlockDiagPreconditioner<PreconditionerMp>::BlockDiagPreconditioner(
   const TrilinosWrappers::BlockSparseMatrix &S,
   const PreconditionerMp &                   Mppreconditioner,
-  SolverControl &                            A_parameters):
-  stokes_matrix(S)
+  SolverControl &                            A_parameters)
+  : stokes_matrix(S)
   , mp_preconditioner(Mppreconditioner)
   , A_inverse(A_parameters)
 {
@@ -1304,10 +1306,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   pmass_preconditioner.initialize(pressure_mass_matrix, preconditionerOptions);
 
 
-  const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU> preconditioner(
-    system_matrix,
-    pmass_preconditioner,
-    solver_control);
+  const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU>
+    preconditioner(system_matrix, pmass_preconditioner, solver_control);
 
   // preconditioner.initialize(system_matrix, preconditionerOptions);
 
@@ -1343,8 +1343,8 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 template <int dim>
 void
 GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
-                                                     double     absolute_residual,
-                                                     double     relative_residual)
+                                              double     absolute_residual,
+                                              double     relative_residual)
 {
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
@@ -1368,10 +1368,12 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
   TrilinosWrappers::PreconditionILU velocity_preconditioner;
-  velocity_preconditioner.initialize(system_matrix.block(0,0),preconditionerOptions);
+  velocity_preconditioner.initialize(system_matrix.block(0, 0),
+                                     preconditionerOptions);
 
   TrilinosWrappers::PreconditionILU pressure_preconditioner;
-  pressure_preconditioner.initialize(system_matrix.block(1,1),preconditionerOptions);
+  pressure_preconditioner.initialize(system_matrix.block(1, 1),
+                                     preconditionerOptions);
 
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
     locally_owned_dofs, this->mpi_communicator);
@@ -1429,7 +1431,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   // Constant modes for velocity
   std::vector<std::vector<bool>> velocity_constant_modes;
-  std::vector<bool> velocity_components(dim+1, true);
+  std::vector<bool>              velocity_components(dim + 1, true);
   velocity_components[dim] = false;
   DoFTools::extract_constant_modes(this->dof_handler,
                                    velocity_components,
@@ -1437,14 +1439,14 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   // Constant modes for pressure
   std::vector<std::vector<bool>> pressure_constant_modes;
-  std::vector<bool> pressure_components(dim, false);
-  velocity_components[dim] = true;
+  std::vector<bool>              pressure_components(dim+1, false);
+  pressure_components[dim] = true;
   DoFTools::extract_constant_modes(this->dof_handler,
                                    pressure_components,
                                    pressure_constant_modes);
 
   this->computing_timer.enter_section("AMG_velocity");
-  const bool elliptic_velocity              = false;
+  const bool elliptic_velocity     = false;
   bool       higher_order_elements = false;
   if (this->degreeVelocity_ > 1)
     higher_order_elements = true;
@@ -1456,55 +1458,59 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
     this->nsparam.linearSolver.amg_smoother_sweeps;
   const unsigned int smoother_overlap =
     this->nsparam.linearSolver.amg_smoother_overlap;
-  const bool                                        output_details = false;
-  const char *                                      smoother_type  = "Chebyshev";//"ILU";
-  const char *                                      coarse_type    = "Amesos-KLU";//"ILU";
+  const bool  output_details = false;
+  const char *smoother_type  = "Chebyshev";  //"ILU";
+  const char *coarse_type    = "Amesos-KLU"; //"ILU";
 
-  TrilinosWrappers::PreconditionAMG::AdditionalData velocity_preconditioner_options(
-    elliptic_velocity,
-    higher_order_elements,
-    n_cycles,
-    w_cycle,
-    aggregation_threshold,
-    velocity_constant_modes,
-    smoother_sweeps,
-    smoother_overlap,
-    output_details,
-    smoother_type,
-    coarse_type);
+  TrilinosWrappers::PreconditionAMG::AdditionalData
+    velocity_preconditioner_options(elliptic_velocity,
+                                    higher_order_elements,
+                                    n_cycles,
+                                    w_cycle,
+                                    aggregation_threshold,
+                                    velocity_constant_modes,
+                                    smoother_sweeps,
+                                    smoother_overlap,
+                                    output_details,
+                                    smoother_type,
+                                    coarse_type);
 
   Teuchos::ParameterList              velocity_parameter_ml;
   std::unique_ptr<Epetra_MultiVector> velocity_distributed_constant_modes;
-  velocity_preconditioner_options.set_parameters(velocity_parameter_ml,
-                                                 velocity_distributed_constant_modes,
-                                                 system_matrix.block(0,0));
-  velocity_preconditioner.initialize(system_matrix.block(0,0), velocity_parameter_ml);
+  velocity_preconditioner_options.set_parameters(
+    velocity_parameter_ml,
+    velocity_distributed_constant_modes,
+    system_matrix.block(0, 0));
+  velocity_preconditioner.initialize(system_matrix.block(0, 0),
+                                     velocity_parameter_ml);
   this->computing_timer.exit_section("AMG_velocity");
 
 
   this->computing_timer.enter_section("AMG_pressure");
   const bool elliptic_pressure = true;
-  higher_order_elements=false;
+  higher_order_elements        = false;
   if (this->degreePressure_ > 1)
     higher_order_elements = true;
-  TrilinosWrappers::PreconditionAMG::AdditionalData pressure_preconditioner_options(
-    elliptic_pressure,
-    higher_order_elements,
-    n_cycles,
-    w_cycle,
-    aggregation_threshold,
-    pressure_constant_modes,
-    smoother_sweeps,
-    smoother_overlap,
-    output_details,
-    smoother_type,
-    coarse_type);
+  TrilinosWrappers::PreconditionAMG::AdditionalData
+                                      pressure_preconditioner_options(elliptic_pressure,
+                                    higher_order_elements,
+                                    n_cycles,
+                                    w_cycle,
+                                    aggregation_threshold,
+                                    pressure_constant_modes,
+                                    smoother_sweeps,
+                                    smoother_overlap,
+                                    output_details,
+                                    smoother_type,
+                                    coarse_type);
   Teuchos::ParameterList              pressure_parameter_ml;
   std::unique_ptr<Epetra_MultiVector> pressure_distributed_constant_modes;
-  velocity_preconditioner_options.set_parameters(pressure_parameter_ml,
-                                                 pressure_distributed_constant_modes,
-                                                 system_matrix.block(0,0));
-  pressure_preconditioner.initialize(system_matrix.block(1,1), pressure_parameter_ml);
+  velocity_preconditioner_options.set_parameters(
+    pressure_parameter_ml,
+    pressure_distributed_constant_modes,
+    system_matrix.block(0, 0));
+  pressure_preconditioner.initialize(system_matrix.block(1, 1),
+                                     pressure_parameter_ml);
   this->computing_timer.exit_section("AMG_pressure");
 
 
@@ -1520,7 +1526,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
 
-  const BlockSchurPreconditioner< TrilinosWrappers::PreconditionAMG >
+  const BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>
     preconditioner(gamma,
                    this->nsparam.physicalProperties.viscosity,
                    system_matrix,

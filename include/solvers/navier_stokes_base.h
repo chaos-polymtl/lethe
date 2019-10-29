@@ -1237,10 +1237,26 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
       this->enstrophy_table.add_value("time",
                                       this->simulationControl.getTime());
       this->enstrophy_table.add_value("enstrophy", enstrophy);
+
+      // Display Enstrophy to screen if verbosity is enabled
       if (this->nsparam.postProcessingParameters.verbosity ==
           Parameters::verbose)
         {
           this->pcout << "Enstrophy  : " << enstrophy << std::endl;
+        }
+
+      // Output Enstrophy to a text file from processor 0
+      if (this->simulationControl.getIter() %
+              this->nsparam.postProcessingParameters.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            nsparam.postProcessingParameters.enstrophy_output_name + ".dat";
+          std::ofstream output(filename.c_str());
+          enstrophy_table.set_precision("time",12);
+          enstrophy_table.set_precision("enstrophy",12);
+          this->enstrophy_table.write_text(output);
         }
     }
 
@@ -1254,6 +1270,21 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
           Parameters::verbose)
         {
           this->pcout << "Kinetic energy : " << kE << std::endl;
+        }
+
+      // Output Kinetic Energy to a text file from processor 0
+      if (this->simulationControl.getIter() %
+              this->nsparam.postProcessingParameters.output_frequency ==
+            0 &&
+          this->this_mpi_process == 0)
+        {
+          std::string filename =
+            nsparam.postProcessingParameters.kinetic_energy_output_name +
+            ".dat";
+          std::ofstream output(filename.c_str());
+          kinetic_energy_table.set_precision("time",12);
+          kinetic_energy_table.set_precision("kinetic-energy",12);
+          this->kinetic_energy_table.write_text(output);
         }
     }
 
