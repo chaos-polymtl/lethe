@@ -171,15 +171,6 @@ private:
                       const double absolute_residual,
                       const double relative_residual) override; // Interface function
 
-  virtual void
-  solve_non_linear_system(
-    const Parameters::SimulationControl::TimeSteppingMethod
-               time_stepping_method,
-    const bool first_iteration)
-  {
-    this->non_linear_solver.solve(time_stepping_method, first_iteration);
-  }
-
   /**
    * GMRES solver with ILU(N) preconditioning
    */
@@ -749,7 +740,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-      this->non_linear_solver.solve(Parameters::SimulationControl::steady, false);
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::steady, false);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -761,8 +753,6 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       throw std::runtime_error("GLSNS - Initial condition could not be set");
     }
 }
-
-
 
 template <int dim>
 void

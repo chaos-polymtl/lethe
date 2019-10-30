@@ -48,6 +48,12 @@ public:
                       const double     absolute_residual,
                       const double     relative_residual) = 0;
 
+  void
+  solve_non_linear_system(
+    const Parameters::SimulationControl::TimeSteppingMethod
+               time_stepping_method,
+    const bool first_iteration);
+
   // Getters
   const Parameters::NonLinearSolver& get_params() const;
   const VectorType &
@@ -99,6 +105,15 @@ PhysicsSolver<VectorType>::PhysicsSolver(const NonLinearSolver<VectorType>& non_
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout})
 {}
+
+template <typename VectorType>
+void
+PhysicsSolver<VectorType>::solve_non_linear_system(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
+  const bool                                              first_iteration)
+{
+  this->non_linear_solver.solve(time_stepping_method, first_iteration);
+}
 
 template <typename VectorType>
 const VectorType &

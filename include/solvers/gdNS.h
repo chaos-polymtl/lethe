@@ -168,15 +168,6 @@ private:
   void
   set_solution_vector(double value);
 
-  virtual void
-  solve_non_linear_system(
-    const Parameters::SimulationControl::TimeSteppingMethod
-               time_stepping_method,
-    const bool first_iteration)
-  {
-    this->non_linear_solver.solve(time_stepping_method, first_iteration);
-  }
-
   /**
    * Solver for the L2 Projection linear system
    */
@@ -903,7 +894,8 @@ GDNavierStokesSolver<dim>::set_initial_condition(
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-      this->non_linear_solver.solve(Parameters::SimulationControl::steady, false);
+      PhysicsSolver<TrilinosWrappers::MPI::BlockVector>::
+        solve_non_linear_system(Parameters::SimulationControl::steady, false);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
