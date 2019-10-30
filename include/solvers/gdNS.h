@@ -297,7 +297,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
     SolverControl solver_control(
       linear_solver_parameters.max_iterations,
       std::max(
-        1e-8 * src.block(1).l2_norm(),
+        1e-3 * src.block(1).l2_norm(),
         // linear_solver_parameters.relative_residual*src.block(0).l2_norm(),
         linear_solver_parameters.minimum_residual));
     TrilinosWrappers::SolverCG cg(solver_control);
