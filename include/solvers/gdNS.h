@@ -174,12 +174,8 @@ private:
                time_stepping_method,
     const bool first_iteration)
   {
-    newton_iteration(time_stepping_method, first_iteration);
+    this->non_linear_solver.solve(time_stepping_method, first_iteration);
   }
-
-  void
-  newton_iteration(const Parameters::SimulationControl::TimeSteppingMethod,
-                   const bool is_initial_step);
 
   /**
    * Solver for the L2 Projection linear system
@@ -907,7 +903,7 @@ GDNavierStokesSolver<dim>::set_initial_condition(
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-      newton_iteration(Parameters::SimulationControl::steady, false);
+      this->non_linear_solver.solve(Parameters::SimulationControl::steady, false);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -1542,72 +1538,6 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
     }
 
   constraints_used.distribute(this->newton_update);
-}
-
-template <int dim>
-void
-GDNavierStokesSolver<dim>::newton_iteration(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step)
-{
-  PhysicsSolver<TrilinosWrappers::MPI::BlockVector> *solver =
-    static_cast<PhysicsSolver<TrilinosWrappers::MPI::BlockVector> *>(this);
-  NonLinearSolver<TrilinosWrappers::MPI::BlockVector> non_linear_solver(
-    solver, this->nsparam.nonLinearSolver);
-  non_linear_solver.solve(time_stepping_method,
-                          is_initial_step,
-                          this->nsparam.linearSolver.minimum_residual,
-                          this->nsparam.linearSolver.relative_residual);
-
-
-  /*
-  double current_res;
-  double last_res;
-  bool   first_step = is_initial_step;
-  {
-    unsigned int outer_iteration = 0;
-    last_res                     = 1.0;
-    current_res                  = 1.0;
-    while ((current_res > this->nsparam.nonLinearSolver.tolerance) &&
-           outer_iteration < this->nsparam.nonLinearSolver.maxIterations)
-      {
-        this->evaluation_point = this->present_solution;
-        assemble_matrix_rhs(time_stepping_method);
-        if (outer_iteration == 0)
-          {
-            current_res = this->system_rhs.l2_norm();
-            last_res    = current_res;
-          }
-        if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
-          this->pcout << "Newton iteration: " << outer_iteration
-                      << "  - Residual:  " << current_res << std::endl;
-        solve_linear_system(first_step,
-                            this->nsparam.linearSolver.minimum_residual,
-                            this->nsparam.linearSolver.relative_residual);
-
-        for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
-          {
-            this->local_evaluation_point = this->present_solution;
-            this->local_evaluation_point.add(alpha, this->newton_update);
-            this->nonzero_constraints.distribute(this->local_evaluation_point);
-            this->evaluation_point = this->local_evaluation_point;
-            assemble_rhs(time_stepping_method);
-            current_res = this->system_rhs.l2_norm();
-            if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
-              this->pcout << "\t\talpha = " << std::setw(6) << alpha
-                          << std::setw(0) << " res = "
-                          << std::setprecision(
-                               this->nsparam.nonLinearSolver.display_precision)
-                          << current_res << std::endl;
-            if (current_res < 0.9 * last_res ||
-                last_res < this->nsparam.nonLinearSolver.tolerance)
-              break;
-          }
-        this->present_solution = this->evaluation_point;
-        last_res               = current_res;
-        ++outer_iteration;
-      }
-  }*/
 }
 
 /*

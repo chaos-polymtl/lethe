@@ -21,42 +21,49 @@
 #define LETHE_NONLINEARSOLVER
 
 #include "parameters.h"
-#include "physics_solver.h"
+
+template <typename VectorType>
+class PhysicsSolver;
 
 template <typename VectorType>
 class NonLinearSolver
 {
 public:
-  NonLinearSolver(PhysicsSolver<VectorType>* physics_solver,
-                  const Parameters::NonLinearSolver &        params);
+  NonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
+                  const Parameters::NonLinearSolver &params,
+                  const double                       absolute_residual,
+                  const double                       relative_residual);
 
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
-                     time_stepping_method,
-        const bool   is_initial_step,
-        const double absolute_residual,
-        const double relative_residual);
+                   time_stepping_method,
+        const bool is_initial_step);
 
 private:
   PhysicsSolver<VectorType>* physics_solver;
   Parameters::NonLinearSolver                params;
+
+  const double absolute_residual;
+  const double relative_residual;
 };
 
 template <typename VectorType>
 NonLinearSolver<VectorType>::NonLinearSolver(
-  PhysicsSolver<VectorType>* physics_solver,
-  const Parameters::NonLinearSolver &        params)
+  PhysicsSolver<VectorType> *        physics_solver,
+  const Parameters::NonLinearSolver &params,
+  const double                       absolute_residual,
+  const double                       relative_residual)
   : physics_solver(physics_solver)
   , params(params)
+  , absolute_residual(absolute_residual)
+  , relative_residual(relative_residual)
 {}
 
 template <typename VectorType>
 void
 NonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step,
-  const double                                            absolute_residual,
-  const double                                            relative_residual)
+  const bool                                              is_initial_step)
 {
   double       current_res;
   double       last_res;
@@ -85,11 +92,6 @@ NonLinearSolver<VectorType>::solve(
             << "  - Residual:  " << current_res << std::endl;
         }
 
-      /*
-      physics_solver->solve_linear_system(first_step,
-                          this->nsparam.linearSolver.minimum_residual,
-                          this->nsparam.linearSolver.relative_residual);
-                          */
       physics_solver->solve_linear_system(first_step,
                                           absolute_residual,
                                           relative_residual);
