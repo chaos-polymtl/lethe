@@ -984,133 +984,15 @@ GDNavierStokesSolver<dim>::refine_mesh()
     {
       if (this->nsparam.meshAdaptation.type ==
           this->nsparam.meshAdaptation.kelly)
-        refine_mesh_Kelly();
-      if (this->nsparam.meshAdaptation.type ==
+        {
+          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>::refine_mesh_kelly(locally_owned_dofs);
+        }
+      else if (this->nsparam.meshAdaptation.type ==
           this->nsparam.meshAdaptation.uniform)
-        refine_mesh_uniform();
+        {
+          refine_mesh_uniform();
+        }
     }
-}
-
-template <int dim>
-void
-GDNavierStokesSolver<dim>::refine_mesh_Kelly()
-{
-  // Time monitoring
-  TimerOutput::Scope t(this->computing_timer, "refine");
-
-  Vector<float> estimated_error_per_cell(this->triangulation.n_active_cells());
-  const MappingQ<dim>              mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
-  const FEValuesExtractors::Vector velocity(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  if (this->nsparam.meshAdaptation.variable ==
-      Parameters::MeshAdaptation::pressure)
-    {
-      KellyErrorEstimator<dim>::estimate(
-        mapping,
-        this->dof_handler,
-        QGauss<dim - 1>(this->degreeQuadrature_ + 1),
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
-        estimated_error_per_cell,
-        this->fe.component_mask(pressure));
-    }
-  else if (this->nsparam.meshAdaptation.variable ==
-           Parameters::MeshAdaptation::velocity)
-    {
-      KellyErrorEstimator<dim>::estimate(
-        mapping,
-        this->dof_handler,
-        QGauss<dim - 1>(this->degreeQuadrature_ + 1),
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
-        estimated_error_per_cell,
-        this->fe.component_mask(velocity));
-    }
-
-  if (this->nsparam.meshAdaptation.fractionType ==
-      Parameters::MeshAdaptation::number)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-      this->triangulation,
-      estimated_error_per_cell,
-      this->nsparam.meshAdaptation.fractionRefinement,
-      this->nsparam.meshAdaptation.fractionCoarsening,
-      this->nsparam.meshAdaptation.maxNbElements);
-
-  else if (this->nsparam.meshAdaptation.fractionType ==
-           Parameters::MeshAdaptation::fraction)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
-      this->triangulation,
-      estimated_error_per_cell,
-      this->nsparam.meshAdaptation.fractionRefinement,
-      this->nsparam.meshAdaptation.fractionCoarsening);
-
-  if (this->triangulation.n_levels() > this->nsparam.meshAdaptation.maxRefLevel)
-    for (typename Triangulation<dim>::active_cell_iterator cell =
-           this->triangulation.begin_active(
-             this->nsparam.meshAdaptation.maxRefLevel);
-         cell != this->triangulation.end();
-         ++cell)
-      cell->clear_refine_flag();
-  for (typename Triangulation<dim>::active_cell_iterator cell =
-         this->triangulation.begin_active(
-           this->nsparam.meshAdaptation.minRefLevel);
-       cell !=
-       this->triangulation.end_active(this->nsparam.meshAdaptation.minRefLevel);
-       ++cell)
-    cell->clear_coarsen_flag();
-
-  this->triangulation.prepare_coarsening_and_refinement();
-
-  // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim,
-                                          TrilinosWrappers::MPI::BlockVector>
-    solution_transfer(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim,
-                                          TrilinosWrappers::MPI::BlockVector>
-    solution_transfer_m1(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim,
-                                          TrilinosWrappers::MPI::BlockVector>
-    solution_transfer_m2(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim,
-                                          TrilinosWrappers::MPI::BlockVector>
-    solution_transfer_m3(this->dof_handler);
-  solution_transfer.prepare_for_coarsening_and_refinement(
-    this->present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
-
-  this->triangulation.execute_coarsening_and_refinement();
-  setup_dofs();
-
-  // Set up the vectors for the transfer
-  TrilinosWrappers::MPI::BlockVector tmp(locally_owned_dofs,
-                                         this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector tmp_m1(locally_owned_dofs,
-                                            this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector tmp_m2(locally_owned_dofs,
-                                            this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector tmp_m3(locally_owned_dofs,
-                                            this->mpi_communicator);
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
-
-  // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
-
-  // Fix on the new mesh
-  this->present_solution = tmp;
-  this->solution_m1      = tmp_m1;
-  this->solution_m2      = tmp_m2;
-  this->solution_m3      = tmp_m3;
 }
 
 template <int dim>
