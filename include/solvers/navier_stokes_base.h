@@ -225,6 +225,10 @@ protected:
   void
   refine_mesh_kelly(DofsType& locally_owned_dofs);
 
+  template <typename DofsType>
+  void
+  refine_mesh_uniform(DofsType& locally_owned_dofs);
+
   /**
    * @brief postprocess
    * Post-process after an iteration
@@ -1327,6 +1331,58 @@ NavierStokesBase<dim, VectorType>::refine_mesh_kelly(DofsType& locally_owned_dof
                                        this->mpi_communicator);
   VectorType tmp_m3(locally_owned_dofs,
                                        this->mpi_communicator);
+
+  // Interpolate the solution at time and previous time
+  solution_transfer.interpolate(tmp);
+  solution_transfer_m1.interpolate(tmp_m1);
+  solution_transfer_m2.interpolate(tmp_m2);
+  solution_transfer_m3.interpolate(tmp_m3);
+
+  // Distribute constraints
+  this->nonzero_constraints.distribute(tmp);
+  this->nonzero_constraints.distribute(tmp_m1);
+  this->nonzero_constraints.distribute(tmp_m2);
+  this->nonzero_constraints.distribute(tmp_m3);
+
+  // Fix on the new mesh
+  this->present_solution = tmp;
+  this->solution_m1      = tmp_m1;
+  this->solution_m2      = tmp_m2;
+  this->solution_m3      = tmp_m3;
+}
+
+template <int dim, typename VectorType>
+template <typename DofsType>
+void
+NavierStokesBase<dim, VectorType>::refine_mesh_uniform(DofsType& locally_owned_dofs)
+{
+  TimerOutput::Scope t(this->computing_timer, "refine");
+
+  // Solution transfer objects for all the solutions
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer(this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_m1(this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_m2(this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_m3(this->dof_handler);
+  solution_transfer.prepare_for_coarsening_and_refinement(
+    this->present_solution);
+  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
+  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
+  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
+
+  // Refine
+  this->triangulation.refine_global(1);
+
+  setup_dofs();
+
+  // Set up the vectors for the transfer
+  VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
