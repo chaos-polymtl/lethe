@@ -36,8 +36,11 @@
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/precondition_block.h>
 #include <deal.II/lac/solver_bicgstab.h>
+#include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/sparse_direct.h>
 #include <deal.II/lac/sparse_ilu.h>
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/sparsity_tools.h>
@@ -85,6 +88,7 @@
 #include <deal.II/distributed/solution_transfer.h>
 
 // Lethe Includes
+#include <core/bdf.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvdhandler.h>
