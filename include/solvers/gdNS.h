@@ -67,12 +67,6 @@ private:
   assemble_L2_projection();
 
   void
-  refine_mesh();
-
-  void
-  refine_mesh_Kelly();
-
-  void
   set_nodal_values();
 
   virtual void
@@ -970,28 +964,6 @@ GDNavierStokesSolver<dim>::assemble_rhs(
     assembleGD<false, Parameters::SimulationControl::steady>();
 }
 
-
-template <int dim>
-void
-GDNavierStokesSolver<dim>::refine_mesh()
-{
-  if (this->simulationControl.getIter() %
-        this->nsparam.meshAdaptation.frequency ==
-      0)
-    {
-      if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.kelly)
-        {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>::refine_mesh_kelly(locally_owned_dofs);
-        }
-      else if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.uniform)
-        {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>::refine_mesh_uniform(locally_owned_dofs);
-        }
-    }
-}
-
 template <int dim>
 void
 GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
@@ -1291,7 +1263,7 @@ GDNavierStokesSolver<dim>::solve()
       printTime(this->pcout, this->simulationControl);
       if (!this->simulationControl.firstIter())
         {
-          this->refine_mesh();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>::refine_mesh(locally_owned_dofs);
         }
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);

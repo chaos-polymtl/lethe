@@ -223,6 +223,10 @@ protected:
 
   template <typename DofsType>
   void
+  refine_mesh(DofsType& locally_owned_dofs);
+
+  template <typename DofsType>
+  void
   refine_mesh_kelly(DofsType& locally_owned_dofs);
 
   template <typename DofsType>
@@ -1229,6 +1233,28 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
             (1. - 2. * timeParameters.startup_timestep_scaling));
           PhysicsSolver<VectorType>::solve_non_linear_system(
             this->simulationControl.getMethod(), false);
+        }
+    }
+}
+
+template <int dim, typename VectorType>
+template <typename DofsType>
+void
+NavierStokesBase<dim, VectorType>::refine_mesh(DofsType& locally_owned_dofs)
+{
+  if (this->simulationControl.getIter() %
+        this->nsparam.meshAdaptation.frequency ==
+      0)
+    {
+      if (this->nsparam.meshAdaptation.type ==
+          this->nsparam.meshAdaptation.kelly)
+        {
+          refine_mesh_kelly(locally_owned_dofs);
+        }
+      else if (this->nsparam.meshAdaptation.type ==
+          this->nsparam.meshAdaptation.uniform)
+        {
+          refine_mesh_uniform(locally_owned_dofs);
         }
     }
 }

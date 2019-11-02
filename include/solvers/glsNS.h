@@ -48,8 +48,7 @@ public:
   solve();
 
 protected:
-  void
-  refine_mesh();
+
   virtual void
   setup_dofs();
   void
@@ -1046,27 +1045,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
   this->newton_update = completely_distributed_solution;
 }
 
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::refine_mesh()
-{
-  if (this->simulationControl.getIter() %
-        this->nsparam.meshAdaptation.frequency ==
-      0)
-    {
-      if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.kelly)
-        {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector>::refine_mesh_kelly(locally_owned_dofs);
-        }
-      else if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.uniform)
-        {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector>::refine_mesh_uniform(locally_owned_dofs);
-        }
-    }
-}
-
 /*
  * Generic CFD Solver application
  * Handles the majority of the cases for the GLS-NS solver
@@ -1087,7 +1065,7 @@ GLSNavierStokesSolver<dim>::solve()
       printTime(this->pcout, this->simulationControl);
       if (!this->simulationControl.firstIter())
         {
-          this->refine_mesh();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector>::refine_mesh(locally_owned_dofs);
         }
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);
