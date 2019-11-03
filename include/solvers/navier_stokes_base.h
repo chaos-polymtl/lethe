@@ -117,7 +117,7 @@ using namespace dealii;
  * @author Bruno Blais, 2019
  */
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
@@ -221,17 +221,14 @@ protected:
                       double     absolute_residual,
                       double     relative_residual) = 0;
 
-  template <typename DofsType>
   void
-  refine_mesh(DofsType& locally_owned_dofs);
+  refine_mesh();
 
-  template <typename DofsType>
   void
-  refine_mesh_kelly(DofsType& locally_owned_dofs);
+  refine_mesh_kelly();
 
-  template <typename DofsType>
   void
-  refine_mesh_uniform(DofsType& locally_owned_dofs);
+  refine_mesh_uniform();
 
   /**
    * @brief postprocess
@@ -312,6 +309,9 @@ protected:
   write_output_torques();
 
   // Member variables
+  DofsType locally_owned_dofs;
+  DofsType locally_relevant_dofs;
+
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
@@ -364,8 +364,8 @@ protected:
 /*
  * Constructor for the Navier-Stokes base class
  */
-template <int dim, typename VectorType>
-NavierStokesBase<dim, VectorType>::NavierStokesBase(
+template <int dim, typename VectorType, typename DofsType>
+NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
@@ -427,9 +427,9 @@ NavierStokesBase<dim, VectorType>::NavierStokesBase(
 /*
  * Kinetic Energy Calculation
  */
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 double
-NavierStokesBase<dim, VectorType>::calculate_average_KE(
+NavierStokesBase<dim, VectorType, DofsType>::calculate_average_KE(
   const VectorType &evaluation_point)
 {
   TimerOutput::Scope t(this->computing_timer, "KE");
@@ -490,9 +490,9 @@ NavierStokesBase<dim, VectorType>::calculate_average_KE(
 }
 
 // enstrophy calculation
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 double
-NavierStokesBase<dim, VectorType>::calculate_average_enstrophy(
+NavierStokesBase<dim, VectorType, DofsType>::calculate_average_enstrophy(
   const VectorType &evaluation_point)
 {
   TimerOutput::Scope t(this->computing_timer, "Entrosphy");
@@ -558,9 +558,9 @@ NavierStokesBase<dim, VectorType>::calculate_average_enstrophy(
   return (en);
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 double
-NavierStokesBase<dim, VectorType>::calculate_CFL(
+NavierStokesBase<dim, VectorType, DofsType>::calculate_CFL(
   const VectorType &evaluation_point)
 {
   QGauss<dim>                          quadrature_formula(1);
@@ -619,9 +619,9 @@ NavierStokesBase<dim, VectorType>::calculate_CFL(
 
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::calculate_forces(
+NavierStokesBase<dim, VectorType, DofsType>::calculate_forces(
   const VectorType &       evaluation_point,
   const SimulationControl &simulationControl)
 {
@@ -758,9 +758,9 @@ NavierStokesBase<dim, VectorType>::calculate_forces(
 }
 
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::calculate_torques(
+NavierStokesBase<dim, VectorType, DofsType>::calculate_torques(
   const VectorType &       evaluation_point,
   const SimulationControl &simulationControl)
 {
@@ -917,9 +917,9 @@ NavierStokesBase<dim, VectorType>::calculate_torques(
 
 // Find the l2 norm of the error between the finite element sol'n and the exact
 // sol'n
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 double
-NavierStokesBase<dim, VectorType>::calculate_L2_error(
+NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   const VectorType &evaluation_point)
 {
   TimerOutput::Scope t(this->computing_timer, "error");
@@ -1006,9 +1006,9 @@ NavierStokesBase<dim, VectorType>::calculate_L2_error(
 /*
  * Attaches manifold to the boundaries of the mesh
  */
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::create_manifolds()
+NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
 {
   Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
 
@@ -1069,9 +1069,9 @@ NavierStokesBase<dim, VectorType>::create_manifolds()
     }
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::finish_simulation()
+NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
 {
   if (nsparam.forcesParameters.calculate_force)
     {
@@ -1114,9 +1114,9 @@ NavierStokesBase<dim, VectorType>::finish_simulation()
     }
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::finish_time_step()
+NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 {
   if (this->simulationControl.getMethod() !=
       Parameters::SimulationControl::steady)
@@ -1145,9 +1145,9 @@ NavierStokesBase<dim, VectorType>::finish_time_step()
 // Do an iteration with the GLS NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial condition
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
+NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
 {
   // Carry out the integration normally
   if (!firstIteration)
@@ -1237,10 +1237,9 @@ NavierStokesBase<dim, VectorType>::iterate(bool firstIteration)
     }
 }
 
-template <int dim, typename VectorType>
-template <typename DofsType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::refine_mesh(DofsType& locally_owned_dofs)
+NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 {
   if (this->simulationControl.getIter() %
         this->nsparam.meshAdaptation.frequency ==
@@ -1249,20 +1248,19 @@ NavierStokesBase<dim, VectorType>::refine_mesh(DofsType& locally_owned_dofs)
       if (this->nsparam.meshAdaptation.type ==
           this->nsparam.meshAdaptation.kelly)
         {
-          refine_mesh_kelly(locally_owned_dofs);
+          refine_mesh_kelly();
         }
       else if (this->nsparam.meshAdaptation.type ==
           this->nsparam.meshAdaptation.uniform)
         {
-          refine_mesh_uniform(locally_owned_dofs);
+          refine_mesh_uniform();
         }
     }
 }
 
-template <int dim, typename VectorType>
-template <typename DofsType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::refine_mesh_kelly(DofsType& locally_owned_dofs)
+NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 {
   // Time monitoring
   TimerOutput::Scope t(this->computing_timer, "refine");
@@ -1377,10 +1375,9 @@ NavierStokesBase<dim, VectorType>::refine_mesh_kelly(DofsType& locally_owned_dof
   this->solution_m3      = tmp_m3;
 }
 
-template <int dim, typename VectorType>
-template <typename DofsType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::refine_mesh_uniform(DofsType& locally_owned_dofs)
+NavierStokesBase<dim, VectorType,  DofsType>::refine_mesh_uniform()
 {
   TimerOutput::Scope t(this->computing_timer, "refine");
 
@@ -1429,9 +1426,9 @@ NavierStokesBase<dim, VectorType>::refine_mesh_uniform(DofsType& locally_owned_d
   this->solution_m3      = tmp_m3;
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
+NavierStokesBase<dim, VectorType,  DofsType>::postprocess(bool firstIter)
 {
   if (this->simulationControl.isOutputIteration())
     this->write_output_results(this->present_solution,
@@ -1567,9 +1564,9 @@ NavierStokesBase<dim, VectorType>::postprocess(bool firstIter)
     }
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::read_checkpoint()
+NavierStokesBase<dim, VectorType,  DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
   std::string        prefix = this->nsparam.restartParameters.filename;
@@ -1619,9 +1616,9 @@ NavierStokesBase<dim, VectorType>::read_checkpoint()
 /*
  * Reads a CFD Mesh from a GMSH file or generates a pre-defined primitive
  */
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::read_mesh()
+NavierStokesBase<dim, VectorType,  DofsType>::read_mesh()
 {
   // GMSH input
   if (this->nsparam.mesh.type == Parameters::Mesh::gmsh)
@@ -1694,9 +1691,9 @@ NavierStokesBase<dim, VectorType>::read_mesh()
 /*
  * Periodicity
  */
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::set_periodicity()
+NavierStokesBase<dim, VectorType,  DofsType>::set_periodicity()
 {
   // Setup parallelism for periodic boundary conditions
   for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
@@ -1717,9 +1714,9 @@ NavierStokesBase<dim, VectorType>::set_periodicity()
     }
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::set_nodal_values()
+NavierStokesBase<dim, VectorType,  DofsType>::set_nodal_values()
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -1740,9 +1737,9 @@ NavierStokesBase<dim, VectorType>::set_nodal_values()
 }
 
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::write_output_results(
+NavierStokesBase<dim, VectorType,  DofsType>::write_output_results(
   const VectorType & solution,
   PVDHandler &       pvdhandler,
   const std::string  folder,
@@ -1831,9 +1828,9 @@ NavierStokesBase<dim, VectorType>::write_output_results(
   MPI_Comm_free(&comm);
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::write_output_forces()
+NavierStokesBase<dim, VectorType,  DofsType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "output_forces");
   for (unsigned int boundary_id = 0;
@@ -1848,9 +1845,9 @@ NavierStokesBase<dim, VectorType>::write_output_forces()
     }
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::write_output_torques()
+NavierStokesBase<dim, VectorType,  DofsType>::write_output_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "output_torques");
   for (unsigned int boundary_id = 0;
@@ -1865,9 +1862,9 @@ NavierStokesBase<dim, VectorType>::write_output_torques()
     }
 }
 
-template <int dim, typename VectorType>
+template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType>::write_checkpoint()
+NavierStokesBase<dim, VectorType,  DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
   std::string        prefix = this->nsparam.restartParameters.filename;

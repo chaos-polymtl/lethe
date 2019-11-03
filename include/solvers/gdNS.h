@@ -39,7 +39,7 @@ using namespace dealii;
 
 template <int dim>
 class GDNavierStokesSolver
-  : public NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>
+  : public NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>
 {
 public:
   GDNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
@@ -115,9 +115,6 @@ private:
   /**
    * Members
    */
-  std::vector<IndexSet> locally_owned_dofs;
-  std::vector<IndexSet> locally_relevant_dofs;
-
   TrilinosWrappers::BlockSparsityPattern sparsity_pattern;
   TrilinosWrappers::BlockSparseMatrix    system_matrix;
   TrilinosWrappers::SparseMatrix         pressure_mass_matrix;
@@ -313,7 +310,7 @@ GDNavierStokesSolver<dim>::GDNavierStokesSolver(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 degreeVelocity,
   const unsigned int                 degreePressure)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>(p_nsparam,
+  : NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>(p_nsparam,
                                                               degreeVelocity,
                                                               degreePressure)
 {}
@@ -353,19 +350,19 @@ GDNavierStokesSolver<dim>::setup_dofs()
   unsigned int dof_u = dofs_per_block[0];
   unsigned int dof_p = dofs_per_block[1];
 
-  locally_owned_dofs.resize(2);
-  locally_owned_dofs[0] =
+  this->locally_owned_dofs.resize(2);
+  this->locally_owned_dofs[0] =
     this->dof_handler.locally_owned_dofs().get_view(0, dof_u);
-  locally_owned_dofs[1] =
+  this->locally_owned_dofs[1] =
     this->dof_handler.locally_owned_dofs().get_view(dof_u, dof_u + dof_p);
 
   IndexSet locally_relevant_dofs_acquisition;
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           locally_relevant_dofs_acquisition);
-  locally_relevant_dofs.resize(2);
-  locally_relevant_dofs[0] =
+  this->locally_relevant_dofs.resize(2);
+  this->locally_relevant_dofs[0] =
     locally_relevant_dofs_acquisition.get_view(0, dof_u);
-  locally_relevant_dofs[1] =
+  this->locally_relevant_dofs[1] =
     locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
 
   const MappingQ<dim>        mapping(this->degreeVelocity_,
@@ -478,28 +475,28 @@ GDNavierStokesSolver<dim>::setup_dofs()
   }
   this->zero_constraints.close();
 
-  this->present_solution.reinit(locally_owned_dofs,
-                                locally_relevant_dofs,
+  this->present_solution.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
-  this->solution_m1.reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
+  this->solution_m1.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
                            this->mpi_communicator);
-  this->solution_m2.reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
+  this->solution_m2.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
                            this->mpi_communicator);
-  this->solution_m3.reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
+  this->solution_m3.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
                            this->mpi_communicator);
 
-  this->newton_update.reinit(locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(locally_owned_dofs, this->mpi_communicator);
+  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
 
-  sparsity_pattern.reinit(locally_owned_dofs,
-                          locally_owned_dofs,
-                          locally_relevant_dofs,
+  sparsity_pattern.reinit(this->locally_owned_dofs,
+                          this->locally_owned_dofs,
+                          this->locally_relevant_dofs,
                           MPI_COMM_WORLD);
 
   Table<2, DoFTools::Coupling> coupling(dim + 1, dim + 1);
@@ -984,7 +981,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
                                linear_solver_tolerance,
@@ -1074,7 +1071,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
                                      preconditionerOptions);
 
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
                                linear_solver_tolerance,
@@ -1263,7 +1260,7 @@ GDNavierStokesSolver<dim>::solve()
       printTime(this->pcout, this->simulationControl);
       if (!this->simulationControl.firstIter())
         {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector>::refine_mesh(locally_owned_dofs);
+          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::refine_mesh();
         }
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);
