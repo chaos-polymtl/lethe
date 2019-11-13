@@ -20,85 +20,7 @@
 #ifndef LETHE_GLSNS_H
 #define LETHE_GLSNS_H
 
-// Dealii Includes
-
-// Base
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/convergence_table.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/index_set.h>
-#include <deal.II/base/quadrature_lib.h>
-#include <deal.II/base/table_handler.h>
-#include <deal.II/base/timer.h>
-#include <deal.II/base/utilities.h>
-
-// Lac
-#include <deal.II/lac/affine_constraints.h>
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/solver_bicgstab.h>
-#include <deal.II/lac/solver_gmres.h>
-#include <deal.II/lac/sparse_ilu.h>
-#include <deal.II/lac/sparse_matrix.h>
-#include <deal.II/lac/sparsity_tools.h>
-#include <deal.II/lac/vector.h>
-
-// Lac - Trilinos includes
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
-#include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/trilinos_solver.h>
-#include <deal.II/lac/trilinos_sparse_matrix.h>
-#include <deal.II/lac/trilinos_vector.h>
-
-// Grid
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_refinement.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold_lib.h>
-#include <deal.II/grid/tria.h>
-#include <deal.II/grid/tria_accessor.h>
-#include <deal.II/grid/tria_iterator.h>
-
-// Dofs
-#include <deal.II/dofs/dof_accessor.h>
-#include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_renumbering.h>
-#include <deal.II/dofs/dof_tools.h>
-
-// Fe
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/mapping_q.h>
-
-// Numerics
-#include <deal.II/numerics/data_out.h>
-#include <deal.II/numerics/error_estimator.h>
-#include <deal.II/numerics/matrix_tools.h>
-#include <deal.II/numerics/solution_transfer.h>
-#include <deal.II/numerics/vector_tools.h>
-
-// Distributed
-#include <deal.II/distributed/grid_refinement.h>
-#include <deal.II/distributed/solution_transfer.h>
-
-// Lethe Includes
-#include <core/bdf.h>
-#include <core/parameters.h>
-#include <core/pvdhandler.h>
-#include <core/simulationcontrol.h>
-
-#include "boundary_conditions.h"
-#include "manifolds.h"
 #include "navier_stokes_base.h"
-#include "navier_stokes_solver_parameters.h"
-#include "postprocessors.h"
-
-// Std
-#include <fstream>
-#include <iostream>
 
 using namespace dealii;
 
@@ -114,7 +36,7 @@ using namespace dealii;
 
 template <int dim>
 class GLSNavierStokesSolver
-  : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector>
+  : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
 {
 public:
   GLSNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
@@ -126,8 +48,7 @@ public:
   solve();
 
 protected:
-  void
-  refine_mesh();
+
   virtual void
   setup_dofs();
   void
@@ -145,24 +66,14 @@ private:
 
   void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method);
+                        time_stepping_method) override;
 
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+                 time_stepping_method) override;
 
   void
   assemble_L2_projection();
-
-  void
-  newton_iteration(const Parameters::SimulationControl::TimeSteppingMethod
-                              time_stepping_method,
-                   const bool is_initial_step);
-
-  void
-  refine_mesh_Kelly();
-  void
-  refine_mesh_uniform();
 
   void
   set_nodal_values();
@@ -172,18 +83,9 @@ private:
    */
 
   void
-  solve_linear_system(bool   initial_step,
-                      double relative_residual,
-                      double minimum_residual); // Interface function
-
-  virtual void
-  solve_non_linear_system(
-    const Parameters::SimulationControl::TimeSteppingMethod
-               time_stepping_method,
-    const bool first_iteration)
-  {
-    newton_iteration(time_stepping_method, first_iteration);
-  }
+  solve_linear_system(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual) override; // Interface function
 
   /**
    * GMRES solver with ILU(N) preconditioning
@@ -213,15 +115,8 @@ private:
    * Members
    */
 private:
-  IndexSet locally_owned_dofs;
-  IndexSet locally_relevant_dofs;
-
   SparsityPattern                sparsity_pattern;
   TrilinosWrappers::SparseMatrix system_matrix;
-
-  TrilinosWrappers::MPI::Vector system_rhs;
-  TrilinosWrappers::MPI::Vector evaluation_point;
-  TrilinosWrappers::MPI::Vector local_evaluation_point;
 
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
@@ -233,7 +128,7 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector>(p_nsparam,
+  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam,
                                                          p_degreeVelocity,
                                                          p_degreePressure)
 {}
@@ -264,9 +159,9 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   this->dof_handler.distribute_dofs(this->fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
-  locally_owned_dofs = this->dof_handler.locally_owned_dofs();
+  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          locally_relevant_dofs);
+                                          this->locally_relevant_dofs);
 
   const MappingQ<dim>        mapping(this->degreeVelocity_,
                               this->nsparam.femParameters.qmapping_all);
@@ -378,24 +273,24 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   }
   this->zero_constraints.close();
 
-  this->present_solution.reinit(locally_owned_dofs,
-                                locally_relevant_dofs,
+  this->present_solution.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
                                 this->mpi_communicator);
-  this->solution_m1.reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
+  this->solution_m1.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
                            this->mpi_communicator);
-  this->solution_m2.reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
+  this->solution_m2.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
                            this->mpi_communicator);
-  this->solution_m3.reinit(locally_owned_dofs,
-                           locally_relevant_dofs,
+  this->solution_m3.reinit(this->locally_owned_dofs,
+                           this->locally_relevant_dofs,
                            this->mpi_communicator);
 
-  this->newton_update.reinit(locally_owned_dofs, this->mpi_communicator);
-  system_rhs.reinit(locally_owned_dofs, this->mpi_communicator);
-  local_evaluation_point.reinit(locally_owned_dofs, this->mpi_communicator);
+  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs, this->mpi_communicator);
 
-  DynamicSparsityPattern dsp(locally_relevant_dofs);
+  DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
                                   this->nonzero_constraints,
@@ -404,9 +299,9 @@ GLSNavierStokesSolver<dim>::setup_dofs()
     dsp,
     this->dof_handler.n_locally_owned_dofs_per_processor(),
     this->mpi_communicator,
-    locally_relevant_dofs);
-  system_matrix.reinit(locally_owned_dofs,
-                       locally_owned_dofs,
+    this->locally_relevant_dofs);
+  system_matrix.reinit(this->locally_owned_dofs,
+                       this->locally_owned_dofs,
                        dsp,
                        this->mpi_communicator);
 
@@ -428,7 +323,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 {
   if (assemble_matrix)
     system_matrix = 0;
-  system_rhs = 0;
+  this->system_rhs = 0;
 
   double         viscosity_ = this->nsparam.physicalProperties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
@@ -507,16 +402,16 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           local_matrix = 0;
 
           local_rhs = 0;
-          fe_values[velocities].get_function_values(evaluation_point,
+          fe_values[velocities].get_function_values(this->evaluation_point,
                                                     present_velocity_values);
           fe_values[velocities].get_function_gradients(
-            evaluation_point, present_velocity_gradients);
-          fe_values[pressure].get_function_values(evaluation_point,
+            this->evaluation_point, present_velocity_gradients);
+          fe_values[pressure].get_function_values(this->evaluation_point,
                                                   present_pressure_values);
           fe_values[pressure].get_function_gradients(
-            evaluation_point, present_pressure_gradients);
+            this->evaluation_point, present_pressure_gradients);
           fe_values[velocities].get_function_laplacians(
-            evaluation_point, present_velocity_laplacians);
+            this->evaluation_point, present_velocity_laplacians);
 
           if (l_forcing_function)
             l_forcing_function->vector_value_list(
@@ -702,19 +597,19 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           system_matrix,
-                                                          system_rhs);
+                                                          this->system_rhs);
             }
           else
             {
               constraints_used.distribute_local_to_global(local_rhs,
                                                           local_dof_indices,
-                                                          system_rhs);
+                                                          this->system_rhs);
             }
         }
     }
   if (assemble_matrix)
     system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::add);
 }
 
 /**
@@ -758,7 +653,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
-      newton_iteration(Parameters::SimulationControl::steady, false);
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::steady, false);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -771,14 +667,12 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
     }
 }
 
-
-
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix = 0;
-  system_rhs    = 0;
+  this->system_rhs    = 0;
   QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim>         mapping(this->degreeVelocity_,
                               this->nsparam.femParameters.qmapping_all);
@@ -856,11 +750,11 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
                                                       local_rhs,
                                                       local_dof_indices,
                                                       system_matrix,
-                                                      system_rhs);
+                                                      this->system_rhs);
         }
     }
   system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -921,16 +815,16 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                double     relative_residual,
-                                                double     minimum_residual)
+                                                double     absolute_residual,
+                                                double     relative_residual)
 {
   if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
-    solve_system_GMRES(initial_step, minimum_residual, relative_residual);
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
   else if (this->nsparam.linearSolver.solver ==
            this->nsparam.linearSolver.bicgstab)
-    solve_system_BiCGStab(initial_step, minimum_residual, relative_residual);
+    solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
   else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
-    solve_system_AMG(initial_step, minimum_residual, relative_residual);
+    solve_system_AMG(initial_step, absolute_residual, relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
@@ -945,7 +839,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
@@ -955,7 +849,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
                                linear_solver_tolerance,
@@ -977,7 +871,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
 
   solver.solve(system_matrix,
                completely_distributed_solution,
-               system_rhs,
+               this->system_rhs,
                preconditioner);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
@@ -1001,7 +895,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -1010,7 +904,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
                                linear_solver_tolerance,
@@ -1032,7 +926,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
 
   solver.solve(system_matrix,
                completely_distributed_solution,
-               system_rhs,
+               this->system_rhs,
                preconditioner);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
@@ -1056,7 +950,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
     initial_step ? this->nonzero_constraints : this->zero_constraints;
 
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
@@ -1065,7 +959,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
                                linear_solver_tolerance,
@@ -1134,7 +1028,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   solver.solve(system_matrix,
                completely_distributed_solution,
-               system_rhs,
+               this->system_rhs,
                preconditioner);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
@@ -1146,249 +1040,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
   constraints_used.distribute(completely_distributed_solution);
 
   this->newton_update = completely_distributed_solution;
-}
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::refine_mesh()
-{
-  if (this->simulationControl.getIter() %
-        this->nsparam.meshAdaptation.frequency ==
-      0)
-    {
-      if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.kelly)
-        refine_mesh_Kelly();
-      if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.uniform)
-        refine_mesh_uniform();
-    }
-}
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::refine_mesh_Kelly()
-{
-  // Time monitoring
-  TimerOutput::Scope t(this->computing_timer, "refine");
-
-  Vector<float> estimated_error_per_cell(this->triangulation.n_active_cells());
-  const MappingQ<dim>              mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
-  const FEValuesExtractors::Vector velocity(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  if (this->nsparam.meshAdaptation.variable ==
-      Parameters::MeshAdaptation::pressure)
-    {
-      KellyErrorEstimator<dim>::estimate(
-        mapping,
-        this->dof_handler,
-        QGauss<dim - 1>(this->degreeQuadrature_ + 1),
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
-        estimated_error_per_cell,
-        this->fe.component_mask(pressure));
-    }
-  else if (this->nsparam.meshAdaptation.variable ==
-           Parameters::MeshAdaptation::velocity)
-    {
-      KellyErrorEstimator<dim>::estimate(
-        mapping,
-        this->dof_handler,
-        QGauss<dim - 1>(this->degreeQuadrature_ + 1),
-        typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
-        estimated_error_per_cell,
-        this->fe.component_mask(velocity));
-    }
-
-  if (this->nsparam.meshAdaptation.fractionType ==
-      Parameters::MeshAdaptation::number)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
-      this->triangulation,
-      estimated_error_per_cell,
-      this->nsparam.meshAdaptation.fractionRefinement,
-      this->nsparam.meshAdaptation.fractionCoarsening,
-      this->nsparam.meshAdaptation.maxNbElements);
-
-  else if (this->nsparam.meshAdaptation.fractionType ==
-           Parameters::MeshAdaptation::fraction)
-    parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
-      this->triangulation,
-      estimated_error_per_cell,
-      this->nsparam.meshAdaptation.fractionRefinement,
-      this->nsparam.meshAdaptation.fractionCoarsening);
-
-  if (this->triangulation.n_levels() > this->nsparam.meshAdaptation.maxRefLevel)
-    for (typename Triangulation<dim>::active_cell_iterator cell =
-           this->triangulation.begin_active(
-             this->nsparam.meshAdaptation.maxRefLevel);
-         cell != this->triangulation.end();
-         ++cell)
-      cell->clear_refine_flag();
-  for (typename Triangulation<dim>::active_cell_iterator cell =
-         this->triangulation.begin_active(
-           this->nsparam.meshAdaptation.minRefLevel);
-       cell !=
-       this->triangulation.end_active(this->nsparam.meshAdaptation.minRefLevel);
-       ++cell)
-    cell->clear_coarsen_flag();
-
-  this->triangulation.prepare_coarsening_and_refinement();
-
-  // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m1(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m2(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m3(this->dof_handler);
-  solution_transfer.prepare_for_coarsening_and_refinement(
-    this->present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
-
-  this->triangulation.execute_coarsening_and_refinement();
-  setup_dofs();
-
-  // Set up the vectors for the transfer
-  TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m1(locally_owned_dofs,
-                                       this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m2(locally_owned_dofs,
-                                       this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m3(locally_owned_dofs,
-                                       this->mpi_communicator);
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
-
-  // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
-
-  // Fix on the new mesh
-  this->present_solution = tmp;
-  this->solution_m1      = tmp_m1;
-  this->solution_m2      = tmp_m2;
-  this->solution_m3      = tmp_m3;
-}
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::refine_mesh_uniform()
-{
-  TimerOutput::Scope t(this->computing_timer, "refine");
-
-  // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m1(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m2(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m3(this->dof_handler);
-  solution_transfer.prepare_for_coarsening_and_refinement(
-    this->present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
-
-  // Refine
-  this->triangulation.refine_global(1);
-
-  setup_dofs();
-
-  // Set up the vectors for the transfer
-  TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m1(locally_owned_dofs,
-                                       this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m2(locally_owned_dofs,
-                                       this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m3(locally_owned_dofs,
-                                       this->mpi_communicator);
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
-
-  // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
-
-  // Fix on the new mesh
-  this->present_solution = tmp;
-  this->solution_m1      = tmp_m1;
-  this->solution_m2      = tmp_m2;
-  this->solution_m3      = tmp_m3;
-}
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::newton_iteration(
-  Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                        is_initial_step)
-{
-  double current_res;
-  double last_res;
-  bool   first_step = is_initial_step;
-  {
-    unsigned int outer_iteration = 0;
-    last_res                     = 1.0;
-    current_res                  = 1.0;
-    while ((current_res > this->nsparam.nonLinearSolver.tolerance) &&
-           outer_iteration < this->nsparam.nonLinearSolver.maxIterations)
-      {
-        evaluation_point = this->present_solution;
-        assemble_matrix_rhs(time_stepping_method);
-        if (outer_iteration == 0)
-          {
-            current_res = system_rhs.l2_norm();
-            last_res    = current_res;
-          }
-        if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
-          this->pcout << "Newton iteration: " << outer_iteration
-                      << "  - Residual:  " << current_res << std::endl;
-        solve_linear_system(first_step,
-                            this->nsparam.linearSolver.relative_residual,
-                            this->nsparam.linearSolver.minimum_residual);
-
-        for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
-          {
-            local_evaluation_point = this->present_solution;
-            local_evaluation_point.add(alpha, this->newton_update);
-            this->nonzero_constraints.distribute(local_evaluation_point);
-            evaluation_point = local_evaluation_point;
-            assemble_rhs(time_stepping_method);
-            current_res = system_rhs.l2_norm();
-            if (this->nsparam.nonLinearSolver.verbosity != Parameters::quiet)
-              this->pcout << "\t\talpha = " << std::setw(6) << alpha
-                          << std::setw(0) << " res = "
-                          << std::setprecision(
-                               this->nsparam.nonLinearSolver.display_precision)
-                          << current_res << std::endl;
-            if (current_res < 0.9 * last_res ||
-                last_res < this->nsparam.nonLinearSolver.tolerance)
-              break;
-          }
-        this->present_solution = evaluation_point;
-        last_res               = current_res;
-        ++outer_iteration;
-      }
-  }
 }
 
 /*
@@ -1411,7 +1062,7 @@ GLSNavierStokesSolver<dim>::solve()
       printTime(this->pcout, this->simulationControl);
       if (!this->simulationControl.firstIter())
         {
-          this->refine_mesh();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::refine_mesh();
         }
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);
