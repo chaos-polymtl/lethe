@@ -1089,7 +1089,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
                    &pressure_preconditioner,
                    this->nsparam.linearSolver);
 
-  solver.solve(system_matrix, this->newton_update, system_rhs, preconditioner);
+  solver.solve(system_matrix, this->newton_update, this->system_rhs, preconditioner);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -1108,7 +1108,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
@@ -1212,7 +1212,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
-    locally_owned_dofs, this->mpi_communicator);
+    this->locally_owned_dofs, this->mpi_communicator);
 
   SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
                                linear_solver_tolerance,
