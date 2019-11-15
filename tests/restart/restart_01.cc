@@ -81,8 +81,8 @@ void
 RestartNavierStokes<dim>::run()
 {
   const int initialSize = 4;
-  GridGenerator::hyper_cube(this->triangulation, -1, 1);
-  this->triangulation.refine_global(initialSize);
+  GridGenerator::hyper_cube(*this->triangulation, -1, 1);
+  this->triangulation->refine_global(initialSize);
   this->setup_dofs();
   this->exact_solution                       = new ExactSolutionMMS<dim>;
   this->forcing_function                     = new MMSSineForcingFunction<dim>;
@@ -103,9 +103,9 @@ RestartNavierStokes<dim>::run()
     std::runtime_error("Zeroed solution has a lower error");
 
   printTime(this->pcout, this->simulationControl);
-  this->triangulation.clear();
-  GridGenerator::hyper_cube(this->triangulation, -1, 1);
-  this->triangulation.refine_global(0);
+  this->triangulation->clear();
+  GridGenerator::hyper_cube(*this->triangulation, -1, 1);
+  this->triangulation->refine_global(0);
 
   this->set_initial_condition(this->nsparam.initialCondition->type, true);
 

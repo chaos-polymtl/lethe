@@ -52,6 +52,8 @@ public:
 
   SimulationControl simulationControl;
 
+  bool use_pft;
+
   void
   declare(ParameterHandler &prm)
   {
