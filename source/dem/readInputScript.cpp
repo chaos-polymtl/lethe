@@ -25,7 +25,7 @@ ReadInputScript::ReadInputScript() {
 			for (int j = 0; j < n-1; ++j) {
 			    input.ignore(1000, '\n');
 			  }
-			  input >> numOfParams >> diameter >> density >> CoR;
+			  input >> numOfParams >> diameter >> density >> CoR >> kn >> ethan >> kt >> ethat >> mu;
 			for (int j = 0; j < m-1; ++j) {
 			  	input.ignore(1000, '\n');
 			  }

@@ -22,6 +22,8 @@
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/particles/property_pool.h>
+									#include <deal.II/grid/grid_tools.h>
+
 #include "readInputScript.h"
 
 using namespace dealii;
@@ -63,11 +65,14 @@ void ParticleInsertion::uniformInsertion(Particles::ParticleHandler<3,3> &partic
 						Particles::Particle<3> particle(position, reference_position, id);
 						Triangulation<3,3>:: active_cell_iterator cell = GridTools::find_active_cell_around_point(tr, particle.get_location());
 
-						if (id == 95)
-						{
+												if (id == 99)
+												{
 
-							std::cout<< GridTools::find_active_cell_around_point(tr, particle.get_location())->id() << std::endl;
-						}
+													std::cout<< GridTools::find_active_cell_around_point(tr, particle.get_location())->id() << std::endl;
+
+												}
+
+
 
 						Particles::ParticleIterator<3,3> pit = particle_handler.insert_particle(particle, cell);
 
