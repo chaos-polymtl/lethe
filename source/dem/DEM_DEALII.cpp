@@ -18,17 +18,18 @@
 #include <fstream>
 #include <math.h>
 #include <tuple>
+#include <algorithm>
 #include "demIterator.h"
 #include "particleInsertion.h"
 #include "readInputScript.h"
 #include "visualization.h"
 #include "writeVTU.h"
-#include "integration.h"
+#include "contactSearch.h"
+//#include "integration.h"
+
 
 
 using namespace dealii;
-
-
 
 
 int main(int argc, char *argv[]) {
@@ -40,7 +41,7 @@ int main(int argc, char *argv[]) {
     properties[0]  = std::make_tuple("id",1);   properties[1]  = std::make_tuple("type",1); properties[2]  = std::make_tuple("Diam",1);	properties[3]  = std::make_tuple("Dens",1);
     properties[4]  = std::make_tuple("Pos",3);  properties[5]  = std::make_tuple("Pos",1);  properties[6]  = std::make_tuple("Pos",1);
     properties[7]  = std::make_tuple("Vel",3);  properties[8]  = std::make_tuple("Vel",1);  properties[9]  = std::make_tuple("Vel",1);
-    properties[10]  = std::make_tuple("a",3); 	properties[11] = std::make_tuple("a",1);    properties[12] = std::make_tuple("a",1);
+    properties[10] = std::make_tuple("a",3); 	properties[11] = std::make_tuple("a",1);    properties[12] = std::make_tuple("a",1);
     properties[13] = std::make_tuple("f",3);    properties[14] = std::make_tuple("f",1);    properties[15] = std::make_tuple("f",1);
     properties[16] = std::make_tuple("w",3); 	properties[17] = std::make_tuple("w",1); 	properties[18] = std::make_tuple("w",1);
 
@@ -58,17 +59,27 @@ int main(int argc, char *argv[]) {
 
 	parallel::distributed::Triangulation<3,3> tr(MPI_COMM_WORLD);
 	Particles::Particle<3> particle;
-	GridGenerator::hyper_cube(tr,-1,1);
-									tr.refine_global(4);
-	MappingQ<3,3> mapping(1);
-	Particles::ParticleHandler<3,3> particle_handler(tr, mapping, n_properties);
+	GridGenerator::hyper_cube(tr,-0.1,0.1);
+	int numRef = 3;
+	tr.refine_global(numRef);
+	//MappingQ<3,3> mapping(3);
+	  	  	  	  	  	  	  	  auto &mappinggg = StaticMappingQ1<3,3>::mapping;
+
+	Particles::ParticleHandler<3,3> particle_handler(tr, mappinggg , n_properties);
 	Particles::PropertyPool pool(n_properties);
 
 
+	int cellNum = pow(pow(2,numRef),3);
+	std::pair <std::vector<std::set<Triangulation<3>::active_cell_iterator>>,std::vector<Triangulation<3>::active_cell_iterator>> cellNeighbor;
+	ContactSearch cs1;
+	cellNeighbor=cs1.findCellNeighbors(cellNum, tr);
+
+
 	DEM_iterator iter1;
-	Integration	 Integ1;
+	std::vector<std::tuple<std::pair<Particles::ParticleIterator<3,3>,Particles::ParticleIterator<3,3>>, std::vector<double>, double, std::vector<double>, double, std::vector<double>, std::vector<double>, double, double >> contactInfo;
+	//Integration	 Integ1;
 
-
+//////////////////////////////add out of sim box -> delete particle
 	//Insertion phase:
 	while (DEM_step < readInput.tInsertion)
 	{
@@ -100,10 +111,12 @@ int main(int argc, char *argv[]) {
 			    visObj.write_vtu(output);
 			}
 
-		iter1.engine(particle_handler, DEM_step, DEM_time, readInput, Integ1);
+		iter1.engine(nPart, particle_handler, tr, DEM_step, DEM_time, readInput, cellNeighbor, contactInfo);
+		std::cout<<DEM_step<<std::endl;
+
 	}
 
-	//Operation phase:
+	//Operation phase:std::vector<Point<3>> points;
 	while (DEM_step < readInput.tFinal)
 	{
 		if (fmod(DEM_step,readInput.writeFrequency) == 1)
@@ -119,42 +132,14 @@ int main(int argc, char *argv[]) {
 			    visObj.write_vtu(output);
 			}
 
-		iter1.engine(particle_handler, DEM_step, DEM_time, readInput, Integ1);
+		iter1.engine(nPart, particle_handler, tr, DEM_step, DEM_time, readInput, cellNeighbor, contactInfo);
+		std::cout<<DEM_step<<std::endl;
 	}
 
 
-
-
-
-
-	//const unsigned int n_processes = Utilities::MPI::n_mpi_processes(Utilities::MPI::Partitioner::get_mpi_communicator());
-    //const unsigned int n_files = (group_files == 0) ? n_processes : std::min(group_files,n_processes);
-
-	//int n_files = 1;
-    //for (int i=0; i<n_files; ++i)
-     // filenames.push_back (particle_file_prefix + "." + Utilities::int_to_string(i, 4) + ".vtu");
-
-
-	//writObj.writeVTUFiles(DEM_step, DEM_time, visObj, particle_handler);
-
-
-
-
-
-
-
-
-
-
-
-
-	//for (auto particle = particle_handler.begin();
-	  //       particle != particle_handler.end();
-	 //        ++particle)
-	 //     std::cout << "Before refinement particle id " << particle->get_id()
-	  //            << " has first property " << particle->get_properties()[0]
-	   //           << " and second property " << particle->get_properties()[1]
-	   //           << std::endl;
+//if tf<tins add error
+	//yek bar call kardane neighbor cell baraye kole sim kafie, dorostesh kon
+	//checke nahayi baraye dorost kar kardane hame chi, aval integration ke az inja call kardanesh hazf shod, badesh contact det
 
 
 
