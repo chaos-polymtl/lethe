@@ -55,19 +55,20 @@ public:
   }
 };
 
-int main()
+int
+main()
 {
-    std::cout << "bonjour" << std::endl;
-    Parameters::NonLinearSolver params{
-      Parameters::Verbosity::quiet,
-      0.1, // tolerance
-      10,  // maxIter
-      4    // display precision
-    };
-    std::unique_ptr<PhysicsSolver<TrilinosWrappers::MPI::Vector>> solver =
-      std::make_unique<TestClass>(TestClass(params));
-    solver->solve_non_linear_system(
-      Parameters::SimulationControl::TimeSteppingMethod::steady, true);
+  std::cout << "bonjour" << std::endl;
+  Parameters::NonLinearSolver params{
+    Parameters::Verbosity::quiet,
+    0.1, // tolerance
+    10,  // maxIter
+    4    // display precision
+  };
+  std::unique_ptr<PhysicsSolver<TrilinosWrappers::MPI::Vector>> solver =
+    std::make_unique<TestClass>(TestClass(params));
+  solver->solve_non_linear_system(
+    Parameters::SimulationControl::TimeSteppingMethod::steady, true);
 
-    std::cout << "fini!" << std::endl;
+  std::cout << "fini!" << std::endl;
 }

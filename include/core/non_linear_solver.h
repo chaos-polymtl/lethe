@@ -35,8 +35,9 @@ public:
                   const Parameters::NonLinearSolver &params,
                   const double                       absolute_residual,
                   const double                       relative_residual);
-  
-  virtual ~NonLinearSolver() {}
+
+  virtual ~NonLinearSolver()
+  {}
 
   virtual void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
@@ -44,8 +45,8 @@ public:
         const bool is_initial_step) = 0;
 
 protected:
-  PhysicsSolver<VectorType>* physics_solver;
-  Parameters::NonLinearSolver                params;
+  PhysicsSolver<VectorType> * physics_solver;
+  Parameters::NonLinearSolver params;
 
   const double absolute_residual;
   const double relative_residual;
