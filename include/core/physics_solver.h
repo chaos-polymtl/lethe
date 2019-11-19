@@ -33,7 +33,9 @@ template <typename VectorType>
 class PhysicsSolver
 {
 public:
-  PhysicsSolver(const NonLinearSolver<VectorType>& non_linear_solver);
+  PhysicsSolver(NonLinearSolver<VectorType>* non_linear_solver);
+
+  ~PhysicsSolver() { delete non_linear_solver; }
 
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -86,7 +88,7 @@ public:
   set_newton_update(const VectorType &newton_update);
 
 protected:
-  NonLinearSolver<VectorType> non_linear_solver;
+  NonLinearSolver<VectorType>* non_linear_solver;
 
   VectorType system_rhs;
   VectorType evaluation_point;
@@ -101,7 +103,7 @@ protected:
 };
 
 template <typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(const NonLinearSolver<VectorType>& non_linear_solver)
+PhysicsSolver<VectorType>::PhysicsSolver(NonLinearSolver<VectorType>* non_linear_solver)
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout})
 {}
@@ -112,7 +114,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              first_iteration)
 {
-  this->non_linear_solver.solve(time_stepping_method, first_iteration);
+  this->non_linear_solver->solve(time_stepping_method, first_iteration);
 }
 
 template <typename VectorType>

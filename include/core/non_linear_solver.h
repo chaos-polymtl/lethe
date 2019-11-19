@@ -35,13 +35,15 @@ public:
                   const Parameters::NonLinearSolver &params,
                   const double                       absolute_residual,
                   const double                       relative_residual);
+  
+  virtual ~NonLinearSolver() {}
 
-  void
+  virtual void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,
-        const bool is_initial_step);
+        const bool is_initial_step) = 0;
 
-private:
+protected:
   PhysicsSolver<VectorType>* physics_solver;
   Parameters::NonLinearSolver                params;
 
@@ -60,82 +62,5 @@ NonLinearSolver<VectorType>::NonLinearSolver(
   , absolute_residual(absolute_residual)
   , relative_residual(relative_residual)
 {}
-
-template <typename VectorType>
-void
-NonLinearSolver<VectorType>::solve(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step)
-{
-  double       current_res;
-  double       last_res;
-  bool         first_step      = is_initial_step;
-  unsigned int outer_iteration = 0;
-  last_res                     = 1.0;
-  current_res                  = 1.0;
-  while ((current_res > params.tolerance) &&
-         outer_iteration < params.maxIterations)
-    {
-      physics_solver->set_evaluation_point(
-        physics_solver->get_present_solution());
-
-      physics_solver->assemble_matrix_rhs(time_stepping_method);
-
-      if (outer_iteration == 0)
-        {
-          current_res = physics_solver->get_system_rhs().l2_norm();
-          last_res    = current_res;
-        }
-
-      if (params.verbosity != Parameters::quiet)
-        {
-          physics_solver->get_ostream()
-            << "Newton iteration: " << outer_iteration
-            << "  - Residual:  " << current_res << std::endl;
-        }
-
-      physics_solver->solve_linear_system(first_step,
-                                          absolute_residual,
-                                          relative_residual);
-
-      for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
-        {
-          physics_solver->set_local_evaluation_point(
-            physics_solver->get_present_solution());
-
-          physics_solver->get_local_evaluation_point().add(
-            alpha, physics_solver->get_newton_update());
-
-          physics_solver->get_nonzero_constraints().distribute(
-            physics_solver->get_local_evaluation_point());
-
-          physics_solver->set_evaluation_point(
-            physics_solver->get_local_evaluation_point());
-            
-          physics_solver->assemble_rhs(time_stepping_method);
-
-          current_res = physics_solver->get_system_rhs().l2_norm();
-
-          if (params.verbosity != Parameters::quiet)
-            {
-              physics_solver->get_ostream() << "\t\talpha = " << std::setw(6) << alpha
-                          << std::setw(0) << " res = "
-                          << std::setprecision(params.display_precision)
-                          << current_res << std::endl;
-            }
-
-          if (current_res < 0.9 * last_res || last_res < params.tolerance)
-            {
-              break;
-            }
-        }
-
-
-      physics_solver->set_present_solution(
-        physics_solver->get_evaluation_point());
-      last_res = current_res;
-      ++outer_iteration;
-    }
-}
 
 #endif

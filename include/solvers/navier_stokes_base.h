@@ -93,6 +93,7 @@
 #include <core/physics_solver.h>
 #include <core/pvdhandler.h>
 #include <core/simulationcontrol.h>
+#include <core/basic_non_linear_solver.h>
 
 #include "boundary_conditions.h"
 #include "manifolds.h"
@@ -369,7 +370,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver<VectorType>({this, p_nsparam.nonLinearSolver, p_nsparam.linearSolver.minimum_residual, p_nsparam.linearSolver.relative_residual})
+  : PhysicsSolver<VectorType>(new BasicNonLinearSolver(this, p_nsparam.nonLinearSolver, p_nsparam.linearSolver.minimum_residual, p_nsparam.linearSolver.relative_residual))
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))

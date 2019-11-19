@@ -2,7 +2,7 @@
 #include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/vector.h>
 
-#include <core/non_linear_solver.h>
+#include <core/basic_non_linear_solver.h>
 #include <core/physics_solver.h>
 #include <core/simulationcontrol.h>
 
@@ -15,7 +15,7 @@ class TestClass : public PhysicsSolver<TrilinosWrappers::MPI::Vector>
 {
 public:
   TestClass(Parameters::NonLinearSolver &params)
-    : PhysicsSolver(NonLinearSolver(this, params, 1e-15, 1e-15))
+    : PhysicsSolver(new BasicNonLinearSolver(this, params, 1e-15, 1e-15))
   {}
 
   void
