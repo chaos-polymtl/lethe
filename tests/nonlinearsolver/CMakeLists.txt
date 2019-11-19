@@ -5,7 +5,7 @@ INCLUDE_DIRECTORIES(
   lethe
   ${CMAKE_SOURCE_DIR}/include
   )
-ADD_EXECUTABLE(nonlinearsolver nonlinearsolver.cc)
+ADD_EXECUTABLE(nonlinearsolver nonlinearsolver_01.cc)
 DEAL_II_SETUP_TARGET(nonlinearsolver)
 TARGET_LINK_LIBRARIES(nonlinearsolver lethe-core)
 add_test( "NONLINEARSOLVER" nonlinearsolver)

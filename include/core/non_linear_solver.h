@@ -20,6 +20,8 @@
 #ifndef LETHE_NONLINEARSOLVER
 #define LETHE_NONLINEARSOLVER
 
+#include <deal.II/lac/affine_constraints.h>
+
 #include "parameters.h"
 
 template <typename VectorType>
