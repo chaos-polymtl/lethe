@@ -48,7 +48,6 @@ public:
   solve();
 
 protected:
-
   virtual void
   setup_dofs();
   void
@@ -83,9 +82,10 @@ private:
    */
 
   void
-  solve_linear_system(const bool   initial_step,
-                      const double absolute_residual,
-                      const double relative_residual) override; // Interface function
+  solve_linear_system(
+    const bool   initial_step,
+    const double absolute_residual,
+    const double relative_residual) override; // Interface function
 
   /**
    * GMRES solver with ILU(N) preconditioning
@@ -128,9 +128,10 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam,
-                                                         p_degreeVelocity,
-                                                         p_degreePressure)
+  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(
+      p_nsparam,
+      p_degreeVelocity,
+      p_degreePressure)
 {}
 
 template <int dim>
@@ -288,7 +289,8 @@ GLSNavierStokesSolver<dim>::setup_dofs()
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
 
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
@@ -671,8 +673,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_L2_projection()
 {
-  system_matrix = 0;
-  this->system_rhs    = 0;
+  system_matrix    = 0;
+  this->system_rhs = 0;
   QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim>         mapping(this->degreeVelocity_,
                               this->nsparam.femParameters.qmapping_all);
@@ -1062,7 +1064,8 @@ GLSNavierStokesSolver<dim>::solve()
       printTime(this->pcout, this->simulationControl);
       if (!this->simulationControl.firstIter())
         {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::refine_mesh();
+          NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
+            refine_mesh();
         }
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);

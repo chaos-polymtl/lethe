@@ -40,8 +40,8 @@ public:
         const bool is_initial_step);
 
 private:
-  PhysicsSolver<VectorType>* physics_solver;
-  Parameters::NonLinearSolver                params;
+  PhysicsSolver<VectorType> * physics_solver;
+  Parameters::NonLinearSolver params;
 
   const double absolute_residual;
   const double relative_residual;
@@ -109,17 +109,17 @@ NonLinearSolver<VectorType>::solve(
 
           physics_solver->set_evaluation_point(
             physics_solver->get_local_evaluation_point());
-            
+
           physics_solver->assemble_rhs(time_stepping_method);
 
           current_res = physics_solver->get_system_rhs().l2_norm();
 
           if (params.verbosity != Parameters::quiet)
             {
-              physics_solver->get_ostream() << "\t\talpha = " << std::setw(6) << alpha
-                          << std::setw(0) << " res = "
-                          << std::setprecision(params.display_precision)
-                          << current_res << std::endl;
+              physics_solver->get_ostream()
+                << "\t\talpha = " << std::setw(6) << alpha << std::setw(0)
+                << " res = " << std::setprecision(params.display_precision)
+                << current_res << std::endl;
             }
 
           if (current_res < 0.9 * last_res || last_res < params.tolerance)

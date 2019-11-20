@@ -39,7 +39,9 @@ using namespace dealii;
 
 template <int dim>
 class GDNavierStokesSolver
-  : public NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>
+  : public NavierStokesBase<dim,
+                            TrilinosWrappers::MPI::BlockVector,
+                            std::vector<IndexSet>>
 {
 public:
   GDNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
@@ -219,7 +221,7 @@ BlockSchurPreconditioner<BSPreconditioner>::vmult(
 
 
 
-    //TrilinosWrappers::SolverBicgstab solver(solver_control);
+    // TrilinosWrappers::SolverBicgstab solver(solver_control);
     TrilinosWrappers::SolverGMRES solver(solver_control);
 
     // A_inverse.solve(stokes_matrix.block(0, 0),dst.block(0), utmp,
@@ -310,9 +312,11 @@ GDNavierStokesSolver<dim>::GDNavierStokesSolver(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 degreeVelocity,
   const unsigned int                 degreePressure)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>(p_nsparam,
-                                                              degreeVelocity,
-                                                              degreePressure)
+  : NavierStokesBase<dim,
+                     TrilinosWrappers::MPI::BlockVector,
+                     std::vector<IndexSet>>(p_nsparam,
+                                            degreeVelocity,
+                                            degreePressure)
 {}
 
 template <int dim>
@@ -491,7 +495,8 @@ GDNavierStokesSolver<dim>::setup_dofs()
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
 
 
   sparsity_pattern.reinit(this->locally_owned_dofs,
@@ -819,8 +824,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::assemble_L2_projection()
 {
-  system_matrix = 0;
-  this->system_rhs    = 0;
+  system_matrix    = 0;
+  this->system_rhs = 0;
   QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim>         mapping(this->degreeVelocity_,
                               this->nsparam.femParameters.qmapping_all);
@@ -1089,7 +1094,10 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
                    &pressure_preconditioner,
                    this->nsparam.linearSolver);
 
-  solver.solve(system_matrix, this->newton_update, this->system_rhs, preconditioner);
+  solver.solve(system_matrix,
+               this->newton_update,
+               this->system_rhs,
+               preconditioner);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -1134,7 +1142,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
 
   // Constant modes for pressure
   std::vector<std::vector<bool>> pressure_constant_modes;
-  std::vector<bool>              pressure_components(dim+1, false);
+  std::vector<bool>              pressure_components(dim + 1, false);
   pressure_components[dim] = true;
   DoFTools::extract_constant_modes(this->dof_handler,
                                    pressure_components,
@@ -1230,7 +1238,10 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
                    &pressure_preconditioner,
                    this->nsparam.linearSolver);
 
-  solver.solve(system_matrix, this->newton_update, this->system_rhs, preconditioner);
+  solver.solve(system_matrix,
+               this->newton_update,
+               this->system_rhs,
+               preconditioner);
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
@@ -1260,7 +1271,9 @@ GDNavierStokesSolver<dim>::solve()
       printTime(this->pcout, this->simulationControl);
       if (!this->simulationControl.firstIter())
         {
-          NavierStokesBase<dim, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::refine_mesh();
+          NavierStokesBase<dim,
+                           TrilinosWrappers::MPI::BlockVector,
+                           std::vector<IndexSet>>::refine_mesh();
         }
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);

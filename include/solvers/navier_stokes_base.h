@@ -369,7 +369,10 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver<VectorType>({this, p_nsparam.nonLinearSolver, p_nsparam.linearSolver.minimum_residual, p_nsparam.linearSolver.relative_residual})
+  : PhysicsSolver<VectorType>({this,
+                               p_nsparam.nonLinearSolver,
+                               p_nsparam.linearSolver.minimum_residual,
+                               p_nsparam.linearSolver.relative_residual})
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -388,7 +391,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , degreePressure_(p_degreePressure)
   , degreeQuadrature_(p_degreeVelocity + 1)
 {
-  this->pcout.set_condition(Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
+  this->pcout.set_condition(
+    Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
   this->simulationControl = nsparam.simulationControl;
 
   // Overide default value of quadrature point if they are specified
@@ -1251,7 +1255,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
           refine_mesh_kelly();
         }
       else if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.uniform)
+               this->nsparam.meshAdaptation.uniform)
         {
           refine_mesh_uniform();
         }
@@ -1330,14 +1334,14 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->triangulation.prepare_coarsening_and_refinement();
 
   // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_m1(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_m2(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_m3(this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
+    this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
+    this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
+    this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
+    this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
   solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
@@ -1349,12 +1353,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   // Set up the vectors for the transfer
   VectorType tmp(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m1(locally_owned_dofs,
-                                       this->mpi_communicator);
-  VectorType tmp_m2(locally_owned_dofs,
-                                       this->mpi_communicator);
-  VectorType tmp_m3(locally_owned_dofs,
-                                       this->mpi_communicator);
+  VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
+  VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
@@ -1377,19 +1378,19 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::refine_mesh_uniform()
+NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
   TimerOutput::Scope t(this->computing_timer, "refine");
 
   // Solution transfer objects for all the solutions
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_m1(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_m2(this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType>
-    solution_transfer_m3(this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
+    this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
+    this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
+    this->dof_handler);
+  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
+    this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
   solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
@@ -1428,7 +1429,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::refine_mesh_uniform()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::postprocess(bool firstIter)
+NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 {
   if (this->simulationControl.isOutputIteration())
     this->write_output_results(this->present_solution,
@@ -1464,8 +1465,8 @@ NavierStokesBase<dim, VectorType,  DofsType>::postprocess(bool firstIter)
           std::string filename =
             nsparam.postProcessingParameters.enstrophy_output_name + ".dat";
           std::ofstream output(filename.c_str());
-          enstrophy_table.set_precision("time",12);
-          enstrophy_table.set_precision("enstrophy",12);
+          enstrophy_table.set_precision("time", 12);
+          enstrophy_table.set_precision("enstrophy", 12);
           this->enstrophy_table.write_text(output);
         }
     }
@@ -1492,8 +1493,8 @@ NavierStokesBase<dim, VectorType,  DofsType>::postprocess(bool firstIter)
             nsparam.postProcessingParameters.kinetic_energy_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
-          kinetic_energy_table.set_precision("time",12);
-          kinetic_energy_table.set_precision("kinetic-energy",12);
+          kinetic_energy_table.set_precision("time", 12);
+          kinetic_energy_table.set_precision("kinetic-energy", 12);
           this->kinetic_energy_table.write_text(output);
         }
     }
@@ -1566,7 +1567,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::postprocess(bool firstIter)
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::read_checkpoint()
+NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
   std::string        prefix = this->nsparam.restartParameters.filename;
@@ -1618,7 +1619,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::read_checkpoint()
  */
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::read_mesh()
+NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
 {
   // GMSH input
   if (this->nsparam.mesh.type == Parameters::Mesh::gmsh)
@@ -1693,7 +1694,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::read_mesh()
  */
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::set_periodicity()
+NavierStokesBase<dim, VectorType, DofsType>::set_periodicity()
 {
   // Setup parallelism for periodic boundary conditions
   for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
@@ -1716,7 +1717,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::set_periodicity()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::set_nodal_values()
+NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -1739,7 +1740,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::set_nodal_values()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::write_output_results(
+NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const VectorType & solution,
   PVDHandler &       pvdhandler,
   const std::string  folder,
@@ -1830,7 +1831,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::write_output_results(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::write_output_forces()
+NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "output_forces");
   for (unsigned int boundary_id = 0;
@@ -1847,7 +1848,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::write_output_forces()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::write_output_torques()
+NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "output_torques");
   for (unsigned int boundary_id = 0;
@@ -1864,7 +1865,7 @@ NavierStokesBase<dim, VectorType,  DofsType>::write_output_torques()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType,  DofsType>::write_checkpoint()
+NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
   std::string        prefix = this->nsparam.restartParameters.filename;

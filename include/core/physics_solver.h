@@ -22,8 +22,8 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
-#include "parameters.h"
 #include "non_linear_solver.h"
+#include "parameters.h"
 
 /**
  * An interface for all physics solver classes to derive from.
@@ -33,7 +33,7 @@ template <typename VectorType>
 class PhysicsSolver
 {
 public:
-  PhysicsSolver(const NonLinearSolver<VectorType>& non_linear_solver);
+  PhysicsSolver(const NonLinearSolver<VectorType> &non_linear_solver);
 
   virtual void
   assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -44,9 +44,9 @@ public:
                  time_stepping_method) = 0;
 
   virtual void
-  solve_linear_system(const bool       initial_step,
-                      const double     absolute_residual,
-                      const double     relative_residual) = 0;
+  solve_linear_system(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual) = 0;
 
   void
   solve_non_linear_system(
@@ -55,7 +55,8 @@ public:
     const bool first_iteration);
 
   // Getters
-  const Parameters::NonLinearSolver& get_params() const;
+  const Parameters::NonLinearSolver &
+  get_params() const;
   const VectorType &
   get_system_rhs() const;
   const VectorType &
@@ -97,11 +98,11 @@ protected:
   AffineConstraints<double> nonzero_constraints;
 
   ConditionalOStream pcout;
-
 };
 
 template <typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(const NonLinearSolver<VectorType>& non_linear_solver)
+PhysicsSolver<VectorType>::PhysicsSolver(
+  const NonLinearSolver<VectorType> &non_linear_solver)
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout})
 {}
