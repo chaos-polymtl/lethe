@@ -57,9 +57,9 @@ void ParticleInsertion::uniformInsertion(Particles::ParticleHandler<3,3> &partic
 						Point<3>    	reference_position;
 						unsigned int    id;
 
-						position[0] = readInput.ins_x_min + (readInput.diameter/2) + (i * 2 * readInput.diameter);
-						position[1] = readInput.ins_y_min + (readInput.diameter/2) + (j * 2 * readInput.diameter);
-						position[2] = readInput.ins_z_min + (readInput.diameter/2) + (k * 2 * readInput.diameter);
+						position[0] = readInput.ins_x_min + (readInput.diameter/2) + (i * 1.1 * readInput.diameter);
+						position[1] = readInput.ins_y_min + (readInput.diameter/2) + (j * 1.1 * readInput.diameter);
+						position[2] = readInput.ins_z_min + (readInput.diameter/2) + (k * 1.1 * readInput.diameter);
 						id = i * ny * nz + j * nz + k + nPart + 1;
 
 						Particles::Particle<3> particle(position, reference_position, id);
@@ -102,6 +102,14 @@ void ParticleInsertion::uniformInsertion(Particles::ParticleHandler<3,3> &partic
 						pit->get_properties()[16] = 0;
 						pit->get_properties()[17] = 0;
 						pit->get_properties()[18] = 0;
+
+
+						if(pit->get_properties()[0] == 2)
+						{
+							pit->get_properties()[9] = -0.1;
+						}
+
+
 
 						++nP;
 						}
