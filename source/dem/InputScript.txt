@@ -1,6 +1,6 @@
 /Properties of particles:
 /1,Num. of params.	2,Diameter	3,Density	4,Coeff of Rest.	5,kn	6,ethan	7,kt	8,ethat	9,mu ...other props
-8			0.01		2500 		0.5			100	0.9	100	0.8	0.5
+8			0.01		2500 		0.5			200	0.01	200	0.01	0.5
 
 /Insertion Box in the format: (xmin,xmax,ymin,ymax,zmin,zmax):
 0	0.1	0	0.1	0	0.1
@@ -9,16 +9,16 @@
 -1	1	-1	1	-1	1
 
 /DEM timestep and final simulation timesteps:
-0.00001	5000
+0.00001	500000
 
 /Insertion phase timesteps, total number of particles, number of particles at each insertion and insertion frequency:
-4000	100	100	500
+4000	2	2	500
 
 /Gravity acceleration gx, gy and gz:
-0.0	0.0	-9.81
+0.0	0.0	0.0
 
 /Write frequency:
-1000
+10
 
 
 
