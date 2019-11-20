@@ -14,7 +14,7 @@ ContactForce::ContactForce()
 
 void ContactForce::linearCF(std::vector<std::tuple<std::pair<Particles::ParticleIterator<3,3>, Particles::ParticleIterator<3, 3>>, std::vector<double>, double, std::vector<double>, double, std::vector<double>, std::vector<double>, double, double>> contactInfo , Particles::ParticleHandler<3,3> &particle_handler, ReadInputScript readInput)
 {
-	for (unsigned int i = 0; contactInfo.size(); i++)
+	for (unsigned int i = 0; i < contactInfo.size(); i++)
 	{
 		{
 			std::vector<double> normalForce  = {vecSubtract(numVecProd((-1.0 * readInput.kn * std::get<2>(contactInfo[i])), std::get<3>(contactInfo[i])) , numVecProd((readInput.ethan * std::get<4>(contactInfo[i])) , std::get<3>(contactInfo[i])))};
@@ -44,7 +44,8 @@ void ContactForce::linearCF(std::vector<std::tuple<std::pair<Particles::Particle
 			std::get<0>(contactInfo[i]).second->get_properties()[15] = -1.0 * std::get<0>(contactInfo[i]).first->get_properties()[15];
 
 			// does it have access to particle handler or I need to loop over particle handler and search for contactInfo particles
-	}
+			std::cout<<"the contact force is: " << std::get<0>(contactInfo[i]).first->get_properties()[13] << " " << std::get<0>(contactInfo[i]).first->get_properties()[14] << " " << std::get<0>(contactInfo[i]).first->get_properties()[15] << std::endl;
+		}
 }
 }
 

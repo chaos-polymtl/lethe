@@ -9,6 +9,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <math.h>
 
 using namespace std;
 
@@ -52,7 +53,9 @@ ReadInputScript::ReadInputScript() {
 				 input >> writeFrequency;
 		}
 // error handling
-
+				double pi = 3.14159265359;
+				float volume = (4.0/3.0) * pi * pow((diameter/2.0),3);
+				mass = volume * density;
 	}
 	else std::cout<<"input script is not open"<<std::endl;
 
