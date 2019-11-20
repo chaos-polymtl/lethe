@@ -5,6 +5,7 @@
  *      Author: shahab
  */
 #include <deal.II/particles/particle_handler.h>
+#include "readInputScript.h"
 using namespace dealii;
 
 #ifndef INTEGRATION_H_
@@ -13,7 +14,7 @@ using namespace dealii;
 class Integration {
 public:
 	Integration();
-	void eulerIntegration(Particles::ParticleHandler<3,3> &, float);
+	void eulerIntegration(Particles::ParticleHandler<3,3> &, ReadInputScript);
 	void velVerIntegration(Particles::ParticleHandler<3,3> &, float);
 	void gearIntegration();
 };

@@ -28,19 +28,31 @@ void DEM_iterator::engine(int &nPart, Particles::ParticleHandler<3,3> &particle_
 
 	ContactSearch cs;
 	contactPairs = cs.findContactPairs(nPart, particle_handler,tr, cellNeighbor.second, cellNeighbor.first);
+
 	cs.fineSearch(contactPairs, particle_handler, contactInfo, readInput.dt);
 
 	// contact force
 	ContactForce cf;
 	cf.linearCF(contactInfo, particle_handler, readInput);
 
-
-
-
+	//for (auto particle = particle_handler.begin(); particle != particle_handler.end(); ++particle)
+			//	{
+			//	std:: cout << particle->get_properties()[13]<< " " <<  particle->get_properties()[14] << " " << particle->get_properties()[15] << std::endl;
+			//	}
 
 	//Integration
 	Integration	 Integ1;
-	Integ1.eulerIntegration(particle_handler, readInput.dt);
+	Integ1.eulerIntegration(particle_handler, readInput);
+
+	for (auto particle = particle_handler.begin(); particle != particle_handler.end(); ++particle)
+				{
+		std:: cout <<"force: "<< particle->get_properties()[13]<< " " <<  particle->get_properties()[14] << " " << particle->get_properties()[15] << std::endl;
+
+				std:: cout <<"acceleration: "<< particle->get_properties()[10]<< " " <<  particle->get_properties()[11] << " " << particle->get_properties()[12] << std::endl;
+				std:: cout <<"velocity: "<< particle->get_properties()[7]<< " " <<  particle->get_properties()[8] << " " << particle->get_properties()[9] << std::endl;
+
+				}
+
 
 	//***********************************************************************
 	//Verlet should be updated after writing the contact force

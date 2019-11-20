@@ -32,7 +32,21 @@
 using namespace dealii;
 
 
+template <class T>
+bool existIn (T i, T j) {
+  return (i==j);
+}
+
+template <class T>
+bool greatherthan (T i, T j) {
+  return (i>j);
+}
+
+
+
+
 int main(int argc, char *argv[]) {
+
 
 	//considering id, type, diameter, density, x, y, z, vx, vy, vz, ax, ay, az, fx, fy, fz, wx, wy, wz, each particle has 19 properties and 9 fields.
     const unsigned int n_properties = 19;
@@ -140,6 +154,68 @@ int main(int argc, char *argv[]) {
 //if tf<tins add error
 	//yek bar call kardane neighbor cell baraye kole sim kafie, dorostesh kon
 	//checke nahayi baraye dorost kar kardane hame chi, aval integration ke az inja call kardanesh hazf shod, badesh contact det
+
+
+
+
+
+
+
+
+
+
+/*
+	Point<3, double> vv;
+	for (Triangulation<3>::active_cell_iterator cell = tr.begin_active(); cell != tr.end(); ++cell)
+		{
+	        for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_cell; ++v)
+	          {
+	        	vv=cell->vertex(v);
+	      	  auto v_to_c   = GridTools::vertex_to_cell_map(tr);
+	      	  auto v_to_c_d = GridTools::vertex_to_cell_centers_directions(tr, v_to_c);
+	      	  auto c_and_p = GridTools::find_active_cell_around_point( mappinggg, tr, vv, v_to_c, v_to_c_d);
+	      	  auto pcell = c_and_p.first;
+
+	      	const Particles::ParticleHandler<3,3>::particle_iterator_range particle_range = particle_handler.particles_in_cell(pcell);
+
+	      	for (typename Particles::ParticleHandler<3,3>::particle_iterator_range::iterator ppparticle =particle_range.begin(); ppparticle != particle_range.end();++ppparticle)
+	      	{
+	      		ppparticle->get_id();
+	      		std::cout<<"In cell "<< pcell->id() << " the id of particles are: " << ppparticle->get_id()<<std::endl;
+
+	      	}
+
+	          }
+		}
+		*/
+
+
+
+/*
+int n_points;
+	 std::vector<Point<3>> points;
+	 for (std::size_t i = 0; i < n_points; ++i)
+	    points.push_back({0.02,0.02,0.01});
+
+	  auto v_to_c   = GridTools::vertex_to_cell_map(tr);
+	  auto v_to_c_d = GridTools::vertex_to_cell_centers_directions(tr, v_to_c);
+
+	  auto &mappinggg = StaticMappingQ1<3,3>::mapping;
+	  auto  cell    = tr.begin_active();
+	  for (auto &p : points)
+	    {
+	      auto c_and_p = GridTools::find_active_cell_around_point(
+	        mappinggg, tr, p, v_to_c, v_to_c_d);
+
+
+															 // std::cout<<"hr,y " <<c_and_p.first<<std::endl;
+
+															  auto p2 = mapping.transform_unit_to_real_cell(c_and_p.first, c_and_p.second);
+															 cell = c_and_p.first;
+
+
+	    }
+	    */
 
 
 
