@@ -155,6 +155,7 @@ void ContactSearch::fineSearch(std::vector<std::pair<Particles::ParticleIterator
 
 					std::cout<< "heyyyy erasing!!!!!!"<<std::endl;
 					contactInfo.erase(contactInfo.begin()+i);
+
 				}
 				searchPair.push_back(std::get<0>(contactInfo[i]));
 
