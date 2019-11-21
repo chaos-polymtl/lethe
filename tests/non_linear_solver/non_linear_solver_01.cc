@@ -1,0 +1,139 @@
+#include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/vector.h>
+
+#include <core/basic_non_linear_solver.h>
+#include <core/physics_solver.h>
+#include <core/simulationcontrol.h>
+
+#include <iostream>
+#include <memory>
+
+#include "../tests.h"
+
+/**
+ * @brief The TestClass tests the non-linear solvers using a simple systme of two
+ * equations, only one of which is non-linear
+ * It uses a FullMatrix and a Vector to store the analytical jacobian et the
+ * right-hand side respectively
+ *
+ * We use the base deal.II types (Vector<double>) to store the information as
+ * there is no need to use the complex Trilinos Vector that support parallelism
+ * in this case
+ *
+ * The system that is solved is :
+ * x_0^2 + x_1 = 0
+ *       2*x_1 + 3 = 0
+ *
+ */
+
+class TestClass : public PhysicsSolver<Vector<double>>
+{
+public:
+  TestClass(Parameters::NonLinearSolver &params)
+    : PhysicsSolver(
+        new BasicNonLinearSolver<Vector<double>>(this, params, 1e-15, 1e-15))
+    ,
+    // Initialize the memory for the system matrix
+    system_matrix(2, 2)
+  {
+    // Initialize the vectors needed for the Physics Solver
+    this->evaluation_point.reinit(2);
+    this->system_rhs.reinit(2);
+    this->local_evaluation_point.reinit(2);
+    this->present_solution.reinit(2);
+    this->newton_update.reinit(2);
+
+    // Set the initial value of the solution
+    this->present_solution[0] = 1;
+    this->present_solution[1] = 0;
+
+    this->nonzero_constraints.close();
+  }
+
+
+  // Assembling Jacobian Matrix
+  virtual void
+  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                        time_stepping_method) override
+  {
+    // System
+    // x_0*x_0 +x_1 = 0
+    // 2*x_1 + 3 = 0
+    //
+    // Jacobian
+    // 2x_0     1
+    // 0        2
+    double x_0          = this->evaluation_point[0];
+    double x_1          = this->evaluation_point[1];
+    system_matrix[0][0] = 2 * x_0;
+    system_matrix[0][1] = 1;
+    system_matrix[1][0] = 0;
+    system_matrix[1][1] = 2.;
+
+    this->system_rhs[0] = -(x_0 * x_0 + x_1);
+    this->system_rhs[1] = -(2 * x_1 + 3);
+  }
+
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override
+  {
+    double x_0          = this->evaluation_point[0];
+    double x_1          = this->evaluation_point[1];
+    this->system_rhs[0] = -(x_0 * x_0 + x_1);
+    this->system_rhs[1] = -(2 * x_1 + 3);
+  }
+
+  /**
+   * @brief solve_linear_system
+   *
+   * Solve the linear system of equation
+   * Right now this is done by hand using a Gauss Pivot Technique
+   * An automatic method should be used if we have bigger system in tests
+   */
+
+  void
+  solve_linear_system(const bool, const double, const double) override
+  {
+    this->newton_update[1] = this->system_rhs[1] / system_matrix[1][1];
+    this->newton_update[0] =
+      (this->system_rhs[0] - this->newton_update[1] * system_matrix[0][1]) /
+      system_matrix[0][0];
+  }
+
+  virtual void
+  apply_constraints()
+  {}
+
+private:
+  FullMatrix<double> system_matrix;
+  Vector<double>     rhs;
+};
+
+int
+main()
+{
+  initlog();
+
+  Parameters::NonLinearSolver params{
+    Parameters::Verbosity::quiet,
+    1e-6, // tolerance
+    10,   // maxIter
+    4     // display precision
+  };
+
+  deallog << "Creating solver" << std::endl;
+
+  // Create an instantiation of the Test Class
+  std::unique_ptr<TestClass> solver = std::make_unique<TestClass>(params);
+
+
+  deallog << "Solving non-linear system " << std::endl;
+  // Solve the non-linear system of equation
+  solver->solve_non_linear_system(
+    Parameters::SimulationControl::TimeSteppingMethod::steady, true);
+
+
+  deallog << "The final solution is : " << solver->get_present_solution()
+          << std::endl;
+}
