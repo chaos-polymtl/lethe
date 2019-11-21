@@ -104,10 +104,10 @@ void ParticleInsertion::uniformInsertion(Particles::ParticleHandler<3,3> &partic
 						pit->get_properties()[18] = 0;
 
 
-						if(pit->get_properties()[0] == 2)
-						{
-							pit->get_properties()[9] = -0.1;
-						}
+					//	if(pit->get_properties()[0] == 2)
+				//		{
+					//		pit->get_properties()[9] = -0.1;
+					//	}
 
 
 
