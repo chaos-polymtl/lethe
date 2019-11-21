@@ -1,12 +1,12 @@
 /Properties of particles:
 /1,Num. of params.	2,Diameter	3,Density	4,Coeff of Rest.	5,kn	6,ethan	7,kt	8,ethat	9,mu ...other props
-8			0.01		2500 		0.5			200	0.01	200	0.01	0.5
+8			0.01		2500 		0.5			10000	0.079	10000	0.079	0.5
 
 /Insertion Box in the format: (xmin,xmax,ymin,ymax,zmin,zmax):
 0	0.1	0	0.1	0	0.1
 
 /Simulation boundaries in the format: (xmin,xmax,ymin,ymax,zmin,zmax):
--1	1	-1	1	-1	1
+-0.1	0.1	-0.1	0.1	-0.1	0.1
 
 /DEM timestep and final simulation timesteps:
 0.00001	500000
