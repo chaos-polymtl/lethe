@@ -526,10 +526,10 @@ GDNavierStokesSolver<dim>::setup_dofs()
   pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
 
 
-  this->globalVolume_ = GridTools::volume(this->triangulation);
+  this->globalVolume_ = GridTools::volume(*this->triangulation);
 
   this->pcout << "   Number of active cells:       "
-              << this->triangulation.n_global_active_cells() << std::endl
+              << this->triangulation->n_global_active_cells() << std::endl
               << "   Number of degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << this->globalVolume_
