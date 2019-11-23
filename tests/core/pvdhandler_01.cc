@@ -14,9 +14,9 @@ main()
 
       PVDHandler pvdhandlerMaster;
 
-      pvdhandlerMaster.append(0.03, "test1");
-      pvdhandlerMaster.append(2.00, "test2");
-      pvdhandlerMaster.append(7.00, "test3");
+      pvdhandlerMaster.append(0.03, "time_at_step_1");
+      pvdhandlerMaster.append(2.00, "time_at_step_2");
+      pvdhandlerMaster.append(7.00, "time_at_step_3");
       pvdhandlerMaster.save("restart");
 
       PVDHandler pvdhandlerWorker;
