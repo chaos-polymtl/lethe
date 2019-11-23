@@ -1,5 +1,5 @@
 #include "core/parameters.h"
-#include "solvers/glsNS.h"
+#include "solvers/gls_navier_stokes.h"
 
 template <int dim>
 class ExactInitialSolution : public Function<dim>

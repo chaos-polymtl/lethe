@@ -91,13 +91,13 @@
 #include <core/bdf.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
-#include <core/pvdhandler.h>
-#include <core/simulationcontrol.h>
+#include <core/pvd_handler.h>
+#include <core/simulation_control.h>
 
 #include "boundary_conditions.h"
 #include "manifolds.h"
 #include "navier_stokes_solver_parameters.h"
-#include "postprocessors.h"
+#include "post_processors.h"
 
 // Std
 #include <fstream>

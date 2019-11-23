@@ -1,4 +1,4 @@
 SET(TEST_LIBRARIES lethe)
-SET(TEST_TARGET glsNS3d)
+SET(TEST_TARGET gls_navier_stokes_3d)
 DEAL_II_PICKUP_TESTS()
 

@@ -1,7 +1,7 @@
 // check the read and write of simulationcontrol
 
 #include "../tests.h"
-#include "core/pvdhandler.h"
+#include "core/pvd_handler.h"
 
 int
 main()

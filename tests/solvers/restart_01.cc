@@ -2,8 +2,8 @@
 
 #include "../tests.h"
 #include "core/parameters.h"
-#include "core/simulationcontrol.h"
-#include "solvers/glsNS.h"
+#include "core/simulation_control.h"
+#include "solvers/gls_navier_stokes.h"
 #include "solvers/navier_stokes_solver_parameters.h"
 
 template <int dim>

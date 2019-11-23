@@ -1,4 +1,4 @@
-#include "core/simulationcontrol.h"
+#include "core/simulation_control.h"
 
 #include <fstream>
 
