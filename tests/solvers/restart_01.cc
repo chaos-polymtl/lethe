@@ -92,15 +92,13 @@ RestartNavierStokes<dim>::run()
   this->iterate(false);
   this->postprocess(false);
   double error1 = this->calculate_L2_error(this->present_solution);
-  deallog << "Error 1 : " << error1 << std::endl;
+  deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step();
 
   this->set_solution_vector(0.);
   double error2 = this->calculate_L2_error(this->present_solution);
 
-  deallog << "Error 2 : " << error2 << std::endl;
-  if (error2 < error1)
-    std::runtime_error("Zeroed solution has a lower error");
+  deallog << "Error after zeroing the solution: " << error2 << std::endl;
 
   printTime(this->pcout, this->simulationControl);
   this->triangulation->clear();
@@ -110,9 +108,7 @@ RestartNavierStokes<dim>::run()
   this->set_initial_condition(this->nsparam.initialCondition->type, true);
 
   double error3 = this->calculate_L2_error(this->present_solution);
-  deallog << "Error 3 : " << error3 << std::endl;
-  if (!approximatelyEqual(error1, error3, 1e-10))
-    std::runtime_error("Reloaded solution is not the same");
+  deallog << "Error after restarting the simulation: " << error3 << std::endl;
 }
 
 int

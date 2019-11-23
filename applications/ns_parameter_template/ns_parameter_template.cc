@@ -1,6 +1,5 @@
 // check the read and write of simulationcontrol
 
-#include "../tests.h"
 #include "solvers/navier_stokes_solver_parameters.h"
 
 int
@@ -8,17 +7,27 @@ main()
 {
   try
     {
-      initlog();
+      {
+        ParameterHandler                prm;
+        NavierStokesSolverParameters<2> nsparam;
+        nsparam.declare(prm);
+        std::ofstream output_prm("template-2d.prm");
+        prm.print_parameters(output_prm, prm.Text);
 
-      deallog << "Beggining" << std::endl;
-      ParameterHandler                prm;
-      NavierStokesSolverParameters<2> nsparam;
-      nsparam.declare(prm);
-      std::ofstream output_prm("template.prm");
-      prm.print_parameters(output_prm, prm.Text);
+        std::ofstream output_xml("templa"
+                                 "te-2d.xml");
+        prm.print_parameters(output_xml, prm.XML);
+      }
+      {
+        ParameterHandler                prm;
+        NavierStokesSolverParameters<3> nsparam;
+        nsparam.declare(prm);
+        std::ofstream output_prm("template-3d.prm");
+        prm.print_parameters(output_prm, prm.Text);
 
-      std::ofstream output_xml("template.xml");
-      prm.print_parameters(output_xml, prm.XML);
+        std::ofstream output_xml("template-3d.xml");
+        prm.print_parameters(output_xml, prm.XML);
+      }
     }
   catch (std::exception &exc)
     {

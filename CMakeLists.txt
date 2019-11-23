@@ -34,7 +34,7 @@ ENABLE_TESTING()
 ADD_SUBDIRECTORY(source)
 ADD_SUBDIRECTORY(applications)
 ADD_SUBDIRECTORY(applications_tests)
-ADD_SUBDIRECTORY(tests/core)
+ADD_SUBDIRECTORY(tests)
 ADD_SUBDIRECTORY(prototypes)
 
 
