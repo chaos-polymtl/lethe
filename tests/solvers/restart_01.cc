@@ -35,7 +35,8 @@ class MMSSineForcingFunction : public Function<dim>
 {
 public:
   MMSSineForcingFunction()
-    : Function<dim>(3){};
+    : Function<dim>(3)
+  {}
   virtual void
   vector_value(const Point<dim> &p, Vector<double> &values) const;
 };

@@ -1,6 +1,6 @@
 #include <deal.II/base/convergence_table.h>
 
-#include <solvers/gdNS.h>
+#include <solvers/gd_navier_stokes.h>
 
 int
 main(int argc, char *argv[])
