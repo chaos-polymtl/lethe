@@ -24,5 +24,6 @@ ADD_LIBRARY(${TARGET}
   ${TARGET_SRC}
   )
 DEAL_II_SETUP_TARGET(${TARGET})
+TARGET_LINK_LIBRARIES(lethe-solvers lethe-core)
 install(TARGETS lethe-solvers ARCHIVE DESTINATION lib)
 
