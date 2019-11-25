@@ -65,12 +65,12 @@ public:
     // Jacobian
     // 2x_0     1
     // 0        2
-    double x_0          = this->evaluation_point[0];
-    double x_1          = this->evaluation_point[1];
-    system_matrix[0][0] = 2 * x_0;
-    system_matrix[0][1] = 1;
-    system_matrix[1][0] = 0;
-    system_matrix[1][1] = 2.;
+    double x_0 = this->evaluation_point[0];
+    double x_1 = this->evaluation_point[1];
+    system_matrix.set(0, 0, 2 * x_0);
+    system_matrix.set(0, 1, 1);
+    system_matrix.set(1, 0, 0);
+    system_matrix.set(1, 1, 2);
 
     this->system_rhs[0] = -(x_0 * x_0 + x_1);
     this->system_rhs[1] = -(2 * x_1 + 3);
@@ -89,9 +89,7 @@ public:
   /**
    * @brief solve_linear_system
    *
-   * Solve the linear system of equation
-   * Right now this is done by hand using a Gauss Pivot Technique
-   * An automatic method should be used if we have bigger system in tests
+   * Solve the linear system of equation using LAPACK
    */
 
   void
@@ -100,10 +98,8 @@ public:
                       const double,
                       const bool) override
   {
-    this->newton_update[1] = this->system_rhs[1] / system_matrix[1][1];
-    this->newton_update[0] =
-      (this->system_rhs[0] - this->newton_update[1] * system_matrix[0][1]) /
-      system_matrix[0][0];
+    system_matrix.solve(this->system_rhs);
+    newton_update = this->system_rhs;
   }
 
   virtual void
@@ -111,8 +107,8 @@ public:
   {}
 
 private:
-  FullMatrix<double> system_matrix;
-  Vector<double>     rhs;
+  LAPACKFullMatrix<double> system_matrix;
+  Vector<double>           rhs;
 };
 
 int
