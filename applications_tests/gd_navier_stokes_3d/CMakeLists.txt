@@ -1,0 +1,4 @@
+SET(TEST_LIBRARIES lethe)
+SET(TEST_TARGET gd_navier_stokes_3d)
+DEAL_II_PICKUP_TESTS()
+

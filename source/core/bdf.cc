@@ -43,7 +43,7 @@ delta(unsigned int p, unsigned int n, unsigned int j, Vector<double> times)
 }
 
 Vector<double>
-bdf_coefficients(unsigned int p, std::vector<double> dt)
+bdf_coefficients(unsigned int p, const std::vector<double> dt)
 {
   // There should be at least p+1 time steps
   assert(dt.size() >= p + 1);

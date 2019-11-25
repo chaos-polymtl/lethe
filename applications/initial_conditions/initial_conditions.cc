@@ -1,5 +1,5 @@
 #include "core/parameters.h"
-#include "solvers/glsNS.h"
+#include "solvers/gls_navier_stokes.h"
 
 template <int dim>
 class ExactInitialSolution : public Function<dim>
@@ -55,8 +55,8 @@ void
 InitialConditionsNavierStokes<dim>::runTest()
 {
   const int initialSize = this->nsparam.mesh.initialRefinement;
-  GridGenerator::hyper_cube(this->triangulation, -1, 1);
-  this->triangulation.refine_global(initialSize);
+  GridGenerator::hyper_cube(*this->triangulation, -1, 1);
+  this->triangulation->refine_global(initialSize);
   // this->make_cube_grid(initialSize);
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;

@@ -1,0 +1,6 @@
+
+DEAL::dt                  : 0.0100000
+DEAL::CFL                 : 0.00000
+DEAL::time                : 0.100000
+DEAL::iter                : 10
+DEAL::OK
