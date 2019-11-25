@@ -49,7 +49,7 @@ BasicNonLinearSolver<VectorType>::solve(
       this->physics_solver->set_evaluation_point(
         this->physics_solver->get_present_solution());
 
-      this->physics_solver->assemble_matrix_rhs(time_stepping_method);
+      this->physics_solver->assemble_matrix_and_rhs(time_stepping_method);
 
       if (outer_iteration == 0)
         {

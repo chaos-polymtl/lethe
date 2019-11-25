@@ -64,7 +64,7 @@ private:
   assembleGLS();
 
   void
-  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+  assemble_matrix_and_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method) override;
 
   void

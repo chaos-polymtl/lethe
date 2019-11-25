@@ -217,7 +217,7 @@ protected:
   iterate(const bool first_iteration);
 
   virtual void
-  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+  assemble_matrix_and_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method) = 0;
 
   virtual void

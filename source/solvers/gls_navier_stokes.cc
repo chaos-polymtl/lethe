@@ -680,7 +680,7 @@ GLSNavierStokesSolver<dim>::set_nodal_values()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_matrix_rhs(
+GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");

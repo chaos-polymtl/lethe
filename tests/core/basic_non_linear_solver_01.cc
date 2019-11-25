@@ -1,9 +1,10 @@
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/sparse_direct.h>
 #include <deal.II/lac/vector.h>
 
 #include <core/basic_non_linear_solver.h>
 #include <core/physics_solver.h>
-#include <core/simulationcontrol.h>
+#include <core/simulation_control.h>
 
 #include <iostream>
 #include <memory>
@@ -53,8 +54,9 @@ public:
 
   // Assembling Jacobian Matrix
   virtual void
-  assemble_matrix_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) override
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override
   {
     // System
     // x_0*x_0 +x_1 = 0
