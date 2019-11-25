@@ -1295,77 +1295,23 @@ NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
       grid_in.attach_triangulation(*this->triangulation);
       std::ifstream input_file(this->nsparam.mesh.file_name);
       grid_in.read_msh(input_file);
-      this->set_periodicity();
     }
 
-  // Dealii meshes
+  // Dealii grids
   else if (this->nsparam.mesh.type == Parameters::Mesh::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         *this->triangulation,
         this->nsparam.mesh.grid_type,
         this->nsparam.mesh.grid_arguments);
-      const int initialSize = this->nsparam.mesh.initialRefinement;
-      this->set_periodicity();
-      this->triangulation->refine_global(initialSize);
-    }
-  // Primitive input
-  else if (this->nsparam.mesh.type == Parameters::Mesh::primitive)
-    {
-      const int initialSize = this->nsparam.mesh.initialRefinement;
-
-      if (this->nsparam.mesh.primitiveType == Parameters::Mesh::hyper_cube)
-        {
-          GridGenerator::hyper_cube(*this->triangulation,
-                                    this->nsparam.mesh.arg1,
-                                    this->nsparam.mesh.arg2,
-                                    this->nsparam.mesh.colorize);
-        }
-      else if (this->nsparam.mesh.primitiveType ==
-               Parameters::Mesh::hyper_shell)
-        {
-          Point<dim> circleCenter;
-          if (dim == 2)
-            circleCenter =
-              Point<dim>(this->nsparam.mesh.arg1, this->nsparam.mesh.arg2);
-
-          if (dim == 3)
-            circleCenter = Point<dim>(this->nsparam.mesh.arg1,
-                                      this->nsparam.mesh.arg2,
-                                      this->nsparam.mesh.arg3);
-
-          GridGenerator::hyper_shell(*this->triangulation,
-                                     circleCenter,
-                                     this->nsparam.mesh.arg4,
-                                     this->nsparam.mesh.arg5,
-                                     4,
-                                     this->nsparam.mesh.colorize);
-        }
-      else if (nsparam.mesh.primitiveType == Parameters::Mesh::cylinder)
-        {
-          Point<dim> center;
-          if (dim != 3)
-            throw std::runtime_error(
-              "Cylinder primitive can only be used in 3D");
-          center = Point<dim>(this->nsparam.mesh.arg1,
-                              this->nsparam.mesh.arg2,
-                              this->nsparam.mesh.arg3);
-
-          GridGenerator::cylinder(*this->triangulation,
-                                  this->nsparam.mesh.arg4,
-                                  this->nsparam.mesh.arg5);
-        }
-      else
-        {
-          throw std::runtime_error(
-            "Unsupported primitive type - mesh will not be created");
-        }
-      this->set_periodicity();
-      this->triangulation->refine_global(initialSize);
     }
   else
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
+
+  const int initialSize = this->nsparam.mesh.initialRefinement;
+  this->set_periodicity();
+  this->triangulation->refine_global(initialSize);
 }
 
 /*

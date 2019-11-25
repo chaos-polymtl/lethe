@@ -20,7 +20,7 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = primitive
+    set type                 = dealii
     set initial refinement   = 3
 end
 # --------------------------------------------------

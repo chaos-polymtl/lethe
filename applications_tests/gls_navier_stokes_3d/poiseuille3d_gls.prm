@@ -53,13 +53,9 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = primitive
-    set primitive type       = cylinder
-    set arg1 = 0
-    set arg2 = 0
-    set arg3 = 0 
-    set arg4 = 1 
-    set arg5 = 1
+    set type                 = dealii
+    set grid type       = cylinder
+    set grid arguments  = 1 : 1 
     set initial refinement = 1
 end
 

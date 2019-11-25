@@ -73,11 +73,9 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = primitive
-    set primitive type       = hyper_cube
-    set arg1                 = 0
-    set arg2                 = 6.28318530718
-    set colorize             = true
+    set type                 = dealii
+    set grid type       = hyper_cube
+    set grid arguments  = 0 : 6.28318530718 : true
     set initial refinement   = 5                        # initial mesh refinement
 end
 # --------------------------------------------------
