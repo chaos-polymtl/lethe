@@ -855,7 +855,24 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
   velocity_preconditioner.initialize(system_matrix.block(0, 0),
                                      velocity_parameter_ml);
   this->computing_timer.exit_section("AMG_velocity");
+  /* ---------------------------------------------------------------------
+   *
+   * Copyright (C) 2019 - by the Lethe authors
+   *
+   * This file is part of the Lethe library
+   *
+   * The Lethe library is free software; you can use it, redistribute
+   * it, and/or modify it under the terms of the GNU Lesser General
+   * Public License as published by the Free Software Foundation; either
+   * version 3.1 of the License, or (at your option) any later version.
+   * The full text of the license can be found in the file LICENSE at
+   * the top level of the Lethe distribution.
+   *
+   * ---------------------------------------------------------------------
 
+   *
+   * Author: Bruno Blais, Polytechnique Montreal, 2019-
+   */
 
   this->computing_timer.enter_section("AMG_pressure");
   const bool elliptic_pressure = true;

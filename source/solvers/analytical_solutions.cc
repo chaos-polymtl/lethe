@@ -19,7 +19,76 @@
 
 #include "solvers/analytical_solutions.h"
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
-// valid before we actually compile the solver This greatly helps with debugging
+namespace AnalyticalSolutions
+{
+  template <int dim>
+  void
+  AnalyticalSolution<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("analytical solution");
+    prm.declare_entry(
+      "enable",
+      "false",
+      Patterns::Bool(),
+      "Enable the calculation of the analytical solution and L2 error");
+    prm.declare_entry(
+      "verbosity",
+      "quiet",
+      Patterns::Selection("quiet|verbose"),
+      "State whether from the post-processing values should be printed "
+      "Choices are <quiet|verbose>.");
+
+    prm.declare_entry(
+      "filename",
+      "L2Error",
+      Patterns::FileName(),
+      "File name for the output for the L2Error table with respect to time or mesh ");
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  AnalyticalSolution<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("analytical solution");
+    enable               = prm.get_bool("enable");
+    filename             = prm.get("filename");
+    const std::string op = prm.get("verbosity");
+    if (op == "verbose")
+      verbosity = Parameters::verbose;
+    if (op == "quiet")
+      verbosity = Parameters::quiet;
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  NSAnalyticalSolution<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    this->AnalyticalSolution<dim>::declare_parameters(prm);
+    prm.enter_subsection("analytical solution");
+    prm.enter_subsection("uvw");
+    velocity.declare_parameters(prm, dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0; 0;");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0; 0;");
+    prm.leave_subsection();
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  NSAnalyticalSolution<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    this->AnalyticalSolution<dim>::parse_parameters(prm);
+    prm.enter_subsection("analytical solution");
+    prm.enter_subsection("uvw");
+    velocity.parse_parameters(prm);
+    prm.leave_subsection();
+    prm.leave_subsection();
+  }
+} // namespace AnalyticalSolutions
+// Pre-compile the 2D and 3D
 template class AnalyticalSolutions::NSAnalyticalSolution<2>;
 template class AnalyticalSolutions::NSAnalyticalSolution<3>;
