@@ -362,9 +362,9 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "gmsh",
-                        Patterns::Selection("gmsh|primitive"),
+                        Patterns::Selection("gmsh|dealii|primitive"),
                         "Type of mesh "
-                        "Choices are <gmsh|primitive>.");
+                        "Choices are <gmsh|dealii|primitive>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -408,6 +408,10 @@ namespace Parameters
                         Patterns::Double(),
                         "Primitive argument 6");
 
+      prm.declare_entry("grid type", "hyper_cube");
+      prm.declare_entry("grid arguments", "-1 ; 1");
+
+
       prm.declare_entry("colorize",
                         "false",
                         Patterns::Bool(),
@@ -425,11 +429,15 @@ namespace Parameters
         const std::string op = prm.get("type");
         if (op == "gmsh")
           type = gmsh;
-        if (op == "primitive")
+        else if (op == "primitive")
           type = primitive;
+        else if (op == "dealii")
+          type = dealii;
+        else
+          throw("Error");
       }
 
-      fileName = prm.get("file name");
+      file_name = prm.get("file name");
 
       initialRefinement = prm.get_integer("initial refinement");
 
@@ -449,6 +457,9 @@ namespace Parameters
       arg4 = prm.get_double("arg4");
       arg5 = prm.get_double("arg5");
       arg6 = prm.get_double("arg6");
+
+      grid_type      = prm.get("grid type");
+      grid_arguments = prm.get("grid arguments");
 
       colorize = prm.get_bool("colorize");
     }

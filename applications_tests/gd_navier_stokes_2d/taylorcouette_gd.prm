@@ -60,14 +60,9 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = primitive
-    set primitive type       = hyper_shell
-    set arg1      = 0
-    set arg2      = 0
-    set arg3      = 0
-    set arg4      = 0.25
-    set arg5      = 1.
-    set colorize             = true
+    set type                 = dealii
+    set grid type = hyper_shell
+    set grid arguments = 0, 0 : 0.25 : 1 : 4:  true
     set initial refinement   = 2
 end
 

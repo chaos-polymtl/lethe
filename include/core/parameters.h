@@ -270,6 +270,7 @@ namespace Parameters
     enum Type
     {
       gmsh,
+      dealii,
       primitive
     };
     Type type;
@@ -293,7 +294,13 @@ namespace Parameters
     double arg6;
 
     // File name of the mesh
-    std::string fileName;
+    std::string file_name;
+
+    // Name of the grid in GridTools
+    std::string grid_type;
+
+    // Arguments of the GridTools
+    std::string grid_arguments;
 
     // Initial refinement level of primitive mesh
     unsigned int initialRefinement;

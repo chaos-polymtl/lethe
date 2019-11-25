@@ -1293,9 +1293,21 @@ NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
     {
       GridIn<dim> grid_in;
       grid_in.attach_triangulation(*this->triangulation);
-      std::ifstream input_file(this->nsparam.mesh.fileName);
+      std::ifstream input_file(this->nsparam.mesh.file_name);
       grid_in.read_msh(input_file);
       this->set_periodicity();
+    }
+
+  // Dealii meshes
+  else if (this->nsparam.mesh.type == Parameters::Mesh::dealii)
+    {
+      GridGenerator::generate_from_name_and_arguments(
+        *this->triangulation,
+        this->nsparam.mesh.grid_type,
+        this->nsparam.mesh.grid_arguments);
+      const int initialSize = this->nsparam.mesh.initialRefinement;
+      this->set_periodicity();
+      this->triangulation->refine_global(initialSize);
     }
   // Primitive input
   else if (this->nsparam.mesh.type == Parameters::Mesh::primitive)

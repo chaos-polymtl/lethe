@@ -20,10 +20,9 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = primitive
-    set primitive type       = hyper_cube
-    set arg1                 = -1
-    set arg2                 = 1
+    set type                 = dealii
+    set grid type            = hyper_cube
+    set grid arguments       = -1 : 1 : false
     set initial refinement   = 3
 end
 #---------------------------------------------------
