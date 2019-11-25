@@ -55,8 +55,9 @@ public:
 
 private:
   void
-  assemble_matrix_and_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) override;
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override;
 
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -95,9 +96,10 @@ private:
    */
 
   void
-  solve_linear_system(bool   initial_step,
-                      double relative_residual,
-                      double minimum_residual) override;
+  solve_linear_system(const bool   initial_step,
+                      const double relative_residual,
+                      const double minimum_residual,
+                      const bool   renewed_matrix = true) override;
 
   /**
    * GMRES solver with ILU preconditioning

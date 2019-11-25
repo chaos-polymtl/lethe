@@ -64,8 +64,9 @@ private:
   assembleGLS();
 
   void
-  assemble_matrix_and_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) override;
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override;
 
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
@@ -85,31 +86,32 @@ private:
   solve_linear_system(
     const bool   initial_step,
     const double absolute_residual,
-    const double relative_residual) override; // Interface function
+    const double relative_residual,
+    const bool   renewed_matrix = true) override; // Interface function
 
   /**
    * GMRES solver with ILU(N) preconditioning
    */
   void
-  solve_system_GMRES(bool   initial_step,
-                     double absolute_residual,
-                     double relative_residual);
+  solve_system_GMRES(const bool   initial_step,
+                     const double absolute_residual,
+                     const double relative_residual);
 
   /**
    * BiCGStab solver with ILU(N) preconditioning
    */
   void
-  solve_system_BiCGStab(bool   initial_step,
-                        double absolute_residual,
-                        double relative_residual);
+  solve_system_BiCGStab(const bool   initial_step,
+                        const double absolute_residual,
+                        const double relative_residual);
 
   /**
    * AMG preconditioner with ILU smoother and coarsener and GMRES final solver
    */
   void
-  solve_system_AMG(bool   initial_step,
-                   double absolute_residual,
-                   double relative_residual);
+  solve_system_AMG(const bool   initial_step,
+                   const double absolute_residual,
+                   const double relative_residual);
 
   /**
    * Members

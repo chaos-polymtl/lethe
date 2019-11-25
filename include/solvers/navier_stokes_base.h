@@ -88,8 +88,8 @@
 #include <deal.II/distributed/solution_transfer.h>
 
 // Lethe Includes
-#include <core/basic_non_linear_solver.h>
 #include <core/bdf.h>
+#include <core/newton_non_linear_solver.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
@@ -217,17 +217,19 @@ protected:
   iterate(const bool first_iteration);
 
   virtual void
-  assemble_matrix_and_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) = 0;
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) = 0;
 
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) = 0;
 
   virtual void
-  solve_linear_system(const bool initial_step,
-                      double     absolute_residual,
-                      double     relative_residual) = 0;
+  solve_linear_system(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual,
+                      const bool   renewed_matrix = true) = 0;
 
   void
   refine_mesh();

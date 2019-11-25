@@ -713,9 +713,10 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                double     absolute_residual,
-                                                double     relative_residual)
+GLSNavierStokesSolver<dim>::solve_linear_system(const bool   initial_step,
+                                                const double absolute_residual,
+                                                const double relative_residual,
+                                                const bool   renewed_matrix)
 {
   if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
@@ -730,9 +731,9 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
-                                               double     absolute_residual,
-                                               double     relative_residual)
+GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
+                                               const double absolute_residual,
+                                               const double relative_residual)
 {
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
@@ -785,9 +786,10 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
-                                                  double     absolute_residual,
-                                                  double     relative_residual)
+GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual)
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
 
@@ -839,9 +841,9 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_AMG(const bool initial_step,
-                                             double     absolute_residual,
-                                             double     relative_residual)
+GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
+                                             const double absolute_residual,
+                                             const double relative_residual)
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
 

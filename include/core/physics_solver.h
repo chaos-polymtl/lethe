@@ -52,7 +52,8 @@ public:
   virtual void
   solve_linear_system(const bool   initial_step,
                       const double absolute_residual,
-                      const double relative_residual) = 0;
+                      const double relative_residual,
+                      const bool   renewed_matrix = true) = 0;
 
   void
   solve_non_linear_system(

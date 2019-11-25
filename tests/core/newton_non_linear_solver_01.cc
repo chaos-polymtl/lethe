@@ -2,7 +2,7 @@
 #include <deal.II/lac/sparse_direct.h>
 #include <deal.II/lac/vector.h>
 
-#include <core/basic_non_linear_solver.h>
+#include <core/newton_non_linear_solver.h>
 #include <core/physics_solver.h>
 #include <core/simulation_control.h>
 
@@ -95,7 +95,10 @@ public:
    */
 
   void
-  solve_linear_system(const bool, const double, const double) override
+  solve_linear_system(const bool,
+                      const double,
+                      const double,
+                      const bool) override
   {
     this->newton_update[1] = this->system_rhs[1] / system_matrix[1][1];
     this->newton_update[0] =

@@ -692,9 +692,10 @@ GDNavierStokesSolver<dim>::set_nodal_values()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                               double     absolute_residual,
-                                               double     relative_residual)
+GDNavierStokesSolver<dim>::solve_linear_system(const bool   initial_step,
+                                               const double absolute_residual,
+                                               const double relative_residual,
+                                               const bool   renewed_matrix)
 {
   if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
     solve_system_GMRES(initial_step, absolute_residual, relative_residual);
