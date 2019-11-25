@@ -2,6 +2,8 @@
 
 #include "solvers/navier_stokes_solver_parameters.h"
 
+#include <fstream>
+
 int
 main()
 {
