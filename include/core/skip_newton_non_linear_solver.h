@@ -13,7 +13,13 @@ public:
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,
-        const bool is_initial_step) override;
+        const bool is_initial_step,
+        const bool force_matrix_renewal) override;
+
+
+private:
+  const Parameters::NonLinearSolver parameters;
+  unsigned int                      consecutive_iters;
 };
 
 template <typename VectorType>
@@ -21,13 +27,16 @@ SkipNewtonNonLinearSolver<VectorType>::SkipNewtonNonLinearSolver(
   PhysicsSolver<VectorType> *        physics_solver,
   const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
+  , parameters(params)
+  , consecutive_iters(0)
 {}
 
 template <typename VectorType>
 void
 SkipNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step)
+  const bool                                              is_initial_step,
+  const bool                                              force_matrix_renewal)
 {
   double       current_res;
   double       last_res;
@@ -36,17 +45,22 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
   last_res                     = 1.0;
   current_res                  = 1.0;
 
-  bool assembly_needed = true;
+  bool assembly_needed = false;
+  if (consecutive_iters == 0 || is_initial_step || force_matrix_renewal)
+    assembly_needed = true;
+
   while ((current_res > this->params.tolerance) &&
-         outer_iteration < this->params.maxIterations)
+         outer_iteration < this->params.max_iterations)
     {
       this->physics_solver->set_evaluation_point(
         this->physics_solver->get_present_solution());
 
       if (assembly_needed)
-        {
-          this->physics_solver->assemble_matrix_and_rhs(time_stepping_method);
-        }
+        this->physics_solver->assemble_matrix_and_rhs(time_stepping_method);
+
+      else if (outer_iteration == 0)
+        this->physics_solver->assemble_rhs(time_stepping_method);
+
 
       if (outer_iteration == 0)
         {
@@ -103,6 +117,9 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
       ++outer_iteration;
       assembly_needed = false;
     }
+  if (!force_matrix_renewal)
+    consecutive_iters++;
+  consecutive_iters = consecutive_iters % parameters.skip_iterations;
 }
 
 #endif

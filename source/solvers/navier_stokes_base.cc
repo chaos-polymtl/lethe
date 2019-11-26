@@ -812,7 +812,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
   if (!firstIteration)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false);
+        this->simulationControl.getMethod(), false, false);
     }
   // This is the first iteration
   else
@@ -821,13 +821,13 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           Parameters::SimulationControl::steady)
         {
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
         }
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf1)
         {
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
         }
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf2)
@@ -841,7 +841,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           this->simulationControl.setMethod(
             Parameters::SimulationControl::bdf1);
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
 
@@ -852,7 +852,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           this->simulationControl.setTimeStep(
             timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
         }
 
       else if (this->simulationControl.getMethod() ==
@@ -867,7 +867,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           this->simulationControl.setMethod(
             Parameters::SimulationControl::bdf1);
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
 
@@ -878,7 +878,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           this->simulationControl.setTimeStep(
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
           this->solution_m3 = this->solution_m2;
           this->solution_m2 = this->solution_m1;
           this->solution_m1 = this->present_solution;
@@ -891,7 +891,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
             timeParameters.dt *
             (1. - 2. * timeParameters.startup_timestep_scaling));
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false);
+            this->simulationControl.getMethod(), false, true);
         }
     }
 }

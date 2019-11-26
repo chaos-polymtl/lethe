@@ -339,6 +339,10 @@ namespace Parameters
                         "10",
                         Patterns::Integer(),
                         "Maximum number of Newton Iterations");
+      prm.declare_entry("skip iterations",
+                        "1",
+                        Patterns::Integer(),
+                        "Time steps to skip before rebuilding the matrix");
       prm.declare_entry("residual precision",
                         "4",
                         Patterns::Integer(),
@@ -363,7 +367,8 @@ namespace Parameters
       if (str_solver == "skip_newton")
         solver = skip_newton;
       tolerance         = prm.get_double("tolerance");
-      maxIterations     = prm.get_integer("max iterations");
+      max_iterations    = prm.get_integer("max iterations");
+      skip_iterations   = prm.get_integer("skip iterations");
       display_precision = prm.get_integer("residual precision");
     }
     prm.leave_subsection();

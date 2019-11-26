@@ -200,10 +200,13 @@ namespace Parameters
     double tolerance;
 
     // Maximal number of iterations for the Newton solver
-    unsigned int maxIterations;
+    unsigned int max_iterations;
 
     // Residual precision
     unsigned int display_precision;
+
+    // Iterations to skip in the non-linear solver
+    unsigned int skip_iterations;
 
     static void
     declare_parameters(ParameterHandler &prm);

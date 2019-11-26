@@ -13,7 +13,8 @@ public:
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,
-        const bool is_initial_step) override;
+        const bool is_initial_step,
+        const bool force_matrix_renewal = true) override;
 };
 
 template <typename VectorType>
@@ -27,7 +28,8 @@ template <typename VectorType>
 void
 NewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step)
+  const bool                                              is_initial_step,
+  const bool)
 {
   double       current_res;
   double       last_res;
@@ -37,7 +39,7 @@ NewtonNonLinearSolver<VectorType>::solve(
   current_res                  = 1.0;
 
   while ((current_res > this->params.tolerance) &&
-         outer_iteration < this->params.maxIterations)
+         outer_iteration < this->params.max_iterations)
     {
       this->physics_solver->set_evaluation_point(
         this->physics_solver->get_present_solution());

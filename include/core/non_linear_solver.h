@@ -40,7 +40,8 @@ public:
   virtual void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,
-        const bool is_initial_step) = 0;
+        const bool is_initial_step,
+        const bool force_matrix_rewewal = true) = 0;
 
 protected:
   PhysicsSolver<VectorType> * physics_solver;

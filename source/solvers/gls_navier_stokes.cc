@@ -553,7 +553,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(Parameters::SimulationControl::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::steady, false);
+        Parameters::SimulationControl::steady, false, true);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
