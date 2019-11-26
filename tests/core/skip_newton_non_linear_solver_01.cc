@@ -27,7 +27,7 @@ main(int argc, char **argv)
 
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::quiet,
-    Parameters::NonLinearSolver::SolverType::newton,
+    Parameters::NonLinearSolver::SolverType::skip_newton,
     1e-8, // tolerance
     10,   // maxIter
     4,    // display precision
