@@ -27,6 +27,32 @@
 
 using namespace dealii;
 
+template <class BSPreconditioner>
+class BlockSchurPreconditioner : public Subscriptor
+{
+public:
+  BlockSchurPreconditioner(double                                     gamma,
+                           double                                     viscosity,
+                           const TrilinosWrappers::BlockSparseMatrix &S,
+                           const TrilinosWrappers::SparseMatrix &     P,
+                           const BSPreconditioner * p_amat_preconditioner,
+                           const BSPreconditioner * p_pmass_preconditioner,
+                           Parameters::LinearSolver solver_parameters);
+
+  void
+  vmult(TrilinosWrappers::MPI::BlockVector &      dst,
+        const TrilinosWrappers::MPI::BlockVector &src) const;
+
+private:
+  const double                               gamma;
+  const double                               viscosity;
+  const Parameters::LinearSolver             linear_solver_parameters;
+  const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
+  const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
+  const BSPreconditioner *                   amat_preconditioner;
+  const BSPreconditioner *                   pmass_preconditioner;
+};
+
 /**
  * A solver class for the Steady-Sate  Navier-Stokes equation using Grad-Div
  * stabilization
@@ -103,16 +129,31 @@ private:
    * GMRES solver with ILU preconditioning
    */
   void
-  solve_system_GMRES(bool   initial_step,
-                     double relative_residual,
-                     double minimum_residual);
+  solve_system_GMRES(const bool   initial_step,
+                     const double relative_residual,
+                     const double minimum_residual,
+                     const bool   renewed_matrix);
   /**
    * GMRES solver with AMG preconditioning
    */
   void
-  solve_system_AMG(bool   initial_step,
-                   double relative_residual,
-                   double minimum_residual);
+  solve_system_AMG(const bool   initial_step,
+                   const double relative_residual,
+                   const double minimum_residual,
+                   const bool   renewed_matrix);
+
+  /**
+   * Set-up AMG preconditioner
+   */
+  void
+  setup_AMG();
+
+  /**
+   * Set-up ILU preconditioner
+   */
+  void
+  setup_ILU();
+
 
 
   /**
@@ -124,34 +165,25 @@ private:
 
   std::vector<types::global_dof_index> dofs_per_block;
 
+  std::shared_ptr<TrilinosWrappers::PreconditionILU>
+    velocity_ilu_preconditioner;
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG>
+    velocity_amg_preconditioner;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU>
+    pressure_ilu_preconditioner;
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG>
+    pressure_amg_preconditioner;
+
+  std::shared_ptr<BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>
+    system_ilu_preconditioner;
+
+  std::shared_ptr<BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>
+    system_amg_preconditioner;
+
   const double gamma = 1;
 };
 
-template <class BSPreconditioner>
-class BlockSchurPreconditioner : public Subscriptor
-{
-public:
-  BlockSchurPreconditioner(double                                     gamma,
-                           double                                     viscosity,
-                           const TrilinosWrappers::BlockSparseMatrix &S,
-                           const TrilinosWrappers::SparseMatrix &     P,
-                           const BSPreconditioner * p_amat_preconditioner,
-                           const BSPreconditioner * p_pmass_preconditioner,
-                           Parameters::LinearSolver solver_parameters);
 
-  void
-  vmult(TrilinosWrappers::MPI::BlockVector &      dst,
-        const TrilinosWrappers::MPI::BlockVector &src) const;
-
-private:
-  const double                               gamma;
-  const double                               viscosity;
-  const Parameters::LinearSolver             linear_solver_parameters;
-  const TrilinosWrappers::BlockSparseMatrix &stokes_matrix;
-  const TrilinosWrappers::SparseMatrix &     pressure_mass_matrix;
-  const BSPreconditioner *                   amat_preconditioner;
-  const BSPreconditioner *                   pmass_preconditioner;
-};
 
 // We can notice that the initialization of the inverse of the matrix at the
 // top left corner is completed in the constructor. If so, every application
