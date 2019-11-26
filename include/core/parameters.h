@@ -183,7 +183,18 @@ namespace Parameters
 
   struct NonLinearSolver
   {
+    // Type of linear solver
+    enum SolverType
+    {
+      newton,
+      skip_newton,
+      adaptative_newton
+    };
+
     Verbosity verbosity;
+
+    // Type of non-linear solver
+    SolverType solver;
 
     // Tolerance
     double tolerance;

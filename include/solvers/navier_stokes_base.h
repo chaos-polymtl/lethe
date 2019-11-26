@@ -225,12 +225,6 @@ protected:
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) = 0;
 
-  virtual void
-  solve_linear_system(const bool   initial_step,
-                      const double absolute_residual,
-                      const double relative_residual,
-                      const bool   renewed_matrix = true) = 0;
-
   void
   refine_mesh();
 

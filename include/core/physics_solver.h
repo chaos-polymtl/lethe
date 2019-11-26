@@ -22,18 +22,33 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
+#include "newton_non_linear_solver.h"
 #include "non_linear_solver.h"
 #include "parameters.h"
 
 /**
- * An interface for all physics solver classes to derive from.
+ * This interface class is used to house all the common elements of physics
+ * solver. A physics solver is an implementation of a linear or non-linear set
+ * of physical equations. This interface is here to provide the families of
+ * non-linear solvers with the necessary elements to allow for the solution of
+ * the problems associated with a set of physics.
  */
 
 template <typename VectorType>
 class PhysicsSolver
 {
 public:
+  /**
+   * @brief PhysicsSolver - Constructor that takes an existing non-linear solver
+   * @param non_linear_solver Non-linear solver that will be used to drive the physics solver
+   */
   PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver);
+
+  /**
+   * @brief PhysicsSolver
+   * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
+   */
+  PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters);
 
   ~PhysicsSolver()
   {
@@ -50,10 +65,8 @@ public:
                  time_stepping_method) = 0;
 
   virtual void
-  solve_linear_system(const bool   initial_step,
-                      const double absolute_residual,
-                      const double relative_residual,
-                      const bool   renewed_matrix = true) = 0;
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix = true) = 0;
 
   void
   solve_non_linear_system(
@@ -120,6 +133,23 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout})
 {}
+
+
+
+template <typename VectorType>
+PhysicsSolver<VectorType>::PhysicsSolver(
+  Parameters::NonLinearSolver non_linear_solver_parameters)
+  : pcout({std::cout})
+{
+  if (non_linear_solver_parameters.solver ==
+      non_linear_solver_parameters.newton)
+    non_linear_solver =
+      new NewtonNonLinearSolver<VectorType>(this, non_linear_solver_parameters);
+  if (non_linear_solver_parameters.solver ==
+      non_linear_solver_parameters.skip_newton)
+    non_linear_solver =
+      new NewtonNonLinearSolver<VectorType>(this, non_linear_solver_parameters);
+}
 
 template <typename VectorType>
 void

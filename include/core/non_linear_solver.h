@@ -32,9 +32,7 @@ class NonLinearSolver
 {
 public:
   NonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
-                  const Parameters::NonLinearSolver &params,
-                  const double                       absolute_residual,
-                  const double                       relative_residual);
+                  const Parameters::NonLinearSolver &params);
 
   virtual ~NonLinearSolver()
   {}
@@ -47,21 +45,14 @@ public:
 protected:
   PhysicsSolver<VectorType> * physics_solver;
   Parameters::NonLinearSolver params;
-
-  const double absolute_residual;
-  const double relative_residual;
 };
 
 template <typename VectorType>
 NonLinearSolver<VectorType>::NonLinearSolver(
   PhysicsSolver<VectorType> *        physics_solver,
-  const Parameters::NonLinearSolver &params,
-  const double                       absolute_residual,
-  const double                       relative_residual)
+  const Parameters::NonLinearSolver &params)
   : physics_solver(physics_solver)
   , params(params)
-  , absolute_residual(absolute_residual)
-  , relative_residual(relative_residual)
 {}
 
 #endif

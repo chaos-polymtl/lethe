@@ -1,4 +1,5 @@
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/lapack_full_matrix.h>
 #include <deal.II/lac/sparse_direct.h>
 #include <deal.II/lac/vector.h>
 
@@ -31,11 +32,7 @@ class TestClass : public PhysicsSolver<Vector<double>>
 {
 public:
   TestClass(Parameters::NonLinearSolver &params)
-    : PhysicsSolver(
-        new BasicNonLinearSolver<Vector<double>>(this, params, 1e-15, 1e-15))
-    ,
-    // Initialize the memory for the system matrix
-    system_matrix(2, 2)
+    : PhysicsSolver(new NewtonNonLinearSolver<Vector<double>>(this, params))
   {
     // Initialize the vectors needed for the Physics Solver
     this->evaluation_point.reinit(2);
@@ -58,6 +55,7 @@ public:
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override
   {
+    system_matrix.reinit(2);
     // System
     // x_0*x_0 +x_1 = 0
     // 2*x_1 + 3 = 0
@@ -93,11 +91,12 @@ public:
    */
 
   void
-  solve_linear_system(const bool,
-                      const double,
-                      const double,
-                      const bool) override
+  solve_linear_system(const bool, const bool) override
   {
+    system_matrix.set_property(LAPACKSupport::general);
+    //    system_matrix.compute_lu_factorization();
+    system_matrix.compute_lu_factorization();
+    //    system_matrix.apply_lu_factorization(this->system);
     system_matrix.solve(this->system_rhs);
     newton_update = this->system_rhs;
   }
@@ -118,6 +117,7 @@ main()
 
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::quiet,
+    Parameters::NonLinearSolver::SolverType::newton,
     1e-6, // tolerance
     10,   // maxIter
     4     // display precision

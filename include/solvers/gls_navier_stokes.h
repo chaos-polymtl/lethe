@@ -84,10 +84,8 @@ private:
 
   void
   solve_linear_system(
-    const bool   initial_step,
-    const double absolute_residual,
-    const double relative_residual,
-    const bool   renewed_matrix = true) override; // Interface function
+    const bool initial_step,
+    const bool renewed_matrix = true) override; // Interface function
 
   /**
    * GMRES solver with ILU(N) preconditioning

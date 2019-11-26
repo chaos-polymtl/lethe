@@ -531,7 +531,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
            Parameters::InitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      solve_linear_system(true, 1e-15, 1e-15);
+      solve_system_GMRES(true, 1e-15, 1e-15, true);
       this->present_solution = this->newton_update;
       this->finish_time_step();
       this->postprocess(true);
@@ -713,11 +713,12 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_linear_system(const bool   initial_step,
-                                                const double absolute_residual,
-                                                const double relative_residual,
-                                                const bool   renewed_matrix)
+GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
+                                                const bool renewed_matrix)
 {
+  const double absolute_residual = this->nsparam.linearSolver.minimum_residual;
+  const double relative_residual = this->nsparam.linearSolver.relative_residual;
+
   if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,

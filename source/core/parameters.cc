@@ -301,6 +301,8 @@ namespace Parameters
         verbosity = verbose;
       if (op == "quiet")
         verbosity = quiet;
+
+
       calculate_kinetic_energy   = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy        = prm.get_bool("calculate enstrophy");
       kinetic_energy_output_name = prm.get("kinetic energy name");
@@ -322,6 +324,13 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether from the non-linear solver should be printed "
         "Choices are <quiet|verbose>.");
+
+      prm.declare_entry("solver",
+                        "newton",
+                        Patterns::Selection("newton|skip_newton"),
+                        "Non-linear solver that will be used "
+                        "Choices are <newton|skip_newton>.");
+
       prm.declare_entry("tolerance",
                         "1e-6",
                         Patterns::Double(),
@@ -348,6 +357,11 @@ namespace Parameters
         verbosity = verbose;
       if (op == "quiet")
         verbosity = quiet;
+      const std::string str_solver = prm.get("solver");
+      if (str_solver == "newton")
+        solver = newton;
+      if (str_solver == "skip_newton")
+        solver = skip_newton;
       tolerance         = prm.get_double("tolerance");
       maxIterations     = prm.get_integer("max iterations");
       display_precision = prm.get_integer("residual precision");

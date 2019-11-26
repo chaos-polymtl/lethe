@@ -4,13 +4,11 @@
 #include "non_linear_solver.h"
 
 template <typename VectorType>
-class BasicNonLinearSolver : public NonLinearSolver<VectorType>
+class NewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
-  BasicNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
-                       const Parameters::NonLinearSolver &params,
-                       const double                       absolute_residual,
-                       const double                       relative_residual);
+  NewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
+                        const Parameters::NonLinearSolver &param);
 
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
@@ -19,20 +17,15 @@ public:
 };
 
 template <typename VectorType>
-BasicNonLinearSolver<VectorType>::BasicNonLinearSolver(
+NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
   PhysicsSolver<VectorType> *        physics_solver,
-  const Parameters::NonLinearSolver &params,
-  const double                       absolute_residual,
-  const double                       relative_residual)
-  : NonLinearSolver<VectorType>(physics_solver,
-                                params,
-                                absolute_residual,
-                                relative_residual)
+  const Parameters::NonLinearSolver &params)
+  : NonLinearSolver<VectorType>(physics_solver, params)
 {}
 
 template <typename VectorType>
 void
-BasicNonLinearSolver<VectorType>::solve(
+NewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step)
 {
@@ -64,9 +57,7 @@ BasicNonLinearSolver<VectorType>::solve(
             << "  - Residual:  " << current_res << std::endl;
         }
 
-      this->physics_solver->solve_linear_system(first_step,
-                                                this->absolute_residual,
-                                                this->relative_residual);
+      this->physics_solver->solve_linear_system(first_step);
 
 
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
