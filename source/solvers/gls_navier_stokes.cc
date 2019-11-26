@@ -743,6 +743,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_ILU()
 {
+  TimerOutput::Scope t(this->computing_timer, "setup_ILU");
+
   const double ilu_fill = this->nsparam.linearSolver.ilu_precond_fill;
   const double ilu_atol = this->nsparam.linearSolver.ilu_precond_atol;
   const double ilu_rtol = this->nsparam.linearSolver.ilu_precond_rtol;
@@ -758,6 +760,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_AMG()
 {
+  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
+
   std::vector<std::vector<bool>> constant_modes;
   // Constant modes include pressure since everything is in the same matrix
   std::vector<bool> velocity_components(dim + 1, true);
@@ -823,7 +827,6 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double relative_residual,
                                                const bool   renewed_matrix)
 {
-  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
@@ -848,17 +851,20 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   if (renewed_matrix || !ilu_preconditioner)
     setup_ILU();
 
-  solver.solve(system_matrix,
-               completely_distributed_solution,
-               this->system_rhs,
-               *ilu_preconditioner);
+  {
+    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-    }
+    solver.solve(system_matrix,
+                 completely_distributed_solution,
+                 this->system_rhs,
+                 *ilu_preconditioner);
 
+    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+      {
+        this->pcout << "  -Iterative solver took : "
+                    << solver_control.last_step() << " steps " << std::endl;
+      }
+  }
   constraints_used.distribute(completely_distributed_solution);
   this->newton_update = completely_distributed_solution;
 }
@@ -896,18 +902,22 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   if (renewed_matrix || !ilu_preconditioner)
     setup_ILU();
 
-  solver.solve(system_matrix,
-               completely_distributed_solution,
-               this->system_rhs,
-               *ilu_preconditioner);
+  {
+    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-    }
-  constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
+    solver.solve(system_matrix,
+                 completely_distributed_solution,
+                 this->system_rhs,
+                 *ilu_preconditioner);
+
+    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+      {
+        this->pcout << "  -Iterative solver took : "
+                    << solver_control.last_step() << " steps " << std::endl;
+      }
+    constraints_used.distribute(completely_distributed_solution);
+    this->newton_update = completely_distributed_solution;
+  }
 }
 
 template <int dim>
@@ -945,20 +955,24 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   if (renewed_matrix || !amg_preconditioner)
     setup_AMG();
 
-  solver.solve(system_matrix,
-               completely_distributed_solution,
-               this->system_rhs,
-               *amg_preconditioner);
+  {
+    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-    }
+    solver.solve(system_matrix,
+                 completely_distributed_solution,
+                 this->system_rhs,
+                 *amg_preconditioner);
 
-  constraints_used.distribute(completely_distributed_solution);
+    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+      {
+        this->pcout << "  -Iterative solver took : "
+                    << solver_control.last_step() << " steps " << std::endl;
+      }
 
-  this->newton_update = completely_distributed_solution;
+    constraints_used.distribute(completely_distributed_solution);
+
+    this->newton_update = completely_distributed_solution;
+  }
 }
 
 template <int dim>

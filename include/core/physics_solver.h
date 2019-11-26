@@ -131,7 +131,7 @@ template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   NonLinearSolver<VectorType> *non_linear_solver)
   : non_linear_solver(non_linear_solver) // Default copy ctor
-  , pcout({std::cout})
+  , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
 {}
 
 
