@@ -27,8 +27,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : PhysicsSolver<VectorType>(
-      new NewtonNonLinearSolver<VectorType>(this, p_nsparam.nonLinearSolver))
+  : PhysicsSolver<VectorType>(p_nsparam.nonLinearSolver)
+  //      new NewtonNonLinearSolver<VectorType>(this,
+  //      p_nsparam.nonLinearSolver))
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))

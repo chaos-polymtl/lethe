@@ -25,6 +25,7 @@
 #include "newton_non_linear_solver.h"
 #include "non_linear_solver.h"
 #include "parameters.h"
+#include "skip_newton_non_linear_solver.h"
 
 /**
  * This interface class is used to house all the common elements of physics
@@ -139,7 +140,7 @@ PhysicsSolver<VectorType>::PhysicsSolver(
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   Parameters::NonLinearSolver non_linear_solver_parameters)
-  : pcout({std::cout})
+  : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
 {
   if (non_linear_solver_parameters.solver ==
       non_linear_solver_parameters.newton)
@@ -148,7 +149,8 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   if (non_linear_solver_parameters.solver ==
       non_linear_solver_parameters.skip_newton)
     non_linear_solver =
-      new NewtonNonLinearSolver<VectorType>(this, non_linear_solver_parameters);
+      new SkipNewtonNonLinearSolver<VectorType>(this,
+                                                non_linear_solver_parameters);
 }
 
 template <typename VectorType>
