@@ -196,7 +196,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                                   false);
   SparsityTools::distribute_sparsity_pattern(
     dsp,
-    this->dof_handler.n_locally_owned_dofs_per_processor(),
+    this->dof_handler.compute_n_locally_owned_dofs_per_processor(),
     this->mpi_communicator,
     this->locally_relevant_dofs);
   system_matrix.reinit(this->locally_owned_dofs,
@@ -719,157 +719,44 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool   initial_step,
                                                 const bool   renewed_matrix)
 {
   if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
-    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
+    solve_system_GMRES(initial_step,
+                       absolute_residual,
+                       relative_residual,
+                       renewed_matrix);
   else if (this->nsparam.linearSolver.solver ==
            this->nsparam.linearSolver.bicgstab)
-    solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
+    solve_system_BiCGStab(initial_step,
+                          absolute_residual,
+                          relative_residual,
+                          renewed_matrix);
   else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
-    solve_system_AMG(initial_step, absolute_residual, relative_residual);
+    solve_system_AMG(initial_step,
+                     absolute_residual,
+                     relative_residual,
+                     renewed_matrix);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
-                                               const double absolute_residual,
-                                               const double relative_residual)
+GLSNavierStokesSolver<dim>::setup_ILU()
 {
-  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linearSolver.residual_precision)
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverGMRES solver(solver_control);
-
-  //**********************************************
-  // Trillinos Wrapper ILU Preconditioner
-  //*********************************************
   const double ilu_fill = this->nsparam.linearSolver.ilu_precond_fill;
   const double ilu_atol = this->nsparam.linearSolver.ilu_precond_atol;
   const double ilu_rtol = this->nsparam.linearSolver.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
-  TrilinosWrappers::PreconditionILU preconditioner;
 
-  preconditioner.initialize(system_matrix, preconditionerOptions);
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
-  solver.solve(system_matrix,
-               completely_distributed_solution,
-               this->system_rhs,
-               preconditioner);
-
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-    }
-
-  constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
+  ilu_preconditioner->initialize(system_matrix, preconditionerOptions);
 }
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
-  const bool   initial_step,
-  const double absolute_residual,
-  const double relative_residual)
+GLSNavierStokesSolver<dim>::setup_AMG()
 {
-  TimerOutput::Scope t(this->computing_timer, "solve");
-
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linearSolver.residual_precision)
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverBicgstab solver(solver_control);
-
-  //**********************************************
-  // Trillinos Wrapper ILU Preconditioner
-  //*********************************************
-  const double ilu_fill = this->nsparam.linearSolver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linearSolver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linearSolver.ilu_precond_rtol;
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-  TrilinosWrappers::PreconditionILU preconditioner;
-
-  preconditioner.initialize(system_matrix, preconditionerOptions);
-
-  solver.solve(system_matrix,
-               completely_distributed_solution,
-               this->system_rhs,
-               preconditioner);
-
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-    }
-  constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
-}
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
-                                             const double absolute_residual,
-                                             const double relative_residual)
-{
-  TimerOutput::Scope t(this->computing_timer, "solve");
-
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linearSolver.residual_precision)
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverGMRES solver(solver_control);
-
-  TrilinosWrappers::PreconditionAMG preconditioner;
-
   std::vector<std::vector<bool>> constant_modes;
   // Constant modes include pressure since everything is in the same matrix
   std::vector<bool> velocity_components(dim + 1, true);
@@ -878,7 +765,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                    velocity_components,
                                    constant_modes);
 
-  // TODO remove this
   TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
   amg_data.constant_modes = constant_modes;
 
@@ -925,12 +811,143 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
   parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
   parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
-  preconditioner.initialize(system_matrix, parameter_ml);
+  amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
+  amg_preconditioner->initialize(system_matrix, parameter_ml);
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
+                                               const double absolute_residual,
+                                               const double relative_residual,
+                                               const bool   renewed_matrix)
+{
+  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << std::setprecision(
+                       this->nsparam.linearSolver.residual_precision)
+                  << linear_solver_tolerance << std::endl;
+    }
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+  TrilinosWrappers::SolverGMRES solver(solver_control);
+
+  if (renewed_matrix || !ilu_preconditioner)
+    setup_ILU();
 
   solver.solve(system_matrix,
                completely_distributed_solution,
                this->system_rhs,
-               preconditioner);
+               *ilu_preconditioner);
+
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  constraints_used.distribute(completely_distributed_solution);
+  this->newton_update = completely_distributed_solution;
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
+  const bool   initial_step,
+  const double absolute_residual,
+  const double relative_residual,
+  const bool   renewed_matrix)
+{
+  TimerOutput::Scope t(this->computing_timer, "solve");
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << std::setprecision(
+                       this->nsparam.linearSolver.residual_precision)
+                  << linear_solver_tolerance << std::endl;
+    }
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+  TrilinosWrappers::SolverBicgstab solver(solver_control);
+
+  if (renewed_matrix || !ilu_preconditioner)
+    setup_ILU();
+
+  solver.solve(system_matrix,
+               completely_distributed_solution,
+               this->system_rhs,
+               *ilu_preconditioner);
+
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+  constraints_used.distribute(completely_distributed_solution);
+  this->newton_update = completely_distributed_solution;
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
+                                             const double absolute_residual,
+                                             const double relative_residual,
+                                             const bool   renewed_matrix)
+{
+  TimerOutput::Scope t(this->computing_timer, "solve");
+
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
+
+  const double linear_solver_tolerance =
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << std::setprecision(
+                       this->nsparam.linearSolver.residual_precision)
+                  << linear_solver_tolerance << std::endl;
+    }
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+  TrilinosWrappers::SolverGMRES     solver(solver_control);
+  TrilinosWrappers::PreconditionAMG preconditioner;
+
+
+  if (renewed_matrix || !amg_preconditioner)
+    setup_AMG();
+
+  solver.solve(system_matrix,
+               completely_distributed_solution,
+               this->system_rhs,
+               *amg_preconditioner);
 
   if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
     {
@@ -943,10 +960,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   this->newton_update = completely_distributed_solution;
 }
 
-/*
- * Generic CFD Solver application
- * Handles the majority of the cases for the GLS-NS solver
- */
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve()

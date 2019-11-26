@@ -78,8 +78,6 @@ BasicNonLinearSolver<VectorType>::solve(
             alpha, this->physics_solver->get_newton_update());
 
           this->physics_solver->apply_constraints();
-          //          this->physics_solver->get_nonzero_constraints().distribute(
-          //            this->physics_solver->get_local_evaluation_point());
 
           this->physics_solver->set_evaluation_point(
             this->physics_solver->get_local_evaluation_point());

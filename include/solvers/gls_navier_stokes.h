@@ -95,7 +95,8 @@ private:
   void
   solve_system_GMRES(const bool   initial_step,
                      const double absolute_residual,
-                     const double relative_residual);
+                     const double relative_residual,
+                     const bool   renewed_matrix);
 
   /**
    * BiCGStab solver with ILU(N) preconditioning
@@ -103,7 +104,8 @@ private:
   void
   solve_system_BiCGStab(const bool   initial_step,
                         const double absolute_residual,
-                        const double relative_residual);
+                        const double relative_residual,
+                        const bool   renewed_matrix);
 
   /**
    * AMG preconditioner with ILU smoother and coarsener and GMRES final solver
@@ -111,14 +113,30 @@ private:
   void
   solve_system_AMG(const bool   initial_step,
                    const double absolute_residual,
-                   const double relative_residual);
+                   const double relative_residual,
+                   const bool   renewed_matrix);
+
+  /**
+   * Set-up AMG preconditioner
+   */
+  void
+  setup_AMG();
+
+  /**
+   * Set-up ILU preconditioner
+   */
+  void
+  setup_ILU();
+
 
   /**
    * Members
    */
 private:
-  SparsityPattern                sparsity_pattern;
-  TrilinosWrappers::SparseMatrix system_matrix;
+  SparsityPattern                                    sparsity_pattern;
+  TrilinosWrappers::SparseMatrix                     system_matrix;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
 
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
