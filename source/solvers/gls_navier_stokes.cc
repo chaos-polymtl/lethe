@@ -329,9 +329,9 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              const double u_mag =
-                std::max(present_velocity_values[q].norm(), 1e-3 * GLS_u_scale);
-              double tau;
+              const double u_mag = std::max(present_velocity_values[q].norm(),
+                                            1e-12 * GLS_u_scale);
+              double       tau;
               if (scheme == Parameters::SimulationControl::steady)
                 tau = 1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
                                      9 * std::pow(4 * viscosity_ / (h * h), 2));
@@ -420,6 +420,15 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                           local_matrix(i, j) +=
                             tau * strong_jac * grad_phi_p[i] * fe_values.JxW(q);
 
+
+                          // PSPG TAU term is currently disabled because it does
+                          // not alter the matrix sufficiently
+                          // local_matrix(i, j) +=
+                          //  -tau * tau * tau * 4 / h / h *
+                          //  (present_velocity_values[q] * phi_u[j]) *
+                          //  strong_residual * grad_phi_p[i] *
+                          //  fe_values.JxW(q);
+
                           // Jacobian is currently incomplete
                           if (SUPG)
                             {
@@ -429,6 +438,21 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                                                present_velocity_values[q]) +
                                  strong_residual * (grad_phi_u[i] * phi_u[j])) *
                                 fe_values.JxW(q);
+
+                              // SUPG TAU term is currently disabled because it
+                              // does not alter the matrix sufficiently
+                              // local_matrix(i, j)
+                              // +=
+                              //   -strong_residual
+                              //   * (grad_phi_u[i]
+                              //   *
+                              //   present_velocity_values[q])
+                              //   * tau * tau *
+                              //   tau * 4 / h / h
+                              //   *
+                              //   (present_velocity_values[q]
+                              //   * phi_u[j]) *
+                              //   fe_values.JxW(q);
                             }
                         }
                     }
