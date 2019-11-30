@@ -27,36 +27,42 @@
 
 using namespace dealii;
 
-int main ()
+int
+main()
 {
   try
-  {
-    Tensor<2,2> mat;
-    mat[0][0]=1.; mat[0][1]=2; mat[1][0]=3;  mat[1][1]=4;
-    std::cout << "The tensor initiated is : " << mat << std::endl;
-  }
+    {
+      Tensor<2, 2> mat;
+      mat[0][0] = 1.;
+      mat[0][1] = 2;
+      mat[1][0] = 3;
+      mat[1][1] = 4;
+      std::cout << "The tensor initiated is : " << mat << std::endl;
+    }
   catch (std::exception &exc)
-  {
-    std::cerr << std::endl << std::endl
-              << "----------------------------------------------------"
-              << std::endl;
-    std::cerr << "Exception on processing: " << std::endl
-              << exc.what() << std::endl
-              << "Aborting!" << std::endl
-              << "----------------------------------------------------"
-              << std::endl;
-    return 1;
-  }
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
   catch (...)
-  {
-    std::cerr << std::endl << std::endl
-              << "----------------------------------------------------"
-              << std::endl;
-    std::cerr << "Unknown exception!" << std::endl
-              << "Aborting!" << std::endl
-              << "----------------------------------------------------"
-              << std::endl;
-    return 1;
-  }
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
   return 0;
 }

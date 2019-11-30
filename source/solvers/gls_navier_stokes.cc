@@ -365,7 +365,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
             l_forcing_function->vector_value_list(
               fe_values.get_quadrature_points(), rhs_force);
 
-          if (scheme != Parameters::SimulationControl::TimeSteppingMethod::steady)
+          if (scheme !=
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
             fe_values[velocities].get_function_values(this->solution_m1,
                                                       p1_velocity_values);
           if (time_stepping_method_has_two_stages(scheme))
@@ -380,7 +381,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               const double u_mag = std::max(present_velocity_values[q].norm(),
                                             1e-12 * GLS_u_scale);
               double       tau;
-              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::steady)
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::steady)
                 tau = 1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
                                      9 * std::pow(4 * viscosity_ / (h * h), 2));
               else
@@ -545,13 +547,15 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                      force * phi_u[i]) *
                     fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                     local_rhs(i) -=
                       alpha_coefs[0] *
                       (present_velocity_values[q] - p1_velocity_values[q]) *
                       phi_u[i] * fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     local_rhs(i) -=
                       (alpha_coefs[0] *
                          (present_velocity_values[q] * phi_u[i]) +
@@ -559,7 +563,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                        alpha_coefs[2] * (p2_velocity_values[q] * phi_u[i])) *
                       fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     local_rhs(i) -=
                       (alpha_coefs[0] *
                          (present_velocity_values[q] * phi_u[i]) +
@@ -684,7 +689,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
         this->nsparam.initialCondition->viscosity;
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
-      this->simulationControl.setMethod(Parameters::SimulationControl::TimeSteppingMethod::steady);
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
       this->simulationControl.setMethod(previousControl);
@@ -872,18 +878,20 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
   const double absolute_residual = this->nsparam.linearSolver.minimum_residual;
   const double relative_residual = this->nsparam.linearSolver.relative_residual;
 
-  if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
+  if (this->nsparam.linearSolver.solver ==
+      Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
   else if (this->nsparam.linearSolver.solver ==
-           this->nsparam.linearSolver.bicgstab)
+           Parameters::LinearSolver::SolverType::bicgstab)
     solve_system_BiCGStab(initial_step,
                           absolute_residual,
                           relative_residual,
                           renewed_matrix);
-  else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
+  else if (this->nsparam.linearSolver.solver ==
+           Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step,
                      absolute_residual,
                      relative_residual,

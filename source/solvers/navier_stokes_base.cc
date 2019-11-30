@@ -59,7 +59,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     degreeQuadrature_ = nsparam.femParameters.quadraturePoints;
 
   // Change the behavior of the timer for situations when you don't want outputs
-  if (nsparam.timer.type == Parameters::Timer::none)
+  if (nsparam.timer.type == Parameters::Timer::Type::none)
     this->computing_timer.disable_output();
 
   // Pre-allocate the force tables to match the number of boundary conditions
@@ -232,7 +232,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_CFL(
   const unsigned int                   dofs_per_cell = this->fe.dofs_per_cell;
   const unsigned int                   n_q_points = quadrature_formula.size();
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -779,7 +779,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->write_checkpoint();
     }
 
-  if (this->nsparam.timer.type == Parameters::Timer::iteration)
+  if (this->nsparam.timer.type == Parameters::Timer::Type::iteration)
     {
       this->computing_timer.print_summary();
       this->computing_timer.reset();
@@ -914,12 +914,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
       0)
     {
       if (this->nsparam.meshAdaptation.type ==
-          this->nsparam.meshAdaptation.kelly)
+          Parameters::MeshAdaptation::Type::kelly)
         {
           refine_mesh_kelly();
         }
       else if (this->nsparam.meshAdaptation.type ==
-               this->nsparam.meshAdaptation.uniform)
+               Parameters::MeshAdaptation::Type::uniform)
         {
           refine_mesh_uniform();
         }
@@ -946,7 +946,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   if (this->nsparam.meshAdaptation.variable ==
-      Parameters::MeshAdaptation::pressure)
+      Parameters::MeshAdaptation::Variable::pressure)
     {
       KellyErrorEstimator<dim>::estimate(
         mapping,
@@ -958,7 +958,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         this->fe.component_mask(pressure));
     }
   else if (this->nsparam.meshAdaptation.variable ==
-           Parameters::MeshAdaptation::velocity)
+           Parameters::MeshAdaptation::Variable::velocity)
     {
       KellyErrorEstimator<dim>::estimate(
         mapping,
@@ -971,7 +971,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     }
 
   if (this->nsparam.meshAdaptation.fractionType ==
-      Parameters::MeshAdaptation::number)
+      Parameters::MeshAdaptation::FractionType::number)
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
       tria,
       estimated_error_per_cell,
@@ -980,7 +980,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       this->nsparam.meshAdaptation.maxNbElements);
 
   else if (this->nsparam.meshAdaptation.fractionType ==
-           Parameters::MeshAdaptation::fraction)
+           Parameters::MeshAdaptation::FractionType::fraction)
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
       tria,
       estimated_error_per_cell,
@@ -1292,7 +1292,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
 {
   // GMSH input
-  if (this->nsparam.mesh.type == Parameters::Mesh::gmsh)
+  if (this->nsparam.mesh.type == Parameters::Mesh::Type::gmsh)
     {
       GridIn<dim> grid_in;
       grid_in.attach_triangulation(*this->triangulation);
@@ -1301,7 +1301,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
     }
 
   // Dealii grids
-  else if (this->nsparam.mesh.type == Parameters::Mesh::dealii)
+  else if (this->nsparam.mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         *this->triangulation,
