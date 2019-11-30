@@ -113,11 +113,11 @@ namespace Parameters
     {
       const std::string cl = prm.get("type");
       if (cl == "none")
-        type = none;
+        type = Type::none;
       else if (cl == "iteration")
-        type = iteration;
+        type = Type::iteration;
       else if (cl == "end")
-        type = end;
+        type = Type::end;
     }
     prm.leave_subsection();
   }
@@ -363,9 +363,9 @@ namespace Parameters
         verbosity = Parameters::Verbosity::quiet;
       const std::string str_solver = prm.get("solver");
       if (str_solver == "newton")
-        solver = newton;
+        solver = SolverType::newton;
       if (str_solver == "skip_newton")
-        solver = skip_newton;
+        solver = SolverType::skip_newton;
       tolerance         = prm.get_double("tolerance");
       max_iterations    = prm.get_integer("max iterations");
       skip_iterations   = prm.get_integer("skip iterations");
@@ -447,11 +447,11 @@ namespace Parameters
       {
         const std::string op = prm.get("type");
         if (op == "gmsh")
-          type = gmsh;
+          type = Type::gmsh;
         else if (op == "primitive")
-          type = primitive;
+          type = Type::primitive;
         else if (op == "dealii")
-          type = dealii;
+          type = Type::dealii;
         else
           throw("Error");
       }
@@ -462,11 +462,11 @@ namespace Parameters
 
       const std::string prim_type = prm.get("primitive type");
       if (prim_type == "hyper_cube")
-        primitiveType = hyper_cube;
+        primitiveType = PrimitiveType::hyper_cube;
       else if (prim_type == "hyper_shell")
-        primitiveType = hyper_shell;
+        primitiveType = PrimitiveType::hyper_shell;
       else if (prim_type == "cylinder")
-        primitiveType = cylinder;
+        primitiveType = PrimitiveType::cylinder;
       else
         throw std::runtime_error("Unsupported primitive - Program will abort");
 
@@ -597,11 +597,11 @@ namespace Parameters
 
       const std::string sv = prm.get("method");
       if (sv == "amg")
-        solver = amg;
+        solver = SolverType::amg;
       else if (sv == "gmres")
-        solver = gmres;
+        solver = SolverType::gmres;
       else if (sv == "bicgstab")
-        solver = bicgstab;
+        solver = SolverType::bicgstab;
       residual_precision = prm.get_integer("residual precision");
       relative_residual  = prm.get_double("relative residual");
       minimum_residual   = prm.get_double("minimum residual");
@@ -681,23 +681,23 @@ namespace Parameters
     {
       const std::string op = prm.get("type");
       if (op == "none")
-        type = none;
+        type = Type::none;
       if (op == "uniform")
-        type = uniform;
+        type = Type::uniform;
       if (op == "kelly")
-        type = kelly;
+        type = Type::kelly;
 
       const std::string vop = prm.get("variable");
       if (vop == "velocity")
-        variable = velocity;
+        variable = Variable::velocity;
       if (vop == "pressure")
-        variable = pressure;
+        variable = Variable::pressure;
 
       const std::string fop = prm.get("fraction type");
       if (fop == "number")
-        fractionType = number;
+        fractionType = FractionType::number;
       if (fop == "fraction")
-        fractionType = fraction;
+        fractionType = FractionType::fraction;
       maxNbElements      = prm.get_integer("max number elements");
       maxRefLevel        = prm.get_integer("max refinement level");
       minRefLevel        = prm.get_integer("min refinement level");

@@ -47,14 +47,19 @@ GDNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+  if (time_stepping_method ==
+      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::steady)
-    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::steady>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGD<true,
+               Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 
 template <int dim>
@@ -64,14 +69,22 @@ GDNavierStokesSolver<dim>::assemble_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    assembleGD<false, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    assembleGD<false, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    assembleGD<false, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::steady)
-    assembleGD<false, Parameters::SimulationControl::TimeSteppingMethod::steady>();
+  if (time_stepping_method ==
+      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 
 template <int dim>
@@ -165,11 +178,13 @@ GDNavierStokesSolver<dim>::assembleGD()
           fe_values[pressure].get_function_values(this->evaluation_point,
                                                   present_pressure_values);
 
-          if (scheme != Parameters::SimulationControl::TimeSteppingMethod::steady)
+          if (scheme !=
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
             fe_values[velocities].get_function_values(this->solution_m1,
                                                       p1_velocity_values);
 
-          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+          if (scheme ==
+                Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
               scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(this->solution_m2,
                                                       p2_velocity_values);
@@ -219,9 +234,12 @@ GDNavierStokesSolver<dim>::assembleGD()
                             fe_values.JxW(q);
 
                           // Mass matrix
-                          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-                              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
-                              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+                          if (scheme == Parameters::SimulationControl::
+                                          TimeSteppingMethod::bdf1 ||
+                              scheme == Parameters::SimulationControl::
+                                          TimeSteppingMethod::bdf2 ||
+                              scheme == Parameters::SimulationControl::
+                                          TimeSteppingMethod::bdf3)
                             local_matrix(i, j) += phi_u[j] * phi_u[i] *
                                                   alpha_bdf[0] *
                                                   fe_values.JxW(q);
@@ -241,20 +259,23 @@ GDNavierStokesSolver<dim>::assembleGD()
                      force * phi_u[i]) *
                     fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                     local_rhs(i) -=
                       alpha_bdf[0] *
                       (present_velocity_values[q] - p1_velocity_values[q]) *
                       phi_u[i] * fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i])) *
                       fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
@@ -650,11 +671,13 @@ GDNavierStokesSolver<dim>::set_initial_condition(
         this->nsparam.initialCondition->viscosity;
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
-      this->simulationControl.setMethod(Parameters::SimulationControl::TimeSteppingMethod::steady);
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::BlockVector>::
-        solve_non_linear_system(Parameters::SimulationControl::TimeSteppingMethod::steady,
-                                false,
-                                true);
+        solve_non_linear_system(
+          Parameters::SimulationControl::TimeSteppingMethod::steady,
+          false,
+          true);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -700,12 +723,14 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
   const double absolute_residual = this->nsparam.linearSolver.minimum_residual;
   const double relative_residual = this->nsparam.linearSolver.relative_residual;
 
-  if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
+  if (this->nsparam.linearSolver.solver ==
+      Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
-  else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
+  else if (this->nsparam.linearSolver.solver ==
+           Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step,
                      absolute_residual,
                      relative_residual,

@@ -143,15 +143,20 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   Parameters::NonLinearSolver non_linear_solver_parameters)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
 {
-  if (non_linear_solver_parameters.solver ==
-      non_linear_solver_parameters.newton)
-    non_linear_solver =
-      new NewtonNonLinearSolver<VectorType>(this, non_linear_solver_parameters);
-  if (non_linear_solver_parameters.solver ==
-      non_linear_solver_parameters.skip_newton)
-    non_linear_solver =
-      new SkipNewtonNonLinearSolver<VectorType>(this,
+  switch (non_linear_solver_parameters.solver)
+    {
+      case Parameters::NonLinearSolver::SolverType::newton:
+        non_linear_solver =
+          new NewtonNonLinearSolver<VectorType>(this,
                                                 non_linear_solver_parameters);
+        break;
+      case Parameters::NonLinearSolver::SolverType::skip_newton:
+        non_linear_solver = new SkipNewtonNonLinearSolver<VectorType>(
+          this, non_linear_solver_parameters);
+        break;
+      default:
+        break;
+    }
 }
 
 template <typename VectorType>
