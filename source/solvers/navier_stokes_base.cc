@@ -358,7 +358,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_forces(
         Utilities::MPI::sum(force, this->mpi_communicator);
     }
 
-  if (nsparam.forcesParameters.verbosity == Parameters::verbose &&
+  if (nsparam.forcesParameters.verbosity == Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
@@ -521,7 +521,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_torques(
         Utilities::MPI::sum(torque, this->mpi_communicator);
     }
 
-  if (nsparam.forcesParameters.verbosity == Parameters::verbose &&
+  if (nsparam.forcesParameters.verbosity == Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       this->pcout << std::endl;
@@ -729,7 +729,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
   if (nsparam.analyticalSolution->calculate_error())
     {
       if (simulationControl.getMethod() ==
-          Parameters::SimulationControl::steady)
+          Parameters::SimulationControl::TimeSteppingMethod::steady)
         {
           error_table.omit_column_from_convergence_rate_evaluation("cells");
           error_table.omit_column_from_convergence_rate_evaluation(
@@ -747,7 +747,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
           error_table.write_text(output);
           std::vector<std::string> sub_columns;
           if (simulationControl.getMethod() ==
-              Parameters::SimulationControl::steady)
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               sub_columns.push_back("cells");
               sub_columns.push_back("error");
@@ -763,7 +763,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 {
   if (this->simulationControl.getMethod() !=
-      Parameters::SimulationControl::steady)
+      Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
       this->solution_m3 = this->solution_m2;
       this->solution_m2 = this->solution_m1;
@@ -798,31 +798,31 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
   if (!firstIteration || !is_bdf(this->simulationControl.getMethod()))
     {
       if (this->simulationControl.getMethod() ==
-          Parameters::SimulationControl::sdirk2)
+          Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
         {
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::sdirk2_1, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1, false, false);
           this->solution_m2 = this->present_solution;
 
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::sdirk2_2, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2, false, false);
         }
 
       else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::sdirk3)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
         {
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::sdirk3_1, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1, false, false);
 
           this->solution_m2 = this->present_solution;
 
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::sdirk3_2, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2, false, false);
 
           this->solution_m3 = this->present_solution;
 
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::sdirk3_3, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3, false, false);
         }
       else
         {
@@ -834,12 +834,12 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
   else
     {
       if (this->simulationControl.getMethod() ==
-          Parameters::SimulationControl::bdf1)
+          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         PhysicsSolver<VectorType>::solve_non_linear_system(
           this->simulationControl.getMethod(), false, true);
 
       else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::bdf2)
+               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         {
           Parameters::SimulationControl timeParameters =
             this->simulationControl.getParameters();
@@ -848,7 +848,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           this->simulationControl.setTimeStep(
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf1);
+            Parameters::SimulationControl::TimeSteppingMethod::bdf1);
           PhysicsSolver<VectorType>::solve_non_linear_system(
             this->simulationControl.getMethod(), false, true);
           this->solution_m2 = this->solution_m1;
@@ -857,7 +857,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           // Reset the time step and do a bdf 2 newton iteration using the two
           // steps to complete the full step
           this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf2);
+            Parameters::SimulationControl::TimeSteppingMethod::bdf2);
           this->simulationControl.setTimeStep(
             timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
           PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -865,7 +865,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
         }
 
       else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::bdf3)
+               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
         {
           Parameters::SimulationControl timeParameters =
             this->simulationControl.getParameters();
@@ -874,7 +874,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           this->simulationControl.setTimeStep(
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf1);
+            Parameters::SimulationControl::TimeSteppingMethod::bdf1);
           PhysicsSolver<VectorType>::solve_non_linear_system(
             this->simulationControl.getMethod(), false, true);
           this->solution_m2 = this->solution_m1;
@@ -883,7 +883,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           // Reset the time step and do a bdf 2 newton iteration using the two
           // steps
           this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf1);
+            Parameters::SimulationControl::TimeSteppingMethod::bdf1);
           this->simulationControl.setTimeStep(
             timeParameters.dt * timeParameters.startup_timestep_scaling);
           PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -895,7 +895,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           // Reset the time step and do a bdf 3 newton iteration using the two
           // steps to complete the full step
           this->simulationControl.setMethod(
-            Parameters::SimulationControl::bdf3);
+            Parameters::SimulationControl::TimeSteppingMethod::bdf3);
           this->simulationControl.setTimeStep(
             timeParameters.dt *
             (1. - 2. * timeParameters.startup_timestep_scaling));
@@ -1119,7 +1119,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
       // Display Enstrophy to screen if verbosity is enabled
       if (this->nsparam.postProcessingParameters.verbosity ==
-          Parameters::verbose)
+          Parameters::Verbosity::verbose)
         {
           this->pcout << "Enstrophy  : " << enstrophy << std::endl;
         }
@@ -1146,7 +1146,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                            this->simulationControl.getTime());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
       if (this->nsparam.postProcessingParameters.verbosity ==
-          Parameters::verbose)
+          Parameters::Verbosity::verbose)
         {
           this->pcout << "Kinetic energy : " << kE << std::endl;
         }
@@ -1204,7 +1204,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           this->exact_solution->set_time(this->simulationControl.getTime());
           const double error = this->calculate_L2_error(this->present_solution);
           if (this->simulationControl.getMethod() ==
-              Parameters::SimulationControl::steady)
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               this->error_table.add_value(
                 "cells", this->triangulation->n_global_active_cells());
@@ -1225,7 +1225,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
               this->error_table.add_value("error", error);
             }
           if (this->nsparam.analyticalSolution->verbosity ==
-              Parameters::verbose)
+              Parameters::Verbosity::verbose)
             {
               this->pcout << "L2 error : " << error << std::endl;
             }

@@ -71,17 +71,17 @@ namespace Parameters
     {
       const std::string sv = prm.get("method");
       if (sv == "steady")
-        method = steady;
+        method = TimeSteppingMethod::steady;
       else if (sv == "bdf1")
-        method = bdf1;
+        method = TimeSteppingMethod::bdf1;
       else if (sv == "bdf2")
-        method = bdf2;
+        method = TimeSteppingMethod::bdf2;
       else if (sv == "bdf3")
-        method = bdf3;
+        method = TimeSteppingMethod::bdf3;
       else if (sv == "sdirk2")
-        method = sdirk2;
+        method = TimeSteppingMethod::sdirk2;
       else if (sv == "sdirk3")
-        method = sdirk3;
+        method = TimeSteppingMethod::sdirk3;
       else
         {
           std::runtime_error("Invalid time stepping scheme");
@@ -246,9 +246,9 @@ namespace Parameters
     {
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
-        verbosity = verbose;
+        verbosity = Verbosity::verbose;
       if (op == "quiet")
-        verbosity = quiet;
+        verbosity = Verbosity::quiet;
       calculate_force       = prm.get_bool("calculate forces");
       calculate_torque      = prm.get_bool("calculate torques");
       force_output_name     = prm.get("force name");
@@ -307,9 +307,9 @@ namespace Parameters
     {
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
-        verbosity = verbose;
+        verbosity = Verbosity::verbose;
       if (op == "quiet")
-        verbosity = quiet;
+        verbosity = Verbosity::quiet;
 
 
       calculate_kinetic_energy   = prm.get_bool("calculate kinetic energy");
@@ -367,9 +367,9 @@ namespace Parameters
     {
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
-        verbosity = verbose;
+        verbosity = Parameters::Verbosity::verbose;
       if (op == "quiet")
-        verbosity = quiet;
+        verbosity = Parameters::Verbosity::quiet;
       const std::string str_solver = prm.get("solver");
       if (str_solver == "newton")
         solver = newton;
@@ -600,9 +600,9 @@ namespace Parameters
     {
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
-        verbosity = verbose;
+        verbosity = Parameters::Verbosity::verbose;
       if (op == "quiet")
-        verbosity = quiet;
+        verbosity = Parameters::Verbosity::quiet;
 
       const std::string sv = prm.get("method");
       if (sv == "amg")

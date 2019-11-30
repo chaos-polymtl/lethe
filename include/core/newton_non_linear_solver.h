@@ -52,7 +52,7 @@ NewtonNonLinearSolver<VectorType>::solve(
           last_res    = current_res;
         }
 
-      if (this->params.verbosity != Parameters::quiet)
+      if (this->params.verbosity != Parameters::Verbosity::quiet)
         {
           this->physics_solver->get_ostream()
             << "Newton iteration: " << outer_iteration
@@ -79,7 +79,7 @@ NewtonNonLinearSolver<VectorType>::solve(
 
           current_res = this->physics_solver->get_system_rhs().l2_norm();
 
-          if (this->params.verbosity != Parameters::quiet)
+          if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
               this->physics_solver->get_ostream()
                 << "\t\talpha = " << std::setw(6) << alpha << std::setw(0)
