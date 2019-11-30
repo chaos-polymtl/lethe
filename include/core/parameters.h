@@ -30,7 +30,7 @@ using namespace dealii;
 
 namespace Parameters
 {
-  enum Verbosity
+  enum class Verbosity
   {
     quiet,
     verbose

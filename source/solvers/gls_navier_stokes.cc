@@ -264,13 +264,13 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   // Get the BDF coefficients
   Vector<double> alpha_bdf;
 
-  if (scheme == Parameters::SimulationControl::bdf1)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     alpha_bdf = bdf_coefficients(1, this->simulationControl.getTimeSteps());
 
-  if (scheme == Parameters::SimulationControl::bdf2)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     alpha_bdf = bdf_coefficients(2, this->simulationControl.getTimeSteps());
 
-  if (scheme == Parameters::SimulationControl::bdf3)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     alpha_bdf = bdf_coefficients(3, this->simulationControl.getTimeSteps());
 
   double sdt = 1. / this->simulationControl.getTimeSteps()[0];
@@ -316,14 +316,14 @@ GLSNavierStokesSolver<dim>::assembleGLS()
             l_forcing_function->vector_value_list(
               fe_values.get_quadrature_points(), rhs_force);
 
-          if (scheme != Parameters::SimulationControl::steady)
+          if (scheme != Parameters::SimulationControl::TimeSteppingMethod::steady)
             fe_values[velocities].get_function_values(this->solution_m1,
                                                       p1_velocity_values);
-          if (scheme == Parameters::SimulationControl::bdf2 ||
-              scheme == Parameters::SimulationControl::bdf3)
+          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(this->solution_m2,
                                                       p2_velocity_values);
-          if (scheme == Parameters::SimulationControl::bdf3)
+          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(this->solution_m3,
                                                       p3_velocity_values);
 
@@ -332,7 +332,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               const double u_mag = std::max(present_velocity_values[q].norm(),
                                             1e-12 * GLS_u_scale);
               double       tau;
-              if (scheme == Parameters::SimulationControl::steady)
+              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::steady)
                 tau = 1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
                                      9 * std::pow(4 * viscosity_ / (h * h), 2));
               else
@@ -366,16 +366,16 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                 present_pressure_gradients[q] -
                 viscosity_ * present_velocity_laplacians[q] - force;
 
-              if (scheme == Parameters::SimulationControl::bdf1)
+              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                 strong_residual += alpha_bdf[0] * present_velocity_values[q] +
                                    alpha_bdf[1] * p1_velocity_values[q];
 
-              if (scheme == Parameters::SimulationControl::bdf2)
+              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 strong_residual += alpha_bdf[0] * present_velocity_values[q] +
                                    alpha_bdf[1] * p1_velocity_values[q] +
                                    alpha_bdf[2] * p2_velocity_values[q];
 
-              if (scheme == Parameters::SimulationControl::bdf3)
+              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 strong_residual += alpha_bdf[0] * present_velocity_values[q] +
                                    alpha_bdf[1] * p1_velocity_values[q] +
                                    alpha_bdf[2] * p2_velocity_values[q] +
@@ -390,9 +390,9 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                          grad_phi_u[j] * present_velocity_values[q] +
                          grad_phi_p[j] - viscosity_ * laplacian_phi_u[j]);
 
-                      if (scheme == Parameters::SimulationControl::bdf1 ||
-                          scheme == Parameters::SimulationControl::bdf2 ||
-                          scheme == Parameters::SimulationControl::bdf3)
+                      if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+                          scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+                          scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                         strong_jac += phi_u[j];
 
                       for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -409,9 +409,9 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                             fe_values.JxW(q);
 
                           // Mass matrix
-                          if (scheme == Parameters::SimulationControl::bdf1 ||
-                              scheme == Parameters::SimulationControl::bdf2 ||
-                              scheme == Parameters::SimulationControl::bdf3)
+                          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+                              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+                              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                             local_matrix(i, j) += phi_u[j] * phi_u[i] *
                                                   alpha_bdf[0] *
                                                   fe_values.JxW(q);
@@ -471,20 +471,20 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                      force * phi_u[i]) *
                     fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::bdf1)
+                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                     local_rhs(i) -=
                       alpha_bdf[0] *
                       (present_velocity_values[q] - p1_velocity_values[q]) *
                       phi_u[i] * fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::bdf2)
+                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i])) *
                       fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::bdf3)
+                  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
@@ -575,9 +575,9 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
         this->nsparam.initialCondition->viscosity;
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
-      this->simulationControl.setMethod(Parameters::SimulationControl::steady);
+      this->simulationControl.setMethod(Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::steady, false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -709,14 +709,14 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (time_stepping_method == Parameters::SimulationControl::bdf1)
-    assembleGLS<true, Parameters::SimulationControl::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf2)
-    assembleGLS<true, Parameters::SimulationControl::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf3)
-    assembleGLS<true, Parameters::SimulationControl::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::steady)
-    assembleGLS<true, Parameters::SimulationControl::steady>();
+  if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 template <int dim>
 void
@@ -725,14 +725,14 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (time_stepping_method == Parameters::SimulationControl::bdf1)
-    assembleGLS<false, Parameters::SimulationControl::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf2)
-    assembleGLS<false, Parameters::SimulationControl::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf3)
-    assembleGLS<false, Parameters::SimulationControl::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::steady)
-    assembleGLS<false, Parameters::SimulationControl::steady>();
+  if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 
 template <int dim>
@@ -856,7 +856,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
@@ -883,7 +883,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                  this->system_rhs,
                  *ilu_preconditioner);
 
-    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -907,7 +907,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
@@ -934,7 +934,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
                  this->system_rhs,
                  *ilu_preconditioner);
 
-    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -958,7 +958,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
@@ -987,7 +987,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                  this->system_rhs,
                  *amg_preconditioner);
 
-    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
