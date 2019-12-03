@@ -393,7 +393,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       if (scheme == Parameters::SimulationControl::bdf1 ||
                           scheme == Parameters::SimulationControl::bdf2 ||
                           scheme == Parameters::SimulationControl::bdf3)
-                        strong_jac += phi_u[j];
+                        strong_jac += phi_u[j] * alpha_bdf[0];
 
                       for (unsigned int i = 0; i < dofs_per_cell; ++i)
                         {
