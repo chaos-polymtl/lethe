@@ -160,4 +160,70 @@ public:
 void
 printTime(ConditionalOStream pcout, SimulationControl control);
 
+inline bool
+is_sdirk(Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::sdirk2_1 ||
+          method == Parameters::SimulationControl::sdirk2_2 ||
+          method == Parameters::SimulationControl::sdirk3_1 ||
+          method == Parameters::SimulationControl::sdirk3_2 ||
+          method == Parameters::SimulationControl::sdirk3_3 ||
+          method == Parameters::SimulationControl::sdirk3 ||
+          method == Parameters::SimulationControl::sdirk2);
+}
+
+inline bool
+is_sdirk_step1(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::sdirk2_1 ||
+          method == Parameters::SimulationControl::sdirk3_1);
+}
+
+inline bool
+is_sdirk_step2(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::sdirk2_2 ||
+          method == Parameters::SimulationControl::sdirk3_2);
+}
+
+inline bool
+is_sdirk_step3(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::sdirk3_3);
+}
+
+inline bool
+is_bdf(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::bdf1 ||
+          method == Parameters::SimulationControl::bdf2 ||
+          method == Parameters::SimulationControl::bdf3);
+}
+
+inline bool
+time_stepping_method_has_two_stages(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::bdf2 ||
+          method == Parameters::SimulationControl::bdf3 ||
+          method == Parameters::SimulationControl::sdirk2_1 ||
+          method == Parameters::SimulationControl::sdirk2_2 ||
+          method == Parameters::SimulationControl::sdirk3_1 ||
+          method == Parameters::SimulationControl::sdirk3_2 ||
+          method == Parameters::SimulationControl::sdirk3_3 ||
+          method == Parameters::SimulationControl::sdirk3 ||
+          method == Parameters::SimulationControl::sdirk2);
+}
+
+inline bool
+time_stepping_method_has_three_stages(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::bdf3 ||
+          method == Parameters::SimulationControl::sdirk3_1 ||
+          method == Parameters::SimulationControl::sdirk3_2 ||
+          method == Parameters::SimulationControl::sdirk3_3 ||
+          method == Parameters::SimulationControl::sdirk3);
+}
+
 #endif

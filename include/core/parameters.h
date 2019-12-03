@@ -44,7 +44,14 @@ namespace Parameters
       steady,
       bdf1,
       bdf2,
-      bdf3
+      bdf3,
+      sdirk2,
+      sdirk2_1,
+      sdirk2_2,
+      sdirk3,
+      sdirk3_1,
+      sdirk3_2,
+      sdirk3_3
     };
     TimeSteppingMethod method;
 

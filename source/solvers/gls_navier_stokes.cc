@@ -261,25 +261,69 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<double>         phi_p(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_p(dofs_per_cell);
 
-  // Get the BDF coefficients
-  Vector<double> alpha_bdf;
+  // Vector for the BDF coefficients
+  // The coefficients are stored in the following fashion :
+  // 0 - n+1
+  // 1 - n
+  // 2 - n-1
+  // 3 - n-2
+  Vector<double> alpha_coefs;
 
-  if (scheme == Parameters::SimulationControl::bdf1)
-    alpha_bdf = bdf_coefficients(1, this->simulationControl.getTimeSteps());
+  // Matrix of coefficients for the SDIRK methods
+  // The lines store the information required for each step
+  // Column 0 always refer to outcome of the step that is being calculated
+  // Column 1 always refer to step n
+  // Column 2+ refer to intermediary steps
+  FullMatrix<double> sdirk_coefs;
 
-  if (scheme == Parameters::SimulationControl::bdf2)
-    alpha_bdf = bdf_coefficients(2, this->simulationControl.getTimeSteps());
-
-  if (scheme == Parameters::SimulationControl::bdf3)
-    alpha_bdf = bdf_coefficients(3, this->simulationControl.getTimeSteps());
-
+  // Inverse time steps which is used for numerous calculations
   double sdt = 1. / this->simulationControl.getTimeSteps()[0];
 
-  // Values at previous time step for backward Euler scheme
+
+  if (scheme == Parameters::SimulationControl::bdf1)
+    alpha_coefs = bdf_coefficients(1, this->simulationControl.getTimeSteps());
+
+  if (scheme == Parameters::SimulationControl::bdf2)
+    alpha_coefs = bdf_coefficients(2, this->simulationControl.getTimeSteps());
+
+  if (scheme == Parameters::SimulationControl::bdf3)
+    alpha_coefs = bdf_coefficients(3, this->simulationControl.getTimeSteps());
+
+  if (scheme == Parameters::SimulationControl::sdirk2_1 ||
+      scheme == Parameters::SimulationControl::sdirk2_2)
+    {
+      const double alpha = (2. - std::sqrt(2)) / 2.;
+      sdirk_coefs.reinit(2, 3);
+      sdirk_coefs[0][0] = 1. / alpha * sdt;
+      sdirk_coefs[0][1] = -1. / alpha * sdt;
+      sdirk_coefs[1][0] = 1. / alpha * sdt;
+      sdirk_coefs[1][1] = -(2 * alpha - 1) / alpha / alpha * sdt;
+      sdirk_coefs[1][2] = -(1 - alpha) / alpha / alpha * sdt;
+    }
+
+
+  if (scheme == Parameters::SimulationControl::sdirk3_1 ||
+      scheme == Parameters::SimulationControl::sdirk3_2 ||
+      scheme == Parameters::SimulationControl::sdirk3_3)
+    {
+      sdirk_coefs.reinit(3, 4);
+      sdirk_coefs[0][0] = 2.29428036032357 * sdt;
+      sdirk_coefs[0][1] = -2.29428036032357 * sdt;
+      sdirk_coefs[1][0] = 2.29428036032357 * sdt;
+      sdirk_coefs[1][1] = -0.809559354865318 * sdt;
+      sdirk_coefs[1][2] = -1.48472100545825 * sdt;
+      sdirk_coefs[2][0] = 2.29428036032357 * sdt;
+      sdirk_coefs[2][1] = 2.87009860266089 * sdt;
+      sdirk_coefs[2][2] = -8.55612780171952 * sdt;
+      sdirk_coefs[2][3] = 3.39174883873506 * sdt;
+    }
+
+
+
+  // Values at previous time step for transient schemes
   std::vector<Tensor<1, dim>> p1_velocity_values(n_q_points);
   std::vector<Tensor<1, dim>> p2_velocity_values(n_q_points);
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
-  std::vector<Tensor<1, dim>> p4_velocity_values(n_q_points);
 
   // Element size
   double h;
@@ -319,11 +363,10 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           if (scheme != Parameters::SimulationControl::steady)
             fe_values[velocities].get_function_values(this->solution_m1,
                                                       p1_velocity_values);
-          if (scheme == Parameters::SimulationControl::bdf2 ||
-              scheme == Parameters::SimulationControl::bdf3)
+          if (time_stepping_method_has_two_stages(scheme))
             fe_values[velocities].get_function_values(this->solution_m2,
                                                       p2_velocity_values);
-          if (scheme == Parameters::SimulationControl::bdf3)
+          if (time_stepping_method_has_three_stages(scheme))
             fe_values[velocities].get_function_values(this->solution_m3,
                                                       p3_velocity_values);
 
@@ -367,19 +410,42 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                 viscosity_ * present_velocity_laplacians[q] - force;
 
               if (scheme == Parameters::SimulationControl::bdf1)
-                strong_residual += alpha_bdf[0] * present_velocity_values[q] +
-                                   alpha_bdf[1] * p1_velocity_values[q];
+                strong_residual += alpha_coefs[0] * present_velocity_values[q] +
+                                   alpha_coefs[1] * p1_velocity_values[q];
 
               if (scheme == Parameters::SimulationControl::bdf2)
-                strong_residual += alpha_bdf[0] * present_velocity_values[q] +
-                                   alpha_bdf[1] * p1_velocity_values[q] +
-                                   alpha_bdf[2] * p2_velocity_values[q];
+                strong_residual += alpha_coefs[0] * present_velocity_values[q] +
+                                   alpha_coefs[1] * p1_velocity_values[q] +
+                                   alpha_coefs[2] * p2_velocity_values[q];
 
               if (scheme == Parameters::SimulationControl::bdf3)
-                strong_residual += alpha_bdf[0] * present_velocity_values[q] +
-                                   alpha_bdf[1] * p1_velocity_values[q] +
-                                   alpha_bdf[2] * p2_velocity_values[q] +
-                                   alpha_bdf[3] * p3_velocity_values[q];
+                strong_residual += alpha_coefs[0] * present_velocity_values[q] +
+                                   alpha_coefs[1] * p1_velocity_values[q] +
+                                   alpha_coefs[2] * p2_velocity_values[q] +
+                                   alpha_coefs[3] * p3_velocity_values[q];
+
+
+              if (is_sdirk_step1(scheme))
+                strong_residual +=
+                  sdirk_coefs[0][0] * present_velocity_values[q] +
+                  sdirk_coefs[0][1] * p1_velocity_values[q];
+
+              if (is_sdirk_step2(scheme))
+                {
+                  strong_residual +=
+                    sdirk_coefs[1][0] * present_velocity_values[q] +
+                    sdirk_coefs[1][1] * p1_velocity_values[q] +
+                    sdirk_coefs[1][2] * p2_velocity_values[q];
+                }
+
+              if (is_sdirk_step3(scheme))
+                {
+                  strong_residual +=
+                    sdirk_coefs[2][0] * present_velocity_values[q] +
+                    sdirk_coefs[2][1] * p1_velocity_values[q] +
+                    sdirk_coefs[2][2] * p2_velocity_values[q] +
+                    sdirk_coefs[2][3] * p3_velocity_values[q];
+                }
 
               if (assemble_matrix)
                 {
@@ -390,10 +456,10 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                          grad_phi_u[j] * present_velocity_values[q] +
                          grad_phi_p[j] - viscosity_ * laplacian_phi_u[j]);
 
-                      if (scheme == Parameters::SimulationControl::bdf1 ||
-                          scheme == Parameters::SimulationControl::bdf2 ||
-                          scheme == Parameters::SimulationControl::bdf3)
-                        strong_jac += phi_u[j] * alpha_bdf[0];
+                      if (is_bdf(scheme))
+                        strong_jac += phi_u[j] * alpha_coefs[0];
+                      if (is_sdirk(scheme))
+                        strong_jac += phi_u[j] * sdirk_coefs[0][0];
 
                       for (unsigned int i = 0; i < dofs_per_cell; ++i)
                         {
@@ -409,11 +475,14 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                             fe_values.JxW(q);
 
                           // Mass matrix
-                          if (scheme == Parameters::SimulationControl::bdf1 ||
-                              scheme == Parameters::SimulationControl::bdf2 ||
-                              scheme == Parameters::SimulationControl::bdf3)
+                          if (is_bdf(scheme))
                             local_matrix(i, j) += phi_u[j] * phi_u[i] *
-                                                  alpha_bdf[0] *
+                                                  alpha_coefs[0] *
+                                                  fe_values.JxW(q);
+
+                          if (is_sdirk(scheme))
+                            local_matrix(i, j) += phi_u[j] * phi_u[i] *
+                                                  sdirk_coefs[0][0] *
                                                   fe_values.JxW(q);
 
                           // PSPG GLS term
@@ -473,24 +542,59 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
                   if (scheme == Parameters::SimulationControl::bdf1)
                     local_rhs(i) -=
-                      alpha_bdf[0] *
+                      alpha_coefs[0] *
                       (present_velocity_values[q] - p1_velocity_values[q]) *
                       phi_u[i] * fe_values.JxW(q);
 
                   if (scheme == Parameters::SimulationControl::bdf2)
                     local_rhs(i) -=
-                      (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i])) *
+                      (alpha_coefs[0] *
+                         (present_velocity_values[q] * phi_u[i]) +
+                       alpha_coefs[1] * (p1_velocity_values[q] * phi_u[i]) +
+                       alpha_coefs[2] * (p2_velocity_values[q] * phi_u[i])) *
                       fe_values.JxW(q);
 
                   if (scheme == Parameters::SimulationControl::bdf3)
                     local_rhs(i) -=
-                      (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[3] * (p3_velocity_values[q] * phi_u[i])) *
+                      (alpha_coefs[0] *
+                         (present_velocity_values[q] * phi_u[i]) +
+                       alpha_coefs[1] * (p1_velocity_values[q] * phi_u[i]) +
+                       alpha_coefs[2] * (p2_velocity_values[q] * phi_u[i]) +
+                       alpha_coefs[3] * (p3_velocity_values[q] * phi_u[i])) *
                       fe_values.JxW(q);
+
+                  if (is_sdirk_step1(scheme))
+                    local_rhs(i) -=
+                      (sdirk_coefs[0][0] *
+                         (present_velocity_values[q] * phi_u[i]) +
+                       sdirk_coefs[0][1] * (p1_velocity_values[q] * phi_u[i])) *
+                      fe_values.JxW(q);
+
+                  if (is_sdirk_step2(scheme))
+                    {
+                      local_rhs(i) -=
+                        (sdirk_coefs[1][0] *
+                           (present_velocity_values[q] * phi_u[i]) +
+                         sdirk_coefs[1][1] *
+                           (p1_velocity_values[q] * phi_u[i]) +
+                         sdirk_coefs[1][2] *
+                           (p2_velocity_values[q] * phi_u[i])) *
+                        fe_values.JxW(q);
+                    }
+
+                  if (is_sdirk_step3(scheme))
+                    {
+                      local_rhs(i) -=
+                        (sdirk_coefs[2][0] *
+                           (present_velocity_values[q] * phi_u[i]) +
+                         sdirk_coefs[2][1] *
+                           (p1_velocity_values[q] * phi_u[i]) +
+                         sdirk_coefs[2][2] *
+                           (p2_velocity_values[q] * phi_u[i]) +
+                         sdirk_coefs[2][3] *
+                           (p3_velocity_values[q] * phi_u[i])) *
+                        fe_values.JxW(q);
+                    }
 
                   // PSPG GLS term
                   local_rhs(i) +=
@@ -715,6 +819,16 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     assembleGLS<true, Parameters::SimulationControl::bdf2>();
   else if (time_stepping_method == Parameters::SimulationControl::bdf3)
     assembleGLS<true, Parameters::SimulationControl::bdf3>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk2_1)
+    assembleGLS<true, Parameters::SimulationControl::sdirk2_1>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk2_2)
+    assembleGLS<true, Parameters::SimulationControl::sdirk2_2>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk3_1)
+    assembleGLS<true, Parameters::SimulationControl::sdirk3_1>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk3_2)
+    assembleGLS<true, Parameters::SimulationControl::sdirk3_2>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk3_3)
+    assembleGLS<true, Parameters::SimulationControl::sdirk3_3>();
   else if (time_stepping_method == Parameters::SimulationControl::steady)
     assembleGLS<true, Parameters::SimulationControl::steady>();
 }
@@ -731,6 +845,16 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
     assembleGLS<false, Parameters::SimulationControl::bdf2>();
   else if (time_stepping_method == Parameters::SimulationControl::bdf3)
     assembleGLS<false, Parameters::SimulationControl::bdf3>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk2_1)
+    assembleGLS<false, Parameters::SimulationControl::sdirk2_1>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk2_2)
+    assembleGLS<false, Parameters::SimulationControl::sdirk2_2>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk3_1)
+    assembleGLS<false, Parameters::SimulationControl::sdirk3_1>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk3_2)
+    assembleGLS<false, Parameters::SimulationControl::sdirk3_2>();
+  else if (time_stepping_method == Parameters::SimulationControl::sdirk3_3)
+    assembleGLS<false, Parameters::SimulationControl::sdirk3_3>();
   else if (time_stepping_method == Parameters::SimulationControl::steady)
     assembleGLS<false, Parameters::SimulationControl::steady>();
 }

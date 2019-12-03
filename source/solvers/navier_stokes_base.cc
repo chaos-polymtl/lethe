@@ -705,21 +705,6 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
           //          this->triangulation.set_all_manifold_ids(manifolds.id[i]);
           this->triangulation->set_all_manifold_ids_on_boundary(
             manifolds.id[i], manifolds.id[i]);
-
-          //          this->pcout << "direction[0]: "      <<direction[0]<<
-          //          std::endl; this->pcout << "direction[1]: "
-          //          <<direction[1]<< std::endl; this->pcout << "direction[2]:
-          //          "      <<direction[2]<< std::endl; this->pcout <<
-          //          "manifolds.id[i]:   " <<manifolds.id[i]  << std::endl;
-          //          this->pcout << "manifolds.arg1[i]: " <<manifolds.arg1[i]<<
-          //          std::endl; this->pcout << "manifolds.arg2[i]: "
-          //          <<manifolds.arg2[i]<< std::endl; this->pcout <<
-          //          "manifolds.arg3[i]: " <<manifolds.arg3[i]<< std::endl;
-          //          this->pcout << "manifolds.arg4[i]: " <<manifolds.arg4[i]<<
-          //          std::endl; this->pcout << "manifolds.arg5[i]: "
-          //          <<manifolds.arg5[i]<< std::endl; this->pcout <<
-          //          "manifolds.arg6[i]: " <<manifolds.arg6[i]<< std::endl;
-          //          this->pcout << "i  : "               << i << std::endl;
         }
       else if (manifolds.types[i] == Parameters::Manifolds::none)
         {}
@@ -808,27 +793,51 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
 {
-  // Carry out the integration normally
-  if (!firstIteration)
+  // Carry out the integration normally if this is not a method that needs to be
+  // started
+  if (!firstIteration || !is_bdf(this->simulationControl.getMethod()))
     {
-      PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, false);
+      if (this->simulationControl.getMethod() ==
+          Parameters::SimulationControl::sdirk2)
+        {
+          PhysicsSolver<VectorType>::solve_non_linear_system(
+            Parameters::SimulationControl::sdirk2_1, false, false);
+          this->solution_m2 = this->present_solution;
+
+          PhysicsSolver<VectorType>::solve_non_linear_system(
+            Parameters::SimulationControl::sdirk2_2, false, false);
+        }
+
+      else if (this->simulationControl.getMethod() ==
+               Parameters::SimulationControl::sdirk3)
+        {
+          PhysicsSolver<VectorType>::solve_non_linear_system(
+            Parameters::SimulationControl::sdirk3_1, false, false);
+
+          this->solution_m2 = this->present_solution;
+
+          PhysicsSolver<VectorType>::solve_non_linear_system(
+            Parameters::SimulationControl::sdirk3_2, false, false);
+
+          this->solution_m3 = this->present_solution;
+
+          PhysicsSolver<VectorType>::solve_non_linear_system(
+            Parameters::SimulationControl::sdirk3_3, false, false);
+        }
+      else
+        {
+          PhysicsSolver<VectorType>::solve_non_linear_system(
+            this->simulationControl.getMethod(), false, false);
+        }
     }
-  // This is the first iteration
+  // This is the first iteration and we are using a BDF scheme
   else
     {
       if (this->simulationControl.getMethod() ==
-          Parameters::SimulationControl::steady)
-        {
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-        }
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::bdf1)
-        {
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-        }
+          Parameters::SimulationControl::bdf1)
+        PhysicsSolver<VectorType>::solve_non_linear_system(
+          this->simulationControl.getMethod(), false, true);
+
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::bdf2)
         {
