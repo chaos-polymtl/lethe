@@ -1096,9 +1096,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                linear_solver_tolerance,
                                true,
                                true);
-  TrilinosWrappers::SolverGMRES     solver(solver_control);
-  TrilinosWrappers::PreconditionAMG preconditioner;
-
+  TrilinosWrappers::SolverGMRES solver(solver_control);
 
   if (renewed_matrix || !amg_preconditioner)
     setup_AMG();
