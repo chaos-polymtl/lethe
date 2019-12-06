@@ -52,7 +52,8 @@ GLSNavierStokesSolver<dim>::setup_dofs()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_dofs");
 
-  // Clear the preconditioner before the matrix they are associated with is cleared
+  // Clear the preconditioner before the matrix they are associated with is
+  // cleared
   amg_preconditioner.reset();
   ilu_preconditioner.reset();
 
@@ -416,16 +417,19 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                 present_pressure_gradients[q] -
                 viscosity_ * present_velocity_laplacians[q] - force;
 
-              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                 strong_residual += alpha_coefs[0] * present_velocity_values[q] +
                                    alpha_coefs[1] * p1_velocity_values[q];
 
-              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 strong_residual += alpha_coefs[0] * present_velocity_values[q] +
                                    alpha_coefs[1] * p1_velocity_values[q] +
                                    alpha_coefs[2] * p2_velocity_values[q];
 
-              if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 strong_residual += alpha_coefs[0] * present_velocity_values[q] +
                                    alpha_coefs[1] * p1_velocity_values[q] +
                                    alpha_coefs[2] * p2_velocity_values[q] +
@@ -824,24 +828,42 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::steady)
-    assembleGLS<true, Parameters::SimulationControl::TimeSteppingMethod::steady>();
+  if (time_stepping_method ==
+      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGLS<true,
+                Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 template <int dim>
 void
@@ -850,24 +872,42 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3>();
-  else if (time_stepping_method == Parameters::SimulationControl::TimeSteppingMethod::steady)
-    assembleGLS<false, Parameters::SimulationControl::TimeSteppingMethod::steady>();
+  if (time_stepping_method ==
+      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGLS<false,
+                Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 
 template <int dim>

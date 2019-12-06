@@ -685,7 +685,8 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
             manifolds.id[i], manifolds.id[i]);
         }
 
-      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::cylindrical)
+      else if (manifolds.types[i] ==
+               Parameters::Manifolds::ManifoldType::cylindrical)
         {
           if (dim != 3)
             throw(std::runtime_error(
@@ -801,28 +802,38 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
           Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
         {
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+            false,
+            false);
           this->solution_m2 = this->present_solution;
 
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+            false,
+            false);
         }
 
       else if (this->simulationControl.getMethod() ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
         {
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+            false,
+            false);
 
           this->solution_m2 = this->present_solution;
 
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+            false,
+            false);
 
           this->solution_m3 = this->present_solution;
 
           PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3, false, false);
+            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+            false,
+            false);
         }
       else
         {
@@ -1327,7 +1338,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_periodicity()
   // Setup parallelism for periodic boundary conditions
   for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
     {
-      if (nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::BoundaryType::periodic)
+      if (nsparam.boundaryConditions.type[i_bc] ==
+          BoundaryConditions::BoundaryType::periodic)
         {
           std::vector<GridTools::PeriodicFacePair<
             typename Triangulation<dim>::cell_iterator>>
