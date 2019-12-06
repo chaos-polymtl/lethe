@@ -17,7 +17,7 @@ main()
       simulationControlParameters.dt      = 0.01;
       simulationControlParameters.adapt   = false;
       simulationControlParameters.maxCFL  = 99;
-      simulationControlParameters.method  = simulationControlParameters.bdf1;
+      simulationControlParameters.method  = Parameters::SimulationControl::TimeSteppingMethod::bdf1;
       simulationControlParameters.timeEnd = 999;
       simulationControlParameters.nbMeshAdapt     = 9;
       simulationControlParameters.output_name     = "test";
