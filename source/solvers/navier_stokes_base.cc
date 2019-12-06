@@ -1391,7 +1391,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
+  DataOutBase::VtkFlags flags;
+  if (this->degreeVelocity_ > 1)
+    flags.write_higher_order_cells = true;
+
   DataOut<dim> data_out;
+  data_out.set_flags(flags);
   data_out.attach_dof_handler(this->dof_handler);
   data_out.add_data_vector(solution,
                            solution_names,
@@ -1404,7 +1409,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     subdomain(i) = this->triangulation->locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
   // data_out.add_data_vector (rot_u,"vorticity");
-  data_out.build_patches(mapping, subdivision);
+  data_out.build_patches(mapping,
+                         subdivision,
+                         DataOut<dim>::curved_inner_cells);
 
   const int my_id = Utilities::MPI::this_mpi_process(this->mpi_communicator);
 
@@ -1437,16 +1444,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
     }
 
-  /*const unsigned int n_processes =
-    Utilities::MPI::n_mpi_processes(this->mpi_communicator);*/
-
-
-
   const unsigned int my_file_id =
     (group_files == 0 ? my_id : my_id % group_files);
   int color = my_id % group_files;
-
-
 
   MPI_Comm comm;
   MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
