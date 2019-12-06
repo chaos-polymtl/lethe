@@ -52,8 +52,7 @@ namespace Parameters
       sdirk3_1,
       sdirk3_2,
       sdirk3_3
-    };
-    TimeSteppingMethod method;
+    } method;
 
     // Initial time step
     double dt;
