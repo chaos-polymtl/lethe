@@ -673,7 +673,7 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
 
   for (unsigned int i = 0; i < manifolds.types.size(); ++i)
     {
-      if (manifolds.types[i] == Parameters::Manifolds::spherical)
+      if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
         {
           Point<dim> circleCenter;
           circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
@@ -685,7 +685,7 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
             manifolds.id[i], manifolds.id[i]);
         }
 
-      else if (manifolds.types[i] == Parameters::Manifolds::cylindrical)
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::cylindrical)
         {
           if (dim != 3)
             throw(std::runtime_error(
@@ -706,7 +706,7 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
           this->triangulation->set_all_manifold_ids_on_boundary(
             manifolds.id[i], manifolds.id[i]);
         }
-      else if (manifolds.types[i] == Parameters::Manifolds::none)
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {}
       else
         throw std::runtime_error("Unsupported manifolds type");
@@ -1327,7 +1327,7 @@ NavierStokesBase<dim, VectorType, DofsType>::set_periodicity()
   // Setup parallelism for periodic boundary conditions
   for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
     {
-      if (nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::periodic)
+      if (nsparam.boundaryConditions.type[i_bc] == BoundaryConditions::BoundaryType::periodic)
         {
           std::vector<GridTools::PeriodicFacePair<
             typename Triangulation<dim>::cell_iterator>>

@@ -44,7 +44,6 @@ namespace Parameters
       steady,
       bdf1,
       bdf2,
-<<<<<<< HEAD
       bdf3,
       sdirk2,
       sdirk2_1,
@@ -55,10 +54,6 @@ namespace Parameters
       sdirk3_3
     };
     TimeSteppingMethod method;
-=======
-      bdf3
-    } method;
->>>>>>> finished converting enums to enum classes in parameters.h
 
     // Initial time step
     double dt;

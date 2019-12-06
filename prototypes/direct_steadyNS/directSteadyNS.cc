@@ -71,7 +71,7 @@
 // Finally, this is as in previous programs:
 using namespace dealii;
 
-enum SimulationCases
+enum class SimulationCases
 {
   MMS           = 0,
   TaylorCouette = 1,
@@ -145,7 +145,7 @@ private:
   BlockVector<double> system_rhs;
   BlockVector<double> evaluation_point;
 
-  const SimulationCases simulationCase_ = MMS;
+  const SimulationCases simulationCase_ = SimulationCases::MMS;
   const bool            stabilized_     = false;
   const bool            iterative_      = false;
   std::vector<double>   L2ErrorU_;
@@ -216,7 +216,7 @@ DirectSteadyNavierStokes<dim>::setup_dofs()
                                              nonzero_constraints,
                                              fe.component_mask(velocities));
 
-    if (simulationCase_ == TaylorCouette)
+    if (simulationCase_ == SimulationCases::TaylorCouette)
       {
         VectorTools::interpolate_boundary_values(dof_handler,
                                                  1,
@@ -237,7 +237,7 @@ DirectSteadyNavierStokes<dim>::setup_dofs()
                                              fe.component_mask(velocities));
 
 
-    if (simulationCase_ == TaylorCouette)
+    if (simulationCase_ == SimulationCases::TaylorCouette)
       {
         VectorTools::interpolate_boundary_values(dof_handler,
                                                  1,

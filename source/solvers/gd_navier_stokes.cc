@@ -468,7 +468,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
          ++i_bc)
       {
         if (this->nsparam.boundaryConditions.type[i_bc] ==
-            BoundaryConditions::noslip)
+            BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
@@ -479,7 +479,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->fe.component_mask(velocities));
           }
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::slip)
+                 BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
@@ -491,7 +491,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->nonzero_constraints);
           }
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::function)
+                 BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
@@ -506,7 +506,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
           }
 
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::periodic)
+                 BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
@@ -528,7 +528,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
          ++i_bc)
       {
         if (this->nsparam.boundaryConditions.type[i_bc] ==
-            BoundaryConditions::slip)
+            BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
@@ -540,7 +540,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->zero_constraints);
           }
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::periodic)
+                 BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
