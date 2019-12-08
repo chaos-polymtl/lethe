@@ -1,0 +1,30 @@
+sudo: required
+language: cpp
+
+notifications:
+  email: false
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+      - gcc
+
+services:
+  - docker
+
+# cache:
+#   directories:
+#   - docker_images
+
+# before_cache:
+# - docker save -o docker_images/images.tar $(docker images -a -q)
+
+before_install:
+# - docker load -i docker_images/images.tar || true
+- docker pull heltai/dealii:v9.1.1-gcc-mpi
+
+script:
+- export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+- echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
+- sudo docker run heltai/dealii:v9.1.1-gcc-mpi /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make && ctest --verbose"
