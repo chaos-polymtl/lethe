@@ -55,9 +55,9 @@ namespace AnalyticalSolutions
     filename             = prm.get("filename");
     const std::string op = prm.get("verbosity");
     if (op == "verbose")
-      verbosity = Parameters::verbose;
+      verbosity = Parameters::Verbosity::verbose;
     if (op == "quiet")
-      verbosity = Parameters::quiet;
+      verbosity = Parameters::Verbosity::quiet;
     prm.leave_subsection();
   }
 

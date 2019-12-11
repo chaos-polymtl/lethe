@@ -30,7 +30,7 @@ namespace Parameters
   class Manifolds
   {
   public:
-    enum ManifoldType
+    enum class ManifoldType
     {
       none,
       spherical,

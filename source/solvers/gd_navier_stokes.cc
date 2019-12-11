@@ -47,14 +47,19 @@ GDNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (time_stepping_method == Parameters::SimulationControl::bdf1)
-    assembleGD<true, Parameters::SimulationControl::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf2)
-    assembleGD<true, Parameters::SimulationControl::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf3)
-    assembleGD<true, Parameters::SimulationControl::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::steady)
-    assembleGD<true, Parameters::SimulationControl::steady>();
+  if (time_stepping_method ==
+      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGD<true,
+               Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 
 template <int dim>
@@ -64,14 +69,22 @@ GDNavierStokesSolver<dim>::assemble_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (time_stepping_method == Parameters::SimulationControl::bdf1)
-    assembleGD<false, Parameters::SimulationControl::bdf1>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf2)
-    assembleGD<false, Parameters::SimulationControl::bdf2>();
-  else if (time_stepping_method == Parameters::SimulationControl::bdf3)
-    assembleGD<false, Parameters::SimulationControl::bdf3>();
-  else if (time_stepping_method == Parameters::SimulationControl::steady)
-    assembleGD<false, Parameters::SimulationControl::steady>();
+  if (time_stepping_method ==
+      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
+  else if (time_stepping_method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady)
+    assembleGD<false,
+               Parameters::SimulationControl::TimeSteppingMethod::steady>();
 }
 
 template <int dim>
@@ -132,13 +145,13 @@ GDNavierStokesSolver<dim>::assembleGD()
 
   std::vector<double> time_steps = this->simulationControl.getTimeSteps();
 
-  if (scheme == Parameters::SimulationControl::bdf1)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     alpha_bdf = bdf_coefficients(1, time_steps);
 
-  if (scheme == Parameters::SimulationControl::bdf2)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     alpha_bdf = bdf_coefficients(2, time_steps);
 
-  if (scheme == Parameters::SimulationControl::bdf3)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     alpha_bdf = bdf_coefficients(3, time_steps);
 
   // Values at previous time step for backward Euler scheme
@@ -165,16 +178,18 @@ GDNavierStokesSolver<dim>::assembleGD()
           fe_values[pressure].get_function_values(this->evaluation_point,
                                                   present_pressure_values);
 
-          if (scheme != Parameters::SimulationControl::steady)
+          if (scheme !=
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
             fe_values[velocities].get_function_values(this->solution_m1,
                                                       p1_velocity_values);
 
-          if (scheme == Parameters::SimulationControl::bdf2 ||
-              scheme == Parameters::SimulationControl::bdf3)
+          if (scheme ==
+                Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(this->solution_m2,
                                                       p2_velocity_values);
 
-          if (scheme == Parameters::SimulationControl::bdf3)
+          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(this->solution_m3,
                                                       p3_velocity_values);
 
@@ -219,9 +234,12 @@ GDNavierStokesSolver<dim>::assembleGD()
                             fe_values.JxW(q);
 
                           // Mass matrix
-                          if (scheme == Parameters::SimulationControl::bdf1 ||
-                              scheme == Parameters::SimulationControl::bdf2 ||
-                              scheme == Parameters::SimulationControl::bdf3)
+                          if (scheme == Parameters::SimulationControl::
+                                          TimeSteppingMethod::bdf1 ||
+                              scheme == Parameters::SimulationControl::
+                                          TimeSteppingMethod::bdf2 ||
+                              scheme == Parameters::SimulationControl::
+                                          TimeSteppingMethod::bdf3)
                             local_matrix(i, j) += phi_u[j] * phi_u[i] *
                                                   alpha_bdf[0] *
                                                   fe_values.JxW(q);
@@ -241,20 +259,23 @@ GDNavierStokesSolver<dim>::assembleGD()
                      force * phi_u[i]) *
                     fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::bdf1)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                     local_rhs(i) -=
                       alpha_bdf[0] *
                       (present_velocity_values[q] - p1_velocity_values[q]) *
                       phi_u[i] * fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::bdf2)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i])) *
                       fe_values.JxW(q);
 
-                  if (scheme == Parameters::SimulationControl::bdf3)
+                  if (scheme ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
                        alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
@@ -447,7 +468,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
          ++i_bc)
       {
         if (this->nsparam.boundaryConditions.type[i_bc] ==
-            BoundaryConditions::noslip)
+            BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
@@ -458,7 +479,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->fe.component_mask(velocities));
           }
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::slip)
+                 BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
@@ -470,7 +491,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->nonzero_constraints);
           }
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::function)
+                 BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
@@ -485,7 +506,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
           }
 
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::periodic)
+                 BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
@@ -507,7 +528,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
          ++i_bc)
       {
         if (this->nsparam.boundaryConditions.type[i_bc] ==
-            BoundaryConditions::slip)
+            BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
@@ -519,7 +540,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->zero_constraints);
           }
         else if (this->nsparam.boundaryConditions.type[i_bc] ==
-                 BoundaryConditions::periodic)
+                 BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
@@ -650,11 +671,13 @@ GDNavierStokesSolver<dim>::set_initial_condition(
         this->nsparam.initialCondition->viscosity;
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
-      this->simulationControl.setMethod(Parameters::SimulationControl::steady);
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::BlockVector>::
-        solve_non_linear_system(Parameters::SimulationControl::steady,
-                                false,
-                                true);
+        solve_non_linear_system(
+          Parameters::SimulationControl::TimeSteppingMethod::steady,
+          false,
+          true);
       this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
@@ -700,12 +723,14 @@ GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
   const double absolute_residual = this->nsparam.linearSolver.minimum_residual;
   const double relative_residual = this->nsparam.linearSolver.relative_residual;
 
-  if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.gmres)
+  if (this->nsparam.linearSolver.solver ==
+      Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
-  else if (this->nsparam.linearSolver.solver == this->nsparam.linearSolver.amg)
+  else if (this->nsparam.linearSolver.solver ==
+           Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step,
                      absolute_residual,
                      relative_residual,
@@ -878,7 +903,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
@@ -907,7 +932,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                  this->newton_update,
                  this->system_rhs,
                  *system_ilu_preconditioner);
-    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -931,7 +956,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
@@ -958,7 +983,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                  this->newton_update,
                  this->system_rhs,
                  *system_amg_preconditioner);
-    if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -980,7 +1005,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
@@ -1018,7 +1043,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                this->system_rhs,
                preconditioner);
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::quiet)
+  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;

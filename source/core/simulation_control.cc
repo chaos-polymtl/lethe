@@ -7,7 +7,8 @@
 void
 printTime(ConditionalOStream pcout, SimulationControl control)
 {
-  if (control.getMethod() == Parameters::SimulationControl::steady)
+  if (control.getMethod() ==
+      Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
       pcout << std::endl;
       pcout
@@ -55,9 +56,11 @@ SimulationControl::addTimeStep(double p_timestep)
 bool
 SimulationControl::integrate()
 {
-  if ((parameterControl.method == parameterControl.steady &&
+  if ((parameterControl.method ==
+         Parameters::SimulationControl::TimeSteppingMethod::steady &&
        iter >= (nbMeshAdapt + 1)) ||
-      (parameterControl.method != parameterControl.steady &&
+      (parameterControl.method !=
+         Parameters::SimulationControl::TimeSteppingMethod::steady &&
        time >= (endTime - 1e-6 * dt[0])))
     return false;
   else

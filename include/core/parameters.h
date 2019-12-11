@@ -30,7 +30,7 @@ using namespace dealii;
 
 namespace Parameters
 {
-  enum Verbosity
+  enum class Verbosity
   {
     quiet,
     verbose
@@ -39,7 +39,7 @@ namespace Parameters
   struct SimulationControl
   {
     // Method used for time progression (steady, unsteady)
-    enum TimeSteppingMethod
+    enum class TimeSteppingMethod
     {
       steady,
       bdf1,
@@ -52,8 +52,7 @@ namespace Parameters
       sdirk3_1,
       sdirk3_2,
       sdirk3_3
-    };
-    TimeSteppingMethod method;
+    } method;
 
     // Initial time step
     double dt;
@@ -109,7 +108,7 @@ namespace Parameters
   {
     // Time measurement in the simulation. None, at each iteration, only at the
     // end
-    enum Type
+    enum class Type
     {
       none,
       iteration,
@@ -210,7 +209,7 @@ namespace Parameters
   struct NonLinearSolver
   {
     // Type of linear solver
-    enum SolverType
+    enum class SolverType
     {
       newton,
       skip_newton,
@@ -243,7 +242,7 @@ namespace Parameters
   struct LinearSolver
   {
     // Type of linear solver
-    enum SolverType
+    enum class SolverType
     {
       gmres,
       bicgstab,
@@ -307,7 +306,7 @@ namespace Parameters
   struct Mesh
   {
     // GMSH or dealii primitive
-    enum Type
+    enum class Type
     {
       gmsh,
       dealii,
@@ -316,7 +315,7 @@ namespace Parameters
     Type type;
 
     // Primitive types
-    enum PrimitiveType
+    enum class PrimitiveType
     {
       hyper_cube,
       hyper_shell,
@@ -354,28 +353,25 @@ namespace Parameters
   struct MeshAdaptation
   {
     // Type of mesh adaptation
-    enum Type
+    enum class Type
     {
       none,
       uniform,
       kelly
-    };
-    Type type;
+    } type;
 
-    enum Variable
+    enum class Variable
     {
       velocity,
       pressure
-    };
-    Variable variable;
+    } variable;
 
     // Decision factor for KELLY refinement (number or fraction)
-    enum FractionType
+    enum class FractionType
     {
       number,
       fraction
-    };
-    FractionType fractionType;
+    } fractionType;
 
     // Maximum number of elements
     unsigned int maxNbElements;

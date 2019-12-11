@@ -47,11 +47,11 @@ namespace Parameters
   {
     const std::string op = prm.get("type");
     if (op == "none")
-      types[i_bc] = none;
+      types[i_bc] = ManifoldType::none;
     else if (op == "spherical")
-      types[i_bc] = spherical;
+      types[i_bc] = ManifoldType::spherical;
     else if (op == "cylindrical")
-      types[i_bc] = cylindrical;
+      types[i_bc] = ManifoldType::cylindrical;
 
     id[i_bc]   = prm.get_integer("id");
     arg1[i_bc] = prm.get_double("arg1");

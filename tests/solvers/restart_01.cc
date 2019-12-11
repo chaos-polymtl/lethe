@@ -129,8 +129,8 @@ main(int argc, char *argv[])
       // Manually alter some of the default parameters of the solver
       NSparam.restartParameters.checkpoint = true;
       NSparam.restartParameters.frequency  = 1;
-      NSparam.nonLinearSolver.verbosity    = Parameters::quiet;
-      NSparam.linearSolver.verbosity       = Parameters::quiet;
+      NSparam.nonLinearSolver.verbosity    = Parameters::Verbosity::quiet;
+      NSparam.linearSolver.verbosity       = Parameters::Verbosity::quiet;
       NSparam.boundaryConditions.createDefaultNoSlip();
 
       RestartNavierStokes<2> problem_2d(NSparam,

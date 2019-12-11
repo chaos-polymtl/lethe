@@ -27,7 +27,7 @@ using namespace dealii;
 
 namespace BoundaryConditions
 {
-  enum BoundaryType
+  enum class BoundaryType
   {
     noslip,
     slip,
@@ -88,7 +88,7 @@ namespace BoundaryConditions
     id.resize(1);
     id[0] = 0;
     type.resize(1);
-    type[0] = noslip;
+    type[0] = BoundaryType::noslip;
     size    = 1;
   }
 
@@ -147,12 +147,12 @@ namespace BoundaryConditions
   {
     const std::string op = prm.get("type");
     if (op == "noslip")
-      type[i_bc] = noslip;
+      type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
-      type[i_bc] = slip;
+      type[i_bc] = BoundaryType::slip;
     if (op == "function")
       {
-        type[i_bc] = function;
+        type[i_bc] = BoundaryType::function;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
@@ -174,7 +174,7 @@ namespace BoundaryConditions
       }
     if (op == "periodic")
       {
-        type[i_bc]               = periodic;
+        type[i_bc]               = BoundaryType::periodic;
         periodic_id[i_bc]        = prm.get_integer("periodic_id");
         periodic_direction[i_bc] = prm.get_integer("periodic_direction");
       }

@@ -34,7 +34,7 @@ using namespace dealii;
 namespace Parameters
 {
   // Type of initial conditions
-  enum InitialConditionType
+  enum class InitialConditionType
   {
     none,
     L2projection,
@@ -99,11 +99,11 @@ namespace Parameters
     {
       const std::string op = prm.get("type");
       if (op == "L2projection")
-        type = L2projection;
+        type = InitialConditionType::L2projection;
       else if (op == "viscous")
-        type = viscous;
+        type = InitialConditionType::viscous;
       else if (op == "nodal")
-        type = nodal;
+        type = InitialConditionType::nodal;
 
       viscosity = prm.get_double("viscosity");
       prm.enter_subsection("uvwp");

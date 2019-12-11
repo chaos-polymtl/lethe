@@ -60,7 +60,7 @@ InitialConditionsNavierStokes<dim>::runTest()
   // this->make_cube_grid(initialSize);
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;
-  this->set_initial_condition(Parameters::L2projection);
+  this->set_initial_condition(Parameters::InitialConditionType::L2projection);
   double error_L2projection = this->calculate_L2_error(this->present_solution);
   if (error_L2projection < 1e-9)
     {
@@ -71,7 +71,7 @@ InitialConditionsNavierStokes<dim>::runTest()
       throw "L2projection initial condition error";
     }
 
-  this->set_initial_condition(Parameters::nodal);
+  this->set_initial_condition(Parameters::InitialConditionType::nodal);
   double error_nodal = this->calculate_L2_error(this->present_solution);
   if (error_nodal < 1e-9)
     {
