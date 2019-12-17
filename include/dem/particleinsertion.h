@@ -7,7 +7,7 @@
 #include <deal.II/distributed/tria.h>
 #include <deal.II/particles/particle_handler.h>
 
-#include "readInputScript.h"
+#include "readinputscript.h"
 
 
 #ifndef PARTICLEINSERTION_H_

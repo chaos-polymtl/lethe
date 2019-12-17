@@ -9,7 +9,7 @@
 #include <tuple>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
-#include "readInputScript.h"
+#include "readinputscript.h"
 
 using namespace dealii;
 
@@ -20,6 +20,8 @@ class ContactForce {
 public:
 	ContactForce();
 	void linearCF(std::vector<std::tuple<std::pair<Particles::ParticleIterator<3,3>, Particles::ParticleIterator<3, 3>>, std::vector<double>, double, std::vector<double>, double, std::vector<double>, std::vector<double>, double, double>> , Particles::ParticleHandler<3,3>&, ReadInputScript);
+
+
 private:
 	double dotProduct(std::vector<double>, std::vector<double>);
 	std::vector<double> crossProduct(std::vector<double>, std::vector<double>);

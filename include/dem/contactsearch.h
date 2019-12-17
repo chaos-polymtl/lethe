@@ -23,8 +23,9 @@ public:
 	//question? why doesnt work by passing by value?
 	std::pair <std::vector<std::set<Triangulation<3>::active_cell_iterator>>,std::vector<Triangulation<3>::active_cell_iterator>> findCellNeighbors(int, const Triangulation<3,3>&);
 	void fineSearch(std::vector<std::pair<Particles::ParticleIterator<3,3>,Particles::ParticleIterator<3, 3>>>, dealii::Particles::ParticleHandler<3, 3>&, std::vector<std::tuple<std::pair<Particles::ParticleIterator<3,3>, Particles::ParticleIterator<3, 3>>, std::vector<double>, double, std::vector<double>, double, std::vector<double>, std::vector<double>, double, double>> & , float);
-
 	//std::directSearch();
+
+	std::vector<Particles::ParticleIterator<3,3>> pWSearch(dealii::Particles::ParticleHandler<3, 3>&);
 
 private:
 	std::vector<double> normVector(Point<3>, Point<3>);
