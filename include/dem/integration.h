@@ -5,7 +5,7 @@
  *      Author: shahab
  */
 #include <deal.II/particles/particle_handler.h>
-#include "readInputScript.h"
+#include "readinputscript.h"
 using namespace dealii;
 
 #ifndef INTEGRATION_H_
