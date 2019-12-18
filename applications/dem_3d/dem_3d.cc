@@ -92,7 +92,7 @@ main(int argc, char *argv[])
     filename = argv[1];
 
   ParameterHandler prm;
-  demparameters<3> DEMparam;
+  ParametersDEM<3> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
   DEMparam.parse(prm);
@@ -185,7 +185,7 @@ main(int argc, char *argv[])
                          Point<3>,
                          Point<3>>>
                      boundaryCellInfo;
-  pwcontactdetection pw1;
+  ParticleWallContactDetection pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 
 

@@ -127,7 +127,7 @@ DEM_iterator::engine(
     pwContactList;
 
 
-  pwcontactdetection pw;
+  ParticleWallContactDetection pw;
   // if (fmod(step,10) == 1)
   //{
   pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
@@ -138,7 +138,7 @@ DEM_iterator::engine(
 
 
   // p-w contact force:
-  PWContactForce pwcf;
+  ParticleWallContactForce pwcf;
   pwcf.pwLinearCF(pwContactInfo, particle_handler, readInput);
 
 
