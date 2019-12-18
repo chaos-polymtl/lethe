@@ -14,17 +14,17 @@
 template <int dim>
 class demparameters {
 public:
-	Parameters::DEM::SimulationControl			simulationControl;
-	Parameters::DEM::PhysicalProperties			physicalProperties;
-	Parameters::DEM::InsertionInfo				insertionInfo;
-	Parameters::DEM::OutputProperties			outputProperties;
+	Parameters::Lagrangian::SimulationControl			simulationControl;
+	Parameters::Lagrangian::PhysicalProperties			physicalProperties;
+	Parameters::Lagrangian::InsertionInfo				insertionInfo;
+	Parameters::Lagrangian::OutputProperties			outputProperties;
 
 	void declare(ParameterHandler &prm)
 	  {
-		Parameters::DEM::SimulationControl::declare_parameters(prm);
-		Parameters::DEM::PhysicalProperties::declare_parameters(prm);
-		Parameters::DEM::InsertionInfo::declare_parameters(prm);
-		Parameters::DEM::OutputProperties::declare_parameters(prm);
+		Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
+		Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
+		Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
+		Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
 	  }
 
 	  void parse(ParameterHandler &prm)

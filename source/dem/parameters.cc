@@ -9,7 +9,7 @@
 
 namespace Parameters
 {
-  namespace DEM
+  namespace Lagrangian
   {
 	void SimulationControl::declare_parameters(ParameterHandler &prm)
 	{
