@@ -5,8 +5,8 @@
  *      Author: meteor
  */
 
-#include "dem/particleinsertion.h"
-#include "dem/readinputscript.h"
+#include "dem/particle_insertion.h"
+#include "dem/read_input_script.h"
 
 #include "iostream"
 #include <fstream>
