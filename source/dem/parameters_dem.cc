@@ -7,7 +7,7 @@
 
 #include "dem/dem_parameters.h"
 
-#include "core/parameters_dem.h"
+#include "core/parameters_lagrangian.h"
 
 template class demparameters<2>;
 template class demparameters<3>;
