@@ -5,9 +5,7 @@
  *      Author: shahab
  */
 
-#include "dem/dem_parameters.h"
-
-#include "core/parameters_lagrangian.h"
+#include "dem/parameters_dem.h"
 
 template class demparameters<2>;
 template class demparameters<3>;
