@@ -12,105 +12,98 @@
 #include <deal.II/base/parsed_function.h>
 
 #ifndef PARAMETERS_LAGRANGIAN_H_
-#define PARAMETERS_LAGRANGIAN_H_
+#  define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
 
 namespace Parameters
 {
-namespace Lagrangian
-{
-	struct SimulationControl
-	{
-		// Time step
-		double dt;
+  namespace Lagrangian
+  {
+    struct SimulationControl
+    {
+      // Time step
+      double dt;
 
-		//End time step
-		int tFinal;
+      // End time step
+      int tFinal;
 
-		//Total number of particles
-		int nTotal;
+      // Total number of particles
+      int nTotal;
 
-		//Write frequency
-		int writeFrequency;
+      // Write frequency
+      int writeFrequency;
 
-		static void
-		declare_parameters(ParameterHandler &prm);
-		void
-		parse_parameters(ParameterHandler &prm);
-	};
-
-
-	struct PhysicalProperties
-	  {
-		//Gravitational acceleration
-		double gx, gy, gz;
-
-		//Particle diameter and density
-		double diameter;
-		double density;
-
-		//Spring and dashpot normal constants
-		double kn;
-		double ethan;
-
-		//Spring and dashpot tangential constants
-		double kt;
-		double ethat;
-
-		//Coefficient of friction
-		double mu;
-
-	    static void
-	    declare_parameters(ParameterHandler &prm);
-	    void
-	    parse_parameters(ParameterHandler &prm);
-	  };
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
 
-	struct InsertionInfo
-	{
-		//Insertion time step
-		int tInsertion;
+    struct PhysicalProperties
+    {
+      // Gravitational acceleration
+      double gx, gy, gz;
 
-		//Inserted number of particles at each time step
-		int nInsert;
+      // Particle diameter and density
+      double diameter;
+      double density;
 
-		//Insertion frequency
-		int insertFrequncy;
+      // Spring and dashpot normal constants
+      double kn;
+      double ethan;
 
-		//Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
-		double x_min, y_min, z_min, x_max, y_max, z_max;
+      // Spring and dashpot tangential constants
+      double kt;
+      double ethat;
 
-	    static void
-	    declare_parameters(ParameterHandler &prm);
-	    void
-	    parse_parameters(ParameterHandler &prm);
-	};
+      // Coefficient of friction
+      double mu;
+
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
 
-	struct OutputProperties
-	{
-		//Number of properties
-		int numProperties;
+    struct InsertionInfo
+    {
+      // Insertion time step
+      int tInsertion;
 
-		//Number of fields
-		int numFields;
+      // Inserted number of particles at each time step
+      int nInsert;
 
-	    static void
-	    declare_parameters(ParameterHandler &prm);
-	    void
-	    parse_parameters(ParameterHandler &prm);
-	};
+      // Insertion frequency
+      int insertFrequncy;
 
-}
-}
+      // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
+      double x_min, y_min, z_min, x_max, y_max, z_max;
+
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+
+    struct OutputProperties
+    {
+      // Number of properties
+      int numProperties;
+
+      // Number of fields
+      int numFields;
+
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+  } // namespace Lagrangian
+} // namespace Parameters
 
 #endif /* PARAMETERS_H_ */
-
-
-
-
-
-
-
