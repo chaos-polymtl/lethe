@@ -85,7 +85,7 @@ int main(int argc, char *argv[]) {
       filename = argv[1];
 
     ParameterHandler                prm;
-    demparamters<3> 				DEMparam;
+    demparameters<3> 				DEMparam;
     DEMparam.declare(prm);
     prm.parse_input(filename);
     DEMparam.parse(prm);
