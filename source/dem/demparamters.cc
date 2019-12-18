@@ -6,7 +6,7 @@
  */
 
 #include "core/parameters_dem.h"
-#include "dem/demparamters.h"
+#include "dem/dem_parameters.h"
 
 template class demparameters<2>;
 template class demparameters<3>;

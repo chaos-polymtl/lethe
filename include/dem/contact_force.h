@@ -9,7 +9,7 @@
 #include <tuple>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
-#include "readinputscript.h"
+#include "read_input_script.h"
 
 using namespace dealii;
 

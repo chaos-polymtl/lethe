@@ -5,7 +5,7 @@
  *      Author: meteor
  */
 
-#include "dem/readinputscript.h"
+#include <dem/read_input_script.h>
 
 #include <iostream>
 #include <fstream>
