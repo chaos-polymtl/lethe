@@ -9,7 +9,7 @@
 #define DEMPARAMTERS_H_
 
 //#include "parameters.h"
-#include <core/parameters_dem.h>
+#include <core/parameters_lagrangian.h>
 
 template <int dim>
 class demparameters

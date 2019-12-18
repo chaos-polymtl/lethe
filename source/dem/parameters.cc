@@ -5,7 +5,7 @@
  *      Author: shahab
  */
 
-#include "core/parameters_dem.h"
+#include "core/parameters_lagrangian.h"
 
 namespace Parameters
 {
