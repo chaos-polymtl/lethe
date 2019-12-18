@@ -67,7 +67,7 @@
 
 #include "dem/contact_search.h"
 #include "dem/dem_iterator.h"
-#include "dem/dem_parameters.h"
+#include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/read_input_script.h"
