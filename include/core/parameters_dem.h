@@ -18,7 +18,8 @@ using namespace dealii;
 
 namespace Parameters
 {
-
+namespace DEM
+{
 	struct SimulationControl
 	{
 		// Time step
@@ -101,6 +102,8 @@ namespace Parameters
 	    void
 	    parse_parameters(ParameterHandler &prm);
 	};
+
+}
 }
 
 #endif /* PARAMETERS_H_ */

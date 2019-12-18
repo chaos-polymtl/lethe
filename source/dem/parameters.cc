@@ -9,6 +9,8 @@
 
 namespace Parameters
 {
+  namespace DEM
+  {
 	void SimulationControl::declare_parameters(ParameterHandler &prm)
 	{
 		prm.enter_subsection("simulation control");
@@ -127,6 +129,8 @@ namespace Parameters
 	    }
 	    prm.leave_subsection();
 	  }
+
+  }
 
 }
 
