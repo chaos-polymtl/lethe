@@ -5,7 +5,7 @@
  *      Author: shahab
  */
 
-#include "dem/writevtu.h"
+#include "dem/write_vtu.h"
 
 #include <deal.II/base/data_out_base.h>
 #include <fstream>

@@ -6,14 +6,14 @@
  */
 #include <deal.II/particles/particle_handler.h>
 
-#include "dem/demiterator.h"
+#include "dem/dem_iterator.h"
 #include "dem/integration.h"
-#include "dem/readinputscript.h"
+#include "dem/read_input_script.h"
 #include "dem/integration.h"
-#include "dem/contactsearch.h"
-#include "dem/contactforce.h"
-#include "dem/pwcontactdetection.h"
-#include "dem/pwcontactforce.h"
+#include "dem/contact_search.h"
+#include "dem/contact_force.h"
+#include "dem/particle_wall_contact_detection.h"
+#include "dem/particle_wall_contact_force.h"
 
 using namespace dealii;
 

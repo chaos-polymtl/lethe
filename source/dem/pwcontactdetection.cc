@@ -12,7 +12,7 @@
 #include <deal.II/particles/particle_handler.h>
 
 
-#include "dem/pwcontactdetection.h"
+#include "dem/particle_wall_contact_detection.h"
 #include <iostream>
 
 using namespace dealii;

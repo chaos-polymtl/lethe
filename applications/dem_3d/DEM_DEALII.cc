@@ -59,14 +59,14 @@
 #include <math.h>
 #include <tuple>
 #include <algorithm>
-#include "dem/demiterator.h"
-#include "dem/particleinsertion.h"
-#include "dem/readinputscript.h"
+#include "dem/dem_iterator.h"
+#include "dem/particle_insertion.h"
+#include "dem/read_input_script.h"
 #include "dem/visualization.h"
-#include "dem/writevtu.h"
-#include "dem/contactsearch.h"
-#include "dem/pwcontactdetection.h"
-#include "dem/demparamters.h"
+#include "dem/write_vtu.h"
+#include "dem/contact_search.h"
+#include "dem/particle_wall_contact_detection.h"
+#include "dem/dem_parameters.h"
 
 
 

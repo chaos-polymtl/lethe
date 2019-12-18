@@ -5,7 +5,7 @@
  *      Author: shahab
  */
 
-#include "dem/contactsearch.h"
+#include "dem/contact_search.h"
 #include <iostream>
 #include <vector>
 #include <deal.II/particles/particle.h>

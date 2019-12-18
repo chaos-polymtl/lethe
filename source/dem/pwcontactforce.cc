@@ -5,11 +5,11 @@
  *      Author: shahab
  */
 
-#include "dem/pwcontactforce.h"
+#include "dem/particle_wall_contact_force.h"
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/base/point.h>
-#include "dem/demiterator.h"
+#include "dem/dem_iterator.h"
 
 
 #include <iostream>
