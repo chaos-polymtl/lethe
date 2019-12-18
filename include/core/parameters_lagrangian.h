@@ -11,14 +11,14 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
-#ifndef PARAMETERS_H_
-#define PARAMETERS_H_
+#ifndef PARAMETERS_LAGRANGIAN_H_
+#define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
 
 namespace Parameters
 {
-namespace DEM
+namespace Lagrangian
 {
 	struct SimulationControl
 	{
