@@ -5,8 +5,8 @@
  *      Author: shahab
  */
 
-#include "dem/contactforce.h"
-#include "dem/demiterator.h"
+#include "dem/contact_force.h"
+#include "dem/dem_iterator.h"
 #include <deal.II/base/point.h>
 
 using namespace dealii;
