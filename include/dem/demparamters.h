@@ -12,19 +12,19 @@
 #include <core/parameters_dem.h>
 
 template <int dim>
-class demparamters {
+class demparameters {
 public:
-	Parameters::SimulationControl			simulationControl;
-	Parameters::PhysicalProperties			physicalProperties;
-	Parameters::InsertionInfo				insertionInfo;
-	Parameters::OutputProperties			outputProperties;
+	Parameters::DEM::SimulationControl			simulationControl;
+	Parameters::DEM::PhysicalProperties			physicalProperties;
+	Parameters::DEM::InsertionInfo				insertionInfo;
+	Parameters::DEM::OutputProperties			outputProperties;
 
 	void declare(ParameterHandler &prm)
 	  {
-		Parameters::SimulationControl::declare_parameters(prm);
-		Parameters::PhysicalProperties::declare_parameters(prm);
-		Parameters::InsertionInfo::declare_parameters(prm);
-		Parameters::OutputProperties::declare_parameters(prm);
+		Parameters::DEM::SimulationControl::declare_parameters(prm);
+		Parameters::DEM::PhysicalProperties::declare_parameters(prm);
+		Parameters::DEM::InsertionInfo::declare_parameters(prm);
+		Parameters::DEM::OutputProperties::declare_parameters(prm);
 	  }
 
 	  void parse(ParameterHandler &prm)

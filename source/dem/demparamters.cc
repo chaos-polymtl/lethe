@@ -5,8 +5,9 @@
  *      Author: shahab
  */
 
+#include "core/parameters_dem.h"
 #include "dem/demparamters.h"
 
-template class demparamters<2>;
-template class demparamters<3>;
+template class demparameters<2>;
+template class demparameters<3>;
 
