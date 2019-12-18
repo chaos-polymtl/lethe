@@ -1128,8 +1128,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const double relative_residual,
                                              const bool   renewed_matrix)
 {
-  TimerOutput::Scope t(this->computing_timer, "solve");
-
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
 
