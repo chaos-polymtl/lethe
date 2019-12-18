@@ -5,22 +5,26 @@
  *      Author: meteor
  */
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/particles/particle_handler.h>
 
 #include "read_input_script.h"
 
 
 #ifndef PARTICLEINSERTION_H_
-#define PARTICLEINSERTION_H_
+#  define PARTICLEINSERTION_H_
 
 
-class ParticleInsertion {
+class ParticleInsertion
+{
 public:
-
-	ParticleInsertion(ReadInputScript readInput);
-	void uniformInsertion(dealii::Particles::ParticleHandler<3, 3>&, const dealii::Triangulation<3, 3>&, ReadInputScript readInput, int&, dealii::Particles::PropertyPool&, dealii::Particles::Particle<3>&);
-
-
+  ParticleInsertion(ReadInputScript readInput);
+  void uniformInsertion(dealii::Particles::ParticleHandler<3, 3> &,
+                        const dealii::Triangulation<3, 3> &,
+                        ReadInputScript readInput,
+                        int &,
+                        dealii::Particles::PropertyPool &,
+                        dealii::Particles::Particle<3> &);
 };
 
 #endif /* PARTICLEINSERTION_H_ */

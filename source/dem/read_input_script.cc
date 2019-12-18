@@ -6,59 +6,67 @@
  */
 
 #include <dem/read_input_script.h>
-
-#include <iostream>
-#include <fstream>
 #include <math.h>
+
+#include <fstream>
+#include <iostream>
 
 using namespace std;
 
-ReadInputScript::ReadInputScript() {
-	int n = 3;
-	int m = 4;
+ReadInputScript::ReadInputScript()
+{
+  int n = 3;
+  int m = 4;
 
-	ifstream input("./InputScript.txt");
+  ifstream input("./InputScript.txt");
 
-	if (input.is_open())
-	{
-		while (!input.eof())
-		{
-			for (int j = 0; j < n-1; ++j) {
-			    input.ignore(1000, '\n');
-			  }
-			  input >> numOfParams >> diameter >> density >> CoR >> kn >> ethan >> kt >> ethat >> mu;
-			for (int j = 0; j < m-1; ++j) {
-			  	input.ignore(1000, '\n');
-			  }
-			  input >> ins_x_min >> ins_x_max >> ins_y_min >> ins_y_max >> ins_z_min >> ins_z_max;
-			for (int j = 0; j < m-1; ++j) {
-				 input.ignore(1000, '\n');
-			  }
-			  input >> x_min >> x_max >> y_min >> y_max >> z_min >> z_max;
-			for (int j = 0; j < m-1; ++j) {
-				 input.ignore(1000, '\n');
-			  }
-				 input >> dt >> tFinal;
-			for (int j = 0; j < m-1; ++j) {
-				 input.ignore(1000, '\n');
-			  }
-				 input >> tInsertion >> nTotal >> nInsert >> insertFrequncy;
-			for (int j = 0; j < m-1; ++j) {
-				 input.ignore(1000, '\n');
-			  }
-				 input >> g[0] >> g[1] >> g[2];
-			for (int j = 0; j < m-1; ++j) {
-				 input.ignore(1000, '\n');
-			 }
-				 input >> writeFrequency;
-		}
-// error handling
-				double pi = 3.14159265359;
-				float volume = (4.0/3.0) * pi * pow((diameter/2.0),3);
-				mass = volume * density;
-	}
-	else std::cout<<"input script is not open"<<std::endl;
-
+  if (input.is_open())
+    {
+      while (!input.eof())
+        {
+          for (int j = 0; j < n - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> numOfParams >> diameter >> density >> CoR >> kn >> ethan >>
+            kt >> ethat >> mu;
+          for (int j = 0; j < m - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> ins_x_min >> ins_x_max >> ins_y_min >> ins_y_max >>
+            ins_z_min >> ins_z_max;
+          for (int j = 0; j < m - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> x_min >> x_max >> y_min >> y_max >> z_min >> z_max;
+          for (int j = 0; j < m - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> dt >> tFinal;
+          for (int j = 0; j < m - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> tInsertion >> nTotal >> nInsert >> insertFrequncy;
+          for (int j = 0; j < m - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> g[0] >> g[1] >> g[2];
+          for (int j = 0; j < m - 1; ++j)
+            {
+              input.ignore(1000, '\n');
+            }
+          input >> writeFrequency;
+        }
+      // error handling
+      double pi     = 3.14159265359;
+      float  volume = (4.0 / 3.0) * pi * pow((diameter / 2.0), 3);
+      mass          = volume * density;
+    }
+  else
+    std::cout << "input script is not open" << std::endl;
 }
-
-

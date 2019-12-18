@@ -12,29 +12,31 @@
 #include <core/parameters_dem.h>
 
 template <int dim>
-class demparameters {
+class demparameters
+{
 public:
-	Parameters::Lagrangian::SimulationControl			simulationControl;
-	Parameters::Lagrangian::PhysicalProperties			physicalProperties;
-	Parameters::Lagrangian::InsertionInfo				insertionInfo;
-	Parameters::Lagrangian::OutputProperties			outputProperties;
+  Parameters::Lagrangian::SimulationControl  simulationControl;
+  Parameters::Lagrangian::PhysicalProperties physicalProperties;
+  Parameters::Lagrangian::InsertionInfo      insertionInfo;
+  Parameters::Lagrangian::OutputProperties   outputProperties;
 
-	void declare(ParameterHandler &prm)
-	  {
-		Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
-		Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
-		Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
-		Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
-	  }
+  void
+  declare(ParameterHandler &prm)
+  {
+    Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
+    Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
+    Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
+    Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
+  }
 
-	  void parse(ParameterHandler &prm)
-	  {
-		  physicalProperties.parse_parameters(prm);
-		  insertionInfo.parse_parameters(prm);
-		  simulationControl.parse_parameters(prm);
-		  outputProperties.parse_parameters(prm);
-
-	  }
+  void
+  parse(ParameterHandler &prm)
+  {
+    physicalProperties.parse_parameters(prm);
+    insertionInfo.parse_parameters(prm);
+    simulationControl.parse_parameters(prm);
+    outputProperties.parse_parameters(prm);
+  }
 };
 
 #endif /* DEMPARAMTERS_H_ */
