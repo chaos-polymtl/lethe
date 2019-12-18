@@ -17,10 +17,10 @@
 
 #include "dem/dem_iterator.h"
 
-PWContactForce::PWContactForce()
+ParticleWallContactForce::ParticleWallContactForce()
 {}
 
-void PWContactForce::pwLinearCF(
+void ParticleWallContactForce::pwLinearCF(
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                          Point<3>,
                          Point<3>,
@@ -91,13 +91,13 @@ void PWContactForce::pwLinearCF(
 }
 
 
-double PWContactForce::vecValue(Point<3> A)
+double ParticleWallContactForce::vecValue(Point<3> A)
 {
   return (sqrt(pow(A[0], 2) + pow(A[1], 2) + pow(A[2], 2)));
 }
 
 int
-PWContactForce::sgn(float a)
+ParticleWallContactForce::sgn(float a)
 {
   int b;
   if (a > 0)
