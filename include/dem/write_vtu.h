@@ -20,7 +20,7 @@
 #include "visualization.h"
 
 #ifndef DEM_WRITEVTU_H_
-#define DEM_WRITEVTU_H_
+#  define DEM_WRITEVTU_H_
 
 class WriteVTU
 {

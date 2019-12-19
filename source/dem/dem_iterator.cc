@@ -110,8 +110,10 @@ DEM_iterator::engine(
   ContactSearch cs;
   // if (fmod(step,10) == 1)
   //	{
-  contactPairs = cs.findContactPairs(
-    nPart, particle_handler, tr, cellNeighbor.second, cellNeighbor.first);
+  contactPairs = cs.findContactPairs(particle_handler,
+                                     tr,
+                                     cellNeighbor.second,
+                                     cellNeighbor.first);
   //	}
 
   cs.fineSearch(contactPairs, particle_handler, contactInfo, readInput.dt);
@@ -152,18 +154,20 @@ DEM_iterator::engine(
   particle_handler.sort_particles_into_subdomains_and_cells();
 
   //	for (auto particle = particle_handler.begin(); particle !=
-  //particle_handler.end(); ++particle)
+  // particle_handler.end(); ++particle)
   //			{
   //	std:: cout <<"force: "<< particle->get_properties()[13]<< " " <<
-  //particle->get_properties()[14] << " " << particle->get_properties()[15] <<
-  //std::endl;
+  // particle->get_properties()[14] << " " << particle->get_properties()[15] <<
+  // std::endl;
   //
   //			std:: cout <<"acceleration: "<< particle->get_properties()[10]<< " "
   //<<  particle->get_properties()[11] << " " << particle->get_properties()[12]
-  //<< std::endl; 			std:: cout <<"velocity: "<< particle->get_properties()[7]<< "
-  //" <<  particle->get_properties()[8] << " " << particle->get_properties()[9]
-  //<< std::endl; 			std:: cout <<"position: " << particle->get_properties()[4]<< "
-  //" <<  particle->get_properties()[5] << " " << particle->get_properties()[6]
+  //<< std::endl; 			std:: cout <<"velocity: "<<
+  //particle->get_properties()[7]<< " " <<  particle->get_properties()[8] << " "
+  //<< particle->get_properties()[9]
+  //<< std::endl; 			std:: cout <<"position: " <<
+  //particle->get_properties()[4]<< " " <<  particle->get_properties()[5] << " "
+  //<< particle->get_properties()[6]
   //<< std::endl;
   //			}
 
