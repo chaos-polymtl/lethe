@@ -37,13 +37,12 @@ public:
   ContactSearch();
   std::vector<std::pair<Particles::ParticleIterator<3, 3>,
                         Particles::ParticleIterator<3, 3>>>
-  findContactPairs(
-    int,
-    dealii::Particles::ParticleHandler<3, 3> &,
-    const Triangulation<3, 3> &,
-    std::vector<Triangulation<3>::active_cell_iterator>,
-    std::vector<std::set<Triangulation<3>::active_cell_iterator>>);
-  // question? why doesnt work by passing by value?
+    findContactPairs(
+      dealii::Particles::ParticleHandler<3, 3> &,
+      const Triangulation<3, 3> &,
+      std::vector<Triangulation<3>::active_cell_iterator>,
+      std::vector<std::set<Triangulation<3>::active_cell_iterator>>);
+
   std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
             std::vector<Triangulation<3>::active_cell_iterator>>
        findCellNeighbors(int, const Triangulation<3, 3> &);

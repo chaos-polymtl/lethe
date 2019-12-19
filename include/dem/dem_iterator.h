@@ -21,7 +21,7 @@
 #include "read_input_script.h"
 
 #ifndef DEMITERATOR_H_
-#define DEMITERATOR_H_
+#  define DEMITERATOR_H_
 
 class DEM_iterator
 {

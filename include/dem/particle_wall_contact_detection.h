@@ -32,7 +32,7 @@ using namespace dealii;
 
 
 #ifndef PWCONTACTDETECTION_H_
-#define PWCONTACTDETECTION_H_
+#  define PWCONTACTDETECTION_H_
 
 class ParticleWallContactDetection
 {

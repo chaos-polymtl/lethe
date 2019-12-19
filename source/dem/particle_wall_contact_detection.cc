@@ -304,7 +304,8 @@ void ParticleWallContactDetection::pwFineSearch(
 
 
 
-Point<3> ParticleWallContactDetection::findProjection(Point<3> pointA, Point<3> pointB)
+Point<3> ParticleWallContactDetection::findProjection(Point<3> pointA,
+                                                      Point<3> pointB)
 {
   Point<3> pointC;
   pointC = ((dotProduct(pointA, pointB)) / (pointB.square())) * pointB;
