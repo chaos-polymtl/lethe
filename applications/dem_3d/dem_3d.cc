@@ -148,7 +148,9 @@ main(int argc, char *argv[])
   Particles::PropertyPool pool(DEMparam.outputProperties.numProperties);
 
 
-  int cellNum = pow(pow(2, numRef), 3);
+  int cellNum = tr.n_active_cells();
+
+
   std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
             std::vector<Triangulation<3>::active_cell_iterator>>
                 cellNeighbor;
