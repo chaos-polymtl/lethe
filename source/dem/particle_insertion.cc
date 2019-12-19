@@ -29,7 +29,6 @@
 
 #include "dem/read_input_script.h"
 #include "iostream"
-#include <deal.II/grid/grid_tools.h>
 
 
 
