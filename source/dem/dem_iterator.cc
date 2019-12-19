@@ -163,10 +163,12 @@ DEM_iterator::engine(
   //			std:: cout <<"acceleration: "<< particle->get_properties()[10]<< " "
   //<<  particle->get_properties()[11] << " " << particle->get_properties()[12]
   //<< std::endl; 			std:: cout <<"velocity: "<<
-  //particle->get_properties()[7]<< " " <<  particle->get_properties()[8] << " "
+  // particle->get_properties()[7]<< " " <<  particle->get_properties()[8] << "
+  // "
   //<< particle->get_properties()[9]
   //<< std::endl; 			std:: cout <<"position: " <<
-  //particle->get_properties()[4]<< " " <<  particle->get_properties()[5] << " "
+  // particle->get_properties()[4]<< " " <<  particle->get_properties()[5] << "
+  // "
   //<< particle->get_properties()[6]
   //<< std::endl;
   //			}
