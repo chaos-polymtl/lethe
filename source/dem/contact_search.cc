@@ -72,9 +72,55 @@ ContactSearch::findContactPairs(
   std::vector<Triangulation<3>::active_cell_iterator> totallCellList,
   std::vector<std::set<Triangulation<3>::active_cell_iterator>>
     cellNeighborList)
+
+
+//2nd method:
+  {
+  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
+                        Particles::ParticleIterator<3, 3>>>
+    contactPairs;
+  int index = 0;
+  for (Triangulation<3>::active_cell_iterator cell = tr.begin_active();
+       cell != tr.end();
+       ++cell, ++index)
+  {
+      const Particles::ParticleHandler<3, 3>::particle_iterator_range particle_range = particle_handler.particles_in_cell(cell);
+
+
+      for (auto cellIt = cellNeighborList[index].begin();
+           cellIt != cellNeighborList[index].end();
+           cellIt++)
+        {
+          const Particles::ParticleHandler<3, 3>::particle_iterator_range
+            particle_range2 = particle_handler.particles_in_cell(*cellIt);
+
+      for (typename Particles::ParticleHandler<3, 3>::particle_iterator_range::iterator partIter =particle_range.begin();  partIter != particle_range.end(); ++partIter)
+        {
+          for (typename Particles::ParticleHandler<3, 3>::particle_iterator_range::iterator partIter2 =particle_range2.begin();  partIter2 != particle_range2.end(); ++partIter2)
+      {
+              auto cPair  = std::make_pair(partIter2, partIter);
+              auto cPair2 = std::make_pair(partIter, partIter2);
+              auto it2 =
+                std::find(contactPairs.begin(), contactPairs.end(), cPair);
+              auto it3 =
+                std::find(contactPairs.begin(), contactPairs.end(), cPair2);
+              if (it2 == contactPairs.end())
+                if (it3 == contactPairs.end())
+                  if (partIter2 != partIter)
+                    contactPairs.push_back(cPair);
+      }
+      }
+
+      }
+  }
+
+  return contactPairs;
+}
+
+
+//1st method:
+/*
 {
-  std::vector<std::vector<Particles::ParticleIterator<3, 3>>> contactList(
-    nPart + 1, std::vector<Particles::ParticleIterator<3, 3>>());
   std::vector<std::pair<Particles::ParticleIterator<3, 3>,
                         Particles::ParticleIterator<3, 3>>>
     contactPairs;
@@ -82,7 +128,6 @@ ContactSearch::findContactPairs(
     {
       contactPairs.clear();
     }
-
   Triangulation<3>::active_cell_iterator currrentCell;
   for (auto particleIter = particle_handler.begin();
        particleIter != particle_handler.end();
@@ -94,7 +139,6 @@ ContactSearch::findContactPairs(
       auto it1 =
         std::find(totallCellList.begin(), totallCellList.end(), currrentCell);
       int index = std::distance(totallCellList.begin(), it1);
-
       for (auto cellIt = cellNeighborList[index].begin();
            cellIt != cellNeighborList[index].end();
            cellIt++)
@@ -107,7 +151,6 @@ ContactSearch::findContactPairs(
                partIter != particle_range.end();
                ++partIter)
             {
-              contactList[particleIter->get_id()].push_back(partIter);
               auto cPair  = std::make_pair(particleIter, partIter);
               auto cPair2 = std::make_pair(partIter, particleIter);
               auto it2 =
@@ -123,6 +166,9 @@ ContactSearch::findContactPairs(
     }
   return contactPairs;
 }
+
+*/
+
 
 
 void ContactSearch::fineSearch(
