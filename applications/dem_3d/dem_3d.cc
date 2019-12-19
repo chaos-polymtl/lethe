@@ -2,38 +2,33 @@
 
 #include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
-
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
-
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
-#include <deal.II/base/point.h>
-#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/base/function_lib.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/partitioner.h>
+#include <deal.II/base/point.h>
 #include <deal.II/base/quadrature_lib.h>
 
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping.h>
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_refinement.h>
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/sparse_matrix.h>
@@ -43,19 +38,9 @@
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/vector_tools.h>
 
-
-
-#include <deal.II/dofs/dof_tools.h>
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/dofs/dof_accessor.h>
-#include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
-
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/particles/particle.h>
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/particle_iterator.h>
 
 #include <math.h>
 
@@ -186,7 +171,7 @@ main(int argc, char *argv[])
                          int,
                          Point<3>,
                          Point<3>>>
-                     boundaryCellInfo;
+                               boundaryCellInfo;
   ParticleWallContactDetection pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 

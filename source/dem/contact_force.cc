@@ -90,9 +90,9 @@ void ContactForce::linearCF(
           -1.0 * std::get<0>(contactInfo[i]).first->get_properties()[15];
 
         //	std::cout<<"the contact force is: " <<
-        //std::get<0>(contactInfo[i]).first->get_properties()[13] << " " <<
-        //std::get<0>(contactInfo[i]).first->get_properties()[14] << " " <<
-        //std::get<0>(contactInfo[i]).first->get_properties()[15] << std::endl;
+        // std::get<0>(contactInfo[i]).first->get_properties()[13] << " " <<
+        // std::get<0>(contactInfo[i]).first->get_properties()[14] << " " <<
+        // std::get<0>(contactInfo[i]).first->get_properties()[15] << std::endl;
 
 
         // calculation of torque
