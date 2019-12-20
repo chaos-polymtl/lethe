@@ -55,7 +55,6 @@
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
-#include "dem/read_input_script.h"
 #include "dem/visualization.h"
 #include "dem/write_vtu.h"
 
@@ -117,8 +116,7 @@ main(int argc, char *argv[])
   int   DEM_step = 0;
   float DEM_time = 0;
 
-  ReadInputScript   readInput;
-  ParticleInsertion ins1(readInput);
+  ParticleInsertion ins1(DEMparam);
 
   parallel::distributed::Triangulation<3, 3> tr(MPI_COMM_WORLD);
 
@@ -177,18 +175,18 @@ main(int argc, char *argv[])
 
 
   // Insertion phase:
-  while (DEM_step < readInput.tInsertion)
+  while (DEM_step < DEMparam.insertionInfo.tInsertion)
     {
-      if (nPart < readInput.nTotal) // number < total number
+      if (nPart < DEMparam.simulationControl.nTotal) // number < total number
         {
-          if (fmod(DEM_step, readInput.insertFrequncy) == 1)
+          if (fmod(DEM_step, DEMparam.insertionInfo.insertFrequncy) == 1)
             {
               ins1.uniformInsertion(
-                particle_handler, tr, readInput, nPart, pool, particle);
+                particle_handler, tr, DEMparam, nPart, pool, particle);
             }
         }
 
-      if (fmod(DEM_step, readInput.writeFrequency) == 1)
+      if (fmod(DEM_step, DEMparam.simulationControl.writeFrequency) == 1)
         {
           Visualization visObj;
           visObj.build_patches(particle_handler,
@@ -216,7 +214,7 @@ main(int argc, char *argv[])
                    tr,
                    DEM_step,
                    DEM_time,
-                   readInput,
+                   DEMparam,
                    cellNeighbor,
                    contactInfo,
                    boundaryCellInfo,
@@ -225,9 +223,9 @@ main(int argc, char *argv[])
     }
 
   // Operation phase:
-  while (DEM_step < readInput.tFinal)
+  while (DEM_step < DEMparam.simulationControl.tFinal)
     {
-      if (fmod(DEM_step, readInput.writeFrequency) == 1)
+      if (fmod(DEM_step, DEMparam.simulationControl.writeFrequency) == 1)
         {
           Visualization visObj;
           visObj.build_patches(particle_handler,
@@ -249,7 +247,7 @@ main(int argc, char *argv[])
                    tr,
                    DEM_step,
                    DEM_time,
-                   readInput,
+                   DEMparam,
                    cellNeighbor,
                    contactInfo,
                    boundaryCellInfo,

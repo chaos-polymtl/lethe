@@ -16,7 +16,7 @@ Integration::Integration()
 
 void Integration::eulerIntegration(
   Particles::ParticleHandler<3, 3> &particle_handler,
-  ReadInputScript                   readInput)
+  ParametersDEM<3> DEMparam)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -24,32 +24,32 @@ void Integration::eulerIntegration(
     {
       // Acceleration calculation:
       particle->get_properties()[10] =
-        readInput.g[0] + (particle->get_properties()[13]) / readInput.mass;
+        DEMparam.physicalProperties.gx + (particle->get_properties()[13]) / (particle->get_properties()[19]);
       particle->get_properties()[11] =
-        readInput.g[1] + (particle->get_properties()[14]) / readInput.mass;
+        DEMparam.physicalProperties.gy + (particle->get_properties()[14]) / (particle->get_properties()[19]);
       particle->get_properties()[12] =
-        readInput.g[2] + (particle->get_properties()[15]) / readInput.mass;
+        DEMparam.physicalProperties.gz + (particle->get_properties()[15]) / (particle->get_properties()[19]);
 
       // Velocity integration:
       particle->get_properties()[7] =
         particle->get_properties()[7] +
-        readInput.dt * particle->get_properties()[10];
+        DEMparam.simulationControl.dt * particle->get_properties()[10];
       particle->get_properties()[8] =
         particle->get_properties()[8] +
-        readInput.dt * particle->get_properties()[11];
+        DEMparam.simulationControl.dt * particle->get_properties()[11];
       particle->get_properties()[9] =
         particle->get_properties()[9] +
-        readInput.dt * particle->get_properties()[12];
+        DEMparam.simulationControl.dt * particle->get_properties()[12];
       // Position integration:
       particle->get_properties()[4] =
         particle->get_properties()[4] +
-        readInput.dt * particle->get_properties()[7];
+        DEMparam.simulationControl.dt * particle->get_properties()[7];
       particle->get_properties()[5] =
         particle->get_properties()[5] +
-        readInput.dt * particle->get_properties()[8];
+        DEMparam.simulationControl.dt * particle->get_properties()[8];
       particle->get_properties()[6] =
         particle->get_properties()[6] +
-        readInput.dt * particle->get_properties()[9];
+        DEMparam.simulationControl.dt * particle->get_properties()[9];
 
       particle->set_location({particle->get_properties()[4],
                               particle->get_properties()[5],
