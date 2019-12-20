@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "integration.h"
 #include "dem/parameters_dem.h"
+#include "integration.h"
 
 
 #ifndef DEMITERATOR_H_
@@ -64,7 +64,7 @@ public:
 
 private:
   void forceReinit(Particles::ParticleHandler<3, 3> &);
-  //void checkSimBound(Particles::ParticleHandler<3, 3> &, ReadInputScript);
+  // void checkSimBound(Particles::ParticleHandler<3, 3> &, ReadInputScript);
 };
 
 #endif /* DEMITERATOR_H_ */

@@ -11,9 +11,9 @@
 #include "dem/contact_force.h"
 #include "dem/contact_search.h"
 #include "dem/integration.h"
+#include "dem/parameters_dem.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
-#include "dem/parameters_dem.h"
 
 using namespace dealii;
 
@@ -62,7 +62,7 @@ DEM_iterator::engine(
   const Triangulation<3, 3> &       tr,
   int &                             step,
   float &                           time,
-   ParametersDEM<3> DEMparam,
+  ParametersDEM<3>                  DEMparam,
   std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
             std::vector<Triangulation<3>::active_cell_iterator>> cellNeighbor,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
@@ -93,7 +93,7 @@ DEM_iterator::engine(
 
 
   // check simulation boundaries
-  //checkSimBound(particle_handler, readInput);
+  // checkSimBound(particle_handler, readInput);
 
 
   // contact search
@@ -116,7 +116,10 @@ DEM_iterator::engine(
                                      cellNeighbor.first);
   //	}
 
-  cs.fineSearch(contactPairs, particle_handler, contactInfo, DEMparam.simulationControl.dt);
+  cs.fineSearch(contactPairs,
+                particle_handler,
+                contactInfo,
+                DEMparam.simulationControl.dt);
 
   // contact force
   ContactForce cf;
@@ -136,7 +139,10 @@ DEM_iterator::engine(
   //}
 
 
-  pw.pwFineSearch(pwContactList, particle_handler, pwContactInfo, DEMparam.simulationControl.dt);
+  pw.pwFineSearch(pwContactList,
+                  particle_handler,
+                  pwContactInfo,
+                  DEMparam.simulationControl.dt);
 
 
   // p-w contact force:
