@@ -20,8 +20,7 @@
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
-
-#include "read_input_script.h"
+#include "dem/parameters_dem.h"
 
 
 #ifndef PARTICLEINSERTION_H_
@@ -31,10 +30,10 @@
 class ParticleInsertion
 {
 public:
-  ParticleInsertion(ReadInputScript readInput);
+  ParticleInsertion(ParametersDEM<3>);
   void uniformInsertion(dealii::Particles::ParticleHandler<3, 3> &,
                         const dealii::Triangulation<3, 3> &,
-                        ReadInputScript readInput,
+                        ParametersDEM<3>,
                         int &,
                         dealii::Particles::PropertyPool &,
                         dealii::Particles::Particle<3> &);

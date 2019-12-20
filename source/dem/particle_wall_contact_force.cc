@@ -30,16 +30,16 @@ void ParticleWallContactForce::pwLinearCF(
                          Point<3>,
                          double>>   pwContactInfo,
   Particles::ParticleHandler<3, 3> &particle_handler,
-  ReadInputScript                   readInput)
+  ParametersDEM<3> DEMparam)
 {
   for (unsigned int i = 0; i < pwContactInfo.size(); i++)
     {
       {
         Point<3> springNormForce =
-          (readInput.kn * std::get<3>(pwContactInfo[i])) *
+          (DEMparam.physicalProperties.kn * std::get<3>(pwContactInfo[i])) *
           std::get<1>(pwContactInfo[i]);
         Point<3> dashpotNormForce =
-          (readInput.ethan * std::get<4>(pwContactInfo[i])) *
+          (DEMparam.physicalProperties.ethan * std::get<4>(pwContactInfo[i])) *
           std::get<1>(pwContactInfo[i]);
         Point<3> normalForce = springNormForce + dashpotNormForce;
 
@@ -51,14 +51,14 @@ void ParticleWallContactForce::pwLinearCF(
           normalForce[2];
 
         Point<3> springTangForce =
-          (readInput.kt * std::get<5>(pwContactInfo[i])) *
+          (DEMparam.physicalProperties.kt * std::get<5>(pwContactInfo[i])) *
           std::get<6>(pwContactInfo[i]);
         Point<3> dashpotTangForce =
-          (readInput.ethat * std::get<7>(pwContactInfo[i])) *
+          (DEMparam.physicalProperties.ethat * std::get<7>(pwContactInfo[i])) *
           std::get<6>(pwContactInfo[i]);
         Point<3> tangForce = springTangForce + dashpotTangForce;
 
-        if (vecValue(tangForce) < (readInput.mu * vecValue(normalForce)))
+        if (vecValue(tangForce) < (DEMparam.physicalProperties.mu * vecValue(normalForce)))
           {
             std::get<0>(pwContactInfo[i]).first->get_properties()[13] =
               std::get<0>(pwContactInfo[i]).first->get_properties()[13] +
@@ -73,7 +73,7 @@ void ParticleWallContactForce::pwLinearCF(
         else
           {
             Point<3> coulumbTangForce =
-              (-1.0 * readInput.mu * vecValue(normalForce) *
+              (-1.0 * DEMparam.physicalProperties.mu * vecValue(normalForce) *
                sgn(std::get<5>(pwContactInfo[i]))) *
               std::get<6>(pwContactInfo[i]);
             std::get<0>(pwContactInfo[i]).first->get_properties()[13] =
