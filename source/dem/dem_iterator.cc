@@ -93,7 +93,7 @@ DEM_iterator::engine(
 
 
   // check simulation boundaries
-  checkSimBound(particle_handler, readInput);
+  //checkSimBound(particle_handler, readInput);
 
 
   // contact search
