@@ -81,7 +81,6 @@ main(int argc, char *argv[])
   prm.parse_input(filename);
   DEMparam.parse(prm);
 
-  // std::cout<<"gz is: " << DEMparam.physicalProperties.gz<< std::endl;
 
 
 
