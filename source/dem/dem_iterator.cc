@@ -13,7 +13,7 @@
 #include "dem/integration.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
-#include "dem/read_input_script.h"
+#include "dem/parameters_dem.h"
 
 using namespace dealii;
 
@@ -33,7 +33,7 @@ void
     }
 }
 
-
+/*
 void DEM_iterator::checkSimBound(
   Particles::ParticleHandler<3, 3> &particle_handler,
   ReadInputScript                   readInput)
@@ -53,7 +53,7 @@ void DEM_iterator::checkSimBound(
         }
     }
 }
-
+*/
 
 void
 DEM_iterator::engine(
@@ -62,7 +62,7 @@ DEM_iterator::engine(
   const Triangulation<3, 3> &       tr,
   int &                             step,
   float &                           time,
-  ReadInputScript                   readInput,
+   ParametersDEM<3> DEMparam,
   std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
             std::vector<Triangulation<3>::active_cell_iterator>> cellNeighbor,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
@@ -116,11 +116,11 @@ DEM_iterator::engine(
                                      cellNeighbor.first);
   //	}
 
-  cs.fineSearch(contactPairs, particle_handler, contactInfo, readInput.dt);
+  cs.fineSearch(contactPairs, particle_handler, contactInfo, DEMparam.simulationControl.dt);
 
   // contact force
   ContactForce cf;
-  cf.linearCF(contactInfo, particle_handler, readInput);
+  cf.linearCF(contactInfo, particle_handler, DEMparam);
 
   // p-w contact detection:
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
@@ -136,17 +136,17 @@ DEM_iterator::engine(
   //}
 
 
-  pw.pwFineSearch(pwContactList, particle_handler, pwContactInfo, readInput.dt);
+  pw.pwFineSearch(pwContactList, particle_handler, pwContactInfo, DEMparam.simulationControl.dt);
 
 
   // p-w contact force:
   ParticleWallContactForce pwcf;
-  pwcf.pwLinearCF(pwContactInfo, particle_handler, readInput);
+  pwcf.pwLinearCF(pwContactInfo, particle_handler, DEMparam);
 
 
   // Integration
   Integration Integ1;
-  Integ1.eulerIntegration(particle_handler, readInput);
+  Integ1.eulerIntegration(particle_handler, DEMparam);
 
 
 
@@ -182,5 +182,5 @@ DEM_iterator::engine(
 
 
   step = step + 1;
-  time = step * readInput.dt;
+  time = step * DEMparam.simulationControl.dt;
 }

@@ -23,8 +23,7 @@
 #include <iostream>
 #include <tuple>
 #include <vector>
-
-#include "read_input_script.h"
+#include "dem/parameters_dem.h"
 
 using namespace dealii;
 
@@ -45,7 +44,7 @@ public:
                            Point<3>,
                            double>>,
     Particles::ParticleHandler<3, 3> &,
-    ReadInputScript);
+    ParametersDEM<3>);
 
 private:
   double vecValue(Point<3>);
