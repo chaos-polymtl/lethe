@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_insertion.h"
+#include "dem/particle_wall_contact_detection.h"
 
 using namespace dealii;
 
@@ -75,7 +75,7 @@ test()
   pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
 
 
-    for (unsigned int i = 0; i != pwContactList.size(); i++)
+  for (unsigned int i = 0; i != pwContactList.size(); i++)
     {
       deallog << "Particle " << std::get<0>(pwContactList[i]).first->get_id()
               << " is located in a boundary cell" << std::endl;

@@ -18,6 +18,7 @@
  */
 
 #include <deal.II/particles/particle_handler.h>
+
 #include "dem/parameters_dem.h"
 using namespace dealii;
 

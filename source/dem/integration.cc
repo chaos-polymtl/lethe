@@ -16,7 +16,7 @@ Integration::Integration()
 
 void Integration::eulerIntegration(
   Particles::ParticleHandler<3, 3> &particle_handler,
-  ParametersDEM<3> DEMparam)
+  ParametersDEM<3>                  DEMparam)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -24,11 +24,14 @@ void Integration::eulerIntegration(
     {
       // Acceleration calculation:
       particle->get_properties()[10] =
-        DEMparam.physicalProperties.gx + (particle->get_properties()[13]) / (particle->get_properties()[19]);
+        DEMparam.physicalProperties.gx +
+        (particle->get_properties()[13]) / (particle->get_properties()[19]);
       particle->get_properties()[11] =
-        DEMparam.physicalProperties.gy + (particle->get_properties()[14]) / (particle->get_properties()[19]);
+        DEMparam.physicalProperties.gy +
+        (particle->get_properties()[14]) / (particle->get_properties()[19]);
       particle->get_properties()[12] =
-        DEMparam.physicalProperties.gz + (particle->get_properties()[15]) / (particle->get_properties()[19]);
+        DEMparam.physicalProperties.gz +
+        (particle->get_properties()[15]) / (particle->get_properties()[19]);
 
       // Velocity integration:
       particle->get_properties()[7] =
