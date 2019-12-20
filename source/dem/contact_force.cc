@@ -29,15 +29,15 @@ void ContactForce::linearCF(
                          double,
                          double>>   contactInfo,
   Particles::ParticleHandler<3, 3> &particle_handler,
-  ReadInputScript                   readInput)
+  ParametersDEM<3> DEMparam)
 {
   for (unsigned int i = 0; i < contactInfo.size(); i++)
     {
       {
         std::vector<double> normalForce = {vecSubtract(
-          numVecProd((-1.0 * readInput.kn * std::get<2>(contactInfo[i])),
+          numVecProd((-1.0 * DEMparam.physicalProperties.kn * std::get<2>(contactInfo[i])),
                      std::get<3>(contactInfo[i])),
-          numVecProd((readInput.ethan * std::get<4>(contactInfo[i])),
+          numVecProd((DEMparam.physicalProperties.ethan * std::get<4>(contactInfo[i])),
                      std::get<3>(contactInfo[i])))};
 
         std::get<0>(contactInfo[i]).first->get_properties()[13] =
@@ -48,12 +48,12 @@ void ContactForce::linearCF(
           normalForce[2];
 
         std::vector<double> tangForce = {vecSubtract(
-          numVecProd((-1.0 * readInput.kt * std::get<8>(contactInfo[i])),
+          numVecProd((-1.0 * DEMparam.physicalProperties.kt * std::get<8>(contactInfo[i])),
                      std::get<6>(contactInfo[i])),
-          numVecProd((readInput.ethat * std::get<7>(contactInfo[i])),
+          numVecProd((DEMparam.physicalProperties.ethat * std::get<7>(contactInfo[i])),
                      std::get<6>(contactInfo[i])))};
 
-        if (vecValue(tangForce) < (readInput.mu * vecValue(normalForce)))
+        if (vecValue(tangForce) < (DEMparam.physicalProperties.mu * vecValue(normalForce)))
           {
             std::get<0>(contactInfo[i]).first->get_properties()[13] =
               std::get<0>(contactInfo[i]).first->get_properties()[13] +
@@ -68,7 +68,7 @@ void ContactForce::linearCF(
         else
           {
             std::vector<double> coulumbTangForce = {
-              numVecProd((readInput.mu * vecValue(normalForce) *
+              numVecProd((DEMparam.physicalProperties.mu * vecValue(normalForce) *
                           sgn(std::get<8>(contactInfo[i]))),
                          std::get<6>(contactInfo[i]))};
             std::get<0>(contactInfo[i]).first->get_properties()[13] =

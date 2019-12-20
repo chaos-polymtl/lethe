@@ -18,8 +18,7 @@
  */
 
 #include <deal.II/particles/particle_handler.h>
-
-#include "read_input_script.h"
+#include "dem/parameters_dem.h"
 using namespace dealii;
 
 #ifndef INTEGRATION_H_
@@ -29,7 +28,7 @@ class Integration
 {
 public:
   Integration();
-  void eulerIntegration(Particles::ParticleHandler<3, 3> &, ReadInputScript);
+  void eulerIntegration(Particles::ParticleHandler<3, 3> &, ParametersDEM<3>);
   void velVerIntegration(Particles::ParticleHandler<3, 3> &, float);
   void
   gearIntegration();

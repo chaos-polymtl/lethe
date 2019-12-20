@@ -27,25 +27,24 @@
 #include <fstream>
 #include <string>
 
-#include "dem/read_input_script.h"
 #include "iostream"
 
 
 
 using namespace dealii;
 
-ParticleInsertion::ParticleInsertion(ReadInputScript readInput)
+ParticleInsertion::ParticleInsertion(ParametersDEM<3> DEMparam)
 {
   int n_exp;
 
   n_exp =
-    int((readInput.ins_x_max - readInput.ins_x_min) /
-        (2 * readInput.diameter)) *
-    int((readInput.ins_y_max - readInput.ins_y_min) /
-        (2 * readInput.diameter)) *
-    int((readInput.ins_z_max - readInput.ins_z_min) / (2 * readInput.diameter));
-  if (readInput.nInsert > n_exp)
-    std::cout << "The inserted number of particles (" << readInput.nInsert
+    int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
+        (2 * DEMparam.physicalProperties.diameter)) *
+    int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) /
+        (2 * DEMparam.physicalProperties.diameter)) *
+    int((DEMparam.insertionInfo.z_max - DEMparam.insertionInfo.z_min) / (2 * DEMparam.physicalProperties.diameter));
+  if (DEMparam.insertionInfo.nInsert > n_exp)
+    std::cout << "The inserted number of particles (" << DEMparam.insertionInfo.nInsert
               << ") is higher than maximum expected number of particles ("
               << n_exp << ")" << std::endl;
 } // add error here
@@ -54,7 +53,7 @@ ParticleInsertion::ParticleInsertion(ReadInputScript readInput)
 void ParticleInsertion::uniformInsertion(
   Particles::ParticleHandler<3, 3> &particle_handler,
   const Triangulation<3, 3> &       tr,
-  ReadInputScript                   readInput,
+  ParametersDEM<3> DEMparam,
   int &                             nPart,
   Particles::PropertyPool &         pool,
   Particles::Particle<3> &          particle)
@@ -62,29 +61,29 @@ void ParticleInsertion::uniformInsertion(
   /// typename Particles::PropertyPool::Handle handle =
   /// pool.allocate_properties_array();
   int nx =
-    int((readInput.ins_x_max - readInput.ins_x_min) / (2 * readInput.diameter));
+    int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) / (2 * DEMparam.physicalProperties.diameter));
   int ny =
-    int((readInput.ins_y_max - readInput.ins_y_min) / (2 * readInput.diameter));
+    int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) / (2 * DEMparam.physicalProperties.diameter));
   int nz =
-    int((readInput.ins_z_max - readInput.ins_z_min) / (2 * readInput.diameter));
+    int((DEMparam.insertionInfo.z_max - DEMparam.insertionInfo.z_min) / (2 * DEMparam.physicalProperties.diameter));
   int nP = 0;
 
 
   for (int i = 0; i < nx; ++i)
     for (int j = 0; j < ny; ++j)
       for (int k = 0; k < nz; ++k)
-        if (nP < readInput.nInsert)
+        if (nP < DEMparam.insertionInfo.nInsert)
           {
             Point<3>     position;
             Point<3>     reference_position;
             unsigned int id;
 
-            position[0] = readInput.ins_x_min + (readInput.diameter / 2) +
-                          (i * 1.1 * readInput.diameter);
-            position[1] = readInput.ins_y_min + (readInput.diameter / 2) +
-                          (j * 1.1 * readInput.diameter);
-            position[2] = readInput.ins_z_min + (readInput.diameter / 2) +
-                          (k * 1.1 * readInput.diameter);
+            position[0] = DEMparam.insertionInfo.x_min + (DEMparam.physicalProperties.diameter / 2) +
+                          (i * 1.1 * DEMparam.physicalProperties.diameter);
+            position[1] = DEMparam.insertionInfo.y_min + (DEMparam.physicalProperties.diameter / 2) +
+                          (j * 1.1 * DEMparam.physicalProperties.diameter);
+            position[2] = DEMparam.insertionInfo.z_min + (DEMparam.physicalProperties.diameter / 2) +
+                          (k * 1.1 * DEMparam.physicalProperties.diameter);
             id = i * ny * nz + j * nz + k + nPart + 1;
             Particles::Particle<3> particle(position, reference_position, id);
             Triangulation<3, 3>::active_cell_iterator cell =
@@ -99,8 +98,8 @@ void ParticleInsertion::uniformInsertion(
 
             pit->get_properties()[0] = id;
             pit->get_properties()[1] = 1;
-            pit->get_properties()[2] = readInput.diameter;
-            pit->get_properties()[3] = readInput.density;
+            pit->get_properties()[2] = DEMparam.physicalProperties.diameter;
+            pit->get_properties()[3] = DEMparam.physicalProperties.density;
             // Position
             pit->get_properties()[4] = position[0];
             pit->get_properties()[5] = position[1];
@@ -110,9 +109,9 @@ void ParticleInsertion::uniformInsertion(
             pit->get_properties()[8] = 0;
             pit->get_properties()[9] = 0;
             // Acceleration
-            pit->get_properties()[10] = 0 + readInput.g[0];
-            pit->get_properties()[11] = 0 + readInput.g[1];
-            pit->get_properties()[12] = 0 + readInput.g[2];
+            pit->get_properties()[10] = 0 + DEMparam.physicalProperties.gx;
+            pit->get_properties()[11] = 0 + DEMparam.physicalProperties.gy;
+            pit->get_properties()[12] = 0 + DEMparam.physicalProperties.gz;
             // Force
             pit->get_properties()[13] = 0;
             pit->get_properties()[14] = 0;
@@ -123,7 +122,7 @@ void ParticleInsertion::uniformInsertion(
             pit->get_properties()[18] = 0;
             // mass and moi
             pit->get_properties()[19] =
-              readInput.density * ((4.0 / 3.0) * 3.1415 *
+              DEMparam.physicalProperties.density * ((4.0 / 3.0) * 3.1415 *
                                    pow((pit->get_properties()[2] / 2.0), 3.0));
             pit->get_properties()[20] =
               (2.0 / 5.0) * (pit->get_properties()[19]) *
@@ -134,5 +133,5 @@ void ParticleInsertion::uniformInsertion(
             ++nP;
           }
 
-  nPart = nPart + readInput.nInsert;
+  nPart = nPart + DEMparam.insertionInfo.nInsert;
 }
