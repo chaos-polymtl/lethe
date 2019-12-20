@@ -30,7 +30,7 @@ void ParticleWallContactForce::pwLinearCF(
                          Point<3>,
                          double>>   pwContactInfo,
   Particles::ParticleHandler<3, 3> &particle_handler,
-  ParametersDEM<3> DEMparam)
+  ParametersDEM<3>                  DEMparam)
 {
   for (unsigned int i = 0; i < pwContactInfo.size(); i++)
     {
@@ -58,7 +58,8 @@ void ParticleWallContactForce::pwLinearCF(
           std::get<6>(pwContactInfo[i]);
         Point<3> tangForce = springTangForce + dashpotTangForce;
 
-        if (vecValue(tangForce) < (DEMparam.physicalProperties.mu * vecValue(normalForce)))
+        if (vecValue(tangForce) <
+            (DEMparam.physicalProperties.mu * vecValue(normalForce)))
           {
             std::get<0>(pwContactInfo[i]).first->get_properties()[13] =
               std::get<0>(pwContactInfo[i]).first->get_properties()[13] +
