@@ -6,7 +6,7 @@
  */
 
 #include "dem/contact_search.h"
-
+#include <deal.II/base/tensor.h>
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -57,8 +57,8 @@ ContactSearch::findCellNeighbors(int cellNum, const Triangulation<3, 3> &tr)
     }
   std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
             std::vector<Triangulation<3>::active_cell_iterator>>
-    out = std::make_pair(cellNeighborList, totallCellList);
-  return out;
+    contactPair = std::make_pair(cellNeighborList, totallCellList);
+  return contactPair;
 }
 
 
@@ -183,36 +183,28 @@ void ContactSearch::fineSearch(
   dealii::Particles::ParticleHandler<3, 3> &                particle_handler,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                                    Particles::ParticleIterator<3, 3>>,
-                         std::vector<double>,
                          double,
-                         std::vector<double>,
+                          Point<3>,
                          double,
-                         std::vector<double>,
-                         std::vector<double>,
+                          Point<3>,
                          double,
                          double>> &                         contactInfo,
   float                                                     dt)
 {
-  Point<3, double> v1, v2;
+  Point<3, double> loc1, loc2;
   std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                        Particles::ParticleIterator<3, 3>>,
-             std::vector<double>,
              double,
-             std::vector<double>,
+              Point<3>,
              double,
-             std::vector<double>,
-             std::vector<double>,
+              Point<3>,
              double,
              double>
     infoTuple;
   std::vector<std::pair<Particles::ParticleIterator<3, 3>,
                         Particles::ParticleIterator<3, 3>>>
     searchPair;
-  // std::vector<std::tuple<std::pair<Particles::ParticleIterator<3,3>,Particles::ParticleIterator<3,
-  // 3>>, double >> lastStepInfo;
-  // std::vector<std::tuple<Particles::ParticleIterator<3,3>,Particles::ParticleIterator<3,3>,double,
-  // std::vector<double>, std::vector<double>, std::vector<double>,
-  // std::vector<double> >> contactInfo;
+
   double distance;
   if (!searchPair.empty())
     {
@@ -220,71 +212,61 @@ void ContactSearch::fineSearch(
     }
 
 
-
   for (unsigned int i = 0; i < contactInfo.size(); i++)
     {
-      v1 = {std::get<0>(contactInfo[i]).first->get_properties()[4],
-            std::get<0>(contactInfo[i]).first->get_properties()[5],
-            std::get<0>(contactInfo[i]).first->get_properties()[6]};
-      v2 = {std::get<0>(contactInfo[i]).second->get_properties()[4],
-            std::get<0>(contactInfo[i]).second->get_properties()[5],
-            std::get<0>(contactInfo[i]).second->get_properties()[6]};
+      loc1 = (std::get<0>(contactInfo[i]).first)->get_location();
+      loc2 = (std::get<0>(contactInfo[i]).second)->get_location();
 
       distance = ((std::get<0>(contactInfo[i]).first->get_properties()[2] +
-                   std::get<0>(contactInfo[i]).first->get_properties()[2]) /
+                   std::get<0>(contactInfo[i]).second->get_properties()[2]) /
                   2) -
-                 v1.distance(v2);
+                 loc1.distance(loc2);
       if (distance > 0)
         {
-          std::vector<double> normVec = normVector(
-            {std::get<0>(contactInfo[i]).second->get_properties()[4],
-             std::get<0>(contactInfo[i]).second->get_properties()[5],
-             std::get<0>(contactInfo[i]).second->get_properties()[6]},
-            {std::get<0>(contactInfo[i]).first->get_properties()[4],
-             std::get<0>(contactInfo[i]).first->get_properties()[5],
-             std::get<0>(contactInfo[i]).first->get_properties()[6]});
-          std::vector<double> relVel = vecAdd(
-            vecSubtract(
-              {std::get<0>(contactInfo[i]).first->get_properties()[7],
-               std::get<0>(contactInfo[i]).first->get_properties()[8],
-               std::get<0>(contactInfo[i]).first->get_properties()[9]},
-              {std::get<0>(contactInfo[i]).second->get_properties()[7],
-               std::get<0>(contactInfo[i]).second->get_properties()[8],
-               std::get<0>(contactInfo[i]).second->get_properties()[9]}),
-            (crossProduct(
-              vecAdd(
-                numVecProd(
-                  std::get<0>(contactInfo[i]).first->get_properties()[2],
-                  {std::get<0>(contactInfo[i]).first->get_properties()[16],
-                   std::get<0>(contactInfo[i]).first->get_properties()[17],
-                   std::get<0>(contactInfo[i]).first->get_properties()[18]}),
-                numVecProd(
-                  std::get<0>(contactInfo[i]).second->get_properties()[2],
-                  {std::get<0>(contactInfo[i]).second->get_properties()[16],
-                   std::get<0>(contactInfo[i]).second->get_properties()[17],
-                   std::get<0>(contactInfo[i]).second->get_properties()[18]})),
-              normVec)));
-          double              normRelVel = dotProduct(relVel, normVec);
-          std::vector<double> relNormVel = numVecProd(normRelVel, normVec);
-          std::vector<double> relTangVel = vecSubtract(relVel, relNormVel);
 
-          std::vector<double> tangVec = {0, 0, 0};
-          if (vecValue(relTangVel) != 0)
+          Point<3> contactVector;
+         contactVector = (loc2-loc1);
+          Point<3> normVec = contactVector / contactVector.norm() ;
+
+          Point<3> part1Vel = {std::get<0>(contactInfo[i]).first->get_properties()[7],
+                               std::get<0>(contactInfo[i]).first->get_properties()[8],
+                               std::get<0>(contactInfo[i]).first->get_properties()[9]};
+          Point<3> part2Vel = {std::get<0>(contactInfo[i]).second->get_properties()[7],
+                               std::get<0>(contactInfo[i]).second->get_properties()[8],
+                               std::get<0>(contactInfo[i]).second->get_properties()[9]};
+
+          Point<3> part1AngVel = {std::get<0>(contactInfo[i]).first->get_properties()[16],
+                                  std::get<0>(contactInfo[i]).first->get_properties()[17],
+                                  std::get<0>(contactInfo[i]).first->get_properties()[18]};
+
+          Point<3> part2AngVel =  {std::get<0>(contactInfo[i]).second->get_properties()[16],
+                                   std::get<0>(contactInfo[i]).second->get_properties()[17],
+                                   std::get<0>(contactInfo[i]).second->get_properties()[18]};
+
+          // ************************************************
+          // in tempelate <3> <2> take care
+          Point<3> relVel;
+              relVel = (part1Vel - part2Vel) + (cross_product_3d((((std::get<0>(contactInfo[i]).first->get_properties()[2]/2.0) * part1AngVel) + ((std::get<0>(contactInfo[i]).second->get_properties()[2]/2.0) * part2AngVel)) , normVec));
+
+    double normRelVel = relVel * normVec;
+          Point<3> relNormVel = normRelVel* normVec;
+          Point<3> relTangVel;
+          relTangVel = relVel - relNormVel;
+          Point<3> tangVec = {0, 0, 0};
+
+          double relTangVelVal = relTangVel.norm();
+          if (relTangVelVal != 0)
             {
-              tangVec = {relTangVel[0] / vecValue(relTangVel),
-                         relTangVel[1] / vecValue(relTangVel),
-                         relTangVel[2] / vecValue(relTangVel)};
+                  tangVec = relTangVel / relTangVelVal;
             }
 
-          double tangRelVel  = dotProduct(relVel, tangVec);
-          double tangOverlap = std::get<8>(contactInfo[i]) + (tangRelVel * dt);
+          double tangRelVel  = relVel * tangVec;
+          double tangOverlap = std::get<6>(contactInfo[i]) + (tangRelVel * dt);
 
           infoTuple      = std::make_tuple(std::get<0>(contactInfo[i]),
-                                      relVel,
                                       distance,
                                       normVec,
                                       normRelVel,
-                                      relTangVel,
                                       tangVec,
                                       tangRelVel,
                                       tangOverlap);
@@ -301,17 +283,15 @@ void ContactSearch::fineSearch(
 
   for (unsigned int i = 0; i < contactPairs.size(); i++)
     {
-      v1       = {contactPairs[i].first->get_properties()[4],
-            contactPairs[i].first->get_properties()[5],
-            contactPairs[i].first->get_properties()[6]};
-      v2       = {contactPairs[i].second->get_properties()[4],
-            contactPairs[i].second->get_properties()[5],
-            contactPairs[i].second->get_properties()[6]};
+
+
+      loc1 = (contactPairs[i].first)->get_location();
+      loc2 = (contactPairs[i].second)->get_location();
+
       distance = ((contactPairs[i].first->get_properties()[2] +
                    contactPairs[i].second->get_properties()[2]) /
                   2) -
-                 v1.distance(v2);
-
+                 loc1.distance(loc2);
 
       auto it4 =
         std::find(searchPair.begin(), searchPair.end(), contactPairs[i]);
@@ -319,52 +299,52 @@ void ContactSearch::fineSearch(
         {
           if (distance > 0)
             {
-              std::vector<double> normVec =
-                normVector({contactPairs[i].second->get_properties()[4],
-                            contactPairs[i].second->get_properties()[5],
-                            contactPairs[i].second->get_properties()[6]},
-                           {contactPairs[i].first->get_properties()[4],
-                            contactPairs[i].first->get_properties()[5],
-                            contactPairs[i].first->get_properties()[6]});
-              std::vector<double> relVel = vecAdd(
-                vecSubtract({contactPairs[i].first->get_properties()[7],
-                             contactPairs[i].first->get_properties()[8],
-                             contactPairs[i].first->get_properties()[9]},
-                            {contactPairs[i].second->get_properties()[7],
-                             contactPairs[i].second->get_properties()[8],
-                             contactPairs[i].second->get_properties()[9]}),
-                (crossProduct(
-                  vecAdd(
-                    numVecProd(contactPairs[i].first->get_properties()[2],
-                               {contactPairs[i].first->get_properties()[16],
-                                contactPairs[i].first->get_properties()[17],
-                                contactPairs[i].first->get_properties()[18]}),
-                    numVecProd(contactPairs[i].second->get_properties()[2],
-                               {contactPairs[i].second->get_properties()[16],
-                                contactPairs[i].second->get_properties()[17],
-                                contactPairs[i].second->get_properties()[18]})),
-                  normVec)));
-              double              normRelVel = dotProduct(relVel, normVec);
-              std::vector<double> relNormVel = numVecProd(normRelVel, normVec);
-              std::vector<double> relTangVel = vecSubtract(relVel, relNormVel);
-              std::vector<double> tangVec    = {0, 0, 0};
-              if (vecValue(relTangVel) != 0)
+              Point<3> contactVector;
+             contactVector = (loc2-loc1);
+              Point<3> normVec = contactVector / contactVector.norm() ;
+
+              Point<3> part1Vel = {contactPairs[i].first->get_properties()[7],
+                                   contactPairs[i].first->get_properties()[8],
+                                   contactPairs[i].first->get_properties()[9]};
+              Point<3> part2Vel = {contactPairs[i].second->get_properties()[7],
+                                   contactPairs[i].second->get_properties()[8],
+                                   contactPairs[i].second->get_properties()[9]};
+
+              Point<3> part1AngVel = {contactPairs[i].first->get_properties()[16],
+                                      contactPairs[i].first->get_properties()[17],
+                                      contactPairs[i].first->get_properties()[18]};
+
+              Point<3> part2AngVel =  {contactPairs[i].second->get_properties()[16],
+                                       contactPairs[i].second->get_properties()[17],
+                                       contactPairs[i].second->get_properties()[18]};
+
+              // ************************************************
+              // in tempelate <3> <2> take care
+              Point<3> relVel;
+                  relVel = (part1Vel - part2Vel) + (cross_product_3d((((contactPairs[i].first->get_properties()[2]/2.0) * part1AngVel) + ((contactPairs[i].second->get_properties()[2]/2.0) * part2AngVel)) , normVec));
+
+
+
+              double              normRelVel = relVel * normVec;
+              Point<3> relNormVel = normRelVel * normVec;
+              Point<3> relTangVel;
+              relTangVel = relVel - relNormVel;
+
+              Point<3> tangVec    = {0, 0, 0};
+              double relTangVelVal = relTangVel.norm();
+              if (relTangVelVal != 0)
                 {
-                  tangVec = {relTangVel[0] / vecValue(relTangVel),
-                             relTangVel[1] / vecValue(relTangVel),
-                             relTangVel[2] / vecValue(relTangVel)};
+                    tangVec = relTangVel / relTangVelVal;
                 }
-              double tangRelVel  = dotProduct(relVel, tangVec);
+              double tangRelVel  = relVel * tangVec;
               double tangOverlap = 0;
 
               infoTuple =
                 std::make_tuple(std::make_pair(contactPairs[i].first,
                                                contactPairs[i].second),
-                                relVel,
                                 distance,
                                 normVec,
                                 normRelVel,
-                                relTangVel,
                                 tangVec,
                                 tangRelVel,
                                 tangOverlap);
@@ -374,50 +354,3 @@ void ContactSearch::fineSearch(
     }
 }
 
-
-
-std::vector<double> ContactSearch::normVector(Point<3> point1, Point<3> point2)
-{
-  Point<3> point3;
-  point3 = (point1 - point2) / (point1.distance(point2));
-  return {point3[0], point3[1], point3[2]};
-}
-
-
-double
-ContactSearch::dotProduct(std::vector<double> A, std::vector<double> B)
-{
-  return (A[0] * B[0] + A[1] * B[1] + A[2] * B[2]);
-}
-
-std::vector<double>
-ContactSearch::crossProduct(std::vector<double> A, std::vector<double> B)
-{
-  return {A[1] * B[2] - A[2] * B[1],
-          A[2] * B[0] - A[0] * B[2],
-          A[0] * B[1] - A[1] * B[0]};
-}
-
-std::vector<double>
-ContactSearch::vecSubtract(std::vector<double> A, std::vector<double> B)
-{
-  return {A[0] - B[0], A[1] - B[1], A[2] - B[2]};
-}
-
-std::vector<double>
-ContactSearch::vecAdd(std::vector<double> A, std::vector<double> B)
-{
-  return {A[0] + B[0], A[1] + B[1], A[2] + B[2]};
-}
-
-std::vector<double>
-ContactSearch::numVecProd(double A, std::vector<double> B)
-{
-  return {A * B[0], A * B[1], A * B[2]};
-}
-
-double
-ContactSearch::vecValue(std::vector<double> A)
-{
-  return (sqrt(pow(A[0], 2) + pow(A[1], 2) + pow(A[2], 2)));
-}
