@@ -143,12 +143,10 @@ main(int argc, char *argv[])
   DEM_iterator iter1;
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                                    Particles::ParticleIterator<3, 3>>,
-                         std::vector<double>,
                          double,
-                         std::vector<double>,
+                         Point<3>,
                          double,
-                         std::vector<double>,
-                         std::vector<double>,
+                         Point<3>,
                          double,
                          double>>
     contactInfo;

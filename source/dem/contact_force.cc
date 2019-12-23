@@ -20,12 +20,10 @@ ContactForce::ContactForce()
 void ContactForce::linearCF(
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                                    Particles::ParticleIterator<3, 3>>,
-                         std::vector<double>,
                          double,
-                         std::vector<double>,
+                         Point<3>,
                          double,
-                         std::vector<double>,
-                         std::vector<double>,
+                         Point<3>,
                          double,
                          double>>   contactInfo,
   Particles::ParticleHandler<3, 3> &particle_handler,
@@ -34,70 +32,29 @@ void ContactForce::linearCF(
   for (unsigned int i = 0; i < contactInfo.size(); i++)
     {
       {
-        std::vector<double> normalForce = {
-          vecSubtract(numVecProd((-1.0 * DEMparam.physicalProperties.kn *
-                                  std::get<2>(contactInfo[i])),
-                                 std::get<3>(contactInfo[i])),
-                      numVecProd((DEMparam.physicalProperties.ethan *
-                                  std::get<4>(contactInfo[i])),
-                                 std::get<3>(contactInfo[i])))};
+        Point<3> totalForce;
+        Point<3> normalForce = ((-1.0 * DEMparam.physicalProperties.kn * std::get<1>(contactInfo[i])) - (DEMparam.physicalProperties.ethan * std::get<3>(contactInfo[i]))) * std::get<2>(contactInfo[i]);
 
-        std::get<0>(contactInfo[i]).first->get_properties()[13] =
-          normalForce[0];
-        std::get<0>(contactInfo[i]).first->get_properties()[14] =
-          normalForce[1];
-        std::get<0>(contactInfo[i]).first->get_properties()[15] =
-          normalForce[2];
 
-        std::vector<double> tangForce = {
-          vecSubtract(numVecProd((-1.0 * DEMparam.physicalProperties.kt *
-                                  std::get<8>(contactInfo[i])),
-                                 std::get<6>(contactInfo[i])),
-                      numVecProd((DEMparam.physicalProperties.ethat *
-                                  std::get<7>(contactInfo[i])),
-                                 std::get<6>(contactInfo[i])))};
+        Point<3> tangForce = (-1.0 * DEMparam.physicalProperties.kt * std::get<6>(contactInfo[i]) - DEMparam.physicalProperties.ethat * std::get<5>(contactInfo[i])) * std::get<4>(contactInfo[i]);
 
-        if (vecValue(tangForce) <
-            (DEMparam.physicalProperties.mu * vecValue(normalForce)))
+
+        if (tangForce.norm() <
+            (DEMparam.physicalProperties.mu * normalForce.norm()))
           {
-            std::get<0>(contactInfo[i]).first->get_properties()[13] =
-              std::get<0>(contactInfo[i]).first->get_properties()[13] +
-              tangForce[0];
-            std::get<0>(contactInfo[i]).first->get_properties()[14] =
-              std::get<0>(contactInfo[i]).first->get_properties()[14] +
-              tangForce[1];
-            std::get<0>(contactInfo[i]).first->get_properties()[15] =
-              std::get<0>(contactInfo[i]).first->get_properties()[15] +
-              tangForce[2];
+             totalForce = normalForce + tangForce;
           }
         else
           {
-            std::vector<double> coulumbTangForce = {numVecProd(
-              (DEMparam.physicalProperties.mu * vecValue(normalForce) *
-               sgn(std::get<8>(contactInfo[i]))),
-              std::get<6>(contactInfo[i]))};
-            std::get<0>(contactInfo[i]).first->get_properties()[13] =
-              std::get<0>(contactInfo[i]).first->get_properties()[13] +
-              coulumbTangForce[0];
-            std::get<0>(contactInfo[i]).first->get_properties()[14] =
-              std::get<0>(contactInfo[i]).first->get_properties()[14] +
-              coulumbTangForce[1];
-            std::get<0>(contactInfo[i]).first->get_properties()[15] =
-              std::get<0>(contactInfo[i]).first->get_properties()[15] +
-              coulumbTangForce[2];
+            Point<3> coulumbTangForce = DEMparam.physicalProperties.mu * normalForce.norm() * sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+
+            totalForce = normalForce + coulumbTangForce;
           }
 
-        std::get<0>(contactInfo[i]).second->get_properties()[13] =
-          -1.0 * std::get<0>(contactInfo[i]).first->get_properties()[13];
-        std::get<0>(contactInfo[i]).second->get_properties()[14] =
-          -1.0 * std::get<0>(contactInfo[i]).first->get_properties()[14];
-        std::get<0>(contactInfo[i]).second->get_properties()[15] =
-          -1.0 * std::get<0>(contactInfo[i]).first->get_properties()[15];
+        std::get<0>(contactInfo[i]).first->get_properties()[13] = totalForce[0];
+        std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[0];
+        std::get<0>(contactInfo[i]).first->get_properties()[15] = totalForce[0];
 
-        //	std::cout<<"the contact force is: " <<
-        // std::get<0>(contactInfo[i]).first->get_properties()[13] << " " <<
-        // std::get<0>(contactInfo[i]).first->get_properties()[14] << " " <<
-        // std::get<0>(contactInfo[i]).first->get_properties()[15] << std::endl;
 
 
         // calculation of torque
@@ -109,44 +66,6 @@ void ContactForce::linearCF(
 }
 
 
-
-double
-ContactForce::dotProduct(std::vector<double> A, std::vector<double> B)
-{
-  return (A[0] * B[0] + A[1] * B[1] + A[2] * B[2]);
-}
-
-std::vector<double>
-ContactForce::crossProduct(std::vector<double> A, std::vector<double> B)
-{
-  return {A[1] * B[2] - A[2] * B[1],
-          A[2] * B[0] - A[0] * B[2],
-          A[0] * B[1] - A[1] * B[0]};
-}
-
-std::vector<double>
-ContactForce::vecSubtract(std::vector<double> A, std::vector<double> B)
-{
-  return {A[0] - B[0], A[1] - B[1], A[2] - B[2]};
-}
-
-std::vector<double>
-ContactForce::vecAdd(std::vector<double> A, std::vector<double> B)
-{
-  return {A[0] + B[0], A[1] + B[1], A[2] + B[2]};
-}
-
-std::vector<double>
-ContactForce::numVecProd(double A, std::vector<double> B)
-{
-  return {A * B[0], A * B[1], A * B[2]};
-}
-
-double
-ContactForce::vecValue(std::vector<double> A)
-{
-  return (sqrt(pow(A[0], 2) + pow(A[1], 2) + pow(A[2], 2)));
-}
 
 int
 ContactForce::sgn(float a)
