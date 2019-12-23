@@ -33,20 +33,29 @@ void ContactForce::linearCF(
     {
       {
         Point<3> totalForce;
-        Point<3> normalForce = ((-1.0 * DEMparam.physicalProperties.kn * std::get<1>(contactInfo[i])) - (DEMparam.physicalProperties.ethan * std::get<3>(contactInfo[i]))) * std::get<2>(contactInfo[i]);
+        Point<3> normalForce =
+          ((-1.0 * DEMparam.physicalProperties.kn *
+            std::get<1>(contactInfo[i])) -
+           (DEMparam.physicalProperties.ethan * std::get<3>(contactInfo[i]))) *
+          std::get<2>(contactInfo[i]);
 
 
-        Point<3> tangForce = (-1.0 * DEMparam.physicalProperties.kt * std::get<6>(contactInfo[i]) - DEMparam.physicalProperties.ethat * std::get<5>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+        Point<3> tangForce =
+          (-1.0 * DEMparam.physicalProperties.kt * std::get<6>(contactInfo[i]) -
+           DEMparam.physicalProperties.ethat * std::get<5>(contactInfo[i])) *
+          std::get<4>(contactInfo[i]);
 
 
         if (tangForce.norm() <
             (DEMparam.physicalProperties.mu * normalForce.norm()))
           {
-             totalForce = normalForce + tangForce;
+            totalForce = normalForce + tangForce;
           }
         else
           {
-            Point<3> coulumbTangForce = DEMparam.physicalProperties.mu * normalForce.norm() * sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+            Point<3> coulumbTangForce =
+              DEMparam.physicalProperties.mu * normalForce.norm() *
+              sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
 
             totalForce = normalForce + coulumbTangForce;
           }
