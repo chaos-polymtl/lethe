@@ -67,12 +67,10 @@ DEM_iterator::engine(
             std::vector<Triangulation<3>::active_cell_iterator>> cellNeighbor,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                                    Particles::ParticleIterator<3, 3>>,
-                         std::vector<double>,
                          double,
-                         std::vector<double>,
+                         Point<3>,
                          double,
-                         std::vector<double>,
-                         std::vector<double>,
+                         Point<3>,
                          double,
                          double>> &                              contactInfo,
   std::vector<std::tuple<int,
@@ -115,7 +113,6 @@ DEM_iterator::engine(
                                      cellNeighbor.second,
                                      cellNeighbor.first);
   //	}
-
   cs.fineSearch(contactPairs,
                 particle_handler,
                 contactInfo,
