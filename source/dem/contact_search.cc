@@ -6,7 +6,9 @@
  */
 
 #include "dem/contact_search.h"
+
 #include <deal.II/base/tensor.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_tools.h>
@@ -184,9 +186,9 @@ void ContactSearch::fineSearch(
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                                    Particles::ParticleIterator<3, 3>>,
                          double,
-                          Point<3>,
+                         Point<3>,
                          double,
-                          Point<3>,
+                         Point<3>,
                          double,
                          double>> &                         contactInfo,
   float                                                     dt)
@@ -195,9 +197,9 @@ void ContactSearch::fineSearch(
   std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                        Particles::ParticleIterator<3, 3>>,
              double,
-              Point<3>,
+             Point<3>,
              double,
-              Point<3>,
+             Point<3>,
              double,
              double>
     infoTuple;
@@ -223,41 +225,52 @@ void ContactSearch::fineSearch(
                  loc1.distance(loc2);
       if (distance > 0)
         {
-
           Point<3> contactVector;
-         contactVector = (loc2-loc1);
-          Point<3> normVec = contactVector / contactVector.norm() ;
+          contactVector    = (loc2 - loc1);
+          Point<3> normVec = contactVector / contactVector.norm();
 
-          Point<3> part1Vel = {std::get<0>(contactInfo[i]).first->get_properties()[7],
-                               std::get<0>(contactInfo[i]).first->get_properties()[8],
-                               std::get<0>(contactInfo[i]).first->get_properties()[9]};
-          Point<3> part2Vel = {std::get<0>(contactInfo[i]).second->get_properties()[7],
-                               std::get<0>(contactInfo[i]).second->get_properties()[8],
-                               std::get<0>(contactInfo[i]).second->get_properties()[9]};
+          Point<3> part1Vel = {
+            std::get<0>(contactInfo[i]).first->get_properties()[7],
+            std::get<0>(contactInfo[i]).first->get_properties()[8],
+            std::get<0>(contactInfo[i]).first->get_properties()[9]};
+          Point<3> part2Vel = {
+            std::get<0>(contactInfo[i]).second->get_properties()[7],
+            std::get<0>(contactInfo[i]).second->get_properties()[8],
+            std::get<0>(contactInfo[i]).second->get_properties()[9]};
 
-          Point<3> part1AngVel = {std::get<0>(contactInfo[i]).first->get_properties()[16],
-                                  std::get<0>(contactInfo[i]).first->get_properties()[17],
-                                  std::get<0>(contactInfo[i]).first->get_properties()[18]};
+          Point<3> part1AngVel = {
+            std::get<0>(contactInfo[i]).first->get_properties()[16],
+            std::get<0>(contactInfo[i]).first->get_properties()[17],
+            std::get<0>(contactInfo[i]).first->get_properties()[18]};
 
-          Point<3> part2AngVel =  {std::get<0>(contactInfo[i]).second->get_properties()[16],
-                                   std::get<0>(contactInfo[i]).second->get_properties()[17],
-                                   std::get<0>(contactInfo[i]).second->get_properties()[18]};
+          Point<3> part2AngVel = {
+            std::get<0>(contactInfo[i]).second->get_properties()[16],
+            std::get<0>(contactInfo[i]).second->get_properties()[17],
+            std::get<0>(contactInfo[i]).second->get_properties()[18]};
 
           // ************************************************
           // in tempelate <3> <2> take care
           Point<3> relVel;
-              relVel = (part1Vel - part2Vel) + (cross_product_3d((((std::get<0>(contactInfo[i]).first->get_properties()[2]/2.0) * part1AngVel) + ((std::get<0>(contactInfo[i]).second->get_properties()[2]/2.0) * part2AngVel)) , normVec));
+          relVel =
+            (part1Vel - part2Vel) +
+            (cross_product_3d(
+              (((std::get<0>(contactInfo[i]).first->get_properties()[2] / 2.0) *
+                part1AngVel) +
+               ((std::get<0>(contactInfo[i]).second->get_properties()[2] /
+                 2.0) *
+                part2AngVel)),
+              normVec));
 
-    double normRelVel = relVel * normVec;
-          Point<3> relNormVel = normRelVel* normVec;
+          double   normRelVel = relVel * normVec;
+          Point<3> relNormVel = normRelVel * normVec;
           Point<3> relTangVel;
-          relTangVel = relVel - relNormVel;
+          relTangVel       = relVel - relNormVel;
           Point<3> tangVec = {0, 0, 0};
 
           double relTangVelVal = relTangVel.norm();
           if (relTangVelVal != 0)
             {
-                  tangVec = relTangVel / relTangVelVal;
+              tangVec = relTangVel / relTangVelVal;
             }
 
           double tangRelVel  = relVel * tangVec;
@@ -283,8 +296,6 @@ void ContactSearch::fineSearch(
 
   for (unsigned int i = 0; i < contactPairs.size(); i++)
     {
-
-
       loc1 = (contactPairs[i].first)->get_location();
       loc2 = (contactPairs[i].second)->get_location();
 
@@ -300,8 +311,8 @@ void ContactSearch::fineSearch(
           if (distance > 0)
             {
               Point<3> contactVector;
-             contactVector = (loc2-loc1);
-              Point<3> normVec = contactVector / contactVector.norm() ;
+              contactVector    = (loc2 - loc1);
+              Point<3> normVec = contactVector / contactVector.norm();
 
               Point<3> part1Vel = {contactPairs[i].first->get_properties()[7],
                                    contactPairs[i].first->get_properties()[8],
@@ -310,31 +321,39 @@ void ContactSearch::fineSearch(
                                    contactPairs[i].second->get_properties()[8],
                                    contactPairs[i].second->get_properties()[9]};
 
-              Point<3> part1AngVel = {contactPairs[i].first->get_properties()[16],
-                                      contactPairs[i].first->get_properties()[17],
-                                      contactPairs[i].first->get_properties()[18]};
+              Point<3> part1AngVel = {
+                contactPairs[i].first->get_properties()[16],
+                contactPairs[i].first->get_properties()[17],
+                contactPairs[i].first->get_properties()[18]};
 
-              Point<3> part2AngVel =  {contactPairs[i].second->get_properties()[16],
-                                       contactPairs[i].second->get_properties()[17],
-                                       contactPairs[i].second->get_properties()[18]};
+              Point<3> part2AngVel = {
+                contactPairs[i].second->get_properties()[16],
+                contactPairs[i].second->get_properties()[17],
+                contactPairs[i].second->get_properties()[18]};
 
               // ************************************************
               // in tempelate <3> <2> take care
               Point<3> relVel;
-                  relVel = (part1Vel - part2Vel) + (cross_product_3d((((contactPairs[i].first->get_properties()[2]/2.0) * part1AngVel) + ((contactPairs[i].second->get_properties()[2]/2.0) * part2AngVel)) , normVec));
+              relVel = (part1Vel - part2Vel) +
+                       (cross_product_3d(
+                         (((contactPairs[i].first->get_properties()[2] / 2.0) *
+                           part1AngVel) +
+                          ((contactPairs[i].second->get_properties()[2] / 2.0) *
+                           part2AngVel)),
+                         normVec));
 
 
 
-              double              normRelVel = relVel * normVec;
+              double   normRelVel = relVel * normVec;
               Point<3> relNormVel = normRelVel * normVec;
               Point<3> relTangVel;
               relTangVel = relVel - relNormVel;
 
-              Point<3> tangVec    = {0, 0, 0};
-              double relTangVelVal = relTangVel.norm();
+              Point<3> tangVec       = {0, 0, 0};
+              double   relTangVelVal = relTangVel.norm();
               if (relTangVelVal != 0)
                 {
-                    tangVec = relTangVel / relTangVelVal;
+                  tangVec = relTangVel / relTangVelVal;
                 }
               double tangRelVel  = relVel * tangVec;
               double tangOverlap = 0;
@@ -353,4 +372,3 @@ void ContactSearch::fineSearch(
         }
     }
 }
-
