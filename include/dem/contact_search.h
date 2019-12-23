@@ -52,12 +52,10 @@ public:
     dealii::Particles::ParticleHandler<3, 3> &,
     std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
                                      Particles::ParticleIterator<3, 3>>,
-                           std::vector<double>,
                            double,
-                           std::vector<double>,
+                           Point<3>,
                            double,
-                           std::vector<double>,
-                           std::vector<double>,
+                           Point<3>,
                            double,
                            double>> &,
     float);
@@ -65,21 +63,6 @@ public:
 
   std::vector<Particles::ParticleIterator<3, 3>>
     pWSearch(dealii::Particles::ParticleHandler<3, 3> &);
-
-private:
-  std::vector<double> normVector(Point<3>, Point<3>);
-  double
-  dotProduct(std::vector<double>, std::vector<double>);
-  std::vector<double>
-  crossProduct(std::vector<double>, std::vector<double>);
-  std::vector<double>
-  vecSubtract(std::vector<double>, std::vector<double>);
-  std::vector<double>
-  vecAdd(std::vector<double>, std::vector<double>);
-  std::vector<double>
-  numVecProd(double, std::vector<double>);
-  double
-  vecValue(std::vector<double>);
 };
 
 #endif /* CONTACTSEARCH_H_ */
