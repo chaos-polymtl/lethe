@@ -83,7 +83,6 @@ main(int argc, char *argv[])
 
 
 
-
   std::vector<std::tuple<std::string, int>> properties(
     DEMparam.outputProperties.numProperties);
   properties[0]  = std::make_tuple("id", 1);
