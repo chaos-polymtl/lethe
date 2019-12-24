@@ -30,6 +30,7 @@ class Integration
 public:
   Integration();
   void eulerIntegration(Particles::ParticleHandler<3, 3> &, ParametersDEM<3>);
+  void rk2Integration(Particles::ParticleHandler<3, 3> &, ParametersDEM<3>);
   void velVerIntegration(Particles::ParticleHandler<3, 3> &, float);
   void
   gearIntegration();
