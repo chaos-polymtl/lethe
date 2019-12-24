@@ -60,7 +60,6 @@ public:
     std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                            Point<3>,
                            Point<3>>>,
-    Particles::ParticleHandler<3, 3> &,
     std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                            Point<3>,
                            Point<3>,
@@ -73,7 +72,6 @@ public:
 
 private:
   Point<3> findProjection(Point<3>, Point<3>);
-
 };
 
 #endif /* PWCONTACTDETECTION_H_ */

@@ -26,7 +26,6 @@ void ContactForce::linearCF(
                          Point<3>,
                          double,
                          double>>   contactInfo,
-  Particles::ParticleHandler<3, 3> &particle_handler,
   ParametersDEM<3>                  DEMparam)
 {
   for (unsigned int i = 0; i < contactInfo.size(); i++)

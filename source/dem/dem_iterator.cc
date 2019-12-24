@@ -6,10 +6,13 @@
  */
 #include "dem/dem_iterator.h"
 
-#include <deal.II/particles/particle_handler.h>
-
 #include <deal.II/particles/particle.h>
+#include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+#include <deal.II/particles/property_pool.h>
+
+#include <math.h>
+
 #include "dem/contact_force.h"
 #include "dem/contact_search.h"
 #include "dem/integration.h"
@@ -18,9 +21,6 @@
 #include "dem/particle_wall_contact_force.h"
 #include "dem/visualization.h"
 #include "dem/write_vtu.h"
-#include <deal.II/particles/property_pool.h>
-
-#include <math.h>
 
 
 using namespace dealii;
@@ -85,7 +85,7 @@ DEM_iterator::engine(
                          Triangulation<3>::active_cell_iterator,
                          int,
                          Point<3>,
-                         Point<3>>> boundaryCellInfo,
+                         Point<3>>>         boundaryCellInfo,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                          Point<3>,
                          Point<3>,
@@ -93,7 +93,9 @@ DEM_iterator::engine(
                          double,
                          double,
                          Point<3>,
-                         double>> & pwContactInfo, std::vector<std::tuple<std::string, int>> properties, Particles::PropertyPool &propPool)
+                         double>> &         pwContactInfo,
+  std::vector<std::tuple<std::string, int>> properties,
+  Particles::PropertyPool &                 propPool)
 {
   // moving walls
 
@@ -101,18 +103,19 @@ DEM_iterator::engine(
   // check simulation boundaries
   // checkSimBound(particle_handler, readInput);
 
-    //insertion
-    if (fmod(step, DEMparam.insertionInfo.insertFrequncy) == 1)
-      {
-    if (step < DEMparam.insertionInfo.tInsertion)
-      {
-        if (nPart < DEMparam.simulationControl.nTotal) // number < total number
-          {
-  ParticleInsertion ins1(DEMparam);
-                ins1.uniformInsertion(
-                  particle_handler, tr, DEMparam, nPart, propPool);
-              }
-          }
+  // insertion
+  if (fmod(step, DEMparam.insertionInfo.insertFrequncy) == 1)
+    {
+      if (step < DEMparam.insertionInfo.tInsertion)
+        {
+          if (nPart <
+              DEMparam.simulationControl.nTotal) // number < total number
+            {
+              ParticleInsertion ins1(DEMparam);
+              ins1.uniformInsertion(
+                particle_handler, tr, DEMparam, nPart, propPool);
+            }
+        }
     }
 
 
@@ -140,7 +143,7 @@ DEM_iterator::engine(
 
   // contact force
   ContactForce cf;
-  cf.linearCF(contactInfo, particle_handler, DEMparam);
+  cf.linearCF(contactInfo, DEMparam);
 
   // p-w contact detection:
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
@@ -157,7 +160,6 @@ DEM_iterator::engine(
 
 
   pw.pwFineSearch(pwContactList,
-                  particle_handler,
                   pwContactInfo,
                   DEMparam.simulationControl.dt);
 
@@ -170,11 +172,11 @@ DEM_iterator::engine(
   // Integration
   Integration Integ1;
   Integ1.eulerIntegration(particle_handler, DEMparam);
-  //Integ1.rk2Integration(particle_handler, DEMparam);
+  // Integ1.rk2Integration(particle_handler, DEMparam);
 
 
 
-  //visualization
+  // visualization
   if (fmod(step, DEMparam.simulationControl.writeFrequency) == 1)
     {
       Visualization visObj;
@@ -187,11 +189,11 @@ DEM_iterator::engine(
       writObj.writeVTUFiles(visObj, step, time);
     }
 
-  //print iteration
-  if (fmod(step,1000) == 0)
-  {
-            std::cout << "Step "<< step << std::endl;
-  }
+  // print iteration
+  if (fmod(step, 1000) == 0)
+    {
+      std::cout << "Step " << step << std::endl;
+    }
 
   // update:
   particle_handler.sort_particles_into_subdomains_and_cells();
