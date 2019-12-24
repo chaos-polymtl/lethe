@@ -36,8 +36,7 @@ public:
                         const dealii::Triangulation<3, 3> &,
                         ParametersDEM<3>,
                         int &,
-                        dealii::Particles::PropertyPool &,
-                        dealii::Particles::Particle<3> &);
+                        dealii::Particles::PropertyPool &);
 };
 
 #endif /* PARTICLEINSERTION_H_ */

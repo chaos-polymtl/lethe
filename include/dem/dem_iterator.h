@@ -18,7 +18,8 @@
  */
 
 #include "dem/parameters_dem.h"
-#include "integration.h"
+#include "dem/integration.h"
+#include "dem/particle_insertion.h"
 
 
 #ifndef DEMITERATOR_H_
@@ -58,7 +59,7 @@ public:
                            double,
                            double,
                            Point<3>,
-                           double>> &);
+                           double>> &, std::vector<std::tuple<std::string, int>>, dealii::Particles::PropertyPool &);
 
 private:
   void forceReinit(Particles::ParticleHandler<3, 3> &);
