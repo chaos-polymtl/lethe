@@ -58,17 +58,17 @@
 
 
 
-
 using namespace dealii;
 
 
 template <int dim>
-void initilization()
+void
+initilization()
 {
-std::string filename;
-    filename = "dem.prm";
+  std::string filename;
+  filename = "dem.prm";
   ParameterHandler prm;
-  ParametersDEM<3> DEMparam;
+  ParametersDEM<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
   DEMparam.parse(prm);
@@ -79,19 +79,19 @@ std::string filename;
   properties[1]  = std::make_tuple("type", 1);
   properties[2]  = std::make_tuple("Diam", 1);
   properties[3]  = std::make_tuple("Dens", 1);
-  properties[4]  = std::make_tuple("Pos", 3);
+  properties[4]  = std::make_tuple("Pos", dim);
   properties[5]  = std::make_tuple("Pos", 1);
   properties[6]  = std::make_tuple("Pos", 1);
-  properties[7]  = std::make_tuple("Vel", 3);
+  properties[7]  = std::make_tuple("Vel", dim);
   properties[8]  = std::make_tuple("Vel", 1);
   properties[9]  = std::make_tuple("Vel", 1);
-  properties[10] = std::make_tuple("a", 3);
+  properties[10] = std::make_tuple("a", dim);
   properties[11] = std::make_tuple("a", 1);
   properties[12] = std::make_tuple("a", 1);
-  properties[13] = std::make_tuple("f", 3);
+  properties[13] = std::make_tuple("f", dim);
   properties[14] = std::make_tuple("f", 1);
   properties[15] = std::make_tuple("f", 1);
-  properties[16] = std::make_tuple("w", 3);
+  properties[16] = std::make_tuple("w", dim);
   properties[17] = std::make_tuple("w", 1);
   properties[18] = std::make_tuple("w", 1);
   properties[19] = std::make_tuple("mass", 1);
@@ -104,9 +104,9 @@ std::string filename;
   int   DEM_step = 0;
   float DEM_time = 0;
 
-  parallel::distributed::Triangulation<3, 3> tr(MPI_COMM_WORLD);
+  parallel::distributed::Triangulation<dim, dim> tr(MPI_COMM_WORLD);
 
-  Particles::Particle<3> particle;
+  Particles::Particle<dim> particle;
   GridGenerator::hyper_cube(tr, -0.1, 0.1, true);
   int numRef = 3;
   tr.refine_global(numRef);
@@ -160,7 +160,6 @@ std::string filename;
   // dem engine iterator:
   while (DEM_step < DEMparam.simulationControl.tFinal)
     {
-
       iter1.engine(nPart,
                    particle_handler,
                    tr,
@@ -170,7 +169,9 @@ std::string filename;
                    cellNeighbor,
                    contactInfo,
                    boundaryCellInfo,
-                   pwContactInfo, properties, propPool);
+                   pwContactInfo,
+                   properties,
+                   propPool);
     }
 }
 
@@ -182,7 +183,7 @@ main(int argc, char *argv[])
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
     argc, argv, numbers::invalid_unsigned_int);
 
-initilization<3>();
+  initilization<3>();
 
   return 0;
 }

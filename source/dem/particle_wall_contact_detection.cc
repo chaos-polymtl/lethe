@@ -142,7 +142,6 @@ void ParticleWallContactDetection::pwFineSearch(
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                          Point<3>,
                          Point<3>>> pwContactList,
-  Particles::ParticleHandler<3, 3> &particle_handler,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                          Point<3>,
                          Point<3>,
@@ -262,7 +261,7 @@ void ParticleWallContactDetection::pwFineSearch(
                 std::get<0>(pwContactList[i]).first->get_properties()[18]};
               Point<3> relVel =
                 pVel +
-               cross_product_3d(
+                cross_product_3d(
                   (((std::get<0>(pwContactList[i]).first->get_properties()[2]) /
                     2) *
                    pOmega),

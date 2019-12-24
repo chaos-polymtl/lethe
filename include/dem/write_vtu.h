@@ -27,9 +27,9 @@ class WriteVTU
 public:
   WriteVTU();
   void
-  write_master_files(const Visualization &           data_out);
+  write_master_files(const Visualization &data_out);
   void
-  writeVTUFiles(Visualization&, int, float);
+  writeVTUFiles(Visualization &, int, float);
 };
 
 #endif /* CMAKEFILES_WRITEVTU_H_ */
