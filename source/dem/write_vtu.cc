@@ -17,16 +17,15 @@
 using namespace dealii;
 
 WriteVTU::WriteVTU()
-{
-}
+{}
 
 // this function writes the pvtu file:
 void
 WriteVTU::write_master_files(const Visualization &data_out)
 {
-    std::string              solution_file_prefix = "Globals";
-    std::vector<std::string> filenames;
-    filenames.push_back(solution_file_prefix + ".vtu");
+  std::string              solution_file_prefix = "Globals";
+  std::vector<std::string> filenames;
+  filenames.push_back(solution_file_prefix + ".vtu");
   const std::string pvtu_master_filename = (solution_file_prefix + ".pvtu");
   std::ofstream     pvtu_master(("particles/" + pvtu_master_filename).c_str());
 
@@ -39,13 +38,12 @@ WriteVTU::writeVTUFiles(Visualization &visObj, int DEM_step, float DEM_time)
   // const unsigned int n_processes =
   // Utilities::MPI::n_mpi_processes(this->get_mpi_communicator());
   // const unsigned int n_processes = 1;
-    std::string filename =
-      (("particles/Out_" + Utilities::int_to_string(DEM_step, 4)));
-    std::ofstream         output((filename + ".vtu"));
-    DataOutBase::VtkFlags vtk_flags;
-    vtk_flags.cycle = DEM_step;
-    vtk_flags.time  = DEM_time;
-    visObj.set_flags(vtk_flags);
-    visObj.write_vtu(output);
-
+  std::string filename =
+    (("particles/Out_" + Utilities::int_to_string(DEM_step, 4)));
+  std::ofstream         output((filename + ".vtu"));
+  DataOutBase::VtkFlags vtk_flags;
+  vtk_flags.cycle = DEM_step;
+  vtk_flags.time  = DEM_time;
+  visObj.set_flags(vtk_flags);
+  visObj.write_vtu(output);
 }

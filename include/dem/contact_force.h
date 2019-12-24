@@ -45,7 +45,6 @@ public:
                            Point<3>,
                            double,
                            double>>,
-    Particles::ParticleHandler<3, 3> &,
     ParametersDEM<3>);
 
 

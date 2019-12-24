@@ -1,8 +1,11 @@
 #include <deal.II/base/parameter_handler.h>
+
+#include <deal.II/fe/mapping_q.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
-#include <deal.II/fe/mapping_q.h>
+
 #include <deal.II/particles/particle.h>
 
 #include <iostream>
@@ -38,21 +41,22 @@ test()
                                                         mapping,
                                                         n_properties);
 
-  int nPart = 0;
-   Particles::PropertyPool pool(DEMparam.outputProperties.numProperties);
-   Particles::Particle<3> particle;
-  ParticleInsertion ins1(DEMparam);
-  ins1.uniformInsertion(
-    particle_handler, tr, DEMparam, nPart, pool, particle);
+  int                     nPart = 0;
+  Particles::PropertyPool pool(DEMparam.outputProperties.numProperties);
+  Particles::Particle<3>  particle;
+  ParticleInsertion       ins1(DEMparam);
+  ins1.uniformInsertion(particle_handler, tr, DEMparam, nPart, pool, particle);
 
-int i = 1;
+  int i = 1;
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
-       ++particle,++i)
+       ++particle, ++i)
     {
-          deallog << "Particle " << i << " is inserted at: "<< particle->get_location()[0] << " "<< particle->get_location()[1] << " "<< particle->get_location()[2] << " " << std::endl;
-  }
-
+      deallog << "Particle " << i
+              << " is inserted at: " << particle->get_location()[0] << " "
+              << particle->get_location()[1] << " "
+              << particle->get_location()[2] << " " << std::endl;
+    }
 }
 
 int

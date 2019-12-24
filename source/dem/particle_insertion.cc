@@ -58,7 +58,6 @@ void ParticleInsertion::uniformInsertion(
   int &                             nPart,
   Particles::PropertyPool &         pool)
 {
-
   int nx = int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
                (2 * DEMparam.physicalProperties.diameter));
   int ny = int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) /

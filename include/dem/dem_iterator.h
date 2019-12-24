@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/parameters_dem.h"
 #include "dem/integration.h"
+#include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 
 
@@ -59,7 +59,9 @@ public:
                            double,
                            double,
                            Point<3>,
-                           double>> &, std::vector<std::tuple<std::string, int>>, dealii::Particles::PropertyPool &);
+                           double>> &,
+    std::vector<std::tuple<std::string, int>>,
+    dealii::Particles::PropertyPool &);
 
 private:
   void forceReinit(Particles::ParticleHandler<3, 3> &);
