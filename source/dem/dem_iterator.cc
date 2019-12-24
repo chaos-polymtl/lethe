@@ -16,6 +16,12 @@
 #include "dem/parameters_dem.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
+#include "dem/visualization.h"
+#include "dem/write_vtu.h"
+#include <deal.II/particles/property_pool.h>
+
+#include <math.h>
+
 
 using namespace dealii;
 
@@ -87,7 +93,7 @@ DEM_iterator::engine(
                          double,
                          double,
                          Point<3>,
-                         double>> & pwContactInfo)
+                         double>> & pwContactInfo, std::vector<std::tuple<std::string, int>> properties, Particles::PropertyPool &propPool)
 {
   // moving walls
 
@@ -95,14 +101,25 @@ DEM_iterator::engine(
   // check simulation boundaries
   // checkSimBound(particle_handler, readInput);
 
+    //insertion
+    if (fmod(step, DEMparam.insertionInfo.insertFrequncy) == 1)
+      {
+    if (step < DEMparam.insertionInfo.tInsertion)
+      {
+        if (nPart < DEMparam.simulationControl.nTotal) // number < total number
+          {
+  ParticleInsertion ins1(DEMparam);
+                ins1.uniformInsertion(
+                  particle_handler, tr, DEMparam, nPart, propPool);
+              }
+          }
+    }
+
 
   // contact search
   std::vector<std::pair<Particles::ParticleIterator<3, 3>,
                         Particles::ParticleIterator<3, 3>>>
     contactPairs;
-  // std::vector<std::tuple<Particles::ParticleIterator<3,3>,Particles::ParticleIterator<3,3>,double,std::vector<double>,
-  // std::vector<double>, std::vector<double>, std::vector<double> >>
-  // contactInfo;
 
   // force reinitilization
   forceReinit(particle_handler);
@@ -115,6 +132,7 @@ DEM_iterator::engine(
                                      cellNeighbor.second,
                                      cellNeighbor.first);
   //	}
+
   cs.fineSearch(contactPairs,
                 particle_handler,
                 contactInfo,
@@ -146,47 +164,37 @@ DEM_iterator::engine(
 
   // p-w contact force:
   ParticleWallContactForce pwcf;
-  pwcf.pwLinearCF(pwContactInfo, particle_handler, DEMparam);
+  pwcf.pwLinearCF(pwContactInfo, DEMparam);
 
 
   // Integration
   Integration Integ1;
-  //Integ1.eulerIntegration(particle_handler, DEMparam);
-  Integ1.rk2Integration(particle_handler, DEMparam);
+  Integ1.eulerIntegration(particle_handler, DEMparam);
+  //Integ1.rk2Integration(particle_handler, DEMparam);
 
 
+
+  //visualization
+  if (fmod(step, DEMparam.simulationControl.writeFrequency) == 1)
+    {
+      Visualization visObj;
+      visObj.build_patches(particle_handler,
+                           DEMparam.outputProperties.numFields,
+                           DEMparam.outputProperties.numProperties,
+                           properties);
+      WriteVTU writObj;
+      writObj.write_master_files(visObj);
+      writObj.writeVTUFiles(visObj, step, time);
+    }
+
+  //print iteration
+  if (fmod(step,1000) == 0)
+  {
+            std::cout << "Step "<< step << std::endl;
+  }
 
   // update:
   particle_handler.sort_particles_into_subdomains_and_cells();
-
-  //	for (auto particle = particle_handler.begin(); particle !=
-  // particle_handler.end(); ++particle)
-  //			{
-  //	std:: cout <<"force: "<< particle->get_properties()[13]<< " " <<
-  // particle->get_properties()[14] << " " << particle->get_properties()[15] <<
-  // std::endl;
-  //
-  //			std:: cout <<"acceleration: "<< particle->get_properties()[10]<< " "
-  //<<  particle->get_properties()[11] << " " << particle->get_properties()[12]
-  //<< std::endl; 			std:: cout <<"velocity: "<<
-  // particle->get_properties()[7]<< " " <<  particle->get_properties()[8] << "
-  // "
-  //<< particle->get_properties()[9]
-  //<< std::endl; 			std:: cout <<"position: " <<
-  // particle->get_properties()[4]<< " " <<  particle->get_properties()[5] << "
-  // "
-  //<< particle->get_properties()[6]
-  //<< std::endl;
-  //			}
-
-
-  //***********************************************************************
-  // Verlet should be updated after writing the contact force
-  // Integ1.velVerIntegration(particle_handler, readInput.dt);
-  //***********************************************************************
-
-
-
   step = step + 1;
   time = step * DEMparam.simulationControl.dt;
 }

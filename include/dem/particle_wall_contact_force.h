@@ -44,11 +44,9 @@ public:
                            double,
                            Point<3>,
                            double>>,
-    Particles::ParticleHandler<3, 3> &,
     ParametersDEM<3>);
 
 private:
-  double vecValue(Point<3>);
   int
   sgn(float);
 };
