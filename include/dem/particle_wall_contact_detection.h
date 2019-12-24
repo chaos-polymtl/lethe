@@ -73,9 +73,7 @@ public:
 
 private:
   Point<3> findProjection(Point<3>, Point<3>);
-  double   dotProduct(Point<3>, Point<3>);
-  Point<3> crossProduct(Point<3>, Point<3>);
-  double   vecValue(Point<3>);
+
 };
 
 #endif /* PWCONTACTDETECTION_H_ */

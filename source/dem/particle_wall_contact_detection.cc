@@ -192,22 +192,22 @@ void ParticleWallContactDetection::pwFineSearch(
             std::get<0>(pwContactInfo[i]).first->get_properties()[18]};
           Point<3> relVel =
             pVel +
-            crossProduct(
+            cross_product_3d(
               (((std::get<0>(pwContactInfo[i]).first->get_properties()[2]) /
                 2) *
                pOmega),
               normVec);
-          double   normRelVel = dotProduct(relVel, normVec);
+          double   normRelVel = relVel * normVec;
           Point<3> relNormVel = normRelVel * normVec;
           Point<3> relTangVel;
           relTangVel             = relVel - relNormVel;
           Point<3> tangVec       = {0, 0, 0};
-          double   relTangVelVal = vecValue(relTangVel);
+          double   relTangVelVal = relTangVel.norm();
           if (relTangVelVal != 0)
             {
               tangVec = relTangVel / relTangVelVal;
             }
-          double tangRelVel = dotProduct(relVel, tangVec);
+          double tangRelVel = relVel * tangVec;
           double tangOverlap =
             std::get<5>(pwContactInfo[i]) + (tangRelVel * dt);
 
@@ -262,12 +262,12 @@ void ParticleWallContactDetection::pwFineSearch(
                 std::get<0>(pwContactList[i]).first->get_properties()[18]};
               Point<3> relVel =
                 pVel +
-                crossProduct(
+               cross_product_3d(
                   (((std::get<0>(pwContactList[i]).first->get_properties()[2]) /
                     2) *
                    pOmega),
                   normVec);
-              double   normRelVel = dotProduct(relVel, normVec);
+              double   normRelVel = relVel * normVec;
               Point<3> relNormVel = normRelVel * normVec;
               Point<3> relTangVel;
               relTangVel       = relVel - relNormVel;
@@ -275,17 +275,16 @@ void ParticleWallContactDetection::pwFineSearch(
 
 
 
-              double relTangVelVal = vecValue(relTangVel);
+              double relTangVelVal = relTangVel.norm();
               if (relTangVelVal != 0)
                 {
                   tangVec = relTangVel / relTangVelVal;
                 }
 
 
-              double tangRelVel  = dotProduct(relVel, tangVec);
+              double tangRelVel  = relVel * tangVec;
               double tangOverlap = 0;
 
-              //   << " " ;
 
               pwInfoTuple = std::make_tuple(std::get<0>(pwContactList[i]),
                                             normVec,
@@ -308,28 +307,7 @@ Point<3> ParticleWallContactDetection::findProjection(Point<3> pointA,
                                                       Point<3> pointB)
 {
   Point<3> pointC;
-  pointC = ((dotProduct(pointA, pointB)) / (pointB.square())) * pointB;
+  pointC = ((pointA * pointB) / (pointB.square())) * pointB;
 
   return pointC;
-}
-
-
-double ParticleWallContactDetection::dotProduct(Point<3> A, Point<3> B)
-{
-  return (A[0] * B[0] + A[1] * B[1] + A[2] * B[2]);
-}
-
-
-Point<3> ParticleWallContactDetection::crossProduct(Point<3> A, Point<3> B)
-{
-  return {A[1] * B[2] - A[2] * B[1],
-          A[2] * B[0] - A[0] * B[2],
-          A[0] * B[1] - A[1] * B[0]};
-}
-
-
-
-double ParticleWallContactDetection::vecValue(Point<3> A)
-{
-  return (sqrt(pow(A[0], 2) + pow(A[1], 2) + pow(A[2], 2)));
 }
