@@ -15,9 +15,9 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/contact_force.h"
-#include "dem/contact_search.h"
 #include "dem/particle_insertion.h"
+#include "dem/particle_wall_contact_detection.h"
+#include "dem/particle_wall_contact_force.h"
 
 using namespace dealii;
 
@@ -45,20 +45,16 @@ test()
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
+  std::vector<std::tuple<int,
+                         Triangulation<3>::active_cell_iterator,
+                         int,
+                         Point<3>,
+                         Point<3>>>
+    boundaryCellInfo;
 
 
-  std::pair<std::vector<
-              std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
-    cellNeighbor;
-
-  ContactSearch cs1;
-  cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
-
-  Point<3> position1 = {0.4, 0, 0};
+  Point<3> position1 = {-0.998, 0, 0};
   int      id1       = 0;
-  Point<3> position2 = {0.40499, 0, 0};
-  int      id2       = 1;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
@@ -88,69 +84,36 @@ test()
   pit1->get_properties()[20] = 1;
 
 
-  Particles::Particle<dim> particle2(position2, position2, id2);
-  typename Triangulation<dim, dim>::active_cell_iterator cell2 =
-    GridTools::find_active_cell_around_point(tr, particle2.get_location());
-  Particles::ParticleIterator<dim, dim> pit2 =
-    particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[0]  = id2;
-  pit2->get_properties()[1]  = 1;
-  pit2->get_properties()[2]  = DEMparam.physicalProperties.diameter;
-  pit2->get_properties()[3]  = DEMparam.physicalProperties.density;
-  pit2->get_properties()[4]  = position2[0];
-  pit2->get_properties()[5]  = position2[1];
-  pit2->get_properties()[6]  = position2[2];
-  pit2->get_properties()[7]  = 0;
-  pit2->get_properties()[8]  = 0;
-  pit2->get_properties()[9]  = 0;
-  pit2->get_properties()[10] = 0;
-  pit2->get_properties()[11] = 0;
-  pit2->get_properties()[12] = 0;
-  pit2->get_properties()[13] = 0;
-  pit2->get_properties()[14] = 0;
-  pit2->get_properties()[15] = 0;
-  pit2->get_properties()[16] = 0;
-  pit2->get_properties()[17] = 0;
-  pit2->get_properties()[18] = 0;
-  pit2->get_properties()[19] = 1;
-  pit2->get_properties()[20] = 1;
+  ParticleWallContactDetection pw1;
+  pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
+                         Point<3>,
+                         Point<3>>>
+    pwContactList;
+  pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
 
-  std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
-                        Particles::ParticleIterator<dim, dim>>>
-    pairs;
-  pairs = cs1.findContactPairs(particle_handler,
-                               tr,
-                               cellNeighbor.second,
-                               cellNeighbor.first);
-
-
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                   Particles::ParticleIterator<3, 3>>,
-                         double,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
+                         Point<3>,
                          Point<3>,
                          double,
-                         Point<3>,
                          double,
+                         double,
+                         Point<3>,
                          double>>
-    contactInfo;
+    pwContactInfo;
+  pw1.pwFineSearch(pwContactList,
+                   particle_handler,
+                   pwContactInfo,
+                   DEMparam.simulationControl.dt);
 
+  ParticleWallContactForce pwcf1;
+  pwcf1.pwLinearCF(pwContactInfo, particle_handler, DEMparam);
 
-
-  cs1.fineSearch(pairs,
-                 particle_handler,
-                 contactInfo,
-                 DEMparam.simulationControl.dt);
-
-
-  ContactForce cf1;
-  cf1.linearCF(contactInfo, particle_handler, DEMparam);
 
   auto particle = particle_handler.begin();
 
-  deallog << "The contact force vector for particle 1 is: "
-          << particle->get_properties()[13] << " "
-          << particle->get_properties()[14] << " "
-          << particle->get_properties()[15] << " N " << std::endl;
+  deallog << "The contact force acting on particle 1 is: "
+          << particle->get_properties()[13] << " N " << std::endl;
 }
 
 int
