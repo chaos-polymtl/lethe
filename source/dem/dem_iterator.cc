@@ -151,7 +151,8 @@ DEM_iterator::engine(
 
   // Integration
   Integration Integ1;
-  Integ1.eulerIntegration(particle_handler, DEMparam);
+  //Integ1.eulerIntegration(particle_handler, DEMparam);
+  Integ1.rk2Integration(particle_handler, DEMparam);
 
 
 
