@@ -8,6 +8,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <deal.II/particles/particle.h>
+#include <deal.II/particles/particle_iterator.h>
 #include "dem/contact_force.h"
 #include "dem/contact_search.h"
 #include "dem/integration.h"
