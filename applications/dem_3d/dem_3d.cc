@@ -55,33 +55,23 @@
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
-#include "dem/visualization.h"
-#include "dem/write_vtu.h"
+
 
 
 
 using namespace dealii;
 
 
-int
-main(int argc, char *argv[])
+template <int dim>
+void initilization()
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-
-  std::string filename;
-  if (argc < 2)
+std::string filename;
     filename = "dem.prm";
-  else
-    filename = argv[1];
-
   ParameterHandler prm;
   ParametersDEM<3> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
   DEMparam.parse(prm);
-
-
 
   std::vector<std::tuple<std::string, int>> properties(
     DEMparam.outputProperties.numProperties);
@@ -114,8 +104,6 @@ main(int argc, char *argv[])
   int   DEM_step = 0;
   float DEM_time = 0;
 
-  ParticleInsertion ins1(DEMparam);
-
   parallel::distributed::Triangulation<3, 3> tr(MPI_COMM_WORLD);
 
   Particles::Particle<3> particle;
@@ -126,7 +114,7 @@ main(int argc, char *argv[])
 
   Particles::ParticleHandler<3, 3> particle_handler(
     tr, mappinggg, DEMparam.outputProperties.numProperties);
-  Particles::PropertyPool pool(DEMparam.outputProperties.numProperties);
+  Particles::PropertyPool propPool(DEMparam.outputProperties.numProperties);
 
 
   int cellNum = tr.n_active_cells();
@@ -169,74 +157,9 @@ main(int argc, char *argv[])
   ParticleWallContactDetection pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 
-
-  // Insertion phase:
-  while (DEM_step < DEMparam.insertionInfo.tInsertion)
-    {
-      if (nPart < DEMparam.simulationControl.nTotal) // number < total number
-        {
-          if (fmod(DEM_step, DEMparam.insertionInfo.insertFrequncy) == 1)
-            {
-              ins1.uniformInsertion(
-                particle_handler, tr, DEMparam, nPart, pool, particle);
-            }
-        }
-
-      if (fmod(DEM_step, DEMparam.simulationControl.writeFrequency) == 1)
-        {
-          Visualization visObj;
-          visObj.build_patches(particle_handler,
-                               DEMparam.outputProperties.numFields,
-                               DEMparam.outputProperties.numProperties,
-                               properties);
-          std::string              particle_file_prefix = "Globals";
-          std::vector<std::string> filenames;
-          filenames.push_back(particle_file_prefix + ".vtu");
-          WriteVTU writObj;
-          writObj.write_master_files(visObj, particle_file_prefix, filenames);
-
-          std::string filename =
-            (("particles/Out_" + Utilities::int_to_string(DEM_step, 4)));
-          std::ofstream         output((filename + ".vtu"));
-          DataOutBase::VtkFlags vtk_flags;
-          vtk_flags.cycle = DEM_step;
-          vtk_flags.time  = DEM_time;
-          visObj.set_flags(vtk_flags);
-          visObj.write_vtu(output);
-        }
-
-      iter1.engine(nPart,
-                   particle_handler,
-                   tr,
-                   DEM_step,
-                   DEM_time,
-                   DEMparam,
-                   cellNeighbor,
-                   contactInfo,
-                   boundaryCellInfo,
-                   pwContactInfo);
-      std::cout << DEM_step << std::endl;
-    }
-
-  // Operation phase:
+  // dem engine iterator:
   while (DEM_step < DEMparam.simulationControl.tFinal)
     {
-      if (fmod(DEM_step, DEMparam.simulationControl.writeFrequency) == 1)
-        {
-          Visualization visObj;
-          visObj.build_patches(particle_handler,
-                               DEMparam.outputProperties.numFields,
-                               DEMparam.outputProperties.numProperties,
-                               properties);
-          std::string filename =
-            (("particles/Out_" + Utilities::int_to_string(DEM_step, 4)));
-          std::ofstream         output((filename + ".vtu"));
-          DataOutBase::VtkFlags vtk_flags;
-          vtk_flags.cycle = DEM_step;
-          vtk_flags.time  = DEM_time;
-          visObj.set_flags(vtk_flags);
-          visObj.write_vtu(output);
-        }
 
       iter1.engine(nPart,
                    particle_handler,
@@ -247,9 +170,19 @@ main(int argc, char *argv[])
                    cellNeighbor,
                    contactInfo,
                    boundaryCellInfo,
-                   pwContactInfo);
-      std::cout << DEM_step << std::endl;
+                   pwContactInfo, properties, propPool);
     }
+}
+
+
+
+int
+main(int argc, char *argv[])
+{
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(
+    argc, argv, numbers::invalid_unsigned_int);
+
+initilization<3>();
 
   return 0;
 }

@@ -56,11 +56,9 @@ void ParticleInsertion::uniformInsertion(
   const Triangulation<3, 3> &       tr,
   ParametersDEM<3>                  DEMparam,
   int &                             nPart,
-  Particles::PropertyPool &         pool,
-  Particles::Particle<3> &          particle)
+  Particles::PropertyPool &         pool)
 {
-  /// typename Particles::PropertyPool::Handle handle =
-  /// pool.allocate_properties_array();
+
   int nx = int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
                (2 * DEMparam.physicalProperties.diameter));
   int ny = int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) /
