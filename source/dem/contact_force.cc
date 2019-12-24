@@ -61,10 +61,15 @@ void ContactForce::linearCF(
           }
 
         std::get<0>(contactInfo[i]).first->get_properties()[13] = totalForce[0];
-        std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[0];
-        std::get<0>(contactInfo[i]).first->get_properties()[15] = totalForce[0];
+        std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[1];
+        std::get<0>(contactInfo[i]).first->get_properties()[15] = totalForce[2];
 
-
+        std::get<0>(contactInfo[i]).second->get_properties()[13] =
+          -1 * totalForce[0];
+        std::get<0>(contactInfo[i]).second->get_properties()[14] =
+          -1 * totalForce[1];
+        std::get<0>(contactInfo[i]).second->get_properties()[15] =
+          -1 * totalForce[2];
 
         // calculation of torque
         // Point<3> Torquei =
