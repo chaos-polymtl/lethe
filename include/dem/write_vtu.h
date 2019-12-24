@@ -27,11 +27,9 @@ class WriteVTU
 public:
   WriteVTU();
   void
-  write_master_files(const Visualization &           data_out,
-                     const std::string &             solution_file_prefix,
-                     const std::vector<std::string> &filenames);
+  write_master_files(const Visualization &           data_out);
   void
-  writeVTUFiles(int, float, Visualization data_out);
+  writeVTUFiles(Visualization&, int, float);
 };
 
 #endif /* CMAKEFILES_WRITEVTU_H_ */
