@@ -22,29 +22,29 @@
 
 using namespace dealii;
 
-ContactSearch::ContactSearch()
+template <int dim, int spacedim>
+ContactSearch<dim,spacedim>::ContactSearch()
 {}
 
-
-
-std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
-          std::vector<Triangulation<3>::active_cell_iterator>>
-ContactSearch::findCellNeighbors(int cellNum, const Triangulation<3, 3> &tr)
+template <int dim, int spacedim>
+std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+          std::vector<typename Triangulation<dim>::active_cell_iterator>>
+ContactSearch<dim,spacedim>::findCellNeighbors(int cellNum, const Triangulation<dim, spacedim> &tr)
 {
-  std::vector<std::set<Triangulation<3>::active_cell_iterator>>
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
                                                       cellNeighborList(cellNum);
-  std::vector<Triangulation<3>::active_cell_iterator> totallCellList;
+  std::vector<typename Triangulation<dim>::active_cell_iterator> totallCellList;
 
-  int  iter   = 0;
+    int  iter   = 0;
   auto v_to_c = GridTools::vertex_to_cell_map(tr);
-  for (Triangulation<3>::active_cell_iterator cell = tr.begin_active();
+  for (typename Triangulation<dim>::active_cell_iterator cell = tr.begin_active();
        cell != tr.end();
        ++cell)
     {
       cellNeighborList[iter].insert(cell);
       totallCellList.push_back(cell);
 
-      for (unsigned int v = 0; v < GeometryInfo<3>::vertices_per_cell; ++v)
+      for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell; ++v)
         {
           for (const auto &neighbor : v_to_c[cell->vertex_index(v)])
             {
@@ -57,35 +57,35 @@ ContactSearch::findCellNeighbors(int cellNum, const Triangulation<3, 3> &tr)
         }
       iter++;
     }
-  std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
-            std::vector<Triangulation<3>::active_cell_iterator>>
+  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+            std::vector<typename Triangulation<dim>::active_cell_iterator>>
     contactPair = std::make_pair(cellNeighborList, totallCellList);
   return contactPair;
 }
 
 
-
-std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                      Particles::ParticleIterator<3, 3>>>
-  ContactSearch::findContactPairs(
-    Particles::ParticleHandler<3, 3> &                  particle_handler,
-    const Triangulation<3, 3> &                         tr,
-    std::vector<Triangulation<3>::active_cell_iterator> totallCellList,
-    std::vector<std::set<Triangulation<3>::active_cell_iterator>>
+template <int dim, int spacedim>
+std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                      Particles::ParticleIterator<dim, spacedim>>>
+  ContactSearch<dim,spacedim>::findContactPairs(
+    Particles::ParticleHandler<dim, spacedim> &                  particle_handler,
+    const Triangulation<dim, spacedim> &                         tr,
+    std::vector<typename Triangulation<dim>::active_cell_iterator> totallCellList,
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
       cellNeighborList)
 
 
 // 2nd method:
 {
-  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                        Particles::ParticleIterator<3, 3>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
       contactPairs;
   int index = 0;
-  for (Triangulation<3>::active_cell_iterator cell = tr.begin_active();
+  for (typename Triangulation<dim>::active_cell_iterator cell = tr.begin_active();
        cell != tr.end();
        ++cell, ++index)
     {
-      const Particles::ParticleHandler<3, 3>::particle_iterator_range
+      typename Particles::ParticleHandler<dim, spacedim>::particle_iterator_range
         particle_range = particle_handler.particles_in_cell(cell);
 
 
@@ -93,16 +93,16 @@ std::vector<std::pair<Particles::ParticleIterator<3, 3>,
            cellIt != cellNeighborList[index].end();
            cellIt++)
         {
-          const Particles::ParticleHandler<3, 3>::particle_iterator_range
+          typename Particles::ParticleHandler<dim, spacedim>::particle_iterator_range
             particle_range2 = particle_handler.particles_in_cell(*cellIt);
 
-          for (typename Particles::ParticleHandler<3, 3>::
+          for (typename Particles::ParticleHandler<dim, spacedim>::
                  particle_iterator_range::iterator partIter =
                    particle_range.begin();
                partIter != particle_range.end();
                ++partIter)
             {
-              for (typename Particles::ParticleHandler<3, 3>::
+              for (typename Particles::ParticleHandler<dim, spacedim>::
                      particle_iterator_range::iterator partIter2 =
                        particle_range2.begin();
                    partIter2 != particle_range2.end();
@@ -130,14 +130,14 @@ std::vector<std::pair<Particles::ParticleIterator<3, 3>,
 // 1st method:
 /*
 {
-  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                        Particles::ParticleIterator<3, 3>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
     contactPairs;
   if (!contactPairs.empty())
     {
       contactPairs.clear();
     }
-  Triangulation<3>::active_cell_iterator currrentCell;
+  typename Triangulation<dim>::active_cell_iterator currrentCell;
   for (auto particleIter = particle_handler.begin();
        particleIter != particle_handler.end();
        ++particleIter)
@@ -152,9 +152,9 @@ std::vector<std::pair<Particles::ParticleIterator<3, 3>,
            cellIt != cellNeighborList[index].end();
            cellIt++)
         {
-          const Particles::ParticleHandler<3, 3>::particle_iterator_range
+          const Particles::ParticleHandler<dim, spacedim>::particle_iterator_range
             particle_range = particle_handler.particles_in_cell(*cellIt);
-          for (typename Particles::ParticleHandler<3, 3>::
+          for (typename Particles::ParticleHandler<dim, spacedim>::
                  particle_iterator_range::iterator partIter =
                    particle_range.begin();
                partIter != particle_range.end();
@@ -178,33 +178,32 @@ std::vector<std::pair<Particles::ParticleIterator<3, 3>,
 */
 
 
-
-void ContactSearch::fineSearch(
-  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                        Particles::ParticleIterator<3, 3>>> contactPairs,
-  dealii::Particles::ParticleHandler<3, 3> &                particle_handler,
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                   Particles::ParticleIterator<3, 3>>,
+template <int dim, int spacedim>
+void ContactSearch<dim,spacedim>::fineSearch(
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>> contactPairs,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                                   Particles::ParticleIterator<dim, spacedim>>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
                          double>> &                         contactInfo,
   float                                                     dt)
 {
-  Point<3, double> loc1, loc2;
-  std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                       Particles::ParticleIterator<3, 3>>,
+  Point<dim, double> loc1, loc2;
+  std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                       Particles::ParticleIterator<dim, spacedim>>,
              double,
-             Point<3>,
+             Point<dim>,
              double,
-             Point<3>,
+             Point<dim>,
              double,
              double>
     infoTuple;
-  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                        Particles::ParticleIterator<3, 3>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
     searchPair;
 
   double distance;
@@ -225,32 +224,32 @@ void ContactSearch::fineSearch(
                  loc1.distance(loc2);
       if (distance > 0)
         {
-          Point<3> contactVector;
+          Point<dim> contactVector;
           contactVector    = (loc2 - loc1);
-          Point<3> normVec = contactVector / contactVector.norm();
+          Point<dim> normVec = contactVector / contactVector.norm();
 
-          Point<3> part1Vel = {
+          Point<dim> part1Vel = {
             std::get<0>(contactInfo[i]).first->get_properties()[7],
             std::get<0>(contactInfo[i]).first->get_properties()[8],
             std::get<0>(contactInfo[i]).first->get_properties()[9]};
-          Point<3> part2Vel = {
+          Point<dim> part2Vel = {
             std::get<0>(contactInfo[i]).second->get_properties()[7],
             std::get<0>(contactInfo[i]).second->get_properties()[8],
             std::get<0>(contactInfo[i]).second->get_properties()[9]};
 
-          Point<3> part1AngVel = {
+          Point<dim> part1AngVel = {
             std::get<0>(contactInfo[i]).first->get_properties()[16],
             std::get<0>(contactInfo[i]).first->get_properties()[17],
             std::get<0>(contactInfo[i]).first->get_properties()[18]};
 
-          Point<3> part2AngVel = {
+          Point<dim> part2AngVel = {
             std::get<0>(contactInfo[i]).second->get_properties()[16],
             std::get<0>(contactInfo[i]).second->get_properties()[17],
             std::get<0>(contactInfo[i]).second->get_properties()[18]};
 
           // ************************************************
           // in tempelate <3> <2> take care
-          Point<3> relVel;
+          Point<dim> relVel;
           relVel =
             (part1Vel - part2Vel) +
             (cross_product_3d(
@@ -262,10 +261,10 @@ void ContactSearch::fineSearch(
               normVec));
 
           double   normRelVel = relVel * normVec;
-          Point<3> relNormVel = normRelVel * normVec;
-          Point<3> relTangVel;
+          Point<dim> relNormVel = normRelVel * normVec;
+          Point<dim> relTangVel;
           relTangVel       = relVel - relNormVel;
-          Point<3> tangVec = {0, 0, 0};
+          Point<dim> tangVec = {0, 0, 0};
 
           double relTangVelVal = relTangVel.norm();
           if (relTangVelVal != 0)
@@ -310,30 +309,30 @@ void ContactSearch::fineSearch(
         {
           if (distance > 0)
             {
-              Point<3> contactVector;
+              Point<dim> contactVector;
               contactVector    = (loc2 - loc1);
-              Point<3> normVec = contactVector / contactVector.norm();
+              Point<dim> normVec = contactVector / contactVector.norm();
 
-              Point<3> part1Vel = {contactPairs[i].first->get_properties()[7],
+              Point<dim> part1Vel = {contactPairs[i].first->get_properties()[7],
                                    contactPairs[i].first->get_properties()[8],
                                    contactPairs[i].first->get_properties()[9]};
-              Point<3> part2Vel = {contactPairs[i].second->get_properties()[7],
+              Point<dim> part2Vel = {contactPairs[i].second->get_properties()[7],
                                    contactPairs[i].second->get_properties()[8],
                                    contactPairs[i].second->get_properties()[9]};
 
-              Point<3> part1AngVel = {
+              Point<dim> part1AngVel = {
                 contactPairs[i].first->get_properties()[16],
                 contactPairs[i].first->get_properties()[17],
                 contactPairs[i].first->get_properties()[18]};
 
-              Point<3> part2AngVel = {
+              Point<dim> part2AngVel = {
                 contactPairs[i].second->get_properties()[16],
                 contactPairs[i].second->get_properties()[17],
                 contactPairs[i].second->get_properties()[18]};
 
               // ************************************************
               // in tempelate <3> <2> take care
-              Point<3> relVel;
+              Point<dim> relVel;
               relVel = (part1Vel - part2Vel) +
                        (cross_product_3d(
                          (((contactPairs[i].first->get_properties()[2] / 2.0) *
@@ -345,11 +344,11 @@ void ContactSearch::fineSearch(
 
 
               double   normRelVel = relVel * normVec;
-              Point<3> relNormVel = normRelVel * normVec;
-              Point<3> relTangVel;
+              Point<dim> relNormVel = normRelVel * normVec;
+              Point<dim> relTangVel;
               relTangVel = relVel - relNormVel;
 
-              Point<3> tangVec       = {0, 0, 0};
+              Point<dim> tangVec       = {0, 0, 0};
               double   relTangVelVal = relTangVel.norm();
               if (relTangVelVal != 0)
                 {
@@ -372,3 +371,5 @@ void ContactSearch::fineSearch(
         }
     }
 }
+
+template class ContactSearch<3,3>;

@@ -31,38 +31,41 @@ using namespace dealii;
 #ifndef CONTACTSEARCH_H_
 #  define CONTACTSEARCH_H_
 
+template <int dim, int spacedim>
 class ContactSearch
 {
 public:
-  ContactSearch();
-  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                        Particles::ParticleIterator<3, 3>>>
-    findContactPairs(
-      dealii::Particles::ParticleHandler<3, 3> &,
-      const Triangulation<3, 3> &,
-      std::vector<Triangulation<3>::active_cell_iterator>,
-      std::vector<std::set<Triangulation<3>::active_cell_iterator>>);
+  ContactSearch<dim,spacedim>();
 
-  std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
-            std::vector<Triangulation<3>::active_cell_iterator>>
-       findCellNeighbors(int, const Triangulation<3, 3> &);
+  std::vector<std::pair<Particles::ParticleIterator<dim,spacedim>,
+                        Particles::ParticleIterator<dim,spacedim>>>
+    findContactPairs(
+      dealii::Particles::ParticleHandler<dim,spacedim> &,
+      const Triangulation<dim,spacedim> &,
+      std::vector<typename Triangulation<dim>::active_cell_iterator>,
+      std::vector< std::set<typename Triangulation<dim>::active_cell_iterator>>);
+
+
+  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+            std::vector<typename Triangulation<dim>::active_cell_iterator>>
+       findCellNeighbors(int, const Triangulation<dim,spacedim> &);
+
+
   void fineSearch(
-    std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                          Particles::ParticleIterator<3, 3>>>,
-    dealii::Particles::ParticleHandler<3, 3> &,
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                     Particles::ParticleIterator<3, 3>>,
+    std::vector<std::pair<Particles::ParticleIterator<dim,spacedim>,
+                          Particles::ParticleIterator<dim,spacedim>>>,
+    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim,spacedim>,
+                                     Particles::ParticleIterator<dim,spacedim>>,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double,
                            double>> &,
     float);
-  // std::directSearch();
 
-  std::vector<Particles::ParticleIterator<3, 3>>
-    pWSearch(dealii::Particles::ParticleHandler<3, 3> &);
+  std::vector<Particles::ParticleIterator<dim,spacedim>>
+    pWSearch(dealii::Particles::ParticleHandler<dim,spacedim> &);
 };
 
 #endif /* CONTACTSEARCH_H_ */
