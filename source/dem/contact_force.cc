@@ -83,7 +83,7 @@ void ContactForce::linearCF(
 int
 ContactForce::sgn(float a)
 {
-  int b;
+  int b=0;
   if (a > 0)
     {
       b = 1;
@@ -94,7 +94,7 @@ ContactForce::sgn(float a)
     }
   else if (a == 0)
     {
-      b = 0;
+     b = 0;
     }
   return b;
 }

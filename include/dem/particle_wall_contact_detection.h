@@ -34,44 +34,45 @@ using namespace dealii;
 #ifndef PWCONTACTDETECTION_H_
 #  define PWCONTACTDETECTION_H_
 
+template <int dim, int spacedim>
 class ParticleWallContactDetection
 {
 public:
-  ParticleWallContactDetection();
+  ParticleWallContactDetection<dim,spacedim>();
   void
   boundaryCellsAndFaces(
-    const Triangulation<3, 3> &,
+    const Triangulation<dim,spacedim> &,
     std::vector<std::tuple<int,
-                           Triangulation<3>::active_cell_iterator,
+                           typename Triangulation<dim>::active_cell_iterator,
                            int,
-                           Point<3>,
-                           Point<3>>> &);
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>>>
+                           Point<dim>,
+                           Point<dim>>> &);
+  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
+                         Point<dim>,
+                         Point<dim>>>
   pwcontactlist(std::vector<std::tuple<int,
-                                       Triangulation<3>::active_cell_iterator,
+                                       typename Triangulation<dim>::active_cell_iterator,
                                        int,
-                                       Point<3>,
-                                       Point<3>>>,
-                Particles::ParticleHandler<3, 3> &);
+                                       Point<dim>,
+                                       Point<dim>>>,
+                Particles::ParticleHandler<dim,spacedim> &);
 
   void pwFineSearch(
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                           Point<3>,
-                           Point<3>>>,
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                           Point<3>,
-                           Point<3>,
+    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
+                           Point<dim>,
+                           Point<dim>>>,
+    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
+                           Point<dim>,
+                           Point<dim>,
                            double,
                            double,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double>> &,
     float);
 
 private:
-  Point<3> findProjection(Point<3>, Point<3>);
+  Point<dim> findProjection(Point<dim>, Point<dim>);
 };
 
 #endif /* PWCONTACTDETECTION_H_ */

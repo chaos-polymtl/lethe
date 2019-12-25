@@ -25,11 +25,13 @@
 
 using namespace dealii;
 
-DEM_iterator::DEM_iterator()
+template <int dim, int spacedim>
+DEM_iterator<dim,spacedim>::DEM_iterator()
 {}
 
+template <int dim, int spacedim>
 void
-  DEM_iterator::forceReinit(Particles::ParticleHandler<3, 3> &particle_handler)
+  DEM_iterator<dim,spacedim>::forceReinit(Particles::ParticleHandler<dim, spacedim> &particle_handler)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -63,36 +65,38 @@ void DEM_iterator::checkSimBound(
 }
 */
 
+
+template <int dim, int spacedim>
 void
-DEM_iterator::engine(
+DEM_iterator<dim,spacedim>::engine(
   int &                             nPart,
-  Particles::ParticleHandler<3, 3> &particle_handler,
-  const Triangulation<3, 3> &       tr,
+  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  const Triangulation<dim, spacedim> &       tr,
   int &                             step,
   float &                           time,
-  ParametersDEM<3>                  DEMparam,
-  std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
-            std::vector<Triangulation<3>::active_cell_iterator>> cellNeighbor,
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                   Particles::ParticleIterator<3, 3>>,
+  ParametersDEM<dim>                  DEMparam,
+  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+            std::vector<typename Triangulation<dim>::active_cell_iterator>> cellNeighbor,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                                   Particles::ParticleIterator<dim, spacedim>>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
                          double>> &                              contactInfo,
   std::vector<std::tuple<int,
-                         Triangulation<3>::active_cell_iterator,
+                         typename Triangulation<dim>::active_cell_iterator,
                          int,
-                         Point<3>,
-                         Point<3>>>         boundaryCellInfo,
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>,
+                         Point<dim>,
+                         Point<dim>>>         boundaryCellInfo,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim,spacedim>, int>,
+                         Point<dim>,
+                         Point<dim>,
                          double,
                          double,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double>> &         pwContactInfo,
   std::vector<std::tuple<std::string, int>> properties,
   Particles::PropertyPool &                 propPool)
@@ -111,7 +115,7 @@ DEM_iterator::engine(
           if (nPart <
               DEMparam.simulationControl.nTotal) // number < total number
             {
-              ParticleInsertion ins1(DEMparam);
+              ParticleInsertion<dim,spacedim> ins1(DEMparam);
               ins1.uniformInsertion(
                 particle_handler, tr, DEMparam, nPart, propPool);
             }
@@ -120,14 +124,14 @@ DEM_iterator::engine(
 
 
   // contact search
-  std::vector<std::pair<Particles::ParticleIterator<3, 3>,
-                        Particles::ParticleIterator<3, 3>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim,spacedim>,
+                        Particles::ParticleIterator<dim,spacedim>>>
     contactPairs;
 
   // force reinitilization
   forceReinit(particle_handler);
 
-  ContactSearch cs;
+  ContactSearch<dim,spacedim> cs;
   // if (fmod(step,10) == 1)
   //	{
   contactPairs = cs.findContactPairs(particle_handler,
@@ -137,18 +141,17 @@ DEM_iterator::engine(
   //	}
 
   cs.fineSearch(contactPairs,
-                particle_handler,
                 contactInfo,
                 DEMparam.simulationControl.dt);
 
   // contact force
-  ContactForce cf;
+  ContactForce<dim,spacedim> cf;
   cf.linearCF(contactInfo, DEMparam);
 
   // p-w contact detection:
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>>>
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+                         Point<dim>,
+                         Point<dim>>>
     pwContactList;
 
 
@@ -200,3 +203,5 @@ DEM_iterator::engine(
   step = step + 1;
   time = step * DEMparam.simulationControl.dt;
 }
+
+template class DEM_iterator<3,3>;
