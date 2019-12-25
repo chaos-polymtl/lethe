@@ -33,7 +33,8 @@
 
 using namespace dealii;
 
-ParticleInsertion::ParticleInsertion(ParametersDEM<3> DEMparam)
+template <int dim, int spacedim>
+ParticleInsertion<dim,spacedim>::ParticleInsertion(ParametersDEM<dim> DEMparam)
 {
   int n_exp;
 
@@ -50,11 +51,11 @@ ParticleInsertion::ParticleInsertion(ParametersDEM<3> DEMparam)
               << n_exp << ")" << std::endl;
 } // add error here
 
-
-void ParticleInsertion::uniformInsertion(
-  Particles::ParticleHandler<3, 3> &particle_handler,
-  const Triangulation<3, 3> &       tr,
-  ParametersDEM<3>                  DEMparam,
+template <int dim, int spacedim>
+void ParticleInsertion<dim,spacedim>::uniformInsertion(
+  Particles::ParticleHandler<dim,spacedim> &particle_handler,
+  const Triangulation<dim,spacedim> &       tr,
+  ParametersDEM<dim>                  DEMparam,
   int &                             nPart,
   Particles::PropertyPool &         pool)
 {
@@ -72,8 +73,8 @@ void ParticleInsertion::uniformInsertion(
       for (int k = 0; k < nz; ++k)
         if (nP < DEMparam.insertionInfo.nInsert)
           {
-            Point<3>     position;
-            Point<3>     reference_position;
+            Point<dim>     position;
+            Point<dim>     reference_position;
             unsigned int id;
 
             position[0] = DEMparam.insertionInfo.x_min +
@@ -86,13 +87,13 @@ void ParticleInsertion::uniformInsertion(
                           (DEMparam.physicalProperties.diameter / 2) +
                           (k * 1.1 * DEMparam.physicalProperties.diameter);
             id = i * ny * nz + j * nz + k + nPart + 1;
-            Particles::Particle<3> particle(position, reference_position, id);
-            Triangulation<3, 3>::active_cell_iterator cell =
+            Particles::Particle<dim> particle(position, reference_position, id);
+            typename Triangulation<dim,spacedim>::active_cell_iterator cell =
               GridTools::find_active_cell_around_point(tr,
                                                        particle.get_location());
 
 
-            Particles::ParticleIterator<3, 3> pit =
+            Particles::ParticleIterator<dim,spacedim> pit =
               particle_handler.insert_particle(particle, cell);
 
             particle.set_property_pool(pool);
@@ -137,3 +138,5 @@ void ParticleInsertion::uniformInsertion(
 
   nPart = nPart + DEMparam.insertionInfo.nInsert;
 }
+
+template class ParticleInsertion<3,3>;
