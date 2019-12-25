@@ -77,7 +77,7 @@ void ParticleWallContactForce::pwLinearCF(
 int
 ParticleWallContactForce::sgn(float a)
 {
-  int b;
+  int b=0;
   if (a > 0)
     {
       b = 1;

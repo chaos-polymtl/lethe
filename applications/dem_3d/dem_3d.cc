@@ -61,7 +61,7 @@
 using namespace dealii;
 
 
-template <int dim>
+template <int dim, int spacedim>
 void
 initilization()
 {
@@ -104,57 +104,56 @@ initilization()
   int   DEM_step = 0;
   float DEM_time = 0;
 
-  parallel::distributed::Triangulation<dim, dim> tr(MPI_COMM_WORLD);
+  parallel::distributed::Triangulation<dim, spacedim> tr(MPI_COMM_WORLD);
 
   Particles::Particle<dim> particle;
   GridGenerator::hyper_cube(tr, -0.1, 0.1, true);
   int numRef = 3;
   tr.refine_global(numRef);
-  auto &mappinggg = StaticMappingQ1<3, 3>::mapping;
+  auto &mappinggg = StaticMappingQ1<dim, spacedim>::mapping;
 
-  Particles::ParticleHandler<3, 3> particle_handler(
+  Particles::ParticleHandler<dim, spacedim> particle_handler(
     tr, mappinggg, DEMparam.outputProperties.numProperties);
   Particles::PropertyPool propPool(DEMparam.outputProperties.numProperties);
 
 
   int cellNum = tr.n_active_cells();
 
-
-  std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
-            std::vector<Triangulation<3>::active_cell_iterator>>
+  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+            std::vector<typename Triangulation<dim>::active_cell_iterator>>
                 cellNeighbor;
-  ContactSearch cs1;
+  ContactSearch<dim,spacedim> cs1;
   cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
 
 
-  DEM_iterator iter1;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                   Particles::ParticleIterator<3, 3>>,
+  DEM_iterator<dim,spacedim> iter1;
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                                   Particles::ParticleIterator<dim, spacedim>>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
                          double>>
     contactInfo;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+                         Point<dim>,
+                         Point<dim>,
                          double,
                          double,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double>>
     pwContactInfo;
 
 
   std::vector<std::tuple<int,
-                         Triangulation<3>::active_cell_iterator,
+                         typename Triangulation<dim>::active_cell_iterator,
                          int,
-                         Point<3>,
-                         Point<3>>>
+                         Point<dim>,
+                         Point<dim>>>
                                boundaryCellInfo;
-  ParticleWallContactDetection pw1;
+  ParticleWallContactDetection<dim,spacedim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 
   // dem engine iterator:
@@ -183,7 +182,7 @@ main(int argc, char *argv[])
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
     argc, argv, numbers::invalid_unsigned_int);
 
-  initilization<3>();
+  initilization<3,3>();
 
   return 0;
 }

@@ -25,46 +25,47 @@
 #ifndef DEMITERATOR_H_
 #  define DEMITERATOR_H_
 
+template <int dim, int spacedim>
 class DEM_iterator
 {
 public:
-  DEM_iterator();
+  DEM_iterator<dim,spacedim>();
   void
   engine(
     int &,
-    dealii::Particles::ParticleHandler<3, 3> &,
-    const dealii::Triangulation<3, 3> &,
+    dealii::Particles::ParticleHandler<dim,spacedim> &,
+    const dealii::Triangulation<dim,spacedim> &,
     int &,
     float &,
-    ParametersDEM<3>,
-    std::pair<std::vector<std::set<Triangulation<3>::active_cell_iterator>>,
-              std::vector<Triangulation<3>::active_cell_iterator>>,
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                     Particles::ParticleIterator<3, 3>>,
+    ParametersDEM<dim>,
+    std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+              std::vector<typename Triangulation<dim>::active_cell_iterator>>,
+    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim,spacedim>,
+                                     Particles::ParticleIterator<dim,spacedim>>,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double,
                            double>> &,
     std::vector<std::tuple<int,
-                           Triangulation<3>::active_cell_iterator,
+                           typename Triangulation<dim>::active_cell_iterator,
                            int,
-                           Point<3>,
-                           Point<3>>>,
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                           Point<3>,
-                           Point<3>,
+                           Point<dim>,
+                           Point<dim>>>,
+    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim,spacedim>, int>,
+                           Point<dim>,
+                           Point<dim>,
                            double,
                            double,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double>> &,
     std::vector<std::tuple<std::string, int>>,
     dealii::Particles::PropertyPool &);
 
 private:
-  void forceReinit(Particles::ParticleHandler<3, 3> &);
+  void forceReinit(Particles::ParticleHandler<dim,spacedim> &);
   // void checkSimBound(Particles::ParticleHandler<3, 3> &, ReadInputScript);
 };
 

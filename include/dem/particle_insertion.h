@@ -27,14 +27,14 @@
 #ifndef PARTICLEINSERTION_H_
 #  define PARTICLEINSERTION_H_
 
-
+template <int dim, int spacedim>
 class ParticleInsertion
 {
 public:
-  ParticleInsertion(ParametersDEM<3>);
-  void uniformInsertion(dealii::Particles::ParticleHandler<3, 3> &,
-                        const dealii::Triangulation<3, 3> &,
-                        ParametersDEM<3>,
+  ParticleInsertion<dim,spacedim>(ParametersDEM<dim>);
+  void uniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
+                        const dealii::Triangulation<dim, spacedim> &,
+                        ParametersDEM<dim>,
                         int &,
                         dealii::Particles::PropertyPool &);
 };
