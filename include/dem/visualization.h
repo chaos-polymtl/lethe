@@ -30,14 +30,14 @@ using namespace dealii;
 #ifndef VISUALIZATION_H_
 #  define VISUALIZATION_H_
 
-
-class Visualization : public dealii::DataOutInterface<0, 3>
+template <int dim, int spacedim>
+class Visualization : public dealii::DataOutInterface<0, dim>
 {
 public:
-  Visualization();
+  Visualization<dim,spacedim>();
 
   void
-  build_patches(const Particles::ParticleHandler<3, 3> &,
+  build_patches(const Particles::ParticleHandler<dim,spacedim> &,
                 const unsigned int,
                 const unsigned int,
                 std::vector<std::tuple<std::string, int>>);
@@ -49,7 +49,7 @@ private:
   /**
    * Implementation of the corresponding function of the base class.
    */
-  virtual const std::vector<DataOutBase::Patch<0, 3>> &
+  virtual const std::vector<DataOutBase::Patch<0, dim>> &
   get_patches() const;
 
   /**
@@ -74,7 +74,7 @@ private:
    * Output information that is filled by build_patches() and
    * written by the write function of the base class.
    */
-  std::vector<DataOutBase::Patch<0, 3>> patches;
+  std::vector<DataOutBase::Patch<0, dim>> patches;
 
   /**
    * A list of field names for all data components stored in patches.
