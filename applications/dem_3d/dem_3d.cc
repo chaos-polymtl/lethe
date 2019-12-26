@@ -55,6 +55,7 @@
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
+#include "dem/integration.h"
 
 
 
@@ -116,14 +117,11 @@ initilization()
     tr, mappinggg, DEMparam.outputProperties.numProperties);
   Particles::PropertyPool propPool(DEMparam.outputProperties.numProperties);
 
-
-  int cellNum = tr.n_active_cells();
-
   std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
             std::vector<typename Triangulation<dim>::active_cell_iterator>>
                 cellNeighbor;
   ContactSearch<dim,spacedim> cs1;
-  cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
+  cellNeighbor = cs1.findCellNeighbors(tr);
 
 
   DEM_iterator<dim,spacedim> iter1;
@@ -146,6 +144,7 @@ initilization()
                          double>>
     pwContactInfo;
 
+ContactForce<dim,spacedim> cf1;
 
   std::vector<std::tuple<int,
                          typename Triangulation<dim>::active_cell_iterator,
@@ -155,6 +154,9 @@ initilization()
                                boundaryCellInfo;
   ParticleWallContactDetection<dim,spacedim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
+
+  ParticleWallContactForce<dim,spacedim> pwcf1;
+  Integration<dim,spacedim> integ1;
 
   // dem engine iterator:
   while (DEM_step < DEMparam.simulationControl.tFinal)
@@ -170,7 +172,7 @@ initilization()
                    boundaryCellInfo,
                    pwContactInfo,
                    properties,
-                   propPool);
+                   propPool, cs1, pw1, cf1, pwcf1, integ1);
     }
 }
 

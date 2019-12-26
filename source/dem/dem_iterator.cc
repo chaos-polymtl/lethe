@@ -12,13 +12,7 @@
 #include <deal.II/particles/property_pool.h>
 
 #include <math.h>
-
-#include "dem/contact_force.h"
-#include "dem/contact_search.h"
-#include "dem/integration.h"
 #include "dem/parameters_dem.h"
-#include "dem/particle_wall_contact_detection.h"
-#include "dem/particle_wall_contact_force.h"
 #include "dem/visualization.h"
 #include "dem/write_vtu.h"
 
@@ -99,7 +93,7 @@ DEM_iterator<dim,spacedim>::engine(
                          Point<dim>,
                          double>> &         pwContactInfo,
   std::vector<std::tuple<std::string, int>> properties,
-  Particles::PropertyPool &                 propPool)
+  Particles::PropertyPool &                 propPool, ContactSearch<dim,spacedim> cs, ParticleWallContactDetection<dim,spacedim> pw,   ContactForce<dim,spacedim> cf,   ParticleWallContactForce<dim,spacedim> pwcf,   Integration<dim,spacedim> Integ1)
 {
   // moving walls
 
@@ -131,7 +125,6 @@ DEM_iterator<dim,spacedim>::engine(
   // force reinitilization
   forceReinit(particle_handler);
 
-  ContactSearch<dim,spacedim> cs;
   // if (fmod(step,10) == 1)
   //	{
   contactPairs = cs.findContactPairs(particle_handler,
@@ -145,7 +138,6 @@ DEM_iterator<dim,spacedim>::engine(
                 DEMparam.simulationControl.dt);
 
   // contact force
-  ContactForce<dim,spacedim> cf;
   cf.linearCF(contactInfo, DEMparam);
 
   // p-w contact detection:
@@ -155,7 +147,6 @@ DEM_iterator<dim,spacedim>::engine(
     pwContactList;
 
 
-  ParticleWallContactDetection pw;
   // if (fmod(step,10) == 1)
   //{
   pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
@@ -168,12 +159,10 @@ DEM_iterator<dim,spacedim>::engine(
 
 
   // p-w contact force:
-  ParticleWallContactForce pwcf;
   pwcf.pwLinearCF(pwContactInfo, DEMparam);
 
 
   // Integration
-  Integration Integ1;
   Integ1.eulerIntegration(particle_handler, DEMparam);
   // Integ1.rk2Integration(particle_handler, DEMparam);
 
@@ -182,12 +171,12 @@ DEM_iterator<dim,spacedim>::engine(
   // visualization
   if (fmod(step, DEMparam.simulationControl.writeFrequency) == 1)
     {
-      Visualization visObj;
+      Visualization<dim,spacedim> visObj;
       visObj.build_patches(particle_handler,
                            DEMparam.outputProperties.numFields,
                            DEMparam.outputProperties.numProperties,
                            properties);
-      WriteVTU writObj;
+      WriteVTU<dim,spacedim> writObj;
       writObj.write_master_files(visObj);
       writObj.writeVTUFiles(visObj, step, time);
     }

@@ -32,20 +32,21 @@ using namespace dealii;
 #ifndef CONTACTFORCE_H_
 #  define CONTACTFORCE_H_
 
+template <int dim, int spacedim>
 class ContactForce
 {
 public:
-  ContactForce();
+  ContactForce<dim,spacedim>();
   void linearCF(
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                     Particles::ParticleIterator<3, 3>>,
+    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>,
+                                     typename Particles::ParticleIterator<dim,spacedim>>,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double,
                            double>>,
-    ParametersDEM<3>);
+    ParametersDEM<dim>);
 
 
 private:

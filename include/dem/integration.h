@@ -25,13 +25,14 @@ using namespace dealii;
 #ifndef INTEGRATION_H_
 #  define INTEGRATION_H_
 
+template <int dim, int spacedim>
 class Integration
 {
 public:
-  Integration();
-  void eulerIntegration(Particles::ParticleHandler<3, 3> &, ParametersDEM<3>);
-  void rk2Integration(Particles::ParticleHandler<3, 3> &, ParametersDEM<3>);
-  void velVerIntegration(Particles::ParticleHandler<3, 3> &, float);
+  Integration<dim,spacedim>();
+  void eulerIntegration(Particles::ParticleHandler<dim,spacedim> &, ParametersDEM<dim>);
+  void rk2Integration(Particles::ParticleHandler<dim,spacedim> &, ParametersDEM<dim>);
+  void velVerIntegration(Particles::ParticleHandler<dim,spacedim> &, float);
   void
   gearIntegration();
 };

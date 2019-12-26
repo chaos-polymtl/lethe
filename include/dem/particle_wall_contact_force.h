@@ -31,20 +31,21 @@ using namespace dealii;
 #ifndef PWCONTACTFORCE_H_
 #  define PWCONTACTFORCE_H_
 
+template <int dim, int spacedim>
 class ParticleWallContactForce
 {
 public:
-  ParticleWallContactForce();
+  ParticleWallContactForce<dim,spacedim>();
   void pwLinearCF(
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                           Point<3>,
-                           Point<3>,
+    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
+                           Point<dim>,
+                           Point<dim>,
                            double,
                            double,
                            double,
-                           Point<3>,
+                           Point<dim>,
                            double>>,
-    ParametersDEM<3>);
+    ParametersDEM<dim>);
 
 private:
   int

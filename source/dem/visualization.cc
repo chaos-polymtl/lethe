@@ -10,13 +10,14 @@
 #include <vector>
 using namespace dealii;
 
-Visualization::Visualization()
+template <int dim, int spacedim>
+Visualization<dim,spacedim>::Visualization()
 {}
 
-
+template <int dim, int spacedim>
 void
-Visualization ::build_patches(
-  const dealii::Particles::ParticleHandler<3, 3> &particle_handler,
+Visualization<dim,spacedim>::build_patches(
+  const dealii::Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const unsigned int                              n_fileds,
   const unsigned int                              n_properties,
   std::vector<std::tuple<std::string, int>>       properties)
@@ -39,7 +40,7 @@ Visualization ::build_patches(
        ++field_index)
     {
       const unsigned n_components = std::get<1>(properties[field_index]);
-      if (n_components == 3)
+      if (n_components == dim)
         {
           const unsigned int field_position = field_index;
           const std::string  field_name = std::get<0>(properties[field_index]);
@@ -54,7 +55,7 @@ Visualization ::build_patches(
   // Third build the actual patch data
   patches.resize(particle_handler.n_locally_owned_particles());
 
-  typename dealii::Particles::ParticleHandler<3, 3>::particle_iterator
+  typename dealii::Particles::ParticleHandler<dim, spacedim>::particle_iterator
     particle = particle_handler.begin();
 
   for (unsigned int i = 0; particle != particle_handler.end(); ++particle, ++i)
@@ -75,28 +76,33 @@ Visualization ::build_patches(
     }
 }
 
-const std::vector<DataOutBase::Patch<0, 3>> &
-Visualization::get_patches() const
+template <int dim, int spacedim>
+const std::vector<DataOutBase::Patch<0, dim>> &
+Visualization<dim,spacedim>::get_patches() const
 {
   return patches;
 }
 
+template <int dim, int spacedim>
 std::vector<std::string>
-Visualization::get_dataset_names() const
+Visualization<dim,spacedim>::get_dataset_names() const
 {
   return dataset_names;
 }
 
+template <int dim, int spacedim>
 std::vector<
   std::tuple<unsigned int,
              unsigned int,
              std::string,
              DataComponentInterpretation::DataComponentInterpretation>>
-Visualization::get_nonscalar_data_ranges() const
+Visualization<dim,spacedim>::get_nonscalar_data_ranges() const
 {
   return vector_datasets;
 }
 
-
-Visualization::~Visualization()
+template <int dim, int spacedim>
+Visualization<dim,spacedim>::~Visualization()
 {}
+
+template class Visualization<3,3>;
