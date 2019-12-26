@@ -29,8 +29,9 @@ ContactSearch<dim,spacedim>::ContactSearch()
 template <int dim, int spacedim>
 std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
           std::vector<typename Triangulation<dim>::active_cell_iterator>>
-ContactSearch<dim,spacedim>::findCellNeighbors(int cellNum, const Triangulation<dim, spacedim> &tr)
+ContactSearch<dim,spacedim>::findCellNeighbors(const Triangulation<dim, spacedim> &tr)
 {
+      int cellNum = tr.n_active_cells();
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
                                                       cellNeighborList(cellNum);
   std::vector<typename Triangulation<dim>::active_cell_iterator> totallCellList;

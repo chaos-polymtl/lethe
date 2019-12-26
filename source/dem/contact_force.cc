@@ -13,33 +13,34 @@
 
 using namespace dealii;
 
-ContactForce::ContactForce()
+template <int dim, int spacedim>
+ContactForce<dim,spacedim>::ContactForce()
 {}
 
-
-void ContactForce::linearCF(
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                   Particles::ParticleIterator<3, 3>>,
+template <int dim, int spacedim>
+void ContactForce<dim,spacedim>::linearCF(
+  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>,
+                                   typename Particles::ParticleIterator<dim,spacedim>>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double,
                          double>>   contactInfo,
-  ParametersDEM<3>                  DEMparam)
+  ParametersDEM<dim>                  DEMparam)
 {
   for (unsigned int i = 0; i < contactInfo.size(); i++)
     {
       {
-        Point<3> totalForce;
-        Point<3> normalForce =
+        Point<dim> totalForce;
+        Point<dim> normalForce =
           ((-1.0 * DEMparam.physicalProperties.kn *
             std::get<1>(contactInfo[i])) -
            (DEMparam.physicalProperties.ethan * std::get<3>(contactInfo[i]))) *
           std::get<2>(contactInfo[i]);
 
 
-        Point<3> tangForce =
+        Point<dim> tangForce =
           (-1.0 * DEMparam.physicalProperties.kt * std::get<6>(contactInfo[i]) -
            DEMparam.physicalProperties.ethat * std::get<5>(contactInfo[i])) *
           std::get<4>(contactInfo[i]);
@@ -52,7 +53,7 @@ void ContactForce::linearCF(
           }
         else
           {
-            Point<3> coulumbTangForce =
+            Point<dim> coulumbTangForce =
               DEMparam.physicalProperties.mu * normalForce.norm() *
               sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
 
@@ -71,7 +72,7 @@ void ContactForce::linearCF(
           -1 * totalForce[2];
 
         // calculation of torque
-        // Point<3> Torquei =
+        // Point<dim> Torquei =
         // ((std::get<0>(contactInfo[i]).first->get_properties()[2])/2.0) *
         // crossProduct( , )
       }
@@ -79,9 +80,9 @@ void ContactForce::linearCF(
 }
 
 
-
+template <int dim, int spacedim>
 int
-ContactForce::sgn(float a)
+ContactForce<dim,spacedim>::sgn(float a)
 {
   int b=0;
   if (a > 0)
@@ -98,3 +99,5 @@ ContactForce::sgn(float a)
     }
   return b;
 }
+
+template class ContactForce<3,3>;
