@@ -48,7 +48,7 @@ public:
 
   std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
             std::vector<typename Triangulation<dim>::active_cell_iterator>>
-       findCellNeighbors(int, const Triangulation<dim,spacedim> &);
+       findCellNeighbors(const Triangulation<dim,spacedim> &);
 
 
   void fineSearch(

@@ -20,7 +20,11 @@
 #include "dem/integration.h"
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
-
+#include "dem/contact_search.h"
+#include "dem/particle_wall_contact_detection.h"
+#include "dem/contact_force.h"
+#include "dem/particle_wall_contact_force.h"
+#include "dem/integration.h"
 
 #ifndef DEMITERATOR_H_
 #  define DEMITERATOR_H_
@@ -62,7 +66,7 @@ public:
                            Point<dim>,
                            double>> &,
     std::vector<std::tuple<std::string, int>>,
-    dealii::Particles::PropertyPool &);
+    dealii::Particles::PropertyPool &, ContactSearch<dim,spacedim>, ParticleWallContactDetection<dim,spacedim>, ContactForce<dim,spacedim>, ParticleWallContactForce<dim,spacedim>, Integration<dim,spacedim>);
 
 private:
   void forceReinit(Particles::ParticleHandler<dim,spacedim> &);

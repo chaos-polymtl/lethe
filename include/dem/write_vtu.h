@@ -22,14 +22,15 @@
 #ifndef DEM_WRITEVTU_H_
 #  define DEM_WRITEVTU_H_
 
+template <int dim, int spacedim>
 class WriteVTU
 {
 public:
-  WriteVTU();
+  WriteVTU<dim,spacedim>();
   void
-  write_master_files(const Visualization &data_out);
+  write_master_files(const Visualization<dim,spacedim> &data_out);
   void
-  writeVTUFiles(Visualization &, int, float);
+  writeVTUFiles(Visualization<dim,spacedim> &, int, float);
 };
 
 #endif /* CMAKEFILES_WRITEVTU_H_ */
