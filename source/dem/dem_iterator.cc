@@ -12,6 +12,7 @@
 #include <deal.II/particles/property_pool.h>
 
 #include <math.h>
+
 #include "dem/parameters_dem.h"
 #include "dem/visualization.h"
 #include "dem/write_vtu.h"
@@ -20,12 +21,13 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-DEM_iterator<dim,spacedim>::DEM_iterator()
+DEM_iterator<dim, spacedim>::DEM_iterator()
 {}
 
 template <int dim, int spacedim>
 void
-  DEM_iterator<dim,spacedim>::forceReinit(Particles::ParticleHandler<dim, spacedim> &particle_handler)
+DEM_iterator<dim, spacedim>::forceReinit(
+  Particles::ParticleHandler<dim, spacedim> &particle_handler)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -62,15 +64,17 @@ void DEM_iterator::checkSimBound(
 
 template <int dim, int spacedim>
 void
-DEM_iterator<dim,spacedim>::engine(
-  int &                             nPart,
+DEM_iterator<dim, spacedim>::engine(
+  int &                                      nPart,
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const Triangulation<dim, spacedim> &       tr,
-  int &                             step,
-  float &                           time,
-  ParametersDEM<dim>                  DEMparam,
-  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim>::active_cell_iterator>> cellNeighbor,
+  int &                                      step,
+  float &                                    time,
+  ParametersDEM<dim>                         DEMparam,
+  std::pair<
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
+                                      cellNeighbor,
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
                                    Particles::ParticleIterator<dim, spacedim>>,
                          double,
@@ -78,22 +82,28 @@ DEM_iterator<dim,spacedim>::engine(
                          double,
                          Point<dim>,
                          double,
-                         double>> &                              contactInfo,
+                         double>> &   contactInfo,
   std::vector<std::tuple<int,
                          typename Triangulation<dim>::active_cell_iterator,
                          int,
                          Point<dim>,
-                         Point<dim>>>         boundaryCellInfo,
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim,spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>,
-                         double,
-                         double,
-                         double,
-                         Point<dim>,
-                         double>> &         pwContactInfo,
-  std::vector<std::tuple<std::string, int>> properties,
-  Particles::PropertyPool &                 propPool, ContactSearch<dim,spacedim> cs, ParticleWallContactDetection<dim,spacedim> pw,   ContactForce<dim,spacedim> cf,   ParticleWallContactForce<dim,spacedim> pwcf,   Integration<dim,spacedim> Integ1)
+                         Point<dim>>> boundaryCellInfo,
+  std::vector<
+    std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+               Point<dim>,
+               Point<dim>,
+               double,
+               double,
+               double,
+               Point<dim>,
+               double>> &                     pwContactInfo,
+  std::vector<std::tuple<std::string, int>>   properties,
+  Particles::PropertyPool &                   propPool,
+  ContactSearch<dim, spacedim>                cs,
+  ParticleWallContactDetection<dim, spacedim> pw,
+  ContactForce<dim, spacedim>                 cf,
+  ParticleWallContactForce<dim, spacedim>     pwcf,
+  Integration<dim, spacedim>                  Integ1)
 {
   // moving walls
 
@@ -109,7 +119,7 @@ DEM_iterator<dim,spacedim>::engine(
           if (nPart <
               DEMparam.simulationControl.nTotal) // number < total number
             {
-              ParticleInsertion<dim,spacedim> ins1(DEMparam);
+              ParticleInsertion<dim, spacedim> ins1(DEMparam);
               ins1.uniformInsertion(
                 particle_handler, tr, DEMparam, nPart, propPool);
             }
@@ -118,8 +128,8 @@ DEM_iterator<dim,spacedim>::engine(
 
 
   // contact search
-  std::vector<std::pair<Particles::ParticleIterator<dim,spacedim>,
-                        Particles::ParticleIterator<dim,spacedim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
     contactPairs;
 
   // force reinitilization
@@ -133,17 +143,16 @@ DEM_iterator<dim,spacedim>::engine(
                                      cellNeighbor.first);
   //	}
 
-  cs.fineSearch(contactPairs,
-                contactInfo,
-                DEMparam.simulationControl.dt);
+  cs.fineSearch(contactPairs, contactInfo, DEMparam.simulationControl.dt);
 
   // contact force
   cf.linearCF(contactInfo, DEMparam);
 
   // p-w contact detection:
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>>>
+  std::vector<
+    std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+               Point<dim>,
+               Point<dim>>>
     pwContactList;
 
 
@@ -153,9 +162,7 @@ DEM_iterator<dim,spacedim>::engine(
   //}
 
 
-  pw.pwFineSearch(pwContactList,
-                  pwContactInfo,
-                  DEMparam.simulationControl.dt);
+  pw.pwFineSearch(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
 
 
   // p-w contact force:
@@ -171,12 +178,12 @@ DEM_iterator<dim,spacedim>::engine(
   // visualization
   if (fmod(step, DEMparam.simulationControl.writeFrequency) == 1)
     {
-      Visualization<dim,spacedim> visObj;
+      Visualization<dim, spacedim> visObj;
       visObj.build_patches(particle_handler,
                            DEMparam.outputProperties.numFields,
                            DEMparam.outputProperties.numProperties,
                            properties);
-      WriteVTU<dim,spacedim> writObj;
+      WriteVTU<dim, spacedim> writObj;
       writObj.write_master_files(visObj);
       writObj.writeVTUFiles(visObj, step, time);
     }
@@ -193,4 +200,4 @@ DEM_iterator<dim,spacedim>::engine(
   time = step * DEMparam.simulationControl.dt;
 }
 
-template class DEM_iterator<3,3>;
+template class DEM_iterator<3, 3>;

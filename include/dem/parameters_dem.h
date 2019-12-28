@@ -30,6 +30,7 @@ public:
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
   Parameters::Lagrangian::InsertionInfo      insertionInfo;
   Parameters::Lagrangian::OutputProperties   outputProperties;
+  Parameters::Lagrangian::SimulationModel    simulationModel;
 
   void
   declare(ParameterHandler &prm)
@@ -38,6 +39,7 @@ public:
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
+    Parameters::Lagrangian::SimulationModel::declare_parameters(prm);
   }
 
   void
@@ -47,6 +49,7 @@ public:
     insertionInfo.parse_parameters(prm);
     simulationControl.parse_parameters(prm);
     outputProperties.parse_parameters(prm);
+    simulationModel.parse_parameters(prm);
   }
 };
 

@@ -35,37 +35,39 @@ template <int dim, int spacedim>
 class ContactSearch
 {
 public:
-  ContactSearch<dim,spacedim>();
+  ContactSearch<dim, spacedim>();
 
-  std::vector<std::pair<Particles::ParticleIterator<dim,spacedim>,
-                        Particles::ParticleIterator<dim,spacedim>>>
-    findContactPairs(
-      dealii::Particles::ParticleHandler<dim,spacedim> &,
-      const Triangulation<dim,spacedim> &,
-      std::vector<typename Triangulation<dim>::active_cell_iterator>,
-      std::vector< std::set<typename Triangulation<dim>::active_cell_iterator>>);
-
-
-  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim>::active_cell_iterator>>
-       findCellNeighbors(const Triangulation<dim,spacedim> &);
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
+  findContactPairs(
+    dealii::Particles::ParticleHandler<dim, spacedim> &,
+    const Triangulation<dim, spacedim> &,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>,
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>);
 
 
-  void fineSearch(
-    std::vector<std::pair<Particles::ParticleIterator<dim,spacedim>,
-                          Particles::ParticleIterator<dim,spacedim>>>,
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim,spacedim>,
-                                     Particles::ParticleIterator<dim,spacedim>>,
-                           double,
-                           Point<dim>,
-                           double,
-                           Point<dim>,
-                           double,
-                           double>> &,
-    float);
+  std::pair<
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
+  findCellNeighbors(const Triangulation<dim, spacedim> &);
 
-  std::vector<Particles::ParticleIterator<dim,spacedim>>
-    pWSearch(dealii::Particles::ParticleHandler<dim,spacedim> &);
+
+  void
+  fineSearch(std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                                   Particles::ParticleIterator<dim, spacedim>>>,
+             std::vector<
+               std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                                    Particles::ParticleIterator<dim, spacedim>>,
+                          double,
+                          Point<dim>,
+                          double,
+                          Point<dim>,
+                          double,
+                          double>> &,
+             float);
+
+  std::vector<Particles::ParticleIterator<dim, spacedim>>
+  pWSearch(dealii::Particles::ParticleHandler<dim, spacedim> &);
 };
 
 #endif /* CONTACTSEARCH_H_ */

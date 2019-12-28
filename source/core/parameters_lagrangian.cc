@@ -71,26 +71,46 @@ namespace Parameters
                           "1.",
                           Patterns::Double(),
                           "Particle density");
-        prm.declare_entry("kn",
+        prm.declare_entry("Yp",
                           "1.",
                           Patterns::Double(),
-                          "Normal spring constant");
-        prm.declare_entry("ethan",
+                          "Young's modulus of particle");
+        prm.declare_entry("Yw",
                           "1.",
                           Patterns::Double(),
-                          "Normal dashpot constant");
-        prm.declare_entry("kt",
+                          "Young's modulus of wall");
+        prm.declare_entry("vp",
                           "1.",
                           Patterns::Double(),
-                          "Tangential spring constant");
-        prm.declare_entry("ethat",
+                          "Poisson's ratio of particle");
+        prm.declare_entry("vw",
                           "1.",
                           Patterns::Double(),
-                          "Tangential dashpot constant");
-        prm.declare_entry("friction coeff",
+                          "Poisson's ratio of wall");
+        prm.declare_entry("ep",
                           "1.",
                           Patterns::Double(),
-                          "Friction coefficient");
+                          "Coefficient of restitution of particle");
+        prm.declare_entry("ew",
+                          "1.",
+                          Patterns::Double(),
+                          "Coefficient of restitution of wall");
+        prm.declare_entry("mup",
+                          "1.",
+                          Patterns::Double(),
+                          "Friction coefficient of particle");
+        prm.declare_entry("muw",
+                          "1.",
+                          Patterns::Double(),
+                          "Friction coefficient of wall");
+        prm.declare_entry("murp",
+                          "1.",
+                          Patterns::Double(),
+                          "Rolling friction coefficient of particle");
+        prm.declare_entry("murw",
+                          "1.",
+                          Patterns::Double(),
+                          "Rolling friction coefficient of wall");
       }
       prm.leave_subsection();
     }
@@ -105,11 +125,16 @@ namespace Parameters
         gz       = prm.get_double("gz");
         diameter = prm.get_double("diameter");
         density  = prm.get_double("density");
-        kn       = prm.get_double("kn");
-        ethan    = prm.get_double("ethan");
-        kt       = prm.get_double("kt");
-        ethat    = prm.get_double("ethat");
-        mu       = prm.get_double("friction coeff");
+        Yp       = prm.get_double("Yp");
+        Yw       = prm.get_double("Yw");
+        vp       = prm.get_double("vp");
+        vw       = prm.get_double("vw");
+        ep       = prm.get_double("ep");
+        ew       = prm.get_double("ew");
+        mup      = prm.get_double("mup");
+        muw      = prm.get_double("muw");
+        murp     = prm.get_double("murp");
+        murw     = prm.get_double("murw");
       }
       prm.leave_subsection();
     }
@@ -203,6 +228,22 @@ namespace Parameters
         numProperties = prm.get_integer("Number of properties");
         numFields     = prm.get_integer("Number of fields");
       }
+      prm.leave_subsection();
+    }
+
+    void
+    SimulationModel::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("simulation model");
+      {}
+      prm.leave_subsection();
+    }
+
+    void
+    SimulationModel::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("simulation model");
+      {}
       prm.leave_subsection();
     }
 
