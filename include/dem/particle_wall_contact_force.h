@@ -20,6 +20,8 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
 
+#include <math.h>
+
 #include <iostream>
 #include <tuple>
 #include <vector>
@@ -35,16 +37,18 @@ template <int dim, int spacedim>
 class ParticleWallContactForce
 {
 public:
-  ParticleWallContactForce<dim,spacedim>();
-  void pwLinearCF(
-    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
-                           Point<dim>,
-                           Point<dim>,
-                           double,
-                           double,
-                           double,
-                           Point<dim>,
-                           double>>,
+  ParticleWallContactForce<dim, spacedim>();
+  void
+  pwLinearCF(
+    std::vector<std::tuple<
+      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+      Point<dim>,
+      Point<dim>,
+      double,
+      double,
+      double,
+      Point<dim>,
+      double>>,
     ParametersDEM<dim>);
 
 private:

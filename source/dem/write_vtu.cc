@@ -17,13 +17,14 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-WriteVTU<dim,spacedim>::WriteVTU()
+WriteVTU<dim, spacedim>::WriteVTU()
 {}
 
 // this function writes the pvtu file:
 template <int dim, int spacedim>
 void
-WriteVTU<dim,spacedim>::write_master_files(const Visualization<dim,spacedim> &data_out)
+WriteVTU<dim, spacedim>::write_master_files(
+  const Visualization<dim, spacedim> &data_out)
 {
   std::string              solution_file_prefix = "Globals";
   std::vector<std::string> filenames;
@@ -36,7 +37,9 @@ WriteVTU<dim,spacedim>::write_master_files(const Visualization<dim,spacedim> &da
 
 template <int dim, int spacedim>
 void
-WriteVTU<dim,spacedim>::writeVTUFiles(Visualization<dim,spacedim> &visObj, int DEM_step, float DEM_time)
+WriteVTU<dim, spacedim>::writeVTUFiles(Visualization<dim, spacedim> &visObj,
+                                       int                           DEM_step,
+                                       float                         DEM_time)
 {
   // const unsigned int n_processes =
   // Utilities::MPI::n_mpi_processes(this->get_mpi_communicator());
@@ -51,4 +54,4 @@ WriteVTU<dim,spacedim>::writeVTUFiles(Visualization<dim,spacedim> &visObj, int D
   visObj.write_vtu(output);
 }
 
-template class WriteVTU<3,3>;
+template class WriteVTU<3, 3>;

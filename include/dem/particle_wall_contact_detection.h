@@ -38,37 +38,42 @@ template <int dim, int spacedim>
 class ParticleWallContactDetection
 {
 public:
-  ParticleWallContactDetection<dim,spacedim>();
+  ParticleWallContactDetection<dim, spacedim>();
   void
   boundaryCellsAndFaces(
-    const Triangulation<dim,spacedim> &,
+    const Triangulation<dim, spacedim> &,
     std::vector<std::tuple<int,
                            typename Triangulation<dim>::active_cell_iterator,
                            int,
                            Point<dim>,
                            Point<dim>>> &);
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>>>
-  pwcontactlist(std::vector<std::tuple<int,
-                                       typename Triangulation<dim>::active_cell_iterator,
-                                       int,
-                                       Point<dim>,
-                                       Point<dim>>>,
-                Particles::ParticleHandler<dim,spacedim> &);
-
-  void pwFineSearch(
-    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
+  std::vector<std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>>>
+  pwcontactlist(
+    std::vector<std::tuple<int,
+                           typename Triangulation<dim>::active_cell_iterator,
+                           int,
                            Point<dim>,
                            Point<dim>>>,
-    std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
-                           Point<dim>,
-                           Point<dim>,
-                           double,
-                           double,
-                           double,
-                           Point<dim>,
-                           double>> &,
+    Particles::ParticleHandler<dim, spacedim> &);
+
+  void
+  pwFineSearch(
+    std::vector<std::tuple<
+      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+      Point<dim>,
+      Point<dim>>>,
+    std::vector<std::tuple<
+      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+      Point<dim>,
+      Point<dim>,
+      double,
+      double,
+      double,
+      Point<dim>,
+      double>> &,
     float);
 
 private:

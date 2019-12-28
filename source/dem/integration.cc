@@ -11,13 +11,14 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-Integration<dim,spacedim>::Integration()
+Integration<dim, spacedim>::Integration()
 {}
 
 template <int dim, int spacedim>
-void Integration<dim,spacedim>::eulerIntegration(
-  Particles::ParticleHandler<dim,spacedim> &particle_handler,
-  ParametersDEM<dim>                  DEMparam)
+void
+Integration<dim, spacedim>::eulerIntegration(
+  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  ParametersDEM<dim>                         DEMparam)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -62,9 +63,10 @@ void Integration<dim,spacedim>::eulerIntegration(
 }
 
 template <int dim, int spacedim>
-void Integration<dim,spacedim>::rk2Integration(
-  Particles::ParticleHandler<dim,spacedim> &particle_handler,
-  ParametersDEM<dim>                  DEMparam)
+void
+Integration<dim, spacedim>::rk2Integration(
+  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  ParametersDEM<dim>                         DEMparam)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -158,4 +160,4 @@ particle->get_properties()[5], particle->get_properties()[6]});
 }
 */
 
-template class Integration<3,3>;
+template class Integration<3, 3>;
