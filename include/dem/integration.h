@@ -29,10 +29,15 @@ template <int dim, int spacedim>
 class Integration
 {
 public:
-  Integration<dim,spacedim>();
-  void eulerIntegration(Particles::ParticleHandler<dim,spacedim> &, ParametersDEM<dim>);
-  void rk2Integration(Particles::ParticleHandler<dim,spacedim> &, ParametersDEM<dim>);
-  void velVerIntegration(Particles::ParticleHandler<dim,spacedim> &, float);
+  Integration<dim, spacedim>();
+  void
+  eulerIntegration(Particles::ParticleHandler<dim, spacedim> &,
+                   ParametersDEM<dim>);
+  void
+  rk2Integration(Particles::ParticleHandler<dim, spacedim> &,
+                 ParametersDEM<dim>);
+  void
+  velVerIntegration(Particles::ParticleHandler<dim, spacedim> &, float);
   void
   gearIntegration();
 };

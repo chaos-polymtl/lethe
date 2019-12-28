@@ -31,12 +31,13 @@ template <int dim, int spacedim>
 class ParticleInsertion
 {
 public:
-  ParticleInsertion<dim,spacedim>(ParametersDEM<dim>);
-  void uniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
-                        const dealii::Triangulation<dim, spacedim> &,
-                        ParametersDEM<dim>,
-                        int &,
-                        dealii::Particles::PropertyPool &);
+  ParticleInsertion<dim, spacedim>(ParametersDEM<dim>);
+  void
+  uniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
+                   const dealii::Triangulation<dim, spacedim> &,
+                   ParametersDEM<dim>,
+                   int &,
+                   dealii::Particles::PropertyPool &);
 };
 
 #endif /* PARTICLEINSERTION_H_ */

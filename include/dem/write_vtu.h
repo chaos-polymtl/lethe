@@ -26,11 +26,11 @@ template <int dim, int spacedim>
 class WriteVTU
 {
 public:
-  WriteVTU<dim,spacedim>();
+  WriteVTU<dim, spacedim>();
   void
-  write_master_files(const Visualization<dim,spacedim> &data_out);
+  write_master_files(const Visualization<dim, spacedim> &data_out);
   void
-  writeVTUFiles(Visualization<dim,spacedim> &, int, float);
+  writeVTUFiles(Visualization<dim, spacedim> &, int, float);
 };
 
 #endif /* CMAKEFILES_WRITEVTU_H_ */

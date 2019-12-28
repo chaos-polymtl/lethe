@@ -50,16 +50,25 @@ namespace Parameters
       double diameter;
       double density;
 
-      // Spring and dashpot normal constants
-      double kn;
-      double ethan;
+      // Young's modulus of particle and wall
+      double Yp;
+      double Yw;
 
-      // Spring and dashpot tangential constants
-      double kt;
-      double ethat;
+      // Poisson's ratios of particle and wall
+      double vp;
+      double vw;
 
-      // Coefficient of friction
-      double mu;
+      // Coefficients of restituion of particle and wall
+      double ep;
+      double ew;
+
+      // Friction coefficients of particle and wall
+      double mup;
+      double muw;
+
+      // Rollinrg friction coefficients of particle and wall
+      double murp;
+      double murw;
 
       static void
       declare_parameters(ParameterHandler &prm);
@@ -97,6 +106,14 @@ namespace Parameters
       // Number of fields
       int numFields;
 
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+    struct SimulationModel
+    {
       static void
       declare_parameters(ParameterHandler &prm);
       void

@@ -34,10 +34,10 @@ template <int dim, int spacedim>
 class Visualization : public dealii::DataOutInterface<0, dim>
 {
 public:
-  Visualization<dim,spacedim>();
+  Visualization<dim, spacedim>();
 
   void
-  build_patches(const Particles::ParticleHandler<dim,spacedim> &,
+  build_patches(const Particles::ParticleHandler<dim, spacedim> &,
                 const unsigned int,
                 const unsigned int,
                 std::vector<std::tuple<std::string, int>>);

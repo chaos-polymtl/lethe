@@ -52,10 +52,10 @@
 
 #include "dem/contact_search.h"
 #include "dem/dem_iterator.h"
+#include "dem/integration.h"
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
-#include "dem/integration.h"
 
 
 
@@ -68,7 +68,7 @@ initilization()
 {
   std::string filename;
   filename = "dem.prm";
-  ParameterHandler prm;
+  ParameterHandler   prm;
   ParametersDEM<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
@@ -117,14 +117,15 @@ initilization()
     tr, mappinggg, DEMparam.outputProperties.numProperties);
   Particles::PropertyPool propPool(DEMparam.outputProperties.numProperties);
 
-  std::pair<std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim>::active_cell_iterator>>
-                cellNeighbor;
-  ContactSearch<dim,spacedim> cs1;
+  std::pair<
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
+                               cellNeighbor;
+  ContactSearch<dim, spacedim> cs1;
   cellNeighbor = cs1.findCellNeighbors(tr);
 
 
-  DEM_iterator<dim,spacedim> iter1;
+  DEM_iterator<dim, spacedim> iter1;
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
                                    Particles::ParticleIterator<dim, spacedim>>,
                          double,
@@ -134,29 +135,30 @@ initilization()
                          double,
                          double>>
     contactInfo;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>,
-                         double,
-                         double,
-                         double,
-                         Point<dim>,
-                         double>>
+  std::vector<
+    std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+               Point<dim>,
+               Point<dim>,
+               double,
+               double,
+               double,
+               Point<dim>,
+               double>>
     pwContactInfo;
 
-ContactForce<dim,spacedim> cf1;
+  ContactForce<dim, spacedim> cf1;
 
   std::vector<std::tuple<int,
                          typename Triangulation<dim>::active_cell_iterator,
                          int,
                          Point<dim>,
                          Point<dim>>>
-                               boundaryCellInfo;
-  ParticleWallContactDetection<dim,spacedim> pw1;
+                                              boundaryCellInfo;
+  ParticleWallContactDetection<dim, spacedim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 
-  ParticleWallContactForce<dim,spacedim> pwcf1;
-  Integration<dim,spacedim> integ1;
+  ParticleWallContactForce<dim, spacedim> pwcf1;
+  Integration<dim, spacedim>              integ1;
 
   // dem engine iterator:
   while (DEM_step < DEMparam.simulationControl.tFinal)
@@ -172,7 +174,12 @@ ContactForce<dim,spacedim> cf1;
                    boundaryCellInfo,
                    pwContactInfo,
                    properties,
-                   propPool, cs1, pw1, cf1, pwcf1, integ1);
+                   propPool,
+                   cs1,
+                   pw1,
+                   cf1,
+                   pwcf1,
+                   integ1);
     }
 }
 
@@ -184,7 +191,7 @@ main(int argc, char *argv[])
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
     argc, argv, numbers::invalid_unsigned_int);
 
-  initilization<3,3>();
+  initilization<3, 3>();
 
   return 0;
 }
