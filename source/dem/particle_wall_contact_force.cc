@@ -18,49 +18,91 @@
 #include "dem/dem_iterator.h"
 
 template <int dim, int spacedim>
-ParticleWallContactForce<dim,spacedim>::ParticleWallContactForce()
+ParticleWallContactForce<dim, spacedim>::ParticleWallContactForce()
 {}
 
 template <int dim, int spacedim>
-void ParticleWallContactForce<dim,spacedim>::pwLinearCF(
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim,spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>,
-                         double,
-                         double,
-                         double,
-                         Point<dim>,
-                         double>> pwContactInfo,
-  ParametersDEM<dim>                DEMparam)
+void
+ParticleWallContactForce<dim, spacedim>::pwLinearCF(
+  std::vector<std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>,
+    double,
+    double,
+    double,
+    Point<dim>,
+    double>>         pwContactInfo,
+  ParametersDEM<dim> DEMparam)
 {
   for (unsigned int i = 0; i < pwContactInfo.size(); i++)
     {
       Point<dim> totalForce;
+      double     yEff = pow((((1 - pow(DEMparam.physicalProperties.vp, 2)) /
+                          DEMparam.physicalProperties.Yp) +
+                         ((1 - pow(DEMparam.physicalProperties.vw, 2)) /
+                          DEMparam.physicalProperties.Yw)),
+                        -1);
+      double     kn =
+        1.2024 *
+        pow((pow(std::get<0>(pwContactInfo[i]).first->get_properties()[19],
+                 0.5) *
+             pow(yEff, 2) *
+             (std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2) *
+             abs(std::get<4>(pwContactInfo[i]))),
+            0.4);
+      double kt =
+        1.2024 *
+        pow((pow(std::get<0>(pwContactInfo[i]).first->get_properties()[19],
+                 0.5) *
+             pow(yEff, 2) *
+             (std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2) *
+             abs(std::get<7>(pwContactInfo[i]))),
+            0.4);
+      double ethan =
+        (-2 * log(DEMparam.physicalProperties.ew) *
+         sqrt(std::get<0>(pwContactInfo[i]).first->get_properties()[19] * kn)) /
+        (sqrt((pow(log(DEMparam.physicalProperties.ew), 2)) + pow(3.1415, 2)));
+      double ethat = 0;
+      if (DEMparam.physicalProperties.ew == 0)
+        {
+          ethat =
+            2 * sqrt(2 / 7 *
+                     std::get<0>(pwContactInfo[i]).first->get_properties()[19] *
+                     kt);
+        }
+      else
+        {
+          ethat =
+            (-2 * log(DEMparam.physicalProperties.ew) *
+             sqrt(2 / 7 *
+                  std::get<0>(pwContactInfo[i]).first->get_properties()[19] *
+                  kt)) /
+            (sqrt(pow(3.1415, 2) +
+                  pow(log(DEMparam.physicalProperties.ew), 2)));
+        }
+
       Point<dim> springNormForce =
-        (DEMparam.physicalProperties.kn * std::get<3>(pwContactInfo[i])) *
-        std::get<1>(pwContactInfo[i]);
+        (kn * std::get<3>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
       Point<dim> dashpotNormForce =
-        (DEMparam.physicalProperties.ethan * std::get<4>(pwContactInfo[i])) *
-        std::get<1>(pwContactInfo[i]);
+        (ethan * std::get<4>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
       Point<dim> normalForce = springNormForce + dashpotNormForce;
 
       Point<dim> springTangForce =
-        (DEMparam.physicalProperties.kt * std::get<5>(pwContactInfo[i])) *
-        std::get<6>(pwContactInfo[i]);
+        (kt * std::get<5>(pwContactInfo[i])) * std::get<6>(pwContactInfo[i]);
       Point<dim> dashpotTangForce =
-        (DEMparam.physicalProperties.ethat * std::get<7>(pwContactInfo[i])) *
-        std::get<6>(pwContactInfo[i]);
+        (ethat * std::get<7>(pwContactInfo[i])) * std::get<6>(pwContactInfo[i]);
       Point<dim> tangForce = springTangForce + dashpotTangForce;
 
       if (tangForce.norm() <
-          (DEMparam.physicalProperties.mu * normalForce.norm()))
+          (DEMparam.physicalProperties.muw * normalForce.norm()))
         {
           totalForce = normalForce + tangForce;
         }
       else
         {
           Point<dim> coulumbTangForce =
-            (-1.0 * DEMparam.physicalProperties.mu * normalForce.norm() *
+            (-1.0 * DEMparam.physicalProperties.muw * normalForce.norm() *
              sgn(std::get<5>(pwContactInfo[i]))) *
             std::get<6>(pwContactInfo[i]);
 
@@ -77,9 +119,9 @@ void ParticleWallContactForce<dim,spacedim>::pwLinearCF(
 
 template <int dim, int spacedim>
 int
-ParticleWallContactForce<dim,spacedim>::sgn(float a)
+ParticleWallContactForce<dim, spacedim>::sgn(float a)
 {
-  int b=0;
+  int b = 0;
   if (a > 0)
     {
       b = 1;
@@ -95,4 +137,4 @@ ParticleWallContactForce<dim,spacedim>::sgn(float a)
   return b;
 }
 
-template class ParticleWallContactForce<3,3>;
+template class ParticleWallContactForce<3, 3>;

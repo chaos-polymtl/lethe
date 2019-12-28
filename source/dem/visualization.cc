@@ -11,16 +11,16 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-Visualization<dim,spacedim>::Visualization()
+Visualization<dim, spacedim>::Visualization()
 {}
 
 template <int dim, int spacedim>
 void
-Visualization<dim,spacedim>::build_patches(
+Visualization<dim, spacedim>::build_patches(
   const dealii::Particles::ParticleHandler<dim, spacedim> &particle_handler,
-  const unsigned int                              n_fileds,
-  const unsigned int                              n_properties,
-  std::vector<std::tuple<std::string, int>>       properties)
+  const unsigned int                                       n_fileds,
+  const unsigned int                                       n_properties,
+  std::vector<std::tuple<std::string, int>>                properties)
 {
   dataset_names.reserve(n_fileds);
 
@@ -78,14 +78,14 @@ Visualization<dim,spacedim>::build_patches(
 
 template <int dim, int spacedim>
 const std::vector<DataOutBase::Patch<0, dim>> &
-Visualization<dim,spacedim>::get_patches() const
+Visualization<dim, spacedim>::get_patches() const
 {
   return patches;
 }
 
 template <int dim, int spacedim>
 std::vector<std::string>
-Visualization<dim,spacedim>::get_dataset_names() const
+Visualization<dim, spacedim>::get_dataset_names() const
 {
   return dataset_names;
 }
@@ -96,13 +96,13 @@ std::vector<
              unsigned int,
              std::string,
              DataComponentInterpretation::DataComponentInterpretation>>
-Visualization<dim,spacedim>::get_nonscalar_data_ranges() const
+Visualization<dim, spacedim>::get_nonscalar_data_ranges() const
 {
   return vector_datasets;
 }
 
 template <int dim, int spacedim>
-Visualization<dim,spacedim>::~Visualization()
+Visualization<dim, spacedim>::~Visualization()
 {}
 
-template class Visualization<3,3>;
+template class Visualization<3, 3>;

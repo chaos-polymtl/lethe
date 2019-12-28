@@ -21,13 +21,13 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-ParticleWallContactDetection<dim,spacedim>::ParticleWallContactDetection()
+ParticleWallContactDetection<dim, spacedim>::ParticleWallContactDetection()
 {}
 
 template <int dim, int spacedim>
 void
-ParticleWallContactDetection<dim,spacedim>::boundaryCellsAndFaces(
-  const Triangulation<dim, spacedim> &        tr,
+ParticleWallContactDetection<dim, spacedim>::boundaryCellsAndFaces(
+  const Triangulation<dim, spacedim> & tr,
   std::vector<std::tuple<int,
                          typename Triangulation<dim>::active_cell_iterator,
                          int,
@@ -35,21 +35,23 @@ ParticleWallContactDetection<dim,spacedim>::boundaryCellsAndFaces(
                          Point<dim>>> &boundaryCellInfo)
 {
   std::vector<std::pair<int, typename Triangulation<dim>::active_cell_iterator>>
-                   searchPair;
+                            searchPair;
   const FE_Q<dim, spacedim> fe(1);
-  QGauss<dim>        quadrature_formula(dim);
-  QGauss<dim - 1>    face_quadrature_formula(dim);
-  unsigned int     n_face_q_points = face_quadrature_formula.size();
+  QGauss<dim>               quadrature_formula(dim);
+  QGauss<dim - 1>           face_quadrature_formula(dim);
+  unsigned int              n_face_q_points = face_quadrature_formula.size();
 
   FEFaceValues<dim> fe_face_values(fe,
-                                 face_quadrature_formula,
-                                 update_values | update_quadrature_points |
-                                   update_normal_vectors);
-  for (typename Triangulation<dim>::active_cell_iterator cell = tr.begin_active();
+                                   face_quadrature_formula,
+                                   update_values | update_quadrature_points |
+                                     update_normal_vectors);
+  for (typename Triangulation<dim>::active_cell_iterator cell =
+         tr.begin_active();
        cell != tr.end();
        ++cell)
     {
-      for (unsigned int face_id = 0; face_id < GeometryInfo<dim>::faces_per_cell;
+      for (unsigned int face_id = 0;
+           face_id < GeometryInfo<dim>::faces_per_cell;
            ++face_id)
         {
           if (cell->face(face_id)->at_boundary() == true)
@@ -63,7 +65,7 @@ ParticleWallContactDetection<dim,spacedim>::boundaryCellsAndFaces(
                     surfNormal; // question? why doesnt it work in one line?!
                   surfNormal = fe_face_values.normal_vector(f_q_point);
                   surfNormal = -1 * surfNormal;
-                  Point<dim>   quadPoint = fe_face_values.quadrature_point(dim);
+                  Point<dim> quadPoint = fe_face_values.quadrature_point(dim);
                   int        boundID   = cell->face(face_id)->boundary_id();
                   std::tuple cellInfo  = std::make_tuple(
                     boundID, cell, face_id, surfNormal, quadPoint);
@@ -85,37 +87,45 @@ ParticleWallContactDetection<dim,spacedim>::boundaryCellsAndFaces(
 }
 
 template <int dim, int spacedim>
-std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-                       Point<dim>,
-                       Point<dim>>>
-ParticleWallContactDetection<dim,spacedim>::pwcontactlist(
+std::vector<std::tuple<
+  std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+  Point<dim>,
+  Point<dim>>>
+ParticleWallContactDetection<dim, spacedim>::pwcontactlist(
   std::vector<std::tuple<int,
                          typename Triangulation<dim>::active_cell_iterator,
                          int,
                          Point<dim>,
-                         Point<dim>>> boundaryCellInfo,
+                         Point<dim>>>        boundaryCellInfo,
   Particles::ParticleHandler<dim, spacedim> &particle_handler)
 {
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>>>
+  std::vector<std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>>>
     pwContactList;
-  std::
-    tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>, Point<dim>, Point<dim>>
-                                                                 pwInfoTuple;
-  std::vector<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>> searchPair;
+  std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>>
+    pwInfoTuple;
+  std::vector<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>>
+    searchPair;
 
 
   for (unsigned int i = 0; i < boundaryCellInfo.size(); ++i)
     {
       typename Triangulation<dim>::active_cell_iterator workingCell =
         std::get<1>(boundaryCellInfo[i]);
-      typename Particles::ParticleHandler<dim, spacedim>::particle_iterator_range
+      typename Particles::ParticleHandler<dim,
+                                          spacedim>::particle_iterator_range
         particle_range = particle_handler.particles_in_cell(workingCell);
 
 
-      for (typename Particles::ParticleHandler<dim, spacedim>::particle_iterator_range::
-             iterator partIter = particle_range.begin();
+      for (typename Particles::ParticleHandler<dim, spacedim>::
+             particle_iterator_range::iterator partIter =
+               particle_range.begin();
            partIter != particle_range.end();
            ++partIter)
         {
@@ -139,30 +149,36 @@ ParticleWallContactDetection<dim,spacedim>::pwcontactlist(
 
 
 template <int dim, int spacedim>
-void ParticleWallContactDetection<dim,spacedim>::pwFineSearch(
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>>> pwContactList,
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-                         Point<dim>,
-                         Point<dim>,
-                         double,
-                         double,
-                         double,
-                         Point<dim>,
-                         double>> & pwContactInfo,
-  float                             dt)
+void
+ParticleWallContactDetection<dim, spacedim>::pwFineSearch(
+  std::vector<std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>>> pwContactList,
+  std::vector<std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>,
+    double,
+    double,
+    double,
+    Point<dim>,
+    double>> &   pwContactInfo,
+  float          dt)
 {
-  std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-             Point<dim>,
-             Point<dim>,
-             double,
-             double,
-             double,
-             Point<dim>,
-             double>
-                                                                 pwInfoTuple;
-  std::vector<std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>> pwSearchPair;
+  std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Point<dim>,
+    Point<dim>,
+    double,
+    double,
+    double,
+    Point<dim>,
+    double>
+    pwInfoTuple;
+  std::vector<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>>
+    pwSearchPair;
   if (!pwSearchPair.empty())
     {
       pwSearchPair.clear();
@@ -170,7 +186,8 @@ void ParticleWallContactDetection<dim,spacedim>::pwFineSearch(
   // reread this part:
   for (unsigned int i = 0; i < pwContactInfo.size(); i++)
     {
-      Point<dim> partCenter = std::get<0>(pwContactInfo[i]).first->get_location();
+      Point<dim> partCenter =
+        std::get<0>(pwContactInfo[i]).first->get_location();
       Point<dim> partVector;
       partVector = partCenter - std::get<2>(pwContactInfo[i]);
       Point<dim> projection =
@@ -199,12 +216,12 @@ void ParticleWallContactDetection<dim,spacedim>::pwFineSearch(
               normVec);
           // find how to perform vec = std::get<0>(anothervec)
 
-          double   normRelVel = relVel * normVec;
+          double     normRelVel = relVel * normVec;
           Point<dim> relNormVel = normRelVel * normVec;
           Point<dim> relTangVel;
-          relTangVel             = relVel - relNormVel;
+          relTangVel               = relVel - relNormVel;
           Point<dim> tangVec       = {0, 0, 0};
-          double   relTangVelVal = relTangVel.norm();
+          double     relTangVelVal = relTangVel.norm();
           if (relTangVelVal != 0)
             {
               tangVec = relTangVel / relTangVelVal;
@@ -235,7 +252,8 @@ void ParticleWallContactDetection<dim,spacedim>::pwFineSearch(
 
   for (unsigned int i = 0; i < pwContactList.size(); i++)
     {
-      Point<dim> partCenter = std::get<0>(pwContactList[i]).first->get_location();
+      Point<dim> partCenter =
+        std::get<0>(pwContactList[i]).first->get_location();
       Point<dim> partVector;
       partVector = partCenter - std::get<2>(pwContactList[i]);
       Point<dim> projection =
@@ -269,11 +287,11 @@ void ParticleWallContactDetection<dim,spacedim>::pwFineSearch(
                     2) *
                    pOmega),
                   normVec);
-              //cross_prod_3d should change for 2d simulations
-              double   normRelVel = relVel * normVec;
+              // cross_prod_3d should change for 2d simulations
+              double     normRelVel = relVel * normVec;
               Point<dim> relNormVel = normRelVel * normVec;
               Point<dim> relTangVel;
-              relTangVel       = relVel - relNormVel;
+              relTangVel         = relVel - relNormVel;
               Point<dim> tangVec = {0, 0, 0};
 
 
@@ -306,8 +324,9 @@ void ParticleWallContactDetection<dim,spacedim>::pwFineSearch(
 
 
 template <int dim, int spacedim>
-Point<dim> ParticleWallContactDetection<dim,spacedim>::findProjection(Point<dim> pointA,
-                                                      Point<dim> pointB)
+Point<dim>
+ParticleWallContactDetection<dim, spacedim>::findProjection(Point<dim> pointA,
+                                                            Point<dim> pointB)
 {
   Point<dim> pointC;
   pointC = ((pointA * pointB) / (pointB.square())) * pointB;
@@ -315,4 +334,4 @@ Point<dim> ParticleWallContactDetection<dim,spacedim>::findProjection(Point<dim>
   return pointC;
 }
 
-template class ParticleWallContactDetection<3,3>;
+template class ParticleWallContactDetection<3, 3>;

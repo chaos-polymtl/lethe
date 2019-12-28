@@ -34,7 +34,7 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-ParticleInsertion<dim,spacedim>::ParticleInsertion(ParametersDEM<dim> DEMparam)
+ParticleInsertion<dim, spacedim>::ParticleInsertion(ParametersDEM<dim> DEMparam)
 {
   int n_exp;
 
@@ -52,12 +52,13 @@ ParticleInsertion<dim,spacedim>::ParticleInsertion(ParametersDEM<dim> DEMparam)
 } // add error here
 
 template <int dim, int spacedim>
-void ParticleInsertion<dim,spacedim>::uniformInsertion(
-  Particles::ParticleHandler<dim,spacedim> &particle_handler,
-  const Triangulation<dim,spacedim> &       tr,
-  ParametersDEM<dim>                  DEMparam,
-  int &                             nPart,
-  Particles::PropertyPool &         pool)
+void
+ParticleInsertion<dim, spacedim>::uniformInsertion(
+  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  const Triangulation<dim, spacedim> &       tr,
+  ParametersDEM<dim>                         DEMparam,
+  int &                                      nPart,
+  Particles::PropertyPool &                  pool)
 {
   int nx = int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
                (2 * DEMparam.physicalProperties.diameter));
@@ -73,8 +74,8 @@ void ParticleInsertion<dim,spacedim>::uniformInsertion(
       for (int k = 0; k < nz; ++k)
         if (nP < DEMparam.insertionInfo.nInsert)
           {
-            Point<dim>     position;
-            Point<dim>     reference_position;
+            Point<dim>   position;
+            Point<dim>   reference_position;
             unsigned int id;
 
             position[0] = DEMparam.insertionInfo.x_min +
@@ -88,12 +89,12 @@ void ParticleInsertion<dim,spacedim>::uniformInsertion(
                           (k * 1.1 * DEMparam.physicalProperties.diameter);
             id = i * ny * nz + j * nz + k + nPart + 1;
             Particles::Particle<dim> particle(position, reference_position, id);
-            typename Triangulation<dim,spacedim>::active_cell_iterator cell =
+            typename Triangulation<dim, spacedim>::active_cell_iterator cell =
               GridTools::find_active_cell_around_point(tr,
                                                        particle.get_location());
 
 
-            Particles::ParticleIterator<dim,spacedim> pit =
+            Particles::ParticleIterator<dim, spacedim> pit =
               particle_handler.insert_particle(particle, cell);
 
             particle.set_property_pool(pool);
@@ -139,4 +140,4 @@ void ParticleInsertion<dim,spacedim>::uniformInsertion(
   nPart = nPart + DEMparam.insertionInfo.nInsert;
 }
 
-template class ParticleInsertion<3,3>;
+template class ParticleInsertion<3, 3>;
