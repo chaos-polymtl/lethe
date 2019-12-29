@@ -45,7 +45,6 @@ template <int dim>
 void
 test()
 {
-
   // Generate a cube triangulation and refine it twice globally
   Triangulation<dim, dim>              tr;
   Particles::ParticleHandler<dim, dim> particle_handler;
@@ -75,7 +74,6 @@ test()
   int      id3       = 2;
 
   // Manually insert the three particles
-
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
    pt1_info =   GridTools::find_active_cell_around_point(mapping, tr,  position1);
   Particles::Particle<dim> particle1(position1, pt1_info.second, id1);
