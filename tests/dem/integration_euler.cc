@@ -42,9 +42,7 @@ test()
 
   const unsigned int n_properties = DEMparam.outputProperties.numProperties;
 
-  Particles::ParticleHandler<dim> particle_handler(tr,
-                                                        mapping,
-                                                        n_properties);
+  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
 
 

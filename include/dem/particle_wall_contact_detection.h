@@ -34,7 +34,7 @@ using namespace dealii;
 #ifndef PWCONTACTDETECTION_H_
 #  define PWCONTACTDETECTION_H_
 
-template <int dim, int spacedim=dim>
+template <int dim, int spacedim = dim>
 class ParticleWallContactDetection
 {
 public:

@@ -46,7 +46,7 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch<dim,spacedim> cs1;
+  ContactSearch<dim, spacedim> cs1;
   cellNeighbor = cs1.findCellNeighbors(tr);
 
   int i = 0;
@@ -71,5 +71,5 @@ int
 main(int argc, char **argv)
 {
   initlog();
-  test<3,3>();
+  test<3, 3>();
 }
