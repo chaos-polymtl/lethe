@@ -25,7 +25,7 @@ using namespace dealii;
 #ifndef INTEGRATION_H_
 #  define INTEGRATION_H_
 
-template <int dim, int spacedim>
+template <int dim, int spacedim=dim>
 class Integration
 {
 public:
