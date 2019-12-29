@@ -10,7 +10,7 @@
 
 using namespace dealii;
 
-template <int dim>
+template <int dim, int spacedim>
 void
 test()
 {
@@ -24,8 +24,8 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch cs1;
-  cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
+  ContactSearch<dim,spacedim> cs1;
+  cellNeighbor = cs1.findCellNeighbors(tr);
 
   int i = 0;
   for (auto cell = tr.begin_active(); cell != tr.end(); ++cell)
@@ -49,5 +49,5 @@ int
 main(int argc, char **argv)
 {
   initlog();
-  test<3>();
+  test<3,3>();
 }
