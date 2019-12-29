@@ -32,8 +32,8 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch cs1;
-  cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
+  ContactSearch<dim> cs1;
+  cellNeighbor = cs1.findCellNeighbors(tr);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
