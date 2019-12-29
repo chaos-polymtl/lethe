@@ -1,3 +1,24 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 - 2019 by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+
+ *
+ * Author: Shahab Golshan, Polytechnique Montreal, 2019-
+ */
+
+// Check if a particle is indeed on the boundary of the system
+
 #include <deal.II/base/point.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -28,7 +49,7 @@ test()
                          Point<3>>>
     boundaryCellInfo;
 
-  ParticleWallContactDetection pw1;
+  ParticleWallContactDetection<dim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 
   int i = 0;
