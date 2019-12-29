@@ -144,13 +144,8 @@ particle_handler.end(); ++particle)
     particle->get_properties()[6] = particle->get_properties()[6] + dt *
 (particle->get_properties()[9] + 0.5 * dt * (particle->get_properties()[12]));
     /Velocity integration:
-    /******************************************************************
     /here it need the new acceleration which should be updated after the
 contact force calculation: particle->get_properties()[7] = () + 0.5 * dt * ();
-    /******************************************************************
-
-
-
 
 
     particle->set_location({particle->get_properties()[4],

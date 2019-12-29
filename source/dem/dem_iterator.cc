@@ -112,7 +112,7 @@ DEM_iterator<dim, spacedim>::engine(
   // checkSimBound(particle_handler, readInput);
 
   // insertion
-  if (fmod(step, DEMparam.insertionInfo.insertFrequncy) == 1)
+  if (fmod(step, DEMparam.insertionInfo.insertFrequency) == 1)
     {
       if (step < DEMparam.insertionInfo.tInsertion)
         {

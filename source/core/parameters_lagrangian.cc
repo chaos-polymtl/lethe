@@ -192,7 +192,7 @@ namespace Parameters
         tInsertion = prm.get_integer("Insertion time step");
         nInsert =
           prm.get_integer("Inserted number of particles at each time step");
-        insertFrequncy = prm.get_integer("Insertion frequency");
+        insertFrequency = prm.get_integer("Insertion frequency");
         x_min          = prm.get_double("Insertion box minimum x");
         y_min          = prm.get_double("Insertion box minimum y");
         z_min          = prm.get_double("Insertion box minimum z");
