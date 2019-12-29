@@ -193,12 +193,12 @@ namespace Parameters
         nInsert =
           prm.get_integer("Inserted number of particles at each time step");
         insertFrequency = prm.get_integer("Insertion frequency");
-        x_min          = prm.get_double("Insertion box minimum x");
-        y_min          = prm.get_double("Insertion box minimum y");
-        z_min          = prm.get_double("Insertion box minimum z");
-        x_max          = prm.get_double("Insertion box maximum x");
-        y_max          = prm.get_double("Insertion box maximum y");
-        z_max          = prm.get_double("Insertion box maximum z");
+        x_min           = prm.get_double("Insertion box minimum x");
+        y_min           = prm.get_double("Insertion box minimum y");
+        z_min           = prm.get_double("Insertion box minimum z");
+        x_max           = prm.get_double("Insertion box maximum x");
+        y_max           = prm.get_double("Insertion box maximum y");
+        z_max           = prm.get_double("Insertion box maximum z");
       }
       prm.leave_subsection();
     }
