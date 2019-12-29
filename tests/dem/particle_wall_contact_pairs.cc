@@ -66,7 +66,7 @@ test()
                          Point<3>>>
     boundaryCellInfo;
 
-  ParticleWallContactDetection pw1;
+  ParticleWallContactDetection<dim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
                          Point<3>,
