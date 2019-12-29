@@ -52,8 +52,8 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch cs1;
-  cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
+  ContactSearch<dim> cs1;
+  cellNeighbor = cs1.findCellNeighbors(tr);
 
   Point<3> position1 = {0.4, 0, 0};
   int      id1       = 0;
@@ -142,8 +142,8 @@ test()
                  DEMparam.simulationControl.dt);
 
 
-  ContactForce cf1;
-  cf1.linearCF(contactInfo, particle_handler, DEMparam);
+  ContactForce<dim> cf1;
+  cf1.linearCF(contactInfo, DEMparam);
 
   auto particle = particle_handler.begin();
 

@@ -51,7 +51,7 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch cs1;
+  ContactSearch<dim> cs1;
   cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
 
   Point<3> position1 = {0.4, 0, 0};
