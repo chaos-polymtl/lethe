@@ -34,7 +34,7 @@ using namespace dealii;
 #ifndef CONTACTFORCE_H_
 #  define CONTACTFORCE_H_
 
-template <int dim, int spacedim=dim>
+template <int dim, int spacedim = dim>
 class ContactForce
 {
 public:

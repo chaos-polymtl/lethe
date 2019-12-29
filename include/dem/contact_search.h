@@ -31,7 +31,7 @@ using namespace dealii;
 #ifndef CONTACTSEARCH_H_
 #  define CONTACTSEARCH_H_
 
-template <int dim, int spacedim=dim>
+template <int dim, int spacedim = dim>
 class ContactSearch
 {
 public:
