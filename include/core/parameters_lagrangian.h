@@ -86,7 +86,7 @@ namespace Parameters
       int nInsert;
 
       // Insertion frequency
-      int insertFrequncy;
+      int insertFrequency;
 
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
       double x_min, y_min, z_min, x_max, y_max, z_max;

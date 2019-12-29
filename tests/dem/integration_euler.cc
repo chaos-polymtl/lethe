@@ -42,7 +42,7 @@ test()
 
   const unsigned int n_properties = DEMparam.outputProperties.numProperties;
 
-  Particles::ParticleHandler<dim, dim> particle_handler(tr,
+  Particles::ParticleHandler<dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
 
@@ -53,8 +53,6 @@ test()
   // gravitational acceleration = 0, 0, -9.81 m/s2
   Point<3> position1 = {0, 0, 0};
   int      id1       = 0;
-
-
 
   Particles::Particle<dim> particle1(position1, position1, id1);
 
@@ -71,8 +69,8 @@ test()
   pit->get_properties()[0] = id1;
 
   pit->get_properties()[1] = 1;
-  pit->get_properties()[2] = DEMparam.physicalProperties.diameter;
-  pit->get_properties()[3] = DEMparam.physicalProperties.density;
+  pit->get_properties()[2] = 0.005;
+  pit->get_properties()[3] = 2500;
   // Position
   pit->get_properties()[4] = 0;
   pit->get_properties()[5] = 0;
@@ -93,12 +91,12 @@ test()
   pit->get_properties()[16] = 0;
   pit->get_properties()[17] = 0;
   pit->get_properties()[18] = 0;
-  // mass and moi
+  // mass and moment of inertia
   pit->get_properties()[19] = 1;
   pit->get_properties()[20] = 1;
 
 
-  Integration Integ1;
+  Integration<dim> Integ1;
   Integ1.eulerIntegration(particle_handler, DEMparam);
 
   for (auto particle = particle_handler.begin();
