@@ -62,7 +62,7 @@ test()
   std::pair<std::vector<
               std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
-      cellNeighbor = cs1.findCellNeighbors(tr);
+    cellNeighbor = cs1.findCellNeighbors(tr);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -75,19 +75,19 @@ test()
 
   // Manually insert the three particles
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-   pt1_info =   GridTools::find_active_cell_around_point(mapping, tr,  position1);
+                           pt1_info = GridTools::find_active_cell_around_point(mapping, tr, position1);
   Particles::Particle<dim> particle1(position1, pt1_info.second, id1);
   Particles::ParticleIterator<dim, dim> pit1 =
     particle_handler.insert_particle(particle1, pt1_info.first);
 
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-   pt2_info =   GridTools::find_active_cell_around_point(mapping, tr,  position2);
+                           pt2_info = GridTools::find_active_cell_around_point(mapping, tr, position2);
   Particles::Particle<dim> particle2(position2, pt2_info.second, id2);
   Particles::ParticleIterator<dim, dim> pit2 =
     particle_handler.insert_particle(particle2, pt2_info.first);
 
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-   pt3_info =   GridTools::find_active_cell_around_point(mapping, tr,  position3);
+                           pt3_info = GridTools::find_active_cell_around_point(mapping, tr, position3);
   Particles::Particle<dim> particle3(position3, pt3_info.second, id3);
   Particles::ParticleIterator<dim, dim> pit3 =
     particle_handler.insert_particle(particle3, pt3_info.first);
