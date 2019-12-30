@@ -10,25 +10,19 @@ addons:
   apt:
     packages:
       - docker-ce
+      - clang-format-9
 
 services:
   - docker
 
 matrix:
   include:
-    - name: Compile and ctest
-      stage: build
-      env: STEP=compile_and_test
     - name: Static checks (clang-format)
       stage: check
       env: STEP=static_check
-      addons:
-        apt:
-          sources:
-            - llvm-toolchain-trusty-5.0
-            - key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
-          packages:
-            - clang-format-5.0
+    - name: Compile and ctest
+      stage: build
+      env: STEP=compile_and_test
 
 before_script:
   - if [ "$STEP" = "compile_and_test" ]; then
