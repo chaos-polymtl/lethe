@@ -25,10 +25,10 @@ matrix:
       addons:
         apt:
           sources:
-            - llvm-toolchain-trusty-9.0
+            - llvm-toolchain-trusty-5.0
             - key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
           packages:
-            - clang-format-9.0
+            - clang-format-5.0
 
 before_script:
   - if [ "$STEP" = "compile_and_test" ]; then
