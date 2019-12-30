@@ -44,8 +44,9 @@ test()
   int                     nPart = 0;
   Particles::PropertyPool pool(DEMparam.outputProperties.numProperties);
   Particles::Particle<3>  particle;
-  ParticleInsertion       ins1(DEMparam);
-  ins1.uniformInsertion(particle_handler, tr, DEMparam, nPart, pool, particle);
+   ParticleInsertion<dim, dim> ins1(DEMparam);
+   ins1.uniformInsertion(
+     particle_handler, tr, DEMparam, nPart,  pool);
 
   int i = 1;
   for (auto particle = particle_handler.begin();

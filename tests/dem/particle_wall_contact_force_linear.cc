@@ -35,7 +35,7 @@ test()
 
   std::string      filename = "../dem.prm";
   ParameterHandler prm;
-  ParametersDEM<3> DEMparam;
+  ParametersDEM<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
   DEMparam.parse(prm);
@@ -46,14 +46,14 @@ test()
                                                         mapping,
                                                         n_properties);
   std::vector<std::tuple<int,
-                         Triangulation<3>::active_cell_iterator,
+                         typename Triangulation<dim>::active_cell_iterator,
                          int,
-                         Point<3>,
-                         Point<3>>>
+                         Point<dim>,
+                         Point<dim>>>
     boundaryCellInfo;
 
 
-  Point<3> position1 = {-0.998, 0, 0};
+  Point<dim> position1 = {-0.998, 0, 0};
   int      id1       = 0;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
@@ -68,7 +68,7 @@ test()
   pit1->get_properties()[4]  = position1[0];
   pit1->get_properties()[5]  = position1[1];
   pit1->get_properties()[6]  = position1[2];
-  pit1->get_properties()[7]  = 0;
+  pit1->get_properties()[7]  = 0.01;
   pit1->get_properties()[8]  = 0;
   pit1->get_properties()[9]  = 0;
   pit1->get_properties()[10] = 0;
@@ -84,30 +84,29 @@ test()
   pit1->get_properties()[20] = 1;
 
 
-  ParticleWallContactDetection pw1;
+  ParticleWallContactDetection<dim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>>>
+  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
+                         Point<dim>,
+                         Point<dim>>>
     pwContactList;
   pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
 
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
+                         Point<dim>,
+                         Point<dim>,
                          double,
                          double,
                          double,
-                         Point<3>,
+                         Point<dim>,
                          double>>
     pwContactInfo;
   pw1.pwFineSearch(pwContactList,
-                   particle_handler,
                    pwContactInfo,
                    DEMparam.simulationControl.dt);
 
-  ParticleWallContactForce pwcf1;
-  pwcf1.pwLinearCF(pwContactInfo, particle_handler, DEMparam);
+  ParticleWallContactForce<dim,dim> pwcf1;
+  pwcf1.pwLinearCF(pwContactInfo, DEMparam);
 
 
   auto particle = particle_handler.begin();
