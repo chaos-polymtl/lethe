@@ -10,7 +10,7 @@ addons:
   apt:
     packages:
       - docker-ce
-      - clang-format-9
+      - clang-format
 
 services:
   - docker
