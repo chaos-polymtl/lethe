@@ -34,11 +34,11 @@ test()
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means only particle 3 is located in a boundary cell
-  Point<3> position1 = {-0.4, 0, 0};
+  Point<dim> position1 = {-0.4, 0, 0};
   int      id1       = 0;
-  Point<3> position2 = {0.4, 0, 0};
+  Point<dim> position2 = {0.4, 0, 0};
   int      id2       = 1;
-  Point<3> position3 = {0.8, 0, 0};
+  Point<dim> position3 = {0.8, 0, 0};
   int      id3       = 2;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
@@ -60,17 +60,18 @@ test()
     particle_handler.insert_particle(particle3, cell3);
 
   std::vector<std::tuple<int,
-                         Triangulation<3>::active_cell_iterator,
+                         typename Triangulation<dim>::active_cell_iterator,
                          int,
-                         Point<3>,
-                         Point<3>>>
+                         Point<dim>,
+                         Point<dim>>>
     boundaryCellInfo;
+
 
   ParticleWallContactDetection<dim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>, int>,
-                         Point<3>,
-                         Point<3>>>
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
+                         Point<dim>,
+                         Point<dim>>>
     pwContactList;
   pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
 

@@ -52,7 +52,7 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch<dim> cs1;
+  ContactSearch<dim,dim> cs1;
   cellNeighbor = cs1.findCellNeighbors(tr);
 
   Point<3> position1 = {0.4, 0, 0};
@@ -72,7 +72,7 @@ test()
   pit1->get_properties()[4]  = position1[0];
   pit1->get_properties()[5]  = position1[1];
   pit1->get_properties()[6]  = position1[2];
-  pit1->get_properties()[7]  = 0;
+  pit1->get_properties()[7]  = 0.01;
   pit1->get_properties()[8]  = 0;
   pit1->get_properties()[9]  = 0;
   pit1->get_properties()[10] = 0;
@@ -135,12 +135,7 @@ test()
     contactInfo;
 
 
-
-  cs1.fineSearch(pairs,
-                 particle_handler,
-                 contactInfo,
-                 DEMparam.simulationControl.dt);
-
+ cs1.fineSearch(pairs, contactInfo, DEMparam.simulationControl.dt);
 
   ContactForce<dim> cf1;
   cf1.linearCF(contactInfo, DEMparam);

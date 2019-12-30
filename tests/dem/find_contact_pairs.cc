@@ -57,7 +57,9 @@ test()
   MappingQ1<dim> mapping;
 
 
-  ContactSearch<dim> cs1;
+  ContactSearch<dim,dim> cs1;
+
+
 
   std::pair<std::vector<
               std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
@@ -99,6 +101,8 @@ test()
                                tr,
                                cellNeighbor.second,
                                cellNeighbor.first);
+
+
 
   for (unsigned int i = 0; i != pairs.size(); i++)
     {

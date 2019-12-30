@@ -51,8 +51,8 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch<dim> cs1;
-  cellNeighbor = cs1.findCellNeighbors(cellNum, tr);
+  ContactSearch<dim,dim> cs1;
+ cellNeighbor = cs1.findCellNeighbors(tr);
 
   Point<3> position1 = {0.4, 0, 0};
   int      id1       = 0;
@@ -134,9 +134,7 @@ test()
     contactInfo;
 
 
-
   cs1.fineSearch(pairs,
-                 particle_handler,
                  contactInfo,
                  DEMparam.simulationControl.dt);
 

@@ -78,7 +78,6 @@ ContactForce<dim, spacedim>::linearCF(
                                   (ethan * std::get<3>(contactInfo[i]))) *
                                  std::get<2>(contactInfo[i]);
 
-
         Point<dim> tangForce = (-1.0 * kt * std::get<6>(contactInfo[i]) -
                                 ethat * std::get<5>(contactInfo[i])) *
                                std::get<4>(contactInfo[i]);
