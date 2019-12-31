@@ -51,6 +51,6 @@ end
 # Properties of particles (for visualization)
 #---------------------------------------------------
 subsection output properties
-    set Number of properties           		 	= 21
-    set Number of fields 			        = 10
+    set Number of properties           		 	= 24
+    set Number of fields 			        = 11
 end

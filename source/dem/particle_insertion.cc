@@ -131,6 +131,10 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             pit->get_properties()[20] =
               (2.0 / 5.0) * (pit->get_properties()[19]) *
               pow((pit->get_properties()[2] / 2.0), 2.0);
+            // Torque
+            pit->get_properties()[21] = 0;
+            pit->get_properties()[22] = 0;
+            pit->get_properties()[23] = 0;
 
 
 
