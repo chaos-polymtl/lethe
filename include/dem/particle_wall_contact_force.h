@@ -51,6 +51,19 @@ public:
       double>>,
     ParametersDEM<dim>);
 
+  void
+  pwNonLinearCF(
+    std::vector<std::tuple<
+      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+      Point<dim>,
+      Point<dim>,
+      double,
+      double,
+      double,
+      Point<dim>,
+      double>>,
+    ParametersDEM<dim>);
+
 private:
   int
   sgn(float);
