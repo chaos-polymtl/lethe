@@ -72,24 +72,24 @@ ContactForce<dim, spacedim>::linearCF(
                     (sqrt(pow(3.1415, 2.0) +
                           pow(log(DEMparam.physicalProperties.ep), 2.0)));
           }
-        Point<dim> normalForce = ((-1.0 * kn * std::get<1>(contactInfo[i])) -
+        Point<dim> normalForce = ((-1.0 * kn * std::get<1>(contactInfo[i])) +
                                   (ethan * std::get<3>(contactInfo[i]))) *
                                  std::get<2>(contactInfo[i]);
 
-        Point<dim> tangForce = (-1.0 * kt * std::get<6>(contactInfo[i]) -
+        Point<dim> tangForce = (-1.0 * kt * std::get<6>(contactInfo[i]) +
                                 ethat * std::get<5>(contactInfo[i])) *
                                std::get<4>(contactInfo[i]);
 
-
-        if (tangForce.norm() <
-            (DEMparam.physicalProperties.mup * normalForce.norm()))
+double coulumbLimit = DEMparam.physicalProperties.mup * normalForce.norm();
+        if (tangForce.norm() <=
+            coulumbLimit)
           {
             totalForce = normalForce + tangForce;
           }
         else
           {
             Point<dim> coulumbTangForce =
-              DEMparam.physicalProperties.mup * normalForce.norm() *
+              coulumbLimit *
               sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
 
             totalForce = normalForce + coulumbTangForce;
@@ -99,6 +99,105 @@ ContactForce<dim, spacedim>::linearCF(
 
 
 
+
+        std::get<0>(contactInfo[i]).first->get_properties()[13] = totalForce[0];
+        std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[1];
+        std::get<0>(contactInfo[i]).first->get_properties()[15] = totalForce[2];
+
+        std::get<0>(contactInfo[i]).second->get_properties()[13] =
+          -1.0 * totalForce[0];
+        std::get<0>(contactInfo[i]).second->get_properties()[14] =
+          -1.0 * totalForce[1];
+        std::get<0>(contactInfo[i]).second->get_properties()[15] =
+          -1.0 * totalForce[2];
+
+        // calculation of torque
+        /*
+         Point<dim> torqueTi;
+         torqueTi = ((std::get<0>(contactInfo[i]).first->get_properties()[2])/2.0) * cross_product_3d( std::get<2>(contactInfo[i]) , totalForce);
+         Point<dim> torqueTj;
+         torqueTj = ((std::get<0>(contactInfo[i]).second->get_properties()[2])/2.0) * cross_product_3d( std::get<2>(contactInfo[i]) , -1.0*totalForce);
+        Point<dim> omegai = {std::get<0>(contactInfo[i]).first->get_properties()[16] ,   std::get<0>(contactInfo[i]).first->get_properties()[17] ,   std::get<0>(contactInfo[i]).first->get_properties()[18]};
+        Point<dim> omegaj = {std::get<0>(contactInfo[i]).second->get_properties()[16] ,   std::get<0>(contactInfo[i]).second->get_properties()[17] ,   std::get<0>(contactInfo[i]).second->get_properties()[18]};
+
+        Point<dim> omegaij = {0.0, 0.0, 0.0};
+        double omegaNorm = (omegai - omegaj).norm();
+        if(omegaNorm != 0)
+        {omegaij = (omegai - omegaj) / omegaNorm ;}
+        Point<dim> torquer;
+       torquer = -1.0 * DEMparam.physicalProperties.murp * rEff * normalForce.norm() * omegaij;
+       std::get<0>(contactInfo[i]).first->get_properties()[21] = torqueTi[0] + torquer[0];
+       std::get<0>(contactInfo[i]).first->get_properties()[22] = torqueTi[1] + torquer[1];
+       std::get<0>(contactInfo[i]).first->get_properties()[23] = torqueTi[2] + torquer[2];
+       std::get<0>(contactInfo[i]).second->get_properties()[21] = torqueTj[0] + torquer[0];
+       std::get<0>(contactInfo[i]).second->get_properties()[22] = torqueTj[1] + torquer[1];
+       std::get<0>(contactInfo[i]).second->get_properties()[23] = torqueTj[2] + torquer[2];
+     */
+
+
+      }
+    }
+}
+
+template <int dim, int spacedim>
+void
+ContactForce<dim, spacedim>::nonLinearCF(
+  std::vector<
+    std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>,
+                         typename Particles::ParticleIterator<dim, spacedim>>,
+               double,
+               Point<dim>,
+               double,
+               Point<dim>,
+               double,
+               double>> contactInfo,
+  ParametersDEM<dim>    DEMparam)
+{
+  for (unsigned int i = 0; i < contactInfo.size(); i++)
+    {
+      {
+        Point<dim> totalForce;
+        double     mEff =
+          (std::get<0>(contactInfo[i]).first->get_properties()[19] *
+           std::get<0>(contactInfo[i]).second->get_properties()[19]) /
+          (std::get<0>(contactInfo[i]).first->get_properties()[19] +
+           std::get<0>(contactInfo[i]).second->get_properties()[19]);
+        double rEff =
+          (std::get<0>(contactInfo[i]).first->get_properties()[2] *
+           std::get<0>(contactInfo[i]).second->get_properties()[2]) /
+          (2.0 * (std::get<0>(contactInfo[i]).first->get_properties()[2] +
+                std::get<0>(contactInfo[i]).second->get_properties()[2]));
+        double yEff = DEMparam.physicalProperties.Yp /
+                      (2.0 * (1.0 - pow(DEMparam.physicalProperties.vp, 2.0)));
+        double gEff = (DEMparam.physicalProperties.Yp) / (4.0 *
+         (2.0-DEMparam.physicalProperties.vp) *
+         (1.0+DEMparam.physicalProperties.vp));
+        double betha = log(DEMparam.physicalProperties.vp)/sqrt(pow(log(DEMparam.physicalProperties.vp),2.0) + 9.8696) ;
+        double sn = 2.0 * yEff * sqrt(rEff * std::get<1>(contactInfo[i]));
+        double st = 8.0 * gEff * sqrt(rEff * std::get<1>(contactInfo[i]));
+        double kn = -1.3333 * yEff * sqrt(rEff * std::get<1>(contactInfo[i]));
+        double ethan = -1.8257 * betha * sqrt(sn * mEff);
+        double kt = -8.0 * gEff * sqrt(rEff * std::get<1>(contactInfo[i]));
+        double ethat = -1.8257 * betha * sqrt(st * mEff);
+
+        Point<dim> normalForce = (( kn * std::get<1>(contactInfo[i])) +
+                                  (ethan * std::get<3>(contactInfo[i]))) *
+                                 std::get<2>(contactInfo[i]);
+        Point<dim> tangForce = (kt * std::get<6>(contactInfo[i]) +
+                                ethat * std::get<5>(contactInfo[i])) *
+                               std::get<4>(contactInfo[i]);
+
+        double coulumbLimit = DEMparam.physicalProperties.mup * normalForce.norm();
+        if (tangForce.norm() <=  coulumbLimit)
+          {
+            totalForce = normalForce + tangForce;
+          }
+        else
+          {
+            Point<dim> coulumbTangForce =
+              coulumbLimit * sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+            totalForce = normalForce + coulumbTangForce;
+          }
 
         std::get<0>(contactInfo[i]).first->get_properties()[13] = totalForce[0];
         std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[1];
