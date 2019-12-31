@@ -67,7 +67,7 @@ void
 initilization()
 {
   std::string filename;
-  filename = "dem.prm";
+   filename = "dem.prm";
   ParameterHandler   prm;
   ParametersDEM<dim> DEMparam;
   DEMparam.declare(prm);
@@ -97,6 +97,9 @@ initilization()
   properties[18] = std::make_tuple("w", 1);
   properties[19] = std::make_tuple("mass", 1);
   properties[20] = std::make_tuple("MOI", 1);
+  properties[21] = std::make_tuple("M", dim);
+  properties[22] = std::make_tuple("M", 1);
+  properties[23] = std::make_tuple("M", 1);
 
 
   // total number of particles in the system
@@ -104,7 +107,6 @@ initilization()
   // DEM clock
   int   DEM_step = 0;
   float DEM_time = 0;
-
   parallel::distributed::Triangulation<dim, spacedim> tr(MPI_COMM_WORLD);
 
   Particles::Particle<dim> particle;
