@@ -36,6 +36,12 @@ DEM_iterator<dim, spacedim>::forceReinit(
       particle->get_properties()[13] = 0;
       particle->get_properties()[14] = 0;
       particle->get_properties()[15] = 0;
+      /*
+      particle->get_properties()[21] = 0;
+      particle->get_properties()[22] = 0;
+      particle->get_properties()[23] = 0;
+      */
+
     }
 }
 
@@ -135,13 +141,13 @@ DEM_iterator<dim, spacedim>::engine(
   // force reinitilization
   forceReinit(particle_handler);
 
-  // if (fmod(step,10) == 1)
-  //	{
+ // if (fmod(step,10) == 1)
+  //      {
   contactPairs = cs.findContactPairs(particle_handler,
                                      tr,
                                      cellNeighbor.second,
                                      cellNeighbor.first);
-  //	}
+  //  }
 
   cs.fineSearch(contactPairs, contactInfo, DEMparam.simulationControl.dt);
 
@@ -156,10 +162,10 @@ DEM_iterator<dim, spacedim>::engine(
     pwContactList;
 
 
-  // if (fmod(step,10) == 1)
-  //{
+ //if (fmod(step,10) == 1)
+ //{
   pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
-  //}
+ //}
 
 
   pw.pwFineSearch(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
