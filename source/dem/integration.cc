@@ -59,6 +59,15 @@ Integration<dim, spacedim>::eulerIntegration(
       particle->set_location({particle->get_properties()[4],
                               particle->get_properties()[5],
                               particle->get_properties()[6]});
+      //Angular velocity:
+      /*
+      particle->get_properties()[16] = particle->get_properties()[16] +
+        (particle->get_properties()[21]) / (particle->get_properties()[20]);
+      particle->get_properties()[17] =particle->get_properties()[17] +
+        (particle->get_properties()[22]) / (particle->get_properties()[20]);
+      particle->get_properties()[18] = particle->get_properties()[18] +
+        (particle->get_properties()[23]) / (particle->get_properties()[20]);
+        */
     }
 }
 
@@ -124,6 +133,17 @@ Integration<dim, spacedim>::rk2Integration(
       particle->set_location({particle->get_properties()[4],
                               particle->get_properties()[5],
                               particle->get_properties()[6]});
+
+      // Angular velocity using Euler:
+      /*
+      particle->get_properties()[16] = particle->get_properties()[16] +
+        (particle->get_properties()[21]) / (particle->get_properties()[20]);
+      particle->get_properties()[17] =particle->get_properties()[17] +
+        (particle->get_properties()[22]) / (particle->get_properties()[20]);
+      particle->get_properties()[18] = particle->get_properties()[18] +
+        (particle->get_properties()[23]) / (particle->get_properties()[20]);
+        */
+
     }
 }
 
