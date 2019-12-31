@@ -52,6 +52,19 @@ public:
                  double>>,
     ParametersDEM<dim>);
 
+  void
+  nonLinearCF(
+    std::vector<
+      std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>,
+                           typename Particles::ParticleIterator<dim, spacedim>>,
+                 double,
+                 Point<dim>,
+                 double,
+                 Point<dim>,
+                 double,
+                 double>>,
+    ParametersDEM<dim>);
+
 
 private:
   int

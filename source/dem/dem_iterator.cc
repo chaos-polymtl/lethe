@@ -172,7 +172,7 @@ DEM_iterator<dim, spacedim>::engine(
 
 
   // p-w contact force:
-  pwcf.pwLinearCF(pwContactInfo, DEMparam);
+  pwcf.pwNonLinearCF(pwContactInfo, DEMparam);
 
 
   // Integration
