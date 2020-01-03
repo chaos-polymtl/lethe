@@ -78,13 +78,13 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             Point<dim>   reference_position;
             unsigned int id;
 
-            position[0] = DEMparam.insertionInfo.x_min +
+            position[2] = DEMparam.insertionInfo.x_min +
                           (DEMparam.physicalProperties.diameter / 2) +
                           (i * 1.1 * DEMparam.physicalProperties.diameter);
             position[1] = DEMparam.insertionInfo.y_min +
                           (DEMparam.physicalProperties.diameter / 2) +
                           (j * 1.1 * DEMparam.physicalProperties.diameter);
-            position[2] = DEMparam.insertionInfo.z_min +
+            position[0] = DEMparam.insertionInfo.z_min +
                           (DEMparam.physicalProperties.diameter / 2) +
                           (k * 1.1 * DEMparam.physicalProperties.diameter);
             id = i * ny * nz + j * nz + k + nPart + 1;

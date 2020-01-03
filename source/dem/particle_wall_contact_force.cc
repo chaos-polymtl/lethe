@@ -171,7 +171,6 @@ ParticleWallContactForce<dim, spacedim>::pwNonLinearCF(
               double ethan = -1.8257 * betha * sqrt(sn * std::get<0>(pwContactInfo[i]).first->get_properties()[19]);
               double kt = 8.0 * gEff * sqrt((std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) * std::get<3>(pwContactInfo[i]));
               double ethat = -1.8257 * betha * sqrt(st * std::get<0>(pwContactInfo[i]).first->get_properties()[19]);
-
       Point<dim> springNormForce =
         (kn * std::get<3>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
       Point<dim> dashpotNormForce =
