@@ -99,7 +99,6 @@ test()
     pairs;
   pairs = cs1.findContactPairs(particle_handler,
                                tr,
-                               cellNeighbor.second,
                                cellNeighbor.first);
 
 
