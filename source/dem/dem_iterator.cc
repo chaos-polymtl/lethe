@@ -141,18 +141,22 @@ DEM_iterator<dim, spacedim>::engine(
   // force reinitilization
   forceReinit(particle_handler);
 
- // if (fmod(step,10) == 1)
+//  if (fmod(step,10) == 1)
   //      {
   contactPairs = cs.findContactPairs(particle_handler,
                                      tr,
-                                     cellNeighbor.second,
                                      cellNeighbor.first);
   //  }
+
+//for(int i  = 0; i < contactPairs.size(); i++)
+//{
+//    std::cout<< contactPairs[i].first->get_id() << " " << contactPairs[i].second->get_id() << std::endl;
+//}
 
   cs.fineSearch(contactPairs, contactInfo, DEMparam.simulationControl.dt);
 
   // contact force
-  cf.linearCF(contactInfo, DEMparam);
+  cf.nonLinearCF(contactInfo, DEMparam);
 
   // p-w contact detection:
   std::vector<
@@ -162,8 +166,8 @@ DEM_iterator<dim, spacedim>::engine(
     pwContactList;
 
 
- //if (fmod(step,10) == 1)
- //{
+// if (fmod(step,10) == 1)
+// {
   pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
  //}
 

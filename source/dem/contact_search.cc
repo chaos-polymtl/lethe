@@ -64,8 +64,8 @@ ContactSearch<dim, spacedim>::findCellNeighbors(
   std::pair<
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    contactPair = std::make_pair(cellNeighborList, totallCellList);
-  return contactPair;
+    cellPair = std::make_pair(cellNeighborList, totallCellList);
+  return cellPair;
 }
 
 
@@ -75,12 +75,89 @@ std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
 ContactSearch<dim, spacedim>::findContactPairs(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const Triangulation<dim, spacedim> &       tr,
-  std::vector<typename Triangulation<dim>::active_cell_iterator> totallCellList,
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cellNeighborList)
 
 
+// 3rd method:
+
+{
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
+      contactPairs;
+  int index = 0;
+  for (typename Triangulation<dim>::active_cell_iterator cell =
+         tr.begin_active();
+       cell != tr.end();
+       ++cell, ++index)
+    {
+      typename Particles::ParticleHandler<dim,
+                                          spacedim>::particle_iterator_range
+        particle_range = particle_handler.particles_in_cell(cell);
+
+
+      for (auto cellIt = cellNeighborList[index].begin();
+           cellIt != cellNeighborList[index].end();
+           cellIt++)
+        {
+          typename Particles::ParticleHandler<dim,
+                                              spacedim>::particle_iterator_range
+            particle_range2 = particle_handler.particles_in_cell(*cellIt);
+
+          int iter3 = 1;
+          for (typename Particles::ParticleHandler<dim, spacedim>::
+                 particle_iterator_range::iterator partIter =
+                   particle_range.begin();
+               partIter != particle_range.end();
+               ++partIter,++iter3)
+            {
+
+              if (cellIt == cellNeighborList[index].begin())
+              {
+                  typename Particles::ParticleHandler<dim, spacedim>::
+                                           particle_iterator_range::iterator partIter2 =
+                                             particle_range2.begin();
+                  std::advance(partIter2, iter3);
+
+               //   for (auto it = partIter2; particle_range2.end(); ++it)
+                  while (partIter2 != particle_range2.end())
+                  {
+                    auto cPair  = std::make_pair(partIter, partIter2);
+                    contactPairs.push_back(cPair);
+                    partIter2++;
+                  }
+              }
+              else
+              {
+                  for (typename Particles::ParticleHandler<dim, spacedim>::
+                         particle_iterator_range::iterator partIter2 =
+                           particle_range2.begin();
+                       partIter2 != particle_range2.end();
+                       ++partIter2)
+                  {
+                      auto cPair  = std::make_pair(partIter, partIter2);
+                      contactPairs.push_back(cPair);
+                  }
+              }
+            }
+        }
+    }
+
+  return contactPairs;
+}
+
+/*
 // 2nd method:
+template <int dim, int spacedim>
+std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                      Particles::ParticleIterator<dim, spacedim>>>
+ContactSearch<dim, spacedim>::findContactPairs(
+  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  const Triangulation<dim, spacedim> &       tr,
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+    cellNeighborList)
+
+
 {
   std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
                         Particles::ParticleIterator<dim, spacedim>>>
@@ -133,7 +210,7 @@ ContactSearch<dim, spacedim>::findContactPairs(
 
   return contactPairs;
 }
-
+*/
 
 // 1st method:
 /*
