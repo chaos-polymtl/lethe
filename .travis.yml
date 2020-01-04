@@ -10,7 +10,6 @@ addons:
   apt:
     packages:
       - docker-ce
-      - clang-format
 
 services:
   - docker
@@ -20,6 +19,13 @@ matrix:
     - name: Static checks (clang-format)
       stage: check
       env: STEP=static_check
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+            - key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - clang-format-5.0
     - name: Compile and ctest
       stage: build
       env: STEP=compile_and_test
