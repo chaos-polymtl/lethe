@@ -1,4 +1,4 @@
-/*
+﻿/*
  * contactForce.cpp
  *
  *  Created on: Oct 31, 2019
@@ -72,7 +72,6 @@ ContactForce<dim, spacedim>::linearCF(
                     (sqrt(pow(3.1415, 2.0) +
                           pow(log(DEMparam.physicalProperties.ep), 2.0)));
           }
-
 
         Point<dim> normalForce = ((-1.0 * kn * std::get<1>(contactInfo[i])) -
                                   (ethan * std::get<3>(contactInfo[i]))) *
