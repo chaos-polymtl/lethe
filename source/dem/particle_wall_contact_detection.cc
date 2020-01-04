@@ -99,6 +99,7 @@ ParticleWallContactDetection<dim, spacedim>::pwcontactlist(
                          Point<dim>>>        boundaryCellInfo,
   Particles::ParticleHandler<dim, spacedim> &particle_handler)
 {
+
   std::vector<std::tuple<
     std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
     Point<dim>,
@@ -109,9 +110,9 @@ ParticleWallContactDetection<dim, spacedim>::pwcontactlist(
     Point<dim>,
     Point<dim>>
     pwInfoTuple;
-  std::vector<
-    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>>
-    searchPair;
+  //std::vector<
+  //  std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>>
+  //  searchPair;
 
 
   for (unsigned int i = 0; i < boundaryCellInfo.size(); ++i)
@@ -132,15 +133,15 @@ ParticleWallContactDetection<dim, spacedim>::pwcontactlist(
           std::pair pwPair =
             std::make_pair(partIter, std::get<0>(boundaryCellInfo[i]));
 
-          auto it4 = std::find(searchPair.begin(), searchPair.end(), pwPair);
-          if (it4 == searchPair.end())
-            {
+    //      auto it4 = std::find(searchPair.begin(), searchPair.end(), pwPair);
+     //     if (it4 == searchPair.end())
+      //      {
               pwInfoTuple = std::make_tuple(pwPair,
                                             std::get<3>(boundaryCellInfo[i]),
                                             std::get<4>(boundaryCellInfo[i]));
               pwContactList.push_back(pwInfoTuple);
-              searchPair.push_back(pwPair);
-            }
+         //     searchPair.push_back(pwPair);
+      //      }
         }
     }
 
