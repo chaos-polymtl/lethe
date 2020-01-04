@@ -82,6 +82,7 @@ ParticleWallContactForce<dim, spacedim>::pwLinearCF(
                   pow(log(DEMparam.physicalProperties.ew), 2.0)));
         }
 
+
       Point<dim> springNormForce =
         (kn * std::get<3>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
       Point<dim> dashpotNormForce =
