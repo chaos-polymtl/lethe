@@ -38,6 +38,12 @@ public:
                    ParametersDEM<dim>,
                    int &,
                    dealii::Particles::PropertyPool &);
+  void
+  nonUniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
+                   const dealii::Triangulation<dim, spacedim> &,
+                   ParametersDEM<dim>,
+                   int &,
+                   dealii::Particles::PropertyPool &);
 };
 
 #endif /* PARTICLEINSERTION_H_ */

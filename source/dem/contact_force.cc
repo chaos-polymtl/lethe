@@ -73,44 +73,54 @@ ContactForce<dim, spacedim>::linearCF(
                           pow(log(DEMparam.physicalProperties.ep), 2.0)));
           }
 
-        Point<dim> normalForce = ((-1.0 * kn * std::get<1>(contactInfo[i])) -
-                                  (ethan * std::get<3>(contactInfo[i]))) *
-                                 std::get<2>(contactInfo[i]);
+        Point<dim> springNormForce =
+          ( kn * std::get<1>(contactInfo[i])) * std::get<2>(contactInfo[i]);
+        Point<dim> dashpotNormForce =
+          (ethan * std::get<3>(contactInfo[i])) * std::get<2>(contactInfo[i]);
 
-        Point<dim> tangForce = (-1.0 * kt * std::get<6>(contactInfo[i]) -
-                                ethat * std::get<5>(contactInfo[i])) *
-                               std::get<4>(contactInfo[i]);
+        Point<dim> normalForce;
+        normalForce = springNormForce + dashpotNormForce;
 
-double coulumbLimit = DEMparam.physicalProperties.mup * normalForce.norm();
-        if (tangForce.norm() <=
-            coulumbLimit)
+
+        Point<dim> springTangForce =
+          (kt * std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+        Point<dim> dashpotTangForce =
+          (ethat * std::get<5>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+
+        Point<dim> tangForce;
+        tangForce= springTangForce + dashpotTangForce;
+
+
+        if (tangForce.norm() <
+                (DEMparam.physicalProperties.mup * normalForce.norm()))
           {
             totalForce = normalForce + tangForce;
           }
         else
           {
+
             Point<dim> coulumbTangForce =
-              coulumbLimit *
-              sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+              (DEMparam.physicalProperties.mup * normalForce.norm() *
+               sgn(std::get<6>(contactInfo[i]))) *
+              std::get<4>(contactInfo[i]);
 
             totalForce = normalForce + coulumbTangForce;
-
 
           }
 
 
 
 
-        std::get<0>(contactInfo[i]).first->get_properties()[13] = totalForce[0];
-        std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[1];
-        std::get<0>(contactInfo[i]).first->get_properties()[15] = totalForce[2];
+        std::get<0>(contactInfo[i]).first->get_properties()[13] = -1 * totalForce[0];
+        std::get<0>(contactInfo[i]).first->get_properties()[14] = -1 * totalForce[1];
+        std::get<0>(contactInfo[i]).first->get_properties()[15] = -1 * totalForce[2];
 
         std::get<0>(contactInfo[i]).second->get_properties()[13] =
-          -1.0 * totalForce[0];
+           totalForce[0];
         std::get<0>(contactInfo[i]).second->get_properties()[14] =
-          -1.0 * totalForce[1];
+           totalForce[1];
         std::get<0>(contactInfo[i]).second->get_properties()[15] =
-          -1.0 * totalForce[2];
+           totalForce[2];
 
         // calculation of torque
         /*
@@ -181,42 +191,50 @@ ContactForce<dim, spacedim>::nonLinearCF(
         double kt = 8.0 * gEff * sqrt(rEff * std::get<1>(contactInfo[i]));
         double ethat = -1.8257 * betha * sqrt(st * mEff);
 
+        Point<dim> springNormForce =
+          ( kn * std::get<1>(contactInfo[i])) * std::get<2>(contactInfo[i]);
+        Point<dim> dashpotNormForce =
+          (ethan * std::get<3>(contactInfo[i])) * std::get<2>(contactInfo[i]);
 
-        Point<dim> normalForce = ((-1.0 * kn * std::get<1>(contactInfo[i])) -
-                                  (ethan * std::get<3>(contactInfo[i]))) *
-                                 std::get<2>(contactInfo[i]);
+        Point<dim> normalForce;
+        normalForce = springNormForce + dashpotNormForce;
 
-        Point<dim> tangForce = (-1.0 * kt * std::get<6>(contactInfo[i]) -
-                                ethat * std::get<5>(contactInfo[i])) *
-                               std::get<4>(contactInfo[i]);
 
-double coulumbLimit = DEMparam.physicalProperties.mup * normalForce.norm();
-        if (tangForce.norm() <=
-            coulumbLimit)
+        Point<dim> springTangForce =
+          (kt * std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+        Point<dim> dashpotTangForce =
+          (ethat * std::get<5>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+
+        Point<dim> tangForce;
+        tangForce = springTangForce + dashpotTangForce;
+
+
+        if (tangForce.norm() <
+                (DEMparam.physicalProperties.mup * normalForce.norm()))
           {
             totalForce = normalForce + tangForce;
           }
         else
           {
             Point<dim> coulumbTangForce =
-              coulumbLimit *
-              sgn(std::get<6>(contactInfo[i])) * std::get<4>(contactInfo[i]);
+              (DEMparam.physicalProperties.mup * normalForce.norm() *
+               sgn(std::get<6>(contactInfo[i]))) *
+              std::get<4>(contactInfo[i]);
 
             totalForce = normalForce + coulumbTangForce;
 
-
           }
 
-        std::get<0>(contactInfo[i]).first->get_properties()[13] = totalForce[0];
-        std::get<0>(contactInfo[i]).first->get_properties()[14] = totalForce[1];
-        std::get<0>(contactInfo[i]).first->get_properties()[15] = totalForce[2];
+        std::get<0>(contactInfo[i]).first->get_properties()[13] = -1 * totalForce[0];
+        std::get<0>(contactInfo[i]).first->get_properties()[14] = -1 * totalForce[1];
+        std::get<0>(contactInfo[i]).first->get_properties()[15] = -1 * totalForce[2];
 
         std::get<0>(contactInfo[i]).second->get_properties()[13] =
-          -1.0 * totalForce[0];
+           totalForce[0];
         std::get<0>(contactInfo[i]).second->get_properties()[14] =
-          -1.0 * totalForce[1];
+           totalForce[1];
         std::get<0>(contactInfo[i]).second->get_properties()[15] =
-          -1.0 * totalForce[2];
+           totalForce[2];
 
         // calculation of torque
         /*
