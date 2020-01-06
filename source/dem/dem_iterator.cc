@@ -126,7 +126,7 @@ DEM_iterator<dim, spacedim>::engine(
               DEMparam.simulationControl.nTotal) // number < total number
             {
               ParticleInsertion<dim, spacedim> ins1(DEMparam);
-              ins1.uniformInsertion(
+              ins1.nonUniformInsertion(
                 particle_handler, tr, DEMparam, nPart, propPool);
             }
         }
@@ -141,17 +141,12 @@ DEM_iterator<dim, spacedim>::engine(
   // force reinitilization
   forceReinit(particle_handler);
 
-//  if (fmod(step,10) == 1)
-  //      {
+  if (fmod(step,10) == 1)
+        {
   contactPairs = cs.findContactPairs(particle_handler,
                                      tr,
                                      cellNeighbor.first);
-  //  }
-
-//for(int i  = 0; i < contactPairs.size(); i++)
-//{
-//    std::cout<< contactPairs[i].first->get_id() << " " << contactPairs[i].second->get_id() << std::endl;
-//}
+    }
 
   cs.fineSearch(contactPairs, contactInfo, DEMparam.simulationControl.dt);
 
@@ -166,10 +161,10 @@ DEM_iterator<dim, spacedim>::engine(
     pwContactList;
 
 
-// if (fmod(step,10) == 1)
-// {
+ if (fmod(step,10) == 1)
+ {
   pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
- //}
+ }
 
 
   pw.pwFineSearch(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
@@ -180,9 +175,8 @@ DEM_iterator<dim, spacedim>::engine(
 
 
   // Integration
-  Integ1.eulerIntegration(particle_handler, DEMparam);
-  // Integ1.rk2Integration(particle_handler, DEMparam);
-
+  // Integ1.eulerIntegration(particle_handler, DEMparam);
+  Integ1.rk2Integration(particle_handler, DEMparam);
 
 
   // visualization
