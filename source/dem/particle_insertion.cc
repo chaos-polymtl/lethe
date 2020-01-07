@@ -34,19 +34,19 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-ParticleInsertion<dim, spacedim>::ParticleInsertion(ParametersDEM<dim> DEMparam)
+ParticleInsertion<dim, spacedim>::ParticleInsertion(float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, double dp, int nInsert)
 {
   int n_exp;
 
-  n_exp = int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
-              (2 * DEMparam.physicalProperties.diameter)) *
-          int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) /
-              (2 * DEMparam.physicalProperties.diameter)) *
-          int((DEMparam.insertionInfo.z_max - DEMparam.insertionInfo.z_min) /
-              (2 * DEMparam.physicalProperties.diameter));
-  if (DEMparam.insertionInfo.nInsert > n_exp)
+  n_exp = int((x_max - x_min) /
+              (2 * dp)) *
+          int((y_max - y_min) /
+              (2 * dp)) *
+          int((z_max - z_min) /
+              (2 * dp));
+  if (nInsert > n_exp)
     std::cout << "The inserted number of particles ("
-              << DEMparam.insertionInfo.nInsert
+              << nInsert
               << ") is higher than maximum expected number of particles ("
               << n_exp << ")" << std::endl;
 } // add error here
@@ -56,37 +56,36 @@ void
 ParticleInsertion<dim, spacedim>::uniformInsertion(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const Triangulation<dim, spacedim> &       tr,
-  ParametersDEM<dim>                         DEMparam,
   int &                                      nPart,
-  Particles::PropertyPool &                  pool)
+  Particles::PropertyPool &                  pool, float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, double dp, int nInsert, int rhop, Point<dim> g)
 {
-  int nx = int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
-               (2 * DEMparam.physicalProperties.diameter));
-  int ny = int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) /
-               (2 * DEMparam.physicalProperties.diameter));
-  int nz = int((DEMparam.insertionInfo.z_max - DEMparam.insertionInfo.z_min) /
-               (2 * DEMparam.physicalProperties.diameter));
+  int nx = int((x_max - x_min) /
+               (2 * dp));
+  int ny = int((y_max - y_min) /
+               (2 * dp));
+  int nz = int((z_max - z_min) /
+               (2 * dp));
   int nP = 0;
 
 
   for (int i = 0; i < nx; ++i)
     for (int j = 0; j < ny; ++j)
       for (int k = 0; k < nz; ++k)
-        if (nP < DEMparam.insertionInfo.nInsert)
+        if (nP < nInsert)
           {
             Point<dim>   position;
             Point<dim>   reference_position;
             unsigned int id;
 
-            position[0] = DEMparam.insertionInfo.x_min +
-                          (DEMparam.physicalProperties.diameter / 2) +
-                          (i * 1.5 * DEMparam.physicalProperties.diameter);
-            position[1] = DEMparam.insertionInfo.y_min +
-                          (DEMparam.physicalProperties.diameter / 2) +
-                          (j * 1.5 * DEMparam.physicalProperties.diameter);
-            position[2] = DEMparam.insertionInfo.z_min +
-                          (DEMparam.physicalProperties.diameter / 2) +
-                          (k * 1.5 * DEMparam.physicalProperties.diameter);
+            position[0] = x_min +
+                          (dp / 2) +
+                          (i * 1.5 * dp);
+            position[1] = y_min +
+                          (dp / 2) +
+                          (j * 1.5 * dp);
+            position[2] = z_min +
+                          (dp / 2) +
+                          (k * 1.5 * dp);
             id = i * ny * nz + j * nz + k + nPart + 1;
             Particles::Particle<dim> particle(position, reference_position, id);
             typename Triangulation<dim, spacedim>::active_cell_iterator cell =
@@ -101,8 +100,8 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
 
             pit->get_properties()[0] = id;
             pit->get_properties()[1] = 1;
-            pit->get_properties()[2] = DEMparam.physicalProperties.diameter;
-            pit->get_properties()[3] = DEMparam.physicalProperties.density;
+            pit->get_properties()[2] = dp;
+            pit->get_properties()[3] = rhop;
             // Position
             pit->get_properties()[4] = position[0];
             pit->get_properties()[5] = position[1];
@@ -112,9 +111,9 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             pit->get_properties()[8] = 0;
             pit->get_properties()[9] = 0;
             // Acceleration
-            pit->get_properties()[10] = 0 + DEMparam.physicalProperties.gx;
-            pit->get_properties()[11] = 0 + DEMparam.physicalProperties.gy;
-            pit->get_properties()[12] = 0 + DEMparam.physicalProperties.gz;
+            pit->get_properties()[10] = 0 + g[0];
+            pit->get_properties()[11] = 0 + g[1];
+            pit->get_properties()[12] = 0 + g[2];
             // Force
             pit->get_properties()[13] = 0;
             pit->get_properties()[14] = 0;
@@ -125,7 +124,7 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             pit->get_properties()[18] = 0;
             // mass and moi
             pit->get_properties()[19] =
-              DEMparam.physicalProperties.density *
+              rhop *
               ((4.0 / 3.0) * 3.1415 *
                pow((pit->get_properties()[2] / 2.0), 3.0));
             pit->get_properties()[20] =
@@ -139,7 +138,7 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
               ++nP;
           }
 
-  nPart = nPart + DEMparam.insertionInfo.nInsert;
+  nPart = nPart + nInsert;
 }
 
 
@@ -148,37 +147,36 @@ void
 ParticleInsertion<dim, spacedim>::nonUniformInsertion(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const Triangulation<dim, spacedim> &       tr,
-  ParametersDEM<dim>                         DEMparam,
   int &                                      nPart,
-  Particles::PropertyPool &                  pool)
+  Particles::PropertyPool &                  pool, float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, double dp, int nInsert, int rhop, Point<dim> g)
 {
-  int nx = int((DEMparam.insertionInfo.x_max - DEMparam.insertionInfo.x_min) /
-               (2 * DEMparam.physicalProperties.diameter));
-  int ny = int((DEMparam.insertionInfo.y_max - DEMparam.insertionInfo.y_min) /
-               (2 * DEMparam.physicalProperties.diameter));
-  int nz = int((DEMparam.insertionInfo.z_max - DEMparam.insertionInfo.z_min) /
-               (2 * DEMparam.physicalProperties.diameter));
+  int nx = int((x_max - x_min) /
+               (2 * dp));
+  int ny = int((y_max - y_min) /
+               (2 * dp));
+  int nz = int((z_max - z_min) /
+               (2 * dp));
   int nP = 0;
 
 
   for (int i = 0; i < nx; ++i)
     for (int j = 0; j < ny; ++j)
       for (int k = 0; k < nz; ++k)
-        if (nP < DEMparam.insertionInfo.nInsert)
+        if (nP < nInsert)
           {
             Point<dim>   position;
             Point<dim>   reference_position;
             unsigned int id;
 
-            position[0] = DEMparam.insertionInfo.x_min +
-                          (DEMparam.physicalProperties.diameter / 2) +
-                          (i * 1.5 * DEMparam.physicalProperties.diameter);
-            position[1] = DEMparam.insertionInfo.y_min +
-                          (DEMparam.physicalProperties.diameter / 2) +
-                          (j * 1.5 * DEMparam.physicalProperties.diameter);
-            position[2] = DEMparam.insertionInfo.z_min +
-                          (DEMparam.physicalProperties.diameter / 2) +
-                          (k * 1.5 * DEMparam.physicalProperties.diameter);
+            position[0] = x_min +
+                          (dp / 2) +
+                          (i * 1.5 * dp);
+            position[1] = y_min +
+                          (dp / 2) +
+                          (j * 1.5 * dp);
+            position[2] = z_min +
+                          (dp / 2) +
+                          (k * 1.5 * dp);
             id = i * ny * nz + j * nz + k + nPart + 1;
             Particles::Particle<dim> particle(position, reference_position, id);
             typename Triangulation<dim, spacedim>::active_cell_iterator cell =
@@ -193,22 +191,22 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
 
             pit->get_properties()[0] = id;
             pit->get_properties()[1] = 1;
-            pit->get_properties()[2] = DEMparam.physicalProperties.diameter;
-            pit->get_properties()[3] = DEMparam.physicalProperties.density;
+            pit->get_properties()[2] = dp;
+            pit->get_properties()[3] = rhop;
             // Position
             int randNum1 = rand() % 101;
             int randNum2 = rand() % 101;
-            pit->get_properties()[4] = position[0] + randNum1 * (DEMparam.physicalProperties.diameter/400.0);
-            pit->get_properties()[5] = position[1] + randNum2 * (DEMparam.physicalProperties.diameter/400.0);
+            pit->get_properties()[4] = position[0] + randNum1 * (dp/400.0);
+            pit->get_properties()[5] = position[1] + randNum2 * (dp/400.0);
             pit->get_properties()[6] = position[2];
             // Velocity
             pit->get_properties()[7] = 0;
             pit->get_properties()[8] = 0;
             pit->get_properties()[9] = 0;
             // Acceleration
-            pit->get_properties()[10] = 0 + DEMparam.physicalProperties.gx;
-            pit->get_properties()[11] = 0 + DEMparam.physicalProperties.gy;
-            pit->get_properties()[12] = 0 + DEMparam.physicalProperties.gz;
+            pit->get_properties()[10] = 0 + g[0];
+            pit->get_properties()[11] = 0 + g[1];
+            pit->get_properties()[12] = 0 + g[2];
             // Force
             pit->get_properties()[13] = 0;
             pit->get_properties()[14] = 0;
@@ -219,7 +217,7 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
             pit->get_properties()[18] = 0;
             // mass and moi
             pit->get_properties()[19] =
-              DEMparam.physicalProperties.density *
+              rhop *
               ((4.0 / 3.0) * 3.1415 *
                pow((pit->get_properties()[2] / 2.0), 3.0));
             pit->get_properties()[20] =
@@ -234,7 +232,7 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
 
           }
 
-  nPart = nPart + DEMparam.insertionInfo.nInsert;
+  nPart = nPart + nInsert;
 }
 
 

@@ -32,15 +32,9 @@ test()
   tr.refine_global(numRef);
   MappingQ<dim, dim> mapping(1);
 
-
-  std::string      filename = "../dem.prm";
-  ParameterHandler prm;
-  ParametersDEM<3> DEMparam;
-  DEMparam.declare(prm);
-  prm.parse_input(filename);
-  DEMparam.parse(prm);
-
-  const unsigned int n_properties = DEMparam.outputProperties.numProperties;
+  const unsigned int n_properties = 24;
+  Point<dim> g = {0, 0, -9.81};
+  float dt = 0.00001;
 
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
@@ -95,14 +89,14 @@ test()
 
 
   Integration<dim> Integ1;
-  Integ1.eulerIntegration(particle_handler, DEMparam);
+  Integ1.eulerIntegration(particle_handler, g, dt);
 
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle)
     {
       deallog << "The new position of the particle in z direction after "
-              << DEMparam.simulationControl.dt
+              << dt
               << " seconds is: " << particle->get_properties()[6] << std::endl;
     }
 }
