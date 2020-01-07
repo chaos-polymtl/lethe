@@ -32,10 +32,10 @@ public:
   Integration<dim, spacedim>();
   void
   eulerIntegration(Particles::ParticleHandler<dim, spacedim> &,
-                   ParametersDEM<dim>);
+Point<dim>, float);
   void
   rk2Integration(Particles::ParticleHandler<dim, spacedim> &,
-                 ParametersDEM<dim>);
+                  Point<dim>, float);
   void
   velVerIntegration(Particles::ParticleHandler<dim, spacedim> &, float);
   void

@@ -7,6 +7,7 @@
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle.h>
+#include <deal.II/base/point.h>
 
 #include <iostream>
 #include <vector>
@@ -28,25 +29,24 @@ test()
   int                cellNum = tr.n_active_cells();
   MappingQ<dim, dim> mapping(1);
 
-  std::string      filename = "../dem.prm";
-  ParameterHandler prm;
-  ParametersDEM<3> DEMparam;
-  DEMparam.declare(prm);
-  prm.parse_input(filename);
-  DEMparam.parse(prm);
-
-  const unsigned int n_properties = DEMparam.outputProperties.numProperties;
+  const unsigned int n_properties = 24;
+  float x_min = -0.05; float y_min = -0.05; float z_min = -0.05;
+  float x_max = 0.05;  float y_max = 0.05;  float z_max = 0.05;
+  double dp = 0.005;
+  int nInsert = 10;
+  int rhop = 2500;
+  Point<dim> g = {0, 0, -9.81};
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
 
   int                     nPart = 0;
-  Particles::PropertyPool pool(DEMparam.outputProperties.numProperties);
+  Particles::PropertyPool pool(n_properties);
   Particles::Particle<3>  particle;
-   ParticleInsertion<dim, dim> ins1(DEMparam);
+   ParticleInsertion<dim, dim> ins1(x_min, y_min, z_min, x_max, y_max, z_max, dp, nInsert);
    ins1.uniformInsertion(
-     particle_handler, tr, DEMparam, nPart,  pool);
+     particle_handler, tr, nPart,  pool, x_min, y_min, z_min, x_max, y_max, z_max, dp, nInsert, rhop, g);
 
   int i = 1;
   for (auto particle = particle_handler.begin();

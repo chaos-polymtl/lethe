@@ -33,14 +33,19 @@ test()
   MappingQ<dim, dim> mapping(1);
 
 
-  std::string      filename = "../dem.prm";
-  ParameterHandler prm;
-  ParametersDEM<dim> DEMparam;
-  DEMparam.declare(prm);
-  prm.parse_input(filename);
-  DEMparam.parse(prm);
-
-  const unsigned int n_properties = DEMparam.outputProperties.numProperties;
+  const unsigned int n_properties = 24;
+  float x_min = -0.05; float y_min = -0.05; float z_min = -0.05;
+  float x_max = 0.05;  float y_max = 0.05;  float z_max = 0.05;
+  double dp = 0.005;
+  int nInsert = 10;
+  int rhop = 2500;
+  Point<dim> g = {0, 0, -9.81};
+  float dt = 0.00001;
+  int Yp = 50000000; int Yw = 50000000;
+  float vp = 0.3; float vw = 0.3;
+  float ew = 0.5;
+  float muw = 0.5;
+  float murw = 0.1;
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
@@ -63,8 +68,8 @@ test()
     particle_handler.insert_particle(particle1, cell1);
   pit1->get_properties()[0]  = id1;
   pit1->get_properties()[1]  = 1;
-  pit1->get_properties()[2]  = DEMparam.physicalProperties.diameter;
-  pit1->get_properties()[3]  = DEMparam.physicalProperties.density;
+  pit1->get_properties()[2]  = dp;
+  pit1->get_properties()[3]  = rhop;
   pit1->get_properties()[4]  = position1[0];
   pit1->get_properties()[5]  = position1[1];
   pit1->get_properties()[6]  = position1[2];
@@ -103,10 +108,10 @@ test()
     pwContactInfo;
   pw1.pwFineSearch(pwContactList,
                    pwContactInfo,
-                   DEMparam.simulationControl.dt);
+                   dt);
 
   ParticleWallContactForce<dim,dim> pwcf1;
-  pwcf1.pwLinearCF(pwContactInfo, DEMparam);
+  pwcf1.pwLinearCF(pwContactInfo, vp, Yp, vw, Yw, ew, muw, murw);
 
 
   auto particle = particle_handler.begin();
