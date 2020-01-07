@@ -31,19 +31,15 @@ template <int dim, int spacedim>
 class ParticleInsertion
 {
 public:
-  ParticleInsertion<dim, spacedim>(ParametersDEM<dim>);
+  ParticleInsertion<dim, spacedim>(float, float, float, float, float, float, double, int);
   void
   uniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
                    const dealii::Triangulation<dim, spacedim> &,
-                   ParametersDEM<dim>,
-                   int &,
-                   dealii::Particles::PropertyPool &);
+                   int &, dealii::Particles::PropertyPool &, float, float, float, float, float, float, double, int, int, Point<dim>);
   void
   nonUniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
                    const dealii::Triangulation<dim, spacedim> &,
-                   ParametersDEM<dim>,
-                   int &,
-                   dealii::Particles::PropertyPool &);
+                   int &, dealii::Particles::PropertyPool &, float, float, float, float, float, float, double, int, int, Point<dim>);
 };
 
 #endif /* PARTICLEINSERTION_H_ */

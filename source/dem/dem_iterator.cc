@@ -76,7 +76,6 @@ DEM_iterator<dim, spacedim>::engine(
   const Triangulation<dim, spacedim> &       tr,
   int &                                      step,
   float &                                    time,
-  ParametersDEM<dim>                         DEMparam,
   std::pair<
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
@@ -104,30 +103,27 @@ DEM_iterator<dim, spacedim>::engine(
                Point<dim>,
                double>> &                     pwContactInfo,
   std::vector<std::tuple<std::string, int>>   properties,
-  Particles::PropertyPool &                   propPool,
+        Particles::PropertyPool &                   propPool,
   ContactSearch<dim, spacedim>                cs,
   ParticleWallContactDetection<dim, spacedim> pw,
   ContactForce<dim, spacedim>                 cf,
   ParticleWallContactForce<dim, spacedim>     pwcf,
-  Integration<dim, spacedim>                  Integ1)
+  Integration<dim, spacedim>                  Integ1, int numberOfSteps, double dt, int nTotal, int writeFreq, Point<dim> g, double dp, int rhop, int Yp, int Yw, float vp, float vw, float ep, float ew, float mup, float muw, float murp, float murw, int tInsertion, int nInsert, int insertFrequency, float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, int numFields, int numProperties)
 {
   // moving walls
 
 
-  // check simulation boundaries
-  // checkSimBound(particle_handler, readInput);
-
   // insertion
-  if (fmod(step, DEMparam.insertionInfo.insertFrequency) == 1)
+  if (fmod(step, insertFrequency) == 1)
     {
-      if (step < DEMparam.insertionInfo.tInsertion)
+      if (step < tInsertion)
         {
           if (nPart <
-              DEMparam.simulationControl.nTotal) // number < total number
+              nTotal) // number < total number
             {
-              ParticleInsertion<dim, spacedim> ins1(DEMparam);
+              ParticleInsertion<dim, spacedim> ins1(x_min, y_min,z_min, x_max, y_max, z_max, dp, nInsert);
               ins1.nonUniformInsertion(
-                particle_handler, tr, DEMparam, nPart, propPool);
+                particle_handler, tr, nPart, propPool, x_min, y_min, z_min, x_max, y_max, z_max, dp, nInsert,rhop, g);
             }
         }
     }
@@ -148,10 +144,10 @@ DEM_iterator<dim, spacedim>::engine(
                                      cellNeighbor.first);
     }
 
-  cs.fineSearch(contactPairs, contactInfo, DEMparam.simulationControl.dt);
+  cs.fineSearch(contactPairs, contactInfo, dt);
 
   // contact force
-  cf.nonLinearCF(contactInfo, DEMparam);
+  cf.nonLinearCF(contactInfo, Yp, vp, mup, murp);
 
   // p-w contact detection:
   std::vector<
@@ -167,25 +163,25 @@ DEM_iterator<dim, spacedim>::engine(
  }
 
 
-  pw.pwFineSearch(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
+  pw.pwFineSearch(pwContactList, pwContactInfo, dt);
 
 
   // p-w contact force:
-  pwcf.pwNonLinearCF(pwContactInfo, DEMparam);
+  pwcf.pwNonLinearCF(pwContactInfo, vp, Yp, vw, Yw, muw, murw);
 
 
   // Integration
-  // Integ1.eulerIntegration(particle_handler, DEMparam);
-  Integ1.rk2Integration(particle_handler, DEMparam);
+   Integ1.eulerIntegration(particle_handler, g, dt);
+  //Integ1.rk2Integration(particle_handler, g, dt);
 
 
   // visualization
-  if (fmod(step, DEMparam.simulationControl.writeFrequency) == 1)
+  if (fmod(step, writeFreq) == 1)
     {
       Visualization<dim, spacedim> visObj;
       visObj.build_patches(particle_handler,
-                           DEMparam.outputProperties.numFields,
-                           DEMparam.outputProperties.numProperties,
+                           numFields,
+                           numProperties,
                            properties);
       WriteVTU<dim, spacedim> writObj;
       writObj.write_master_files(visObj);
@@ -201,7 +197,7 @@ DEM_iterator<dim, spacedim>::engine(
   // update:
   particle_handler.sort_particles_into_subdomains_and_cells();
   step = step + 1;
-  time = step * DEMparam.simulationControl.dt;
+  time = step * dt;
 }
 
 template class DEM_iterator<3, 3>;
