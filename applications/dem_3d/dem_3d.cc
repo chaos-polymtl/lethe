@@ -162,15 +162,45 @@ initilization()
   ParticleWallContactForce<dim, spacedim> pwcf1;
   Integration<dim, spacedim>              integ1;
 
+  //reading parameters from parameter handler file:
+  const int numberOfSteps = DEMparam.simulationControl.tFinal;
+  const double dt = DEMparam.simulationControl.dt;
+  const int nTotal = DEMparam.simulationControl.nTotal;
+  const int writeFreq = DEMparam.simulationControl.writeFrequency;
+  Point<dim> g = {DEMparam.physicalProperties.gx, DEMparam.physicalProperties.gy, DEMparam.physicalProperties.gz};
+  const double dp = DEMparam.physicalProperties.diameter;
+  const int rhop = DEMparam.physicalProperties.density;
+  const int Yp = DEMparam.physicalProperties.Yp;
+  const int Yw = DEMparam.physicalProperties.Yw;
+  const float vp = DEMparam.physicalProperties.vp;
+  const float vw = DEMparam.physicalProperties.vw;
+  const float ep = DEMparam.physicalProperties.ep;
+  const float ew = DEMparam.physicalProperties.ew;
+  const float mup = DEMparam.physicalProperties.mup;
+  const float muw = DEMparam.physicalProperties.muw;
+  const float murp = DEMparam.physicalProperties.murp;
+  const float murw = DEMparam.physicalProperties.murw;
+  const int tInsertion = DEMparam.insertionInfo.tInsertion;
+  const int nInsert = DEMparam.insertionInfo.nInsert;
+  const int insertFrequency = DEMparam.insertionInfo.insertFrequency;
+  const float x_min = DEMparam.insertionInfo.x_min;
+  const float y_min = DEMparam.insertionInfo.y_min;
+  const float z_min = DEMparam.insertionInfo.z_min;
+  const float x_max = DEMparam.insertionInfo.x_max;
+  const float y_max = DEMparam.insertionInfo.y_max;
+  const float z_max = DEMparam.insertionInfo.z_max;
+  const int numFields = DEMparam.outputProperties.numFields;
+  const int numProperties = DEMparam.outputProperties.numProperties;
+
+
   // dem engine iterator:
-  while (DEM_step < DEMparam.simulationControl.tFinal)
+  while (DEM_step < numberOfSteps)
     {
       iter1.engine(nPart,
                    particle_handler,
                    tr,
                    DEM_step,
                    DEM_time,
-                   DEMparam,
                    cellNeighbor,
                    contactInfo,
                    boundaryCellInfo,
@@ -181,7 +211,7 @@ initilization()
                    pw1,
                    cf1,
                    pwcf1,
-                   integ1);
+                   integ1, numberOfSteps, dt, nTotal, writeFreq, g, dp, rhop, Yp, Yw, vp, vw, ep, ew, mup, muw, murp, murw, tInsertion, nInsert, insertFrequency, x_min, y_min, z_min, x_max, y_max, z_max, numFields, numProperties);
     }
 }
 

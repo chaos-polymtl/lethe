@@ -49,7 +49,7 @@ public:
       double,
       Point<dim>,
       double>>,
-    ParametersDEM<dim>);
+float, int, float, float, float, float, float);
 
   void
   pwNonLinearCF(
@@ -62,7 +62,7 @@ public:
       double,
       Point<dim>,
       double>>,
-    ParametersDEM<dim>);
+float, int, float, int, float, float);
 
 private:
   int

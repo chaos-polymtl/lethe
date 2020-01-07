@@ -40,7 +40,6 @@ public:
     const dealii::Triangulation<dim, spacedim> &,
     int &,
     float &,
-    ParametersDEM<dim>,
     std::pair<
       std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
       std::vector<typename Triangulation<dim>::active_cell_iterator>>,
@@ -68,12 +67,12 @@ public:
                  Point<dim>,
                  double>> &,
     std::vector<std::tuple<std::string, int>>,
-    dealii::Particles::PropertyPool &,
+dealii::Particles::PropertyPool &,
     ContactSearch<dim, spacedim>,
     ParticleWallContactDetection<dim, spacedim>,
     ContactForce<dim, spacedim>,
     ParticleWallContactForce<dim, spacedim>,
-    Integration<dim, spacedim>);
+    Integration<dim, spacedim>, int, double, int, int, Point<dim>, double, int, int, int, float, float, float, float, float, float, float, float, int, int, int, float, float, float, float, float, float, int, int);
 
 private:
   void
