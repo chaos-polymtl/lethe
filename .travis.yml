@@ -1,0 +1,47 @@
+language: cpp
+
+os: linux
+
+notifications:
+  email: false
+  # webhooks: https://www.travisbuddy.com/
+
+addons:
+  apt:
+    packages:
+      - docker-ce
+
+services:
+  - docker
+
+matrix:
+  include:
+    - name: Compile and ctest
+      stage: build
+      env: STEP=compile_and_test
+    - name: Static checks (clang-format)
+      stage: check
+      env: STEP=static_check
+      addons:
+        apt:
+          sources:
+            - llvm-toolchain-trusty-5.0
+            - key_url: 'http://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - clang-format-5.0
+
+before_script:
+  - if [ "$STEP" = "compile_and_test" ]; then
+      docker pull heltai/dealii:v9.1.1-gcc-mpi;
+    fi
+
+script:
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH"
+  - if [ "$STEP" = "static_check" ]; then
+      python contrib/utilities/run-clang-format.py -r source include;
+    fi
+  - if [ "$STEP" = "compile_and_test" ]; then
+      docker run heltai/dealii:v9.1.1-gcc-mpi /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest -j";
+    fi
+ 
