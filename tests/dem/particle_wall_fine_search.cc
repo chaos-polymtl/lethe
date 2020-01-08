@@ -32,8 +32,8 @@ test()
   MappingQ<dim, dim> mapping(1);
 
 
-  std::string      filename = "../dem.prm";
-  ParameterHandler prm;
+  std::string        filename = "../dem.prm";
+  ParameterHandler   prm;
   ParametersDEM<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
@@ -53,7 +53,7 @@ test()
 
 
   Point<dim> position1 = {-0.998, 0, 0};
-  int      id1       = 0;
+  int        id1       = 0;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
@@ -85,24 +85,24 @@ test()
 
   ParticleWallContactDetection<dim> pw1;
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
-                         Point<dim>,
-                         Point<dim>>>
+  std::vector<
+    std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
+               Point<dim>,
+               Point<dim>>>
     pwContactList;
   pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
 
-  std::vector<std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
-                         Point<dim>,
-                         Point<dim>,
-                         double,
-                         double,
-                         double,
-                         Point<dim>,
-                         double>>
+  std::vector<
+    std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
+               Point<dim>,
+               Point<dim>,
+               double,
+               double,
+               double,
+               Point<dim>,
+               double>>
     pwContactInfo;
-  pw1.pwFineSearch(pwContactList,
-                   pwContactInfo,
-                   DEMparam.simulationControl.dt);
+  pw1.pwFineSearch(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
 
 
   for (unsigned int i = 0; i != pwContactInfo.size(); i++)

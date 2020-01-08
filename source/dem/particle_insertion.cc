@@ -34,19 +34,21 @@
 using namespace dealii;
 
 template <int dim, int spacedim>
-ParticleInsertion<dim, spacedim>::ParticleInsertion(float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, double dp, int nInsert)
+ParticleInsertion<dim, spacedim>::ParticleInsertion(float  x_min,
+                                                    float  y_min,
+                                                    float  z_min,
+                                                    float  x_max,
+                                                    float  y_max,
+                                                    float  z_max,
+                                                    double dp,
+                                                    int    nInsert)
 {
   int n_exp;
 
-  n_exp = int((x_max - x_min) /
-              (2 * dp)) *
-          int((y_max - y_min) /
-              (2 * dp)) *
-          int((z_max - z_min) /
-              (2 * dp));
+  n_exp = int((x_max - x_min) / (2 * dp)) * int((y_max - y_min) / (2 * dp)) *
+          int((z_max - z_min) / (2 * dp));
   if (nInsert > n_exp)
-    std::cout << "The inserted number of particles ("
-              << nInsert
+    std::cout << "The inserted number of particles (" << nInsert
               << ") is higher than maximum expected number of particles ("
               << n_exp << ")" << std::endl;
 } // add error here
@@ -57,14 +59,21 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const Triangulation<dim, spacedim> &       tr,
   int &                                      nPart,
-  Particles::PropertyPool &                  pool, float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, double dp, int nInsert, int rhop, Point<dim> g)
+  Particles::PropertyPool &                  pool,
+  float                                      x_min,
+  float                                      y_min,
+  float                                      z_min,
+  float                                      x_max,
+  float                                      y_max,
+  float                                      z_max,
+  double                                     dp,
+  int                                        nInsert,
+  int                                        rhop,
+  Point<dim>                                 g)
 {
-  int nx = int((x_max - x_min) /
-               (2 * dp));
-  int ny = int((y_max - y_min) /
-               (2 * dp));
-  int nz = int((z_max - z_min) /
-               (2 * dp));
+  int nx = int((x_max - x_min) / (2 * dp));
+  int ny = int((y_max - y_min) / (2 * dp));
+  int nz = int((z_max - z_min) / (2 * dp));
   int nP = 0;
 
 
@@ -77,16 +86,10 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             Point<dim>   reference_position;
             unsigned int id;
 
-            position[0] = x_min +
-                          (dp / 2) +
-                          (i * 1.5 * dp);
-            position[1] = y_min +
-                          (dp / 2) +
-                          (j * 1.5 * dp);
-            position[2] = z_min +
-                          (dp / 2) +
-                          (k * 1.5 * dp);
-            id = i * ny * nz + j * nz + k + nPart + 1;
+            position[0] = x_min + (dp / 2) + (i * 1.5 * dp);
+            position[1] = y_min + (dp / 2) + (j * 1.5 * dp);
+            position[2] = z_min + (dp / 2) + (k * 1.5 * dp);
+            id          = i * ny * nz + j * nz + k + nPart + 1;
             Particles::Particle<dim> particle(position, reference_position, id);
             typename Triangulation<dim, spacedim>::active_cell_iterator cell =
               GridTools::find_active_cell_around_point(tr,
@@ -124,9 +127,8 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             pit->get_properties()[18] = 0;
             // mass and moi
             pit->get_properties()[19] =
-              rhop *
-              ((4.0 / 3.0) * 3.1415 *
-               pow((pit->get_properties()[2] / 2.0), 3.0));
+              rhop * ((4.0 / 3.0) * 3.1415 *
+                      pow((pit->get_properties()[2] / 2.0), 3.0));
             pit->get_properties()[20] =
               (2.0 / 5.0) * (pit->get_properties()[19]) *
               pow((pit->get_properties()[2] / 2.0), 2.0);
@@ -135,7 +137,7 @@ ParticleInsertion<dim, spacedim>::uniformInsertion(
             pit->get_properties()[22] = 0;
             pit->get_properties()[23] = 0;
 
-              ++nP;
+            ++nP;
           }
 
   nPart = nPart + nInsert;
@@ -148,14 +150,21 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   const Triangulation<dim, spacedim> &       tr,
   int &                                      nPart,
-  Particles::PropertyPool &                  pool, float x_min, float y_min, float z_min, float x_max, float y_max, float z_max, double dp, int nInsert, int rhop, Point<dim> g)
+  Particles::PropertyPool &                  pool,
+  float                                      x_min,
+  float                                      y_min,
+  float                                      z_min,
+  float                                      x_max,
+  float                                      y_max,
+  float                                      z_max,
+  double                                     dp,
+  int                                        nInsert,
+  int                                        rhop,
+  Point<dim>                                 g)
 {
-  int nx = int((x_max - x_min) /
-               (2 * dp));
-  int ny = int((y_max - y_min) /
-               (2 * dp));
-  int nz = int((z_max - z_min) /
-               (2 * dp));
+  int nx = int((x_max - x_min) / (2 * dp));
+  int ny = int((y_max - y_min) / (2 * dp));
+  int nz = int((z_max - z_min) / (2 * dp));
   int nP = 0;
 
 
@@ -168,16 +177,10 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
             Point<dim>   reference_position;
             unsigned int id;
 
-            position[0] = x_min +
-                          (dp / 2) +
-                          (i * 1.5 * dp);
-            position[1] = y_min +
-                          (dp / 2) +
-                          (j * 1.5 * dp);
-            position[2] = z_min +
-                          (dp / 2) +
-                          (k * 1.5 * dp);
-            id = i * ny * nz + j * nz + k + nPart + 1;
+            position[0] = x_min + (dp / 2) + (i * 1.5 * dp);
+            position[1] = y_min + (dp / 2) + (j * 1.5 * dp);
+            position[2] = z_min + (dp / 2) + (k * 1.5 * dp);
+            id          = i * ny * nz + j * nz + k + nPart + 1;
             Particles::Particle<dim> particle(position, reference_position, id);
             typename Triangulation<dim, spacedim>::active_cell_iterator cell =
               GridTools::find_active_cell_around_point(tr,
@@ -194,10 +197,10 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
             pit->get_properties()[2] = dp;
             pit->get_properties()[3] = rhop;
             // Position
-            int randNum1 = rand() % 101;
-            int randNum2 = rand() % 101;
-            pit->get_properties()[4] = position[0] + randNum1 * (dp/400.0);
-            pit->get_properties()[5] = position[1] + randNum2 * (dp/400.0);
+            int randNum1             = rand() % 101;
+            int randNum2             = rand() % 101;
+            pit->get_properties()[4] = position[0] + randNum1 * (dp / 400.0);
+            pit->get_properties()[5] = position[1] + randNum2 * (dp / 400.0);
             pit->get_properties()[6] = position[2];
             // Velocity
             pit->get_properties()[7] = 0;
@@ -217,9 +220,8 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
             pit->get_properties()[18] = 0;
             // mass and moi
             pit->get_properties()[19] =
-              rhop *
-              ((4.0 / 3.0) * 3.1415 *
-               pow((pit->get_properties()[2] / 2.0), 3.0));
+              rhop * ((4.0 / 3.0) * 3.1415 *
+                      pow((pit->get_properties()[2] / 2.0), 3.0));
             pit->get_properties()[20] =
               (2.0 / 5.0) * (pit->get_properties()[19]) *
               pow((pit->get_properties()[2] / 2.0), 2.0);
@@ -228,13 +230,11 @@ ParticleInsertion<dim, spacedim>::nonUniformInsertion(
             pit->get_properties()[22] = 0;
             pit->get_properties()[23] = 0;
 
-              ++nP;
-
+            ++nP;
           }
 
   nPart = nPart + nInsert;
 }
-
 
 
 

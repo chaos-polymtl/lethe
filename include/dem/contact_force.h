@@ -50,7 +50,11 @@ public:
                  Point<dim>,
                  double,
                  double>>,
-    int, float, float, float, float);
+    int,
+    float,
+    float,
+    float,
+    float);
 
   void
   nonLinearCF(
@@ -63,7 +67,10 @@ public:
                  Point<dim>,
                  double,
                  double>>,
-    int, float, float, float);
+    int,
+    float,
+    float,
+    float);
 
 
 private:

@@ -33,18 +33,22 @@ test()
   MappingQ<dim, dim> mapping(1);
 
   const unsigned int n_properties = 24;
-  float x_min = -0.05; float y_min = -0.05; float z_min = -0.05;
-  float x_max = 0.05;  float y_max = 0.05;  float z_max = 0.05;
-  double dp = 0.005;
-  int nInsert = 10;
-  int rhop = 2500;
-  Point<dim> g = {0, 0, -9.81};
-  float dt = 0.00001;
-  int Yp = 50000000;
-  float vp = 0.3;
-  float ep = 0.5;
-  float mup = 0.5;
-  float murp = 0.1;
+  float              x_min        = -0.05;
+  float              y_min        = -0.05;
+  float              z_min        = -0.05;
+  float              x_max        = 0.05;
+  float              y_max        = 0.05;
+  float              z_max        = 0.05;
+  double             dp           = 0.005;
+  int                nInsert      = 10;
+  int                rhop         = 2500;
+  Point<dim>         g            = {0, 0, -9.81};
+  float              dt           = 0.00001;
+  int                Yp           = 50000000;
+  float              vp           = 0.3;
+  float              ep           = 0.5;
+  float              mup          = 0.5;
+  float              murp         = 0.1;
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
@@ -56,7 +60,7 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch<dim,dim> cs1;
+  ContactSearch<dim, dim> cs1;
   cellNeighbor = cs1.findCellNeighbors(tr);
 
   Point<3> position1 = {0.4, 0, 0};
@@ -122,9 +126,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler,
-                               tr,
-                               cellNeighbor.first);
+  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
 
 
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
@@ -138,7 +140,7 @@ test()
     contactInfo;
 
 
- cs1.fineSearch(pairs, contactInfo, dt);
+  cs1.fineSearch(pairs, contactInfo, dt);
 
   ContactForce<dim> cf1;
   cf1.nonLinearCF(contactInfo, Yp, vp, mup, murp);
