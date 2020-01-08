@@ -236,8 +236,9 @@ DEM_iterator<dim, spacedim>::engine(
 
   auto t15 = std::chrono::high_resolution_clock::now();
   // Integration
-  Integ1.eulerIntegration(particle_handler, g, dt);
+  //Integ1.eulerIntegration(particle_handler, g, dt);
   // Integ1.rk2Integration(particle_handler, g, dt);
+  Integ1.velVerIntegration(particle_handler, g, dt);
   auto t16 = std::chrono::high_resolution_clock::now();
   auto duration_Integration =
     std::chrono::duration_cast<std::chrono::microseconds>(t16 - t15).count();
