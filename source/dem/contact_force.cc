@@ -218,7 +218,6 @@ ContactForce<dim, spacedim>::nonLinearCF(
             Point<dim> coulumbTangForce =
               (mup * normalForce.norm() * sgn(std::get<6>(contactInfo[i]))) *
               std::get<4>(contactInfo[i]);
-
             totalForce = normalForce + coulumbTangForce;
           }
 

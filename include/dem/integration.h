@@ -39,7 +39,8 @@ public:
                  Point<dim>,
                  float);
   void
-  velVerIntegration(Particles::ParticleHandler<dim, spacedim> &, float);
+  velVerIntegration(Particles::ParticleHandler<dim, spacedim> &, Point<dim>,
+                 float);
   void
   gearIntegration();
 };
