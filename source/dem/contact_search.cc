@@ -109,36 +109,35 @@ ContactSearch<dim, spacedim>::findContactPairs(
                  particle_iterator_range::iterator partIter =
                    particle_range.begin();
                partIter != particle_range.end();
-               ++partIter,++iter3)
+               ++partIter, ++iter3)
             {
-
               if (cellIt == cellNeighborList[index].begin())
-              {
+                {
                   typename Particles::ParticleHandler<dim, spacedim>::
-                                           particle_iterator_range::iterator partIter2 =
-                                             particle_range2.begin();
+                    particle_iterator_range::iterator partIter2 =
+                      particle_range2.begin();
                   std::advance(partIter2, iter3);
 
-               //   for (auto it = partIter2; particle_range2.end(); ++it)
+                  //   for (auto it = partIter2; particle_range2.end(); ++it)
                   while (partIter2 != particle_range2.end())
-                  {
-                    auto cPair  = std::make_pair(partIter, partIter2);
-                    contactPairs.push_back(cPair);
-                    partIter2++;
-                  }
-              }
+                    {
+                      auto cPair = std::make_pair(partIter, partIter2);
+                      contactPairs.push_back(cPair);
+                      partIter2++;
+                    }
+                }
               else
-              {
+                {
                   for (typename Particles::ParticleHandler<dim, spacedim>::
                          particle_iterator_range::iterator partIter2 =
                            particle_range2.begin();
                        partIter2 != particle_range2.end();
                        ++partIter2)
-                  {
-                      auto cPair  = std::make_pair(partIter, partIter2);
+                    {
+                      auto cPair = std::make_pair(partIter, partIter2);
                       contactPairs.push_back(cPair);
-                  }
-              }
+                    }
+                }
             }
         }
     }
@@ -146,8 +145,9 @@ ContactSearch<dim, spacedim>::findContactPairs(
   return contactPairs;
 }
 
-/*
+
 // 2nd method:
+/*
 template <int dim, int spacedim>
 std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
                       Particles::ParticleIterator<dim, spacedim>>>

@@ -51,8 +51,8 @@ test()
             std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
     cellNeighbor;
 
-  ContactSearch<dim,dim> cs1;
- cellNeighbor = cs1.findCellNeighbors(tr);
+  ContactSearch<dim, dim> cs1;
+  cellNeighbor = cs1.findCellNeighbors(tr);
 
   Point<3> position1 = {0.4, 0, 0};
   int      id1       = 0;
@@ -117,9 +117,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler,
-                               tr,
-                               cellNeighbor.first);
+  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
 
 
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
@@ -133,9 +131,7 @@ test()
     contactInfo;
 
 
-  cs1.fineSearch(pairs,
-                 contactInfo,
-                 DEMparam.simulationControl.dt);
+  cs1.fineSearch(pairs, contactInfo, DEMparam.simulationControl.dt);
 
   for (unsigned int i = 0; i != contactInfo.size(); i++)
     {
