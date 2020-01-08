@@ -57,7 +57,7 @@ test()
   MappingQ1<dim> mapping;
 
 
-  ContactSearch<dim,dim> cs1;
+  ContactSearch<dim, dim> cs1;
 
 
 
@@ -97,9 +97,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler,
-                               tr,
-                               cellNeighbor.first);
+  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
 
 
 

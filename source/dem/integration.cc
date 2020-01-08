@@ -18,7 +18,8 @@ template <int dim, int spacedim>
 void
 Integration<dim, spacedim>::eulerIntegration(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
-  Point<dim> g, float dt)
+  Point<dim>                                 g,
+  float                                      dt)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -37,29 +38,23 @@ Integration<dim, spacedim>::eulerIntegration(
 
       // Velocity integration:
       particle->get_properties()[7] =
-        particle->get_properties()[7] +
-        dt * particle->get_properties()[10];
+        particle->get_properties()[7] + dt * particle->get_properties()[10];
       particle->get_properties()[8] =
-        particle->get_properties()[8] +
-        dt * particle->get_properties()[11];
+        particle->get_properties()[8] + dt * particle->get_properties()[11];
       particle->get_properties()[9] =
-        particle->get_properties()[9] +
-        dt * particle->get_properties()[12];
+        particle->get_properties()[9] + dt * particle->get_properties()[12];
       // Position integration:
       particle->get_properties()[4] =
-        particle->get_properties()[4] +
-        dt * particle->get_properties()[7];
+        particle->get_properties()[4] + dt * particle->get_properties()[7];
       particle->get_properties()[5] =
-        particle->get_properties()[5] +
-        dt * particle->get_properties()[8];
+        particle->get_properties()[5] + dt * particle->get_properties()[8];
       particle->get_properties()[6] =
-        particle->get_properties()[6] +
-        dt * particle->get_properties()[9];
+        particle->get_properties()[6] + dt * particle->get_properties()[9];
 
       particle->set_location({particle->get_properties()[4],
                               particle->get_properties()[5],
                               particle->get_properties()[6]});
-      //Angular velocity:
+      // Angular velocity:
       /*
       particle->get_properties()[16] = particle->get_properties()[16] +
         (particle->get_properties()[21]) / (particle->get_properties()[20]);
@@ -75,7 +70,8 @@ template <int dim, int spacedim>
 void
 Integration<dim, spacedim>::rk2Integration(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
-  Point<dim> g, float dt)
+  Point<dim>                                 g,
+  float                                      dt)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -104,31 +100,25 @@ Integration<dim, spacedim>::rk2Integration(
 
       particle->get_properties()[7] =
         particle->get_properties()[7] +
-        (dt / 2.0) *
-          (axStar + particle->get_properties()[10]);
+        (dt / 2.0) * (axStar + particle->get_properties()[10]);
 
       particle->get_properties()[8] =
         particle->get_properties()[8] +
-        (dt / 2.0) *
-          (ayStar + particle->get_properties()[11]);
+        (dt / 2.0) * (ayStar + particle->get_properties()[11]);
       particle->get_properties()[9] =
         particle->get_properties()[9] +
-        (dt / 2.0) *
-          (azStar + particle->get_properties()[12]);
+        (dt / 2.0) * (azStar + particle->get_properties()[12]);
 
       // Position integration:
       particle->get_properties()[4] =
         particle->get_properties()[4] +
-        (dt / 2.0) *
-          (vxStar + particle->get_properties()[7]);
+        (dt / 2.0) * (vxStar + particle->get_properties()[7]);
       particle->get_properties()[5] =
         particle->get_properties()[5] +
-        (dt / 2.0) *
-          (vyStar + particle->get_properties()[8]);
+        (dt / 2.0) * (vyStar + particle->get_properties()[8]);
       particle->get_properties()[6] =
         particle->get_properties()[6] +
-        (dt / 2.0) *
-          (vzStar + particle->get_properties()[9]);
+        (dt / 2.0) * (vzStar + particle->get_properties()[9]);
 
       particle->set_location({particle->get_properties()[4],
                               particle->get_properties()[5],
@@ -143,7 +133,6 @@ Integration<dim, spacedim>::rk2Integration(
       particle->get_properties()[18] = particle->get_properties()[18] +
         (particle->get_properties()[23]) / (particle->get_properties()[20]);
         */
-
     }
 }
 

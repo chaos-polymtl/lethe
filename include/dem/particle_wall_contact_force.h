@@ -49,7 +49,13 @@ public:
       double,
       Point<dim>,
       double>>,
-float, int, float, float, float, float, float);
+    float,
+    int,
+    float,
+    float,
+    float,
+    float,
+    float);
 
   void
   pwNonLinearCF(
@@ -62,7 +68,12 @@ float, int, float, float, float, float, float);
       double,
       Point<dim>,
       double>>,
-float, int, float, int, float, float);
+    float,
+    int,
+    float,
+    int,
+    float,
+    float);
 
 private:
   int

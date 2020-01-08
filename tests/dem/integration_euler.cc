@@ -33,8 +33,8 @@ test()
   MappingQ<dim, dim> mapping(1);
 
   const unsigned int n_properties = 24;
-  Point<dim> g = {0, 0, -9.81};
-  float dt = 0.00001;
+  Point<dim>         g            = {0, 0, -9.81};
+  float              dt           = 0.00001;
 
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
@@ -95,8 +95,7 @@ test()
        particle != particle_handler.end();
        ++particle)
     {
-      deallog << "The new position of the particle in z direction after "
-              << dt
+      deallog << "The new position of the particle in z direction after " << dt
               << " seconds is: " << particle->get_properties()[6] << std::endl;
     }
 }
