@@ -35,11 +35,11 @@ test()
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means only particle 3 is located in a boundary cell
   Point<dim> position1 = {-0.4, 0, 0};
-  int      id1       = 0;
+  int        id1       = 0;
   Point<dim> position2 = {0.4, 0, 0};
-  int      id2       = 1;
+  int        id2       = 1;
   Point<dim> position3 = {0.8, 0, 0};
-  int      id3       = 2;
+  int        id3       = 2;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
