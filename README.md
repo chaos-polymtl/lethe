@@ -1,6 +1,7 @@
+[![Build Status](https://travis-ci.com/lethe-cfd/lethe.svg?branch=master)](https://travis-ci.com/lethe-cfd/lethe)
 ![Lethe](logo/logo_black.png?raw=true)
-What is Lethe?
-================
+# What is Lethe?
+
 
 Lethe is an Open-source Computational Fluid Dynamics (CFD) Software which uses high-order Continuous Galerkin formulations to solve the incompressible Navier-Stokes equations (among others). Lethe contains a family of solvers that are based on the deal.II open source framework for its finite elements formulation (https://github.com/dealii/dealii). Through deal.II, Lethe uses Trilinos for its sparse linear algebra and p4est for distribute adaptative quad/oct trees.
 
