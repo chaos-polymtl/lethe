@@ -5,6 +5,7 @@
 *.cproject
 *CMakeCache.txt*
 *.cmake
+.vscode/*
 
 # Prerequisites
 *.d
