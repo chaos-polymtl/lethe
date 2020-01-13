@@ -45,9 +45,8 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
   last_res                     = 1.0;
   current_res                  = 1.0;
 
-  bool assembly_needed = false;
-  if (consecutive_iters == 0 || is_initial_step || force_matrix_renewal)
-    assembly_needed = true;
+  bool assembly_needed =
+    consecutive_iters == 0 || is_initial_step || force_matrix_renewal;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
@@ -61,7 +60,6 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
 
       else if (outer_iteration == 0)
         solver->assemble_rhs(time_stepping_method);
-
 
       if (outer_iteration == 0)
         {
@@ -80,13 +78,9 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
           solver->local_evaluation_point = solver->present_solution;
-
           solver->local_evaluation_point.add(alpha, solver->newton_update);
-
           solver->apply_constraints();
-
           solver->evaluation_point = solver->local_evaluation_point;
-
           solver->assemble_rhs(time_stepping_method);
 
           current_res = solver->system_rhs.l2_norm();
@@ -105,15 +99,16 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
             }
         }
 
-
       solver->present_solution = solver->evaluation_point;
       last_res                 = current_res;
       ++outer_iteration;
       assembly_needed = false;
     }
   if (!force_matrix_renewal)
-    consecutive_iters++;
-  consecutive_iters = consecutive_iters % parameters.skip_iterations;
+    {
+      consecutive_iters++;
+      consecutive_iters = consecutive_iters % parameters.skip_iterations;
+    }
 }
 
 #endif

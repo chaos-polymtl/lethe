@@ -45,7 +45,8 @@ NewtonNonLinearSolver<VectorType>::solve(
     {
       solver->evaluation_point = solver->present_solution;
 
-      solver->assemble_matrix_and_rhs(time_stepping_method);
+      if (true)
+        solver->assemble_matrix_and_rhs(time_stepping_method);
 
       if (outer_iteration == 0)
         {
@@ -84,7 +85,6 @@ NewtonNonLinearSolver<VectorType>::solve(
               break;
             }
         }
-
 
       solver->present_solution = solver->evaluation_point;
       last_res                 = current_res;
