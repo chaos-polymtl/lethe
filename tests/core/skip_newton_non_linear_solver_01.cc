@@ -46,6 +46,6 @@ main(int argc, char **argv)
     Parameters::SimulationControl::TimeSteppingMethod::steady, true, true);
 
 
-  deallog << "The final solution is : " << solver->get_present_solution()
+  deallog << "The final solution is : " << solver->present_solution
           << std::endl;
 }

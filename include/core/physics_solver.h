@@ -82,39 +82,6 @@ public:
     nonzero_constraints.distribute(local_evaluation_point);
   }
 
-  // Getters
-  const Parameters::NonLinearSolver &
-  get_params() const;
-  const VectorType &
-  get_system_rhs() const;
-  const VectorType &
-  get_evaluation_point() const;
-  VectorType &
-  get_local_evaluation_point();
-  const VectorType &
-  get_present_solution() const;
-  const VectorType &
-  get_newton_update() const;
-
-  AffineConstraints<double> &
-  get_nonzero_constraints();
-
-  ConditionalOStream &
-  get_ostream();
-
-  // Setters
-  void
-  set_system_rhs(const VectorType &system_rhs);
-  void
-  set_evaluation_point(const VectorType &evaluation_point);
-  void
-  set_local_evaluation_point(const VectorType &local_evaluation_point);
-  void
-  set_present_solution(const VectorType &present_solution);
-  void
-  set_newton_update(const VectorType &newton_update);
-
-protected:
   // TODO std::unique or std::shared pointer
   NonLinearSolver<VectorType> *non_linear_solver;
 
@@ -169,93 +136,6 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   this->non_linear_solver->solve(time_stepping_method,
                                  first_iteration,
                                  force_matrix_renewal);
-}
-
-template <typename VectorType>
-const VectorType &
-PhysicsSolver<VectorType>::get_system_rhs() const
-{
-  return system_rhs;
-}
-
-template <typename VectorType>
-const VectorType &
-PhysicsSolver<VectorType>::get_evaluation_point() const
-{
-  return evaluation_point;
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_local_evaluation_point()
-{
-  return local_evaluation_point;
-}
-
-template <typename VectorType>
-const VectorType &
-PhysicsSolver<VectorType>::get_present_solution() const
-{
-  return present_solution;
-}
-
-template <typename VectorType>
-const VectorType &
-PhysicsSolver<VectorType>::get_newton_update() const
-{
-  return newton_update;
-}
-
-template <typename VectorType>
-AffineConstraints<double> &
-PhysicsSolver<VectorType>::get_nonzero_constraints()
-{
-  return nonzero_constraints;
-}
-
-template <typename VectorType>
-ConditionalOStream &
-PhysicsSolver<VectorType>::get_ostream()
-{
-  return pcout;
-}
-
-template <typename VectorType>
-void
-PhysicsSolver<VectorType>::set_system_rhs(const VectorType &system_rhs)
-{
-  this->system_rhs = system_rhs;
-}
-
-template <typename VectorType>
-void
-PhysicsSolver<VectorType>::set_evaluation_point(
-  const VectorType &evaluation_point)
-{
-  this->evaluation_point = evaluation_point;
-}
-
-template <typename VectorType>
-void
-PhysicsSolver<VectorType>::set_local_evaluation_point(
-  const VectorType &local_evaluation_point)
-{
-  this->local_evaluation_point = local_evaluation_point;
-}
-
-template <typename VectorType>
-void
-PhysicsSolver<VectorType>::set_present_solution(
-  const VectorType &present_solution)
-{
-  this->present_solution = present_solution;
-}
-
-template <typename VectorType>
-void
-PhysicsSolver<VectorType>::set_newton_update(const VectorType &newton_update)
-{
-  this->newton_update = newton_update;
 }
 
 #endif
