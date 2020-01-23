@@ -109,7 +109,7 @@ DEM_iterator<dim, spacedim>::engine(
   ParticleWallContactDetection<dim, spacedim> pw,
   ContactForce<dim, spacedim>                 cf,
   ParticleWallContactForce<dim, spacedim>     pwcf,
-  Integrator<dim, spacedim>                   Integ1,
+  Integrator<dim, spacedim> *                 Integ1,
   int                                         numberOfSteps,
   double                                      dt,
   int                                         nTotal,
@@ -238,7 +238,7 @@ DEM_iterator<dim, spacedim>::engine(
   // Integration
   // Integ1.eulerIntegration(particle_handler, g, dt);
   // Integ1.rk2Integration(particle_handler, g, dt);
-  Integ1.velocity_verlet_integration(particle_handler, g, dt);
+  Integ1->integrate(particle_handler, g, dt);
   auto t16 = std::chrono::high_resolution_clock::now();
   auto duration_Integration =
     std::chrono::duration_cast<std::chrono::microseconds>(t16 - t15).count();

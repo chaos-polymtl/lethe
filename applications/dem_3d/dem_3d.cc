@@ -52,10 +52,10 @@
 
 #include "dem/contact_search.h"
 #include "dem/dem_iterator.h"
-#include "dem/integrator.h"
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
+#include "dem/velocity_verlet_integrator.h"
 
 
 
@@ -160,7 +160,7 @@ initilization()
   pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
 
   ParticleWallContactForce<dim, spacedim> pwcf1;
-  Integrator<dim, spacedim>               integ1;
+  VelocityVerletIntegrator<dim, spacedim> integ1;
 
   // reading parameters from parameter handler file:
   const int    numberOfSteps   = DEMparam.simulationControl.tFinal;
@@ -213,7 +213,7 @@ initilization()
                    pw1,
                    cf1,
                    pwcf1,
-                   integ1,
+                   &integ1,
                    numberOfSteps,
                    dt,
                    nTotal,
