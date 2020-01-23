@@ -174,6 +174,25 @@ is_sdirk(Parameters::SimulationControl::TimeSteppingMethod method)
 }
 
 inline bool
+is_sdirk2(Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2);
+}
+
+inline bool
+is_sdirk3(Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3);
+}
+
+inline bool
 is_sdirk_step1(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
