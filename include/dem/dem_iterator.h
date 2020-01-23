@@ -72,7 +72,7 @@ public:
     ParticleWallContactDetection<dim, spacedim>,
     ContactForce<dim, spacedim>,
     ParticleWallContactForce<dim, spacedim>,
-    Integrator<dim, spacedim>,
+    Integrator<dim, spacedim> *,
     int,
     double,
     int,

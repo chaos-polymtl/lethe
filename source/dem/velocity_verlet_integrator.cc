@@ -1,8 +1,8 @@
-#include <dem/explicit_euler_integrator.h>
+#include <dem/velocity_verlet_integrator.h>
 
 template <int dim, int spacedim>
 void
-ExplicitEulerIntegrator<dim, spacedim>::integrate(
+VelocityVerletIntegrator<dim, spacedim>::integrate(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   Tensor<1, dim>                             g,
   double                                     dt)
@@ -15,31 +15,40 @@ ExplicitEulerIntegrator<dim, spacedim>::integrate(
       // efficiency
       auto particle_properties = particle->get_properties();
 
-      // Acceleration calculation:
+      // Calculate the acceleration of a particle
       particle_properties[10] =
         g[0] + particle_properties[13] / particle_properties[19];
       particle_properties[11] =
-        g[1] + particle_properties[14] / particle_properties[19];
+        g[1] + particle_properties[14] / (particle_properties[19]);
       particle_properties[12] =
         g[2] + particle_properties[15] / particle_properties[19];
 
-      // Velocity integration:
+      // Store particle velocity and acceleration in Tensors
       Tensor<1, dim> particle_velocity;
-      particle_velocity[0] =
-        particle_properties[7] + dt * particle_properties[10];
-      particle_velocity[1] =
-        particle_properties[8] + dt * particle_properties[11];
-      particle_velocity[2] =
-        particle_properties[9] + dt * particle_properties[12];
-      for (unsigned int i = 0; i < dim; ++i)
+      Tensor<1, dim> particle_acceleration;
+      for (int d = 0; d < dim; ++d)
         {
-          particle_properties[7 + i] = particle_velocity[i];
+          particle_velocity[d]     = particle_properties[7 + d];
+          particle_acceleration[d] = particle_properties[1 + d];
         }
 
-      // Position integration:
+      // Calculate the half step particle velocity
+      Tensor<1, dim> vStar =
+        particle_velocity + (particle_acceleration * 0.5 * dt);
+
+      // Calculate the particle position
       auto particle_position = particle->get_location();
       particle_position      = particle_position + (particle_velocity * dt);
       particle->set_location(particle_position);
+
+      // Calculate the particle full step velocity
+      vStar = vStar + particle_acceleration * 0.5 * dt;
+
+      // Update particle velocity
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[7 + d] = vStar[d];
+        }
 
       // Angular velocity:
       /*
@@ -53,4 +62,4 @@ ExplicitEulerIntegrator<dim, spacedim>::integrate(
     }
 }
 
-template class ExplicitEulerIntegrator<3, 3>;
+template class VelocityVerletIntegrator<3, 3>;

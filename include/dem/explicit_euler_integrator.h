@@ -55,7 +55,7 @@ public:
    */
   virtual void
   integrate(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-            Point<dim>                                 body_force,
+            Tensor<1, dim>                             body_force,
             double                                     time_step) override;
 };
 
