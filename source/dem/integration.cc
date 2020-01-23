@@ -139,7 +139,7 @@ Integration<dim, spacedim>::rk2Integration(
 
 template <int dim, int spacedim>
 void
-Integration<dim, spacedim>::velVerIntegration(
+Integration<dim, spacedim>::velocity_verlet_integration(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   Point<dim>                                 g,
   float                                      dt)
