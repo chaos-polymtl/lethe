@@ -17,8 +17,8 @@
 
 #include "../tests.h"
 #include "dem/contact_search.h"
-#include "dem/integrator.h"
 #include "dem/particle_insertion.h"
+#include "dem/velocity_verlet_integrator.h"
 
 using namespace dealii;
 
@@ -88,8 +88,8 @@ test()
   pit->get_properties()[20] = 1;
 
 
-  Integrator<dim> Integ1;
-  Integ1.velocity_verlet_integration(particle_handler, g, dt);
+  VelocityVerletIntegrator<dim> Integ1;
+  Integ1.integrate(particle_handler, g, dt);
 
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

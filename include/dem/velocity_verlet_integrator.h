@@ -14,30 +14,40 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019
+ * Author: Bruno Blais, Polytechnique Montreal, 2019
  */
 
 #include <deal.II/particles/particle_handler.h>
 
-#include "dem/parameters_dem.h"
+#include <dem/integrator.h>
+#include <dem/parameters_dem.h>
+
 using namespace dealii;
 
-#ifndef INTEGRATION_H_
-#  define INTEGRATION_H_
+#ifndef VELOCITYVERLETINTEGRATOR_H_
+#  define VELOCITYVERLETINTEGRATOR_H_
+
+
+/**
+ * Implementation of a classical velocity verlet scheme for the integration
+ * of the particle motion
+ *
+ * @note
+ *
+ * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
+ */
 
 template <int dim, int spacedim = dim>
-class Integrator
+class VelocityVerletIntegrator : public Integrator<dim, spacedim>
 {
 public:
-  Integrator();
+  VelocityVerletIntegrator()
+  {}
 
-  virtual ~Integrator(){};
 
   /**
    * Carries out the integration of the motion of all particles by using
-   * the acceleration that is internally stored within the property handler
-   * This virtual function that serves as a template for all integrator
-   * function.
+   * the acceleration with the velocity verlet method
    *
    * @param particle_handler The particle handler whose particle motion we wish to integrate
    * @param body_force A constant volumetric body force applied to all particles
@@ -46,16 +56,7 @@ public:
   virtual void
   integrate(Particles::ParticleHandler<dim, spacedim> &particle_handler,
             Tensor<1, dim>                             body_force,
-            double                                     time_step)
-  {}
-
-  void
-  rk2Integration(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-                 Point<dim>                                 body_force,
-                 float                                      time_step);
-
-  void
-  gearIntegration();
+            double                                     time_step) override;
 };
 
-#endif /* INTEGRATION_H_ */
+#endif
