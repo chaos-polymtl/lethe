@@ -5,18 +5,22 @@
  *      Author: shahab
  */
 
-#include "dem/integration.h"
+#include "dem/integrator.h"
 
 #include <deal.II/particles/particle_handler.h>
 using namespace dealii;
 
 template <int dim, int spacedim>
-Integration<dim, spacedim>::Integration()
+Integrator<dim, spacedim>::Integrator()
 {}
+
+
+// Why are all the numbers for the properties hard-coded? This should
+// Come out of an enum class or something like this...
 
 template <int dim, int spacedim>
 void
-Integration<dim, spacedim>::eulerIntegration(
+Integrator<dim, spacedim>::eulerIntegration(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   Point<dim>                                 g,
   float                                      dt)
@@ -68,7 +72,7 @@ Integration<dim, spacedim>::eulerIntegration(
 
 template <int dim, int spacedim>
 void
-Integration<dim, spacedim>::rk2Integration(
+Integrator<dim, spacedim>::rk2Integration(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   Point<dim>                                 g,
   float                                      dt)
@@ -139,7 +143,7 @@ Integration<dim, spacedim>::rk2Integration(
 
 template <int dim, int spacedim>
 void
-Integration<dim, spacedim>::velocity_verlet_integration(
+Integrator<dim, spacedim>::velocity_verlet_integration(
   Particles::ParticleHandler<dim, spacedim> &particle_handler,
   Point<dim>                                 g,
   float                                      dt)
@@ -194,4 +198,4 @@ Integration<dim, spacedim>::velocity_verlet_integration(
 }
 
 
-template class Integration<3, 3>;
+template class Integrator<3, 3>;
