@@ -17,7 +17,7 @@
 
 #include "../tests.h"
 #include "dem/contact_search.h"
-#include "dem/integrator.h"
+#include "dem/explicit_euler_integrator.h"
 #include "dem/particle_insertion.h"
 
 using namespace dealii;
@@ -88,8 +88,8 @@ test()
   pit->get_properties()[20] = 1;
 
 
-  Integrator<dim> Integ1;
-  Integ1.eulerIntegration(particle_handler, g, dt);
+  ExplicitEulerIntegrator<dim> Integ1;
+  Integ1.integrate(particle_handler, g, dt);
 
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
