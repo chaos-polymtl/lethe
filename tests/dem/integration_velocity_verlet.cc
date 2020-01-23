@@ -89,7 +89,7 @@ test()
 
 
   Integration<dim> Integ1;
-  Integ1.velVerIntegration(particle_handler, g, dt);
+  Integ1.velocity_verlet_integration(particle_handler, g, dt);
 
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

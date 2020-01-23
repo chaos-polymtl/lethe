@@ -138,13 +138,16 @@ Integration<dim, spacedim>::rk2Integration(
 
 
 template <int dim, int spacedim>
-void Integration<dim, spacedim>::velVerIntegration(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-                                      Point<dim>                                 g,
-                                      float                                      dt)
+void
+Integration<dim, spacedim>::velVerIntegration(
+  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  Point<dim>                                 g,
+  float                                      dt)
 {
-  for (auto particle = particle_handler.begin(); particle !=
-particle_handler.end(); ++particle)
-  {
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
+    {
       // Acceleration calculation:
       particle->get_properties()[10] =
         g[0] +
@@ -156,32 +159,38 @@ particle_handler.end(); ++particle)
         g[2] +
         (particle->get_properties()[15]) / (particle->get_properties()[19]);
 
-      Point<dim> vel = {particle->get_properties()[7], particle->get_properties()[8], particle->get_properties()[9]};
-      Point<dim> acc = {particle->get_properties()[10], particle->get_properties()[11], particle->get_properties()[12]};
-    Point<dim> vStar = vel + (acc * dt/2);
+      Point<dim> vel   = {particle->get_properties()[7],
+                        particle->get_properties()[8],
+                        particle->get_properties()[9]};
+      Point<dim> acc   = {particle->get_properties()[10],
+                        particle->get_properties()[11],
+                        particle->get_properties()[12]};
+      Point<dim> vStar = vel + (acc * dt / 2);
 
-    particle->get_properties()[4] = particle->get_properties()[4] + (vStar[0] * dt);
-    particle->get_properties()[5] = particle->get_properties()[5] + (vStar[1] * dt);
-    particle->get_properties()[6] = particle->get_properties()[6] + (vStar[2] * dt);
-    particle->set_location({particle->get_properties()[4],
-                            particle->get_properties()[5],
-                            particle->get_properties()[6]});
+      particle->get_properties()[4] =
+        particle->get_properties()[4] + (vStar[0] * dt);
+      particle->get_properties()[5] =
+        particle->get_properties()[5] + (vStar[1] * dt);
+      particle->get_properties()[6] =
+        particle->get_properties()[6] + (vStar[2] * dt);
+      particle->set_location({particle->get_properties()[4],
+                              particle->get_properties()[5],
+                              particle->get_properties()[6]});
 
-    particle->get_properties()[7] = vStar[0] + (acc[0] * dt/2);
-    particle->get_properties()[8] = vStar[1] + (acc[1] * dt/2);
-    particle->get_properties()[9] = vStar[2] + (acc[2] * dt/2);
+      particle->get_properties()[7] = vStar[0] + (acc[0] * dt / 2);
+      particle->get_properties()[8] = vStar[1] + (acc[1] * dt / 2);
+      particle->get_properties()[9] = vStar[2] + (acc[2] * dt / 2);
 
-    // Angular velocity using Euler:
-    /*
-    particle->get_properties()[16] = particle->get_properties()[16] +
-      (particle->get_properties()[21]) / (particle->get_properties()[20]);
-    particle->get_properties()[17] =particle->get_properties()[17] +
-      (particle->get_properties()[22]) / (particle->get_properties()[20]);
-    particle->get_properties()[18] = particle->get_properties()[18] +
-      (particle->get_properties()[23]) / (particle->get_properties()[20]);
-      */
-
-  }
+      // Angular velocity using Euler:
+      /*
+      particle->get_properties()[16] = particle->get_properties()[16] +
+        (particle->get_properties()[21]) / (particle->get_properties()[20]);
+      particle->get_properties()[17] =particle->get_properties()[17] +
+        (particle->get_properties()[22]) / (particle->get_properties()[20]);
+      particle->get_properties()[18] = particle->get_properties()[18] +
+        (particle->get_properties()[23]) / (particle->get_properties()[20]);
+        */
+    }
 }
 
 
