@@ -109,7 +109,7 @@ DEM_iterator<dim, spacedim>::engine(
   ParticleWallContactDetection<dim, spacedim> pw,
   ContactForce<dim, spacedim>                 cf,
   ParticleWallContactForce<dim, spacedim>     pwcf,
-  Integration<dim, spacedim>                  Integ1,
+  Integrator<dim, spacedim>                   Integ1,
   int                                         numberOfSteps,
   double                                      dt,
   int                                         nTotal,
