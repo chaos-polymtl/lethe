@@ -49,10 +49,10 @@ public:
             double                                     time_step)
   {}
 
-  void
-  rk2Integration(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-                 Point<dim>                                 body_force,
-                 float                                      time_step);
+  // void
+  // rk2Integration(Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  //               Point<dim>                                 body_force,
+  //               float                                      time_step);
 
   void
   gearIntegration();
