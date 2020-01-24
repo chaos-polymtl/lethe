@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2020 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -20,10 +20,16 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include "dem/parameters_dem.h"
+
 using namespace dealii;
 
 #ifndef INTEGRATION_H_
 #  define INTEGRATION_H_
+
+/**
+ * Base interface for classes that carry out the integration of the velocity and
+ * position of particles with inertia
+ */
 
 template <int dim, int spacedim = dim>
 class Integrator
@@ -55,15 +61,6 @@ public:
   integrate(Particles::ParticleHandler<dim, spacedim> &particle_handler,
             Tensor<1, dim>                             body_force,
             double                                     time_step) = 0;
-
-  // void
-  // rk2Integration(Particles::ParticleHandler<dim, spacedim>
-  // &particle_handler,
-  //               Point<dim>                                 body_force,
-  //               float                                      time_step);
-
-  void
-  gearIntegration();
 };
 
 #endif /* INTEGRATION_H_ */
