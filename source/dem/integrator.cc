@@ -10,10 +10,6 @@
 #include <deal.II/particles/particle_handler.h>
 using namespace dealii;
 
-template <int dim, int spacedim>
-Integrator<dim, spacedim>::Integrator()
-{}
-
 // Why are all the numbers for the properties hard-coded? This should
 // Come out of an enum class or something like this...
 
@@ -90,5 +86,3 @@ Integrator<dim, spacedim>::Integrator()
 //        */
 //    }
 //}
-
-template class Integrator<3, 3>;
