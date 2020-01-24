@@ -29,9 +29,17 @@ template <int dim, int spacedim = dim>
 class Integrator
 {
 public:
-  Integrator();
+  /**
+   * The constructor to the integrator class is currently blank
+   * Eventually it might be a good idea to have the integration class contain
+   * the index to the velocity property, the force property and the acceleration
+   * property manually
+   */
+  Integrator()
+  {}
 
-  virtual ~Integrator(){};
+  virtual ~Integrator()
+  {}
 
   /**
    * Carries out the integration of the motion of all particles by using
@@ -46,11 +54,11 @@ public:
   virtual void
   integrate(Particles::ParticleHandler<dim, spacedim> &particle_handler,
             Tensor<1, dim>                             body_force,
-            double                                     time_step)
-  {}
+            double                                     time_step) = 0;
 
   // void
-  // rk2Integration(Particles::ParticleHandler<dim, spacedim> &particle_handler,
+  // rk2Integration(Particles::ParticleHandler<dim, spacedim>
+  // &particle_handler,
   //               Point<dim>                                 body_force,
   //               float                                      time_step);
 

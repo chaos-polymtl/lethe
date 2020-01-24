@@ -1,4 +1,8 @@
+#include <dem/particle_properties_index.h>
 #include <dem/velocity_verlet_integrator.h>
+
+
+using namespace DEM;
 
 template <int dim, int spacedim>
 void
@@ -16,20 +20,21 @@ VelocityVerletIntegrator<dim, spacedim>::integrate(
       auto particle_properties = particle->get_properties();
 
       // Calculate the acceleration of a particle
-      particle_properties[10] =
-        g[0] + particle_properties[13] / particle_properties[19];
-      particle_properties[11] =
-        g[1] + particle_properties[14] / (particle_properties[19]);
-      particle_properties[12] =
-        g[2] + particle_properties[15] / particle_properties[19];
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[PropertiesIndex::acc_x + d] =
+            g[d] + particle_properties[PropertiesIndex::force_x + d] /
+                     particle_properties[PropertiesIndex::mass];
+        }
 
       // Store particle velocity and acceleration in Tensors
       Tensor<1, dim> particle_velocity;
       Tensor<1, dim> particle_acceleration;
       for (int d = 0; d < dim; ++d)
         {
-          particle_velocity[d]     = particle_properties[7 + d];
-          particle_acceleration[d] = particle_properties[1 + d];
+          particle_velocity[d] = particle_properties[PropertiesIndex::v_x + d];
+          particle_acceleration[d] =
+            particle_properties[PropertiesIndex::acc_x + d];
         }
 
       // Calculate the half step particle velocity
@@ -47,7 +52,7 @@ VelocityVerletIntegrator<dim, spacedim>::integrate(
       // Update particle velocity
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties[7 + d] = vStar[d];
+          particle_properties[PropertiesIndex::v_x + d] = vStar[d];
         }
 
       // Angular velocity:

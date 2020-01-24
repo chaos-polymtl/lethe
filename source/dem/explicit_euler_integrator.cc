@@ -1,4 +1,9 @@
 #include <dem/explicit_euler_integrator.h>
+#include <dem/particle_properties_index.h>
+
+
+using namespace DEM;
+
 
 template <int dim, int spacedim>
 void
@@ -15,25 +20,24 @@ ExplicitEulerIntegrator<dim, spacedim>::integrate(
       // efficiency
       auto particle_properties = particle->get_properties();
 
-      // Acceleration calculation:
-      particle_properties[10] =
-        g[0] + particle_properties[13] / particle_properties[19];
-      particle_properties[11] =
-        g[1] + particle_properties[14] / particle_properties[19];
-      particle_properties[12] =
-        g[2] + particle_properties[15] / particle_properties[19];
+      // Calculate the acceleration of a particle
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[PropertiesIndex::acc_x + d] =
+            g[d] + particle_properties[PropertiesIndex::force_x + d] /
+                     particle_properties[PropertiesIndex::mass];
+        }
 
       // Velocity integration:
       Tensor<1, dim> particle_velocity;
-      particle_velocity[0] =
-        particle_properties[7] + dt * particle_properties[10];
-      particle_velocity[1] =
-        particle_properties[8] + dt * particle_properties[11];
-      particle_velocity[2] =
-        particle_properties[9] + dt * particle_properties[12];
-      for (unsigned int i = 0; i < dim; ++i)
+
+      for (unsigned int d = 0; d < dim; ++d)
         {
-          particle_properties[7 + i] = particle_velocity[i];
+          particle_velocity[d] =
+            particle_properties[PropertiesIndex::v_x + d] +
+            dt * particle_properties[PropertiesIndex::acc_x + d];
+
+          particle_properties[PropertiesIndex::v_x + d] = particle_velocity[d];
         }
 
       // Position integration:
