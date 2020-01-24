@@ -51,7 +51,9 @@
 #include <vector>
 
 #include "dem/contact_search.h"
+#include "dem/dem.h"
 #include "dem/dem_iterator.h"
+#include "dem/dem_properties.h"
 #include "dem/parameters_dem.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
@@ -74,33 +76,9 @@ initilization()
   prm.parse_input(filename);
   DEMparam.parse(prm);
 
-  std::vector<std::tuple<std::string, int>> properties(
-    DEMparam.outputProperties.numProperties);
-  properties[0]  = std::make_tuple("id", 1);
-  properties[1]  = std::make_tuple("type", 1);
-  properties[2]  = std::make_tuple("Diam", 1);
-  properties[3]  = std::make_tuple("Dens", 1);
-  properties[4]  = std::make_tuple("Pos", dim);
-  properties[5]  = std::make_tuple("Pos", 1);
-  properties[6]  = std::make_tuple("Pos", 1);
-  properties[7]  = std::make_tuple("Vel", dim);
-  properties[8]  = std::make_tuple("Vel", 1);
-  properties[9]  = std::make_tuple("Vel", 1);
-  properties[10] = std::make_tuple("a", dim);
-  properties[11] = std::make_tuple("a", 1);
-  properties[12] = std::make_tuple("a", 1);
-  properties[13] = std::make_tuple("f", dim);
-  properties[14] = std::make_tuple("f", 1);
-  properties[15] = std::make_tuple("f", 1);
-  properties[16] = std::make_tuple("w", dim);
-  properties[17] = std::make_tuple("w", 1);
-  properties[18] = std::make_tuple("w", 1);
-  properties[19] = std::make_tuple("mass", 1);
-  properties[20] = std::make_tuple("MOI", 1);
-  properties[21] = std::make_tuple("M", dim);
-  properties[22] = std::make_tuple("M", 1);
-  properties[23] = std::make_tuple("M", 1);
-
+  DEM::DEMProperties<3>                     properties_class;
+  std::vector<std::tuple<std::string, int>> properties =
+    properties_class.get_properties_name();
 
   // total number of particles in the system
   int nPart = 0;

@@ -1,5 +1,5 @@
+#include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
-#include <dem/particle_properties_index.h>
 
 
 using namespace DEM;
