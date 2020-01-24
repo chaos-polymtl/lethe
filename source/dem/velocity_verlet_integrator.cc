@@ -1,4 +1,4 @@
-#include <dem/particle_properties_index.h>
+#include <dem/dem_properties.h>
 #include <dem/velocity_verlet_integrator.h>
 
 
