@@ -74,8 +74,6 @@ public:
 
 
 private:
-  int
-  sgn(float);
 };
 
 #endif /* CONTACTFORCE_H_ */
