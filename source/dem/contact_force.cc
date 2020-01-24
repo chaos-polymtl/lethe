@@ -5,9 +5,12 @@
  *      Author: shahab
  */
 
+
 #include "dem/contact_force.h"
 
 #include <deal.II/base/point.h>
+
+#include <boost/math/special_functions/sign.hpp>
 
 #include "dem/dem_iterator.h"
 
@@ -94,7 +97,8 @@ ContactForce<dim, spacedim>::linearCF(
         else
           {
             Point<dim> coulumbTangForce =
-              (mup * normalForce.norm() * sgn(std::get<6>(contactInfo[i]))) *
+              (mup * normalForce.norm() *
+               boost::math::sign(std::get<6>(contactInfo[i]))) *
               std::get<4>(contactInfo[i]);
 
             totalForce = normalForce + coulumbTangForce;
@@ -216,7 +220,8 @@ ContactForce<dim, spacedim>::nonLinearCF(
         else
           {
             Point<dim> coulumbTangForce =
-              (mup * normalForce.norm() * sgn(std::get<6>(contactInfo[i]))) *
+              (mup * normalForce.norm() *
+               boost::math::sign(std::get<6>(contactInfo[i]))) *
               std::get<4>(contactInfo[i]);
             totalForce = normalForce + coulumbTangForce;
           }
@@ -278,25 +283,5 @@ ContactForce<dim, spacedim>::nonLinearCF(
     }
 }
 
-
-template <int dim, int spacedim>
-int
-ContactForce<dim, spacedim>::sgn(float a)
-{
-  int b = 0;
-  if (a > 0)
-    {
-      b = 1;
-    }
-  else if (a < 0)
-    {
-      b = -1;
-    }
-  else if (a == 0)
-    {
-      b = 0;
-    }
-  return b;
-}
 
 template class ContactForce<3, 3>;
