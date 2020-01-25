@@ -32,20 +32,20 @@ class DEMSolver
 public:
   DEMSolver(ParametersDEM<dim> dem_parameters);
 
-  void solve();
+  void
+  solve();
 
 private:
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
-  ParametersDEM<dim>                        parameters;
+  ParametersDEM<dim> parameters;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
 
   Particles::ParticleHandler<dim, dim> particle_handler;
   Particles::PropertyPool              property_pool;
-  MappingQGeneric<dim> mapping;
-
+  MappingQGeneric<dim>                 mapping;
 };
 
 #endif

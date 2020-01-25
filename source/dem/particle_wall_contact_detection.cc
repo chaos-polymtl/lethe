@@ -67,7 +67,7 @@ ParticleWallContactDetection<dim, spacedim>::boundaryCellsAndFaces(
                   surfNormal = -1 * surfNormal;
                   Point<dim> quadPoint = fe_face_values.quadrature_point(dim);
                   int        boundID   = cell->face(face_id)->boundary_id();
-                  auto cellInfo  = std::make_tuple(
+                  auto       cellInfo  = std::make_tuple(
                     boundID, cell, face_id, surfNormal, quadPoint);
                   auto cellInfoPair = std::make_pair(boundID, cell);
 
