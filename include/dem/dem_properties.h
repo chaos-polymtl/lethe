@@ -21,6 +21,8 @@
 #include <tuple>
 #include <vector>
 
+#ifndef LETHE_dem_properties_H
+#define LETHE_dem_properties_H
 
 namespace DEM
 {
@@ -62,11 +64,7 @@ namespace DEM
   };
 
   unsigned int
-  get_number_properties()
-  {
-    return PropertiesIndex::n_properties;
-  }
-
+  get_number_properties();
 
   template <int dim>
   class DEMProperties
@@ -78,3 +76,5 @@ namespace DEM
 
 
 } // namespace DEM
+
+#endif
