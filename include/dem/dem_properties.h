@@ -61,6 +61,7 @@ namespace DEM
     n_properties = 24
   };
 
+  unsigned int get_number_properties(){return PropertiesIndex::n_properties;}
 
 
   template <int dim>
@@ -69,6 +70,7 @@ namespace DEM
   public:
     std::vector<std::tuple<std::string, int>>
     get_properties_name();
+
   };
 
 
