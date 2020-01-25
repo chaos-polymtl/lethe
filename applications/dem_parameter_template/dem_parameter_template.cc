@@ -10,7 +10,7 @@ main()
   try
     {
       {
-        ParameterHandler                prm;
+        ParameterHandler       prm;
         DEMSolverParameters<2> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-2d.prm");
@@ -20,7 +20,7 @@ main()
         prm.print_parameters(output_xml, prm.XML);
       }
       {
-        ParameterHandler                prm;
+        ParameterHandler       prm;
         DEMSolverParameters<3> dem_parameters;
         dem_parameters.declare(prm);
         std::ofstream output_prm("dem-3d.prm");

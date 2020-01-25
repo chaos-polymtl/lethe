@@ -70,7 +70,7 @@ initilization()
 {
   std::string filename;
   filename = "dem.prm";
-  ParameterHandler   prm;
+  ParameterHandler         prm;
   DEMSolverParameters<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);

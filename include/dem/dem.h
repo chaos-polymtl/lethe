@@ -17,8 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <deal.II/fe/mapping_q.h>
 #include <deal.II/distributed/tria.h>
+
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
@@ -38,12 +39,13 @@ public:
   solve();
 
 private:
-  void read_mesh();
+  void
+  read_mesh();
 
-  MPI_Comm           mpi_communicator;
-  const unsigned int n_mpi_processes;
-  const unsigned int this_mpi_process;
-  ConditionalOStream pcout;
+  MPI_Comm                 mpi_communicator;
+  const unsigned int       n_mpi_processes;
+  const unsigned int       this_mpi_process;
+  ConditionalOStream       pcout;
   DEMSolverParameters<dim> parameters;
 
   parallel::distributed::Triangulation<dim> triangulation;
@@ -51,7 +53,6 @@ private:
   Particles::PropertyPool              property_pool;
   MappingQGeneric<dim>                 mapping;
   Particles::ParticleHandler<dim, dim> particle_handler;
-
 };
 
 #endif
