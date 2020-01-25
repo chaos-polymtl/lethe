@@ -19,7 +19,7 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
-      ParameterHandler prm;
+      ParameterHandler       prm;
       DEMSolverParameters<3> dem_parameters;
       dem_parameters.declare(prm);
 

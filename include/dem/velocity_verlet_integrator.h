@@ -20,6 +20,7 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <dem/integrator.h>
+
 #include "dem/dem_solver_parameters.h"
 
 using namespace dealii;
