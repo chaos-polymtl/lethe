@@ -22,7 +22,7 @@
 #include <vector>
 
 #ifndef LETHE_dem_properties_H
-#define LETHE_dem_properties_H
+#  define LETHE_dem_properties_H
 
 namespace DEM
 {
