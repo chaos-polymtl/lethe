@@ -22,6 +22,7 @@ main(int argc, char *argv[])
       ParameterHandler prm;
       ParametersDEM<3> dem_parameters;
       dem_parameters.declare(prm);
+
       // Parsing of the file
       prm.parse_input(argv[1]);
       dem_parameters.parse(prm);
