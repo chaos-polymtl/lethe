@@ -16,3 +16,11 @@
  *
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
+
+#include <dem/dem.h>
+
+template <int dim>
+void DEMSolver<dim>::solve()
+{
+
+}

@@ -31,6 +31,8 @@ class DEMSolver
   DEMSolver(ParametersDEM<dim> dem_parameters)
   {}
 
+  void solve();
+
 private:
   ParametersDEM<dim>                        parameters;
   parallel::distributed::Triangulation<dim> triangulation;
