@@ -9,4 +9,6 @@ ADD_SUBDIRECTORY(initial_conditions)
 ADD_SUBDIRECTORY(navier_stokes_parameter_template)
 ADD_SUBDIRECTORY(dem_3d)
 ADD_SUBDIRECTORY(c_dem_3d)
+ADD_SUBDIRECTORY(dem_parameter_template)
+
 
