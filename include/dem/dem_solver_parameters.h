@@ -21,20 +21,28 @@
 #define PARAMETERS_DEM_H_
 
 #include <core/parameters_lagrangian.h>
+#include <core/parameters.h>
+#include <core/simulation_control.h>
 
 template <int dim>
-class ParametersDEM
+class DEMSolverParameters
 {
 public:
-  Parameters::Lagrangian::SimulationControl  simulationControl;
+  Parameters::Mesh                           mesh;
+  Parameters::Lagrangian::SimulationControl  simulationControl; // To be deprecated
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
   Parameters::Lagrangian::InsertionInfo      insertionInfo;
   Parameters::Lagrangian::OutputProperties   outputProperties;
   Parameters::Lagrangian::SimulationModel    simulationModel;
 
+  SimulationControl simulation_control;
+
+
   void
   declare(ParameterHandler &prm)
   {
+    Parameters::SimulationControl::declare_parameters(prm);
+    Parameters::Mesh::declare_parameters(prm);
     Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
@@ -45,11 +53,13 @@ public:
   void
   parse(ParameterHandler &prm)
   {
+    mesh.parse_parameters(prm);
     physicalProperties.parse_parameters(prm);
     insertionInfo.parse_parameters(prm);
     simulationControl.parse_parameters(prm);
     outputProperties.parse_parameters(prm);
     simulationModel.parse_parameters(prm);
+    simulation_control.initialize(prm);
   }
 };
 

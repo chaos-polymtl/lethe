@@ -34,7 +34,7 @@ test()
 
   std::string        filename = "../dem.prm";
   ParameterHandler   prm;
-  ParametersDEM<dim> DEMparam;
+  DEMSolverParameters<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
   DEMparam.parse(prm);

@@ -54,7 +54,7 @@
 #include "dem/dem.h"
 #include "dem/dem_iterator.h"
 #include "dem/dem_properties.h"
-#include "dem/parameters_dem.h"
+#include "dem/dem_solver_parameters.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/velocity_verlet_integrator.h"
@@ -71,7 +71,7 @@ initilization()
   std::string filename;
   filename = "dem.prm";
   ParameterHandler   prm;
-  ParametersDEM<dim> DEMparam;
+  DEMSolverParameters<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);
   DEMparam.parse(prm);
@@ -87,7 +87,6 @@ initilization()
   float                                               DEM_time = 0;
   parallel::distributed::Triangulation<dim, spacedim> tr(MPI_COMM_WORLD);
 
-  Particles::Particle<dim> particle;
   GridGenerator::hyper_cube(tr, -0.1, 0.1, true);
   int numRef = 3;
   tr.refine_global(numRef);

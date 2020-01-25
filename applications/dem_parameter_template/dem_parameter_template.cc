@@ -1,34 +1,34 @@
-#include "dem/dem.h"
-#include "dem/dem_properties.h"
+// check the read and write of simulationcontrol
 
+#include <fstream>
 
-
-using namespace dealii;
+#include "dem/dem_solver_parameters.h"
 
 int
-main(int argc, char *argv[])
+main()
 {
   try
     {
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+      {
+        ParameterHandler                prm;
+        DEMSolverParameters<2> dem_parameters;
+        dem_parameters.declare(prm);
+        std::ofstream output_prm("dem-2d.prm");
+        prm.print_parameters(output_prm, prm.Text);
 
-      if (argc != 2)
-        {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
-        }
+        std::ofstream output_xml("dem-2d.xml");
+        prm.print_parameters(output_xml, prm.XML);
+      }
+      {
+        ParameterHandler                prm;
+        DEMSolverParameters<3> dem_parameters;
+        dem_parameters.declare(prm);
+        std::ofstream output_prm("dem-3d.prm");
+        prm.print_parameters(output_prm, prm.Text);
 
-      ParameterHandler prm;
-      DEMSolverParameters<3> dem_parameters;
-      dem_parameters.declare(prm);
-
-      // Parsing of the file
-      prm.parse_input(argv[1]);
-      dem_parameters.parse(prm);
-
-      DEMSolver<3> problem_3d(dem_parameters);
-      problem_3d.solve();
+        std::ofstream output_xml("dem-3d.xml");
+        prm.print_parameters(output_xml, prm.XML);
+      }
     }
   catch (std::exception &exc)
     {
@@ -55,5 +55,4 @@ main(int argc, char *argv[])
                 << std::endl;
       return 1;
     }
-  return 0;
 }

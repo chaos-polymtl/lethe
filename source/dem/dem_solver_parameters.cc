@@ -1,4 +1,4 @@
-#include "dem/parameters_dem.h"
+#include "dem/dem_solver_parameters.h"
 
-template class ParametersDEM<2>;
-template class ParametersDEM<3>;
+template class DEMSolverParameters<2>;
+template class DEMSolverParameters<3>;

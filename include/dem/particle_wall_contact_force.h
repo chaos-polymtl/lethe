@@ -26,7 +26,7 @@
 #include <tuple>
 #include <vector>
 
-#include "dem/parameters_dem.h"
+#include "dem/dem_solver_parameters.h"
 
 using namespace dealii;
 
