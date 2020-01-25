@@ -17,6 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/particles/particle_handler.h>
 
@@ -28,17 +29,23 @@
 template <int dim>
 class DEMSolver
 {
-  DEMSolver(ParametersDEM<dim> dem_parameters)
-  {}
+public:
+  DEMSolver(ParametersDEM<dim> dem_parameters);
 
   void solve();
 
 private:
+  MPI_Comm           mpi_communicator;
+  const unsigned int n_mpi_processes;
+  const unsigned int this_mpi_process;
   ParametersDEM<dim>                        parameters;
-  parallel::distributed::Triangulation<dim> triangulation;
+
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
 
   Particles::ParticleHandler<dim, dim> particle_handler;
   Particles::PropertyPool              property_pool;
+  MappingQGeneric<dim> mapping;
+
 };
 
 #endif
