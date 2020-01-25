@@ -10,8 +10,8 @@ main(int argc, char *argv[])
 {
   try
     {
-    Utilities::MPI::MPI_InitFinalize mpi_initialization(
-      argc, argv, numbers::invalid_unsigned_int);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
 
       if (argc != 2)
         {
@@ -19,7 +19,7 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
-      ParameterHandler                prm;
+      ParameterHandler prm;
       ParametersDEM<3> dem_parameters;
       dem_parameters.declare(prm);
       // Parsing of the file

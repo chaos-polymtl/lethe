@@ -21,22 +21,19 @@
 #include <dem/dem_properties.h>
 
 template <int dim>
-DEMSolver<dim>::DEMSolver(ParametersDEM<dim> dem_parameters):
-  mpi_communicator(MPI_COMM_WORLD)
+DEMSolver<dim>::DEMSolver(ParametersDEM<dim> dem_parameters)
+  : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
   , parameters(dem_parameters)
   , property_pool(DEM::get_number_properties())
   , mapping(1)
-{
-
-}
+{}
 
 template <int dim>
-void DEMSolver<dim>::solve()
-{
-
-}
+void
+DEMSolver<dim>::solve()
+{}
 
 
 template class DEMSolver<3>;
