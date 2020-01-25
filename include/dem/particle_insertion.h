@@ -21,8 +21,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
-#include "dem/parameters_dem.h"
-
+#include "dem/dem_solver_parameters.h"
 
 #ifndef PARTICLEINSERTION_H_
 #  define PARTICLEINSERTION_H_

@@ -18,10 +18,12 @@
  */
 
 #include <deal.II/fe/mapping_q.h>
+#include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/property_pool.h>
 
-#include <dem/parameters_dem.h>
+#include <dem/dem_solver_parameters.h>
 
 #ifndef LETHE_DEM_H
 #  define LETHE_DEM_H
@@ -30,22 +32,26 @@ template <int dim>
 class DEMSolver
 {
 public:
-  DEMSolver(ParametersDEM<dim> dem_parameters);
+  DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
   void
   solve();
 
 private:
+  void read_mesh();
+
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
-  ParametersDEM<dim> parameters;
+  ConditionalOStream pcout;
+  DEMSolverParameters<dim> parameters;
 
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
+  parallel::distributed::Triangulation<dim> triangulation;
 
-  Particles::ParticleHandler<dim, dim> particle_handler;
   Particles::PropertyPool              property_pool;
   MappingQGeneric<dim>                 mapping;
+  Particles::ParticleHandler<dim, dim> particle_handler;
+
 };
 
 #endif
