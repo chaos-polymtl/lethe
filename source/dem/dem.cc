@@ -17,6 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <iostream>
+#include <fstream>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
 
