@@ -20,7 +20,7 @@
 #include "dem/contact_force.h"
 #include "dem/contact_search.h"
 #include "dem/integrator.h"
-#include "dem/parameters_dem.h"
+#include "dem/dem_solver_parameters.h"
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"

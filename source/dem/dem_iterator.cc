@@ -15,7 +15,7 @@
 
 #include <chrono>
 
-#include "dem/parameters_dem.h"
+#include "dem/dem_solver_parameters.h"
 #include "dem/visualization.h"
 #include "dem/write_vtu.h"
 
