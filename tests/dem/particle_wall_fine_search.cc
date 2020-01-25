@@ -32,8 +32,8 @@ test()
   MappingQ<dim, dim> mapping(1);
 
 
-  std::string        filename = "../dem.prm";
-  ParameterHandler   prm;
+  std::string              filename = "../dem.prm";
+  ParameterHandler         prm;
   DEMSolverParameters<dim> DEMparam;
   DEMparam.declare(prm);
   prm.parse_input(filename);

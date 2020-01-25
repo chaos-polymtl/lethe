@@ -17,14 +17,14 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <iostream>
-#include <fstream>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
+
+#include <fstream>
+#include <iostream>
 
 
 template <int dim>
@@ -37,7 +37,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , triangulation(this->mpi_communicator)
   , property_pool(DEM::get_number_properties())
   , mapping(1)
-  , particle_handler(triangulation,mapping,DEM::get_number_properties())
+  , particle_handler(triangulation, mapping, DEM::get_number_properties())
 {}
 
 template <int dim>
@@ -54,7 +54,7 @@ DEMSolver<dim>::read_mesh()
     }
 
   // Dealii grids
-  else if (  parameters.mesh.type == Parameters::Mesh::Type::dealii)
+  else if (parameters.mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         triangulation,

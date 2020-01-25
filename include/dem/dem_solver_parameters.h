@@ -20,16 +20,17 @@
 #ifndef PARAMETERS_DEM_H_
 #define PARAMETERS_DEM_H_
 
-#include <core/parameters_lagrangian.h>
 #include <core/parameters.h>
+#include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
 
 template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                           mesh;
-  Parameters::Lagrangian::SimulationControl  simulationControl; // To be deprecated
+  Parameters::Mesh mesh;
+  Parameters::Lagrangian::SimulationControl
+                                             simulationControl; // To be deprecated
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
   Parameters::Lagrangian::InsertionInfo      insertionInfo;
   Parameters::Lagrangian::OutputProperties   outputProperties;
