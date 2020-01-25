@@ -55,5 +55,11 @@ namespace DEM
     return properties;
   }
 
+  unsigned int
+  get_number_properties()
+  {
+    return PropertiesIndex::n_properties;
+  }
+
   template class DEMProperties<3>;
 } // namespace DEM
