@@ -67,9 +67,9 @@ ParticleWallContactDetection<dim, spacedim>::boundaryCellsAndFaces(
                   surfNormal = -1 * surfNormal;
                   Point<dim> quadPoint = fe_face_values.quadrature_point(dim);
                   int        boundID   = cell->face(face_id)->boundary_id();
-                  std::tuple cellInfo  = std::make_tuple(
+                  auto cellInfo  = std::make_tuple(
                     boundID, cell, face_id, surfNormal, quadPoint);
-                  std::pair cellInfoPair = std::make_pair(boundID, cell);
+                  auto cellInfoPair = std::make_pair(boundID, cell);
 
                   auto it = std::find(searchPair.begin(),
                                       searchPair.end(),
@@ -129,7 +129,7 @@ ParticleWallContactDetection<dim, spacedim>::pwcontactlist(
            partIter != particle_range.end();
            ++partIter)
         {
-          std::pair pwPair =
+          auto pwPair =
             std::make_pair(partIter, std::get<0>(boundaryCellInfo[i]));
 
           //      auto it4 = std::find(searchPair.begin(), searchPair.end(),
