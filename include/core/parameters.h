@@ -38,7 +38,7 @@ namespace Parameters
 
   struct SimulationControl
   {
-    // Method used for time progression (steady, unsteady)
+    // Method used for time progression of eulerian solvers (steady, unsteady)
     enum class TimeSteppingMethod
     {
       steady,
@@ -53,6 +53,13 @@ namespace Parameters
       sdirk3_2,
       sdirk3_3
     } method;
+
+    // Method used for time progression (steady, unsteady)
+    enum class LagrangianTimeSteppingMethod
+    {
+      explicit_euler,
+      velocity_verlet
+    } lagrangian_method;
 
     // Initial time step
     double dt;

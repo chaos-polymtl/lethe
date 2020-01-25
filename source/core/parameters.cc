@@ -389,61 +389,23 @@ namespace Parameters
     prm.enter_subsection("mesh");
     {
       prm.declare_entry("type",
-                        "gmsh",
-                        Patterns::Selection("gmsh|dealii|primitive"),
+                        "dealii",
+                        Patterns::Selection("gmsh|dealii"),
                         "Type of mesh "
-                        "Choices are <gmsh|dealii|primitive>.");
+                        "Choices are <gmsh|dealii>.");
 
       prm.declare_entry("file name",
                         "none",
                         Patterns::FileName(),
                         "GMSH file name");
 
-      prm.declare_entry("primitive type",
-                        "hyper_cube",
-                        Patterns::Selection("hyper_cube|hyper_shell|cylinder"),
-                        "Type of primitive "
-                        "Choices are <hyper_cube|hyper_shell|cylinder>.");
-
       prm.declare_entry("initial refinement",
                         "0",
                         Patterns::Integer(),
                         "Initial refinement of primitive mesh");
 
-      prm.declare_entry("arg1",
-                        "-1",
-                        Patterns::Double(),
-                        "Primitive argument 1");
-      prm.declare_entry("arg2",
-                        "-1",
-                        Patterns::Double(),
-                        "Primitive argument 2");
-      prm.declare_entry("arg3",
-                        "-1",
-                        Patterns::Double(),
-                        "Primitive argument 3");
-      prm.declare_entry("arg4",
-                        "-1",
-                        Patterns::Double(),
-                        "Primitive argument 4");
-      prm.declare_entry("arg5",
-                        "-1",
-                        Patterns::Double(),
-                        "Primitive argument 5");
-
-      prm.declare_entry("arg6",
-                        "-1",
-                        Patterns::Double(),
-                        "Primitive argument 6");
-
       prm.declare_entry("grid type", "hyper_cube");
-      prm.declare_entry("grid arguments", "-1 ; 1");
-
-
-      prm.declare_entry("colorize",
-                        "false",
-                        Patterns::Bool(),
-                        "Colorize boundary conditions");
+      prm.declare_entry("grid arguments", "-1 : 1 : false");
     }
     prm.leave_subsection();
   }
@@ -457,8 +419,6 @@ namespace Parameters
         const std::string op = prm.get("type");
         if (op == "gmsh")
           type = Type::gmsh;
-        else if (op == "primitive")
-          type = Type::primitive;
         else if (op == "dealii")
           type = Type::dealii;
         else
@@ -469,27 +429,8 @@ namespace Parameters
 
       initialRefinement = prm.get_integer("initial refinement");
 
-      const std::string prim_type = prm.get("primitive type");
-      if (prim_type == "hyper_cube")
-        primitiveType = PrimitiveType::hyper_cube;
-      else if (prim_type == "hyper_shell")
-        primitiveType = PrimitiveType::hyper_shell;
-      else if (prim_type == "cylinder")
-        primitiveType = PrimitiveType::cylinder;
-      else
-        throw std::runtime_error("Unsupported primitive - Program will abort");
-
-      arg1 = prm.get_double("arg1");
-      arg2 = prm.get_double("arg2");
-      arg3 = prm.get_double("arg3");
-      arg4 = prm.get_double("arg4");
-      arg5 = prm.get_double("arg5");
-      arg6 = prm.get_double("arg6");
-
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");
-
-      colorize = prm.get_bool("colorize");
     }
     prm.leave_subsection();
   }
