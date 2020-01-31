@@ -50,6 +50,7 @@
 #include <tuple>
 #include <vector>
 
+#include "dem/contact_info_struct.h"
 #include "dem/contact_search.h"
 #include "dem/dem.h"
 #include "dem/dem_iterator.h"
@@ -58,7 +59,6 @@
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/velocity_verlet_integrator.h"
-#include "dem/contact_info_struct.h"
 
 
 using namespace dealii;
@@ -105,8 +105,10 @@ initilization()
 
 
   DEM_iterator<dim, spacedim> iter1;
-  std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> inContactPairs(DEMparam.simulationControl.nTotal);
-  std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>> inContactInfo(DEMparam.simulationControl.nTotal);
+  std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
+                                                               inContactPairs(DEMparam.simulationControl.nTotal);
+  std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> inContactInfo(
+    DEMparam.simulationControl.nTotal);
   std::vector<
     std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
                Point<dim>,

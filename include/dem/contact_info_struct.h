@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 #include <deal.II/base/point.h>
+
 #include <deal.II/particles/particle.h>
 
 #ifndef CONTACTINFOSTRUCT_H_
@@ -27,14 +28,14 @@ using namespace dealii;
 template <int dim, int spacedim>
 struct ContactInfoStruct
 {
-	double normOverlap;
-Point<dim> normVec;
-double normRelVel;
-Point<dim> tangVec;
-double tangRelVel;
-double tangOverlap;
-Particles::ParticleIterator<dim, spacedim> particleI;
-Particles::ParticleIterator<dim, spacedim> particleJ;
+  double                                     normOverlap;
+  Point<dim>                                 normVec;
+  double                                     normRelVel;
+  Point<dim>                                 tangVec;
+  double                                     tangRelVel;
+  double                                     tangOverlap;
+  Particles::ParticleIterator<dim, spacedim> particleI;
+  Particles::ParticleIterator<dim, spacedim> particleJ;
 };
 
 #endif /* CONTACTINFOSTRUCT_H_ */
