@@ -26,8 +26,8 @@
 #include <tuple>
 #include <vector>
 
-#include "dem/dem_solver_parameters.h"
 #include "dem/contact_info_struct.h"
+#include "dem/dem_solver_parameters.h"
 
 
 
@@ -41,22 +41,20 @@ class ContactForce
 {
 public:
   ContactForce<dim, spacedim>();
- void
-  linearCF(
-std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>>,
-    int,
-    float,
-    float,
-    float,
-    float);
+  void
+  linearCF(std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>>,
+           int,
+           float,
+           float,
+           float,
+           float);
 
   void
-  nonLinearCF(
-   std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>>,
-    int,
-    float,
-    float,
-    float);
+  nonLinearCF(std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>>,
+              int,
+              float,
+              float,
+              float);
 
 
 
