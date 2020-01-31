@@ -63,10 +63,11 @@ test()
   ContactSearch<dim, dim> cs1;
   cellNeighbor = cs1.findCellNeighbors(tr);
 
-  Point<3> position1 = {0.4, 0, 0};
-  int      id1       = 0;
-  Point<3> position2 = {0.40499, 0, 0};
-  int      id2       = 1;
+  Point<3> position1     = {0.4, 0, 0};
+  int      id1           = 1;
+  Point<3> position2     = {0.40499, 0, 0};
+  int      id2           = 2;
+  int      num_Particles = 2;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
@@ -129,21 +130,18 @@ test()
   pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
 
 
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<3, 3>,
-                                   Particles::ParticleIterator<3, 3>>,
-                         double,
-                         Point<3>,
-                         double,
-                         Point<3>,
-                         double,
-                         double>>
-    contactInfo;
+  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
 
 
-  cs1.fineSearch(pairs, contactInfo, dt);
+  std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
+                                                          inContactPairs(num_Particles);
+  std::vector<std::map<int, ContactInfoStruct<dim, dim>>> inContactInfo(
+    num_Particles);
 
+
+  cs1.fineSearch(pairs, inContactPairs, inContactInfo, dt, particle_handler);
   ContactForce<dim> cf1;
-  cf1.nonLinearCF(contactInfo, Yp, vp, mup, murp);
+  cf1.nonLinearCF(inContactInfo, Yp, vp, mup, murp);
 
   auto particle = particle_handler.begin();
 
