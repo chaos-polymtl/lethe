@@ -27,6 +27,8 @@
 #include <vector>
 
 #include "dem/dem_solver_parameters.h"
+#include "dem/contact_info_struct.h"
+
 
 
 using namespace dealii;
@@ -39,17 +41,9 @@ class ContactForce
 {
 public:
   ContactForce<dim, spacedim>();
-  void
+ void
   linearCF(
-    std::vector<
-      std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>,
-                           typename Particles::ParticleIterator<dim, spacedim>>,
-                 double,
-                 Point<dim>,
-                 double,
-                 Point<dim>,
-                 double,
-                 double>>,
+std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>>,
     int,
     float,
     float,
@@ -58,19 +52,12 @@ public:
 
   void
   nonLinearCF(
-    std::vector<
-      std::tuple<std::pair<typename Particles::ParticleIterator<dim, spacedim>,
-                           typename Particles::ParticleIterator<dim, spacedim>>,
-                 double,
-                 Point<dim>,
-                 double,
-                 Point<dim>,
-                 double,
-                 double>>,
+   std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>>,
     int,
     float,
     float,
     float);
+
 
 
 private:

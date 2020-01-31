@@ -24,6 +24,7 @@
 #include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
+#include "dem/contact_info_struct.h"
 
 #ifndef DEMITERATOR_H_
 #  define DEMITERATOR_H_
@@ -43,15 +44,8 @@ public:
     std::pair<
       std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
       std::vector<typename Triangulation<dim>::active_cell_iterator>>,
-    std::vector<
-      std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                           Particles::ParticleIterator<dim, spacedim>>,
-                 double,
-                 Point<dim>,
-                 double,
-                 Point<dim>,
-                 double,
-                 double>> &,
+    std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
+std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>> &,
     std::vector<std::tuple<int,
                            typename Triangulation<dim>::active_cell_iterator,
                            int,
@@ -72,7 +66,7 @@ public:
     ParticleWallContactDetection<dim, spacedim>,
     ContactForce<dim, spacedim>,
     ParticleWallContactForce<dim, spacedim>,
-    Integrator<dim, spacedim> *,
+     Integrator<dim, spacedim> *,
     int,
     double,
     int,
@@ -101,7 +95,6 @@ public:
     float,
     int,
     int);
-
 private:
   void
   forceReinit(Particles::ParticleHandler<dim, spacedim> &);

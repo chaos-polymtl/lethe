@@ -1,0 +1,2 @@
+/usr/bin/ar qc liblethe-core.a  CMakeFiles/lethe-core.dir/bdf.cc.o CMakeFiles/lethe-core.dir/parameters.cc.o CMakeFiles/lethe-core.dir/parameters_lagrangian.cc.o CMakeFiles/lethe-core.dir/pvd_handler.cc.o CMakeFiles/lethe-core.dir/sdirk.cc.o CMakeFiles/lethe-core.dir/simulation_control.cc.o
+/usr/bin/ranlib liblethe-core.a
