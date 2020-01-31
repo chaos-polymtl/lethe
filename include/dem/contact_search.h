@@ -21,7 +21,7 @@
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
-
+#include "dem/contact_info_struct.h"
 #include <iostream>
 #include <vector>
 
@@ -60,19 +60,12 @@ public:
   findCellNeighbors(const Triangulation<dim, spacedim> &);
 
 
-  void
+   void
   fineSearch(std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
                                    Particles::ParticleIterator<dim, spacedim>>>,
-             std::vector<
-               std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                                    Particles::ParticleIterator<dim, spacedim>>,
-                          double,
-                          Point<dim>,
-                          double,
-                          Point<dim>,
-                          double,
-                          double>> &,
-             float);
+             std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
+             std::vector<std::map<int, ContactInfoStruct<dim,spacedim>>> &,
+             float, Particles::ParticleHandler<dim, spacedim> &);
 
   std::vector<Particles::ParticleIterator<dim, spacedim>>
   pWSearch(dealii::Particles::ParticleHandler<dim, spacedim> &);
