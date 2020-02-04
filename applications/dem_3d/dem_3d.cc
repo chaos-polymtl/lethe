@@ -56,7 +56,6 @@
 #include "dem/dem_iterator.h"
 #include "dem/dem_properties.h"
 #include "dem/dem_solver_parameters.h"
-#include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/velocity_verlet_integrator.h"
 
@@ -158,12 +157,12 @@ initilization()
   const int    inserted_number_at_step         = DEMparam.insertionInfo.nInsert;
   const int    insertFrequency = DEMparam.insertionInfo.insertFrequency;
   const double distance_threshold = DEMparam.insertionInfo.distance_threshold;
-  const float  x_min           = DEMparam.insertionInfo.x_min;
-  const float  y_min           = DEMparam.insertionInfo.y_min;
-  const float  z_min           = DEMparam.insertionInfo.z_min;
-  const float  x_max           = DEMparam.insertionInfo.x_max;
-  const float  y_max           = DEMparam.insertionInfo.y_max;
-  const float  z_max           = DEMparam.insertionInfo.z_max;
+  const double  x_min           = DEMparam.insertionInfo.x_min;
+  const double  y_min           = DEMparam.insertionInfo.y_min;
+  const double  z_min           = DEMparam.insertionInfo.z_min;
+  const double  x_max           = DEMparam.insertionInfo.x_max;
+  const double  y_max           = DEMparam.insertionInfo.y_max;
+  const double  z_max           = DEMparam.insertionInfo.z_max;
   const int    numFields       = DEMparam.outputProperties.numFields;
   const int    numProperties   = DEMparam.outputProperties.numProperties;
 

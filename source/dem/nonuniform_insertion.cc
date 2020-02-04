@@ -5,7 +5,7 @@
  *      Author: meteor
  */
 
-#include "dem/uniform_insertion.h"
+#include "dem/nonuniform_insertion.h"
 #include <dem/dem_properties.h>
 
 #include <deal.II/base/array_view.h>
@@ -33,12 +33,10 @@
 using namespace DEM;
 
 template <int dim, int spacedim>
-UniformInsertion<dim, spacedim>::UniformInsertion(double x_min, double y_min,
-                                                  double z_min, double x_max,
-                                                  double y_max, double z_max,
-                                                  double dp,
-                                                  int inserted_number_at_step,
-                                                  double distance_threshold) {
+NonUniformInsertion<dim, spacedim>::NonUniformInsertion(
+    double x_min, double y_min, double z_min, double x_max, double y_max,
+    double z_max, double dp, int inserted_number_at_step,
+    double distance_threshold) {
   // This variable is used for calculation of the maximum number of particles
   // that can fit in the chosen insertion box
   int maximum_particle_number;
@@ -60,7 +58,7 @@ UniformInsertion<dim, spacedim>::UniformInsertion(double x_min, double y_min,
 } // add error here
 
 template <int dim, int spacedim>
-void UniformInsertion<dim, spacedim>::insert(
+void NonUniformInsertion<dim, spacedim>::insert(
     Particles::ParticleHandler<dim, spacedim> &particle_handler,
     const Triangulation<dim, spacedim> &tr, int &total_particle_number_insystem,
     Particles::PropertyPool &pool, double x_min, double y_min, double z_min,
@@ -92,8 +90,14 @@ void UniformInsertion<dim, spacedim>::insert(
             unsigned int id;
 
             // Obtaning position of the inserted particle
-            position[0] = x_min + (dp / 2) + (i * distance_threshold * dp);
-            position[1] = y_min + (dp / 2) + (j * distance_threshold * dp);
+            // In non-uniform insertion, two random numbers are created and
+            // added to the position of particles
+            int randNum1 = rand() % 101;
+            int randNum2 = rand() % 101;
+            position[0] = x_min + (dp / 2) + (i * distance_threshold * dp) +
+                          randNum1 * (dp / 400.0);
+            position[1] = y_min + (dp / 2) + (j * distance_threshold * dp) +
+                          randNum2 * (dp / 400.0);
             if (dim == 3)
               position[2] = z_min + (dp / 2) + (k * distance_threshold * dp);
 
@@ -167,4 +171,4 @@ void UniformInsertion<dim, spacedim>::insert(
       total_particle_number_insystem + inserted_number_at_step;
 }
 
-template class UniformInsertion<3, 3>;
+template class NonUniformInsertion<3, 3>;
