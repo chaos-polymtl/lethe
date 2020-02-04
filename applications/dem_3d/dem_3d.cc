@@ -80,8 +80,8 @@ initilization()
   std::vector<std::tuple<std::string, int>> properties =
     properties_class.get_properties_name();
 
-  // total number of particles in the system
-  int nPart = 0;
+  // total number of active particles in the system
+  int active_particle_number = 0;
   // DEM clock
   int                                                 DEM_step = 0;
   float                                               DEM_time = 0;
@@ -94,7 +94,7 @@ initilization()
 
   Particles::ParticleHandler<dim, spacedim> particle_handler(
     tr, mappinggg, DEMparam.outputProperties.numProperties);
-  Particles::PropertyPool propPool(DEMparam.outputProperties.numProperties);
+  Particles::PropertyPool property_pool(DEMparam.outputProperties.numProperties);
 
   std::pair<
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
@@ -155,8 +155,9 @@ initilization()
   const float  murp            = DEMparam.physicalProperties.murp;
   const float  murw            = DEMparam.physicalProperties.murw;
   const int    tInsertion      = DEMparam.insertionInfo.tInsertion;
-  const int    nInsert         = DEMparam.insertionInfo.nInsert;
+  const int    inserted_number_at_step         = DEMparam.insertionInfo.nInsert;
   const int    insertFrequency = DEMparam.insertionInfo.insertFrequency;
+  const double distance_threshold = DEMparam.insertionInfo.distance_threshold;
   const float  x_min           = DEMparam.insertionInfo.x_min;
   const float  y_min           = DEMparam.insertionInfo.y_min;
   const float  z_min           = DEMparam.insertionInfo.z_min;
@@ -170,7 +171,7 @@ initilization()
   // dem engine iterator:
   while (DEM_step < numberOfSteps)
     {
-      iter1.engine(nPart,
+      iter1.engine(active_particle_number,
                    particle_handler,
                    tr,
                    DEM_step,
@@ -181,7 +182,7 @@ initilization()
                    boundaryCellInfo,
                    pwContactInfo,
                    properties,
-                   propPool,
+                   property_pool,
                    cs1,
                    pw1,
                    cf1,
@@ -205,8 +206,9 @@ initilization()
                    murp,
                    murw,
                    tInsertion,
-                   nInsert,
+                   inserted_number_at_step,
                    insertFrequency,
+                   distance_threshold,
                    x_min,
                    y_min,
                    z_min,
