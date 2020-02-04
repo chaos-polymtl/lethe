@@ -6,6 +6,7 @@
  */
 #include "dem/dem_iterator.h"
 
+#include "dem/nonuniform_insertion.h"
 #include "dem/uniform_insertion.h"
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
@@ -101,20 +102,10 @@ void DEM_iterator<dim, spacedim>::engine(
     if (step < tInsertion) {
       if (active_particle_number < nTotal) // number < total number
       {
-        //       ParticleInsertion<dim, spacedim> ins1(
-        //           x_min, y_min, z_min, x_max, y_max, z_max, dp,
-        //           inserted_number_at_step, distance_threshold);
-        //      ins1.nonUniformInsertion(particle_handler, tr,
-        //      active_particle_number,
-        //                               property_pool, x_min, y_min, z_min,
-        //                               x_max,
-        //                              y_max, z_max, dp,
-        //                              inserted_number_at_step,
-        //                               rhop, g, distance_threshold);
 
-        UniformInsertion<dim, spacedim> ins2(x_min, y_min, z_min, x_max, y_max,
-                                             z_max, dp, inserted_number_at_step,
-                                             distance_threshold);
+        NonUniformInsertion<dim, spacedim> ins2(
+            x_min, y_min, z_min, x_max, y_max, z_max, dp,
+            inserted_number_at_step, distance_threshold);
 
         ins2.insert(particle_handler, tr, active_particle_number, property_pool,
                     x_min, y_min, z_min, x_max, y_max, z_max, dp,
