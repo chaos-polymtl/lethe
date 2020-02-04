@@ -56,12 +56,11 @@
 #include "dem/dem_iterator.h"
 #include "dem/dem_properties.h"
 #include "dem/dem_solver_parameters.h"
+#include "dem/insertion_info_struct.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/velocity_verlet_integrator.h"
 
-
 using namespace dealii;
-
 
 template <int dim, int spacedim>
 void
@@ -93,7 +92,8 @@ initilization()
 
   Particles::ParticleHandler<dim, spacedim> particle_handler(
     tr, mappinggg, DEMparam.outputProperties.numProperties);
-  Particles::PropertyPool property_pool(DEMparam.outputProperties.numProperties);
+  Particles::PropertyPool property_pool(
+    DEMparam.outputProperties.numProperties);
 
   std::pair<
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
@@ -101,7 +101,6 @@ initilization()
                                cellNeighbor;
   ContactSearch<dim, spacedim> cs1;
   cellNeighbor = cs1.findCellNeighbors(tr);
-
 
   DEM_iterator<dim, spacedim> iter1;
   std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
@@ -134,38 +133,44 @@ initilization()
   VelocityVerletIntegrator<dim, spacedim> integ1;
 
   // reading parameters from parameter handler file:
-  const int    numberOfSteps   = DEMparam.simulationControl.tFinal;
-  const double dt              = DEMparam.simulationControl.dt;
-  const int    nTotal          = DEMparam.simulationControl.nTotal;
-  const int    writeFreq       = DEMparam.simulationControl.writeFrequency;
-  Point<dim>   g               = {DEMparam.physicalProperties.gx,
+  const int    numberOfSteps = DEMparam.simulationControl.tFinal;
+  const double dt            = DEMparam.simulationControl.dt;
+  const int    nTotal        = DEMparam.simulationControl.nTotal;
+  const int    writeFreq     = DEMparam.simulationControl.writeFrequency;
+  Point<dim>   g             = {DEMparam.physicalProperties.gx,
                   DEMparam.physicalProperties.gy,
                   DEMparam.physicalProperties.gz};
-  const double dp              = DEMparam.physicalProperties.diameter;
-  const int    rhop            = DEMparam.physicalProperties.density;
-  const int    Yp              = DEMparam.physicalProperties.Yp;
-  const int    Yw              = DEMparam.physicalProperties.Yw;
-  const float  vp              = DEMparam.physicalProperties.vp;
-  const float  vw              = DEMparam.physicalProperties.vw;
-  const float  ep              = DEMparam.physicalProperties.ep;
-  const float  ew              = DEMparam.physicalProperties.ew;
-  const float  mup             = DEMparam.physicalProperties.mup;
-  const float  muw             = DEMparam.physicalProperties.muw;
-  const float  murp            = DEMparam.physicalProperties.murp;
-  const float  murw            = DEMparam.physicalProperties.murw;
-  const int    tInsertion      = DEMparam.insertionInfo.tInsertion;
-  const int    inserted_number_at_step         = DEMparam.insertionInfo.nInsert;
-  const int    insertFrequency = DEMparam.insertionInfo.insertFrequency;
-  const double distance_threshold = DEMparam.insertionInfo.distance_threshold;
-  const double  x_min           = DEMparam.insertionInfo.x_min;
-  const double  y_min           = DEMparam.insertionInfo.y_min;
-  const double  z_min           = DEMparam.insertionInfo.z_min;
-  const double  x_max           = DEMparam.insertionInfo.x_max;
-  const double  y_max           = DEMparam.insertionInfo.y_max;
-  const double  z_max           = DEMparam.insertionInfo.z_max;
-  const int    numFields       = DEMparam.outputProperties.numFields;
-  const int    numProperties   = DEMparam.outputProperties.numProperties;
+  const double dp            = DEMparam.physicalProperties.diameter;
+  const int    rhop          = DEMparam.physicalProperties.density;
+  const int    Yp            = DEMparam.physicalProperties.Yp;
+  const int    Yw            = DEMparam.physicalProperties.Yw;
+  const float  vp            = DEMparam.physicalProperties.vp;
+  const float  vw            = DEMparam.physicalProperties.vw;
+  const float  ep            = DEMparam.physicalProperties.ep;
+  const float  ew            = DEMparam.physicalProperties.ew;
+  const float  mup           = DEMparam.physicalProperties.mup;
+  const float  muw           = DEMparam.physicalProperties.muw;
+  const float  murp          = DEMparam.physicalProperties.murp;
+  const float  murw          = DEMparam.physicalProperties.murw;
 
+  InsertionInfoStruct<dim, spacedim> insertion_info_struct;
+  insertion_info_struct.insertion_steps_number =
+    DEMparam.insertionInfo.tInsertion;
+  insertion_info_struct.inserted_number_at_step =
+    DEMparam.insertionInfo.nInsert;
+  insertion_info_struct.insertion_frequency =
+    DEMparam.insertionInfo.insertFrequency;
+  insertion_info_struct.distance_threshold =
+    DEMparam.insertionInfo.distance_threshold;
+  insertion_info_struct.x_min = DEMparam.insertionInfo.x_min;
+  insertion_info_struct.y_min = DEMparam.insertionInfo.y_min;
+  insertion_info_struct.z_min = DEMparam.insertionInfo.z_min;
+  insertion_info_struct.x_max = DEMparam.insertionInfo.x_max;
+  insertion_info_struct.y_max = DEMparam.insertionInfo.y_max;
+  insertion_info_struct.z_max = DEMparam.insertionInfo.z_max;
+
+  const int numFields     = DEMparam.outputProperties.numFields;
+  const int numProperties = DEMparam.outputProperties.numProperties;
 
   // dem engine iterator:
   while (DEM_step < numberOfSteps)
@@ -204,22 +209,11 @@ initilization()
                    muw,
                    murp,
                    murw,
-                   tInsertion,
-                   inserted_number_at_step,
-                   insertFrequency,
-                   distance_threshold,
-                   x_min,
-                   y_min,
-                   z_min,
-                   x_max,
-                   y_max,
-                   z_max,
+                   insertion_info_struct,
                    numFields,
                    numProperties);
     }
 }
-
-
 
 int
 main(int argc, char *argv[])
