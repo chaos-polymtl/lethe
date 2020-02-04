@@ -91,6 +91,9 @@ namespace Parameters
       // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
       double x_min, y_min, z_min, x_max, y_max, z_max;
 
+      // Insertion distance threshold
+      double distance_threshold;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void

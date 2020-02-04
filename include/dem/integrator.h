@@ -51,7 +51,7 @@ public:
    * Carries out the integration of the motion of all particles by using
    * the acceleration that is internally stored within the property handler
    * This virtual function that serves as a template for all integrator
-   * function.
+   * functions.
    *
    * @param particle_handler The particle handler whose particle motion we wish to integrate
    * @param body_force A constant volumetric body force applied to all particles

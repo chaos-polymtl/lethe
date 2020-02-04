@@ -87,6 +87,7 @@ public:
     int,
     int,
     int,
+double,
     float,
     float,
     float,
