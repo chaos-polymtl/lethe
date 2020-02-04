@@ -13,8 +13,9 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/uniform_insertion.h"
+#include "dem/insertion_info_struct.h"
 #include "dem/particle_wall_contact_detection.h"
+#include "dem/uniform_insertion.h"
 
 using namespace dealii;
 
@@ -26,37 +27,41 @@ test()
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  int                cellNum = tr.n_active_cells();
-  MappingQ<dim, dim> mapping(1);
+  int                           cellNum = tr.n_active_cells();
+  MappingQ<dim, dim>            mapping(1);
+  InsertionInfoStruct<dim, dim> insertion_info_struct;
 
-  const unsigned int n_properties = 24;
-  float              x_min        = -0.05;
-  float              y_min        = -0.05;
-  float              z_min        = -0.05;
-  float              x_max        = 0.05;
-  float              y_max        = 0.05;
-  float              z_max        = 0.05;
-  double             dp           = 0.005;
-  int                inserted_number_at_step      = 10;
-  int                rhop         = 2500;
-  int distance_threshold = 2;
-  Point<dim>         g            = {0, 0, -9.81};
+  const unsigned int n_properties               = 24;
+  insertion_info_struct.x_min                   = -0.05;
+  insertion_info_struct.y_min                   = -0.05;
+  insertion_info_struct.z_min                   = -0.05;
+  insertion_info_struct.x_max                   = 0.05;
+  insertion_info_struct.y_max                   = 0.05;
+  insertion_info_struct.z_max                   = 0.05;
+  insertion_info_struct.inserted_number_at_step = 10;
+  insertion_info_struct.distance_threshold      = 2;
+  double     dp                                 = 0.005;
+  int        rhop                               = 2500;
+  Point<dim> g                                  = {0, 0, -9.81};
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
 
-  int                         active_particle_number = 0;
-  Particles::PropertyPool     property_pool(n_properties);
-  Particles::Particle<3>      particle;
+  int                     active_particle_number = 0;
+  Particles::PropertyPool property_pool(n_properties);
+  Particles::Particle<3>  particle;
 
-  UniformInsertion<dim, dim> ins1(
-    x_min, y_min, z_min, x_max, y_max, z_max, dp,
-    inserted_number_at_step, distance_threshold);
+  UniformInsertion<dim, dim> ins1(dp, insertion_info_struct);
 
-ins1.insert(particle_handler, tr, active_particle_number, property_pool,
-            x_min, y_min, z_min, x_max, y_max, z_max, dp,
-            inserted_number_at_step, rhop, g, distance_threshold);
+  ins1.insert(particle_handler,
+              tr,
+              active_particle_number,
+              property_pool,
+              dp,
+              rhop,
+              g,
+              insertion_info_struct);
 
 
   int i = 1;

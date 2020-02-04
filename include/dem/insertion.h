@@ -21,36 +21,27 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include "dem/insertion_info_struct.h"
+
 using namespace dealii;
 
 #ifndef INSERTION_H_
-#define INSERTION_H_
+#  define INSERTION_H_
 
 /**
  * Base interface for classes that carry out the insertion of particles in the
  * system
  */
 
-template <int dim, int spacedim = dim> class Insertion {
+template <int dim, int spacedim = dim>
+class Insertion
+{
 public:
-  /**
-   * The constructor to the insertion class calculates the maximum number of
-   * particles (maximum_particle_number) which can be inserted in the insertion
-   * box and prints a warning if the number of particles to be inserted at this
-   * step exceeds this calculated number Note that in the current version only
-   * the insertion in a rectangular box is defined
-   *
-   * @param x_min, y_min, z_min, x_max, y_max and z_max Dimensions of the
-   * rectangular insertion box
-   * @param dp Particle diameter
-   * @param inserted_number_at_step Inserted number of particles at each
-   * insertion step
-   * @param distance_threshold Considered distance between two particles (ratio
-   * of distance to diameter of particles)
-   */
-  Insertion() {}
+  Insertion()
+  {}
 
-  virtual ~Insertion() {}
+  virtual ~Insertion()
+  {}
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -64,23 +55,21 @@ public:
    * inserted
    * @param active_particle_number Number of active particles inserted so far
    * @param property_pool property pool of particles
-   * @param x_min, y_min, z_min, x_max, y_max and z_max Dimensions of the
-   * rectangular insertion box
    * @param dp Particle diameter
-   * @param inserted_number_at_step Inserted number of particles at each
-   * insertion step
    * @param rhop Density of particles
    * @param g gravitational acceleration
-   * @param distance_threshold Considered distance between two particles (ratio
-   * of distance to diameter of particles)
+   * @param insertion_info_struct Information related to the insertion of
+   * particles from the parameter handler file)
    */
   virtual void
   insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &tr, int &active_particle_number,
-         Particles::PropertyPool &property_pool, double x_min, double y_min,
-         double z_min, double x_max, double y_max, double z_max, double dp,
-         int inserted_number_at_step, int rhop, Tensor<1, dim> g,
-         double distance_threshold) = 0;
+         const Triangulation<dim, spacedim> &       tr,
+         int &                                      active_particle_number,
+         Particles::PropertyPool &                  property_pool,
+         double                                     dp,
+         int                                        rhop,
+         Tensor<1, dim>                             g,
+         InsertionInfoStruct<dim, spacedim>         insertion_info_struct) = 0;
 };
 
 #endif /* INSERTION_H_ */
