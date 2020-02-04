@@ -180,6 +180,10 @@ namespace Parameters
                           "1",
                           Patterns::Double(),
                           "Insertion z max");
+        prm.declare_entry("Insertion distance threshold",
+                          "1",
+                          Patterns::Double(),
+                          "Distance threshold");
       }
       prm.leave_subsection();
     }
@@ -192,13 +196,14 @@ namespace Parameters
         tInsertion = prm.get_integer("Insertion time step");
         nInsert =
           prm.get_integer("Inserted number of particles at each time step");
-        insertFrequency = prm.get_integer("Insertion frequency");
-        x_min           = prm.get_double("Insertion box minimum x");
-        y_min           = prm.get_double("Insertion box minimum y");
-        z_min           = prm.get_double("Insertion box minimum z");
-        x_max           = prm.get_double("Insertion box maximum x");
-        y_max           = prm.get_double("Insertion box maximum y");
-        z_max           = prm.get_double("Insertion box maximum z");
+        insertFrequency    = prm.get_integer("Insertion frequency");
+        x_min              = prm.get_double("Insertion box minimum x");
+        y_min              = prm.get_double("Insertion box minimum y");
+        z_min              = prm.get_double("Insertion box minimum z");
+        x_max              = prm.get_double("Insertion box maximum x");
+        y_max              = prm.get_double("Insertion box maximum y");
+        z_max              = prm.get_double("Insertion box maximum z");
+        distance_threshold = prm.get_double("Insertion distance threshold");
       }
       prm.leave_subsection();
     }
