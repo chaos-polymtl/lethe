@@ -37,7 +37,7 @@ public:
                                    float,
                                    float,
                                    double,
-                                   int);
+                                   int, double);
   void
   uniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
                    const dealii::Triangulation<dim, spacedim> &,
@@ -52,7 +52,7 @@ public:
                    double,
                    int,
                    int,
-                   Point<dim>);
+                   Point<dim>, double);
   void
   nonUniformInsertion(dealii::Particles::ParticleHandler<dim, spacedim> &,
                       const dealii::Triangulation<dim, spacedim> &,
@@ -67,7 +67,7 @@ public:
                       double,
                       int,
                       int,
-                      Point<dim>);
+                      Point<dim>, double);
 };
 
 #endif /* PARTICLEINSERTION_H_ */
