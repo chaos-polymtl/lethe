@@ -19,15 +19,28 @@
 #include <deal.II/base/point.h>
 
 #ifndef INSERTIONINFOSTRUCT_H_
-#define INSERTIONINFOSTRUCT_H_
+#  define INSERTIONINFOSTRUCT_H_
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct InsertionInfoStruct {
+// Handles the parameters related to the insertion of particles
+template <int dim, int spacedim>
+struct InsertionInfoStruct
+{
+  // Number of insertion phase time steps
   int insertion_steps_number;
+
+  // Number of particles inserted at current step
   int inserted_number_at_step;
+
+  // Frequency of insertion steps
   int insertion_frequency;
+
+  // Ratio of the distance between the centers of two adjacent particles to the
+  // particle diameter (for uniform size distribution of particles)
   double distance_threshold;
+
+  // Dimensions of the insertion box
   double x_min;
   double y_min;
   double z_min;
