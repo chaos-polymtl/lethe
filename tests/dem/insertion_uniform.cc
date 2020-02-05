@@ -40,28 +40,20 @@ test()
   insertion_info_struct.z_max                   = 0.05;
   insertion_info_struct.inserted_number_at_step = 10;
   insertion_info_struct.distance_threshold      = 2;
-  double     dp                                 = 0.005;
-  int        rhop                               = 2500;
-  Point<dim> g                                  = {0, 0, -9.81};
+  double dp                                     = 0.005;
+  int    rhop                                   = 2500;
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
 
-  int                     active_particle_number = 0;
   Particles::PropertyPool property_pool(n_properties);
   Particles::Particle<3>  particle;
 
   UniformInsertion<dim, dim> ins1(dp, insertion_info_struct);
 
-  ins1.insert(particle_handler,
-              tr,
-              active_particle_number,
-              property_pool,
-              dp,
-              rhop,
-              g,
-              insertion_info_struct);
+  ins1.insert(
+    particle_handler, tr, property_pool, dp, rhop, insertion_info_struct);
 
 
   int i = 1;
