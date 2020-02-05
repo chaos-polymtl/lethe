@@ -115,7 +115,7 @@ UniformInsertion<dim, spacedim>::insert(
               // ids of new particles
               if (dim == 3)
                 id = i * ny * nz + j * nz + k +
-                     particle_handler.n_global_particles() + 1;
+                     particle_handler.n_global_particles();
               if (dim == 2)
                 id = i * ny + j + particle_handler.n_global_particles();
 

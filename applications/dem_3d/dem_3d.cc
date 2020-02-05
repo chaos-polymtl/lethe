@@ -189,7 +189,6 @@ initilization()
                    cf1,
                    pwcf1,
                    &integ1,
-                   numberOfSteps,
                    dt,
                    nTotal,
                    writeFreq,
