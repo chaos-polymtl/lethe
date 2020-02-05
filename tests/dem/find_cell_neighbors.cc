@@ -28,7 +28,7 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/contact_search.h"
+#include "dem/find_cell_neighbors.h"
 
 using namespace dealii;
 
@@ -41,20 +41,19 @@ test()
   int numRef = 2;
   tr.refine_global(numRef);
   int cellNum = tr.n_active_cells();
-  std::pair<std::vector<
-              std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
-    cellNeighbor;
 
-  ContactSearch<dim, spacedim> cs1;
-  cellNeighbor = cs1.findCellNeighbors(tr);
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+      cellNeighbor;
+
+  FindCellNeighbors<dim, dim> cn1;
+  cellNeighbor = cn1.find_cell_neighbors(tr);
 
   int i = 0;
   for (auto cell = tr.begin_active(); cell != tr.end(); ++cell)
     {
       deallog << "neighbors of cell " << cell << " are: ";
-      for (auto it = (cellNeighbor.first)[i].begin();
-           it != (cellNeighbor.first)[i].end();
+      for (auto it = cellNeighbor[i].begin();
+           it != cellNeighbor[i].end();
            ++it)
         {
           deallog << " " << *it;
