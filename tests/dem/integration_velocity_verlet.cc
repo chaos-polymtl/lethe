@@ -17,7 +17,6 @@
 
 #include "../tests.h"
 #include "dem/contact_search.h"
-#include "dem/particle_insertion.h"
 #include "dem/velocity_verlet_integrator.h"
 
 using namespace dealii;

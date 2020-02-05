@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/particle_insertion.h"
+#include "dem/dem_solver_parameters.h"
 #include "dem/particle_wall_contact_detection.h"
 
 using namespace dealii;

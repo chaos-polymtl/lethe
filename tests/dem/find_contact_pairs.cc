@@ -37,7 +37,6 @@
 
 #include "../tests.h"
 #include "dem/contact_search.h"
-#include "dem/particle_insertion.h"
 
 using namespace dealii;
 
