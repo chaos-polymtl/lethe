@@ -25,7 +25,7 @@
 #include "dem/insertion.h"
 
 #ifndef UNIFORMINSERTION_H_
-#  define UNIFORMINSERTION_H_
+#define UNIFORMINSERTION_H_
 
 /**
  * Uniform insertion of particles in a rectangular box
@@ -36,8 +36,7 @@
  */
 
 template <int dim, int spacedim = dim>
-class UniformInsertion : public Insertion<dim, spacedim>
-{
+class UniformInsertion : public Insertion<dim, spacedim> {
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
@@ -51,8 +50,7 @@ public:
    * particles from the parameter handler file)
    */
   UniformInsertion<dim, spacedim>(
-    double                             dp,
-    InsertionInfoStruct<dim, spacedim> insertion_info_struct);
+      double dp, InsertionInfoStruct<dim, spacedim> insertion_info_struct);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -64,22 +62,16 @@ public:
    * inserted
    * @param tr Triangulation to access the cells in which the particles are
    * inserted
-   * @param active_particle_number Number of active particles inserted so far
    * @param property_pool property pool of particles
    * @param dp Particle diameter
    * @param rhop Density of particles
-   * @param g gravitational acceleration
    * @param insertion_info_struct Information related to the insertion of
    * particles from the parameter handler file)
    */
   virtual void
   insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &       tr,
-         int &                                      active_particle_number,
-         Particles::PropertyPool &                  property_pool,
-         double                                     dp,
-         int                                        rhop,
-         Tensor<1, dim>                             g,
+         const Triangulation<dim, spacedim> &tr,
+         Particles::PropertyPool &property_pool, double dp, int rhop,
          InsertionInfoStruct<dim, spacedim> insertion_info_struct) override;
 };
 
