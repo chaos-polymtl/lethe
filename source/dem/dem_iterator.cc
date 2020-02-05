@@ -105,7 +105,6 @@ DEM_iterator<dim, spacedim>::engine(
   ContactForce<dim, spacedim>                 cf,
   ParticleWallContactForce<dim, spacedim>     pwcf,
   Integrator<dim, spacedim> *                 Integ1,
-  int                                         numberOfSteps,
   double                                      dt,
   int                                         nTotal,
   int                                         writeFreq,

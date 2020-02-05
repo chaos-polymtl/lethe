@@ -57,9 +57,9 @@ test()
 
   int      num_Particles = 2;
   Point<3> position1     = {0.4, 0, 0};
-  int      id1           = 1;
+  int      id1           = 0;
   Point<3> position2     = {0.40499, 0, 0};
-  int      id2           = 2;
+  int      id2           = 1;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
