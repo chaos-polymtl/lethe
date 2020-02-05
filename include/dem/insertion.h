@@ -26,22 +26,18 @@
 using namespace dealii;
 
 #ifndef INSERTION_H_
-#  define INSERTION_H_
+#define INSERTION_H_
 
 /**
  * Base interface for classes that carry out the insertion of particles in the
  * system
  */
 
-template <int dim, int spacedim = dim>
-class Insertion
-{
+template <int dim, int spacedim = dim> class Insertion {
 public:
-  Insertion()
-  {}
+  Insertion() {}
 
-  virtual ~Insertion()
-  {}
+  virtual ~Insertion() {}
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -53,23 +49,17 @@ public:
    * inserted
    * @param tr Triangulation to access the cells in which the particles are
    * inserted
-   * @param active_particle_number Number of active particles inserted so far
    * @param property_pool property pool of particles
    * @param dp Particle diameter
    * @param rhop Density of particles
-   * @param g gravitational acceleration
    * @param insertion_info_struct Information related to the insertion of
    * particles from the parameter handler file)
    */
   virtual void
   insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &       tr,
-         int &                                      active_particle_number,
-         Particles::PropertyPool &                  property_pool,
-         double                                     dp,
-         int                                        rhop,
-         Tensor<1, dim>                             g,
-         InsertionInfoStruct<dim, spacedim>         insertion_info_struct) = 0;
+         const Triangulation<dim, spacedim> &tr,
+         Particles::PropertyPool &property_pool, double dp, int rhop,
+         InsertionInfoStruct<dim, spacedim> insertion_info_struct) = 0;
 };
 
 #endif /* INSERTION_H_ */
