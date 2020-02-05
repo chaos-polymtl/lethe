@@ -36,6 +36,7 @@
 #include <vector>
 
 #include "../tests.h"
+#include "dem/find_cell_neighbors.h"
 #include "dem/contact_search.h"
 
 using namespace dealii;
@@ -60,10 +61,11 @@ test()
 
 
 
-  std::pair<std::vector<
-              std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
-    cellNeighbor = cs1.findCellNeighbors(tr);
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+      cellNeighbor;
+
+  FindCellNeighbors<dim, dim> cn1;
+  cellNeighbor = cn1.find_cell_neighbors(tr);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -96,7 +98,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
+  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor);
 
 
 
