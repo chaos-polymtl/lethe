@@ -78,8 +78,6 @@ initilization()
   std::vector<std::tuple<std::string, int>> properties =
     properties_class.get_properties_name();
 
-  // total number of active particles in the system
-  int active_particle_number = 0;
   // DEM clock
   int                                                 DEM_step = 0;
   float                                               DEM_time = 0;
@@ -175,8 +173,7 @@ initilization()
   // dem engine iterator:
   while (DEM_step < numberOfSteps)
     {
-      iter1.engine(active_particle_number,
-                   particle_handler,
+      iter1.engine(particle_handler,
                    tr,
                    DEM_step,
                    DEM_time,

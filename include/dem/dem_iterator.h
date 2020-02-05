@@ -27,70 +27,36 @@
 #include "dem/particle_wall_contact_force.h"
 
 #ifndef DEMITERATOR_H_
-#  define DEMITERATOR_H_
+#define DEMITERATOR_H_
 
-template <int dim, int spacedim>
-class DEM_iterator
-{
+template <int dim, int spacedim> class DEM_iterator {
 public:
   DEM_iterator<dim, spacedim>();
-  void
-  engine(
-    int &,
-    dealii::Particles::ParticleHandler<dim, spacedim> &,
-    const dealii::Triangulation<dim, spacedim> &,
-    int &,
-    float &,
-    std::pair<
-      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
-      std::vector<typename Triangulation<dim>::active_cell_iterator>>,
-    std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
-    std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &,
-    std::vector<std::tuple<int,
-                           typename Triangulation<dim>::active_cell_iterator,
-                           int,
-                           Point<dim>,
-                           Point<dim>>>,
-    std::vector<
-      std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
-                 Point<dim>,
-                 Point<dim>,
-                 double,
-                 double,
-                 double,
-                 Point<dim>,
-                 double>> &,
-    std::vector<std::tuple<std::string, int>>,
-    dealii::Particles::PropertyPool &,
-    ContactSearch<dim, spacedim>,
-    ParticleWallContactDetection<dim, spacedim>,
-    ContactForce<dim, spacedim>,
-    ParticleWallContactForce<dim, spacedim>,
-    Integrator<dim, spacedim> *,
-    int,
-    double,
-    int,
-    int,
-    Point<dim>,
-    double,
-    int,
-    int,
-    int,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    float,
-    InsertionInfoStruct<dim, spacedim>,
-    int,
-    int);
+  void engine(
+      dealii::Particles::ParticleHandler<dim, spacedim> &,
+      const dealii::Triangulation<dim, spacedim> &, int &, float &,
+      std::pair<std::vector<std::set<
+                    typename Triangulation<dim>::active_cell_iterator>>,
+                std::vector<typename Triangulation<dim>::active_cell_iterator>>,
+      std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
+      std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &,
+      std::vector<
+          std::tuple<int, typename Triangulation<dim>::active_cell_iterator,
+                     int, Point<dim>, Point<dim>>>,
+      std::vector<std::tuple<
+          std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
+          &,
+      std::vector<std::tuple<std::string, int>>,
+      dealii::Particles::PropertyPool &, ContactSearch<dim, spacedim>,
+      ParticleWallContactDetection<dim, spacedim>, ContactForce<dim, spacedim>,
+      ParticleWallContactForce<dim, spacedim>, Integrator<dim, spacedim> *, int,
+      double, int, int, Point<dim>, double, int, int, int, float, float, float,
+      float, float, float, float, float, InsertionInfoStruct<dim, spacedim>,
+      int, int);
 
 private:
-  void
-  forceReinit(Particles::ParticleHandler<dim, spacedim> &);
+  void forceReinit(Particles::ParticleHandler<dim, spacedim> &);
   // void checkSimBound(Particles::ParticleHandler<3, 3> &, ReadInputScript);
 };
 
