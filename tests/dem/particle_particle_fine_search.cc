@@ -16,6 +16,7 @@
 
 #include "../tests.h"
 #include "dem/contact_info_struct.h"
+#include "dem/find_cell_neighbors.h"
 #include "dem/contact_search.h"
 #include "dem/dem_solver_parameters.h"
 
@@ -47,13 +48,13 @@ test()
                                                         n_properties);
 
 
-  std::pair<std::vector<
-              std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
-    cellNeighbor;
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+      cellNeighbor;
+
+  FindCellNeighbors<dim, dim> cn1;
+  cellNeighbor = cn1.find_cell_neighbors(tr);
 
   ContactSearch<dim, dim> cs1;
-  cellNeighbor = cs1.findCellNeighbors(tr);
 
   int      num_Particles = 2;
   Point<3> position1     = {0.4, 0, 0};
@@ -119,7 +120,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor.first);
+  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor);
 
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
