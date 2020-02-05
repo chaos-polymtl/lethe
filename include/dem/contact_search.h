@@ -27,15 +27,12 @@
 
 #include "dem/contact_info_struct.h"
 
-
 using namespace dealii;
 
 #ifndef CONTACTSEARCH_H_
-#  define CONTACTSEARCH_H_
+#define CONTACTSEARCH_H_
 
-template <int dim, int spacedim = dim>
-class ContactSearch
-{
+template <int dim, int spacedim = dim> class ContactSearch {
 public:
   ContactSearch<dim, spacedim>();
 
@@ -52,24 +49,16 @@ public:
   std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
                         Particles::ParticleIterator<dim, spacedim>>>
   findContactPairs(
-    dealii::Particles::ParticleHandler<dim, spacedim> &,
-    const Triangulation<dim, spacedim> &,
-    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>);
+      dealii::Particles::ParticleHandler<dim, spacedim> &,
+      const Triangulation<dim, spacedim> &,
+      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>);
 
-  std::pair<
-    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
-    std::vector<typename Triangulation<dim>::active_cell_iterator>>
-  findCellNeighbors(const Triangulation<dim, spacedim> &);
-
-
-  void
-  fineSearch(
-    std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                          Particles::ParticleIterator<dim, spacedim>>>,
-    std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
-    std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &,
-    float,
-    Particles::ParticleHandler<dim, spacedim> &);
+  void fineSearch(
+      std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                            Particles::ParticleIterator<dim, spacedim>>>,
+      std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
+      std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &, float,
+      Particles::ParticleHandler<dim, spacedim> &);
 
   std::vector<Particles::ParticleIterator<dim, spacedim>>
   pWSearch(dealii::Particles::ParticleHandler<dim, spacedim> &);
