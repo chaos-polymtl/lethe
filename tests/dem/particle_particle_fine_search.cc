@@ -17,7 +17,7 @@
 #include "../tests.h"
 #include "dem/contact_info_struct.h"
 #include "dem/contact_search.h"
-#include "dem/particle_insertion.h"
+#include "dem/dem_solver_parameters.h"
 
 using namespace dealii;
 

@@ -18,7 +18,6 @@
 #include "../tests.h"
 #include "dem/contact_search.h"
 #include "dem/explicit_euler_integrator.h"
-#include "dem/particle_insertion.h"
 
 using namespace dealii;
 

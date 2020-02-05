@@ -15,7 +15,6 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/particle_insertion.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
 
