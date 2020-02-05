@@ -290,26 +290,18 @@ ContactSearch<dim, spacedim>::fineSearch(
                         Particles::ParticleIterator<dim, spacedim>>::iterator
         map_it;
 
-      auto temporary_map = inContactPairs[particle->get_id() - 1];
+      auto temporary_map = inContactPairs[particle->get_id()];
       //    std::cout << "The temporary map size is : " << temporary_map.size()
       //              << std::endl;
 
       for (map_it = temporary_map.begin(); map_it != temporary_map.end();
            map_it++)
-        // while (map_it != inContactPairs[particle->get_id() - 1].end())
+        // while (map_it != inContactPairs[particle->get_id()].end())
         {
           auto particleTwo = map_it->second;
 
           loc1 = particle->get_location();
           loc2 = particleTwo->get_location();
-
-          //   std::cout << particle->get_id() << " " << particleTwo->get_id()
-          //            << std::endl;
-          //  if (particleTwo->get_id() == 0 || particleTwo->get_id() > 1000) {
-          //     std::cout << inContactPairs[particle->get_id() - 1].size()
-          //               << "          fffff "
-          //               << " " << std::endl;
-          //  }
 
           distance = ((particle->get_properties()[2] +
                        particleTwo->get_properties()[2]) /
@@ -361,40 +353,37 @@ ContactSearch<dim, spacedim>::fineSearch(
               double tangRelVel = relVel * tangVec;
               // add this to property of particles // ****************
               double tangOverlap =
-                inContactInfo[particle->get_id() - 1][particleTwo->get_id()]
+                inContactInfo[particle->get_id()][particleTwo->get_id()]
                   .tangOverlap +
                 (tangRelVel * dt);
 
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .normOverlap = distance;
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .normVec = normVec;
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .normRelVel = normRelVel;
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .tangVec = tangVec;
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .tangRelVel = tangRelVel;
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .tangOverlap = tangOverlap;
 
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .particleI = particle;
-              (inContactInfo[particle->get_id() - 1])[particleTwo->get_id()]
+              (inContactInfo[particle->get_id()])[particleTwo->get_id()]
                 .particleJ = particleTwo;
             }
           else
             {
-              //(inContactPairs[particle->get_id() -
-              // 1]).erase(particleTwo->get_id());auto map_it3 =
-              // inContactPairs[(contactPairs[i].second)->get_id() - 1].find(
-              //(inContactInfo[particle->get_id() -
-              // 1]).erase(particleTwo->get_id());
-              //(inContactPairs[particle->get_id() - 1]).erase(map_it);
-              (inContactPairs[particle->get_id() - 1])
-                .erase(particleTwo->get_id());
-              (inContactInfo[particle->get_id() - 1])
-                .erase(particleTwo->get_id());
+              //(inContactPairs[particle->get_id()]).erase(particleTwo->get_id());auto
+              // map_it3 =
+              // inContactPairs[(contactPairs[i].second)->get_id()].find(
+              //(inContactInfo[particle->get_id()]).erase(particleTwo->get_id());
+              //(inContactPairs[particle->get_id()]).erase(map_it);
+              (inContactPairs[particle->get_id()]).erase(particleTwo->get_id());
+              (inContactInfo[particle->get_id()]).erase(particleTwo->get_id());
             }
           //     searchPair.push_back(std::get<0>(contactInfo[i]));
 
@@ -419,18 +408,17 @@ ContactSearch<dim, spacedim>::fineSearch(
 
       if (distance > 0)
         {
-          auto map_it2 =
-            inContactPairs[(contactPairs[i].first)->get_id() - 1].find(
-              (contactPairs[i].second)->get_id());
+          auto map_it2 = inContactPairs[(contactPairs[i].first)->get_id()].find(
+            (contactPairs[i].second)->get_id());
           auto map_it3 =
-            inContactPairs[(contactPairs[i].second)->get_id() - 1].find(
+            inContactPairs[(contactPairs[i].second)->get_id()].find(
               (contactPairs[i].first)->get_id());
           if (map_it2 ==
-                inContactPairs[(contactPairs[i].first)->get_id() - 1].end() &&
+                inContactPairs[(contactPairs[i].first)->get_id()].end() &&
               map_it3 ==
-                inContactPairs[(contactPairs[i].second)->get_id() - 1].end())
+                inContactPairs[(contactPairs[i].second)->get_id()].end())
             {
-              inContactPairs[(contactPairs[i].first)->get_id() - 1].insert(
+              inContactPairs[(contactPairs[i].first)->get_id()].insert(
                 {(contactPairs[i].second)->get_id(), contactPairs[i].second});
               //    std::cout << (contactPairs[i].first)->get_id() << " "
               //            << (contactPairs[i].second)->get_id() << std::endl;
@@ -492,7 +480,7 @@ ContactSearch<dim, spacedim>::fineSearch(
               contactInfo.tangOverlap = tangOverlap;
               contactInfo.particleI   = contactPairs[i].first;
               contactInfo.particleJ   = contactPairs[i].second;
-              inContactInfo[(contactPairs[i].first)->get_id() - 1].insert(
+              inContactInfo[(contactPairs[i].first)->get_id()].insert(
                 {(contactPairs[i].second)->get_id(), contactInfo});
 
               //     std::cout << contactInfo.particleI->get_id() << " "
