@@ -1,2 +1,0 @@
-/usr/bin/ar qc liblethe-solvers.a  CMakeFiles/lethe-solvers.dir/analytical_solutions.cc.o CMakeFiles/lethe-solvers.dir/boundary_conditions.cc.o CMakeFiles/lethe-solvers.dir/gd_navier_stokes.cc.o CMakeFiles/lethe-solvers.dir/gls_navier_stokes.cc.o CMakeFiles/lethe-solvers.dir/initial_conditions.cc.o CMakeFiles/lethe-solvers.dir/manifolds.cc.o CMakeFiles/lethe-solvers.dir/navier_stokes_base.cc.o CMakeFiles/lethe-solvers.dir/navier_stokes_solver_parameters.cc.o CMakeFiles/lethe-solvers.dir/source_terms.cc.o
-/usr/bin/ranlib liblethe-solvers.a
