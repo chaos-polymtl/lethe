@@ -46,12 +46,6 @@ public:
       std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>);
   */
 
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
-  findContactPairs(
-      dealii::Particles::ParticleHandler<dim, spacedim> &,
-      const Triangulation<dim, spacedim> &,
-      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>);
 
   void fineSearch(
       std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,

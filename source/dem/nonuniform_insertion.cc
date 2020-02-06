@@ -89,6 +89,9 @@ void NonUniformInsertion<dim, spacedim>::insert(
             // Obtaning position of the inserted particle
             // In non-uniform insertion, two random numbers are created and
             // added to the position of particles
+
+            // This numbers 101 and 400 are hard-coded, I will fix them when
+            // adding new paramters to the parameter handler file
             int randNum1 = rand() % 101;
             int randNum2 = rand() % 101;
             position[0] = insertion_info_struct.x_min + (dp / 2) +

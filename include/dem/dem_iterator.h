@@ -25,6 +25,7 @@
 #include "dem/integrator.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
+#include "dem/pp_broad_search.h"
 
 #ifndef DEMITERATOR_H_
 #define DEMITERATOR_H_
@@ -35,7 +36,8 @@ public:
   void engine(
       dealii::Particles::ParticleHandler<dim, spacedim> &,
       const dealii::Triangulation<dim, spacedim> &, int &, float &,
-      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+          &,
       std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
       std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &,
       std::vector<
@@ -51,7 +53,7 @@ public:
       ParticleWallContactForce<dim, spacedim>, Integrator<dim, spacedim> *,
       double, int, int, Point<dim>, double, int, int, int, float, float, float,
       float, float, float, float, float, InsertionInfoStruct<dim, spacedim>,
-      int, int);
+      int, int, PPBroadSearch<dim, spacedim>);
 
 private:
   void forceReinit(Particles::ParticleHandler<dim, spacedim> &);

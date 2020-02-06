@@ -16,6 +16,7 @@
 
 #include "../tests.h"
 #include "dem/find_cell_neighbors.h"
+#include "dem/pp_broad_search.h"
 #include "dem/contact_force.h"
 #include "dem/contact_search.h"
 
@@ -62,6 +63,7 @@ test()
   cellNeighbor = cn1.find_cell_neighbors(tr);
 
   ContactSearch<dim, dim> cs1;
+        PPBroadSearch<dim, dim> ppbs;
 
 
   Point<3> position1     = {0.4, 0, 0};
@@ -128,7 +130,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor);
+  pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
                                                           inContactPairs(num_Particles);
