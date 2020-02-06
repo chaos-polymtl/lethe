@@ -69,7 +69,7 @@ void DEM_iterator<dim, spacedim>::engine(
     Particles::ParticleHandler<dim, spacedim> &particle_handler,
     const Triangulation<dim, spacedim> &tr, int &step, float &time,
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-        cellNeighbor,
+        &cellNeighbor,
     std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
         &inContactPairs,
     std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &inContactInfo,
@@ -89,7 +89,7 @@ void DEM_iterator<dim, spacedim>::engine(
     Point<dim> g, double dp, int rhop, int Yp, int Yw, float vp, float vw,
     float ep, float ew, float mup, float muw, float murp, float murw,
     InsertionInfoStruct<dim, spacedim> insertion_info_struct, int numFields,
-    int numProperties) {
+    int numProperties, PPBroadSearch<dim, spacedim> ppbs) {
   // moving walls
 
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -124,7 +124,8 @@ void DEM_iterator<dim, spacedim>::engine(
   auto t3 = std::chrono::high_resolution_clock::now();
   // if (fmod(step,10) == 1)
   //      {
-  contactPairs = cs.findContactPairs(particle_handler, tr, cellNeighbor);
+  // contactPairs = cs.findContactPairs(particle_handler, tr, cellNeighbor);
+  contactPairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
   //  }
   auto t4 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactPairs =
