@@ -41,6 +41,9 @@ FindCellNeighbors<dim, spacedim>::find_cell_neighbors(
   for (typename Triangulation<dim>::active_cell_iterator cell =
            tr.begin_active();
        cell != tr.end(); ++cell, ++cell_number_iterator) {
+
+    // The first element of each set (each element of the vector) is the cell
+    // itself.
     cellNeighborList[cell_number_iterator].insert(cell);
     totall_cell_list.push_back(cell);
 
