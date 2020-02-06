@@ -18,6 +18,7 @@
 #include "dem/contact_info_struct.h"
 #include "dem/find_cell_neighbors.h"
 #include "dem/contact_search.h"
+#include "dem/pp_broad_search.h"
 #include "dem/dem_solver_parameters.h"
 
 using namespace dealii;
@@ -55,6 +56,7 @@ test()
   cellNeighbor = cn1.find_cell_neighbors(tr);
 
   ContactSearch<dim, dim> cs1;
+    PPBroadSearch<dim, dim> ppbs;
 
   int      num_Particles = 2;
   Point<3> position1     = {0.4, 0, 0};
@@ -120,7 +122,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor);
+  pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
 
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>

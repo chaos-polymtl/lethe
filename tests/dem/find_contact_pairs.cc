@@ -37,7 +37,7 @@
 
 #include "../tests.h"
 #include "dem/find_cell_neighbors.h"
-#include "dem/contact_search.h"
+#include "dem/pp_broad_search.h"
 
 using namespace dealii;
 
@@ -57,7 +57,7 @@ test()
   MappingQ1<dim> mapping;
 
 
-  ContactSearch<dim, dim> cs1;
+  PPBroadSearch<dim, dim> ppbs;
 
 
 
@@ -98,7 +98,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
                         Particles::ParticleIterator<dim, dim>>>
     pairs;
-  pairs = cs1.findContactPairs(particle_handler, tr, cellNeighbor);
+  pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
 
 
 

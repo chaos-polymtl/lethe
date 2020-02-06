@@ -59,6 +59,7 @@
 #include "dem/find_cell_neighbors.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/particle_wall_contact_detection.h"
+#include "dem/pp_broad_search.h"
 #include "dem/velocity_verlet_integrator.h"
 
 using namespace dealii;
@@ -118,6 +119,7 @@ template <int dim, int spacedim> void initilization() {
 
   ParticleWallContactForce<dim, spacedim> pwcf1;
   VelocityVerletIntegrator<dim, spacedim> integ1;
+  PPBroadSearch<dim, spacedim> ppbs;
 
   // reading parameters from parameter handler file:
   const int numberOfSteps = DEMparam.simulationControl.tFinal;
@@ -166,7 +168,7 @@ template <int dim, int spacedim> void initilization() {
                  properties, property_pool, cs1, pw1, cf1, pwcf1, &integ1, dt,
                  nTotal, writeFreq, g, dp, rhop, Yp, Yw, vp, vw, ep, ew, mup,
                  muw, murp, murw, insertion_info_struct, numFields,
-                 numProperties);
+                 numProperties, ppbs);
   }
 }
 
