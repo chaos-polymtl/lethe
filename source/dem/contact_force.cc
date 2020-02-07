@@ -54,28 +54,29 @@ void ContactForce<dim, spacedim>::linearCF(
                 (sqrt(pow(3.1415, 2.0) + pow(log(ep), 2.0)));
       }
 
-      Point<dim> springNormForce =
+      Tensor<1, dim> springNormForce =
           (kn * info_it->second.normal_overlap) * info_it->second.normal_vector;
-      Point<dim> dashpotNormForce =
+      Tensor<1, dim> dashpotNormForce =
           (ethan * info_it->second.normal_relative_velocity) *
           info_it->second.normal_vector;
 
-      Point<dim> normalForce;
+      Tensor<1, dim> normalForce;
       normalForce = springNormForce + dashpotNormForce;
 
-      Point<dim> springTangForce = (kt * info_it->second.tangential_overlap) *
-                                   info_it->second.tangential_vector;
-      Point<dim> dashpotTangForce =
+      Tensor<1, dim> springTangForce =
+          (kt * info_it->second.tangential_overlap) *
+          info_it->second.tangential_vector;
+      Tensor<1, dim> dashpotTangForce =
           (ethat * info_it->second.tangential_relative_velocity) *
           info_it->second.tangential_vector;
 
-      Point<dim> tangForce;
+      Tensor<1, dim> tangForce;
       tangForce = springTangForce + dashpotTangForce;
 
       if (tangForce.norm() < (mup * normalForce.norm())) {
         totalForce = normalForce + tangForce;
       } else {
-        Point<dim> coulumbTangForce =
+        Tensor<1, dim> coulumbTangForce =
             (mup * normalForce.norm() *
              boost::math::sign(info_it->second.tangential_overlap)) *
             info_it->second.tangential_vector;
@@ -99,26 +100,26 @@ void ContactForce<dim, spacedim>::linearCF(
 
       // calculation of torque
       /*
-       Point<dim> torqueTi;
+       Tensor<1, dim>  torqueTi;
        torqueTi =
      ((std::get<0>(contactInfo[i]).first->get_properties()[2])/2.0) *
-     cross_product_3d( std::get<2>(contactInfo[i]) , totalForce); Point<dim>
+     cross_product_3d( std::get<2>(contactInfo[i]) , totalForce); Tensor<1, dim>
      torqueTj; torqueTj =
      ((std::get<0>(contactInfo[i]).second->get_properties()[2])/2.0) *
      cross_product_3d( std::get<2>(contactInfo[i]) , -1.0*totalForce);
-      Point<dim> omegai =
+      Tensor<1, dim>  omegai =
      {std::get<0>(contactInfo[i]).first->get_properties()[16] ,
      std::get<0>(contactInfo[i]).first->get_properties()[17] ,
-     std::get<0>(contactInfo[i]).first->get_properties()[18]}; Point<dim>
+     std::get<0>(contactInfo[i]).first->get_properties()[18]}; Tensor<1, dim>
      omegaj = {std::get<0>(contactInfo[i]).second->get_properties()[16] ,
      std::get<0>(contactInfo[i]).second->get_properties()[17] ,
      std::get<0>(contactInfo[i]).second->get_properties()[18]};
 
-      Point<dim> omegaij = {0.0, 0.0, 0.0};
+      Tensor<1, dim>  omegaij = {0.0, 0.0, 0.0};
       double omegaNorm = (omegai - omegaj).norm();
       if(omegaNorm != 0)
       {omegaij = (omegai - omegaj) / omegaNorm ;}
-      Point<dim> torquer;
+      Tensor<1, dim>  torquer;
      torquer = -1.0 * murp * rEff * normalForce.norm() * omegaij;
      std::get<0>(contactInfo[i]).first->get_properties()[21] = torqueTi[0] +
      torquer[0]; std::get<0>(contactInfo[i]).first->get_properties()[22] =
@@ -147,7 +148,7 @@ void ContactForce<dim, spacedim>::nonLinearCF(
     info_it = inContactInfo[i].begin();
 
     while (info_it != inContactInfo[i].end()) {
-      Point<dim> totalForce;
+      Tensor<1, dim> totalForce;
       double mEff = (info_it->second.particle_one->get_properties()[19] *
                      info_it->second.particle_two->get_properties()[19]) /
                     (info_it->second.particle_one->get_properties()[19] +
@@ -166,28 +167,29 @@ void ContactForce<dim, spacedim>::nonLinearCF(
       double kt = 8.0 * gEff * sqrt(rEff * info_it->second.normal_overlap);
       double ethat = -1.8257 * betha * sqrt(st * mEff);
 
-      Point<dim> springNormForce =
+      Tensor<1, dim> springNormForce =
           (kn * info_it->second.normal_overlap) * info_it->second.normal_vector;
-      Point<dim> dashpotNormForce =
+      Tensor<1, dim> dashpotNormForce =
           (ethan * info_it->second.normal_relative_velocity) *
           info_it->second.normal_vector;
 
-      Point<dim> normalForce;
+      Tensor<1, dim> normalForce;
       normalForce = springNormForce + dashpotNormForce;
 
-      Point<dim> springTangForce = (kt * info_it->second.tangential_overlap) *
-                                   info_it->second.tangential_vector;
-      Point<dim> dashpotTangForce =
+      Tensor<1, dim> springTangForce =
+          (kt * info_it->second.tangential_overlap) *
+          info_it->second.tangential_vector;
+      Tensor<1, dim> dashpotTangForce =
           (ethat * info_it->second.tangential_relative_velocity) *
           info_it->second.tangential_vector;
 
-      Point<dim> tangForce;
+      Tensor<1, dim> tangForce;
       tangForce = springTangForce + dashpotTangForce;
 
       if (tangForce.norm() < (mup * normalForce.norm())) {
         totalForce = normalForce + tangForce;
       } else {
-        Point<dim> coulumbTangForce =
+        Tensor<1, dim> coulumbTangForce =
             (mup * normalForce.norm() *
              boost::math::sign(info_it->second.tangential_overlap)) *
             info_it->second.tangential_vector;
@@ -209,26 +211,26 @@ void ContactForce<dim, spacedim>::nonLinearCF(
 
       // calculation of torque
       /*
-       Point<dim> torqueTi;
+       Tensor<1, dim>  torqueTi;
        torqueTi =
      ((std::get<0>(contactInfo[i]).first->get_properties()[2])/2.0) *
-     cross_product_3d( std::get<2>(contactInfo[i]) , totalForce); Point<dim>
+     cross_product_3d( std::get<2>(contactInfo[i]) , totalForce); Tensor<1, dim>
      torqueTj; torqueTj =
      ((std::get<0>(contactInfo[i]).second->get_properties()[2])/2.0) *
      cross_product_3d( std::get<2>(contactInfo[i]) , -1.0*totalForce);
-      Point<dim> omegai =
+      Tensor<1, dim>  omegai =
      {std::get<0>(contactInfo[i]).first->get_properties()[16] ,
      std::get<0>(contactInfo[i]).first->get_properties()[17] ,
-     std::get<0>(contactInfo[i]).first->get_properties()[18]}; Point<dim>
+     std::get<0>(contactInfo[i]).first->get_properties()[18]}; Tensor<1, dim>
      omegaj = {std::get<0>(contactInfo[i]).second->get_properties()[16] ,
      std::get<0>(contactInfo[i]).second->get_properties()[17] ,
      std::get<0>(contactInfo[i]).second->get_properties()[18]};
 
-      Point<dim> omegaij = {0.0, 0.0, 0.0};
+      Tensor<1, dim>  omegaij = {0.0, 0.0, 0.0};
       double omegaNorm = (omegai - omegaj).norm();
       if(omegaNorm != 0)
       {omegaij = (omegai - omegaj) / omegaNorm ;}
-      Point<dim> torquer;
+      Tensor<1, dim>  torquer;
      torquer = -1.0 * murp * rEff * normalForce.norm() * omegaij;
      std::get<0>(contactInfo[i]).first->get_properties()[21] = torqueTi[0] +
      torquer[0]; std::get<0>(contactInfo[i]).first->get_properties()[22] =

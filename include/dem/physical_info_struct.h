@@ -16,28 +16,34 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <deal.II/base/tensor.h>
-#include <deal.II/particles/particle_iterator.h>
 
-#ifndef CONTACTINFOSTRUCT_H_
-#define CONTACTINFOSTRUCT_H_
+
+#include <deal.II/base/tensor.h>
+
+#ifndef PHYSICALINFOSTRUCT_H_
+#define PHYSICALINFOSTRUCT_H_
 
 /**
- * This struct handles the information related to the calculation of the
- * particle-particle contact force
+ * This struct handles the information related to the physical
+ * properties of the simulation including particle and wall properties
  */
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct contact_info_struct {
-  double normal_overlap;
-  Tensor<1, dim> normal_vector;
-  double normal_relative_velocity;
-  Tensor<1, dim> tangential_vector;
-  double tangential_relative_velocity;
-  double tangential_overlap;
-  Particles::ParticleIterator<dim, spacedim> particle_one;
-  Particles::ParticleIterator<dim, spacedim> particle_two;
+template <int dim> struct physical_info_struct {
+  Tensor<1, dim> g;
+  double particle_diameter;
+  int particle_density;
+  int Young_modulus_particle;
+  int Young_modulus_wall;
+  double Poisson_ratio_particle;
+  double Poisson_ratio_wall;
+  double restitution_coefficient_particle;
+  double restitution_coefficient_wall;
+  double friction_coefficient_particle;
+  double friction_coefficient_wall;
+  double rolling_friction_coefficient_particle;
+  double rolling_friction_coefficient_particle;
 };
 
-#endif /* CONTACTINFOSTRUCT_H_ */
+#endif /* PHYSICALINFOSTRUCT_H_ */
