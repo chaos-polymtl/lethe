@@ -72,7 +72,8 @@ void DEM_iterator<dim, spacedim>::engine(
         &cellNeighbor,
     std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
         &inContactPairs,
-    std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &inContactInfo,
+    std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+        &inContactInfo,
     std::vector<
         std::tuple<int, typename Triangulation<dim>::active_cell_iterator, int,
                    Point<dim>, Point<dim>>>
@@ -81,7 +82,7 @@ void DEM_iterator<dim, spacedim>::engine(
         std::pair<Particles::ParticleIterator<dim, spacedim>, int>, Point<dim>,
         Point<dim>, double, double, double, Point<dim>, double>> &pwContactInfo,
     std::vector<std::tuple<std::string, int>> properties,
-    Particles::PropertyPool &property_pool, ContactSearch<dim, spacedim> cs,
+    Particles::PropertyPool &property_pool,
     ParticleWallContactDetection<dim, spacedim> pw,
     ContactForce<dim, spacedim> cf,
     ParticleWallContactForce<dim, spacedim> pwcf,
@@ -89,7 +90,8 @@ void DEM_iterator<dim, spacedim>::engine(
     Point<dim> g, double dp, int rhop, int Yp, int Yw, float vp, float vw,
     float ep, float ew, float mup, float muw, float murp, float murw,
     InsertionInfoStruct<dim, spacedim> insertion_info_struct, int numFields,
-    int numProperties, PPBroadSearch<dim, spacedim> ppbs) {
+    int numProperties, PPBroadSearch<dim, spacedim> ppbs,
+    PPFineSearch<dim, spacedim> ppfs) {
   // moving walls
 
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -113,27 +115,28 @@ void DEM_iterator<dim, spacedim>::engine(
   auto duration_Insertion =
       std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
-  // contact search
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
-      contactPairs;
-
   // force reinitilization
   forceReinit(particle_handler);
 
+  // contact search
+
   auto t3 = std::chrono::high_resolution_clock::now();
-  // if (fmod(step,10) == 1)
-  //      {
-  // contactPairs = cs.findContactPairs(particle_handler, tr, cellNeighbor);
-  contactPairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
-  //  }
+  // if (fmod(step, 10) == 1) {
+  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
+                        Particles::ParticleIterator<dim, spacedim>>>
+      contact_pair_candidates;
+
+  contact_pair_candidates =
+      ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
+  //}
   auto t4 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactPairs =
       std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
 
   auto t5 = std::chrono::high_resolution_clock::now();
-  cs.fineSearch(contactPairs, inContactPairs, inContactInfo, dt,
-                particle_handler);
+  ppfs.pp_Fine_Search(contact_pair_candidates, inContactPairs, inContactInfo,
+                      dt, particle_handler);
+
   auto t6 = std::chrono::high_resolution_clock::now();
   auto duration_PPFineSearch =
       std::chrono::duration_cast<std::chrono::microseconds>(t6 - t5).count();
@@ -153,10 +156,9 @@ void DEM_iterator<dim, spacedim>::engine(
       pwContactList;
 
   auto t9 = std::chrono::high_resolution_clock::now();
-  // if (fmod(step,10) == 1)
-  //{
+  // if (fmod(step, 10) == 1) {
   pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
-  // }
+  //}
   auto t10 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactPairs =
       std::chrono::duration_cast<std::chrono::microseconds>(t10 - t9).count();
