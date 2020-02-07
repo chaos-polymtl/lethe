@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/contact_search.h"
 #include "dem/explicit_euler_integrator.h"
 
 using namespace dealii;

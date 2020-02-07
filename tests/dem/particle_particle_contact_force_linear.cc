@@ -18,7 +18,7 @@
 #include "dem/find_cell_neighbors.h"
 #include "dem/pp_broad_search.h"
 #include "dem/contact_force.h"
-#include "dem/contact_search.h"
+#include "dem/pp_fine_search.h"
 
 using namespace dealii;
 
@@ -63,8 +63,8 @@ test()
   FindCellNeighbors<dim, dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);
 
-  ContactSearch<dim, dim> cs1;
       PPBroadSearch<dim, dim> ppbs;
+          PPFineSearch<dim, dim> ppfs;
 
 
   Point<3> position1     = {0.4, 0, 0};
@@ -136,11 +136,15 @@ test()
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
                                                           inContactPairs(num_Particles);
-  std::vector<std::map<int, ContactInfoStruct<dim, dim>>> inContactInfo(
+  std::vector<std::map<int, contact_info_struct<dim, dim>>> inContactInfo(
     num_Particles);
 
 
-  cs1.fineSearch(pairs, inContactPairs, inContactInfo, dt, particle_handler);
+  ppfs.pp_Fine_Search(pairs,
+                 inContactPairs,
+                 inContactInfo,
+                 dt,
+                 particle_handler);
   ContactForce<dim> cf1;
   cf1.linearCF(inContactInfo, Yp, vp, ep, mup, murp);
 
