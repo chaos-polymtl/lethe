@@ -1,5 +1,4 @@
 #include "dem/pp_broad_search.h"
-#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
@@ -19,7 +18,7 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
                         Particles::ParticleIterator<dim, spacedim>>>
       contact_pair_candidates;
 
-  // An counter for counting the cells
+  // A counter for counting the cells
   int cell_number_counter = 0;
 
   // Looping over cell_neighbor_list
@@ -103,6 +102,8 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
   return contact_pair_candidates;
 }
 
+// These are old EXTREMELY unefficient methods for broad search I had written
+// earlier
 // 2nd method:
 /*
 template <int dim, int spacedim>

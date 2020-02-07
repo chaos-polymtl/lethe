@@ -24,15 +24,15 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct ContactInfoStruct {
-  double normOverlap;
-  Point<dim> normVec;
-  double normRelVel;
-  Point<dim> tangVec;
-  double tangRelVel;
-  double tangOverlap;
-  Particles::ParticleIterator<dim, spacedim> particleI;
-  Particles::ParticleIterator<dim, spacedim> particleJ;
+template <int dim, int spacedim> struct contact_info_struct {
+  double normal_overlap;
+  Point<dim> normal_vector;
+  double normal_relative_velocity;
+  Point<dim> tangential_vector;
+  double tangential_relative_velocity;
+  double tangential_overlap;
+  Particles::ParticleIterator<dim, spacedim> particle_one;
+  Particles::ParticleIterator<dim, spacedim> particle_two;
 };
 
 #endif /* CONTACTINFOSTRUCT_H_ */

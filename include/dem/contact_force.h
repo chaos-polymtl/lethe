@@ -29,34 +29,20 @@
 #include "dem/contact_info_struct.h"
 #include "dem/dem_solver_parameters.h"
 
-
-
 using namespace dealii;
 
 #ifndef CONTACTFORCE_H_
-#  define CONTACTFORCE_H_
+#define CONTACTFORCE_H_
 
-template <int dim, int spacedim = dim>
-class ContactForce
-{
+template <int dim, int spacedim = dim> class ContactForce {
 public:
   ContactForce<dim, spacedim>();
-  void
-  linearCF(std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>>,
-           int,
-           float,
-           float,
-           float,
-           float);
+  void linearCF(std::vector<std::map<int, contact_info_struct<dim, spacedim>>>,
+                int, float, float, float, float);
 
   void
-  nonLinearCF(std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>>,
-              int,
-              float,
-              float,
-              float);
-
-
+  nonLinearCF(std::vector<std::map<int, contact_info_struct<dim, spacedim>>>,
+              int, float, float, float);
 
 private:
 };
