@@ -17,9 +17,9 @@
 #include "../tests.h"
 #include "dem/contact_info_struct.h"
 #include "dem/find_cell_neighbors.h"
-#include "dem/contact_search.h"
 #include "dem/pp_broad_search.h"
 #include "dem/dem_solver_parameters.h"
+#include "dem/pp_fine_search.h"
 
 using namespace dealii;
 
@@ -55,14 +55,15 @@ test()
   FindCellNeighbors<dim, dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);
 
-  ContactSearch<dim, dim> cs1;
     PPBroadSearch<dim, dim> ppbs;
+    PPFineSearch<dim, dim> ppfs;
 
   int      num_Particles = 2;
   Point<3> position1     = {0.4, 0, 0};
   int      id1           = 0;
   Point<3> position2     = {0.40499, 0, 0};
   int      id2           = 1;
+    float              dt           = 0.00001;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
@@ -127,38 +128,38 @@ test()
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
                                                           inContactPairs(num_Particles);
-  std::vector<std::map<int, ContactInfoStruct<dim, dim>>> inContactInfo(
+  std::vector<std::map<int, contact_info_struct<dim, dim>>> inContactInfo(
     num_Particles);
 
 
-  cs1.fineSearch(pairs,
+  ppfs.pp_Fine_Search(pairs,
                  inContactPairs,
                  inContactInfo,
-                 DEMparam.simulationControl.dt,
+                 dt,
                  particle_handler);
 
-  typename std::map<int, ContactInfoStruct<dim, dim>>::iterator info_it;
+  typename std::map<int, contact_info_struct<dim, dim>>::iterator info_it;
   for (unsigned int i = 0; i < inContactInfo.size(); i++)
     {
       info_it = inContactInfo[i].begin();
       while (info_it != inContactInfo[i].end())
         {
           deallog << "The normal overlap of contacting paritlce is: "
-                  << info_it->second.normOverlap << std::endl;
+                  << info_it->second.normal_overlap << std::endl;
           deallog << "The normal vector of collision is: "
-                  << info_it->second.normVec[0] << " "
-                  << info_it->second.normVec[1] << " "
-                  << info_it->second.normVec[2] << std::endl;
+                  << info_it->second.normal_vector[0] << " "
+                  << info_it->second.normal_vector[1] << " "
+                  << info_it->second.normal_vector[2] << std::endl;
           deallog << "Normal relative velocity at contact point is: "
-                  << info_it->second.normRelVel << std::endl;
+                  << info_it->second.normal_relative_velocity << std::endl;
           deallog << "The tangential overlap of contacting paritlce is: "
-                  << info_it->second.tangOverlap << std::endl;
+                  << info_it->second.tangential_overlap << std::endl;
           deallog << "The tangential vector of collision is: "
-                  << info_it->second.tangVec[0] << " "
-                  << info_it->second.tangVec[1] << " "
-                  << info_it->second.tangVec[2] << std::endl;
+                  << info_it->second.tangential_vector[0] << " "
+                  << info_it->second.tangential_vector[1] << " "
+                  << info_it->second.tangential_vector[2] << std::endl;
           deallog << "Tangential relative velocity at contact point is: "
-                  << info_it->second.tangRelVel << std::endl;
+                  << info_it->second.tangential_relative_velocity << std::endl;
           info_it++;
         }
     }
