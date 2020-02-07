@@ -51,7 +51,6 @@
 #include <vector>
 
 #include "dem/contact_info_struct.h"
-#include "dem/contact_search.h"
 #include "dem/dem.h"
 #include "dem/dem_iterator.h"
 #include "dem/dem_properties.h"
@@ -60,6 +59,7 @@
 #include "dem/insertion_info_struct.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/pp_broad_search.h"
+#include "dem/pp_fine_search.h"
 #include "dem/velocity_verlet_integrator.h"
 
 using namespace dealii;
@@ -94,15 +94,14 @@ template <int dim, int spacedim> void initilization() {
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
       cellNeighbor;
-  ContactSearch<dim, spacedim> cs1;
+
   FindCellNeighbors<dim, spacedim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);
-  // cellNeighbor = cs1.findCellNeighbors(tr);
 
   DEM_iterator<dim, spacedim> iter1;
   std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
       inContactPairs(DEMparam.simulationControl.nTotal);
-  std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> inContactInfo(
+  std::vector<std::map<int, contact_info_struct<dim, spacedim>>> inContactInfo(
       DEMparam.simulationControl.nTotal);
   std::vector<std::tuple<
       std::pair<Particles::ParticleIterator<dim, spacedim>, int>, Point<dim>,
@@ -120,6 +119,7 @@ template <int dim, int spacedim> void initilization() {
   ParticleWallContactForce<dim, spacedim> pwcf1;
   VelocityVerletIntegrator<dim, spacedim> integ1;
   PPBroadSearch<dim, spacedim> ppbs;
+  PPFineSearch<dim, spacedim> ppfs;
 
   // reading parameters from parameter handler file:
   const int numberOfSteps = DEMparam.simulationControl.tFinal;
@@ -165,10 +165,10 @@ template <int dim, int spacedim> void initilization() {
   while (DEM_step < numberOfSteps) {
     iter1.engine(particle_handler, tr, DEM_step, DEM_time, cellNeighbor,
                  inContactPairs, inContactInfo, boundaryCellInfo, pwContactInfo,
-                 properties, property_pool, cs1, pw1, cf1, pwcf1, &integ1, dt,
+                 properties, property_pool, pw1, cf1, pwcf1, &integ1, dt,
                  nTotal, writeFreq, g, dp, rhop, Yp, Yw, vp, vw, ep, ew, mup,
                  muw, murp, murw, insertion_info_struct, numFields,
-                 numProperties, ppbs);
+                 numProperties, ppbs, ppfs);
   }
 }
 

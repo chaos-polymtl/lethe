@@ -19,13 +19,13 @@
 
 #include "dem/contact_force.h"
 #include "dem/contact_info_struct.h"
-#include "dem/contact_search.h"
 #include "dem/dem_solver_parameters.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/integrator.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
 #include "dem/pp_broad_search.h"
+#include "dem/pp_fine_search.h"
 
 #ifndef DEMITERATOR_H_
 #define DEMITERATOR_H_
@@ -39,7 +39,7 @@ public:
       std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
           &,
       std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
-      std::vector<std::map<int, ContactInfoStruct<dim, spacedim>>> &,
+      std::vector<std::map<int, contact_info_struct<dim, spacedim>>> &,
       std::vector<
           std::tuple<int, typename Triangulation<dim>::active_cell_iterator,
                      int, Point<dim>, Point<dim>>>,
@@ -48,12 +48,12 @@ public:
           Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
           &,
       std::vector<std::tuple<std::string, int>>,
-      dealii::Particles::PropertyPool &, ContactSearch<dim, spacedim>,
+      dealii::Particles::PropertyPool &,
       ParticleWallContactDetection<dim, spacedim>, ContactForce<dim, spacedim>,
       ParticleWallContactForce<dim, spacedim>, Integrator<dim, spacedim> *,
       double, int, int, Point<dim>, double, int, int, int, float, float, float,
       float, float, float, float, float, InsertionInfoStruct<dim, spacedim>,
-      int, int, PPBroadSearch<dim, spacedim>);
+      int, int, PPBroadSearch<dim, spacedim>, PPFineSearch<dim, spacedim>);
 
 private:
   void forceReinit(Particles::ParticleHandler<dim, spacedim> &);
