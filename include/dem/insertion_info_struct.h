@@ -19,14 +19,16 @@
 #include <deal.II/base/point.h>
 
 #ifndef INSERTIONINFOSTRUCT_H_
-#  define INSERTIONINFOSTRUCT_H_
+#define INSERTIONINFOSTRUCT_H_
+
+/**
+ * This struct handles the information related to the insertion
+ * of particles
+ */
 
 using namespace dealii;
 
-// Handles the parameters related to the insertion of particles
-template <int dim, int spacedim>
-struct InsertionInfoStruct
-{
+template <int dim, int spacedim> struct InsertionInfoStruct {
   // Number of insertion phase time steps
   int insertion_steps_number;
 
