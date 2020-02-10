@@ -22,62 +22,34 @@
 
 #include <math.h>
 
+#include "dem/dem_solver_parameters.h"
+#include "dem/physical_info_struct.h"
 #include <iostream>
 #include <tuple>
 #include <vector>
 
-#include "dem/dem_solver_parameters.h"
-
 using namespace dealii;
 
 #ifndef PWCONTACTFORCE_H_
-#  define PWCONTACTFORCE_H_
+#define PWCONTACTFORCE_H_
 
-template <int dim, int spacedim>
-class ParticleWallContactForce
-{
+template <int dim, int spacedim> class ParticleWallContactForce {
 public:
   ParticleWallContactForce<dim, spacedim>();
-  void
-  pwLinearCF(
-    std::vector<std::tuple<
-      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Point<dim>,
-      Point<dim>,
-      double,
-      double,
-      double,
-      Point<dim>,
-      double>>,
-    float,
-    int,
-    float,
-    float,
-    float,
-    float,
-    float);
+  void pwLinearCF(
+      std::vector<std::tuple<
+          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>,
+      physical_info_struct<dim> &);
 
-  void
-  pwNonLinearCF(
-    std::vector<std::tuple<
-      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Point<dim>,
-      Point<dim>,
-      double,
-      double,
-      double,
-      Point<dim>,
-      double>>,
-    float,
-    int,
-    float,
-    int,
-    float,
-    float);
+  void pwNonLinearCF(
+      std::vector<std::tuple<
+          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>,
+      physical_info_struct<dim> &);
 
 private:
-  int
-  sgn(float);
+  int sgn(float);
 };
 
 #endif /* PWCONTACTFORCE_H_ */

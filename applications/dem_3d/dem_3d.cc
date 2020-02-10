@@ -58,8 +58,11 @@
 #include "dem/find_cell_neighbors.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/particle_wall_contact_detection.h"
+#include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
 #include "dem/pp_fine_search.h"
+#include "dem/pp_linear_force.h"
+#include "dem/pp_nonlinear_force.h"
 #include "dem/velocity_verlet_integrator.h"
 
 using namespace dealii;
@@ -108,8 +111,6 @@ template <int dim, int spacedim> void initilization() {
       Point<dim>, double, double, double, Point<dim>, double>>
       pwContactInfo;
 
-  ContactForce<dim, spacedim> cf1;
-
   std::vector<std::tuple<int, typename Triangulation<dim>::active_cell_iterator,
                          int, Point<dim>, Point<dim>>>
       boundaryCellInfo;
@@ -120,29 +121,39 @@ template <int dim, int spacedim> void initilization() {
   VelocityVerletIntegrator<dim, spacedim> integ1;
   PPBroadSearch<dim, spacedim> ppbs;
   PPFineSearch<dim, spacedim> ppfs;
+  // PPLinearForce<dim, spacedim> pplf;
+  PPNonLinearForce<dim, spacedim> ppnlf;
 
   // reading parameters from parameter handler file:
   const int numberOfSteps = DEMparam.simulationControl.tFinal;
   const double dt = DEMparam.simulationControl.dt;
   const int nTotal = DEMparam.simulationControl.nTotal;
   const int writeFreq = DEMparam.simulationControl.writeFrequency;
-  Point<dim> g = {DEMparam.physicalProperties.gx,
-                  DEMparam.physicalProperties.gy,
-                  DEMparam.physicalProperties.gz};
-  const double dp = DEMparam.physicalProperties.diameter;
-  const int rhop = DEMparam.physicalProperties.density;
-  const int Yp = DEMparam.physicalProperties.Yp;
-  const int Yw = DEMparam.physicalProperties.Yw;
-  const float vp = DEMparam.physicalProperties.vp;
-  const float vw = DEMparam.physicalProperties.vw;
-  const float ep = DEMparam.physicalProperties.ep;
-  const float ew = DEMparam.physicalProperties.ew;
-  const float mup = DEMparam.physicalProperties.mup;
-  const float muw = DEMparam.physicalProperties.muw;
-  const float murp = DEMparam.physicalProperties.murp;
-  const float murw = DEMparam.physicalProperties.murw;
+  Tensor<1, dim> g{{DEMparam.physicalProperties.gx,
+                    DEMparam.physicalProperties.gy,
+                    DEMparam.physicalProperties.gz}};
 
-  InsertionInfoStruct<dim, spacedim> insertion_info_struct;
+  physical_info_struct<dim> physical_info_struct;
+  physical_info_struct.particle_diameter = DEMparam.physicalProperties.diameter;
+  physical_info_struct.particle_density = DEMparam.physicalProperties.density;
+  physical_info_struct.Young_modulus_particle = DEMparam.physicalProperties.Yp;
+  physical_info_struct.Young_modulus_wall = DEMparam.physicalProperties.Yw;
+  physical_info_struct.restitution_coefficient_particle =
+      DEMparam.physicalProperties.ep;
+  physical_info_struct.restitution_coefficient_wall =
+      DEMparam.physicalProperties.ew;
+  physical_info_struct.Poisson_ratio_particle = DEMparam.physicalProperties.vp;
+  physical_info_struct.Poisson_ratio_wall = DEMparam.physicalProperties.vw;
+  physical_info_struct.friction_coefficient_particle =
+      DEMparam.physicalProperties.mup;
+  physical_info_struct.friction_coefficient_wall =
+      DEMparam.physicalProperties.muw;
+  physical_info_struct.rolling_friction_coefficient_particle =
+      DEMparam.physicalProperties.murp;
+  physical_info_struct.rolling_friction_coefficient_wall =
+      DEMparam.physicalProperties.murw;
+
+  insertion_info_struct<dim, spacedim> insertion_info_struct;
   insertion_info_struct.insertion_steps_number =
       DEMparam.insertionInfo.tInsertion;
   insertion_info_struct.inserted_number_at_step =
@@ -165,10 +176,9 @@ template <int dim, int spacedim> void initilization() {
   while (DEM_step < numberOfSteps) {
     iter1.engine(particle_handler, tr, DEM_step, DEM_time, cellNeighbor,
                  inContactPairs, inContactInfo, boundaryCellInfo, pwContactInfo,
-                 properties, property_pool, pw1, cf1, pwcf1, &integ1, dt,
-                 nTotal, writeFreq, g, dp, rhop, Yp, Yw, vp, vw, ep, ew, mup,
-                 muw, murp, murw, insertion_info_struct, numFields,
-                 numProperties, ppbs, ppfs);
+                 properties, property_pool, pw1, &ppnlf, pwcf1, &integ1, dt,
+                 nTotal, writeFreq, physical_info_struct, insertion_info_struct,
+                 g, numFields, numProperties, ppbs, ppfs);
   }
 }
 

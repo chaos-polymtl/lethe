@@ -34,11 +34,10 @@ void DEM_iterator<dim, spacedim>::forceReinit(
     particle->get_properties()[13] = 0;
     particle->get_properties()[14] = 0;
     particle->get_properties()[15] = 0;
-    /*
+
     particle->get_properties()[21] = 0;
     particle->get_properties()[22] = 0;
     particle->get_properties()[23] = 0;
-    */
   }
 }
 
@@ -84,14 +83,13 @@ void DEM_iterator<dim, spacedim>::engine(
     std::vector<std::tuple<std::string, int>> properties,
     Particles::PropertyPool &property_pool,
     ParticleWallContactDetection<dim, spacedim> pw,
-    ContactForce<dim, spacedim> cf,
+    PPContactForce<dim, spacedim> *pplf,
     ParticleWallContactForce<dim, spacedim> pwcf,
     Integrator<dim, spacedim> *Integ1, double dt, int nTotal, int writeFreq,
-    Point<dim> g, double dp, int rhop, int Yp, int Yw, float vp, float vw,
-    float ep, float ew, float mup, float muw, float murp, float murw,
-    InsertionInfoStruct<dim, spacedim> insertion_info_struct, int numFields,
-    int numProperties, PPBroadSearch<dim, spacedim> ppbs,
-    PPFineSearch<dim, spacedim> ppfs) {
+    physical_info_struct<dim> phyical_info_struct,
+    insertion_info_struct<dim, spacedim> insertion_info_struct,
+    Tensor<1, dim> g, int numFields, int numProperties,
+    PPBroadSearch<dim, spacedim> ppbs, PPFineSearch<dim, spacedim> ppfs) {
   // moving walls
 
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -103,9 +101,10 @@ void DEM_iterator<dim, spacedim>::engine(
       if (particle_handler.n_global_particles() <
           nTotal) // number < total number
       {
-        NonUniformInsertion<dim, spacedim> ins2(dp, insertion_info_struct);
+        NonUniformInsertion<dim, spacedim> ins2(phyical_info_struct,
+                                                insertion_info_struct);
 
-        ins2.insert(particle_handler, tr, property_pool, dp, rhop,
+        ins2.insert(particle_handler, tr, property_pool, phyical_info_struct,
                     insertion_info_struct);
       }
     }
@@ -143,8 +142,8 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t7 = std::chrono::high_resolution_clock::now();
   // contact force
-  cf.nonLinearCF(inContactInfo, Yp, vp, mup, murp);
-  // cf.linearCF(inContactInfo, Yp, vp, ep, mup, murp);
+  // cf.nonLinearCF(inContactInfo, phyical_info_struct);
+  pplf->calculate_pp_contact_force(inContactInfo, phyical_info_struct);
   auto t8 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t8 - t7).count();
@@ -171,8 +170,8 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t13 = std::chrono::high_resolution_clock::now();
   // p-w contact force:
-  pwcf.pwNonLinearCF(pwContactInfo, vp, Yp, vw, Yw, muw, murw);
-  // pwcf.pwLinearCF(pwContactInfo, vp, Yp, vw, Yw, ew, muw, murw);
+  pwcf.pwNonLinearCF(pwContactInfo, phyical_info_struct);
+  // pwcf.pwLinearCF(pwContactInfo, phyical_info_struct);
   auto t14 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t14 - t13).count();

@@ -25,7 +25,7 @@
 #include "dem/insertion.h"
 
 #ifndef NONUNIFORMINSERTION_H_
-#  define NONUNIFORMINSERTION_H_
+#define NONUNIFORMINSERTION_H_
 
 /**
  * Non-uniform insertion of particles in a rectangular box
@@ -36,8 +36,7 @@
  */
 
 template <int dim, int spacedim = dim>
-class NonUniformInsertion : public Insertion<dim, spacedim>
-{
+class NonUniformInsertion : public Insertion<dim, spacedim> {
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
@@ -46,13 +45,14 @@ public:
    * step exceeds this calculated number Note that in the current version only
    * the insertion in a rectangular box is defined
    *
-   * @param dp Particle diameter
+   * @param physical_info_struct Physical properties of particles. We only use
+   * particle diameter here
    * @param insertion_info_struct Information related to the insertion of
    * particles from the parameter handler file)
    */
   NonUniformInsertion<dim, spacedim>(
-    double                             dp,
-    InsertionInfoStruct<dim, spacedim> insertion_info_struct);
+      physical_info_struct<dim> &physical_info_struct,
+      insertion_info_struct<dim, spacedim> &insertion_info_struct);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -64,19 +64,18 @@ public:
    * inserted
    * @param tr Triangulation to access the cells in which the particles are
    * inserted
-   * @param property_pool property pool of particles
-   * @param dp Particle diameter
-   * @param rhop Density of particles
+   * @param property_pool Property pool of particles
+   * @param physical_info_struct Physical properties of particles. We use
+   * particle diameter and density here
    * @param insertion_info_struct Information related to the insertion of
    * particles from the parameter handler file)
    */
   virtual void
   insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &       tr,
-         Particles::PropertyPool &                  property_pool,
-         double                                     dp,
-         int                                        rhop,
-         InsertionInfoStruct<dim, spacedim> insertion_info_struct) override;
+         const Triangulation<dim, spacedim> &tr,
+         Particles::PropertyPool &property_pool,
+         physical_info_struct<dim> &physical_info_struct,
+         insertion_info_struct<dim, spacedim> &insertion_info_struct) override;
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */

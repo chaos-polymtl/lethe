@@ -28,7 +28,7 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct InsertionInfoStruct {
+template <int dim, int spacedim> struct insertion_info_struct {
   // Number of insertion phase time steps
   int insertion_steps_number;
 
