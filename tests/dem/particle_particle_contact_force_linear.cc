@@ -16,9 +16,10 @@
 
 #include "../tests.h"
 #include "dem/find_cell_neighbors.h"
+#include "dem/pp_linear_force.h"
 #include "dem/pp_broad_search.h"
-#include "dem/contact_force.h"
 #include "dem/pp_fine_search.h"
+#include "dem/physical_info_struct.h"
 
 using namespace dealii;
 
@@ -32,7 +33,7 @@ test()
   tr.refine_global(numRef);
   int                cellNum = tr.n_active_cells();
   MappingQ<dim, dim> mapping(1);
-
+  physical_info_struct<dim> physical_info_struct;
 
   const unsigned int n_properties = 24;
   float              x_min        = -0.05;
@@ -41,16 +42,17 @@ test()
   float              x_max        = 0.05;
   float              y_max        = 0.05;
   float              z_max        = 0.05;
-  double             dp           = 0.005;
   int                nInsert      = 10;
-  int                rhop         = 2500;
   Point<dim>         g            = {0, 0, -9.81};
   float              dt           = 0.00001;
-  int                Yp           = 50000000;
-  float              vp           = 0.3;
-  float              ep           = 0.5;
-  float              mup          = 0.5;
-  float              murp         = 0.1;
+
+  physical_info_struct.particle_diameter = 0.005;
+physical_info_struct.particle_density = 2500;
+  physical_info_struct.Young_modulus_particle = 50000000;
+  physical_info_struct.Poisson_ratio_particle = 0.3;
+  physical_info_struct.restitution_coefficient_particle = 0.5;
+  physical_info_struct.friction_coefficient_particle= 0.5;
+  physical_info_struct.rolling_friction_coefficient_particle = 0.1;
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
@@ -80,8 +82,8 @@ test()
     particle_handler.insert_particle(particle1, cell1);
   pit1->get_properties()[0]  = id1;
   pit1->get_properties()[1]  = 1;
-  pit1->get_properties()[2]  = dp;
-  pit1->get_properties()[3]  = rhop;
+  pit1->get_properties()[2]  = physical_info_struct.particle_diameter;
+  pit1->get_properties()[3]  = physical_info_struct.particle_density;
   pit1->get_properties()[4]  = position1[0];
   pit1->get_properties()[5]  = position1[1];
   pit1->get_properties()[6]  = position1[2];
@@ -108,8 +110,8 @@ test()
     particle_handler.insert_particle(particle2, cell2);
   pit2->get_properties()[0]  = id2;
   pit2->get_properties()[1]  = 1;
-  pit2->get_properties()[2]  = dp;
-  pit2->get_properties()[3]  = rhop;
+  pit2->get_properties()[2]  = physical_info_struct.particle_diameter;
+  pit2->get_properties()[3]  = physical_info_struct.particle_density;
   pit2->get_properties()[4]  = position2[0];
   pit2->get_properties()[5]  = position2[1];
   pit2->get_properties()[6]  = position2[2];
@@ -145,8 +147,9 @@ test()
                  inContactInfo,
                  dt,
                  particle_handler);
-  ContactForce<dim> cf1;
-  cf1.linearCF(inContactInfo, Yp, vp, ep, mup, murp);
+
+  PPLinearForce<dim, dim> pplf;
+  pplf.calculate_pp_contact_force(inContactInfo, physical_info_struct);
 
   auto particle = particle_handler.begin();
 
