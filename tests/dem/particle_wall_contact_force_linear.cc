@@ -17,6 +17,7 @@
 #include "../tests.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
+#include "dem/physical_info_struct.h"
 
 using namespace dealii;
 
@@ -30,7 +31,7 @@ test()
   tr.refine_global(numRef);
   int                cellNum = tr.n_active_cells();
   MappingQ<dim, dim> mapping(1);
-
+  physical_info_struct<dim> physical_info_struct;
 
   const unsigned int n_properties = 24;
   float              x_min        = -0.05;
@@ -39,18 +40,22 @@ test()
   float              x_max        = 0.05;
   float              y_max        = 0.05;
   float              z_max        = 0.05;
-  double             dp           = 0.005;
   int                nInsert      = 10;
-  int                rhop         = 2500;
   Point<dim>         g            = {0, 0, -9.81};
   float              dt           = 0.00001;
-  int                Yp           = 50000000;
-  int                Yw           = 50000000;
-  float              vp           = 0.3;
-  float              vw           = 0.3;
-  float              ew           = 0.5;
-  float              muw          = 0.5;
-  float              murw         = 0.1;
+
+  physical_info_struct.particle_diameter = 0.005;
+physical_info_struct.particle_density = 2500;
+  physical_info_struct.Young_modulus_particle = 50000000;
+  physical_info_struct.Young_modulus_wall = 50000000;
+  physical_info_struct.Poisson_ratio_particle = 0.3;
+    physical_info_struct.Poisson_ratio_wall = 0.3;
+  physical_info_struct.restitution_coefficient_particle = 0.5;
+  physical_info_struct.restitution_coefficient_wall = 0.5;
+  physical_info_struct.friction_coefficient_particle= 0.5;
+  physical_info_struct.friction_coefficient_wall= 0.5;
+  physical_info_struct.rolling_friction_coefficient_particle = 0.1;
+  physical_info_struct.rolling_friction_coefficient_wall = 0.1;
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
@@ -73,8 +78,8 @@ test()
     particle_handler.insert_particle(particle1, cell1);
   pit1->get_properties()[0]  = id1;
   pit1->get_properties()[1]  = 1;
-  pit1->get_properties()[2]  = dp;
-  pit1->get_properties()[3]  = rhop;
+  pit1->get_properties()[2]  = physical_info_struct.particle_diameter;
+  pit1->get_properties()[3]  = physical_info_struct.particle_density;
   pit1->get_properties()[4]  = position1[0];
   pit1->get_properties()[5]  = position1[1];
   pit1->get_properties()[6]  = position1[2];
@@ -115,7 +120,7 @@ test()
   pw1.pwFineSearch(pwContactList, pwContactInfo, dt);
 
   ParticleWallContactForce<dim, dim> pwcf1;
-  pwcf1.pwLinearCF(pwContactInfo, vp, Yp, vw, Yw, ew, muw, murw);
+  pwcf1.pwLinearCF(pwContactInfo, physical_info_struct);
 
 
   auto particle = particle_handler.begin();
