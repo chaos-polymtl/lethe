@@ -17,44 +17,40 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include "dem/physical_info_struct.h"
+#include "dem/contact_info_struct.h"
 #include <deal.II/particles/particle_handler.h>
-
 
 using namespace dealii;
 
 #ifndef PPCONTACTFORCE_H_
-#  define PPCONTACTFORCE_H_
+#define PPCONTACTFORCE_H_
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle
  * contact force
  */
 
-template <int dim, int spacedim = dim>
-class PPContactForce
-{
+template <int dim, int spacedim = dim> class PPContactForce {
 public:
-  PPContactForce()
-  {}
+  PPContactForce() {}
 
-  virtual ~PPContactForce()
-  {}
+  virtual ~PPContactForce() {}
 
   /**
-   * Carries out the calculation of the contact force using the contact pair information
+   * Carries out the calculation of the contact force using the contact pair
+   information
    * obtained in the fine search and physical properties of particles
    *
-   * @param pairs_in_contact_info Required information for calculation of the particle-
-   * particle contact force, these information were obtained in the fine search
-
+   * @param pairs_in_contact_info Required information for calculation of the
+   * particle-particle contact force, these information were obtained in the
+   fine search
+   * @param physical_properties Physical properties of particles
    */
-  virtual void
-  calculate_pp_contact_force(std::vector<std::map<int, contact_info_struct<dim, spacedim>>>        &pairs_in_contact_info,
-    			     int Yp, 
-			     double vp, 
-			     double ep, 
-			     double mup, 
-			     double murp) = 0;
+  virtual void calculate_pp_contact_force(
+      std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+          &pairs_in_contact_info,
+      physical_info_struct<dim> &physical_properties) = 0;
 };
 
 #endif /* PPCONTACTFORCE_H_ */
