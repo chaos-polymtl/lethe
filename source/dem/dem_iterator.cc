@@ -86,7 +86,7 @@ void DEM_iterator<dim, spacedim>::engine(
     PPContactForce<dim, spacedim> *pplf,
     ParticleWallContactForce<dim, spacedim> pwcf,
     Integrator<dim, spacedim> *Integ1, double dt, int nTotal, int writeFreq,
-    physical_info_struct<dim> phyical_info_struct,
+    physical_info_struct<dim> physical_info_struct,
     insertion_info_struct<dim, spacedim> insertion_info_struct,
     Tensor<1, dim> g, int numFields, int numProperties,
     PPBroadSearch<dim, spacedim> ppbs, PPFineSearch<dim, spacedim> ppfs) {
@@ -101,10 +101,10 @@ void DEM_iterator<dim, spacedim>::engine(
       if (particle_handler.n_global_particles() <
           nTotal) // number < total number
       {
-        NonUniformInsertion<dim, spacedim> ins2(phyical_info_struct,
+        NonUniformInsertion<dim, spacedim> ins2(physical_info_struct,
                                                 insertion_info_struct);
 
-        ins2.insert(particle_handler, tr, property_pool, phyical_info_struct,
+        ins2.insert(particle_handler, tr, property_pool, physical_info_struct,
                     insertion_info_struct);
       }
     }
@@ -142,8 +142,8 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t7 = std::chrono::high_resolution_clock::now();
   // contact force
-  // cf.nonLinearCF(inContactInfo, phyical_info_struct);
-  pplf->calculate_pp_contact_force(inContactInfo, phyical_info_struct);
+  // cf.nonLinearCF(inContactInfo, physical_info_struct);
+  pplf->calculate_pp_contact_force(inContactInfo, physical_info_struct);
   auto t8 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t8 - t7).count();
@@ -170,8 +170,8 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t13 = std::chrono::high_resolution_clock::now();
   // p-w contact force:
-  pwcf.pwNonLinearCF(pwContactInfo, phyical_info_struct);
-  // pwcf.pwLinearCF(pwContactInfo, phyical_info_struct);
+  pwcf.pwNonLinearCF(pwContactInfo, physical_info_struct);
+  // pwcf.pwLinearCF(pwContactInfo, physical_info_struct);
   auto t14 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t14 - t13).count();
