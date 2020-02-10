@@ -17,14 +17,15 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/contact_force.h"
 #include "dem/contact_info_struct.h"
 #include "dem/dem_solver_parameters.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/integrator.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
+#include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
+#include "dem/pp_contact_force.h"
 #include "dem/pp_fine_search.h"
 
 #ifndef DEMITERATOR_H_
@@ -49,11 +50,11 @@ public:
           &,
       std::vector<std::tuple<std::string, int>>,
       dealii::Particles::PropertyPool &,
-      ParticleWallContactDetection<dim, spacedim>, ContactForce<dim, spacedim>,
-      ParticleWallContactForce<dim, spacedim>, Integrator<dim, spacedim> *,
-      double, int, int, Point<dim>, double, int, int, int, float, float, float,
-      float, float, float, float, float, InsertionInfoStruct<dim, spacedim>,
-      int, int, PPBroadSearch<dim, spacedim>, PPFineSearch<dim, spacedim>);
+      ParticleWallContactDetection<dim, spacedim>,
+      PPContactForce<dim, spacedim> *, ParticleWallContactForce<dim, spacedim>,
+      Integrator<dim, spacedim> *, double, int, int, physical_info_struct<dim>,
+      insertion_info_struct<dim, spacedim>, Tensor<1, dim>, int, int,
+      PPBroadSearch<dim, spacedim>, PPFineSearch<dim, spacedim>);
 
 private:
   void forceReinit(Particles::ParticleHandler<dim, spacedim> &);

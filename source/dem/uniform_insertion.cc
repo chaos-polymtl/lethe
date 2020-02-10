@@ -27,7 +27,8 @@ using namespace DEM;
 
 template <int dim, int spacedim>
 UniformInsertion<dim, spacedim>::UniformInsertion(
-    double dp, InsertionInfoStruct<dim, spacedim> insertion_info_struct) {
+    physical_info_struct<dim> &physical_info_struct,
+    insertion_info_struct<dim, spacedim> &insertion_info_struct) {
   // This variable is used for calculation of the maximum number of particles
   // that can fit in the chosen insertion box
   int maximum_particle_number;
@@ -36,11 +37,14 @@ UniformInsertion<dim, spacedim>::UniformInsertion(
   // two adjacent particles to the diameter of particles
   maximum_particle_number =
       int((insertion_info_struct.x_max - insertion_info_struct.x_min) /
-          (insertion_info_struct.distance_threshold * dp)) *
+          (insertion_info_struct.distance_threshold *
+           physical_info_struct.particle_diameter)) *
       int((insertion_info_struct.y_max - insertion_info_struct.y_min) /
-          (insertion_info_struct.distance_threshold * dp)) *
+          (insertion_info_struct.distance_threshold *
+           physical_info_struct.particle_diameter)) *
       int((insertion_info_struct.z_max - insertion_info_struct.z_min) /
-          (insertion_info_struct.distance_threshold * dp));
+          (insertion_info_struct.distance_threshold *
+           physical_info_struct.particle_diameter));
 
   // If the inserted number of particles at this step exceeds the maximum
   // number, a warning is printed
@@ -57,16 +61,19 @@ template <int dim, int spacedim>
 void UniformInsertion<dim, spacedim>::insert(
     Particles::ParticleHandler<dim, spacedim> &particle_handler,
     const Triangulation<dim, spacedim> &tr, Particles::PropertyPool &pool,
-    double dp, int rhop,
-    InsertionInfoStruct<dim, spacedim> insertion_info_struct) {
+    physical_info_struct<dim> &physical_info_struct,
+    insertion_info_struct<dim, spacedim> &insertion_info_struct) {
   // nx, ny and nz are the results of discretization of the insertion domain in
   // x, y and z directions
   int nx = int((insertion_info_struct.x_max - insertion_info_struct.x_min) /
-               (insertion_info_struct.distance_threshold * dp));
+               (insertion_info_struct.distance_threshold *
+                physical_info_struct.particle_diameter));
   int ny = int((insertion_info_struct.y_max - insertion_info_struct.y_min) /
-               (insertion_info_struct.distance_threshold * dp));
+               (insertion_info_struct.distance_threshold *
+                physical_info_struct.particle_diameter));
   int nz = int((insertion_info_struct.z_max - insertion_info_struct.z_min) /
-               (insertion_info_struct.distance_threshold * dp));
+               (insertion_info_struct.distance_threshold *
+                physical_info_struct.particle_diameter));
 
   // inserted_sofar_step shows the number of inserted particles, so far, at
   // this step
@@ -87,13 +94,19 @@ void UniformInsertion<dim, spacedim>::insert(
             unsigned int id;
 
             // Obtaning position of the inserted particle
-            position[0] = insertion_info_struct.x_min + (dp / 2) +
-                          (i * insertion_info_struct.distance_threshold * dp);
-            position[1] = insertion_info_struct.y_min + (dp / 2) +
-                          (j * insertion_info_struct.distance_threshold * dp);
+            position[0] = insertion_info_struct.x_min +
+                          (physical_info_struct.particle_diameter / 2) +
+                          (i * insertion_info_struct.distance_threshold *
+                           physical_info_struct.particle_diameter);
+            position[1] = insertion_info_struct.y_min +
+                          (physical_info_struct.particle_diameter / 2) +
+                          (j * insertion_info_struct.distance_threshold *
+                           physical_info_struct.particle_diameter);
             if (dim == 3)
-              position[2] = insertion_info_struct.z_min + (dp / 2) +
-                            (k * insertion_info_struct.distance_threshold * dp);
+              position[2] = insertion_info_struct.z_min +
+                            (physical_info_struct.particle_diameter / 2) +
+                            (k * insertion_info_struct.distance_threshold *
+                             physical_info_struct.particle_diameter);
 
             // Since the id of each particle should be unique, we need to use
             // the total number of particles in the system to calculate the
@@ -119,8 +132,10 @@ void UniformInsertion<dim, spacedim>::insert(
             // Initialization of the properties of the new particle
             pit->get_properties()[PropertiesIndex::id] = id;
             pit->get_properties()[PropertiesIndex::type] = 1;
-            pit->get_properties()[PropertiesIndex::dp] = dp;
-            pit->get_properties()[PropertiesIndex::rho] = rhop;
+            pit->get_properties()[PropertiesIndex::dp] =
+                physical_info_struct.particle_diameter;
+            pit->get_properties()[PropertiesIndex::rho] =
+                physical_info_struct.particle_density;
             // Velocity
             pit->get_properties()[PropertiesIndex::v_x] = 0;
             pit->get_properties()[PropertiesIndex::v_y] = 0;
@@ -143,7 +158,7 @@ void UniformInsertion<dim, spacedim>::insert(
               pit->get_properties()[PropertiesIndex::omega_z] = 0;
             // mass and moi
             pit->get_properties()[PropertiesIndex::mass] =
-                rhop *
+                physical_info_struct.particle_density *
                 ((4.0 / 3.0) * 3.1415 *
                  pow((pit->get_properties()[PropertiesIndex::dp] / 2.0), 3.0));
 
