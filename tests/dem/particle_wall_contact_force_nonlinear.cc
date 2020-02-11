@@ -17,6 +17,7 @@
 #include "../tests.h"
 #include "dem/particle_wall_contact_detection.h"
 #include "dem/particle_wall_contact_force.h"
+#include "dem/find_boundary_cells_information.h"
 
 using namespace dealii;
 
@@ -62,12 +63,6 @@ physical_info_struct.particle_density = 2500;
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
-  std::vector<std::tuple<int,
-                         typename Triangulation<dim>::active_cell_iterator,
-                         int,
-                         Point<dim>,
-                         Point<dim>>>
-    boundaryCellInfo;
 
 
   Point<dim> position1 = {-0.998, 0, 0};
@@ -100,16 +95,18 @@ physical_info_struct.particle_density = 2500;
   pit1->get_properties()[19] = 1;
   pit1->get_properties()[20] = 1;
 
+  std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
+  FindBoundaryCellsInformation<dim, dim> boundary_cells_object;
+   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
+
 
   ParticleWallContactDetection<dim> pw1;
-  pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
-  std::vector<
+    std::vector<
     std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
                Point<dim>,
                Point<dim>>>
     pwContactList;
-  pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
-
+pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
                          Point<dim>,
                          Point<dim>,

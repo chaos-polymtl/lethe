@@ -55,6 +55,7 @@
 #include "dem/dem_iterator.h"
 #include "dem/dem_properties.h"
 #include "dem/dem_solver_parameters.h"
+#include "dem/find_boundary_cells_information.h"
 #include "dem/find_cell_neighbors.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/particle_wall_contact_detection.h"
@@ -111,11 +112,12 @@ template <int dim, int spacedim> void initilization() {
       Point<dim>, double, double, double, Point<dim>, double>>
       pwContactInfo;
 
-  std::vector<std::tuple<int, typename Triangulation<dim>::active_cell_iterator,
-                         int, Point<dim>, Point<dim>>>
-      boundaryCellInfo;
   ParticleWallContactDetection<dim, spacedim> pw1;
-  pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
+
+  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
+  FindBoundaryCellsInformation<dim, dim> boundary_cell_object;
+  boundary_cells_information =
+      boundary_cell_object.find_boundary_cells_information(tr);
 
   ParticleWallContactForce<dim, spacedim> pwcf1;
   VelocityVerletIntegrator<dim, spacedim> integ1;
@@ -175,10 +177,11 @@ template <int dim, int spacedim> void initilization() {
   // dem engine iterator:
   while (DEM_step < numberOfSteps) {
     iter1.engine(particle_handler, tr, DEM_step, DEM_time, cellNeighbor,
-                 inContactPairs, inContactInfo, boundaryCellInfo, pwContactInfo,
-                 properties, property_pool, pw1, &ppnlf, pwcf1, &integ1, dt,
-                 nTotal, writeFreq, physical_info_struct, insertion_info_struct,
-                 g, numFields, numProperties, ppbs, ppfs);
+                 inContactPairs, inContactInfo, boundary_cells_information,
+                 pwContactInfo, properties, property_pool, pw1, &ppnlf, pwcf1,
+                 &integ1, dt, nTotal, writeFreq, physical_info_struct,
+                 insertion_info_struct, g, numFields, numProperties, ppbs,
+                 ppfs);
   }
 }
 
