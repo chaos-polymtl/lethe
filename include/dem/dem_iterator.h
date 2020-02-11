@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include "dem/boundary_cells_info_struct.h"
 #include "dem/contact_info_struct.h"
 #include "dem/dem_solver_parameters.h"
 #include "dem/insertion_info_struct.h"
@@ -41,9 +42,7 @@ public:
           &,
       std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
       std::vector<std::map<int, contact_info_struct<dim, spacedim>>> &,
-      std::vector<
-          std::tuple<int, typename Triangulation<dim>::active_cell_iterator,
-                     int, Point<dim>, Point<dim>>>,
+      std::vector<boundary_cells_info_struct<dim>>,
       std::vector<std::tuple<
           std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
           Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>

@@ -73,10 +73,7 @@ void DEM_iterator<dim, spacedim>::engine(
         &inContactPairs,
     std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
         &inContactInfo,
-    std::vector<
-        std::tuple<int, typename Triangulation<dim>::active_cell_iterator, int,
-                   Point<dim>, Point<dim>>>
-        boundaryCellInfo,
+    std::vector<boundary_cells_info_struct<dim>> boundary_cells_information,
     std::vector<std::tuple<
         std::pair<Particles::ParticleIterator<dim, spacedim>, int>, Point<dim>,
         Point<dim>, double, double, double, Point<dim>, double>> &pwContactInfo,
@@ -156,7 +153,8 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t9 = std::chrono::high_resolution_clock::now();
   // if (fmod(step, 10) == 1) {
-  pwContactList = pw.pwcontactlist(boundaryCellInfo, particle_handler);
+  pwContactList =
+      pw.pwcontactlist(boundary_cells_information, particle_handler);
   //}
   auto t10 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactPairs =

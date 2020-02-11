@@ -29,7 +29,7 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/particle_wall_contact_detection.h"
+#include "dem/find_boundary_cells_information.h"
 
 
 using namespace dealii;
@@ -42,22 +42,18 @@ test()
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  std::vector<std::tuple<int,
-                         Triangulation<3>::active_cell_iterator,
-                         int,
-                         Point<3>,
-                         Point<3>>>
-    boundaryCellInfo;
+  std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
 
-  ParticleWallContactDetection<dim> pw1;
-  pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
+
+ FindBoundaryCellsInformation<dim, dim> pw1;
+  boundaryCellInfo = pw1.find_boundary_cells_information(tr);
 
   int i = 0;
   for (unsigned int i = 0; i != boundaryCellInfo.size(); ++i)
     {
-      deallog << "Cell " << std::get<1>(boundaryCellInfo[i])
+      deallog << "Cell " << (boundaryCellInfo[i]).cell
               << " is on system boundaries (boundary"
-              << std::get<0>(boundaryCellInfo[i]) << ")" << std::endl;
+              << (boundaryCellInfo[i]).boundary_id << ")" << std::endl;
     }
 }
 
