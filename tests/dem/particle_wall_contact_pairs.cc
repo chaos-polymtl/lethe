@@ -13,6 +13,7 @@
 
 #include "../tests.h"
 #include "dem/particle_wall_contact_detection.h"
+#include "dem/find_boundary_cells_information.h"
 
 using namespace dealii;
 
@@ -58,16 +59,11 @@ test()
   Particles::ParticleIterator<dim, dim> pit3 =
     particle_handler.insert_particle(particle3, cell3);
 
-  std::vector<std::tuple<int,
-                         typename Triangulation<dim>::active_cell_iterator,
-                         int,
-                         Point<dim>,
-                         Point<dim>>>
-    boundaryCellInfo;
-
+  std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
+  FindBoundaryCellsInformation<dim, dim> boundary_cells_object;
+   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
   ParticleWallContactDetection<dim> pw1;
-  pw1.boundaryCellsAndFaces(tr, boundaryCellInfo);
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
                          Point<dim>,
                          Point<dim>>>

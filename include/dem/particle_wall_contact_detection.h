@@ -21,60 +21,36 @@
 
 #include <deal.II/distributed/tria.h>
 
+#include "dem/boundary_cells_info_struct.h"
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
-
 #include <iostream>
 #include <vector>
 
-
 using namespace dealii;
 
-
 #ifndef PWCONTACTDETECTION_H_
-#  define PWCONTACTDETECTION_H_
+#define PWCONTACTDETECTION_H_
 
-template <int dim, int spacedim = dim>
-class ParticleWallContactDetection
-{
+template <int dim, int spacedim = dim> class ParticleWallContactDetection {
 public:
   ParticleWallContactDetection<dim, spacedim>();
-  void
-  boundaryCellsAndFaces(
-    const Triangulation<dim, spacedim> &,
-    std::vector<std::tuple<int,
-                           typename Triangulation<dim>::active_cell_iterator,
-                           int,
-                           Point<dim>,
-                           Point<dim>>> &);
-  std::vector<std::tuple<
-    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-    Point<dim>,
-    Point<dim>>>
-  pwcontactlist(
-    std::vector<std::tuple<int,
-                           typename Triangulation<dim>::active_cell_iterator,
-                           int,
-                           Point<dim>,
-                           Point<dim>>>,
-    Particles::ParticleHandler<dim, spacedim> &);
 
-  void
-  pwFineSearch(
-    std::vector<std::tuple<
+  std::vector<std::tuple<
       std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Point<dim>,
-      Point<dim>>>,
-    std::vector<std::tuple<
-      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Point<dim>,
-      Point<dim>,
-      double,
-      double,
-      double,
-      Point<dim>,
-      double>> &,
-    float);
+      Point<dim>, Point<dim>>>
+  pwcontactlist(std::vector<boundary_cells_info_struct<dim>> &,
+                Particles::ParticleHandler<dim, spacedim> &);
+
+  void pwFineSearch(
+      std::vector<std::tuple<
+          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+          Point<dim>, Point<dim>>>,
+      std::vector<std::tuple<
+          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
+          &,
+      float);
 
 private:
   Point<dim> findProjection(Point<dim>, Point<dim>);
