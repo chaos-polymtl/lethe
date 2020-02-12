@@ -22,9 +22,9 @@ ParticleWallContactForce<dim, spacedim>::ParticleWallContactForce() {}
 
 template <int dim, int spacedim>
 void ParticleWallContactForce<dim, spacedim>::pwLinearCF(
-    std::vector<std::tuple<
-        std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-        Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
+    std::vector<std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
+                           Tensor<1, dim>, Point<dim>, double, double, double,
+                           Point<dim>, double>>
         pwContactInfo,
     physical_info_struct<dim> &physical_info_struct) {
   for (unsigned int i = 0; i < pwContactInfo.size(); i++) {
@@ -37,45 +37,43 @@ void ParticleWallContactForce<dim, spacedim>::pwLinearCF(
             -1.0);
     double kn =
         1.2024 *
-        pow((pow(std::get<0>(pwContactInfo[i]).first->get_properties()[19],
-                 0.5) *
+        pow((pow(std::get<0>(pwContactInfo[i])->get_properties()[19], 0.5) *
              pow(yEff, 2.0) *
-             (std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) *
+             (std::get<0>(pwContactInfo[i])->get_properties()[2] / 2.0) *
              abs(std::get<4>(pwContactInfo[i]))),
             0.4);
     double kt =
         1.2024 *
-        pow((pow(std::get<0>(pwContactInfo[i]).first->get_properties()[19],
-                 0.5) *
+        pow((pow(std::get<0>(pwContactInfo[i])->get_properties()[19], 0.5) *
              pow(yEff, 2.0) *
-             (std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) *
+             (std::get<0>(pwContactInfo[i])->get_properties()[2] / 2.0) *
              abs(std::get<7>(pwContactInfo[i]))),
             0.4);
     double ethan =
         (-2.0 * log(physical_info_struct.restitution_coefficient_wall) *
-         sqrt(std::get<0>(pwContactInfo[i]).first->get_properties()[19] * kn)) /
+         sqrt(std::get<0>(pwContactInfo[i])->get_properties()[19] * kn)) /
         (sqrt(
             (pow(log(physical_info_struct.restitution_coefficient_wall), 2.0)) +
             pow(3.1415, 2.0)));
     double ethat = 0;
     if (physical_info_struct.restitution_coefficient_wall == 0) {
       ethat =
-          2.0 *
-          sqrt(2.0 / 7.0 *
-               std::get<0>(pwContactInfo[i]).first->get_properties()[19] * kt);
+          2.0 * sqrt(2.0 / 7.0 *
+                     std::get<0>(pwContactInfo[i])->get_properties()[19] * kt);
     } else {
       ethat = (-2.0 * log(physical_info_struct.restitution_coefficient_wall) *
                sqrt(2.0 / 7.0 *
-                    std::get<0>(pwContactInfo[i]).first->get_properties()[19] *
-                    kt)) /
+                    std::get<0>(pwContactInfo[i])->get_properties()[19] * kt)) /
               (sqrt(pow(3.1415, 2.0) +
                     pow(log(physical_info_struct.restitution_coefficient_wall),
                         2.0)));
     }
 
-    Point<dim> springNormForce =
+    Point<dim> springNormForce;
+    springNormForce =
         (kn * std::get<3>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
-    Point<dim> dashpotNormForce =
+    Point<dim> dashpotNormForce;
+    dashpotNormForce =
         (ethan * std::get<4>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
 
     Point<dim> normalForce;
@@ -101,25 +99,22 @@ void ParticleWallContactForce<dim, spacedim>::pwLinearCF(
       totalForce = normalForce + coulumbTangForce;
     }
 
-    std::get<0>(pwContactInfo[i]).first->get_properties()[13] =
-        std::get<0>(pwContactInfo[i]).first->get_properties()[13] +
-        totalForce[0];
-    std::get<0>(pwContactInfo[i]).first->get_properties()[14] =
-        std::get<0>(pwContactInfo[i]).first->get_properties()[14] +
-        totalForce[1];
-    std::get<0>(pwContactInfo[i]).first->get_properties()[15] =
-        std::get<0>(pwContactInfo[i]).first->get_properties()[15] +
-        totalForce[2];
+    std::get<0>(pwContactInfo[i])->get_properties()[13] =
+        std::get<0>(pwContactInfo[i])->get_properties()[13] + totalForce[0];
+    std::get<0>(pwContactInfo[i])->get_properties()[14] =
+        std::get<0>(pwContactInfo[i])->get_properties()[14] + totalForce[1];
+    std::get<0>(pwContactInfo[i])->get_properties()[15] =
+        std::get<0>(pwContactInfo[i])->get_properties()[15] + totalForce[2];
 
     // calculation of torque
     /*
      Point<dim> torqueTi;
      torqueTi =
-((std::get<0>(pwContactInfo[i]).first->get_properties()[2])/2.0) *
+((std::get<0>(pwContactInfo[i])->get_properties()[2])/2.0) *
 cross_product_3d( std::get<1>(pwContactInfo[i]) , totalForce); Point<dim>
-omegai = {std::get<0>(pwContactInfo[i]).first->get_properties()[16] ,
-std::get<0>(pwContactInfo[i]).first->get_properties()[17] ,
-std::get<0>(pwContactInfo[i]).first->get_properties()[18]};
+omegai = {std::get<0>(pwContactInfo[i])->get_properties()[16] ,
+std::get<0>(pwContactInfo[i])->get_properties()[17] ,
+std::get<0>(pwContactInfo[i])->get_properties()[18]};
 
     Point<dim> omegaiw = {0.0, 0.0, 0.0};
     double omegaNorm = omegai.norm();
@@ -127,15 +122,15 @@ std::get<0>(pwContactInfo[i]).first->get_properties()[18]};
     {omegaiw = omegai / omegaNorm ;}
     Point<dim> torquer;
    torquer = -1.0 * physical_info_struct.rolling_friction_coefficient_wall *
-((std::get<0>(pwContactInfo[i]).first->get_properties()[2])/2.0) *
+((std::get<0>(pwContactInfo[i])->get_properties()[2])/2.0) *
 normalForce.norm() * omegaiw;
 
-   std::get<0>(pwContactInfo[i]).first->get_properties()[21] =
-std::get<0>(pwContactInfo[i]).first->get_properties()[21] + torqueTi[0] +
-torquer[0]; std::get<0>(pwContactInfo[i]).first->get_properties()[22] =
-std::get<0>(pwContactInfo[i]).first->get_properties()[22] + torqueTi[1] +
-torquer[1]; std::get<0>(pwContactInfo[i]).first->get_properties()[23] =
-std::get<0>(pwContactInfo[i]).first->get_properties()[23] + torqueTi[2] +
+   std::get<0>(pwContactInfo[i])->get_properties()[21] =
+std::get<0>(pwContactInfo[i])->get_properties()[21] + torqueTi[0] +
+torquer[0]; std::get<0>(pwContactInfo[i])->get_properties()[22] =
+std::get<0>(pwContactInfo[i])->get_properties()[22] + torqueTi[1] +
+torquer[1]; std::get<0>(pwContactInfo[i])->get_properties()[23] =
+std::get<0>(pwContactInfo[i])->get_properties()[23] + torqueTi[2] +
 torquer[2];
 */
   }
@@ -143,9 +138,9 @@ torquer[2];
 
 template <int dim, int spacedim>
 void ParticleWallContactForce<dim, spacedim>::pwNonLinearCF(
-    std::vector<std::tuple<
-        std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-        Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
+    std::vector<std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
+                           Tensor<1, dim>, Point<dim>, double, double, double,
+                           Point<dim>, double>>
         pwContactInfo,
     physical_info_struct<dim> &physical_info_struct) {
   for (unsigned int i = 0; i < pwContactInfo.size(); i++) {
@@ -170,29 +165,31 @@ void ParticleWallContactForce<dim, spacedim>::pwNonLinearCF(
         sqrt(pow(log(physical_info_struct.Poisson_ratio_wall), 2.0) + 9.8696);
     double sn =
         2.0 * yEff *
-        sqrt((std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) *
+        sqrt((std::get<0>(pwContactInfo[i])->get_properties()[2] / 2.0) *
              std::get<3>(pwContactInfo[i]));
     double st =
         8.0 * gEff *
-        sqrt((std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) *
+        sqrt((std::get<0>(pwContactInfo[i])->get_properties()[2] / 2.0) *
              std::get<3>(pwContactInfo[i]));
     double kn =
         1.3333 * yEff *
-        sqrt((std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) *
+        sqrt((std::get<0>(pwContactInfo[i])->get_properties()[2] / 2.0) *
              std::get<3>(pwContactInfo[i]));
     double ethan =
         -1.8257 * betha *
-        sqrt(sn * std::get<0>(pwContactInfo[i]).first->get_properties()[19]);
+        sqrt(sn * std::get<0>(pwContactInfo[i])->get_properties()[19]);
     double kt =
         8.0 * gEff *
-        sqrt((std::get<0>(pwContactInfo[i]).first->get_properties()[2] / 2.0) *
+        sqrt((std::get<0>(pwContactInfo[i])->get_properties()[2] / 2.0) *
              std::get<3>(pwContactInfo[i]));
     double ethat =
         -1.8257 * betha *
-        sqrt(st * std::get<0>(pwContactInfo[i]).first->get_properties()[19]);
-    Point<dim> springNormForce =
+        sqrt(st * std::get<0>(pwContactInfo[i])->get_properties()[19]);
+    Point<dim> springNormForce;
+    springNormForce =
         (kn * std::get<3>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
-    Point<dim> dashpotNormForce =
+    Point<dim> dashpotNormForce;
+    dashpotNormForce =
         (ethan * std::get<4>(pwContactInfo[i])) * std::get<1>(pwContactInfo[i]);
 
     Point<dim> normalForce;
@@ -218,25 +215,22 @@ void ParticleWallContactForce<dim, spacedim>::pwNonLinearCF(
       totalForce = normalForce + coulumbTangForce;
     }
 
-    std::get<0>(pwContactInfo[i]).first->get_properties()[13] =
-        std::get<0>(pwContactInfo[i]).first->get_properties()[13] +
-        totalForce[0];
-    std::get<0>(pwContactInfo[i]).first->get_properties()[14] =
-        std::get<0>(pwContactInfo[i]).first->get_properties()[14] +
-        totalForce[1];
-    std::get<0>(pwContactInfo[i]).first->get_properties()[15] =
-        std::get<0>(pwContactInfo[i]).first->get_properties()[15] +
-        totalForce[2];
+    std::get<0>(pwContactInfo[i])->get_properties()[13] =
+        std::get<0>(pwContactInfo[i])->get_properties()[13] + totalForce[0];
+    std::get<0>(pwContactInfo[i])->get_properties()[14] =
+        std::get<0>(pwContactInfo[i])->get_properties()[14] + totalForce[1];
+    std::get<0>(pwContactInfo[i])->get_properties()[15] =
+        std::get<0>(pwContactInfo[i])->get_properties()[15] + totalForce[2];
 
     // calculation of torque
     /*
      Point<dim> torqueTi;
      torqueTi =
-((std::get<0>(pwContactInfo[i]).first->get_properties()[2])/2.0) *
+((std::get<0>(pwContactInfo[i])->get_properties()[2])/2.0) *
 cross_product_3d( std::get<1>(pwContactInfo[i]) , totalForce); Point<dim>
-omegai = {std::get<0>(pwContactInfo[i]).first->get_properties()[16] ,
-std::get<0>(pwContactInfo[i]).first->get_properties()[17] ,
-std::get<0>(pwContactInfo[i]).first->get_properties()[18]};
+omegai = {std::get<0>(pwContactInfo[i])->get_properties()[16] ,
+std::get<0>(pwContactInfo[i])->get_properties()[17] ,
+std::get<0>(pwContactInfo[i])->get_properties()[18]};
 
     Point<dim> omegaiw = {0.0, 0.0, 0.0};
     double omegaNorm = omegai.norm();
@@ -244,15 +238,15 @@ std::get<0>(pwContactInfo[i]).first->get_properties()[18]};
     {omegaiw = omegai / omegaNorm ;}
     Point<dim> torquer;
    torquer = -1.0 * physical_info_struct.rolling_friction_coefficient_wall *
-((std::get<0>(pwContactInfo[i]).first->get_properties()[2])/2.0) *
+((std::get<0>(pwContactInfo[i])->get_properties()[2])/2.0) *
 normalForce.norm() * omegaiw;
 
-   std::get<0>(pwContactInfo[i]).first->get_properties()[21] =
-std::get<0>(pwContactInfo[i]).first->get_properties()[21] + torqueTi[0] +
-torquer[0]; std::get<0>(pwContactInfo[i]).first->get_properties()[22] =
-std::get<0>(pwContactInfo[i]).first->get_properties()[22] + torqueTi[1] +
-torquer[1]; std::get<0>(pwContactInfo[i]).first->get_properties()[23] =
-std::get<0>(pwContactInfo[i]).first->get_properties()[23] + torqueTi[2] +
+   std::get<0>(pwContactInfo[i])->get_properties()[21] =
+std::get<0>(pwContactInfo[i])->get_properties()[21] + torqueTi[0] +
+torquer[0]; std::get<0>(pwContactInfo[i])->get_properties()[22] =
+std::get<0>(pwContactInfo[i])->get_properties()[22] + torqueTi[1] +
+torquer[1]; std::get<0>(pwContactInfo[i])->get_properties()[23] =
+std::get<0>(pwContactInfo[i])->get_properties()[23] + torqueTi[2] +
 torquer[2];
 */
   }

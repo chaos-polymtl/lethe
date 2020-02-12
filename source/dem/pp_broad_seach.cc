@@ -13,7 +13,7 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
         &cell_Neighbor_List) {
   // A vector of pairs which contains all the canditates for particle-particle
-  // collision at this time step.
+  // collision at each time step
   std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
                         Particles::ParticleIterator<dim, spacedim>>>
       contact_pair_candidates;

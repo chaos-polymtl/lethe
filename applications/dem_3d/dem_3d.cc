@@ -64,8 +64,10 @@
 #include "dem/pp_fine_search.h"
 #include "dem/pp_linear_force.h"
 #include "dem/pp_nonlinear_force.h"
+#include "dem/pw_broad_search.h"
 #include "dem/velocity_verlet_integrator.h"
 
+#include "variant"
 using namespace dealii;
 
 template <int dim, int spacedim> void initilization() {
@@ -107,9 +109,9 @@ template <int dim, int spacedim> void initilization() {
       inContactPairs(DEMparam.simulationControl.nTotal);
   std::vector<std::map<int, contact_info_struct<dim, spacedim>>> inContactInfo(
       DEMparam.simulationControl.nTotal);
-  std::vector<std::tuple<
-      std::pair<Particles::ParticleIterator<dim, spacedim>, int>, Point<dim>,
-      Point<dim>, double, double, double, Point<dim>, double>>
+  std::vector<
+      std::tuple<Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
+                 Point<dim>, double, double, double, Point<dim>, double>>
       pwContactInfo;
 
   ParticleWallContactDetection<dim, spacedim> pw1;
@@ -125,6 +127,7 @@ template <int dim, int spacedim> void initilization() {
   PPFineSearch<dim, spacedim> ppfs;
   // PPLinearForce<dim, spacedim> pplf;
   PPNonLinearForce<dim, spacedim> ppnlf;
+  PWBroadSearch<dim, spacedim> pwbs;
 
   // reading parameters from parameter handler file:
   const int numberOfSteps = DEMparam.simulationControl.tFinal;
@@ -180,8 +183,8 @@ template <int dim, int spacedim> void initilization() {
                  inContactPairs, inContactInfo, boundary_cells_information,
                  pwContactInfo, properties, property_pool, pw1, &ppnlf, pwcf1,
                  &integ1, dt, nTotal, writeFreq, physical_info_struct,
-                 insertion_info_struct, g, numFields, numProperties, ppbs,
-                 ppfs);
+                 insertion_info_struct, g, numFields, numProperties, ppbs, ppfs,
+                 pwbs);
   }
 }
 
