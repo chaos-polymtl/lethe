@@ -38,14 +38,14 @@ public:
   ParticleWallContactForce<dim, spacedim>();
   void pwLinearCF(
       std::vector<std::tuple<
-          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>,
+          typename Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
+          Point<dim>, double, double, double, Point<dim>, double>>,
       physical_info_struct<dim> &);
 
   void pwNonLinearCF(
       std::vector<std::tuple<
-          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>,
+          typename Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
+          Point<dim>, double, double, double, Point<dim>, double>>,
       physical_info_struct<dim> &);
 
 private:

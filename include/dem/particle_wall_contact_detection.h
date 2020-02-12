@@ -36,24 +36,17 @@ template <int dim, int spacedim = dim> class ParticleWallContactDetection {
 public:
   ParticleWallContactDetection<dim, spacedim>();
 
-  std::vector<std::tuple<
-      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Point<dim>, Point<dim>>>
-  pwcontactlist(std::vector<boundary_cells_info_struct<dim>> &,
-                Particles::ParticleHandler<dim, spacedim> &);
-
   void pwFineSearch(
+      std::vector<
+          std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
+                     Tensor<1, dim>, Point<dim>>>,
       std::vector<std::tuple<
-          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-          Point<dim>, Point<dim>>>,
-      std::vector<std::tuple<
-          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
-          &,
+          typename Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
+          Point<dim>, double, double, double, Point<dim>, double>> &,
       float);
 
 private:
-  Point<dim> findProjection(Point<dim>, Point<dim>);
+  Point<dim> findProjection(Point<dim>, Tensor<1, dim>);
 };
 
 #endif /* PWCONTACTDETECTION_H_ */
