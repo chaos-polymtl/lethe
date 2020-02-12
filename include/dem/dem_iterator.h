@@ -28,6 +28,7 @@
 #include "dem/pp_broad_search.h"
 #include "dem/pp_contact_force.h"
 #include "dem/pp_fine_search.h"
+#include "dem/pw_broad_search.h"
 
 #ifndef DEMITERATOR_H_
 #define DEMITERATOR_H_
@@ -43,17 +44,17 @@ public:
       std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
       std::vector<std::map<int, contact_info_struct<dim, spacedim>>> &,
       std::vector<boundary_cells_info_struct<dim>>,
-      std::vector<std::tuple<
-          std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
-          Point<dim>, Point<dim>, double, double, double, Point<dim>, double>>
-          &,
+      std::vector<
+          std::tuple<Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
+                     Point<dim>, double, double, double, Point<dim>, double>> &,
       std::vector<std::tuple<std::string, int>>,
       dealii::Particles::PropertyPool &,
       ParticleWallContactDetection<dim, spacedim>,
       PPContactForce<dim, spacedim> *, ParticleWallContactForce<dim, spacedim>,
       Integrator<dim, spacedim> *, double, int, int, physical_info_struct<dim>,
       insertion_info_struct<dim, spacedim>, Tensor<1, dim>, int, int,
-      PPBroadSearch<dim, spacedim>, PPFineSearch<dim, spacedim>);
+      PPBroadSearch<dim, spacedim>, PPFineSearch<dim, spacedim>,
+      PWBroadSearch<dim, spacedim>);
 
 private:
   void forceReinit(Particles::ParticleHandler<dim, spacedim> &);
