@@ -19,8 +19,8 @@
 #include <deal.II/base/tensor.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef CONTACTINFOSTRUCT_H_
-#define CONTACTINFOSTRUCT_H_
+#ifndef PPCONTACTINFOSTRUCT_H_
+#define PPCONTACTINFOSTRUCT_H_
 
 /**
  * This struct handles the information related to the calculation of the
@@ -29,7 +29,7 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct contact_info_struct {
+template <int dim, int spacedim> struct pp_contact_info_struct {
   double normal_overlap;
   Tensor<1, dim> normal_vector;
   double normal_relative_velocity;
@@ -40,4 +40,4 @@ template <int dim, int spacedim> struct contact_info_struct {
   Particles::ParticleIterator<dim, spacedim> particle_two;
 };
 
-#endif /* CONTACTINFOSTRUCT_H_ */
+#endif /* PPCONTACTINFOSTRUCT_H_ */

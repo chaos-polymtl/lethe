@@ -17,7 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/contact_info_struct.h"
+#include "dem/pp_contact_info_struct.h"
 #include <deal.II/distributed/tria.h>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>

@@ -18,7 +18,7 @@
  */
 
 #include "dem/physical_info_struct.h"
-#include "dem/contact_info_struct.h"
+#include "dem/pp_contact_info_struct.h"
 #include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
@@ -48,7 +48,7 @@ public:
    * @param physical_properties Physical properties of particles
    */
   virtual void calculate_pp_contact_force(
-      std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+      std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
           &pairs_in_contact_info,
       physical_info_struct<dim> &physical_properties) = 0;
 };

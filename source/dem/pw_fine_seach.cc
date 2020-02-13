@@ -9,19 +9,9 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
     std::vector<std::tuple<
         std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
         Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
-    std::vector<
-        std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                                 Tensor<1, dim>, Point<dim>, double, double,
-                                 double, Tensor<1, dim>, double>>>
+    std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
         &pw_pairs_in_contact,
     double dt) {
-
-  // this should be deleted
-  // *****************************************************
-  std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
-             Tensor<1, dim>, Point<dim>, double, double, double, Tensor<1, dim>,
-             double>
-      pw_information_tuple;
 
   // Iterating over all element of pw_pairs_in_contact vector, i.e. lterating
   // over all the particles. The size of this vector (pw_pairs_in_contact) is
@@ -49,12 +39,12 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
       // tuple is also defined as a local variable
       int boundary_id = contact_pairs_iterator->first;
       auto information_tuple = contact_pairs_iterator->second;
-      auto particle = std::get<0>(information_tuple);
+      auto particle = information_tuple.particle;
 
       // Normal vector of the boundary and a point on the boudary are defined as
       // local parameters
-      Tensor<1, dim> normal_vector = std::get<1>(information_tuple);
-      Point<dim> point_on_boundary = std::get<2>(information_tuple);
+      Tensor<1, dim> normal_vector = information_tuple.normal_vector;
+      Point<dim> point_on_boundary = information_tuple.point_on_boundary;
 
       // A vector (point_to_particle_vector) is defined which connects the
       // center of particle to the point_on_boundary. This vector will then be
@@ -124,16 +114,24 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
 
         // Calculation of new tangential_overlap, since this value is
         // history-dependent, it needs the value at previous time-step
-        double tangential_overlap = std::get<5>(information_tuple) +
+        double tangential_overlap = information_tuple.tangential_overlap +
                                     (tangential_relative_velocity_value * dt);
 
-        pw_information_tuple = std::make_tuple(
-            particle, normal_vector, point_on_boundary, distance,
-            normal_relative_velocity_value, tangential_overlap,
-            tangential_vector, tangential_relative_velocity_value);
+        // Creating a sample from the pw_contact_info_struct and adding contact
+        // info to the sample
+        pw_contact_info_struct<dim, spacedim> contact_info;
+        contact_info.particle = particle;
+        contact_info.normal_vector = normal_vector;
+        contact_info.point_on_boundary = point_on_boundary;
+        contact_info.normal_overlap = distance;
+        contact_info.normal_relative_velocity = normal_relative_velocity_value;
+        contact_info.tangential_overlap = tangential_overlap;
+        contact_info.tangential_vector = tangential_vector;
+        contact_info.tangential_relative_velocity =
+            tangential_relative_velocity_value;
 
         pw_pairs_in_contact_iterator->insert_or_assign(boundary_id,
-                                                       pw_information_tuple);
+                                                       contact_info);
       }
 
       // If the particle-wall pair is not in contact anymore (i.e. the contact
@@ -245,15 +243,21 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
         // equal to zero
         double tangential_overlap = 0;
 
-        // Making the information tuple using the calculated parameters and
-        // adding this tuple to the pw_pairs_in_contact vector
-        pw_information_tuple = std::make_tuple(
-            particle, normal_vector, point_on_boundary, distance,
-            normal_relative_velocity_value, tangential_overlap,
-            tangential_vector, tangential_relative_velocity_value);
+        // Creating a sample from the pw_contact_info_struct and adding contact
+        // info to the sample
+        pw_contact_info_struct<dim, spacedim> contact_info;
+        contact_info.particle = particle;
+        contact_info.normal_vector = normal_vector;
+        contact_info.point_on_boundary = point_on_boundary;
+        contact_info.normal_overlap = distance;
+        contact_info.normal_relative_velocity = normal_relative_velocity_value;
+        contact_info.tangential_overlap = tangential_overlap;
+        contact_info.tangential_vector = tangential_vector;
+        contact_info.tangential_relative_velocity =
+            tangential_relative_velocity_value;
 
         pw_pairs_in_contact[particle->get_id()].insert(
-            {boundary_id, pw_information_tuple});
+            {boundary_id, contact_info});
       }
     }
   }

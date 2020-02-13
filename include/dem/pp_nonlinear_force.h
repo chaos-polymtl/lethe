@@ -17,10 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/contact_info_struct.h"
 #include "dem/dem_solver_parameters.h"
 #include "dem/physical_info_struct.h"
 #include "dem/pp_contact_force.h"
+#include "dem/pp_contact_info_struct.h"
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
 #include <dem/dem_properties.h>
@@ -58,7 +58,7 @@ public:
    * @param physical_properties Physical properties of particles
    */
   virtual void calculate_pp_contact_force(
-      std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+      std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
           &pairs_in_contact_info,
       physical_info_struct<dim> &physical_properties) override;
 };
