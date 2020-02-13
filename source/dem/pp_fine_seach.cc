@@ -11,7 +11,7 @@ void PPFineSearch<dim, spacedim>::pp_Fine_Search(
         &contact_pair_candidates,
     std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
         &pairs_in_contact,
-    std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+    std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
         &pairs_in_contact_info,
     double dt, Particles::ParticleHandler<dim, spacedim> &particle_handler) {
 
@@ -143,9 +143,9 @@ void PPFineSearch<dim, spacedim>::pp_Fine_Search(
                                      .tangential_overlap +
             (tangential_relative_velocity_value * dt);
 
-        // Creating a sample from the contact_info_struct and adding contact
+        // Creating a sample from the pp_contact_info_struct and adding contact
         // info to the sample
-        contact_info_struct<dim, spacedim> contact_info;
+        pp_contact_info_struct<dim, spacedim> contact_info;
 
         contact_info.normal_overlap = distance;
         contact_info.normal_vector = normal_vector;
@@ -304,7 +304,7 @@ void PPFineSearch<dim, spacedim>::pp_Fine_Search(
 
         // Creating a sample from the contact_info_struct and adding contact
         // info to the sample
-        contact_info_struct<dim, spacedim> contact_info;
+        pp_contact_info_struct<dim, spacedim> contact_info;
 
         contact_info.normal_overlap = distance;
         contact_info.normal_vector = normal_vector;

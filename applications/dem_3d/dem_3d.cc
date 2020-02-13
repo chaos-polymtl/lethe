@@ -50,7 +50,6 @@
 #include <tuple>
 #include <vector>
 
-#include "dem/contact_info_struct.h"
 #include "dem/dem.h"
 #include "dem/dem_iterator.h"
 #include "dem/dem_properties.h"
@@ -60,10 +59,12 @@
 #include "dem/insertion_info_struct.h"
 #include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
+#include "dem/pp_contact_info_struct.h"
 #include "dem/pp_fine_search.h"
 #include "dem/pp_linear_force.h"
 #include "dem/pp_nonlinear_force.h"
 #include "dem/pw_broad_search.h"
+#include "dem/pw_contact_info_struct.h"
 #include "dem/pw_fine_search.h"
 #include "dem/velocity_verlet_integrator.h"
 
@@ -107,17 +108,10 @@ template <int dim, int spacedim> void initilization() {
   DEM_iterator<dim, spacedim> iter1;
   std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
       inContactPairs(DEMparam.simulationControl.nTotal);
-  std::vector<std::map<int, contact_info_struct<dim, spacedim>>> inContactInfo(
-      DEMparam.simulationControl.nTotal);
+  std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
+      inContactInfo(DEMparam.simulationControl.nTotal);
 
-  // std::vector<std::tuple<
-  //   std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
-  //   Tensor<1, dim>, Point<dim>, double, double, double, Point<dim>, double>>
-  //   pwContactInfo;
-  std::vector<
-      std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                               Tensor<1, dim>, Point<dim>, double, double,
-                               double, Tensor<1, dim>, double>>>
+  std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
       pwContactInfo(DEMparam.simulationControl.nTotal);
 
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;

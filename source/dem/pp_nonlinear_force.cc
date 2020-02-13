@@ -4,7 +4,7 @@ using namespace dealii;
 
 template <int dim, int spacedim>
 void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
-    std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+    std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
         &pairs_in_contact_info,
     physical_info_struct<dim> &physical_properties) {
 
