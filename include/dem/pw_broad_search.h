@@ -44,22 +44,26 @@ public:
   PWBroadSearch<dim, spacedim>();
 
   /**
-   * Finds a vector of tuples (tuple of particles located in boundary cells,
-   * normal vector of the boundary face and a point on the face) which shows the
-   * candidate particle-wall collision pairs. These collision pairs will be
-   * investigated in the fine search to check if they are in contact or not
+   * Finds a vector of tuples (tuple of contact pairs (particles located in
+   * boundary cells, boundary id), normal vector of the boundary face and a
+   * point on the face) which shows the candidate particle-wall collision pairs.
+   * These collision pairs will be investigated in the fine search to check if
+   * they are in contact or not
    *
    * @param boundary_cells_information Information of the boundary cells and
    * faces. This is the output of the FindBoundaryCellsInformation class
    * @param particle_handler Particle handler of particles located in boundary
    * cells
    * @return A vector of tuples. Each element of vector (tuple) contains a
-   * particle located near boundaries, the normal vector of the corresponding
-   * face boundary and a point on the boundary
+   * contact pair (particle located near boundaries, boundary id), the normal
+   * vector of the corresponding face boundary and a point on the boundary. The
+   * contact pair is used in the fine search to look for replications and this
+   * is the reason it is defined as a separate pair
    */
 
-  std::vector<std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
-                         Tensor<1, dim>, Point<dim>>>
+  std::vector<std::tuple<
+      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+      Tensor<1, dim>, Point<dim>>>
   find_PW_Contact_Pairs(
       std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
       Particles::ParticleHandler<dim, spacedim> &particle_handler);

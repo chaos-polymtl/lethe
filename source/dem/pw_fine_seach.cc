@@ -1,0 +1,272 @@
+#include "dem/pw_fine_search.h"
+
+using namespace dealii;
+
+template <int dim, int spacedim> PWFineSearch<dim, spacedim>::PWFineSearch() {}
+
+template <int dim, int spacedim>
+void PWFineSearch<dim, spacedim>::pw_Fine_Search(
+    std::vector<std::tuple<
+        std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+        Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
+    std::vector<
+        std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
+                                 Tensor<1, dim>, Point<dim>, double, double,
+                                 double, Tensor<1, dim>, double>>>
+        &pw_pairs_in_contact,
+    double dt) {
+
+  // this should be deleted
+  // *****************************************************
+  std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
+             Tensor<1, dim>, Point<dim>, double, double, double, Tensor<1, dim>,
+             double>
+      pw_information_tuple;
+
+  // Iterating over all element of pw_pairs_in_contact vector, i.e. lterating
+  // over all the particles. The size of this vector (pw_pairs_in_contact) is
+  // equal to the number of particles and element i of this vector corresponds
+  // to particle i. Each element of this vector (i.e. each particle) consists of
+  // a map container. The key of this map is the id of the boundary which is in
+  // contact with the corresponding particle. The contact information are stored
+  // in this map
+  for (auto pw_pairs_in_contact_iterator = pw_pairs_in_contact.begin();
+       pw_pairs_in_contact_iterator != pw_pairs_in_contact.end();
+       ++pw_pairs_in_contact_iterator) {
+
+    // Defining element (particle->get_id())th of the pw_pairs_in_contact vector
+    // as a local map (pw_contact_map)
+    auto pw_contact_map = *pw_pairs_in_contact_iterator;
+
+    // Iterating (with defining the iterator contact_pairs_iterator) over
+    // elemens of pw_pairs_in_contact_iterator which is a pointer to a map
+    for (auto contact_pairs_iterator = pw_contact_map.begin();
+         contact_pairs_iterator != pw_contact_map.end();
+         contact_pairs_iterator++) {
+
+      // For each contact, the boundary id (map key) and particle are taken from
+      // the iterator and defined as local parameters. Similarly the information
+      // tuple is also defined as a local variable
+      int boundary_id = contact_pairs_iterator->first;
+      auto information_tuple = contact_pairs_iterator->second;
+      auto particle = std::get<0>(information_tuple);
+
+      // Normal vector of the boundary and a point on the boudary are defined as
+      // local parameters
+      Tensor<1, dim> normal_vector = std::get<1>(information_tuple);
+      Point<dim> point_on_boundary = std::get<2>(information_tuple);
+
+      // A vector (point_to_particle_vector) is defined which connects the
+      // center of particle to the point_on_boundary. This vector will then be
+      // projected on the normal vector of the boundary to obtain the
+      // particle-wall distance
+      Tensor<1, dim> point_to_particle_vector =
+          particle->get_location() - point_on_boundary;
+
+      // Finding the projected vector on the normal vector of the boundary. Here
+      // we have used the private function find_projection. Using this projected
+      // vector, the particle-wall distance is calculated
+      Tensor<1, dim> projected_vector =
+          find_projection(point_to_particle_vector, normal_vector);
+      double distance =
+          ((particle->get_properties()[2]) / 2) - (projected_vector.norm());
+
+      // Check to see if particle-wall pair is still in contact
+      if (distance > 0) {
+        // If they are still in contact
+
+        // Using velocity and angular velocity of particle as
+        // local vectors
+        Tensor<1, dim> particle_velocity{{particle->get_properties()[7],
+                                          particle->get_properties()[8],
+                                          particle->get_properties()[9]}};
+        Tensor<1, dim> particle_omega{{particle->get_properties()[16],
+                                       particle->get_properties()[17],
+                                       particle->get_properties()[18]}};
+
+        // Defining relative contact velocity
+        Tensor<1, dim> contact_relative_velocity;
+        if (dim == 3) {
+          contact_relative_velocity =
+              particle_velocity +
+              cross_product_3d(
+                  (((particle->get_properties()[2]) / 2) * particle_omega),
+                  normal_vector);
+        }
+        /*
+           if (dim == 2){
+              contact_relative_velocity =
+              particle_velocity +
+              cross_product_2d(
+                  (((particle->get_properties()[2]) / 2) * particle_omega),
+                  normal_vector);
+          }
+          */
+
+        // Calculation of normal relative velocity
+        double normal_relative_velocity_value =
+            contact_relative_velocity * normal_vector;
+        Tensor<1, dim> normal_relative_velocity =
+            normal_relative_velocity_value * normal_vector;
+
+        // Calculation of tangential relative velocity
+        Tensor<1, dim> tangential_relative_velocity =
+            contact_relative_velocity - normal_relative_velocity;
+
+        // Calculation of tangential vector using tangential relative velocity
+        Tensor<1, dim> tangential_vector{{0, 0, 0}};
+        double tangential_relative_velocity_value =
+            tangential_relative_velocity.norm();
+        if (tangential_relative_velocity_value != 0) {
+          tangential_vector =
+              tangential_relative_velocity / tangential_relative_velocity_value;
+        }
+
+        // Calculation of new tangential_overlap, since this value is
+        // history-dependent, it needs the value at previous time-step
+        double tangential_overlap = std::get<5>(information_tuple) +
+                                    (tangential_relative_velocity_value * dt);
+
+        pw_information_tuple = std::make_tuple(
+            particle, normal_vector, point_on_boundary, distance,
+            normal_relative_velocity_value, tangential_overlap,
+            tangential_vector, tangential_relative_velocity_value);
+
+        pw_pairs_in_contact_iterator->insert_or_assign(boundary_id,
+                                                       pw_information_tuple);
+      }
+
+      // If the particle-wall pair is not in contact anymore (i.e. the contact
+      // is finished and distance <= 0), this element should be erased from
+      // pw_pairs_in_contact
+      else {
+        //(pw_pairs_in_contact[particle->get_id()]).erase(contact_pairs_iterator->first);
+        pw_pairs_in_contact_iterator->erase(boundary_id);
+      }
+    }
+  }
+
+  // Now iterating over contact candidates from broad search. If a particle-wall
+  // pair is in contact (distance > 0) and does not exist in the
+  // pw_pairs_in_contact, it is added to the pw_pairs_in_contact
+  for (auto pw_contact_pair_candidates_iterator =
+           pw_contact_pair_candidates.begin();
+       pw_contact_pair_candidates_iterator != pw_contact_pair_candidates.end();
+       ++pw_contact_pair_candidates_iterator) {
+
+    // Get the particle and boundary id from the vector and the total array view
+    // to the particle properties once to improve efficiency
+    auto particle = std::get<0>(*pw_contact_pair_candidates_iterator).first;
+    auto particle_properties = particle->get_properties();
+    int boundary_id = std::get<0>(*pw_contact_pair_candidates_iterator).second;
+
+    // Normal vector of the boundary and a point on the boudary are defined as
+    // local parameters
+    Tensor<1, dim> normal_vector =
+        std::get<1>(*pw_contact_pair_candidates_iterator);
+    Point<dim> point_on_boundary =
+        std::get<2>(*pw_contact_pair_candidates_iterator);
+
+    // A vector (point_to_particle_vector) is defined which connects the
+    // center of particle to the point_on_boundary. This vector will then be
+    // projected on the normal vector of the boundary to obtain the
+    // particle-wall distance
+    Tensor<1, dim> point_to_particle_vector =
+        particle->get_location() - point_on_boundary;
+
+    // Finding the projected vector on the normal vector of the boundary. Here
+    // we have used the private function find_projection. Using this projected
+    // vector, the particle-wall distance is calculated
+    Tensor<1, dim> projected_vector =
+        find_projection(point_to_particle_vector, normal_vector);
+    double distance =
+        ((particle_properties[2]) / 2) - (projected_vector.norm());
+
+    // Check to see if the particle-wall pair is in contact
+    if (distance > 0) {
+
+      // Check to see if in the (particle->get_id())th element of the
+      // pw_pairs_in_contact vector, an element with the same key as the
+      // boundary exists or not. If there exist an element with this key value,
+      // it shows that this particle-wall pair has already been found and there
+      // is no need to calculate its properties again
+      if (pw_pairs_in_contact[particle->get_id()].count(boundary_id) <= 0) {
+
+        // If the pair is in contact (distance>0) and the pair does not exist in
+        // the pw_pairs_in_contact vector, the contact properties should be
+        // obtained and added to the pw_pairs_in_contact vector
+        Tensor<1, dim> particle_velocity{{particle_properties[7],
+                                          particle_properties[8],
+                                          particle_properties[9]}};
+        Tensor<1, dim> particle_omega{{particle_properties[16],
+                                       particle_properties[17],
+                                       particle_properties[18]}};
+
+        // Defining relative contact velocity
+        Tensor<1, dim> contact_relative_velocity;
+        if (dim == 3) {
+          contact_relative_velocity =
+              particle_velocity +
+              cross_product_3d(
+                  (((particle_properties[2]) / 2) * particle_omega),
+                  normal_vector);
+        }
+        /*
+        if (dim == 2)
+        {
+            contact_relative_velocity =
+                particle_velocity +
+                cross_product_2d(
+                    (((particle_properties[2]) / 2) * particle_omega),
+                    normal_vector);
+        }
+        */
+
+        // Calculation of normal relative velocity
+        double normal_relative_velocity_value =
+            contact_relative_velocity * normal_vector;
+        Tensor<1, dim> normal_relative_velocity =
+            normal_relative_velocity_value * normal_vector;
+
+        // Calculation of tangential relative velocity
+        Tensor<1, dim> tangential_relative_velocity =
+            contact_relative_velocity - normal_relative_velocity;
+
+        // Calculation of tangential vector using tangential relative velocity
+        Tensor<1, dim> tangential_vector{{0, 0, 0}};
+        double tangential_relative_velocity_value =
+            tangential_relative_velocity.norm();
+        if (tangential_relative_velocity_value != 0) {
+          tangential_vector =
+              tangential_relative_velocity / tangential_relative_velocity_value;
+        }
+
+        // Setting tangential overlap of the new particle-wall contact pair
+        // equal to zero
+        double tangential_overlap = 0;
+
+        // Making the information tuple using the calculated parameters and
+        // adding this tuple to the pw_pairs_in_contact vector
+        pw_information_tuple = std::make_tuple(
+            particle, normal_vector, point_on_boundary, distance,
+            normal_relative_velocity_value, tangential_overlap,
+            tangential_vector, tangential_relative_velocity_value);
+
+        pw_pairs_in_contact[particle->get_id()].insert(
+            {boundary_id, pw_information_tuple});
+      }
+    }
+  }
+}
+
+template <int dim, int spacedim>
+Tensor<1, dim>
+PWFineSearch<dim, spacedim>::find_projection(Tensor<1, dim> vector_a,
+                                             Tensor<1, dim> vector_b) {
+  Tensor<1, dim> vector_c;
+  vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
+
+  return vector_c;
+}
+
+template class PWFineSearch<3, 3>;

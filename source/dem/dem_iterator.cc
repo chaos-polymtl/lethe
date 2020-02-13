@@ -74,20 +74,20 @@ void DEM_iterator<dim, spacedim>::engine(
     std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
         &inContactInfo,
     std::vector<boundary_cells_info_struct<dim>> boundary_cells_information,
-    std::vector<std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                           Tensor<1, dim>, Point<dim>, double, double, double,
-                           Point<dim>, double>> &pwContactInfo,
+    std::vector<
+        std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
+                                 Tensor<1, dim>, Point<dim>, double, double,
+                                 double, Tensor<1, dim>, double>>>
+        &pwContactInfo,
     std::vector<std::tuple<std::string, int>> properties,
-    Particles::PropertyPool &property_pool,
-    ParticleWallContactDetection<dim, spacedim> pw,
-    PPContactForce<dim, spacedim> *pplf,
+    Particles::PropertyPool &property_pool, PPContactForce<dim, spacedim> *pplf,
     ParticleWallContactForce<dim, spacedim> pwcf,
     Integrator<dim, spacedim> *Integ1, double dt, int nTotal, int writeFreq,
     physical_info_struct<dim> physical_info_struct,
     insertion_info_struct<dim, spacedim> insertion_info_struct,
     Tensor<1, dim> g, int numFields, int numProperties,
     PPBroadSearch<dim, spacedim> ppbs, PPFineSearch<dim, spacedim> ppfs,
-    PWBroadSearch<dim, spacedim> pwbs) {
+    PWBroadSearch<dim, spacedim> pwbs, PWFineSearch<dim, spacedim> pwfs) {
   // moving walls
 
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -147,8 +147,9 @@ void DEM_iterator<dim, spacedim>::engine(
       std::chrono::duration_cast<std::chrono::microseconds>(t8 - t7).count();
 
   // p-w contact detection:
-  std::vector<std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                         Tensor<1, dim>, Point<dim>>>
+  std::vector<
+      std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+                 Tensor<1, dim>, Point<dim>>>
       pwContactList;
 
   auto t9 = std::chrono::high_resolution_clock::now();
@@ -162,7 +163,9 @@ void DEM_iterator<dim, spacedim>::engine(
       std::chrono::duration_cast<std::chrono::microseconds>(t10 - t9).count();
 
   auto t11 = std::chrono::high_resolution_clock::now();
-  pw.pwFineSearch(pwContactList, pwContactInfo, dt);
+  // pw.pwFineSearch(pwContactList, pwContactInfo, dt);
+  pwfs.pw_Fine_Search(pwContactList, pwContactInfo, dt);
+
   auto t12 = std::chrono::high_resolution_clock::now();
   auto duration_PWFineSearch =
       std::chrono::duration_cast<std::chrono::microseconds>(t12 - t11).count();
