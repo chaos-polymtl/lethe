@@ -17,6 +17,9 @@ void PPFineSearch<dim, spacedim>::pp_Fine_Search(
 
   // Iterating over all the particles in particle_handler, which shows the first
   // particle in the contact pair
+
+  // ??????????????????????????////
+  // what about iterating over pairs_in_contact directly???
   for (auto particle_one = particle_handler.begin();
        particle_one != particle_handler.end(); ++particle_one) {
 

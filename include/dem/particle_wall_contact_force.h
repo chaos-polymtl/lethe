@@ -37,15 +37,17 @@ template <int dim, int spacedim> class ParticleWallContactForce {
 public:
   ParticleWallContactForce<dim, spacedim>();
   void pwLinearCF(
-      std::vector<std::tuple<
-          typename Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
-          Point<dim>, double, double, double, Point<dim>, double>>,
+      std::vector<
+          std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
+                                   Tensor<1, dim>, Point<dim>, double, double,
+                                   double, Tensor<1, dim>, double>>> &,
       physical_info_struct<dim> &);
 
   void pwNonLinearCF(
-      std::vector<std::tuple<
-          typename Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
-          Point<dim>, double, double, double, Point<dim>, double>>,
+      std::vector<
+          std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
+                                   Tensor<1, dim>, Point<dim>, double, double,
+                                   double, Tensor<1, dim>, double>>> &,
       physical_info_struct<dim> &);
 
 private:
