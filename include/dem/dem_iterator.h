@@ -18,7 +18,6 @@
  */
 
 #include "dem/boundary_cells_info_struct.h"
-#include "dem/contact_info_struct.h"
 #include "dem/dem_solver_parameters.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/integrator.h"
@@ -26,8 +25,10 @@
 #include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
 #include "dem/pp_contact_force.h"
+#include "dem/pp_contact_info_struct.h"
 #include "dem/pp_fine_search.h"
 #include "dem/pw_broad_search.h"
+#include "dem/pw_contact_info_struct.h"
 #include "dem/pw_fine_search.h"
 
 #ifndef DEMITERATOR_H_
@@ -42,12 +43,9 @@ public:
       std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
           &,
       std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>> &,
-      std::vector<std::map<int, contact_info_struct<dim, spacedim>>> &,
+      std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>> &,
       std::vector<boundary_cells_info_struct<dim>>,
-      std::vector<
-          std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                                   Tensor<1, dim>, Point<dim>, double, double,
-                                   double, Tensor<1, dim>, double>>> &,
+      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>> &,
       std::vector<std::tuple<std::string, int>>,
       dealii::Particles::PropertyPool &, PPContactForce<dim, spacedim> *,
       ParticleWallContactForce<dim, spacedim>, Integrator<dim, spacedim> *,

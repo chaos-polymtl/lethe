@@ -15,9 +15,9 @@
 
 #include <chrono>
 
-#include "dem/contact_info_struct.h"
 #include "dem/dem_solver_parameters.h"
 #include "dem/nonuniform_insertion.h"
+#include "dem/pp_contact_info_struct.h"
 #include "dem/uniform_insertion.h"
 #include "dem/visualization.h"
 #include "dem/write_vtu.h"
@@ -71,13 +71,10 @@ void DEM_iterator<dim, spacedim>::engine(
         &cellNeighbor,
     std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
         &inContactPairs,
-    std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+    std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
         &inContactInfo,
     std::vector<boundary_cells_info_struct<dim>> boundary_cells_information,
-    std::vector<
-        std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                                 Tensor<1, dim>, Point<dim>, double, double,
-                                 double, Tensor<1, dim>, double>>>
+    std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
         &pwContactInfo,
     std::vector<std::tuple<std::string, int>> properties,
     Particles::PropertyPool &property_pool, PPContactForce<dim, spacedim> *pplf,
@@ -163,7 +160,6 @@ void DEM_iterator<dim, spacedim>::engine(
       std::chrono::duration_cast<std::chrono::microseconds>(t10 - t9).count();
 
   auto t11 = std::chrono::high_resolution_clock::now();
-  // pw.pwFineSearch(pwContactList, pwContactInfo, dt);
   pwfs.pw_Fine_Search(pwContactList, pwContactInfo, dt);
 
   auto t12 = std::chrono::high_resolution_clock::now();
