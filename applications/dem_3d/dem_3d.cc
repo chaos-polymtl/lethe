@@ -58,13 +58,13 @@
 #include "dem/find_boundary_cells_information.h"
 #include "dem/find_cell_neighbors.h"
 #include "dem/insertion_info_struct.h"
-#include "dem/particle_wall_contact_detection.h"
 #include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
 #include "dem/pp_fine_search.h"
 #include "dem/pp_linear_force.h"
 #include "dem/pp_nonlinear_force.h"
 #include "dem/pw_broad_search.h"
+#include "dem/pw_fine_search.h"
 #include "dem/velocity_verlet_integrator.h"
 
 #include "variant"
@@ -109,12 +109,16 @@ template <int dim, int spacedim> void initilization() {
       inContactPairs(DEMparam.simulationControl.nTotal);
   std::vector<std::map<int, contact_info_struct<dim, spacedim>>> inContactInfo(
       DEMparam.simulationControl.nTotal);
-  std::vector<
-      std::tuple<Particles::ParticleIterator<dim, spacedim>, Tensor<1, dim>,
-                 Point<dim>, double, double, double, Point<dim>, double>>
-      pwContactInfo;
 
-  ParticleWallContactDetection<dim, spacedim> pw1;
+  // std::vector<std::tuple<
+  //   std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
+  //   Tensor<1, dim>, Point<dim>, double, double, double, Point<dim>, double>>
+  //   pwContactInfo;
+  std::vector<
+      std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
+                               Tensor<1, dim>, Point<dim>, double, double,
+                               double, Tensor<1, dim>, double>>>
+      pwContactInfo(DEMparam.simulationControl.nTotal);
 
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
   FindBoundaryCellsInformation<dim, dim> boundary_cell_object;
@@ -128,6 +132,7 @@ template <int dim, int spacedim> void initilization() {
   // PPLinearForce<dim, spacedim> pplf;
   PPNonLinearForce<dim, spacedim> ppnlf;
   PWBroadSearch<dim, spacedim> pwbs;
+  PWFineSearch<dim, spacedim> pwfs;
 
   // reading parameters from parameter handler file:
   const int numberOfSteps = DEMparam.simulationControl.tFinal;
@@ -181,10 +186,10 @@ template <int dim, int spacedim> void initilization() {
   while (DEM_step < numberOfSteps) {
     iter1.engine(particle_handler, tr, DEM_step, DEM_time, cellNeighbor,
                  inContactPairs, inContactInfo, boundary_cells_information,
-                 pwContactInfo, properties, property_pool, pw1, &ppnlf, pwcf1,
+                 pwContactInfo, properties, property_pool, &ppnlf, pwcf1,
                  &integ1, dt, nTotal, writeFreq, physical_info_struct,
                  insertion_info_struct, g, numFields, numProperties, ppbs, ppfs,
-                 pwbs);
+                 pwbs, pwfs);
   }
 }
 
