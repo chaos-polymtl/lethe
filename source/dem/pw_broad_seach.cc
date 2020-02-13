@@ -6,18 +6,20 @@ template <int dim, int spacedim>
 PWBroadSearch<dim, spacedim>::PWBroadSearch() {}
 
 template <int dim, int spacedim>
-std::vector<std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
-                       Tensor<1, dim>, Point<dim>>>
+std::vector<std::tuple<
+    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+    Tensor<1, dim>, Point<dim>>>
 PWBroadSearch<dim, spacedim>::find_PW_Contact_Pairs(
     std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
     Particles::ParticleHandler<dim, spacedim> &particle_handler) {
 
   // A vector of tuples which contains all the canditates for particle-wall
-  // collision at each time step. Each tuple contains a particle located near
-  // the boundaries, the normal vector of the corresponding boundary face and
-  // a point on the face
-  std::vector<std::tuple<typename Particles::ParticleIterator<dim, spacedim>,
-                         Tensor<1, dim>, Point<dim>>>
+  // collision at each time step. Each tuple contains a collision pair (a
+  // particle located near the boundaries, boundary id), the normal vector of
+  // the corresponding boundary face and a point on the face
+  std::vector<std::tuple<
+      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
+      Tensor<1, dim>, Point<dim>>>
       pw_contact_pair_candidates;
 
   // Iterating over the boundary_cells_information vector which is the output of
@@ -44,10 +46,11 @@ PWBroadSearch<dim, spacedim>::find_PW_Contact_Pairs(
 
       // Making the tuple and adding it to the pw_contact_pair_candidates
       // vector. This vector is the output of this function
-      pw_contact_pair_candidates.push_back(
-          std::make_tuple(particles_in_cell_iterator,
-                          boundary_cells_information_iterator->normal_vector,
-                          boundary_cells_information_iterator->point_on_face));
+      pw_contact_pair_candidates.push_back(std::make_tuple(
+          std::make_pair(particles_in_cell_iterator,
+                         boundary_cells_information_iterator->boundary_id),
+          boundary_cells_information_iterator->normal_vector,
+          boundary_cells_information_iterator->point_on_face));
     }
   }
 
