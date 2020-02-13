@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/contact_info_struct.h"
 #include "dem/dem_properties.h"
+#include "dem/pp_contact_info_struct.h"
 #include <deal.II/base/tensor.h>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
@@ -74,7 +74,7 @@ public:
           &contact_pair_candidates,
       std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
           &pairs_in_contact,
-      std::vector<std::map<int, contact_info_struct<dim, spacedim>>>
+      std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
           &pairs_in_contact_info,
       double dt, Particles::ParticleHandler<dim, spacedim> &particle_handler);
 };

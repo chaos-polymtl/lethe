@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include "dem/pw_contact_info_struct.h"
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
@@ -59,7 +60,7 @@ public:
    * which shows contact pair candidates
    * @param pw_pairs_in_contact A vector of maps which stores all the
    * particle-wall pairs which are physically in contact, and the contact
-   * information in a tuple. Note that the size of this map is equal to the
+   * information in a struct. Note that the size of this vector is equal to the
    * number of particles while the key of map (each element of the vector) is
    * the boundary id
    * @param dt DEM time step
@@ -69,10 +70,7 @@ public:
       std::vector<std::tuple<
           std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
           Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
-      std::vector<
-          std::map<int, std::tuple<Particles::ParticleIterator<dim, spacedim>,
-                                   Tensor<1, dim>, Point<dim>, double, double,
-                                   double, Tensor<1, dim>, double>>>
+      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
           &pw_pairs_in_contact,
       double dt);
 

@@ -16,37 +16,29 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-
-#include <deal.II/particles/particle.h>
+#include <deal.II/base/point.h>
+#include <deal.II/base/tensor.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#include <math.h>
+#ifndef PWCONTACTINFOSTRUCT_H_
+#define PWCONTACTINFOSTRUCT_H_
 
-#include "dem/dem_solver_parameters.h"
-#include "dem/physical_info_struct.h"
-#include "dem/pw_contact_info_struct.h"
-#include <iostream>
-#include <tuple>
-#include <vector>
+/**
+ * This struct handles the information related to the calculation of the
+ * particle-wall contact force
+ */
 
 using namespace dealii;
 
-#ifndef PWCONTACTFORCE_H_
-#define PWCONTACTFORCE_H_
-
-template <int dim, int spacedim> class ParticleWallContactForce {
-public:
-  ParticleWallContactForce<dim, spacedim>();
-  void pwLinearCF(
-      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>> &,
-      physical_info_struct<dim> &);
-
-  void pwNonLinearCF(
-      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>> &,
-      physical_info_struct<dim> &);
-
-private:
-  int sgn(float);
+template <int dim, int spacedim> struct pw_contact_info_struct {
+  Particles::ParticleIterator<dim, spacedim> particle;
+  Tensor<1, dim> normal_vector;
+  Point<dim> point_on_boundary;
+  double normal_overlap;
+  double normal_relative_velocity;
+  double tangential_overlap;
+  Tensor<1, dim> tangential_vector;
+  double tangential_relative_velocity;
 };
 
-#endif /* PWCONTACTFORCE_H_ */
+#endif /* PWCONTACTINFOSTRUCT_H_ */
