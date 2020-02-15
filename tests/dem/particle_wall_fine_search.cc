@@ -16,7 +16,9 @@
 
 #include "../tests.h"
 #include "dem/dem_solver_parameters.h"
-#include "dem/particle_wall_contact_detection.h"
+#include "dem/pw_contact_info_struct.h"
+#include "dem/pw_broad_search.h"
+#include "dem/pw_fine_search.h"
 #include "dem/find_boundary_cells_information.h"
 
 using namespace dealii;
@@ -45,11 +47,10 @@ test()
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
                                                         mapping,
                                                         n_properties);
-
+int num_particles =1;
 
   Point<dim> position1 = {-0.998, 0, 0};
   int        id1       = 0;
-
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
@@ -82,45 +83,42 @@ test()
    boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
 
-  ParticleWallContactDetection<dim> pw1;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
-               Point<dim>,
-               Point<dim>>>
-    pwContactList;
-  pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
+   PWBroadSearch<dim, dim> pw1;
+   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
+                          Tensor<1, dim>,
+                          Point<dim>>>
+     pwContactList(num_particles);
 
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
-               Point<dim>,
-               Point<dim>,
-               double,
-               double,
-               double,
-               Point<dim>,
-               double>>
-    pwContactInfo;
-  pw1.pwFineSearch(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
+   pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
 
+   PWFineSearch<dim, dim> pw2;
 
+std::vector<std::map<int, pw_contact_info_struct<dim, dim>>> pwContactInfo(num_particles);
+
+   pw2.pw_Fine_Search(pwContactList, pwContactInfo, DEMparam.simulationControl.dt);
   for (unsigned int i = 0; i != pwContactInfo.size(); i++)
     {
+      auto info_it = pwContactInfo[i].begin();
+      while (info_it != pwContactInfo[i].end())
+      {
       deallog << "The normal overlap of contacting paritlce-wall is: "
-              << std::get<3>(pwContactInfo[i]) << std::endl;
+              << info_it->second.normal_overlap << std::endl;
       deallog << "The normal vector of collision is: "
-              << std::get<1>(pwContactInfo[i])[0] << " "
-              << std::get<1>(pwContactInfo[i])[1] << " "
-              << std::get<1>(pwContactInfo[i])[2] << std::endl;
+              << info_it->second.normal_vector[0] << " "
+              << info_it->second.normal_vector[1] << " "
+              << info_it->second.normal_vector[2] << std::endl;
       deallog << "Normal relative velocity at contact point is: "
-              << std::get<4>(pwContactInfo[i]) << std::endl;
+              << info_it->second.normal_relative_velocity << std::endl;
       deallog << "The tangential overlap of contacting paritlce-wall is: "
-              << std::get<5>(pwContactInfo[i]) << std::endl;
+              << info_it->second.tangential_overlap << std::endl;
       deallog << "The tangential vector of collision is: "
-              << std::get<6>(pwContactInfo[i])[0] << " "
-              << std::get<6>(pwContactInfo[i])[1] << " "
-              << std::get<6>(pwContactInfo[i])[2] << std::endl;
+              << info_it->second.tangential_vector[0] << " "
+              << info_it->second.tangential_vector[1] << " "
+              << info_it->second.tangential_vector[2] << std::endl;
       deallog << "Tangential relative velocity at contact point is: "
-              << std::get<7>(pwContactInfo[i]) << std::endl;
+              << info_it->second.tangential_relative_velocity << std::endl;
+      ++info_it;
+      }
     }
 }
 
