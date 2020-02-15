@@ -25,7 +25,7 @@
 #include "dem/insertion.h"
 
 #ifndef UNIFORMINSERTION_H_
-#define UNIFORMINSERTION_H_
+#  define UNIFORMINSERTION_H_
 
 /**
  * Uniform insertion of particles in a rectangular box
@@ -36,7 +36,8 @@
  */
 
 template <int dim, int spacedim = dim>
-class UniformInsertion : public Insertion<dim, spacedim> {
+class UniformInsertion : public Insertion<dim, spacedim>
+{
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
@@ -51,8 +52,8 @@ public:
    * particles from the parameter handler file)
    */
   UniformInsertion<dim, spacedim>(
-      physical_info_struct<dim> &physical_info_struct,
-      insertion_info_struct<dim, spacedim> &insertion_info_struct);
+    physical_info_struct<dim> &                 physical_info_struct,
+    const insertion_info_struct<dim, spacedim> &insertion_info_struct);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -71,11 +72,12 @@ public:
    * particles from the parameter handler file)
    */
   virtual void
-  insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &tr,
-         Particles::PropertyPool &property_pool,
-         physical_info_struct<dim> &physical_info_struct,
-         insertion_info_struct<dim, spacedim> &insertion_info_struct) override;
+  insert(
+    Particles::ParticleHandler<dim, spacedim> & particle_handler,
+    const Triangulation<dim, spacedim> &        tr,
+    Particles::PropertyPool &                   property_pool,
+    physical_info_struct<dim> &                 physical_info_struct,
+    const insertion_info_struct<dim, spacedim> &insertion_info_struct) override;
 };
 
 #endif /* UNIFORMINSERTION_H_ */

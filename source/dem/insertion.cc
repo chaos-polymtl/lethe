@@ -18,6 +18,3 @@
  */
 
 #include "dem/insertion.h"
-
-#include <deal.II/particles/particle_handler.h>
-using namespace dealii;
