@@ -168,8 +168,8 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t13 = std::chrono::high_resolution_clock::now();
   // p-w contact force:
-  pwcf.pwNonLinearCF(pwContactInfo, physical_info_struct);
-  // pwcf.pwLinearCF(pwContactInfo, physical_info_struct);
+  // pwcf.pwNonLinearCF(pwContactInfo, physical_info_struct);
+  pwcf.pwLinearCF(pwContactInfo, physical_info_struct);
   auto t14 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t14 - t13).count();

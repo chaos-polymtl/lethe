@@ -40,6 +40,7 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
       int boundary_id = contact_pairs_iterator->first;
       auto information_tuple = contact_pairs_iterator->second;
       auto particle = information_tuple.particle;
+      auto particle_properties = particle->get_properties();
 
       // Normal vector of the boundary and a point on the boudary are defined as
       // local parameters
@@ -58,8 +59,8 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
       // vector, the particle-wall distance is calculated
       Tensor<1, dim> projected_vector =
           find_projection(point_to_particle_vector, normal_vector);
-      double distance =
-          ((particle->get_properties()[2]) / 2) - (projected_vector.norm());
+      double distance = ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
+                        (projected_vector.norm());
 
       // Check to see if particle-wall pair is still in contact
       if (distance > 0) {
@@ -67,12 +68,14 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
 
         // Using velocity and angular velocity of particle as
         // local vectors
-        Tensor<1, dim> particle_velocity{{particle->get_properties()[7],
-                                          particle->get_properties()[8],
-                                          particle->get_properties()[9]}};
-        Tensor<1, dim> particle_omega{{particle->get_properties()[16],
-                                       particle->get_properties()[17],
-                                       particle->get_properties()[18]}};
+        Tensor<1, dim> particle_velocity{
+            {particle_properties[DEM::PropertiesIndex::v_x],
+             particle_properties[DEM::PropertiesIndex::v_y],
+             particle_properties[DEM::PropertiesIndex::v_z]}};
+        Tensor<1, dim> particle_omega{
+            {particle_properties[DEM::PropertiesIndex::omega_x],
+             particle_properties[DEM::PropertiesIndex::omega_y],
+             particle_properties[DEM::PropertiesIndex::omega_z]}};
 
         // Defining relative contact velocity
         Tensor<1, dim> contact_relative_velocity;
@@ -80,7 +83,8 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
           contact_relative_velocity =
               particle_velocity +
               cross_product_3d(
-                  (((particle->get_properties()[2]) / 2) * particle_omega),
+                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
+                   particle_omega),
                   normal_vector);
         }
         /*
@@ -88,8 +92,8 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
               contact_relative_velocity =
               particle_velocity +
               cross_product_2d(
-                  (((particle->get_properties()[2]) / 2) * particle_omega),
-                  normal_vector);
+                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
+          particle_omega), normal_vector);
           }
           */
 
@@ -177,8 +181,8 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
     // vector, the particle-wall distance is calculated
     Tensor<1, dim> projected_vector =
         find_projection(point_to_particle_vector, normal_vector);
-    double distance =
-        ((particle_properties[2]) / 2) - (projected_vector.norm());
+    double distance = ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
+                      (projected_vector.norm());
 
     // Check to see if the particle-wall pair is in contact
     if (distance > 0) {
@@ -193,12 +197,14 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
         // If the pair is in contact (distance>0) and the pair does not exist in
         // the pw_pairs_in_contact vector, the contact properties should be
         // obtained and added to the pw_pairs_in_contact vector
-        Tensor<1, dim> particle_velocity{{particle_properties[7],
-                                          particle_properties[8],
-                                          particle_properties[9]}};
-        Tensor<1, dim> particle_omega{{particle_properties[16],
-                                       particle_properties[17],
-                                       particle_properties[18]}};
+        Tensor<1, dim> particle_velocity{
+            {particle_properties[DEM::PropertiesIndex::v_x],
+             particle_properties[DEM::PropertiesIndex::v_y],
+             particle_properties[DEM::PropertiesIndex::v_z]}};
+        Tensor<1, dim> particle_omega{
+            {particle_properties[DEM::PropertiesIndex::omega_x],
+             particle_properties[DEM::PropertiesIndex::omega_y],
+             particle_properties[DEM::PropertiesIndex::omega_z]}};
 
         // Defining relative contact velocity
         Tensor<1, dim> contact_relative_velocity;
@@ -206,7 +212,8 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
           contact_relative_velocity =
               particle_velocity +
               cross_product_3d(
-                  (((particle_properties[2]) / 2) * particle_omega),
+                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
+                   particle_omega),
                   normal_vector);
         }
         /*
@@ -215,8 +222,8 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
             contact_relative_velocity =
                 particle_velocity +
                 cross_product_2d(
-                    (((particle_properties[2]) / 2) * particle_omega),
-                    normal_vector);
+                    (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
+        particle_omega), normal_vector);
         }
         */
 

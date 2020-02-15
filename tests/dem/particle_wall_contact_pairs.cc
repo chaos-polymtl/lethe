@@ -12,7 +12,7 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/particle_wall_contact_detection.h"
+#include "dem/pw_broad_search.h"
 #include "dem/find_boundary_cells_information.h"
 
 using namespace dealii;
@@ -63,12 +63,12 @@ test()
   FindBoundaryCellsInformation<dim, dim> boundary_cells_object;
    boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
-  ParticleWallContactDetection<dim> pw1;
+  PWBroadSearch<dim, dim> pw1;
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
-                         Point<dim>,
+                         Tensor<1, dim>,
                          Point<dim>>>
     pwContactList;
-  pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
+  pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
 
 
   for (unsigned int i = 0; i != pwContactList.size(); i++)

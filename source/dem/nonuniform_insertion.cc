@@ -48,13 +48,14 @@ NonUniformInsertion<dim, spacedim>::NonUniformInsertion(
 
   // If the inserted number of particles at this step exceeds the maximum
   // number, a warning is printed
-  if (insertion_info_struct.inserted_number_at_step > maximum_particle_number)
+  if (insertion_info_struct.inserted_number_at_step > maximum_particle_number) {
     std::cout << "The inserted number of particles ("
               << insertion_info_struct.inserted_number_at_step
               << ") is higher than maximum expected number of particles ("
               << maximum_particle_number << ")" << std::endl;
-  std::cout << "Inserting " << maximum_particle_number << " at this step"
-            << std::endl;
+    std::cout << "Inserting " << maximum_particle_number << " at this step"
+              << std::endl;
+  }
 } // add error here
 
 template <int dim, int spacedim>

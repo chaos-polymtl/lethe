@@ -73,7 +73,6 @@ void ParticleWallContactForce<dim, spacedim>::pwLinearCF(
                   pow(log(physical_info_struct.restitution_coefficient_wall),
                       2.0)));
       }
-
       Point<dim> springNormForce;
       springNormForce = (kn * (map_iterator->second).normal_overlap) *
                         (map_iterator->second).normal_vector;
