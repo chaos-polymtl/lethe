@@ -25,7 +25,7 @@
 #include "dem/insertion.h"
 
 #ifndef NONUNIFORMINSERTION_H_
-#define NONUNIFORMINSERTION_H_
+#  define NONUNIFORMINSERTION_H_
 
 /**
  * Non-uniform insertion of particles in a rectangular box
@@ -36,13 +36,14 @@
  */
 
 template <int dim, int spacedim = dim>
-class NonUniformInsertion : public Insertion<dim, spacedim> {
+class NonUniformInsertion : public Insertion<dim, spacedim>
+{
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
    * particles (maximum_particle_number) which can be inserted in the insertion
    * box and prints a warning if the number of particles to be inserted at this
-   * step exceeds this calculated number Note that in the current version only
+   * step exceeds this calculated number. Note that in the current version only
    * the insertion in a rectangular box is defined
    *
    * @param physical_info_struct Physical properties of particles. We only use
@@ -51,8 +52,8 @@ public:
    * particles from the parameter handler file)
    */
   NonUniformInsertion<dim, spacedim>(
-      physical_info_struct<dim> &physical_info_struct,
-      insertion_info_struct<dim, spacedim> &insertion_info_struct);
+    physical_info_struct<dim> &                 physical_info_struct,
+    const insertion_info_struct<dim, spacedim> &insertion_info_struct);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -71,11 +72,12 @@ public:
    * particles from the parameter handler file)
    */
   virtual void
-  insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &tr,
-         Particles::PropertyPool &property_pool,
-         physical_info_struct<dim> &physical_info_struct,
-         insertion_info_struct<dim, spacedim> &insertion_info_struct) override;
+  insert(
+    Particles::ParticleHandler<dim, spacedim> & particle_handler,
+    const Triangulation<dim, spacedim> &        tr,
+    Particles::PropertyPool &                   property_pool,
+    physical_info_struct<dim> &                 physical_info_struct,
+    const insertion_info_struct<dim, spacedim> &insertion_info_struct) override;
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */
