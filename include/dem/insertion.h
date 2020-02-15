@@ -19,31 +19,36 @@
 
 #include <deal.II/distributed/tria.h>
 
+#include <deal.II/particles/particle_handler.h>
+
 #include "dem/insertion_info_struct.h"
 #include "dem/physical_info_struct.h"
-#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
 #ifndef INSERTION_H_
-#define INSERTION_H_
+#  define INSERTION_H_
 
 /**
  * Base interface for classes that carry out the insertion of particles in the
  * system
  */
 
-template <int dim, int spacedim = dim> class Insertion {
+template <int dim, int spacedim = dim>
+class Insertion
+{
 public:
-  Insertion() {}
+  Insertion()
+  {}
 
-  virtual ~Insertion() {}
+  virtual ~Insertion()
+  {}
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
-   * insertion box, finding the initial position of particles in the insertion
-   * box, their id and other initial properties of the particles. This virtual
-   * function that serves as a template for all insertion functions.
+   * insertion region, finding the initial position of particles in the
+   * insertion region, their id and other initial properties of the particles.
+   * This virtual class serves as a template for all insertion functions.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -56,11 +61,11 @@ public:
    * particles from the parameter handler file)
    */
   virtual void
-  insert(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-         const Triangulation<dim, spacedim> &tr,
-         Particles::PropertyPool &property_pool,
-         physical_info_struct<dim> &physical_info_struct,
-         insertion_info_struct<dim, spacedim> &insertion_info_struct) = 0;
+  insert(Particles::ParticleHandler<dim, spacedim> & particle_handler,
+         const Triangulation<dim, spacedim> &        tr,
+         Particles::PropertyPool &                   property_pool,
+         physical_info_struct<dim> &                 physical_info_struct,
+         const insertion_info_struct<dim, spacedim> &insertion_info_struct) = 0;
 };
 
 #endif /* INSERTION_H_ */
