@@ -801,7 +801,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
                                    pressure_components,
                                    pressure_constant_modes);
 
-  this->computing_timer.enter_section("AMG_velocity");
+  this->computing_timer.enter_subsection("AMG_velocity");
   const bool elliptic_velocity     = false;
   bool       higher_order_elements = false;
   if (this->degreeVelocity_ > 1)
@@ -844,9 +844,9 @@ GDNavierStokesSolver<dim>::setup_AMG()
     system_matrix.block(0, 0));
   velocity_amg_preconditioner->initialize(system_matrix.block(0, 0),
                                           velocity_parameter_ml);
-  this->computing_timer.exit_section("AMG_velocity");
+  this->computing_timer.leave_subsection("AMG_velocity");
 
-  this->computing_timer.enter_section("AMG_pressure");
+  this->computing_timer.enter_subsection("AMG_pressure");
   const bool elliptic_pressure = true;
   higher_order_elements        = false;
   if (this->degreePressure_ > 1)
@@ -871,7 +871,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
     system_matrix.block(0, 0));
   pressure_amg_preconditioner->initialize(system_matrix.block(1, 1),
                                           pressure_parameter_ml);
-  this->computing_timer.exit_section("AMG_pressure");
+  this->computing_timer.leave_subsection("AMG_pressure");
 
 
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
