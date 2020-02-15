@@ -15,7 +15,6 @@
 #include "../tests.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/physical_info_struct.h"
-#include "dem/particle_wall_contact_detection.h"
 #include "dem/uniform_insertion.h"
 
 using namespace dealii;

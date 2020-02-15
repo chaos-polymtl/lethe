@@ -138,7 +138,7 @@ physical_info_struct.particle_density = 2500;
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
                                                           inContactPairs(num_Particles);
-  std::vector<std::map<int, contact_info_struct<dim, dim>>> inContactInfo(
+  std::vector<std::map<int, pp_contact_info_struct<dim, dim>>> inContactInfo(
     num_Particles);
 
 
