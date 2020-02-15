@@ -15,11 +15,10 @@ void PPFineSearch<dim, spacedim>::pp_Fine_Search(
         &pairs_in_contact_info,
     double dt, Particles::ParticleHandler<dim, spacedim> &particle_handler) {
 
-  // Iterating over all the particles in particle_handler, which shows the first
-  // particle in the contact pair
+  //** We can delete the pairs_in_contact and only use the pairs_in_contact_info
 
-  // ??????????????????????????////
-  // what about iterating over pairs_in_contact directly???
+  // Iterating over all the particles in particle_handler, which shows the
+  // first particle in the contact pair
   for (auto particle_one = particle_handler.begin();
        particle_one != particle_handler.end(); ++particle_one) {
 

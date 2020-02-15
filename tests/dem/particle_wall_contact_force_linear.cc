@@ -15,7 +15,8 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/particle_wall_contact_detection.h"
+#include "dem/pw_broad_search.h"
+#include "dem/pw_fine_search.h"
 #include "dem/particle_wall_contact_force.h"
 #include "dem/physical_info_struct.h"
 #include "dem/find_boundary_cells_information.h"
@@ -34,6 +35,7 @@ test()
   MappingQ<dim, dim> mapping(1);
   physical_info_struct<dim> physical_info_struct;
 
+  int num_particles =1;
   const unsigned int n_properties = 24;
   float              x_min        = -0.05;
   float              y_min        = -0.05;
@@ -96,25 +98,20 @@ physical_info_struct.particle_density = 2500;
   FindBoundaryCellsInformation<dim, dim> boundary_cells_object;
    boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
-  ParticleWallContactDetection<dim> pw1;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim, dim>, int>,
-               Point<dim>,
-               Point<dim>>>
-    pwContactList;
-  pwContactList = pw1.pwcontactlist(boundaryCellInfo, particle_handler);
 
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
-                         Point<dim>,
-                         Point<dim>,
-                         double,
-                         double,
-                         double,
-                         Point<dim>,
-                         double>>
-    pwContactInfo;
-  pw1.pwFineSearch(pwContactList, pwContactInfo, dt);
+   PWBroadSearch<dim, dim> pw1;
+   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
+                          Tensor<1, dim>,
+                          Point<dim>>>
+     pwContactList(num_particles);
 
+   pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
+
+   PWFineSearch<dim, dim> pw2;
+
+std::vector<std::map<int, pw_contact_info_struct<dim, dim>>> pwContactInfo(num_particles);
+
+   pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
   ParticleWallContactForce<dim, dim> pwcf1;
   pwcf1.pwLinearCF(pwContactInfo, physical_info_struct);
 

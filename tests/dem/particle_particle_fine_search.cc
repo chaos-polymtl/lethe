@@ -15,7 +15,7 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/contact_info_struct.h"
+#include "dem/pp_contact_info_struct.h"
 #include "dem/find_cell_neighbors.h"
 #include "dem/pp_broad_search.h"
 #include "dem/dem_solver_parameters.h"
@@ -128,7 +128,7 @@ test()
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
                                                           inContactPairs(num_Particles);
-  std::vector<std::map<int, contact_info_struct<dim, dim>>> inContactInfo(
+  std::vector<std::map<int, pp_contact_info_struct<dim, dim>>> inContactInfo(
     num_Particles);
 
 
@@ -138,7 +138,7 @@ test()
                  dt,
                  particle_handler);
 
-  typename std::map<int, contact_info_struct<dim, dim>>::iterator info_it;
+  typename std::map<int, pp_contact_info_struct<dim, dim>>::iterator info_it;
   for (unsigned int i = 0; i < inContactInfo.size(); i++)
     {
       info_it = inContactInfo[i].begin();

@@ -17,6 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include "dem/dem_properties.h"
 #include "dem/pw_contact_info_struct.h"
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
