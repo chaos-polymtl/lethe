@@ -1,6 +1,7 @@
 language: cpp
 
-os: linux
+os: linux 
+dist: bionic
 
 notifications:
   email: false
