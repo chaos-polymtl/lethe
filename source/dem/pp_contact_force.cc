@@ -18,4 +18,3 @@
  */
 
 #include "dem/pp_contact_force.h"
-using namespace dealii;
