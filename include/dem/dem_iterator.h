@@ -21,7 +21,6 @@
 #include "dem/dem_solver_parameters.h"
 #include "dem/insertion_info_struct.h"
 #include "dem/integrator.h"
-//#include "dem/particle_wall_contact_force.h"
 #include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
 #include "dem/pp_contact_force.h"
