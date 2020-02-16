@@ -15,7 +15,7 @@ void PPLinearForce<dim, spacedim>::calculate_pp_contact_force(
     // Now an iterator (contact_information_iterator) on each element of the
     // pairs_in_contact_info vector is defined. This iterator iterates over a
     // map which contains the required information for calculation of the
-    // contact  Pointforce for each particle (i.e. each element of the
+    // contact force for each particle (i.e. each element of the
     // pairs_in_contact_info vector)
     auto contact_information_iterator = pairs_in_contact_info_iterator->begin();
     while (contact_information_iterator !=
