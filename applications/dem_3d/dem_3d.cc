@@ -57,7 +57,6 @@
 #include "dem/find_boundary_cells_information.h"
 #include "dem/find_cell_neighbors.h"
 #include "dem/insertion_info_struct.h"
-//#include "dem/particle_wall_contact_force.h"
 #include "dem/physical_info_struct.h"
 #include "dem/pp_broad_search.h"
 #include "dem/pp_contact_info_struct.h"
@@ -68,6 +67,7 @@
 #include "dem/pw_contact_info_struct.h"
 #include "dem/pw_fine_search.h"
 #include "dem/pw_linear_force.h"
+#include "dem/pw_nonlinear_force.h"
 #include "dem/velocity_verlet_integrator.h"
 
 #include "variant"
@@ -128,6 +128,7 @@ template <int dim, int spacedim> void initilization() {
   // PPLinearForce<dim, spacedim> pplf;
   PPNonLinearForce<dim, spacedim> ppnlf;
   PWLinearForce<dim, spacedim> pwlf;
+  // PWNonLinearForce<dim, spacedim> pwnlf;
   PWBroadSearch<dim, spacedim> pwbs;
   PWFineSearch<dim, spacedim> pwfs;
 

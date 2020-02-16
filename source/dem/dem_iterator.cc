@@ -137,7 +137,6 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t7 = std::chrono::high_resolution_clock::now();
   // contact force
-  // cf.nonLinearCF(inContactInfo, physical_info_struct);
   pplf->calculate_pp_contact_force(inContactInfo, physical_info_struct);
   auto t8 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactForce =
