@@ -31,8 +31,8 @@
 
 using namespace dealii;
 
-#ifndef PWCONTACTFORCE_H_
-#define PWCONTACTFORCE_H_
+#ifndef PWCONTACTFORCES_H_
+#define PWCONTACTFORCES_H_
 
 template <int dim, int spacedim> class ParticleWallContactForce {
 public:
@@ -49,4 +49,4 @@ private:
   int sgn(float);
 };
 
-#endif /* PWCONTACTFORCE_H_ */
+#endif /* PWCONTACTFORCES_H_ */

@@ -78,8 +78,8 @@ void DEM_iterator<dim, spacedim>::engine(
         &pwContactInfo,
     std::vector<std::tuple<std::string, int>> properties,
     Particles::PropertyPool &property_pool, PPContactForce<dim, spacedim> *pplf,
-    ParticleWallContactForce<dim, spacedim> pwcf,
-    Integrator<dim, spacedim> *Integ1, double dt, int nTotal, int writeFreq,
+    PWContactForce<dim, spacedim> *pwcf, Integrator<dim, spacedim> *Integ1,
+    double dt, int nTotal, int writeFreq,
     physical_info_struct<dim> physical_info_struct,
     insertion_info_struct<dim, spacedim> insertion_info_struct,
     Tensor<1, dim> g, int numFields, int numProperties,
@@ -169,7 +169,7 @@ void DEM_iterator<dim, spacedim>::engine(
   auto t13 = std::chrono::high_resolution_clock::now();
   // p-w contact force:
   // pwcf.pwNonLinearCF(pwContactInfo, physical_info_struct);
-  pwcf.pwLinearCF(pwContactInfo, physical_info_struct);
+  pwcf->calculate_pw_contact_force(pwContactInfo, physical_info_struct);
   auto t14 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t14 - t13).count();
