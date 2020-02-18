@@ -31,13 +31,13 @@ void DEM_iterator<dim, spacedim>::forceReinit(
     Particles::ParticleHandler<dim, spacedim> &particle_handler) {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end(); ++particle) {
-    particle->get_properties()[13] = 0;
-    particle->get_properties()[14] = 0;
-    particle->get_properties()[15] = 0;
+    particle->get_properties()[DEM::PropertiesIndex::force_x] = 0;
+    particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
+    particle->get_properties()[DEM::PropertiesIndex::force_z] = 0;
 
-    particle->get_properties()[21] = 0;
-    particle->get_properties()[22] = 0;
-    particle->get_properties()[23] = 0;
+    particle->get_properties()[DEM::PropertiesIndex::M_x] = 0;
+    particle->get_properties()[DEM::PropertiesIndex::M_y] = 0;
+    particle->get_properties()[DEM::PropertiesIndex::M_z] = 0;
   }
 }
 
@@ -76,15 +76,16 @@ void DEM_iterator<dim, spacedim>::engine(
     std::vector<boundary_cells_info_struct<dim>> boundary_cells_information,
     std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
         &pwContactInfo,
-    std::vector<std::tuple<std::string, int>> properties,
+    std::vector<std::pair<std::string, int>> properties,
     Particles::PropertyPool &property_pool, PPContactForce<dim, spacedim> *pplf,
     PWContactForce<dim, spacedim> *pwcf, Integrator<dim, spacedim> *Integ1,
     double dt, int nTotal, int writeFreq,
     physical_info_struct<dim> physical_info_struct,
     insertion_info_struct<dim, spacedim> insertion_info_struct,
-    Tensor<1, dim> g, int numFields, int numProperties,
-    PPBroadSearch<dim, spacedim> ppbs, PPFineSearch<dim, spacedim> ppfs,
-    PWBroadSearch<dim, spacedim> pwbs, PWFineSearch<dim, spacedim> pwfs) {
+    Tensor<1, dim> g, int numFields, PPBroadSearch<dim, spacedim> ppbs,
+    PPFineSearch<dim, spacedim> ppfs, PWBroadSearch<dim, spacedim> pwbs,
+    PWFineSearch<dim, spacedim> pwfs) {
+
   // moving walls
 
   auto t1 = std::chrono::high_resolution_clock::now();
@@ -186,8 +187,7 @@ void DEM_iterator<dim, spacedim>::engine(
   // visualization
   if (fmod(step, writeFreq) == 1) {
     Visualization<dim, spacedim> visObj;
-    visObj.build_patches(particle_handler, numFields, numProperties,
-                         properties);
+    visObj.build_patches(particle_handler, properties);
     WriteVTU<dim, spacedim> writObj;
     writObj.write_master_files(visObj);
     writObj.writeVTUFiles(visObj, step, time);

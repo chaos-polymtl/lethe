@@ -46,11 +46,11 @@ public:
       std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>> &,
       std::vector<boundary_cells_info_struct<dim>>,
       std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>> &,
-      std::vector<std::tuple<std::string, int>>,
+      std::vector<std::pair<std::string, int>>,
       dealii::Particles::PropertyPool &, PPContactForce<dim, spacedim> *,
       PWContactForce<dim, spacedim> *, Integrator<dim, spacedim> *, double, int,
       int, physical_info_struct<dim>, insertion_info_struct<dim, spacedim>,
-      Tensor<1, dim>, int, int, PPBroadSearch<dim, spacedim>,
+      Tensor<1, dim>, int, PPBroadSearch<dim, spacedim>,
       PPFineSearch<dim, spacedim>, PWBroadSearch<dim, spacedim>,
       PWFineSearch<dim, spacedim>);
 
