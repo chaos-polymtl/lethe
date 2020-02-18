@@ -83,7 +83,7 @@ template <int dim, int spacedim> void initilization() {
   DEMparam.parse(prm);
 
   DEM::DEMProperties<3> properties_class;
-  std::vector<std::tuple<std::string, int>> properties =
+  std::vector<std::pair<std::string, int>> properties =
       properties_class.get_properties_name();
 
   // DEM clock
@@ -178,7 +178,6 @@ template <int dim, int spacedim> void initilization() {
   insertion_info_struct.z_max = DEMparam.insertionInfo.z_max;
 
   const int numFields = DEMparam.outputProperties.numFields;
-  const int numProperties = DEMparam.outputProperties.numProperties;
 
   // dem engine iterator:
   while (DEM_step < numberOfSteps) {
@@ -186,8 +185,7 @@ template <int dim, int spacedim> void initilization() {
                  inContactPairs, inContactInfo, boundary_cells_information,
                  pwContactInfo, properties, property_pool, &ppnlf, &pwlf,
                  &integ1, dt, nTotal, writeFreq, physical_info_struct,
-                 insertion_info_struct, g, numFields, numProperties, ppbs, ppfs,
-                 pwbs, pwfs);
+                 insertion_info_struct, g, numFields, ppbs, ppfs, pwbs, pwfs);
   }
 }
 
