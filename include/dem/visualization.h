@@ -18,7 +18,6 @@
  */
 
 #include <deal.II/base/data_out_base.h>
-
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 
@@ -28,47 +27,60 @@
 using namespace dealii;
 
 #ifndef VISUALIZATION_H_
-#  define VISUALIZATION_H_
+#define VISUALIZATION_H_
 
-template <int dim, int spacedim>
-class Visualization : public dealii::DataOutInterface<0, dim>
-{
+/**
+ * Building patches of particle properties for visualization
+ *
+ * @note This function is taken from Aspect and dealii and implemented here
+ *
+ * @author Shahab Golshan, Polytechnique Montreal 2019-
+ */
+
+template <int dim, int spacedim = dim>
+class Visualization : public dealii::DataOutInterface<0, dim> {
 public:
   Visualization<dim, spacedim>();
 
-  void
-  build_patches(const Particles::ParticleHandler<dim, spacedim> &,
-                const unsigned int,
-                const unsigned int,
-                std::vector<std::tuple<std::string, int>>);
+  /**
+   * Carries out building the patches of properties of particles for
+   * visualization
+   *
+   * @param particle_handler The particle handler of active particles for
+   * visulization
+   * @param properties Properties of particles for visulization. This is a
+   * vector of pairs and each pair contains the property name as the first
+   * element and the size of the property as the second element. For vectors
+   * only the size of the first element of the vector is defined equal to the
+   * dimension
+   */
+
+  void build_patches(
+      const Particles::ParticleHandler<dim, spacedim> &particle_handler,
+      std::vector<std::pair<std::string, int>> properties);
 
   ~Visualization();
-
 
 private:
   /**
    * Implementation of the corresponding function of the base class.
    */
-  virtual const std::vector<DataOutBase::Patch<0, dim>> &
-  get_patches() const;
+  virtual const std::vector<DataOutBase::Patch<0, dim>> &get_patches() const;
 
   /**
    * Implementation of the corresponding function of the base class.
    */
-  virtual std::vector<std::string>
-  get_dataset_names() const;
+  virtual std::vector<std::string> get_dataset_names() const;
 
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
   virtual std::vector<
-    std::tuple<unsigned int,
-               unsigned int,
-               std::string,
-               DataComponentInterpretation::DataComponentInterpretation>>
+      std::tuple<unsigned int, unsigned int, std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
   get_nonscalar_data_ranges() const;
-#  else
+#else
   virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
   get_vector_data_ranges() const;
-#  endif
+#endif
 
   /**
    * Output information that is filled by build_patches() and
@@ -84,16 +96,14 @@ private:
   /**
    * Store which of the data fields are vectors.
    */
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
   std::vector<
-    std::tuple<unsigned int,
-               unsigned int,
-               std::string,
-               DataComponentInterpretation::DataComponentInterpretation>>
-    vector_datasets;
-#  else
+      std::tuple<unsigned int, unsigned int, std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+      vector_datasets;
+#else
   std::vector<std::tuple<unsigned int, unsigned int, std::string>>
-    vector_datasets;
-#  endif
+      vector_datasets;
+#endif
 };
 #endif
