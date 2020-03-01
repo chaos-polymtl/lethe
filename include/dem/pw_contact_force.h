@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/physical_info_struct.h"
-#include "dem/pw_contact_info_struct.h"
+#include <dem/dem_solver_parameters.h>
+#include <dem/pw_contact_info_struct.h>
 
 using namespace dealii;
 
@@ -30,7 +30,7 @@ using namespace dealii;
  * contact force
  */
 
-template <int dim, int spacedim = dim> class PWContactForce {
+template <int dim> class PWContactForce {
 public:
   PWContactForce() {}
 
@@ -43,12 +43,12 @@ public:
    *
    * @param pw_pairs_in_contact Required information for calculation of the
    * particle-wall contact force
-   * @param physical_properties Physical properties of particles and walls
+   * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void calculate_pw_contact_force(
-      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
+      std::vector<std::map<int, pw_contact_info_struct<dim>>>
           &pw_pairs_in_contact,
-      const physical_info_struct<dim> &physical_info_struct) = 0;
+      const DEMSolverParameters<dim> &dem_parameters) = 0;
 };
 
 #endif /* PWCONTACTFORCE_H_ */

@@ -17,11 +17,11 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/boundary_cells_info_struct.h"
 #include <deal.II/distributed/tria.h>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+#include <dem/boundary_cells_info_struct.h>
 #include <iostream>
 #include <vector>
 
@@ -39,9 +39,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim> class PWBroadSearch {
+template <int dim> class PWBroadSearch {
 public:
-  PWBroadSearch<dim, spacedim>();
+  PWBroadSearch<dim>();
 
   /**
    * Finds a vector of tuples (tuple of contact pairs (particles located in
@@ -61,12 +61,12 @@ public:
    * is the reason it is defined as a separate pair
    */
 
-  std::vector<std::tuple<
-      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Tensor<1, dim>, Point<dim>>>
+  std::vector<
+      std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                 Tensor<1, dim>, Point<dim>>>
   find_PW_Contact_Pairs(
       std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
-      Particles::ParticleHandler<dim, spacedim> &particle_handler);
+      Particles::ParticleHandler<dim> &particle_handler);
 };
 
 #endif /* PWBROADSEARCH_H_ */

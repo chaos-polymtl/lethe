@@ -17,17 +17,14 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <deal.II/particles/particle.h>
+#include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/pw_contact_force.h>
+#include <dem/pw_contact_info_struct.h>
 #include <iostream>
 #include <math.h>
 #include <vector>
-
-#include <deal.II/particles/particle.h>
-
-#include "dem/dem_solver_parameters.h"
-#include "dem/physical_info_struct.h"
-#include "dem/pw_contact_force.h"
-#include "dem/pw_contact_info_struct.h"
-#include <dem/dem_properties.h>
 
 using namespace dealii;
 
@@ -44,8 +41,7 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim>
-class PWNonLinearForce : public PWContactForce<dim, spacedim> {
+template <int dim> class PWNonLinearForce : public PWContactForce<dim> {
 public:
   PWNonLinearForce() {}
 
@@ -56,12 +52,12 @@ public:
    * @param pw_pairs_in_contact Required information for calculation of the
    * particle-wall contact force, these information were obtained in the
    * fine search
-   * @param physical_properties Physical properties of particles and walls
+   * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void calculate_pw_contact_force(
-      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
+      std::vector<std::map<int, pw_contact_info_struct<dim>>>
           &pw_pairs_in_contact,
-      const physical_info_struct<dim> &physical_properties) override;
+      const DEMSolverParameters<dim> &dem_parameters) override;
 };
 
 #endif

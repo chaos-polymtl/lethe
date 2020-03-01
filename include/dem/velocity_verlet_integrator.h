@@ -18,16 +18,13 @@
  */
 
 #include <deal.II/particles/particle_handler.h>
-
+#include <dem/dem_solver_parameters.h>
 #include <dem/integrator.h>
-
-#include "dem/dem_solver_parameters.h"
 
 using namespace dealii;
 
 #ifndef VELOCITYVERLETINTEGRATOR_H_
-#  define VELOCITYVERLETINTEGRATOR_H_
-
+#define VELOCITYVERLETINTEGRATOR_H_
 
 /**
  * Implementation of a classical velocity verlet scheme for the integration
@@ -38,26 +35,21 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim>
-class VelocityVerletIntegrator : public Integrator<dim, spacedim>
-{
+template <int dim> class VelocityVerletIntegrator : public Integrator<dim> {
 public:
-  VelocityVerletIntegrator()
-  {}
-
+  VelocityVerletIntegrator() {}
 
   /**
    * Carries out the integration of the motion of all particles by using
    * the acceleration with the velocity verlet method
    *
-   * @param particle_handler The particle handler whose particle motion we wish to integrate
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
    * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
    */
-  virtual void
-  integrate(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-            Tensor<1, dim>                             body_force,
-            double                                     time_step) override;
+  virtual void integrate(Particles::ParticleHandler<dim> &particle_handler,
+                         Tensor<1, dim> body_force, double time_step) override;
 };
 
 #endif

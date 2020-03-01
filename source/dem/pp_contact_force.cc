@@ -17,4 +17,4 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/pp_contact_force.h"
+#include <dem/pp_contact_force.h>

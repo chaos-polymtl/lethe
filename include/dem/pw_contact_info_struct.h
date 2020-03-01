@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct pw_contact_info_struct {
-  Particles::ParticleIterator<dim, spacedim> particle;
+template <int dim> struct pw_contact_info_struct {
+  Particles::ParticleIterator<dim> particle;
   Tensor<1, dim> normal_vector;
   Point<dim> point_on_boundary;
   double normal_overlap;

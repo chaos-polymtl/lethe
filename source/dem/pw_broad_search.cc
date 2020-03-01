@@ -1,25 +1,24 @@
-#include "dem/pw_broad_search.h"
+#include <dem/pw_broad_search.h>
 
 using namespace dealii;
 
-template <int dim, int spacedim>
-PWBroadSearch<dim, spacedim>::PWBroadSearch() {}
+template <int dim> PWBroadSearch<dim>::PWBroadSearch() {}
 
-template <int dim, int spacedim>
-std::vector<std::tuple<
-    std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-    Tensor<1, dim>, Point<dim>>>
-PWBroadSearch<dim, spacedim>::find_PW_Contact_Pairs(
+template <int dim>
+std::vector<
+    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+               Tensor<1, dim>, Point<dim>>>
+PWBroadSearch<dim>::find_PW_Contact_Pairs(
     std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
-    Particles::ParticleHandler<dim, spacedim> &particle_handler) {
+    Particles::ParticleHandler<dim> &particle_handler) {
 
   // A vector of tuples which contains all the canditates for particle-wall
   // collision at each time step. Each tuple contains a collision pair (a
   // particle located near the boundaries, boundary id), the normal vector of
   // the corresponding boundary face and a point on the face
-  std::vector<std::tuple<
-      std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-      Tensor<1, dim>, Point<dim>>>
+  std::vector<
+      std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                 Tensor<1, dim>, Point<dim>>>
       pw_contact_pair_candidates;
 
   // Iterating over the boundary_cells_information vector which is the output of
@@ -34,13 +33,12 @@ PWBroadSearch<dim, spacedim>::find_PW_Contact_Pairs(
 
     // Fidning particles located in the corresponding cell
     // (boundary_cells_information_iterator.cell)
-    typename Particles::ParticleHandler<dim, spacedim>::particle_iterator_range
+    typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(
             boundary_cells_information_iterator->cell);
 
-    for (typename Particles::ParticleHandler<dim, spacedim>::
-             particle_iterator_range::iterator particles_in_cell_iterator =
-                 particles_in_cell.begin();
+    for (typename Particles::ParticleHandler<dim>::particle_iterator_range::
+             iterator particles_in_cell_iterator = particles_in_cell.begin();
          particles_in_cell_iterator != particles_in_cell.end();
          ++particles_in_cell_iterator) {
 
@@ -57,4 +55,5 @@ PWBroadSearch<dim, spacedim>::find_PW_Contact_Pairs(
   return pw_contact_pair_candidates;
 }
 
-template class PWBroadSearch<3, 3>;
+template class PWBroadSearch<2>;
+template class PWBroadSearch<3>;
