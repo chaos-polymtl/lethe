@@ -1,19 +1,15 @@
-#include "dem/find_cell_neighbors.h"
+#include <dem/find_cell_neighbors.h>
 
 using namespace dealii;
 
 // The constructor of this class is empty
-template <int dim, int spacedim>
-FindCellNeighbors<dim, spacedim>::FindCellNeighbors()
-{}
+template <int dim> FindCellNeighbors<dim>::FindCellNeighbors() {}
 
 // This function finds the neighbor list of all the active cells in the
 // triangulation
-template <int dim, int spacedim>
+template <int dim>
 std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-FindCellNeighbors<dim, spacedim>::find_cell_neighbors(
-  const Triangulation<dim, spacedim> &tr)
-{
+FindCellNeighbors<dim>::find_cell_neighbors(const Triangulation<dim> &tr) {
   // Number of active cells in the triangulation
   int cell_number = tr.n_active_cells();
 
@@ -22,14 +18,14 @@ FindCellNeighbors<dim, spacedim>::find_cell_neighbors(
   // corresponding adjacent cells of the main cell. The first element of the set
   // is the main cell.
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-    cellNeighborList(cell_number);
+      cellNeighborList(cell_number);
 
   // This vector is used to avoid repetition of adjacent cells. For instance if
   // cell B is recognized as the neighbor of cell A, cell A will not be added to
   // the neighbor list of cell B again. This is done using the totall_cell_list
   // vector
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-    totall_cell_list;
+      totall_cell_list;
 
   // Cell iterator counter
   int cell_number_iterator = 0;
@@ -40,36 +36,30 @@ FindCellNeighbors<dim, spacedim>::find_cell_neighbors(
 
   // Looping over cells
   for (typename Triangulation<dim>::active_cell_iterator cell =
-         tr.begin_active();
-       cell != tr.end();
-       ++cell, ++cell_number_iterator)
-    {
-      // The first element of each set (each element of the vector) is the cell
-      // itself.
-      cellNeighborList[cell_number_iterator].insert(cell);
-      totall_cell_list.push_back(cell);
+           tr.begin_active();
+       cell != tr.end(); ++cell, ++cell_number_iterator) {
+    // The first element of each set (each element of the vector) is the cell
+    // itself.
+    cellNeighborList[cell_number_iterator].insert(cell);
+    totall_cell_list.push_back(cell);
 
-      for (unsigned int vertex = 0;
-           vertex < GeometryInfo<dim>::vertices_per_cell;
-           ++vertex)
-        {
-          for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
-            {
-              auto search_iterator = std::find(totall_cell_list.begin(),
-                                               totall_cell_list.end(),
-                                               neighbor);
+    for (unsigned int vertex = 0; vertex < GeometryInfo<dim>::vertices_per_cell;
+         ++vertex) {
+      for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)]) {
+        auto search_iterator = std::find(totall_cell_list.begin(),
+                                         totall_cell_list.end(), neighbor);
 
-              // If the cell (neighbor) is not present in the total_cell_list
-              // vector, it will be added as the neighbor of the main cell
-              // ("cell") and also to the total_cell_list to avoid repetition
-              // for next cells.
-              if (search_iterator == totall_cell_list.end())
-                cellNeighborList[cell_number_iterator].insert(neighbor);
-            }
-        }
+        // If the cell (neighbor) is not present in the total_cell_list
+        // vector, it will be added as the neighbor of the main cell
+        // ("cell") and also to the total_cell_list to avoid repetition
+        // for next cells.
+        if (search_iterator == totall_cell_list.end())
+          cellNeighborList[cell_number_iterator].insert(neighbor);
+      }
     }
+  }
   return cellNeighborList;
 }
 
-template class FindCellNeighbors<2, 2>;
-template class FindCellNeighbors<3, 3>;
+template class FindCellNeighbors<2>;
+template class FindCellNeighbors<3>;

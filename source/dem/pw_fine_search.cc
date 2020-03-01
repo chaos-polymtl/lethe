@@ -1,15 +1,15 @@
-#include "dem/pw_fine_search.h"
+#include <dem/pw_fine_search.h>
 
 using namespace dealii;
 
-template <int dim, int spacedim> PWFineSearch<dim, spacedim>::PWFineSearch() {}
+template <int dim> PWFineSearch<dim>::PWFineSearch() {}
 
-template <int dim, int spacedim>
-void PWFineSearch<dim, spacedim>::pw_Fine_Search(
-    std::vector<std::tuple<
-        std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-        Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
-    std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
+template <int dim>
+void PWFineSearch<dim>::pw_Fine_Search(
+    std::vector<
+        std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                   Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
+    std::vector<std::map<int, pw_contact_info_struct<dim>>>
         &pw_pairs_in_contact,
     double dt) {
 
@@ -26,13 +26,12 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
 
     // Defining element (particle->get_id())th of the pw_pairs_in_contact vector
     // as a local map (pw_contact_map)
-    auto pw_contact_map = *pw_pairs_in_contact_iterator;
+    auto pw_contact_map = pw_pairs_in_contact_iterator;
 
     // Iterating (with defining the iterator contact_pairs_iterator) over
     // elemens of pw_pairs_in_contact_iterator which is a pointer to a map
-    for (auto contact_pairs_iterator = pw_contact_map.begin();
-         contact_pairs_iterator != pw_contact_map.end();
-         contact_pairs_iterator++) {
+    for (auto contact_pairs_iterator = pw_contact_map->begin();
+         contact_pairs_iterator != pw_contact_map->end();) {
 
       // For each contact, the boundary id (map key) and particle are taken from
       // the iterator and defined as local parameters. Similarly the information
@@ -63,19 +62,25 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
                         (projected_vector.norm());
 
       // Check to see if particle-wall pair is still in contact
-      if (distance > 0) {
+      if (distance > 0.0) {
         // If they are still in contact
 
         // Using velocity and angular velocity of particle as
         // local vectors
-        Tensor<1, dim> particle_velocity{
-            {particle_properties[DEM::PropertiesIndex::v_x],
-             particle_properties[DEM::PropertiesIndex::v_y],
-             particle_properties[DEM::PropertiesIndex::v_z]}};
-        Tensor<1, dim> particle_omega{
-            {particle_properties[DEM::PropertiesIndex::omega_x],
-             particle_properties[DEM::PropertiesIndex::omega_y],
-             particle_properties[DEM::PropertiesIndex::omega_z]}};
+        Tensor<1, dim> particle_velocity;
+        particle_velocity[0] = particle_properties[DEM::PropertiesIndex::v_x];
+        particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
+        if (dim == 3) {
+          particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
+        }
+
+        Tensor<1, dim> particle_omega;
+        particle_omega[0] = particle_properties[DEM::PropertiesIndex::omega_x];
+        particle_omega[1] = particle_properties[DEM::PropertiesIndex::omega_y];
+        if (dim == 3) {
+          particle_omega[2] =
+              particle_properties[DEM::PropertiesIndex::omega_z];
+        }
 
         // Defining relative contact velocity
         Tensor<1, dim> contact_relative_velocity;
@@ -88,14 +93,14 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
                   normal_vector);
         }
         /*
-           if (dim == 2){
-              contact_relative_velocity =
-              particle_velocity +
-              cross_product_2d(
-                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
-          particle_omega), normal_vector);
-          }
-          */
+                if (dim == 2) {
+                  contact_relative_velocity =
+                      particle_velocity +
+                      cross_product_2d(
+                          (((particle_properties[DEM::PropertiesIndex::dp]) / 2)
+           * particle_omega), normal_vector);
+                }
+                */
 
         // Calculation of normal relative velocity
         double normal_relative_velocity_value =
@@ -108,10 +113,15 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
             contact_relative_velocity - normal_relative_velocity;
 
         // Calculation of tangential vector using tangential relative velocity
-        Tensor<1, dim> tangential_vector{{0, 0, 0}};
+        Tensor<1, dim> tangential_vector;
+        tangential_vector[0] = 0.0;
+        tangential_vector[1] = 0.0;
+        if (dim == 3) {
+          tangential_vector[2] = 0.0;
+        }
         double tangential_relative_velocity_value =
             tangential_relative_velocity.norm();
-        if (tangential_relative_velocity_value != 0) {
+        if (tangential_relative_velocity_value != 0.0) {
           tangential_vector =
               tangential_relative_velocity / tangential_relative_velocity_value;
         }
@@ -123,7 +133,7 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
 
         // Creating a sample from the pw_contact_info_struct and adding contact
         // info to the sample
-        pw_contact_info_struct<dim, spacedim> contact_info;
+        pw_contact_info_struct<dim> contact_info;
         contact_info.particle = particle;
         contact_info.normal_vector = normal_vector;
         contact_info.point_on_boundary = point_on_boundary;
@@ -136,6 +146,7 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
 
         pw_pairs_in_contact_iterator->insert_or_assign(boundary_id,
                                                        contact_info);
+        ++contact_pairs_iterator;
       }
 
       // If the particle-wall pair is not in contact anymore (i.e. the contact
@@ -143,7 +154,7 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
       // pw_pairs_in_contact
       else {
         //(pw_pairs_in_contact[particle->get_id()]).erase(contact_pairs_iterator->first);
-        pw_pairs_in_contact_iterator->erase(boundary_id);
+        pw_contact_map->erase(contact_pairs_iterator++);
       }
     }
   }
@@ -185,7 +196,7 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
                       (projected_vector.norm());
 
     // Check to see if the particle-wall pair is in contact
-    if (distance > 0) {
+    if (distance > 0.0) {
 
       // Check to see if in the (particle->get_id())th element of the
       // pw_pairs_in_contact vector, an element with the same key as the
@@ -197,33 +208,37 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
         // If the pair is in contact (distance>0) and the pair does not exist in
         // the pw_pairs_in_contact vector, the contact properties should be
         // obtained and added to the pw_pairs_in_contact vector
-        Tensor<1, dim> particle_velocity{
-            {particle_properties[DEM::PropertiesIndex::v_x],
-             particle_properties[DEM::PropertiesIndex::v_y],
-             particle_properties[DEM::PropertiesIndex::v_z]}};
-        Tensor<1, dim> particle_omega{
-            {particle_properties[DEM::PropertiesIndex::omega_x],
-             particle_properties[DEM::PropertiesIndex::omega_y],
-             particle_properties[DEM::PropertiesIndex::omega_z]}};
+        Tensor<1, dim> particle_velocity;
+        particle_velocity[0] = particle_properties[DEM::PropertiesIndex::v_x];
+        particle_velocity[1] = particle_properties[DEM::PropertiesIndex::v_y];
+        if (dim == 3) {
+          particle_velocity[2] = particle_properties[DEM::PropertiesIndex::v_z];
+        }
+
+        Tensor<1, dim> particle_omega;
+        particle_omega[0] = particle_properties[DEM::PropertiesIndex::omega_x];
+        particle_omega[1] = particle_properties[DEM::PropertiesIndex::omega_y];
+        if (dim == 3) {
+          particle_omega[2] =
+              particle_properties[DEM::PropertiesIndex::omega_z];
+        }
 
         // Defining relative contact velocity
         Tensor<1, dim> contact_relative_velocity;
         if (dim == 3) {
-          contact_relative_velocity =
-              particle_velocity +
+          particle_velocity +
               cross_product_3d(
                   (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
                    particle_omega),
                   normal_vector);
         }
         /*
-        if (dim == 2)
-        {
-            contact_relative_velocity =
-                particle_velocity +
-                cross_product_2d(
-                    (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
-        particle_omega), normal_vector);
+        if (dim == 2) {
+          particle_velocity +
+              cross_product_2d(
+                  (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
+                   particle_omega),
+                  normal_vector);
         }
         */
 
@@ -238,21 +253,26 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
             contact_relative_velocity - normal_relative_velocity;
 
         // Calculation of tangential vector using tangential relative velocity
-        Tensor<1, dim> tangential_vector{{0, 0, 0}};
+        Tensor<1, dim> tangential_vector;
+        tangential_vector[0] = 0.0;
+        tangential_vector[1] = 0.0;
+        if (dim == 3) {
+          tangential_vector[2] = 0.0;
+        }
         double tangential_relative_velocity_value =
             tangential_relative_velocity.norm();
-        if (tangential_relative_velocity_value != 0) {
+        if (tangential_relative_velocity_value != 0.0) {
           tangential_vector =
               tangential_relative_velocity / tangential_relative_velocity_value;
         }
 
         // Setting tangential overlap of the new particle-wall contact pair
         // equal to zero
-        double tangential_overlap = 0;
+        double tangential_overlap = 0.0;
 
         // Creating a sample from the pw_contact_info_struct and adding contact
         // info to the sample
-        pw_contact_info_struct<dim, spacedim> contact_info;
+        pw_contact_info_struct<dim> contact_info;
         contact_info.particle = particle;
         contact_info.normal_vector = normal_vector;
         contact_info.point_on_boundary = point_on_boundary;
@@ -270,14 +290,14 @@ void PWFineSearch<dim, spacedim>::pw_Fine_Search(
   }
 }
 
-template <int dim, int spacedim>
-Tensor<1, dim>
-PWFineSearch<dim, spacedim>::find_projection(Tensor<1, dim> vector_a,
-                                             Tensor<1, dim> vector_b) {
+template <int dim>
+Tensor<1, dim> PWFineSearch<dim>::find_projection(Tensor<1, dim> vector_a,
+                                                  Tensor<1, dim> vector_b) {
   Tensor<1, dim> vector_c;
   vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
 
   return vector_c;
 }
 
-template class PWFineSearch<3, 3>;
+template class PWFineSearch<2>;
+template class PWFineSearch<3>;

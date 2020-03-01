@@ -2,11 +2,14 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim>
-void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
-    const std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
+template <int dim>
+void PPNonLinearForce<dim>::calculate_pp_contact_force(
+    const std::vector<std::map<int, pp_contact_info_struct<dim>>>
         &pairs_in_contact_info,
-    const physical_info_struct<dim> &physical_properties) {
+    const DEMSolverParameters<dim> &dem_parameters) {
+  // Defining physical properties as local variable
+  const auto physical_properties = dem_parameters.physicalProperties;
+
   // Looping over pairs_in_contact_info, which means looping over all the active
   // particles with iterator pairs_in_contact_info_iterator
   for (auto pairs_in_contact_info_iterator = pairs_in_contact_info.begin();
@@ -17,9 +20,13 @@ void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
     // map which contains the required information for calculation of the
     // contact  Pointforce for each particle (i.e. each element of the
     // pairs_in_contact_info vector)
-    auto contact_information_iterator = pairs_in_contact_info_iterator->begin();
-    while (contact_information_iterator !=
-           pairs_in_contact_info_iterator->end()) {
+
+    // auto contact_information_iterator =
+    // pairs_in_contact_info_iterator->begin();
+    for (auto contact_information_iterator =
+             pairs_in_contact_info_iterator->begin();
+         contact_information_iterator != pairs_in_contact_info_iterator->end();
+         ++contact_information_iterator) {
       // Defining the iterator's second value (map value) as a local
       // parameter
       auto contact_information_iterator_second =
@@ -46,10 +53,10 @@ void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
           (2.0 * (particle_one_properties[DEM::PropertiesIndex::dp] +
                   particle_two_properties[DEM::PropertiesIndex::dp]));
       double effective_youngs_modulus =
-          physical_properties.Young_modulus_particle /
+          physical_properties.Youngs_modulus_particle /
           (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_particle, 2.0)));
       double effective_shear_modulus =
-          physical_properties.Young_modulus_particle /
+          physical_properties.Youngs_modulus_particle /
           (4.0 * (2.0 - physical_properties.Poisson_ratio_particle) *
            (1.0 + physical_properties.Poisson_ratio_particle));
 
@@ -125,8 +132,8 @@ void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
         // Tangential overlap is not changed
       } else {
 
-        // Gross sliding occurs and the tangential overlap and tangnetial force
-        // are limited to Coulumb's criterion
+        // Gross sliding occurs and the tangential overlap and tangnetial
+        // force are limited to Coulumb's criterion
         contact_information_iterator_second.tangential_overlap =
             maximum_tangential_overlap *
             boost::math::sign(
@@ -155,17 +162,11 @@ void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
       // Calculation of torque
       // Torque caused by tangential force (tangential_torque)
       Tensor<1, dim> tangential_torque_particle_one,
-          tangential_torque_particle_two;
-      if (dim == 3) {
-        tangential_torque_particle_one =
+          tangential_torque_particle_two =
             (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
             cross_product_3d(contact_information_iterator_second.normal_vector,
                              (-1 * total_force));
-        tangential_torque_particle_two =
-            (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
-            cross_product_3d(contact_information_iterator_second.normal_vector,
-                             total_force);
-      }
+
 
       // Rolling resistance torque
       // For calculation of rolling resistance torque, we need to obtain
@@ -208,11 +209,10 @@ void PPNonLinearForce<dim, spacedim>::calculate_pp_contact_force(
       }
       */
 
-      ++contact_information_iterator;
+      // ++contact_information_iterator;
     }
   }
 }
 
-template class PPNonLinearForce<2, 2>;
-
-template class PPNonLinearForce<3, 3>;
+template class PPNonLinearForce<2>;
+template class PPNonLinearForce<3>;

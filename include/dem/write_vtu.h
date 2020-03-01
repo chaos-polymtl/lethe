@@ -17,20 +17,52 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "visualization.h"
+#include <deal.II/base/data_out_base.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/visualization.h>
+#include <fstream>
+#include <iostream>
+#include <sys/stat.h>
 
 #ifndef DEM_WRITEVTU_H_
-#  define DEM_WRITEVTU_H_
+#define DEM_WRITEVTU_H_
 
-template <int dim, int spacedim>
-class WriteVTU
-{
+/**
+ * Writing the simulation output as .pvtu and .vtu formats
+ *
+ * @note This function is taken from Aspect and dealii and implemented here
+ *
+ * @author Shahab Golshan, Polytechnique Montreal 2019-
+ */
+
+template <int dim> class WriteVTU {
 public:
-  WriteVTU<dim, spacedim>();
-  void
-  write_master_files(const Visualization<dim, spacedim> &data_out);
-  void
-  writeVTUFiles(Visualization<dim, spacedim> &, int, float);
+  WriteVTU<dim>();
+
+  /**
+   * Carries out writing .pvtu file which contains the general information of
+   * simulation outputs and creating the output folder
+   *
+   * @param visulization_object An object of visualization class
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+
+  void write_master_files(Visualization<dim> &visulization_object,
+                          const DEMSolverParameters<dim> &dem_parameters);
+
+  /**
+   * Carries out writing .vtu files which contain the information of all the
+   * particles in the system at the writing time-step
+   *
+   * @param visulization_object An object of visualization class
+   * @param DEM_step Current DEM step number
+   * @param DEM_time Current DEM time
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+
+  void writeVTUFiles(Visualization<dim> &visulization_object,
+                     const int &DEM_step, const double &DEM_time,
+                     const DEMSolverParameters<dim> &dem_parameters);
 };
 
-#endif /* CMAKEFILES_WRITEVTU_H_ */
+#endif /* DEM_WRITEVTU_H_ */

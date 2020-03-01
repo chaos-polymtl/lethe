@@ -17,11 +17,11 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/pp_contact_info_struct.h"
 #include <deal.II/distributed/tria.h>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+#include <dem/pp_contact_info_struct.h>
 #include <iostream>
 #include <vector>
 
@@ -39,9 +39,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim> class PPBroadSearch {
+template <int dim> class PPBroadSearch {
 public:
-  PPBroadSearch<dim, spacedim>();
+  PPBroadSearch<dim>();
 
   /**
    * Finds a vector of pairs (particle pairs) which shows the candidate
@@ -56,10 +56,10 @@ public:
    * cells which are collision candidates
    */
 
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
   find_PP_Contact_Pairs(
-      dealii::Particles::ParticleHandler<dim, spacedim> &particle_handler,
+      dealii::Particles::ParticleHandler<dim> &particle_handler,
       std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
           &cellNeighborList);
 };

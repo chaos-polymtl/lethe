@@ -19,22 +19,18 @@
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
-
 #include <dem/dem_properties.h>
-#include <math.h>
-
+#include <dem/dem_solver_parameters.h>
+#include <dem/pp_contact_force.h>
+#include <dem/pp_contact_info_struct.h>
 #include <iostream>
+#include <math.h>
 #include <vector>
-
-#include "dem/dem_solver_parameters.h"
-#include "dem/physical_info_struct.h"
-#include "dem/pp_contact_force.h"
-#include "dem/pp_contact_info_struct.h"
 
 using namespace dealii;
 
 #ifndef PPNONLINEARFORCE_H_
-#  define PPNONLINEARFORCE_H_
+#define PPNONLINEARFORCE_H_
 
 /**
  * Calculation of the non-linear particle-particle contact force using the
@@ -46,12 +42,9 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim>
-class PPNonLinearForce : public PPContactForce<dim, spacedim>
-{
+template <int dim> class PPNonLinearForce : public PPContactForce<dim> {
 public:
-  PPNonLinearForce()
-  {}
+  PPNonLinearForce() {}
 
   /**
    * Carries out the calculation of the particle-particle contact force using
@@ -60,13 +53,12 @@ public:
    * @param pairs_in_contact_info Required information for calculation of the
    * particle-particle contact force, these information were obtained in the
    * fine search
-   * @param physical_properties Physical properties of particles
+   * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void
-  calculate_pp_contact_force(
-    const std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
-      &                              pairs_in_contact_info,
-    const physical_info_struct<dim> &physical_properties) override;
+  virtual void calculate_pp_contact_force(
+      const std::vector<std::map<int, pp_contact_info_struct<dim>>>
+          &pairs_in_contact_info,
+      const DEMSolverParameters<dim> &dem_parameters) override;
 };
 
 #endif

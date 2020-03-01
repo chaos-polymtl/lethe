@@ -16,50 +16,46 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-
-#ifndef PARAMETERS_DEM_H_
-#define PARAMETERS_DEM_H_
-
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
 
-template <int dim>
-class DEMSolverParameters
-{
+#ifndef PARAMETERS_DEM_H_
+#define PARAMETERS_DEM_H_
+
+/**
+ * Handles all the parameters declared in the parameter handler file
+ */
+
+template <int dim> class DEMSolverParameters {
 public:
   Parameters::Mesh mesh;
   Parameters::Lagrangian::SimulationControl
-                                             simulationControl; // To be deprecated
+      simulationControl; // To be deprecated
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
-  Parameters::Lagrangian::InsertionInfo      insertionInfo;
-  Parameters::Lagrangian::OutputProperties   outputProperties;
-  Parameters::Lagrangian::SimulationModel    simulationModel;
+  Parameters::Lagrangian::InsertionInfo insertionInfo;
+  Parameters::Lagrangian::OutputProperties outputProperties;
+  Parameters::Lagrangian::ModelParameters model_parmeters;
 
   SimulationControl simulation_control;
 
-
-  void
-  declare(ParameterHandler &prm)
-  {
+  void declare(ParameterHandler &prm) {
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
     Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
-    Parameters::Lagrangian::SimulationModel::declare_parameters(prm);
+    Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
   }
 
-  void
-  parse(ParameterHandler &prm)
-  {
+  void parse(ParameterHandler &prm) {
     mesh.parse_parameters(prm);
     physicalProperties.parse_parameters(prm);
     insertionInfo.parse_parameters(prm);
     simulationControl.parse_parameters(prm);
     outputProperties.parse_parameters(prm);
-    simulationModel.parse_parameters(prm);
+    model_parmeters.parse_parameters(prm);
     simulation_control.initialize(prm);
   }
 };

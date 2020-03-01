@@ -5,16 +5,15 @@
  *      Author: shahab
  */
 
-#include "dem/visualization.h"
+#include <dem/visualization.h>
 
 using namespace dealii;
 
-template <int dim, int spacedim>
-Visualization<dim, spacedim>::Visualization() {}
+template <int dim> Visualization<dim>::Visualization() {}
 
-template <int dim, int spacedim>
-void Visualization<dim, spacedim>::build_patches(
-    const dealii::Particles::ParticleHandler<dim, spacedim> &particle_handler,
+template <int dim>
+void Visualization<dim>::build_patches(
+    const dealii::Particles::ParticleHandler<dim> &particle_handler,
     std::vector<std::pair<std::string, int>> properties) {
 
   // Get the number of properties as a local parameter
@@ -46,8 +45,8 @@ void Visualization<dim, spacedim>::build_patches(
   // Building the patch data
   patches.resize(particle_handler.n_locally_owned_particles());
 
-  typename dealii::Particles::ParticleHandler<dim, spacedim>::particle_iterator
-      particle = particle_handler.begin();
+  typename dealii::Particles::ParticleHandler<dim>::particle_iterator particle =
+      particle_handler.begin();
 
   // Looping over particle to get the properties from the particle_handler
   for (unsigned int i = 0; particle != particle_handler.end();
@@ -69,27 +68,26 @@ void Visualization<dim, spacedim>::build_patches(
   }
 }
 
-template <int dim, int spacedim>
+template <int dim>
 const std::vector<DataOutBase::Patch<0, dim>> &
-Visualization<dim, spacedim>::get_patches() const {
+Visualization<dim>::get_patches() const {
   return patches;
 }
 
-template <int dim, int spacedim>
-std::vector<std::string>
-Visualization<dim, spacedim>::get_dataset_names() const {
+template <int dim>
+std::vector<std::string> Visualization<dim>::get_dataset_names() const {
   return dataset_names;
 }
 
-template <int dim, int spacedim>
+template <int dim>
 std::vector<
     std::tuple<unsigned int, unsigned int, std::string,
                DataComponentInterpretation::DataComponentInterpretation>>
-Visualization<dim, spacedim>::get_nonscalar_data_ranges() const {
+Visualization<dim>::get_nonscalar_data_ranges() const {
   return vector_datasets;
 }
 
-template <int dim, int spacedim>
-Visualization<dim, spacedim>::~Visualization() {}
+template <int dim> Visualization<dim>::~Visualization() {}
 
-template class Visualization<3, 3>;
+template class Visualization<2>;
+template class Visualization<3>;

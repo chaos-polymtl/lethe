@@ -2,11 +2,13 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim>
-void PWNonLinearForce<dim, spacedim>::calculate_pw_contact_force(
-    std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
+template <int dim>
+void PWNonLinearForce<dim>::calculate_pw_contact_force(
+    std::vector<std::map<int, pw_contact_info_struct<dim>>>
         &pw_pairs_in_contact,
-    const physical_info_struct<dim> &physical_properties) {
+    const DEMSolverParameters<dim> &dem_parameters) {
+  // Defining physical properties as local variable
+  const auto physical_properties = dem_parameters.physicalProperties;
 
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -18,10 +20,13 @@ void PWNonLinearForce<dim, spacedim>::calculate_pw_contact_force(
     // pw_pairs_in_contact vector is defined. This iterator iterates over a
     // map which contains the required information for calculation of the
     // contact force for each particle
-    auto pw_contact_information_iterator =
-        pw_pairs_in_contact_iterator->begin();
-    while (pw_contact_information_iterator !=
-           pw_pairs_in_contact_iterator->end()) {
+
+    // auto pw_contact_information_iterator =
+    //    pw_pairs_in_contact_iterator->begin();
+    for (auto pw_contact_information_iterator =
+             pw_pairs_in_contact_iterator->begin();
+         pw_contact_information_iterator != pw_pairs_in_contact_iterator->end();
+         ++pw_contact_information_iterator) {
       // Defining the iterator's second value (map value) as a local
       // parameter
       auto contact_information = pw_contact_information_iterator->second;
@@ -35,10 +40,10 @@ void PWNonLinearForce<dim, spacedim>::calculate_pw_contact_force(
       // Calculation of effective Young's modulus and shear
       // modulus of the contact
       double effective_youngs_modulus =
-          physical_properties.Young_modulus_wall /
+          physical_properties.Youngs_modulus_wall /
           (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_wall, 2.0)));
       double effective_shear_modulus =
-          physical_properties.Young_modulus_wall /
+          physical_properties.Youngs_modulus_wall /
           (4.0 * (2.0 - physical_properties.Poisson_ratio_wall) *
            (1.0 + physical_properties.Poisson_ratio_wall));
 
@@ -136,37 +141,46 @@ void PWNonLinearForce<dim, spacedim>::calculate_pw_contact_force(
       }
 
       // Calculation of torque
-      /*
-       Point<dim> torqueTi;
-       torqueTi =
-  ((particle_properties[2])/2.0) *
-  cross_product_3d( contact_information.normal_vector , total_force);
-  Point<dim> omegai = {particle_properties[16] ,
-  particle_properties[17] ,
-  particle_properties[18]};
+      // First calculation of torque due to tangential force acting on particle
+      Tensor<1, dim> tangential_toruqe =
+          ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+          cross_product_3d(contact_information.normal_vector, total_force);
 
-      Point<dim> omegaiw = {0.0, 0.0, 0.0};
-      double omegaNorm = omegai.norm();
-      if(omegaNorm != 0)
-      {omegaiw = omegai / omegaNorm ;}
-      Point<dim> torquer;
-     torquer = -1.0 * physical_properties.rolling_friction_coefficient_wall *
-  ((particle_properties[2])/2.0) *
-  normal_force.norm() * omegaiw;
+      // Getting the angular velocity of particle in the vector format
+      Tensor<1, dim> angular_velocity;
+      for (int d = 0; d < dim; ++d) {
+        angular_velocity[d] =
+            particle_properties[DEM::PropertiesIndex::omega_x + d];
+      }
 
-     particle_properties[21] =
-  particle_properties[21] + torqueTi[0] +
-  torquer[0]; particle_properties[22] =
-  particle_properties[22] + torqueTi[1] +
-  torquer[1]; particle_properties[23] =
-  particle_properties[23] + torqueTi[2] +
-  torquer[2];
-  */
+      // Calculation of particle-wall angular velocity (norm of the particle
+      // angular velocity)
+      Tensor<1, dim> pw_angular_velocity;
+      for (int d = 0; d < dim; ++d) {
+        pw_angular_velocity[d] = 0.0;
+      }
+      double omegaNorm = angular_velocity.norm();
+      if (omegaNorm != 0) {
+        pw_angular_velocity = angular_velocity / omegaNorm;
+      }
 
-      ++pw_contact_information_iterator;
+      // Calcualation of rolling resistance torque
+      Tensor<1, dim> rolling_resistance_torque =
+          -1.0 * physical_properties.rolling_friction_wall *
+          ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+          normal_force.norm() * pw_angular_velocity;
+
+      // Updating the acting toruqe on the particle
+      for (int d = 0; d < dim; ++d) {
+        particle_properties[DEM::PropertiesIndex::M_x + d] =
+            particle_properties[DEM::PropertiesIndex::M_x + d] +
+            tangential_toruqe[d] + rolling_resistance_torque[d];
+      }
+
+      //++pw_contact_information_iterator;
     }
   }
 }
 
-template class PWNonLinearForce<2, 2>;
-template class PWNonLinearForce<3, 3>;
+template class PWNonLinearForce<2>;
+template class PWNonLinearForce<3>;
