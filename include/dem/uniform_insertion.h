@@ -18,14 +18,13 @@
  */
 
 #include <deal.II/distributed/tria.h>
-
 #include <deal.II/particles/particle_handler.h>
-
-#include "dem/dem_solver_parameters.h"
-#include "dem/insertion.h"
+#include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/insertion.h>
 
 #ifndef UNIFORMINSERTION_H_
-#  define UNIFORMINSERTION_H_
+#define UNIFORMINSERTION_H_
 
 /**
  * Uniform insertion of particles in a rectangular box
@@ -35,9 +34,7 @@
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim>
-class UniformInsertion : public Insertion<dim, spacedim>
-{
+template <int dim> class UniformInsertion : public Insertion<dim> {
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
@@ -46,14 +43,9 @@ public:
    * step exceeds this calculated number Note that in the current version only
    * the insertion in a rectangular box is defined
    *
-   * @param physical_info_struct Physical properties of particles. We only use
-   * particle diameter here
-   * @param insertion_info_struct Information related to the insertion of
-   * particles from the parameter handler file)
+   * @param dem_parameters DEM parameters declared in the .prm file
    */
-  UniformInsertion<dim, spacedim>(
-    physical_info_struct<dim> &                 physical_info_struct,
-    const insertion_info_struct<dim, spacedim> &insertion_info_struct);
+  UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -63,21 +55,15 @@ public:
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
-   * @param tr Triangulation to access the cells in which the particles are
-   * inserted
+   * @param triangulation Triangulation to access the cells in which the
+   * particles are inserted
    * @param property_pool property pool of particles
-   * @param physical_info_struct Physical properties of particles. We use
-   * particle diameter and density here
-   * @param insertion_info_struct Information related to the insertion of
-   * particles from the parameter handler file)
+   * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void
-  insert(
-    Particles::ParticleHandler<dim, spacedim> & particle_handler,
-    const Triangulation<dim, spacedim> &        tr,
-    Particles::PropertyPool &                   property_pool,
-    physical_info_struct<dim> &                 physical_info_struct,
-    const insertion_info_struct<dim, spacedim> &insertion_info_struct) override;
+  virtual void insert(Particles::ParticleHandler<dim> &particle_handler,
+                      const Triangulation<dim> &triangulation,
+                      Particles::PropertyPool &property_pool,
+                      const DEMSolverParameters<dim> &dem_parameters) override;
 };
 
 #endif /* UNIFORMINSERTION_H_ */

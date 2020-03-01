@@ -38,20 +38,20 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim> class FindCellNeighbors {
+template <int dim> class FindCellNeighbors {
 public:
-  FindCellNeighbors<dim, spacedim>();
+  FindCellNeighbors<dim>();
 
   /**
    * Find the neighbor list of all the active cells in the triangulation
    *
-   * @param tr Triangulation to access the information of the cells
+   * @param triangulation Triangulation to access the information of the cells
    * @return A vector (with size of the cell number) of sets (adjacent cells
    * of each cell). First element of each set shows the main cell itself
    */
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-  find_cell_neighbors(const Triangulation<dim, spacedim> &tr);
+  find_cell_neighbors(const Triangulation<dim> &triangulation);
 };
 
 #endif /* FINDCELLNEIGHBORS_H_ */

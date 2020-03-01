@@ -1,21 +1,20 @@
-#include "dem/pp_broad_search.h"
+#include <dem/pp_broad_search.h>
 
 using namespace dealii;
 
-template <int dim, int spacedim>
-PPBroadSearch<dim, spacedim>::PPBroadSearch() {}
+template <int dim> PPBroadSearch<dim>::PPBroadSearch() {}
 
-template <int dim, int spacedim>
-std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                      Particles::ParticleIterator<dim, spacedim>>>
-PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
-    Particles::ParticleHandler<dim, spacedim> &particle_handler,
+template <int dim>
+std::vector<std::pair<Particles::ParticleIterator<dim>,
+                      Particles::ParticleIterator<dim>>>
+PPBroadSearch<dim>::find_PP_Contact_Pairs(
+    Particles::ParticleHandler<dim> &particle_handler,
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
         &cell_Neighbor_List) {
   // A vector of pairs which contains all the canditates for particle-particle
   // collision at each time step
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
       contact_pair_candidates;
 
   // A counter for counting the cells
@@ -31,7 +30,7 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
         cell_Neighbor_List[cell_number_counter].begin();
 
     // Particles in the main cell
-    typename Particles::ParticleHandler<dim, spacedim>::particle_iterator_range
+    typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_main_cell =
             particle_handler.particles_in_cell(*neighbor_cell_iterator);
 
@@ -39,52 +38,57 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
     // becasue each particle will not be considered as collision partner with
     // itself
     int particle_in_main_cell_counter = 1;
-    for (typename Particles::ParticleHandler<dim, spacedim>::
-             particle_iterator_range::iterator particles_in_main_cell_iterator =
+    for (typename Particles::ParticleHandler<dim>::particle_iterator_range::
+             iterator particles_in_main_cell_iterator =
                  particles_in_main_cell.begin();
          particles_in_main_cell_iterator != particles_in_main_cell.end();
          ++particles_in_main_cell_iterator, ++particle_in_main_cell_counter) {
 
-      typename Particles::ParticleHandler<
-          dim, spacedim>::particle_iterator_range::iterator
-          particles_in_main_cell_iterator_two = particles_in_main_cell.begin();
+      typename Particles::ParticleHandler<dim>::particle_iterator_range::
+          iterator particles_in_main_cell_iterator_two =
+              particles_in_main_cell.begin();
 
       // Advancing the second iterator to capture all the particle pairs in the
       // main cell
       std::advance(particles_in_main_cell_iterator_two,
                    particle_in_main_cell_counter);
 
-      while (particles_in_main_cell_iterator_two !=
-             particles_in_main_cell.end()) {
+      // while (particles_in_main_cell_iterator_two !=
+      //  particles_in_main_cell.end()) {
+      for (particles_in_main_cell_iterator_two;
+           particles_in_main_cell_iterator_two != particles_in_main_cell.end();
+           ++particles_in_main_cell_iterator_two) {
         // Capturing all the particle pairs in the main cell
         auto contact_pair = std::make_pair(particles_in_main_cell_iterator,
                                            particles_in_main_cell_iterator_two);
         contact_pair_candidates.push_back(contact_pair);
-        ++particles_in_main_cell_iterator_two;
+        //++particles_in_main_cell_iterator_two;
       }
     }
 
     // Going through neighbor cells of the main cell
     ++neighbor_cell_iterator;
 
-    while (neighbor_cell_iterator !=
-           cell_Neighbor_List[cell_number_counter].end()) {
-
+    // while (neighbor_cell_iterator !=
+    //   cell_Neighbor_List[cell_number_counter].end()) {
+    //************* unused warning check
+    for (neighbor_cell_iterator; neighbor_cell_iterator !=
+                                 cell_Neighbor_List[cell_number_counter].end();
+         ++neighbor_cell_iterator) {
       // Defining iterator on particles in the neighbor cell
-      typename Particles::ParticleHandler<
-          dim, spacedim>::particle_iterator_range particles_in_neighbor_cell =
-          particle_handler.particles_in_cell(*neighbor_cell_iterator);
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+          particles_in_neighbor_cell =
+              particle_handler.particles_in_cell(*neighbor_cell_iterator);
 
       // Capturing particle pairs, the first particle in the main cell and the
       // second particle in the neighbor cells
-      for (typename Particles::ParticleHandler<
-               dim, spacedim>::particle_iterator_range::iterator
-               particles_in_main_cell_iterator = particles_in_main_cell.begin();
+      for (typename Particles::ParticleHandler<dim>::particle_iterator_range::
+               iterator particles_in_main_cell_iterator =
+                   particles_in_main_cell.begin();
            particles_in_main_cell_iterator != particles_in_main_cell.end();
            ++particles_in_main_cell_iterator) {
-        for (typename Particles::ParticleHandler<
-                 dim, spacedim>::particle_iterator_range::iterator
-                 particles_in_neighbor_cell_iterator =
+        for (typename Particles::ParticleHandler<dim>::particle_iterator_range::
+                 iterator particles_in_neighbor_cell_iterator =
                      particles_in_neighbor_cell.begin();
              particles_in_neighbor_cell_iterator !=
              particles_in_neighbor_cell.end();
@@ -96,7 +100,7 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
         }
       }
 
-      ++neighbor_cell_iterator;
+      //++neighbor_cell_iterator;
     }
   }
   return contact_pair_candidates;
@@ -106,19 +110,19 @@ PPBroadSearch<dim, spacedim>::find_PP_Contact_Pairs(
 // earlier
 // 2nd method:
 /*
-template <int dim, int spacedim>
-std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                      Particles::ParticleIterator<dim, spacedim>>>
-ContactSearch<dim, spacedim>::findContactPairs(
-  Particles::ParticleHandler<dim, spacedim> &particle_handler,
-  const Triangulation<dim, spacedim> &       tr,
+template <int dim>
+std::vector<std::pair<Particles::ParticleIterator<dim>,
+                      Particles::ParticleIterator<dim>>>
+ContactSearch<dim>::findContactPairs(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const Triangulation<dim> &       tr,
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cellNeighborList)
 
 
 {
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
       contactPairs;
   int index = 0;
   for (typename Triangulation<dim>::active_cell_iterator cell =
@@ -126,8 +130,7 @@ ContactSearch<dim, spacedim>::findContactPairs(
        cell != tr.end();
        ++cell, ++index)
     {
-      typename Particles::ParticleHandler<dim,
-                                          spacedim>::particle_iterator_range
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
         particle_range = particle_handler.particles_in_cell(cell);
 
 
@@ -135,17 +138,16 @@ ContactSearch<dim, spacedim>::findContactPairs(
            cellIt != cellNeighborList[index].end();
            cellIt++)
         {
-          typename Particles::ParticleHandler<dim,
-                                              spacedim>::particle_iterator_range
+          typename Particles::ParticleHandler<dim>::particle_iterator_range
             particle_range2 = particle_handler.particles_in_cell(*cellIt);
 
-          for (typename Particles::ParticleHandler<dim, spacedim>::
+          for (typename Particles::ParticleHandler<dim>::
                  particle_iterator_range::iterator partIter =
                    particle_range.begin();
                partIter != particle_range.end();
                ++partIter)
             {
-              for (typename Particles::ParticleHandler<dim, spacedim>::
+              for (typename Particles::ParticleHandler<dim>::
                      particle_iterator_range::iterator partIter2 =
                        particle_range2.begin();
                    partIter2 != particle_range2.end();
@@ -183,8 +185,8 @@ ContactSearch<dim, spacedim>::findContactPairs(
 | Solve                           |         2 |      3.03s |       3.4% |
 | Setup dof system                |         1 |      3.97s |       4.5% |
 +---------------------------------+-----------+------------+------------+
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
     contactPairs;
   if (!contactPairs.empty())
     {
@@ -205,10 +207,9 @@ ContactSearch<dim, spacedim>::findContactPairs(
            cellIt != cellNeighborList[index].end();
            cellIt++)
         {
-          const Particles::ParticleHandler<dim,
-spacedim>::particle_iterator_range particle_range =
-particle_handler.particles_in_cell(*cellIt); for (typename
-Particles::ParticleHandler<dim, spacedim>:: particle_iterator_range::iterator
+          const Particles::ParticleHandler<dim>::particle_iterator_range
+particle_range = particle_handler.particles_in_cell(*cellIt); for (typename
+Particles::ParticleHandler<dim>:: particle_iterator_range::iterator
 partIter = particle_range.begin(); partIter != particle_range.end();
                ++partIter)
             {
@@ -229,4 +230,5 @@ partIter = particle_range.begin(); partIter != particle_range.end();
 }
 */
 
-template class PPBroadSearch<3, 3>;
+template class PPBroadSearch<2>;
+template class PPBroadSearch<3>;

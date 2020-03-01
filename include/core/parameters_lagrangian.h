@@ -4,126 +4,130 @@
  *  Created on: Dec 16, 2019
  *      Author: shahab
  */
-
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+#include <string>
 
 #ifndef PARAMETERS_LAGRANGIAN_H_
-#  define PARAMETERS_LAGRANGIAN_H_
+#define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
 
-namespace Parameters
-{
-  namespace Lagrangian
-  {
-    struct SimulationControl
-    {
-      // Time step
-      double dt;
+namespace Parameters {
+namespace Lagrangian {
+struct SimulationControl {
+  // Time step
+  double dt;
 
-      // End time step
-      int tFinal;
+  // End time step
+  int final_time_step;
 
-      // Total number of particles
-      int nTotal;
+  // Total number of particles
+  int total_particle_number;
 
-      // Write frequency
-      int writeFrequency;
+  // Write frequency
+  int write_frequency;
 
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
+struct PhysicalProperties {
+  // Gravitational acceleration
+  double gx, gy, gz;
 
-    struct PhysicalProperties
-    {
-      // Gravitational acceleration
-      double gx, gy, gz;
+  // Particle diameter and density
+  double diameter;
+  double density;
 
-      // Particle diameter and density
-      double diameter;
-      double density;
+  // Young's modulus of particle and wall
+  double Youngs_modulus_particle;
+  double Youngs_modulus_wall;
 
-      // Young's modulus of particle and wall
-      double Yp;
-      double Yw;
+  // Poisson's ratios of particle and wall
+  double Poisson_ratio_particle;
+  double Poisson_ratio_wall;
 
-      // Poisson's ratios of particle and wall
-      double vp;
-      double vw;
+  // Coefficients of restituion of particle and wall
+  double restitution_coefficient_particle;
+  double restitution_coefficient_wall;
 
-      // Coefficients of restituion of particle and wall
-      double ep;
-      double ew;
+  // Friction coefficients of particle and wall
+  double friction_coefficient_particle;
+  double friction_coefficient_wall;
 
-      // Friction coefficients of particle and wall
-      double mup;
-      double muw;
+  // Rollinrg friction coefficients of particle and wall
+  double rolling_friction_particle;
+  double rolling_friction_wall;
 
-      // Rollinrg friction coefficients of particle and wall
-      double murp;
-      double murw;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+struct InsertionInfo {
+  // Insertion time step
+  int insertion_steps_number;
 
+  // Inserted number of particles at each time step
+  int inserted_this_step;
 
-    struct InsertionInfo
-    {
-      // Insertion time step
-      int tInsertion;
+  // Insertion frequency
+  int insertion_frequency;
 
-      // Inserted number of particles at each time step
-      int nInsert;
+  // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
+  double x_min, y_min, z_min, x_max, y_max, z_max;
 
-      // Insertion frequency
-      int insertFrequency;
+  // Insertion distance threshold
+  double distance_threshold;
 
-      // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
-      double x_min, y_min, z_min, x_max, y_max, z_max;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-      // Insertion distance threshold
-      double distance_threshold;
+struct OutputProperties {
+  // Number of properties
+  int properties_number;
 
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+  // Output directory
+  std::string output_folder;
 
+  // General information file (.pvtu) prefix
+  std::string general_file_prefix;
 
-    struct OutputProperties
-    {
-      // Number of properties
-      int numProperties;
+  // Result (.vtu) name prefix
+  std::string result_prefix;
 
-      // Number of fields
-      int numFields;
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
 
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+struct ModelParameters {
+  // Particle-particle broad search frequency
+  int pp_broad_search_frequency;
 
-    struct SimulationModel
-    {
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+  // Particle-wall broad search frequency
+  int pw_broad_search_frequency;
 
-  } // namespace Lagrangian
+  // Choosing particle-particle contact force model
+  enum class PPContactForceModel {
+    pp_linear,
+    pp_nonlinear
+  } pp_contact_force_method;
+
+  // Choosing particle-wall contact force model
+  enum class PWContactForceModel {
+    pw_linear,
+    pw_nonlinear
+  } pw_contact_force_method;
+
+  static void declare_parameters(ParameterHandler &prm);
+  void parse_parameters(ParameterHandler &prm);
+};
+
+} // namespace Lagrangian
 } // namespace Parameters
 
 #endif /* PARAMETERS_H_ */

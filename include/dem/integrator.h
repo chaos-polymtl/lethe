@@ -18,22 +18,19 @@
  */
 
 #include <deal.II/particles/particle_handler.h>
-
-#include "dem/dem_solver_parameters.h"
+#include <dem/dem_solver_parameters.h>
 
 using namespace dealii;
 
 #ifndef INTEGRATION_H_
-#  define INTEGRATION_H_
+#define INTEGRATION_H_
 
 /**
  * Base interface for classes that carry out the integration of the velocity and
  * position of particles with inertia
  */
 
-template <int dim, int spacedim = dim>
-class Integrator
-{
+template <int dim> class Integrator {
 public:
   /**
    * The constructor to the integrator class is currently blank
@@ -41,11 +38,9 @@ public:
    * the index to the velocity property, the force property and the acceleration
    * property manually
    */
-  Integrator()
-  {}
+  Integrator() {}
 
-  virtual ~Integrator()
-  {}
+  virtual ~Integrator() {}
 
   /**
    * Carries out the integration of the motion of all particles by using
@@ -53,14 +48,13 @@ public:
    * This virtual function that serves as a template for all integrator
    * functions.
    *
-   * @param particle_handler The particle handler whose particle motion we wish to integrate
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
    * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
    */
-  virtual void
-  integrate(Particles::ParticleHandler<dim, spacedim> &particle_handler,
-            Tensor<1, dim>                             body_force,
-            double                                     time_step) = 0;
+  virtual void integrate(Particles::ParticleHandler<dim> &particle_handler,
+                         Tensor<1, dim> body_force, double time_step) = 0;
 };
 
 #endif /* INTEGRATION_H_ */

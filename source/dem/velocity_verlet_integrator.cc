@@ -3,10 +3,10 @@
 
 using namespace DEM;
 
-template <int dim, int spacedim>
-void VelocityVerletIntegrator<dim, spacedim>::integrate(
-    Particles::ParticleHandler<dim, spacedim> &particle_handler,
-    Tensor<1, dim> g, double dt) {
+template <int dim>
+void VelocityVerletIntegrator<dim>::integrate(
+    Particles::ParticleHandler<dim> &particle_handler, Tensor<1, dim> g,
+    double dt) {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end(); ++particle) {
     // Get the total array view to the particle properties once to improve
@@ -68,4 +68,5 @@ void VelocityVerletIntegrator<dim, spacedim>::integrate(
   }
 }
 
-template class VelocityVerletIntegrator<3, 3>;
+template class VelocityVerletIntegrator<2>;
+template class VelocityVerletIntegrator<3>;

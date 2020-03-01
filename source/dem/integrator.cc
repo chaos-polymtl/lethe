@@ -17,9 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/integrator.h"
+#include <dem/integrator.h>
 
-#include <deal.II/particles/particle_handler.h>
 using namespace dealii;
 
 // Why are all the numbers for the properties hard-coded? This should
@@ -28,11 +27,10 @@ using namespace dealii;
 // Not sure if this implementation of the RK2 integrator is valid and there are
 // currently no unit tests for it
 
-
-// template <int dim, int spacedim>
+// template <int dim>
 // void
-// Integrator<dim, spacedim>::rk2Integration(
-//  Particles::ParticleHandler<dim, spacedim> &particle_handler,
+// Integrator<dim>::rk2Integration(
+//  Particles::ParticleHandler<dim> &particle_handler,
 //  Point<dim>                                 g,
 //  float                                      dt)
 //{
@@ -54,7 +52,6 @@ using namespace dealii;
 //      particle->get_properties()[12] =
 //        g[2] +
 //        (particle->get_properties()[15]) / (particle->get_properties()[19]);
-
 
 //      // Velocity integration:
 //      double vxStar = particle->get_properties()[7];

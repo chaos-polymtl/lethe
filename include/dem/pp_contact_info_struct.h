@@ -29,15 +29,15 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim> struct pp_contact_info_struct {
+template <int dim> struct pp_contact_info_struct {
   double normal_overlap;
   Tensor<1, dim> normal_vector;
   double normal_relative_velocity;
   Tensor<1, dim> tangential_vector;
   double tangential_relative_velocity;
   double tangential_overlap;
-  Particles::ParticleIterator<dim, spacedim> particle_one;
-  Particles::ParticleIterator<dim, spacedim> particle_two;
+  Particles::ParticleIterator<dim> particle_one;
+  Particles::ParticleIterator<dim> particle_two;
 };
 
 #endif /* PPCONTACTINFOSTRUCT_H_ */

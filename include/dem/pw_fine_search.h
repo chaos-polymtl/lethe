@@ -17,11 +17,11 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/dem_properties.h"
-#include "dem/pw_contact_info_struct.h"
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+#include <dem/dem_properties.h>
+#include <dem/pw_contact_info_struct.h>
 #include <iostream>
 #include <vector>
 
@@ -41,9 +41,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim> class PWFineSearch {
+template <int dim> class PWFineSearch {
 public:
-  PWFineSearch<dim, spacedim>();
+  PWFineSearch<dim>();
 
   /**
    * Iterates over a vector of maps (pw_pairs_in_contact) to see if the
@@ -64,16 +64,16 @@ public:
    * information in a struct. Note that the size of this vector is equal to the
    * number of particles while the key of map (each element of the vector) is
    * the boundary id
-   * @param dt DEM time step
+   * @param time_step DEM time step
    */
 
   void pw_Fine_Search(
-      std::vector<std::tuple<
-          std::pair<typename Particles::ParticleIterator<dim, spacedim>, int>,
-          Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
-      std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
+      std::vector<
+          std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                     Tensor<1, dim>, Point<dim>>> &pw_contact_pair_candidates,
+      std::vector<std::map<int, pw_contact_info_struct<dim>>>
           &pw_pairs_in_contact,
-      double dt);
+      double time_step);
 
   /** This private function is used to find the projection of vector_a on
    * vector_b
@@ -82,7 +82,8 @@ public:
    * @return The projection of vector_a on vector_b
    */
 private:
-  Tensor<1, dim> find_projection(Tensor<1, dim>, Tensor<1, dim>);
+  Tensor<1, dim> find_projection(Tensor<1, dim> vector_a,
+                                 Tensor<1, dim> vector_b);
 };
 
 #endif /* PWFINESEARCH_H_ */
