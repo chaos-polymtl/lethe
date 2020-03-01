@@ -4,104 +4,73 @@
  *  Created on: Sep 26, 2019
  *      Author: shahab
  */
-#include "dem/dem_iterator.h"
-
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
-#include <deal.II/particles/property_pool.h>
-
-#include <math.h>
-
-#include <chrono>
-
-#include "dem/dem_solver_parameters.h"
-#include "dem/nonuniform_insertion.h"
-#include "dem/pp_contact_info_struct.h"
-#include "dem/uniform_insertion.h"
-#include "dem/visualization.h"
-#include "dem/write_vtu.h"
+#include <dem/dem_iterator.h>
 
 using namespace dealii;
 
-template <int dim, int spacedim> DEM_iterator<dim, spacedim>::DEM_iterator() {}
+template <int dim> DEM_iterator<dim>::DEM_iterator() {}
 
-template <int dim, int spacedim>
-void DEM_iterator<dim, spacedim>::forceReinit(
-    Particles::ParticleHandler<dim, spacedim> &particle_handler) {
+template <int dim>
+void DEM_iterator<dim>::reinitialize_force(
+    Particles::ParticleHandler<dim> &particle_handler) {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end(); ++particle) {
-    particle->get_properties()[DEM::PropertiesIndex::force_x] = 0;
-    particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
-    particle->get_properties()[DEM::PropertiesIndex::force_z] = 0;
 
-    particle->get_properties()[DEM::PropertiesIndex::M_x] = 0;
-    particle->get_properties()[DEM::PropertiesIndex::M_y] = 0;
-    particle->get_properties()[DEM::PropertiesIndex::M_z] = 0;
+    // Getting properties of particle as local variable
+    auto particle_properties = particle->get_properties();
+
+    // Reinitializing forces and momentums of particles in the system
+    particle_properties[DEM::PropertiesIndex::force_x] = 0;
+    particle_properties[DEM::PropertiesIndex::force_y] = 0;
+    particle_properties[DEM::PropertiesIndex::force_z] = 0;
+
+    particle_properties[DEM::PropertiesIndex::M_x] = 0;
+    particle_properties[DEM::PropertiesIndex::M_y] = 0;
+    particle_properties[DEM::PropertiesIndex::M_z] = 0;
   }
 }
 
-/*
-void DEM_iterator::checkSimBound(
-  Particles::ParticleHandler<3, 3> &particle_handler,
-  ReadInputScript                   readInput)
-{
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
-    {
-      if (particle->get_properties()[4] < readInput.x_min ||
-          particle->get_properties()[4] > readInput.x_max ||
-          particle->get_properties()[5] < readInput.y_min ||
-          particle->get_properties()[5] > readInput.y_max ||
-          particle->get_properties()[6] < readInput.z_min ||
-          particle->get_properties()[6] > readInput.z_max)
-        {
-          particle_handler.remove_particle(particle);
-        }
-    }
-}
-*/
-
-template <int dim, int spacedim>
-void DEM_iterator<dim, spacedim>::engine(
-    Particles::ParticleHandler<dim, spacedim> &particle_handler,
-    const Triangulation<dim, spacedim> &tr, int &step, float &time,
+template <int dim>
+void DEM_iterator<dim>::engine(
+    Particles::ParticleHandler<dim> &particle_handler,
+    const Triangulation<dim> &triangulation, int &DEM_step, double &DEM_time,
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-        &cellNeighbor,
-    std::vector<std::map<int, Particles::ParticleIterator<dim, spacedim>>>
-        &inContactPairs,
-    std::vector<std::map<int, pp_contact_info_struct<dim, spacedim>>>
-        &inContactInfo,
-    std::vector<boundary_cells_info_struct<dim>> boundary_cells_information,
-    std::vector<std::map<int, pw_contact_info_struct<dim, spacedim>>>
-        &pwContactInfo,
+        &cell_neighbor_list,
+    std::vector<std::map<int, pp_contact_info_struct<dim>>>
+        &pairs_in_contact_info,
+    std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
+    std::vector<std::map<int, pw_contact_info_struct<dim>>>
+        &pw_pairs_in_contact,
+    DEMSolverParameters<dim> &dem_parameters, Tensor<1, dim> &g,
     std::vector<std::pair<std::string, int>> properties,
-    Particles::PropertyPool &property_pool, PPContactForce<dim, spacedim> *pplf,
-    PWContactForce<dim, spacedim> *pwcf, Integrator<dim, spacedim> *Integ1,
-    double dt, int nTotal, int writeFreq,
-    physical_info_struct<dim> physical_info_struct,
-    insertion_info_struct<dim, spacedim> insertion_info_struct,
-    Tensor<1, dim> g, int numFields, PPBroadSearch<dim, spacedim> ppbs,
-    PPFineSearch<dim, spacedim> ppfs, PWBroadSearch<dim, spacedim> pwbs,
-    PWFineSearch<dim, spacedim> pwfs) {
+    Particles::PropertyPool &property_pool,
+    PPContactForce<dim> *pp_force_object, PWContactForce<dim> *pw_force_object,
+    Integrator<dim> *integrator_object,
+    PPBroadSearch<dim> *pp_broad_search_object,
+    PPFineSearch<dim> *pp_fine_search_object,
+    PWBroadSearch<dim> *pw_broad_search_object,
+    PWFineSearch<dim> *pw_fine_search_object) {
+
+  // Defining parameters as a local variable
+  auto local_parameter = dem_parameters;
 
   // moving walls
 
   auto t1 = std::chrono::high_resolution_clock::now();
   // insertion
-  if (fmod(step, insertion_info_struct.insertion_frequency) == 1) {
-    if (step < insertion_info_struct.insertion_steps_number) {
+  if (fmod(DEM_step, local_parameter.insertionInfo.insertion_frequency) == 1) {
+    if (DEM_step < local_parameter.insertionInfo.insertion_steps_number) {
       // put this if inside the insertion class or use a local variable
       // instead of n_global_particles
       if (particle_handler.n_global_particles() <
-          nTotal) // number < total number
+          local_parameter.simulationControl
+              .total_particle_number) // number < total number
       {
-        NonUniformInsertion<dim, spacedim> ins2(physical_info_struct,
-                                                insertion_info_struct);
+        NonUniformInsertion<dim> ins2(dem_parameters);
+        // UniformInsertion<dim> ins2(dem_parameters);
 
-        ins2.insert(particle_handler, tr, property_pool, physical_info_struct,
-                    insertion_info_struct);
+        ins2.insert(particle_handler, triangulation, property_pool,
+                    dem_parameters);
       }
     }
   }
@@ -110,27 +79,32 @@ void DEM_iterator<dim, spacedim>::engine(
   auto duration_Insertion =
       std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
 
+  // sort particles in cells
+  particle_handler.sort_particles_into_subdomains_and_cells();
+
   // force reinitilization
-  forceReinit(particle_handler);
+  reinitialize_force(particle_handler);
 
   // contact search
 
   auto t3 = std::chrono::high_resolution_clock::now();
-  // if (fmod(step, 10) == 1) {
-  std::vector<std::pair<Particles::ParticleIterator<dim, spacedim>,
-                        Particles::ParticleIterator<dim, spacedim>>>
+  // if (step % model_parameters_struct.pp_broad_search_frequency == 0) {
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
       contact_pair_candidates;
 
-  contact_pair_candidates =
-      ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
-  //}
+  contact_pair_candidates = pp_broad_search_object->find_PP_Contact_Pairs(
+      particle_handler, cell_neighbor_list);
+
+  // }
   auto t4 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactPairs =
       std::chrono::duration_cast<std::chrono::microseconds>(t4 - t3).count();
 
   auto t5 = std::chrono::high_resolution_clock::now();
-  ppfs.pp_Fine_Search(contact_pair_candidates, inContactPairs, inContactInfo,
-                      dt, particle_handler);
+  pp_fine_search_object->pp_Fine_Search(contact_pair_candidates,
+                                        pairs_in_contact_info,
+                                        local_parameter.simulationControl.dt);
 
   auto t6 = std::chrono::high_resolution_clock::now();
   auto duration_PPFineSearch =
@@ -138,29 +112,30 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t7 = std::chrono::high_resolution_clock::now();
   // contact force
-  pplf->calculate_pp_contact_force(inContactInfo, physical_info_struct);
+  pp_force_object->calculate_pp_contact_force(pairs_in_contact_info,
+                                              dem_parameters);
   auto t8 = std::chrono::high_resolution_clock::now();
   auto duration_PPContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t8 - t7).count();
 
   // p-w contact detection:
-  std::vector<
-      std::tuple<std::pair<Particles::ParticleIterator<dim, spacedim>, int>,
-                 Tensor<1, dim>, Point<dim>>>
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                         Tensor<1, dim>, Point<dim>>>
       pwContactList;
 
   auto t9 = std::chrono::high_resolution_clock::now();
-  // if (fmod(step, 10) == 1) {
-
-  pwContactList =
-      pwbs.find_PW_Contact_Pairs(boundary_cells_information, particle_handler);
-  //}
+  if (DEM_step % local_parameter.model_parmeters.pw_broad_search_frequency ==
+      0) {
+    pwContactList = pw_broad_search_object->find_PW_Contact_Pairs(
+        boundary_cells_information, particle_handler);
+  }
   auto t10 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactPairs =
       std::chrono::duration_cast<std::chrono::microseconds>(t10 - t9).count();
 
   auto t11 = std::chrono::high_resolution_clock::now();
-  pwfs.pw_Fine_Search(pwContactList, pwContactInfo, dt);
+  pw_fine_search_object->pw_Fine_Search(pwContactList, pw_pairs_in_contact,
+                                        local_parameter.simulationControl.dt);
 
   auto t12 = std::chrono::high_resolution_clock::now();
   auto duration_PWFineSearch =
@@ -168,37 +143,36 @@ void DEM_iterator<dim, spacedim>::engine(
 
   auto t13 = std::chrono::high_resolution_clock::now();
   // p-w contact force:
-  // pwcf.pwNonLinearCF(pwContactInfo, physical_info_struct);
-  pwcf->calculate_pw_contact_force(pwContactInfo, physical_info_struct);
+  pw_force_object->calculate_pw_contact_force(pw_pairs_in_contact,
+                                              dem_parameters);
   auto t14 = std::chrono::high_resolution_clock::now();
   auto duration_PWContactForce =
       std::chrono::duration_cast<std::chrono::microseconds>(t14 - t13).count();
 
   auto t15 = std::chrono::high_resolution_clock::now();
   // Integration
-  // Integ1.eulerIntegration(particle_handler, g, dt);
-  // Integ1.rk2Integration(particle_handler, g, dt);
-  Integ1->integrate(particle_handler, g, dt);
+  integrator_object->integrate(particle_handler, g,
+                               local_parameter.simulationControl.dt);
   auto t16 = std::chrono::high_resolution_clock::now();
   auto duration_Integration =
       std::chrono::duration_cast<std::chrono::microseconds>(t16 - t15).count();
-
   auto t17 = std::chrono::high_resolution_clock::now();
+
   // visualization
-  if (fmod(step, writeFreq) == 1) {
-    Visualization<dim, spacedim> visObj;
+  if (DEM_step % local_parameter.simulationControl.write_frequency == 1) {
+    Visualization<dim> visObj;
     visObj.build_patches(particle_handler, properties);
-    WriteVTU<dim, spacedim> writObj;
-    writObj.write_master_files(visObj);
-    writObj.writeVTUFiles(visObj, step, time);
+    WriteVTU<dim> writObj;
+    writObj.write_master_files(visObj, dem_parameters);
+    writObj.writeVTUFiles(visObj, DEM_step, DEM_time, dem_parameters);
   }
   auto t18 = std::chrono::high_resolution_clock::now();
   auto duration_Visualization =
       std::chrono::duration_cast<std::chrono::microseconds>(t18 - t17).count();
 
   // print iteration
-  if (fmod(step, 1000) == 1) {
-    std::cout << "Step " << step << std::endl;
+  if (fmod(DEM_step, 1000) == 1) {
+    std::cout << "Step " << DEM_step << std::endl;
     std::cout << "CPU time of insertion is: " << duration_Insertion << " micros"
               << std::endl;
     std::cout << "CPU time of P-P borad search is: " << duration_PPContactPairs
@@ -223,9 +197,9 @@ void DEM_iterator<dim, spacedim>::engine(
   }
 
   // update:
-  particle_handler.sort_particles_into_subdomains_and_cells();
-  step = step + 1;
-  time = step * dt;
+  DEM_step = DEM_step + 1;
+  DEM_time = DEM_step * local_parameter.simulationControl.dt;
 }
 
-template class DEM_iterator<3, 3>;
+template class DEM_iterator<2>;
+template class DEM_iterator<3>;

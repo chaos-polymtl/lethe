@@ -31,26 +31,30 @@ DEMProperties<dim>::get_properties_name() {
   properties[PropertiesIndex::rho] = std::make_pair("Density", 1);
   properties[PropertiesIndex::v_x] = std::make_pair("Velocity", dim);
   properties[PropertiesIndex::v_y] = std::make_pair("Velocity", 1);
-  properties[PropertiesIndex::v_z] = std::make_pair("Velocity", 1);
   properties[PropertiesIndex::acc_x] = std::make_pair("Acceleration", dim);
   properties[PropertiesIndex::acc_y] = std::make_pair("Acceleration", 1);
-  properties[PropertiesIndex::acc_z] = std::make_pair("Acceleration", 1);
   properties[PropertiesIndex::force_x] = std::make_pair("Force", dim);
   properties[PropertiesIndex::force_y] = std::make_pair("Force", 1);
-  properties[PropertiesIndex::force_z] = std::make_pair("Force", 1);
   properties[PropertiesIndex::omega_x] = std::make_pair("Omega", dim);
   properties[PropertiesIndex::omega_y] = std::make_pair("Omega", 1);
-  properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
   properties[PropertiesIndex::mass] = std::make_pair("mass", 1);
   properties[PropertiesIndex::mom_inertia] = std::make_pair("MOI", 1);
   properties[PropertiesIndex::M_x] = std::make_pair("M", dim);
   properties[PropertiesIndex::M_y] = std::make_pair("M", 1);
-  properties[PropertiesIndex::M_z] = std::make_pair("M", 1);
+
+  if (dim == 3) {
+    properties[PropertiesIndex::v_z] = std::make_pair("Velocity", 1);
+    properties[PropertiesIndex::acc_z] = std::make_pair("Acceleration", 1);
+    properties[PropertiesIndex::force_z] = std::make_pair("Force", 1);
+    properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
+    properties[PropertiesIndex::M_z] = std::make_pair("M", 1);
+  }
 
   return properties;
 }
 
 unsigned int get_number_properties() { return PropertiesIndex::n_properties; }
 
+template class DEMProperties<2>;
 template class DEMProperties<3>;
 } // namespace DEM

@@ -20,7 +20,6 @@
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
-
 #include <tuple>
 #include <vector>
 
@@ -37,10 +36,10 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim>
+template <int dim>
 class Visualization : public dealii::DataOutInterface<0, dim> {
 public:
-  Visualization<dim, spacedim>();
+  Visualization<dim>();
 
   /**
    * Carries out building the patches of properties of particles for
@@ -55,9 +54,8 @@ public:
    * dimension
    */
 
-  void build_patches(
-      const Particles::ParticleHandler<dim, spacedim> &particle_handler,
-      std::vector<std::pair<std::string, int>> properties);
+  void build_patches(const Particles::ParticleHandler<dim> &particle_handler,
+                     std::vector<std::pair<std::string, int>> properties);
 
   ~Visualization();
 

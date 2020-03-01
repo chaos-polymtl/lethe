@@ -40,16 +40,16 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim, int spacedim = dim> class FindBoundaryCellsInformation {
+template <int dim> class FindBoundaryCellsInformation {
 public:
-  FindBoundaryCellsInformation<dim, spacedim>();
+  FindBoundaryCellsInformation<dim>();
 
   /**
    * Loops over all the cells to find boundary cells, find the boundary faces of
    * boundary cells and for the boundary faces the normal vector and a point
    * locating on the face are obtained
    *
-   * @param tr Triangulation to access the information of the cells
+   * @param triangulation Triangulation to access the information of the cells
    * @return A vector of structs (boundary_cells_info_struct), this struct
    * contains 1, an integer which shows the number of boundary face 2, the
    * corresponding boundary cell 3, the face number of the cell 4, normal vector
@@ -57,8 +57,8 @@ public:
    * distance between center of particles and the face
    */
 
-  std::vector<boundary_cells_info_struct<dim>>
-  find_boundary_cells_information(const Triangulation<dim, spacedim> &tr);
+  std::vector<boundary_cells_info_struct<dim>> find_boundary_cells_information(
+      const parallel::distributed::Triangulation<dim> &triangulation);
 };
 
 #endif /* FINDBOUNDARYCELLSINFORMATION_H_ */
