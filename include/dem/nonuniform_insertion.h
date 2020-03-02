@@ -18,12 +18,14 @@
  */
 
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/particles/particle_handler.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
 
 #ifndef NONUNIFORMINSERTION_H_
-#define NONUNIFORMINSERTION_H_
+#  define NONUNIFORMINSERTION_H_
 
 /**
  * Non-uniform insertion of particles in a rectangular box
@@ -33,7 +35,9 @@
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim> class NonUniformInsertion : public Insertion<dim> {
+template <int dim>
+class NonUniformInsertion : public Insertion<dim>
+{
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
@@ -59,10 +63,11 @@ public:
    * @param property_pool Property pool of particles
    * @param dem_parameters DEM parameters declared in the .prm file)
    */
-  virtual void insert(Particles::ParticleHandler<dim> &particle_handler,
-                      const Triangulation<dim> &triangulation,
-                      Particles::PropertyPool &property_pool,
-                      const DEMSolverParameters<dim> &dem_parameters) override;
+  virtual void
+  insert(Particles::ParticleHandler<dim> &particle_handler,
+         const Triangulation<dim> &       triangulation,
+         Particles::PropertyPool &        property_pool,
+         const DEMSolverParameters<dim> & dem_parameters) override;
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */

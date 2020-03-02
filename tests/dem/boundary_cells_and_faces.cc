@@ -45,7 +45,7 @@ test()
   std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
 
 
- FindBoundaryCellsInformation<dim, dim> pw1;
+  FindBoundaryCellsInformation<dim, dim> pw1;
   boundaryCellInfo = pw1.find_boundary_cells_information(tr);
 
   int i = 0;

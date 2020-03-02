@@ -12,8 +12,8 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/pw_broad_search.h"
 #include "dem/find_boundary_cells_information.h"
+#include "dem/pw_broad_search.h"
 
 using namespace dealii;
 
@@ -60,8 +60,8 @@ test()
     particle_handler.insert_particle(particle3, cell3);
 
   std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
-  FindBoundaryCellsInformation<dim, dim> boundary_cells_object;
-   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
+  FindBoundaryCellsInformation<dim, dim>       boundary_cells_object;
+  boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
   PWBroadSearch<dim, dim> pw1;
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,

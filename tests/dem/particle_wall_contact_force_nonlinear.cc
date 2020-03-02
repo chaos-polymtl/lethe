@@ -15,10 +15,10 @@
 #include <vector>
 
 #include "../tests.h"
+#include "dem/find_boundary_cells_information.h"
+#include "dem/particle_wall_contact_force.h"
 #include "dem/pw_broad_search.h"
 #include "dem/pw_fine_search.h"
-#include "dem/particle_wall_contact_force.h"
-#include "dem/find_boundary_cells_information.h"
 
 using namespace dealii;
 
@@ -30,35 +30,35 @@ test()
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  int                cellNum = tr.n_active_cells();
-  MappingQ<dim, dim> mapping(1);
+  int                       cellNum = tr.n_active_cells();
+  MappingQ<dim, dim>        mapping(1);
   physical_info_struct<dim> physical_info_struct;
 
 
-  int num_particles =1;
-  const unsigned int n_properties = 24;
-  float              x_min        = -0.05;
-  float              y_min        = -0.05;
-  float              z_min        = -0.05;
-  float              x_max        = 0.05;
-  float              y_max        = 0.05;
-  float              z_max        = 0.05;
-  int                nInsert      = 10;
-  Point<dim>         g            = {0, 0, -9.81};
-  float              dt           = 0.00001;
+  int                num_particles = 1;
+  const unsigned int n_properties  = 24;
+  float              x_min         = -0.05;
+  float              y_min         = -0.05;
+  float              z_min         = -0.05;
+  float              x_max         = 0.05;
+  float              y_max         = 0.05;
+  float              z_max         = 0.05;
+  int                nInsert       = 10;
+  Point<dim>         g             = {0, 0, -9.81};
+  float              dt            = 0.00001;
 
-  physical_info_struct.particle_diameter = 0.005;
-physical_info_struct.particle_density = 2500;
-  physical_info_struct.Young_modulus_particle = 50000000;
-  physical_info_struct.Young_modulus_wall = 50000000;
-  physical_info_struct.Poisson_ratio_particle = 0.3;
-    physical_info_struct.Poisson_ratio_wall = 0.3;
-  physical_info_struct.restitution_coefficient_particle = 0.5;
-  physical_info_struct.restitution_coefficient_wall = 0.5;
-  physical_info_struct.friction_coefficient_particle= 0.5;
-  physical_info_struct.friction_coefficient_wall= 0.5;
+  physical_info_struct.particle_diameter                     = 0.005;
+  physical_info_struct.particle_density                      = 2500;
+  physical_info_struct.Young_modulus_particle                = 50000000;
+  physical_info_struct.Young_modulus_wall                    = 50000000;
+  physical_info_struct.Poisson_ratio_particle                = 0.3;
+  physical_info_struct.Poisson_ratio_wall                    = 0.3;
+  physical_info_struct.restitution_coefficient_particle      = 0.5;
+  physical_info_struct.restitution_coefficient_wall          = 0.5;
+  physical_info_struct.friction_coefficient_particle         = 0.5;
+  physical_info_struct.friction_coefficient_wall             = 0.5;
   physical_info_struct.rolling_friction_coefficient_particle = 0.1;
-  physical_info_struct.rolling_friction_coefficient_wall = 0.1;
+  physical_info_struct.rolling_friction_coefficient_wall     = 0.1;
 
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
@@ -97,23 +97,24 @@ physical_info_struct.particle_density = 2500;
   pit1->get_properties()[20] = 1;
 
   std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
-  FindBoundaryCellsInformation<dim, dim> boundary_cells_object;
-   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
+  FindBoundaryCellsInformation<dim, dim>       boundary_cells_object;
+  boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
 
-   PWBroadSearch<dim, dim> pw1;
-   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
-                          Tensor<1, dim>,
-                          Point<dim>>>
-     pwContactList(num_particles);
+  PWBroadSearch<dim, dim> pw1;
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
+                         Tensor<1, dim>,
+                         Point<dim>>>
+    pwContactList(num_particles);
 
-   pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
+  pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
 
-   PWFineSearch<dim, dim> pw2;
+  PWFineSearch<dim, dim> pw2;
 
-std::vector<std::map<int, pw_contact_info_struct<dim, dim>>> pwContactInfo(num_particles);
+  std::vector<std::map<int, pw_contact_info_struct<dim, dim>>> pwContactInfo(
+    num_particles);
 
-   pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
+  pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
   ParticleWallContactForce<dim, dim> pwcf1;
   pwcf1.pwNonLinearCF(pwContactInfo, physical_info_struct);
 
