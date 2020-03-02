@@ -20,6 +20,8 @@
 // Generate a triangulation that is twiced refined and check if the cells
 // neighbors are the correct ones
 
+#include "dem/find_cell_neighbors.h"
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
@@ -28,7 +30,6 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/find_cell_neighbors.h"
 
 using namespace dealii;
 
@@ -43,7 +44,7 @@ test()
   int cellNum = tr.n_active_cells();
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cellNeighbor;
+    cellNeighbor;
 
   FindCellNeighbors<dim, dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);
@@ -52,9 +53,7 @@ test()
   for (auto cell = tr.begin_active(); cell != tr.end(); ++cell)
     {
       deallog << "neighbors of cell " << cell << " are: ";
-      for (auto it = cellNeighbor[i].begin();
-           it != cellNeighbor[i].end();
-           ++it)
+      for (auto it = cellNeighbor[i].begin(); it != cellNeighbor[i].end(); ++it)
         {
           deallog << " " << *it;
         }

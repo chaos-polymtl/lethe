@@ -15,10 +15,10 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/pp_contact_info_struct.h"
+#include "dem/dem_solver_parameters.h"
 #include "dem/find_cell_neighbors.h"
 #include "dem/pp_broad_search.h"
-#include "dem/dem_solver_parameters.h"
+#include "dem/pp_contact_info_struct.h"
 #include "dem/pp_fine_search.h"
 
 using namespace dealii;
@@ -50,20 +50,20 @@ test()
 
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cellNeighbor;
+    cellNeighbor;
 
   FindCellNeighbors<dim, dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);
 
-    PPBroadSearch<dim, dim> ppbs;
-    PPFineSearch<dim, dim> ppfs;
+  PPBroadSearch<dim, dim> ppbs;
+  PPFineSearch<dim, dim>  ppfs;
 
   int      num_Particles = 2;
   Point<3> position1     = {0.4, 0, 0};
   int      id1           = 0;
   Point<3> position2     = {0.40499, 0, 0};
   int      id2           = 1;
-    float              dt           = 0.00001;
+  float    dt            = 0.00001;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim, dim>::active_cell_iterator cell1 =
@@ -127,16 +127,13 @@ test()
 
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
-                                                          inContactPairs(num_Particles);
+                                                               inContactPairs(num_Particles);
   std::vector<std::map<int, pp_contact_info_struct<dim, dim>>> inContactInfo(
     num_Particles);
 
 
-  ppfs.pp_Fine_Search(pairs,
-                 inContactPairs,
-                 inContactInfo,
-                 dt,
-                 particle_handler);
+  ppfs.pp_Fine_Search(
+    pairs, inContactPairs, inContactInfo, dt, particle_handler);
 
   typename std::map<int, pp_contact_info_struct<dim, dim>>::iterator info_it;
   for (unsigned int i = 0; i < inContactInfo.size(); i++)

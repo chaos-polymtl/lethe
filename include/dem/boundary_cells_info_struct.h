@@ -18,19 +18,22 @@
  */
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
+
 #include <deal.II/distributed/tria.h>
 
 #ifndef BOUNDARYCELLSINFOSTRUCT_H_
-#define BOUNDARYCELLSINFOSTRUCT_H_
+#  define BOUNDARYCELLSINFOSTRUCT_H_
 
 /**
- * This struct handles the information related to the boundary cells which will be
- * used for particle-wall contact detection
+ * This struct handles the information related to the boundary cells which will
+ * be used for particle-wall contact detection
  */
 
 using namespace dealii;
 
-template <int dim> struct boundary_cells_info_struct {
+template <int dim>
+struct boundary_cells_info_struct
+{
   // An integer which shows the id of the boundary cell
   int boundary_id;
 
@@ -45,7 +48,6 @@ template <int dim> struct boundary_cells_info_struct {
 
   // A point on the boundary face
   Point<dim> point_on_face;
-
 };
 
 #endif /* BOUNDARYCELLSINFOSTRUCT_H_ */

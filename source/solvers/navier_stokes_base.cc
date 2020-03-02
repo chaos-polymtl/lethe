@@ -169,7 +169,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
     }
 }
 
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
@@ -1120,7 +1119,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
     {
@@ -1128,8 +1126,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       tria->save(prefix + ".triangulation");
     }
 }
-
-
 
 // Pre-compile the 2D and 3D version with the types that can occur
 template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;

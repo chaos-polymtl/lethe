@@ -27,10 +27,10 @@ test()
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  int                           cellNum = tr.n_active_cells();
-  MappingQ<dim, dim>            mapping(1);
+  int                             cellNum = tr.n_active_cells();
+  MappingQ<dim, dim>              mapping(1);
   insertion_info_struct<dim, dim> insertion_info_struct;
-  physical_info_struct<dim> physical_info_struct;
+  physical_info_struct<dim>       physical_info_struct;
 
   const unsigned int n_properties               = 24;
   insertion_info_struct.x_min                   = -0.05;
@@ -52,9 +52,11 @@ test()
   Particles::PropertyPool property_pool(n_properties);
   Particles::Particle<3>  particle;
 
-   UniformInsertion<dim, dim> ins1(physical_info_struct,
-                                          insertion_info_struct);
-  ins1.insert(particle_handler, tr, property_pool, physical_info_struct,
+  UniformInsertion<dim, dim> ins1(physical_info_struct, insertion_info_struct);
+  ins1.insert(particle_handler,
+              tr,
+              property_pool,
+              physical_info_struct,
               insertion_info_struct);
 
   int i = 1;

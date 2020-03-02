@@ -18,14 +18,16 @@
  */
 
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/grid/grid_tools.h>
+
 #include <iostream>
 #include <vector>
 
 using namespace dealii;
 
 #ifndef FINDCELLNEIGHBORS_H_
-#define FINDCELLNEIGHBORS_H_
+#  define FINDCELLNEIGHBORS_H_
 
 /**
  * Finds the neighbors lists of all the active cells in the input triangulation.
@@ -38,7 +40,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class FindCellNeighbors {
+template <int dim>
+class FindCellNeighbors
+{
 public:
   FindCellNeighbors<dim>();
 

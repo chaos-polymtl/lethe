@@ -18,14 +18,16 @@
  */
 
 #include <deal.II/base/data_out_base.h>
+
 #include <dem/dem_solver_parameters.h>
 #include <dem/visualization.h>
-#include <fstream>
-#include <iostream>
 #include <sys/stat.h>
 
+#include <fstream>
+#include <iostream>
+
 #ifndef DEM_WRITEVTU_H_
-#define DEM_WRITEVTU_H_
+#  define DEM_WRITEVTU_H_
 
 /**
  * Writing the simulation output as .pvtu and .vtu formats
@@ -35,7 +37,9 @@
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class WriteVTU {
+template <int dim>
+class WriteVTU
+{
 public:
   WriteVTU<dim>();
 
@@ -47,8 +51,9 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    */
 
-  void write_master_files(Visualization<dim> &visulization_object,
-                          const DEMSolverParameters<dim> &dem_parameters);
+  void
+  write_master_files(Visualization<dim> &            visulization_object,
+                     const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out writing .vtu files which contain the information of all the
@@ -60,9 +65,11 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    */
 
-  void writeVTUFiles(Visualization<dim> &visulization_object,
-                     const int &DEM_step, const double &DEM_time,
-                     const DEMSolverParameters<dim> &dem_parameters);
+  void
+  writeVTUFiles(Visualization<dim> &            visulization_object,
+                const int &                     DEM_step,
+                const double &                  DEM_time,
+                const DEMSolverParameters<dim> &dem_parameters);
 };
 
 #endif /* DEM_WRITEVTU_H_ */

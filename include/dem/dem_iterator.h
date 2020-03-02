@@ -16,6 +16,8 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <deal.II/base/timer.h>
+
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
@@ -36,18 +38,18 @@
 #include <dem/uniform_insertion.h>
 #include <dem/visualization.h>
 #include <dem/write_vtu.h>
-
-#include <chrono>
 #include <math.h>
 
 #ifndef DEMITERATOR_H_
-#define DEMITERATOR_H_
+#  define DEMITERATOR_H_
 
 /**
  * Iterator on the functions and classes for each DEM step
  */
 
-template <int dim> class DEM_iterator {
+template <int dim>
+class DEM_iterator
+{
 public:
   DEM_iterator<dim>();
 
@@ -80,26 +82,31 @@ public:
    * @param pw_broad_search_object Particle-wall broad search object
    * @param pw_fine_search_object Particle-wall fine search object
    */
-  void engine(
-      Particles::ParticleHandler<dim> &particle_handler,
-      const Triangulation<dim> &triangulation, int &DEM_step, double &DEM_time,
-      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-          &cell_neighbor_list,
-      std::vector<std::map<int, pp_contact_info_struct<dim>>>
-          &pairs_in_contact_info,
-      std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
-      std::vector<std::map<int, pw_contact_info_struct<dim>>>
-          &pw_pairs_in_contact,
-      DEMSolverParameters<dim> &dem_parameters, Tensor<1, dim> &g,
-      std::vector<std::pair<std::string, int>> properties,
-      Particles::PropertyPool &property_pool,
-      PPContactForce<dim> *pp_contact_force_object,
-      PWContactForce<dim> *pw_contact_force_object,
-      Integrator<dim> *integrator_object,
-      PPBroadSearch<dim> *pp_broad_search_object,
-      PPFineSearch<dim> *pp_fine_search_object,
-      PWBroadSearch<dim> *pw_broad_search_object,
-      PWFineSearch<dim> *pw_fine_search_object);
+  void
+  engine(
+    Particles::ParticleHandler<dim> &particle_handler,
+    const Triangulation<dim> &       triangulation,
+    int &                            DEM_step,
+    double &                         DEM_time,
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+      &cell_neighbor_list,
+    std::vector<std::map<int, pp_contact_info_struct<dim>>>
+      &                                           pairs_in_contact_info,
+    std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
+    std::vector<std::map<int, pw_contact_info_struct<dim>>>
+      &                                      pw_pairs_in_contact,
+    DEMSolverParameters<dim> &               dem_parameters,
+    Tensor<1, dim> &                         g,
+    std::vector<std::pair<std::string, int>> properties,
+    Particles::PropertyPool &                property_pool,
+    PPContactForce<dim> *                    pp_contact_force_object,
+    PWContactForce<dim> *                    pw_contact_force_object,
+    Integrator<dim> *                        integrator_object,
+    PPBroadSearch<dim> *                     pp_broad_search_object,
+    PPFineSearch<dim> *                      pp_fine_search_object,
+    PWBroadSearch<dim> *                     pw_broad_search_object,
+    PWFineSearch<dim> *                      pw_fine_search_object,
+    TimerOutput &                            computing_timer);
 
 private:
   /**
@@ -108,7 +115,8 @@ private:
    * @param particle_handler Particle handler to access all the particles in the
    * system
    */
-  void reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
+  void
+  reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
 };
 
 #endif /* DEMITERATOR_H_ */

@@ -16,10 +16,10 @@
 
 #include "../tests.h"
 #include "dem/find_cell_neighbors.h"
-#include "dem/pp_broad_search.h"
-#include "dem/pp_nonlinear_force.h"
-#include "dem/pp_fine_search.h"
 #include "dem/physical_info_struct.h"
+#include "dem/pp_broad_search.h"
+#include "dem/pp_fine_search.h"
+#include "dem/pp_nonlinear_force.h"
 
 using namespace dealii;
 
@@ -31,8 +31,8 @@ test()
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  int                cellNum = tr.n_active_cells();
-  MappingQ<dim, dim> mapping(1);
+  int                       cellNum = tr.n_active_cells();
+  MappingQ<dim, dim>        mapping(1);
   physical_info_struct<dim> physical_info_struct;
 
 
@@ -47,12 +47,12 @@ test()
   Point<dim>         g            = {0, 0, -9.81};
   float              dt           = 0.00001;
 
-  physical_info_struct.particle_diameter = 0.005;
-physical_info_struct.particle_density = 2500;
-  physical_info_struct.Young_modulus_particle = 50000000;
-  physical_info_struct.Poisson_ratio_particle = 0.3;
-  physical_info_struct.restitution_coefficient_particle = 0.5;
-  physical_info_struct.friction_coefficient_particle= 0.5;
+  physical_info_struct.particle_diameter                     = 0.005;
+  physical_info_struct.particle_density                      = 2500;
+  physical_info_struct.Young_modulus_particle                = 50000000;
+  physical_info_struct.Poisson_ratio_particle                = 0.3;
+  physical_info_struct.restitution_coefficient_particle      = 0.5;
+  physical_info_struct.friction_coefficient_particle         = 0.5;
   physical_info_struct.rolling_friction_coefficient_particle = 0.1;
 
   Particles::ParticleHandler<dim, dim> particle_handler(tr,
@@ -61,13 +61,13 @@ physical_info_struct.particle_density = 2500;
 
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cellNeighbor;
+    cellNeighbor;
 
   FindCellNeighbors<dim, dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);
 
-        PPBroadSearch<dim, dim> ppbs;
-                  PPFineSearch<dim, dim> ppfs;
+  PPBroadSearch<dim, dim> ppbs;
+  PPFineSearch<dim, dim>  ppfs;
 
 
   Point<3> position1     = {0.4, 0, 0};
@@ -137,16 +137,13 @@ physical_info_struct.particle_density = 2500;
   pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
 
   std::vector<std::map<int, Particles::ParticleIterator<dim, dim>>>
-                                                          inContactPairs(num_Particles);
+                                                               inContactPairs(num_Particles);
   std::vector<std::map<int, pp_contact_info_struct<dim, dim>>> inContactInfo(
     num_Particles);
 
 
-  ppfs.pp_Fine_Search(pairs,
-                 inContactPairs,
-                 inContactInfo,
-                 dt,
-                 particle_handler);
+  ppfs.pp_Fine_Search(
+    pairs, inContactPairs, inContactInfo, dt, particle_handler);
 
   PPNonLinearForce<dim, dim> ppnlf;
   ppnlf.calculate_pp_contact_force(inContactInfo, physical_info_struct);
