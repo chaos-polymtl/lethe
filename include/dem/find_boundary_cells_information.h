@@ -17,18 +17,22 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include "dem/boundary_cells_info_struct.h"
 #include <deal.II/base/quadrature_lib.h>
+
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
+
 #include <iostream>
 #include <vector>
+
+#include "dem/boundary_cells_info_struct.h"
 
 using namespace dealii;
 
 #ifndef FINDBOUNDARYCELLSINFORMATION_H_
-#define FINDBOUNDARYCELLSINFORMATION_H_
+#  define FINDBOUNDARYCELLSINFORMATION_H_
 
 /**
  * Finds all the boundary cells and faces in the triangulation, for each cell
@@ -40,7 +44,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class FindBoundaryCellsInformation {
+template <int dim>
+class FindBoundaryCellsInformation
+{
 public:
   FindBoundaryCellsInformation<dim>();
 
@@ -57,8 +63,9 @@ public:
    * distance between center of particles and the face
    */
 
-  std::vector<boundary_cells_info_struct<dim>> find_boundary_cells_information(
-      const parallel::distributed::Triangulation<dim> &triangulation);
+  std::vector<boundary_cells_info_struct<dim>>
+  find_boundary_cells_information(
+    const parallel::distributed::Triangulation<dim> &triangulation);
 };
 
 #endif /* FINDBOUNDARYCELLSINFORMATION_H_ */

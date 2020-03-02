@@ -82,7 +82,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
               << " MPI rank(s)..." << std::endl;
 }
 
-
 /*
  * Kinetic Energy Calculation
  */
@@ -416,7 +415,6 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_forces(
     }
 }
 
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::calculate_torques(
@@ -608,7 +606,6 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   std::vector<double>         local_pressure_values(n_q_points);
 
   Function<dim> *l_exact_solution = this->exact_solution;
-
 
   double l2errorU = 0.;
 
@@ -1377,7 +1374,6 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
   this->present_solution = this->newton_update;
 }
 
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
@@ -1523,7 +1519,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
     {
@@ -1531,8 +1526,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       tria->save(prefix + ".triangulation");
     }
 }
-
-
 
 // Pre-compile the 2D and 3D version with the types that can occur
 template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;
