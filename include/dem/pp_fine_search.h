@@ -18,17 +18,20 @@
  */
 
 #include <deal.II/base/tensor.h>
+
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
+
 #include <dem/dem_properties.h>
 #include <dem/pp_contact_info_struct.h>
+
 #include <iostream>
 #include <vector>
 
 using namespace dealii;
 
 #ifndef PPFINESEARCH_H_
-#define PPFINESEARCH_H_
+#  define PPFINESEARCH_H_
 
 /**
  * This class is used for fine particle-particle contact search. Fine search
@@ -40,7 +43,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class PPFineSearch {
+template <int dim>
+class PPFineSearch
+{
 public:
   PPFineSearch<dim>();
 
@@ -64,12 +69,13 @@ public:
    * @param time_step DEM time step
    */
 
-  void pp_Fine_Search(std::vector<std::pair<Particles::ParticleIterator<dim>,
-                                            Particles::ParticleIterator<dim>>>
-                          &contact_pair_candidates,
-                      std::vector<std::map<int, pp_contact_info_struct<dim>>>
-                          &pairs_in_contact_info,
-                      double time_step);
+  void
+  pp_Fine_Search(std::vector<std::pair<Particles::ParticleIterator<dim>,
+                                       Particles::ParticleIterator<dim>>>
+                   &contact_pair_candidates,
+                 std::vector<std::map<int, pp_contact_info_struct<dim>>>
+                   &    pairs_in_contact_info,
+                 double time_step);
 };
 
 #endif /* PPFINESEARCH_H_ */

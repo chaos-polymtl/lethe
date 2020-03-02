@@ -218,7 +218,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
     }
 }
 
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
@@ -322,50 +321,6 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   std::vector<double>         local_pressure_values(n_q_points);
 
   Function<dim> *l_exact_solution = this->exact_solution;
-
-  double pressure_integral       = 0;
-  double exact_pressure_integral = 0;
-
-  // loop over elements to calculate average pressure
-  {
-    typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                            .begin_active(),
-                                                   endc =
-                                                     this->dof_handler.end();
-    for (; cell != endc; ++cell)
-      {
-        if (cell->is_locally_owned())
-          {
-            fe_values.reinit(cell);
-
-            fe_values[pressure].get_function_values(evaluation_point,
-                                                    local_pressure_values);
-            // Get the exact solution at all gauss points
-            l_exact_solution->vector_value_list(
-              fe_values.get_quadrature_points(), q_exactSol);
-
-
-            // Retrieve the effective "connectivity matrix" for this element
-            cell->get_dof_indices(local_dof_indices);
-
-            for (unsigned int q = 0; q < n_q_points; q++)
-              {
-                pressure_integral +=
-                  local_pressure_values[q] * fe_values.JxW(q);
-                exact_pressure_integral +=
-                  q_exactSol[q][dim] * fe_values.JxW(q);
-              }
-          }
-      }
-  }
-
-  pressure_integral =
-    Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
-  exact_pressure_integral =
-    Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
-  double average_pressure       = pressure_integral / globalVolume_;
-  double average_exact_pressure = exact_pressure_integral / globalVolume_;
-
 
   double l2errorU = 0.;
   double l2errorP = 0.;
@@ -1154,7 +1109,6 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
   this->present_solution = this->newton_update;
 }
 
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
@@ -1308,7 +1262,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
 
-
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
     {
@@ -1316,8 +1269,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       tria->save(prefix + ".triangulation");
     }
 }
-
-
 
 // Pre-compile the 2D and 3D version with the types that can occur
 template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;

@@ -62,7 +62,7 @@ test()
 
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cellNeighbor;
+    cellNeighbor;
 
   FindCellNeighbors<dim, dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(tr);

@@ -16,19 +16,23 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
+
 #include <dem/pp_contact_info_struct.h>
+
 #include <iostream>
 #include <vector>
 
 using namespace dealii;
 
 #ifndef PPBROADSEARCH_H_
-#define PPBROADSEARCH_H_
+#  define PPBROADSEARCH_H_
 
 /**
  * This class is used for broad particle-particle contact search. Broad search
@@ -39,7 +43,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class PPBroadSearch {
+template <int dim>
+class PPBroadSearch
+{
 public:
   PPBroadSearch<dim>();
 
@@ -59,9 +65,9 @@ public:
   std::vector<std::pair<Particles::ParticleIterator<dim>,
                         Particles::ParticleIterator<dim>>>
   find_PP_Contact_Pairs(
-      dealii::Particles::ParticleHandler<dim> &particle_handler,
-      std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-          &cellNeighborList);
+    dealii::Particles::ParticleHandler<dim> &particle_handler,
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+      &cellNeighborList);
 };
 
 #endif /* PPBROADSEARCH_H_ */

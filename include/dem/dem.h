@@ -18,8 +18,12 @@
  */
 
 #include <deal.II/base/tensor.h>
+#include <deal.II/base/timer.h>
+
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/fe/mapping_q.h>
+
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
 
@@ -41,14 +45,16 @@
 #include <dem/visualization.h>
 
 #ifndef LETHE_DEM_H
-#define LETHE_DEM_H
+#  define LETHE_DEM_H
 
 /**
  * The DEM class which initializes all the required parameters and iterates over
  * the DEM iterator
  */
 
-template <int dim> class DEMSolver {
+template <int dim>
+class DEMSolver
+{
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
@@ -56,24 +62,27 @@ public:
    * Initialiazes all the required parameters and iterates over the DEM iterator
    * (DEM engine).
    */
-  void solve();
+  void
+  solve();
 
 private:
-  MPI_Comm mpi_communicator;
-  const unsigned int n_mpi_processes;
-  const unsigned int this_mpi_process;
-  ConditionalOStream pcout;
-  DEMSolverParameters<dim> parameters;
+  MPI_Comm                                  mpi_communicator;
+  const unsigned int                        n_mpi_processes;
+  const unsigned int                        this_mpi_process;
+  ConditionalOStream                        pcout;
+  DEMSolverParameters<dim>                  parameters;
   parallel::distributed::Triangulation<dim> triangulation;
-  Particles::PropertyPool property_pool;
-  MappingQGeneric<dim> mapping;
-  Particles::ParticleHandler<dim, dim> particle_handler;
+  Particles::PropertyPool                   property_pool;
+  MappingQGeneric<dim>                      mapping;
+  TimerOutput                               computing_timer;
+  Particles::ParticleHandler<dim, dim>      particle_handler;
 
   /**
    * Defines or reads the mesh based on the information provided by the user.
    * Gmsh files can also be read in this function.
    */
-  void read_mesh();
+  void
+  read_mesh();
 };
 
 #endif
