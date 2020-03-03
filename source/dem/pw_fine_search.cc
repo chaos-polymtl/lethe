@@ -255,7 +255,8 @@ PWFineSearch<dim>::pw_Fine_Search(
               Tensor<1, dim> contact_relative_velocity;
               if (dim == 3)
                 {
-                  particle_velocity +
+                  contact_relative_velocity =
+                    particle_velocity +
                     cross_product_3d(
                       (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
                        particle_omega),
@@ -263,6 +264,7 @@ PWFineSearch<dim>::pw_Fine_Search(
                 }
               /*
               if (dim == 2) {
+              contact_relative_velocity =
                 particle_velocity +
                     cross_product_2d(
                         (((particle_properties[DEM::PropertiesIndex::dp]) / 2) *

@@ -80,13 +80,13 @@ DEM_iterator<dim>::engine(
               local_parameter.simulationControl
                 .total_particle_number) // number < total number
             {
-              NonUniformInsertion<dim> ins2(dem_parameters);
-              // UniformInsertion<dim> ins2(dem_parameters);
+              NonUniformInsertion<dim> ins2(local_parameter);
+              // UniformInsertion<dim> ins2(local_parameter);
 
               ins2.insert(particle_handler,
                           triangulation,
                           property_pool,
-                          dem_parameters);
+                          local_parameter);
             }
         }
     }
@@ -127,7 +127,7 @@ DEM_iterator<dim>::engine(
   // PP contact force
   computing_timer.enter_subsection("pp_contact_force");
   pp_force_object->calculate_pp_contact_force(pairs_in_contact_info,
-                                              dem_parameters);
+                                              local_parameter);
   computing_timer.leave_subsection();
 
   // PW contact search
@@ -154,7 +154,7 @@ DEM_iterator<dim>::engine(
   // PW contact force:
   computing_timer.enter_subsection("pw_contact_force");
   pw_force_object->calculate_pw_contact_force(pw_pairs_in_contact,
-                                              dem_parameters);
+                                              local_parameter);
   computing_timer.leave_subsection();
 
   // Integration
@@ -171,8 +171,8 @@ DEM_iterator<dim>::engine(
       Visualization<dim> visObj;
       visObj.build_patches(particle_handler, properties);
       WriteVTU<dim> writObj;
-      writObj.write_master_files(visObj, dem_parameters);
-      writObj.writeVTUFiles(visObj, DEM_step, DEM_time, dem_parameters);
+      writObj.write_master_files(visObj, local_parameter);
+      writObj.writeVTUFiles(visObj, DEM_step, DEM_time, local_parameter);
     }
   computing_timer.leave_subsection();
 
