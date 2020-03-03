@@ -19,18 +19,20 @@
 
 // Check if a particle is indeed on the boundary of the system
 
+#include <deal.II/base/mpi.h>
 #include <deal.II/base/point.h>
+
+#include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/tria.h>
+
+#include <dem/find_boundary_cells_information.h>
 
 #include <iostream>
 #include <vector>
 
 #include "../tests.h"
-#include "dem/find_boundary_cells_information.h"
-
 
 using namespace dealii;
 
@@ -38,22 +40,25 @@ template <int dim>
 void
 test()
 {
-  Triangulation<dim, dim> tr;
-  GridGenerator::hyper_cube(tr, -1, 1, true);
+  parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
+  GridGenerator::hyper_cube(triangulation, -1, 1, true);
   int numRef = 2;
-  tr.refine_global(numRef);
-  std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
+  triangulation.refine_global(numRef);
 
+  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
 
-  FindBoundaryCellsInformation<dim, dim> pw1;
-  boundaryCellInfo = pw1.find_boundary_cells_information(tr);
+  FindBoundaryCellsInformation<dim> boundary_cell_object;
+
+  boundary_cells_information =
+    boundary_cell_object.find_boundary_cells_information(triangulation);
 
   int i = 0;
-  for (unsigned int i = 0; i != boundaryCellInfo.size(); ++i)
+  for (unsigned int i = 0; i != boundary_cells_information.size(); ++i)
     {
-      deallog << "Cell " << (boundaryCellInfo[i]).cell
+      deallog << "Cell " << (boundary_cells_information[i]).cell
               << " is on system boundaries (boundary"
-              << (boundaryCellInfo[i]).boundary_id << ")" << std::endl;
+              << (boundary_cells_information[i]).boundary_id << ")"
+              << std::endl;
     }
 }
 
@@ -61,5 +66,7 @@ int
 main(int argc, char **argv)
 {
   initlog();
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(
+    argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }

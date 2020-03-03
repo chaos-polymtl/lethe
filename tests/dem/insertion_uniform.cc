@@ -13,8 +13,7 @@
 #include <vector>
 
 #include "../tests.h"
-#include "dem/insertion_info_struct.h"
-#include "dem/physical_info_struct.h"
+#include "dem/dem_solver_parameters.h"
 #include "dem/uniform_insertion.h"
 
 using namespace dealii;
@@ -23,41 +22,33 @@ template <int dim>
 void
 test()
 {
-  parallel::distributed::Triangulation<dim, dim> tr(MPI_COMM_WORLD);
+  parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  int                             cellNum = tr.n_active_cells();
-  MappingQ<dim, dim>              mapping(1);
-  insertion_info_struct<dim, dim> insertion_info_struct;
-  physical_info_struct<dim>       physical_info_struct;
+  int                      cellNum = tr.n_active_cells();
+  MappingQ<dim>            mapping(1);
+  DEMSolverParameters<dim> dem_parameters;
 
-  const unsigned int n_properties               = 24;
-  insertion_info_struct.x_min                   = -0.05;
-  insertion_info_struct.y_min                   = -0.05;
-  insertion_info_struct.z_min                   = -0.05;
-  insertion_info_struct.x_max                   = 0.05;
-  insertion_info_struct.y_max                   = 0.05;
-  insertion_info_struct.z_max                   = 0.05;
-  insertion_info_struct.inserted_number_at_step = 10;
-  insertion_info_struct.distance_threshold      = 2;
-  physical_info_struct.particle_diameter        = 0.005;
-  physical_info_struct.particle_density         = 2500;
+  const unsigned int n_properties                 = 21;
+  dem_parameters.insertionInfo.x_min              = -0.05;
+  dem_parameters.insertionInfo.y_min              = -0.05;
+  dem_parameters.insertionInfo.z_min              = -0.05;
+  dem_parameters.insertionInfo.x_max              = 0.05;
+  dem_parameters.insertionInfo.y_max              = 0.05;
+  dem_parameters.insertionInfo.z_max              = 0.05;
+  dem_parameters.insertionInfo.inserted_this_step = 10;
+  dem_parameters.insertionInfo.distance_threshold = 2;
+  dem_parameters.physicalProperties.diameter      = 0.005;
+  dem_parameters.physicalProperties.density       = 2500;
 
-
-  Particles::ParticleHandler<dim, dim> particle_handler(tr,
-                                                        mapping,
-                                                        n_properties);
+  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
   Particles::PropertyPool property_pool(n_properties);
   Particles::Particle<3>  particle;
 
-  UniformInsertion<dim, dim> ins1(physical_info_struct, insertion_info_struct);
-  ins1.insert(particle_handler,
-              tr,
-              property_pool,
-              physical_info_struct,
-              insertion_info_struct);
+  UniformInsertion<dim> ins1(dem_parameters);
+  ins1.insert(particle_handler, tr, property_pool, dem_parameters);
 
   int i = 1;
   for (auto particle = particle_handler.begin();
