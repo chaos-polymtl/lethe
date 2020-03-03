@@ -24,19 +24,17 @@ template <int dim>
 void
 test()
 {
-  parallel::distributed::Triangulation<dim, dim> tr(MPI_COMM_WORLD);
+  parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  MappingQ<dim, dim> mapping(1);
+  MappingQ<dim> mapping(1);
 
   const unsigned int n_properties = 24;
   Point<dim>         g            = {0, 0, -9.81};
   float              dt           = 0.00001;
 
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
-
-
 
   // inserting one particle at x = 0 , y = 0 and z = 0 m
   // initial velocity of particles = 0, 0, 0 m/s
@@ -46,45 +44,36 @@ test()
 
   Particles::Particle<dim> particle1(position1, position1, id1);
 
-
-  typename Triangulation<dim, dim>::active_cell_iterator cell1 =
+  typename Triangulation<dim>::active_cell_iterator cell1 =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
 
-
-  Particles::ParticleIterator<dim, dim> pit =
+  Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, cell1);
-
-
 
   pit->get_properties()[0] = id1;
 
   pit->get_properties()[1] = 1;
   pit->get_properties()[2] = 0.005;
   pit->get_properties()[3] = 2500;
-  // Position
+  // Velocity
   pit->get_properties()[4] = 0;
   pit->get_properties()[5] = 0;
   pit->get_properties()[6] = 0;
-  // Velocity
+  // Acceleration
   pit->get_properties()[7] = 0;
   pit->get_properties()[8] = 0;
-  pit->get_properties()[9] = 0;
-  // Acceleration
+  pit->get_properties()[9] = -9.81;
+  // Force
   pit->get_properties()[10] = 0;
   pit->get_properties()[11] = 0;
-  pit->get_properties()[12] = -9.81;
-  // Force
+  pit->get_properties()[12] = 0;
+  // w
   pit->get_properties()[13] = 0;
   pit->get_properties()[14] = 0;
   pit->get_properties()[15] = 0;
-  // w
-  pit->get_properties()[16] = 0;
-  pit->get_properties()[17] = 0;
-  pit->get_properties()[18] = 0;
   // mass and moment of inertia
-  pit->get_properties()[19] = 1;
-  pit->get_properties()[20] = 1;
-
+  pit->get_properties()[16] = 1;
+  pit->get_properties()[17] = 1;
 
   ExplicitEulerIntegrator<dim> Integ1;
   Integ1.integrate(particle_handler, g, dt);
@@ -94,7 +83,7 @@ test()
        ++particle)
     {
       deallog << "The new position of the particle in z direction after " << dt
-              << " seconds is: " << particle->get_properties()[6] << std::endl;
+              << " seconds is: " << particle->get_location()[2] << std::endl;
     }
 }
 

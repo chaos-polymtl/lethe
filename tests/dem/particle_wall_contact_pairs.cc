@@ -21,15 +21,15 @@ template <int dim>
 void
 test()
 {
-  Triangulation<dim, dim>              tr;
-  Particles::ParticleHandler<dim, dim> particle_handler;
+  parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
   GridGenerator::hyper_cube(tr, -1, 1, true);
   int numRef = 2;
   tr.refine_global(numRef);
-  int cellNum = tr.n_active_cells();
-  std::pair<std::vector<
-              std::set<typename Triangulation<dim, dim>::active_cell_iterator>>,
-            std::vector<typename Triangulation<dim, dim>::active_cell_iterator>>
+  Particles::ParticleHandler<dim> particle_handler;
+  int                             num_particles = 1;
+  std::pair<
+    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
+    std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cellNeighbor;
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
@@ -42,34 +42,36 @@ test()
   int        id3       = 2;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
-  typename Triangulation<dim, dim>::active_cell_iterator cell1 =
+  typename Triangulation<dim>::active_cell_iterator cell1 =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
-  Particles::ParticleIterator<dim, dim> pit1 =
+  Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
 
   Particles::Particle<dim> particle2(position2, position2, id2);
-  typename Triangulation<dim, dim>::active_cell_iterator cell2 =
+  typename Triangulation<dim>::active_cell_iterator cell2 =
     GridTools::find_active_cell_around_point(tr, particle2.get_location());
-  Particles::ParticleIterator<dim, dim> pit2 =
+  Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
 
   Particles::Particle<dim> particle3(position3, position3, id3);
-  typename Triangulation<dim, dim>::active_cell_iterator cell3 =
+  typename Triangulation<dim>::active_cell_iterator cell3 =
     GridTools::find_active_cell_around_point(tr, particle3.get_location());
-  Particles::ParticleIterator<dim, dim> pit3 =
+  Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, cell3);
 
-  std::vector<boundary_cells_info_struct<dim>> boundaryCellInfo;
-  FindBoundaryCellsInformation<dim, dim>       boundary_cells_object;
-  boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
+  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
+  FindBoundaryCellsInformation<dim>            boundary_cell_object;
+  boundary_cells_information =
+    boundary_cell_object.find_boundary_cells_information(tr);
 
-  PWBroadSearch<dim, dim> pw1;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim, dim>, int>,
-                         Tensor<1, dim>,
-                         Point<dim>>>
-    pwContactList;
-  pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
-
+  PWBroadSearch<dim> pw1;
+  std::vector<
+    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+               Tensor<1, dim>,
+               Point<dim>>>
+    pwContactList(num_particles);
+  pwContactList =
+    pw1.find_PW_Contact_Pairs(boundary_cells_information, particle_handler);
 
   for (unsigned int i = 0; i != pwContactList.size(); i++)
     {
@@ -82,5 +84,7 @@ int
 main(int argc, char **argv)
 {
   initlog();
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(
+    argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }

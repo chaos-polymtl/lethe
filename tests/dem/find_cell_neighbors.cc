@@ -33,31 +33,31 @@
 
 using namespace dealii;
 
-template <int dim, int spacedim>
+template <int dim>
 void
 test()
 {
-  Triangulation<dim, dim> tr;
-  GridGenerator::hyper_cube(tr, -1, 1, true);
+  parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
+  GridGenerator::hyper_cube(triangulation, -1, 1, true);
   int numRef = 2;
-  tr.refine_global(numRef);
-  int cellNum = tr.n_active_cells();
+  triangulation.refine_global(numRef);
+  int cellNum = triangulation.n_active_cells();
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cellNeighbor;
 
-  FindCellNeighbors<dim, dim> cn1;
-  cellNeighbor = cn1.find_cell_neighbors(tr);
+  FindCellNeighbors<dim> cn1;
+  cellNeighbor = cn1.find_cell_neighbors(triangulation);
 
   int i = 0;
-  for (auto cell = tr.begin_active(); cell != tr.end(); ++cell)
+  for (auto cell = triangulation.begin_active(); cell != triangulation.end();
+       ++cell)
     {
       deallog << "neighbors of cell " << cell << " are: ";
       for (auto it = cellNeighbor[i].begin(); it != cellNeighbor[i].end(); ++it)
         {
           deallog << " " << *it;
         }
-
 
       deallog << std::endl;
 
@@ -69,5 +69,7 @@ int
 main(int argc, char **argv)
 {
   initlog();
-  test<3, 3>();
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(
+    argc, argv, numbers::invalid_unsigned_int);
+  test<3>();
 }

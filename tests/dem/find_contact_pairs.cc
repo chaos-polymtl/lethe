@@ -21,7 +21,6 @@
 // We check if these particles appear correctly to each other
 // as potential neighbhors
 
-
 #include <deal.II/base/point.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -46,26 +45,23 @@ void
 test()
 {
   // Generate a cube triangulation and refine it twice globally
-  Triangulation<dim, dim>              tr;
-  Particles::ParticleHandler<dim, dim> particle_handler;
-  GridGenerator::hyper_cube(tr, -1, 1, true);
+  parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
+  GridGenerator::hyper_cube(triangulation, -1, 1, true);
   int numRef = 2;
-  tr.refine_global(numRef);
-  int cellNum = tr.n_active_cells();
+  triangulation.refine_global(numRef);
+  Particles::ParticleHandler<dim> particle_handler;
 
+  int cellNum = triangulation.n_active_cells();
 
   MappingQ1<dim> mapping;
 
-
-  PPBroadSearch<dim, dim> ppbs;
-
-
+  PPBroadSearch<dim> ppbs;
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cellNeighbor;
 
-  FindCellNeighbors<dim, dim> cn1;
-  cellNeighbor = cn1.find_cell_neighbors(tr);
+  FindCellNeighbors<dim> cn1;
+  cellNeighbor = cn1.find_cell_neighbors(triangulation);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -78,29 +74,33 @@ test()
 
   // Manually insert the three particles
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-                           pt1_info = GridTools::find_active_cell_around_point(mapping, tr, position1);
-  Particles::Particle<dim> particle1(position1, pt1_info.second, id1);
-  Particles::ParticleIterator<dim, dim> pit1 =
+                                   pt1_info = GridTools::find_active_cell_around_point(mapping,
+                                                        triangulation,
+                                                        position1);
+  Particles::Particle<dim>         particle1(position1, pt1_info.second, id1);
+  Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, pt1_info.first);
 
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-                           pt2_info = GridTools::find_active_cell_around_point(mapping, tr, position2);
-  Particles::Particle<dim> particle2(position2, pt2_info.second, id2);
-  Particles::ParticleIterator<dim, dim> pit2 =
+                                   pt2_info = GridTools::find_active_cell_around_point(mapping,
+                                                        triangulation,
+                                                        position2);
+  Particles::Particle<dim>         particle2(position2, pt2_info.second, id2);
+  Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, pt2_info.first);
 
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-                           pt3_info = GridTools::find_active_cell_around_point(mapping, tr, position3);
-  Particles::Particle<dim> particle3(position3, pt3_info.second, id3);
-  Particles::ParticleIterator<dim, dim> pit3 =
+                                   pt3_info = GridTools::find_active_cell_around_point(mapping,
+                                                        triangulation,
+                                                        position3);
+  Particles::Particle<dim>         particle3(position3, pt3_info.second, id3);
+  Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, pt3_info.first);
 
-  std::vector<std::pair<Particles::ParticleIterator<dim, dim>,
-                        Particles::ParticleIterator<dim, dim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
     pairs;
   pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
-
-
 
   for (unsigned int i = 0; i != pairs.size(); i++)
     {
@@ -113,5 +113,7 @@ int
 main(int argc, char **argv)
 {
   initlog();
+  Utilities::MPI::MPI_InitFinalize mpi_initialization(
+    argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }
