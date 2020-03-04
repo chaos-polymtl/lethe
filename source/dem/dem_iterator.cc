@@ -62,9 +62,7 @@ DEM_iterator<dim>::engine(
   TimerOutput &       computing_timer)
 {
   // Defining parameters as a local variable
-  computing_timer.enter_subsection("others1");
   auto local_parameter = dem_parameters;
-  computing_timer.leave_subsection();
 
   // Moving walls
 
@@ -93,12 +91,12 @@ DEM_iterator<dim>::engine(
   computing_timer.leave_subsection();
 
   // Sort particles in cells
-  computing_timer.enter_subsection("others2");
+  computing_timer.enter_subsection("sort_particles_in_cells");
   particle_handler.sort_particles_into_subdomains_and_cells();
   computing_timer.leave_subsection();
 
   // Force reinitilization
-  computing_timer.enter_subsection("others3");
+  computing_timer.enter_subsection("reinitialize_forces");
   reinitialize_force(particle_handler);
   computing_timer.leave_subsection();
 
@@ -177,7 +175,7 @@ DEM_iterator<dim>::engine(
   computing_timer.leave_subsection();
 
   // Print iteration
-  computing_timer.enter_subsection("others4");
+
   if (fmod(DEM_step, 1000) == 1)
     {
       std::cout << "Step " << DEM_step << std::endl;
@@ -186,7 +184,6 @@ DEM_iterator<dim>::engine(
         << "-------------------------------------------------------------"
            "----------"
         << std::endl;
-      computing_timer.leave_subsection();
     }
 
   // Update:
