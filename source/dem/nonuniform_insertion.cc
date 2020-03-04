@@ -87,21 +87,22 @@ NonUniformInsertion<dim>::insert(
               // Obtaning position of the inserted particle
               // In non-uniform insertion, two random numbers are created and
               // added to the position of particles
-
-              // This numbers 101 and 400 are hard-coded, I will fix them when
-              // adding new paramters to the parameter handler file
-              int randNum1 = rand() % 300;
-              int randNum2 = rand() % 300;
-              position[0]  = insertion_information.x_min +
+              double random_number_one =
+                (((double)rand()) / ((double)RAND_MAX)) *
+                insertion_information.random_number_bin;
+              double random_number_two =
+                (((double)rand()) / ((double)RAND_MAX)) *
+                insertion_information.random_number_bin;
+              position[0] = insertion_information.x_min +
                             (physical_properties.diameter / 2) +
                             (k * insertion_information.distance_threshold *
                              physical_properties.diameter) +
-                            randNum1 * (physical_properties.diameter / 400.0);
+                            random_number_one * physical_properties.diameter;
               position[1] = insertion_information.y_min +
                             (physical_properties.diameter / 2) +
                             (j * insertion_information.distance_threshold *
                              physical_properties.diameter) +
-                            randNum2 * (physical_properties.diameter / 400.0);
+                            random_number_two * physical_properties.diameter;
               if (dim == 3)
                 position[2] = insertion_information.z_min +
                               (physical_properties.diameter / 2) +

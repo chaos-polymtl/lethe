@@ -180,6 +180,10 @@ namespace Parameters
                           "1",
                           Patterns::Double(),
                           "Distance threshold");
+        prm.declare_entry("Insertion random number range",
+                          "1",
+                          Patterns::Double(),
+                          "Random number bin");
       }
       prm.leave_subsection();
     }
@@ -200,6 +204,7 @@ namespace Parameters
         y_max               = prm.get_double("Insertion box maximum y");
         z_max               = prm.get_double("Insertion box maximum z");
         distance_threshold  = prm.get_double("Insertion distance threshold");
+        random_number_bin   = prm.get_double("Insertion random number range");
       }
       prm.leave_subsection();
     }
