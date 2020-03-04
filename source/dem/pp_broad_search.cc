@@ -39,31 +39,21 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
           // finding collision pairs in the main cell, particle counter starts
           // from 1, becasue each particle will not be considered as collision
           // partner with itself
-          int particle_in_main_cell_counter = 1;
           for (typename Particles::ParticleHandler<
                  dim>::particle_iterator_range::iterator
                  particles_in_main_cell_iterator_one =
                    particles_in_main_cell.begin();
                particles_in_main_cell_iterator_one !=
                particles_in_main_cell.end();
-               ++particles_in_main_cell_iterator_one,
-                 ++particle_in_main_cell_counter)
+               ++particles_in_main_cell_iterator_one)
             {
-              typename Particles::ParticleHandler<
-                dim>::particle_iterator_range::iterator
-                particles_in_main_cell_iterator_two =
-                  particles_in_main_cell.begin();
-
               // Advancing the second iterator to capture all the particle pairs
               // in the main cell
-              std::advance(particles_in_main_cell_iterator_two,
-                           particle_in_main_cell_counter);
+              auto particles_in_main_cell_iterator_two =
+                std::next(particles_in_main_cell_iterator_one, 1);
 
-              // while (particles_in_main_cell_iterator_two !=
-              //  particles_in_main_cell.end()) {
-              for (particles_in_main_cell_iterator_two;
-                   particles_in_main_cell_iterator_two !=
-                   particles_in_main_cell.end();
+              for (; particles_in_main_cell_iterator_two !=
+                     particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator_two)
                 {
                   // Capturing all the particle pairs in the main cell
@@ -71,15 +61,13 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                     std::make_pair(particles_in_main_cell_iterator_one,
                                    particles_in_main_cell_iterator_two);
                   contact_pair_candidates.push_back(contact_pair);
-                  //++particles_in_main_cell_iterator_two;
                 }
             }
 
           // Going through neighbor cells of the main cell
           ++cell_neighbor_iterator;
 
-          for (cell_neighbor_iterator;
-               cell_neighbor_iterator != cell_neighbor_list_iterator->end();
+          for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
                ++cell_neighbor_iterator)
             {
               // Defining iterator on particles in the neighbor cell
