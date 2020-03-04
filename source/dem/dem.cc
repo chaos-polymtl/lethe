@@ -22,6 +22,7 @@
 
 #include <dem/dem.h>
 #include <dem/dem_properties.h>
+#include <dem/pw_contact_force.h>
 
 #include <fstream>
 #include <iostream>
@@ -110,12 +111,13 @@ DEMSolver<dim>::solve()
   // ***** I need to choose the contact model based on input file
   PPBroadSearch<dim> pp_broad_search_object;
   PPFineSearch<dim>  pp_fine_search_object;
-  // PPLinearForce<dim> pp_force_object;
+  // Default particle-particle contact force model in non-linear
   PPNonLinearForce<dim> pp_force_object;
+  // PPLinearForce<dim> pp_force_object;
+  PWBroadSearch<dim> pw_broad_search_object;
+  PWFineSearch<dim>  pw_fine_search_object;
   // PWLinearForce<dim> pw_force_object;
   PWNonLinearForce<dim> pw_force_object;
-  PWBroadSearch<dim>    pw_broad_search_object;
-  PWFineSearch<dim>     pw_fine_search_object;
 
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();

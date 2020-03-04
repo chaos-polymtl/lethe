@@ -30,7 +30,7 @@ namespace Parameters
       int final_time_step;
 
       // Total number of particles
-      int total_particle_number;
+      unsigned int total_particle_number;
 
       // Write frequency
       int write_frequency;
@@ -92,6 +92,9 @@ namespace Parameters
 
       // Insertion distance threshold
       double distance_threshold;
+
+      // Insertion random number range
+      double random_number_bin;
 
       static void
       declare_parameters(ParameterHandler &prm);
