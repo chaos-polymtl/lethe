@@ -323,7 +323,55 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
 
   Function<dim> *l_exact_solution = this->exact_solution;
 
+<<<<<<< HEAD
+=======
+
+
+  double pressure_integral       = 0;
+  double exact_pressure_integral = 0;
+
+  // loop over elements to calculate average pressure
+  {
+    typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
+                                                            .begin_active(),
+                                                   endc =
+                                                     this->dof_handler.end();
+    for (; cell != endc; ++cell)
+      {
+        if (cell->is_locally_owned())
+          {
+            fe_values.reinit(cell);
+
+            fe_values[pressure].get_function_values(evaluation_point,
+                                                    local_pressure_values);
+            // Get the exact solution at all gauss points
+            l_exact_solution->vector_value_list(
+              fe_values.get_quadrature_points(), q_exactSol);
+
+
+            // Retrieve the effective "connectivity matrix" for this element
+            cell->get_dof_indices(local_dof_indices);
+
+            for (unsigned int q = 0; q < n_q_points; q++)
+              {
+                pressure_integral +=
+                  local_pressure_values[q] * fe_values.JxW(q);
+                exact_pressure_integral +=
+                  q_exactSol[q][dim] * fe_values.JxW(q);
+              }
+          }
+      }
+  }
+
+  double average_pressure       = pressure_integral / globalVolume_;
+  double average_exact_pressure = exact_pressure_integral / globalVolume_;
+  std::cout << " Average pressure is : " << pressure_integral << std::endl;
+  std::cout << " Average exact pressure is : " << pressure_integral
+            << std::endl;
+
+
   double l2errorU = 0.;
+  double l2errorP = 0.;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -364,10 +412,17 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
                   l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                               fe_values.JxW(q);
                 }
+
+              double p_sim   = local_pressure_values[q] - average_pressure;
+              double p_exact = q_exactSol[q][dim] - average_exact_pressure;
+              l2errorP +=
+                (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
             }
         }
     }
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
+
+  std::cout << "L2 error pressure is : " << std::sqrt(l2errorP) << std::endl;
   return std::sqrt(l2errorU);
 }
 
