@@ -124,20 +124,13 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_average_KE(
               double ux_sim = local_velocity_values[q][0];
               double uy_sim = local_velocity_values[q][1];
 
-              if (dim == 2)
-                {
-                  KEU += 0.5 * ((ux_sim) * (ux_sim)*fe_values.JxW(q)) /
+              KEU += 0.5 * ((ux_sim) * (ux_sim)*fe_values.JxW(q)) /
                          globalVolume_;
-                  KEU += 0.5 * ((uy_sim) * (uy_sim)*fe_values.JxW(q)) /
+              KEU += 0.5 * ((uy_sim) * (uy_sim)*fe_values.JxW(q)) /
                          globalVolume_;
-                }
-              else
+              if (dim == 3)
                 {
                   double uz_sim = local_velocity_values[q][2];
-                  KEU += 0.5 * ((ux_sim) * (ux_sim)*fe_values.JxW(q)) /
-                         globalVolume_;
-                  KEU += 0.5 * ((uy_sim) * (uy_sim)*fe_values.JxW(q)) /
-                         globalVolume_;
                   KEU += 0.5 * ((uz_sim) * (uz_sim)*fe_values.JxW(q)) /
                          globalVolume_;
                 }
@@ -312,11 +305,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_forces(
        ++boundary_id)
     {
       force                                               = 0;
-      typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                              .begin_active(),
-                                                     endc =
-                                                       this->dof_handler.end();
-      for (; cell != endc; ++cell)
+      for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
             {
@@ -457,11 +446,8 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_torques(
       torque = 0;
       Point<dim> center_of_rotation =
         nsparam.boundaryConditions.bcFunctions[boundary_id].cor;
-      typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                              .begin_active(),
-                                                     endc =
-                                                       this->dof_handler.end();
-      for (; cell != endc; ++cell)
+
+      for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
             {
@@ -609,14 +595,9 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
 
   Function<dim> *l_exact_solution = this->exact_solution;
 
-
   double l2errorU = 0.;
 
-  // loop over elements
-  typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
-  for (; cell != endc; ++cell)
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {

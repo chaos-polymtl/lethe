@@ -229,6 +229,19 @@ namespace BoundaryConditions
         declareDefaultEntry(prm, 3);
       }
       prm.leave_subsection();
+
+      prm.enter_subsection("bc 4");
+      {
+        declareDefaultEntry(prm, 4);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 5");
+      {
+        declareDefaultEntry(prm, 5);
+      }
+      prm.leave_subsection();
+
     }
     prm.leave_subsection();
   }
@@ -274,6 +287,24 @@ namespace BoundaryConditions
           prm.enter_subsection("bc 3");
           {
             parse_boundary(prm, 3);
+          }
+          prm.leave_subsection();
+        }
+
+      if (size >= 5)
+        {
+          prm.enter_subsection("bc 4");
+          {
+            parse_boundary(prm, 4);
+          }
+          prm.leave_subsection();
+        }
+
+      if (size >= 6)
+        {
+          prm.enter_subsection("bc 5");
+          {
+            parse_boundary(prm, 5);
           }
           prm.leave_subsection();
         }
