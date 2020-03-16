@@ -47,15 +47,14 @@ using namespace dealii;
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes
 template <int dim, typename VectorType>
-std::vector<Tensor<1,dim> >
+std::vector<Tensor<1, dim>>
 calculate_forces(
-    const FESystem<dim>                                 &fe,
-    const DoFHandler<dim>                               &dof_handler,
-    const VectorType                                    &evaluation_point,
-    const Parameters::PhysicalProperties                &physical_properties,
-    const Parameters::FEM                               &fem_parameters,
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-    const MPI_Comm                                      &mpi_communicator
-    );
+  const FESystem<dim> &                                fe,
+  const DoFHandler<dim> &                              dof_handler,
+  const VectorType &                                   evaluation_point,
+  const Parameters::PhysicalProperties &               physical_properties,
+  const Parameters::FEM &                              fem_parameters,
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const MPI_Comm &                                     mpi_communicator);
 
 #endif

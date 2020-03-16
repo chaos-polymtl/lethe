@@ -30,23 +30,21 @@ using namespace dealii;
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes
 template <int dim, typename VectorType>
-std::vector<Tensor<1,dim> >
+std::vector<Tensor<1, dim>>
 calculate_forces(
-    const FESystem<dim>                                 &fe,
-    const DoFHandler<dim>                               &dof_handler,
-    const VectorType                                    &evaluation_point,
-    const Parameters::PhysicalProperties                &physical_properties,
-    const Parameters::FEM                               &fem_parameters,
-    const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
-    const MPI_Comm                                      &mpi_communicator
-    )
+  const FESystem<dim> &                                fe,
+  const DoFHandler<dim> &                              dof_handler,
+  const VectorType &                                   evaluation_point,
+  const Parameters::PhysicalProperties &               physical_properties,
+  const Parameters::FEM &                              fem_parameters,
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const MPI_Comm &                                     mpi_communicator)
 {
-  double             viscosity = physical_properties.viscosity;
+  double viscosity = physical_properties.viscosity;
 
   QGauss<dim - 1>     face_quadrature_formula(fe.degree + 1);
-  const MappingQ<dim> mapping(fe.degree,
-                             fem_parameters.qmapping_all);
-  const unsigned int               n_q_points = face_quadrature_formula.size();
+  const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
+  const unsigned int  n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   std::vector<double>              pressure_values(n_q_points);
@@ -56,7 +54,7 @@ calculate_forces(
   Tensor<2, dim>                   fluid_pressure;
   Tensor<1, dim>                   force;
 
-  std::vector<Tensor<1,dim> > force_vector(boundary_conditions.size);
+  std::vector<Tensor<1, dim>> force_vector(boundary_conditions.size);
 
   FEFaceValues<dim> fe_face_values(mapping,
                                    fe,
@@ -65,11 +63,10 @@ calculate_forces(
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
 
-  for (unsigned int boundary_id = 0;
-       boundary_id < boundary_conditions.size;
+  for (unsigned int boundary_id = 0; boundary_id < boundary_conditions.size;
        ++boundary_id)
     {
-      force                                               = 0;
+      force = 0;
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -108,47 +105,46 @@ calculate_forces(
                 }
             }
         }
-      force_vector[boundary_id] =
-        Utilities::MPI::sum(force, mpi_communicator);
+      force_vector[boundary_id] = Utilities::MPI::sum(force, mpi_communicator);
     }
   return force_vector;
 }
 
-template std::vector<Tensor<1,2> > calculate_forces<2, TrilinosWrappers::MPI::Vector>(
-const FESystem<2>                                 &fe,
-const DoFHandler<2>                               &dof_handler,
-const TrilinosWrappers::MPI::Vector                                    &evaluation_point,
-const Parameters::PhysicalProperties                &physical_properties,
-const Parameters::FEM                               &fem_parameters,
-const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-const MPI_Comm                                      &mpi_communicator
-);
-template std::vector<Tensor<1,3> > calculate_forces<3, TrilinosWrappers::MPI::Vector>(
-const FESystem<3>                                 &fe,
-const DoFHandler<3>                               &dof_handler,
-const TrilinosWrappers::MPI::Vector                                    &evaluation_point,
-const Parameters::PhysicalProperties                &physical_properties,
-const Parameters::FEM                               &fem_parameters,
-const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-const MPI_Comm                                      &mpi_communicator
-);
+template std::vector<Tensor<1, 2>>
+calculate_forces<2, TrilinosWrappers::MPI::Vector>(
+  const FESystem<2> &                                fe,
+  const DoFHandler<2> &                              dof_handler,
+  const TrilinosWrappers::MPI::Vector &              evaluation_point,
+  const Parameters::PhysicalProperties &             physical_properties,
+  const Parameters::FEM &                            fem_parameters,
+  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
+  const MPI_Comm &                                   mpi_communicator);
+template std::vector<Tensor<1, 3>>
+calculate_forces<3, TrilinosWrappers::MPI::Vector>(
+  const FESystem<3> &                                fe,
+  const DoFHandler<3> &                              dof_handler,
+  const TrilinosWrappers::MPI::Vector &              evaluation_point,
+  const Parameters::PhysicalProperties &             physical_properties,
+  const Parameters::FEM &                            fem_parameters,
+  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
+  const MPI_Comm &                                   mpi_communicator);
 
-template std::vector<Tensor<1,2> >calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
-const FESystem<2>                                 &fe,
-const DoFHandler<2>                               &dof_handler,
-const TrilinosWrappers::MPI::BlockVector          &evaluation_point,
-const Parameters::PhysicalProperties              &physical_properties,
-const Parameters::FEM                             &fem_parameters,
-const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
-const MPI_Comm                                    &mpi_communicator
-);
+template std::vector<Tensor<1, 2>>
+calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
+  const FESystem<2> &                                fe,
+  const DoFHandler<2> &                              dof_handler,
+  const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
+  const Parameters::PhysicalProperties &             physical_properties,
+  const Parameters::FEM &                            fem_parameters,
+  const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
+  const MPI_Comm &                                   mpi_communicator);
 
-template std::vector<Tensor<1,3> > calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
-const FESystem<3>                                 &fe,
-const DoFHandler<3>                               &dof_handler,
-const TrilinosWrappers::MPI::BlockVector          &evaluation_point,
-const Parameters::PhysicalProperties              &physical_properties,
-const Parameters::FEM                             &fem_parameters,
-const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
-const MPI_Comm                                    &mpi_communicator
-);
+template std::vector<Tensor<1, 3>>
+calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
+  const FESystem<3> &                                fe,
+  const DoFHandler<3> &                              dof_handler,
+  const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
+  const Parameters::PhysicalProperties &             physical_properties,
+  const Parameters::FEM &                            fem_parameters,
+  const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
+  const MPI_Comm &                                   mpi_communicator);

@@ -125,10 +125,10 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_average_KE(
               double ux_sim = local_velocity_values[q][0];
               double uy_sim = local_velocity_values[q][1];
 
-              KEU += 0.5 * ((ux_sim) * (ux_sim)*fe_values.JxW(q)) /
-                         globalVolume_;
-              KEU += 0.5 * ((uy_sim) * (uy_sim)*fe_values.JxW(q)) /
-                         globalVolume_;
+              KEU +=
+                0.5 * ((ux_sim) * (ux_sim)*fe_values.JxW(q)) / globalVolume_;
+              KEU +=
+                0.5 * ((uy_sim) * (uy_sim)*fe_values.JxW(q)) / globalVolume_;
               if (dim == 3)
                 {
                   double uz_sim = local_velocity_values[q][2];
@@ -280,7 +280,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_forces");
 
-  this->forces_=calculate_forces(this->fe,this->dof_handler,evaluation_point,nsparam.physicalProperties,nsparam.femParameters,nsparam.boundaryConditions,mpi_communicator);
+  this->forces_ = calculate_forces(this->fe,
+                                   this->dof_handler,
+                                   evaluation_point,
+                                   nsparam.physicalProperties,
+                                   nsparam.femParameters,
+                                   nsparam.boundaryConditions,
+                                   mpi_communicator);
 
   if (nsparam.forcesParameters.verbosity == Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
@@ -1103,7 +1109,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                 this->nsparam.forcesParameters.calculation_frequency ==
               0)
             this->postprocessing_forces(this->present_solution,
-                                   this->simulationControl);
+                                        this->simulationControl);
           if (this->simulationControl.getIter() %
                 this->nsparam.forcesParameters.output_frequency ==
               0)

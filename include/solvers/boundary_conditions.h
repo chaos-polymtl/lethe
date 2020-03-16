@@ -241,7 +241,6 @@ namespace BoundaryConditions
         declareDefaultEntry(prm, 5);
       }
       prm.leave_subsection();
-
     }
     prm.leave_subsection();
   }

@@ -166,7 +166,7 @@ protected:
    */
   void
   postprocessing_forces(const VectorType &       evaluation_point,
-                   const SimulationControl &simulationControl);
+                        const SimulationControl &simulationControl);
 
   /**
    * @brief calculate_L2_error
