@@ -19,6 +19,7 @@
 
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_force.h>
+#include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
 
 /*
@@ -95,52 +96,12 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_average_KE(
 {
   TimerOutput::Scope t(this->computing_timer, "KE");
 
-  QGauss<dim>         quadrature_formula(this->degreeQuadrature_ + 1);
-  const MappingQ<dim> mapping(this->degreeVelocity_,
-                              nsparam.femParameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
-                          update_values | update_quadrature_points |
-                            update_JxW_values);
-
-  const FEValuesExtractors::Vector velocities(0);
-  const unsigned int               n_q_points = quadrature_formula.size();
-
-  std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
-  double                      KEU = 0.0;
-
-  typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
-  for (; cell != endc; ++cell)
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values[velocities].get_function_values(evaluation_point,
-                                                    local_velocity_values);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              double ux_sim = local_velocity_values[q][0];
-              double uy_sim = local_velocity_values[q][1];
-
-              KEU +=
-                0.5 * ((ux_sim) * (ux_sim)*fe_values.JxW(q)) / globalVolume_;
-              KEU +=
-                0.5 * ((uy_sim) * (uy_sim)*fe_values.JxW(q)) / globalVolume_;
-              if (dim == 3)
-                {
-                  double uz_sim = local_velocity_values[q][2];
-                  KEU += 0.5 * ((uz_sim) * (uz_sim)*fe_values.JxW(q)) /
-                         globalVolume_;
-                }
-            }
-        }
-    }
-  KEU = Utilities::MPI::sum(KEU, this->mpi_communicator);
-  return (KEU);
+  double KE = calculate_kinetic_energy(this->fe,
+                                       this->dof_handler,
+                                       evaluation_point,
+                                       nsparam.femParameters,
+                                       mpi_communicator);
+  return KE;
 }
 
 // enstrophy calculation
@@ -243,10 +204,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_CFL(
   // CFL
   double CFL = 0;
 
-  typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
-  for (; cell != endc; ++cell)
+  for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
