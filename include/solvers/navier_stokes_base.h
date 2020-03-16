@@ -183,8 +183,8 @@ protected:
    * Calculate torque acting on each boundary condition
    */
   void
-  calculate_torques(const VectorType &       evaluation_point,
-                    const SimulationControl &simulationControl);
+  postprocessing_torques(const VectorType &       evaluation_point,
+                         const SimulationControl &simulationControl);
 
   /**
    * @brief create_manifold

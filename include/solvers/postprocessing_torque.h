@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
-#ifndef LETHE_FORCECALCULATION_H
-#define LETHE_FORCECALCULATION_H
+#ifndef LETHE_TORQUECALCULATION_H
+#define LETHE_TORQUECALCULATION_H
 
 // Base
 #include <deal.II/base/quadrature_lib.h>
@@ -44,30 +44,30 @@
 
 using namespace dealii;
 /**
- * @brief Calculates the force due to the fluid motion on every boundary conditions
- * @return std::vector of forces on each boundary condition
+ * @brief Calculates the torques due to the fluid motion on every boundary conditions
+ * @return std::vector of torques on each boundary condition
  * Post-processing function
- * This function calculates the force acting on each of the boundary conditions
+ * This function calculates the torqueacting on each of the boundary conditions
  * within the domain. It generates a vector which size is the number of boundary
- * conditions
+ * conditions.
  *
- * @param fe The finite element system object used for the calculation
+ * @param fe The finite element system object used for the calculation.
  *
- * @param dof_handler The dof_handler used for the calculation
+ * @param dof_handler The dof_handler used for the calculation.
  *
- * @param evaluation_point The solution at which the force is calculated
+ * @param evaluation_point The solution at which the torque is calculated.
  *
- * @param physical_properties The parameters containing the required physical properties
+ * @param physical_properties The parameters containing the required physical properties.
  *
- * @param fem_parameters The fem_parameters of the simulation
+ * @param fem_parameters The fem_parameters of the simulation.
  *
- * @param boundary_conditions The boundary conditions object
+ * @param boundary_conditions The boundary conditions object.
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ * @param mpi_communicator The mpi communicator. It is used to reduce the torque calculation.
  */
 template <int dim, typename VectorType>
-std::vector<Tensor<1, dim>>
-calculate_forces(
+std::vector<Tensor<1, 3>>
+calculate_torques(
   const FESystem<dim> &                                fe,
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
