@@ -402,7 +402,7 @@ namespace Parameters
       prm.declare_entry("initial refinement",
                         "0",
                         Patterns::Integer(),
-                        "Initial refinement of primitive mesh");
+                        "Initial refinement of the mesh");
 
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
@@ -422,7 +422,7 @@ namespace Parameters
         else if (op == "dealii")
           type = Type::dealii;
         else
-          throw("Error");
+          throw("Error, invalid mesh type. Choices are gmsh and dealii");
       }
 
       file_name = prm.get("file name");
@@ -454,9 +454,9 @@ namespace Parameters
       prm.declare_entry(
         "method",
         "gmres",
-        Patterns::Selection("gmres|bicgstab|amg"),
+        Patterns::Selection("gmres|bicgstab|amg|direct"),
         "The iterative solver for the linear system of equations. "
-        "Choices are <gmres|bicgstab|amg>. gmres is a GMRES iterative solver "
+        "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative solver "
         "with ILU preconditioning. bicgstab is a BICGSTAB iterative solver "
         "with ILU preconditioning. "
         "amg is GMRES + AMG preconditioning with an ILU coarsener and "

@@ -356,10 +356,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
   std::vector<double>         phi_p(dofs_per_cell);
 
-  typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
-  for (; cell != endc; ++cell)
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {

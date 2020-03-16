@@ -134,21 +134,6 @@ protected:
   {}
 
   // Member functions
-  /**
-   * @brief calculate_average_KE
-   * Post-processing function
-   * Calculate the average kinetic energy in the simulation domain
-   */
-  double
-  calculate_average_KE(const VectorType &evaluation_point);
-
-  /**
-   * @brief calculate_average_enstrophy
-   * Post-processing function
-   * Calculate the average enstrophy in the simulation domain
-   */
-  double
-  calculate_average_enstrophy(const VectorType &evaluation_point);
 
   /**
    * @brief calculate_CFL
@@ -165,8 +150,8 @@ protected:
    * Calculate forces acting on each boundary condition
    */
   void
-  calculate_forces(const VectorType &       evaluation_point,
-                   const SimulationControl &simulationControl);
+  postprocessing_forces(const VectorType &       evaluation_point,
+                        const SimulationControl &simulationControl);
 
   /**
    * @brief calculate_L2_error
@@ -183,8 +168,8 @@ protected:
    * Calculate torque acting on each boundary condition
    */
   void
-  calculate_torques(const VectorType &       evaluation_point,
-                    const SimulationControl &simulationControl);
+  postprocessing_torques(const VectorType &       evaluation_point,
+                         const SimulationControl &simulationControl);
 
   /**
    * @brief create_manifold
@@ -211,7 +196,7 @@ protected:
 
   /**
    * @brief iterate
-   * Do a CFD iteration
+   * Do a regular CFD iteration
    */
   void
   iterate(const bool first_iteration);
