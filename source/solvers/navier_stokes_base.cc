@@ -85,25 +85,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
               << " MPI rank(s)..." << std::endl;
 }
 
-
-/*
- * Kinetic Energy Calculation
- */
-template <int dim, typename VectorType, typename DofsType>
-double
-NavierStokesBase<dim, VectorType, DofsType>::calculate_average_KE(
-  const VectorType &evaluation_point)
-{
-  TimerOutput::Scope t(this->computing_timer, "KE");
-
-  double KE = calculate_kinetic_energy(this->fe,
-                                       this->dof_handler,
-                                       evaluation_point,
-                                       nsparam.femParameters,
-                                       mpi_communicator);
-  return KE;
-}
-
 // enstrophy calculation
 template <int dim, typename VectorType, typename DofsType>
 double
@@ -948,7 +929,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.postProcessingParameters.calculate_kinetic_energy)
     {
-      double kE = this->calculate_average_KE(this->present_solution);
+
+      TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
+      double kE =  calculate_kinetic_energy(this->fe,
+                                            this->dof_handler,
+                                            this->present_solution,
+                                            nsparam.femParameters,
+                                            mpi_communicator);
       this->kinetic_energy_table.add_value("time",
                                            this->simulationControl.getTime());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);

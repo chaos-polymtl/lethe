@@ -134,13 +134,6 @@ protected:
   {}
 
   // Member functions
-  /**
-   * @brief calculate_average_KE
-   * Post-processing function
-   * Calculate the average kinetic energy in the simulation domain
-   */
-  double
-  calculate_average_KE(const VectorType &evaluation_point);
 
   /**
    * @brief calculate_average_enstrophy

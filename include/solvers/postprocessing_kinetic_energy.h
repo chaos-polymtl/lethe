@@ -44,12 +44,10 @@
 
 using namespace dealii;
 /**
- * @brief Calculates the force due to the fluid motion on every boundary conditions
- * @return std::vector of forces on each boundary condition
+ * @brief Calculate the average kinetic energy in the simulation domain
+ * @return average kinetic energy in the domain
  * Post-processing function
- * This function calculates the force acting on each of the boundary conditions
- * within the domain. It generates a vector which size is the number of boundary
- * conditions
+ * This function calculates the average kinetic energy in the simulation domain
  *
  * @param fe The finite element system object used for the calculation
  *
