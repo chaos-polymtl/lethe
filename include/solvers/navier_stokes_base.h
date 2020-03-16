@@ -165,7 +165,7 @@ protected:
    * Calculate forces acting on each boundary condition
    */
   void
-  calculate_forces(const VectorType &       evaluation_point,
+  postprocessing_forces(const VectorType &       evaluation_point,
                    const SimulationControl &simulationControl);
 
   /**

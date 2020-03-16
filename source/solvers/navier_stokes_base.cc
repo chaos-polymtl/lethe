@@ -17,7 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/navier_stokes_base.h"
+#include <solvers/navier_stokes_base.h>
+#include <solvers/postprocessing_force.h>
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -273,79 +274,13 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_CFL(
 // doing a single pass instead of N boundary passes
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::calculate_forces(
+NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   const VectorType &       evaluation_point,
   const SimulationControl &simulationControl)
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_forces");
-  double             viscosity = this->nsparam.physicalProperties.viscosity;
 
-  QGauss<dim - 1>     face_quadrature_formula(this->degreeQuadrature_ + 1);
-  const MappingQ<dim> mapping(this->degreeVelocity_,
-                              nsparam.femParameters.qmapping_all);
-  const int           n_q_points = face_quadrature_formula.size();
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  std::vector<double>              pressure_values(n_q_points);
-  std::vector<Tensor<2, dim>>      velocity_gradients(n_q_points);
-  Tensor<1, dim>                   normal_vector;
-  Tensor<2, dim>                   fluid_stress;
-  Tensor<2, dim>                   fluid_pressure;
-  Tensor<1, dim>                   force;
-
-  FEFaceValues<dim> fe_face_values(mapping,
-                                   this->fe,
-                                   face_quadrature_formula,
-                                   update_values | update_quadrature_points |
-                                     update_gradients | update_JxW_values |
-                                     update_normal_vectors);
-
-  for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundaryConditions.size;
-       ++boundary_id)
-    {
-      force                                               = 0;
-      for (const auto &cell : dof_handler.active_cell_iterators())
-        {
-          if (cell->is_locally_owned())
-            {
-              for (unsigned int face = 0;
-                   face < GeometryInfo<dim>::faces_per_cell;
-                   face++)
-                {
-                  if (cell->face(face)->at_boundary())
-                    {
-                      fe_face_values.reinit(cell, face);
-                      if (cell->face(face)->boundary_id() == boundary_id)
-                        {
-                          std::vector<Point<dim>> q_points =
-                            fe_face_values.get_quadrature_points();
-                          fe_face_values[velocities].get_function_gradients(
-                            evaluation_point, velocity_gradients);
-                          fe_face_values[pressure].get_function_values(
-                            evaluation_point, pressure_values);
-                          for (int q = 0; q < n_q_points; q++)
-                            {
-                              normal_vector = -fe_face_values.normal_vector(q);
-                              for (int d = 0; d < dim; ++d)
-                                {
-                                  fluid_pressure[d][d] = pressure_values[q];
-                                }
-                              fluid_stress =
-                                viscosity * (velocity_gradients[q] +
-                                             transpose(velocity_gradients[q])) -
-                                fluid_pressure;
-                              force += fluid_stress * normal_vector *
-                                       fe_face_values.JxW(q);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-      this->forces_[boundary_id] =
-        Utilities::MPI::sum(force, this->mpi_communicator);
-    }
+  this->forces_=calculate_forces(this->fe,this->dof_handler,evaluation_point,nsparam.physicalProperties,nsparam.femParameters,nsparam.boundaryConditions,mpi_communicator);
 
   if (nsparam.forcesParameters.verbosity == Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
@@ -1167,7 +1102,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           if (this->simulationControl.getIter() %
                 this->nsparam.forcesParameters.calculation_frequency ==
               0)
-            this->calculate_forces(this->present_solution,
+            this->postprocessing_forces(this->present_solution,
                                    this->simulationControl);
           if (this->simulationControl.getIter() %
                 this->nsparam.forcesParameters.output_frequency ==
