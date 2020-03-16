@@ -18,6 +18,7 @@
  */
 
 #include <solvers/navier_stokes_base.h>
+#include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
@@ -83,75 +84,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
-}
-
-// enstrophy calculation
-template <int dim, typename VectorType, typename DofsType>
-double
-NavierStokesBase<dim, VectorType, DofsType>::calculate_average_enstrophy(
-  const VectorType &evaluation_point)
-{
-  TimerOutput::Scope t(this->computing_timer, "Entrosphy");
-
-  QGauss<dim>         quadrature_formula(this->degreeQuadrature_ + 1);
-  const MappingQ<dim> mapping(this->degreeVelocity_,
-                              nsparam.femParameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Vector velocities(0);
-
-  const unsigned int n_q_points = quadrature_formula.size();
-
-  std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
-  double                      en = 0.0;
-
-  typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
-  for (; cell != endc; ++cell)
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-
-          fe_values[velocities].get_function_gradients(
-            evaluation_point, present_velocity_gradients);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              // Find the values of gradient of ux and uy (the finite element
-              // solution) at the quadrature points
-              double ux_y = present_velocity_gradients[q][0][1];
-              double uy_x = present_velocity_gradients[q][1][0];
-
-              if (dim == 2)
-                {
-                  en += 0.5 * (uy_x - ux_y) * (uy_x - ux_y) * fe_values.JxW(q) /
-                        globalVolume_;
-                }
-              else
-                {
-                  double uz_y = present_velocity_gradients[q][2][1];
-                  double uy_z = present_velocity_gradients[q][1][2];
-                  double ux_z = present_velocity_gradients[q][0][2];
-                  double uz_x = present_velocity_gradients[q][2][0];
-                  en += 0.5 * (uz_y - uy_z) * (uz_y - uy_z) * fe_values.JxW(q) /
-                        globalVolume_;
-                  en += 0.5 * (ux_z - uz_x) * (ux_z - uz_x) * fe_values.JxW(q) /
-                        globalVolume_;
-                  en += 0.5 * (uy_x - ux_y) * (uy_x - ux_y) * fe_values.JxW(q) /
-                        globalVolume_;
-                }
-            }
-        }
-    }
-  en = Utilities::MPI::sum(en, this->mpi_communicator);
-
-  return (en);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -899,8 +831,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.postProcessingParameters.calculate_enstrophy)
     {
-      double enstrophy =
-        this->calculate_average_enstrophy(this->present_solution);
+      double enstrophy = calculate_enstrophy(this->fe,
+                                             this->dof_handler,
+                                             this->present_solution,
+                                             nsparam.femParameters,
+                                             mpi_communicator);
+
       this->enstrophy_table.add_value("time",
                                       this->simulationControl.getTime());
       this->enstrophy_table.add_value("enstrophy", enstrophy);
@@ -929,13 +865,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.postProcessingParameters.calculate_kinetic_energy)
     {
-
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
-      double kE =  calculate_kinetic_energy(this->fe,
-                                            this->dof_handler,
-                                            this->present_solution,
-                                            nsparam.femParameters,
-                                            mpi_communicator);
+      double             kE = calculate_kinetic_energy(this->fe,
+                                           this->dof_handler,
+                                           this->present_solution,
+                                           nsparam.femParameters,
+                                           mpi_communicator);
       this->kinetic_energy_table.add_value("time",
                                            this->simulationControl.getTime());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);

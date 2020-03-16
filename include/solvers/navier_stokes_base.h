@@ -136,14 +136,6 @@ protected:
   // Member functions
 
   /**
-   * @brief calculate_average_enstrophy
-   * Post-processing function
-   * Calculate the average enstrophy in the simulation domain
-   */
-  double
-  calculate_average_enstrophy(const VectorType &evaluation_point);
-
-  /**
    * @brief calculate_CFL
    * @return maximum of the CFL
    * Calculates the maximum CFL reached
@@ -204,7 +196,7 @@ protected:
 
   /**
    * @brief iterate
-   * Do a CFD iteration
+   * Do a regular CFD iteration
    */
   void
   iterate(const bool first_iteration);
