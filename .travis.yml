@@ -32,7 +32,7 @@ matrix:
 
 before_script:
   - if [ "$STEP" = "compile_and_test" ]; then
-      docker pull rrastak/dealii;
+      docker pull rrastak/dealii:master-bare-gcc
     fi
 
 script:
