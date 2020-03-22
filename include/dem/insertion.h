@@ -19,14 +19,10 @@
 
 #include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
-
 #include <deal.II/distributed/tria.h>
-
 #include <deal.II/fe/mapping_q.h>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
-
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
@@ -43,22 +39,18 @@
 using namespace dealii;
 
 #ifndef INSERTION_H_
-#  define INSERTION_H_
+#define INSERTION_H_
 
 /**
  * Base interface for classes that carry out the insertion of particles in the
  * system
  */
 
-template <int dim>
-class Insertion
-{
+template <int dim> class Insertion {
 public:
-  Insertion()
-  {}
+  Insertion() {}
 
-  virtual ~Insertion()
-  {}
+  virtual ~Insertion() {}
 
   /**
    * Carries out the insertion of particles by discretizing and looping over the
@@ -73,11 +65,10 @@ public:
    * @param property_pool Property pool of particles
    * @param dem_parameters DEM parameters declared in the .prm file)
    */
-  virtual void
-  insert(Particles::ParticleHandler<dim> &particle_handler,
-         const Triangulation<dim> &       triangulation,
-         Particles::PropertyPool &        property_pool,
-         const DEMSolverParameters<dim> & dem_parameters) = 0;
+  virtual void insert(Particles::ParticleHandler<dim> &particle_handler,
+                      const Triangulation<dim> &triangulation,
+                      Particles::PropertyPool &property_pool,
+                      const DEMSolverParameters<dim> &dem_parameters) = 0;
 };
 
 #endif /* INSERTION_H_ */

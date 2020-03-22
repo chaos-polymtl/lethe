@@ -31,7 +31,7 @@
 using namespace dealii;
 
 #ifndef PWNONLINEARFORCE_H_
-#  define PWNONLINEARFORCE_H_
+#define PWNONLINEARFORCE_H_
 
 /**
  * Calculation of the non-linear particle-wall contact force using the
@@ -43,12 +43,9 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PWNonLinearForce : public PWContactForce<dim>
-{
+template <int dim> class PWNonLinearForce : public PWContactForce<dim> {
 public:
-  PWNonLinearForce()
-  {}
+  PWNonLinearForce() {}
 
   /**
    * Carries out the calculation of the particle-wall contact force using
@@ -59,11 +56,10 @@ public:
    * fine search
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void
-  calculate_pw_contact_force(
-    std::vector<std::map<int, pw_contact_info_struct<dim>>>
-      &                             pw_pairs_in_contact,
-    const DEMSolverParameters<dim> &dem_parameters) override;
+  virtual void calculate_pw_contact_force(
+      const std::vector<std::map<int, pw_contact_info_struct<dim>>>
+          *pw_pairs_in_contact,
+      const DEMSolverParameters<dim> &dem_parameters) override;
 };
 
 #endif
