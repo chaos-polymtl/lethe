@@ -70,8 +70,7 @@ test()
                Tensor<1, dim>,
                Point<dim>>>
     pwContactList(num_particles);
-  pwContactList =
-    pw1.find_PW_Contact_Pairs(boundary_cells_information, particle_handler);
+      pw1.find_PW_Contact_Pairs(boundary_cells_information, particle_handler, pwContactList);
 
   for (unsigned int i = 0; i != pwContactList.size(); i++)
     {

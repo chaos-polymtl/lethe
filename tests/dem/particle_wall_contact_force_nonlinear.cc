@@ -94,7 +94,7 @@ test()
                          Point<dim>>>
     pwContactList(num_particles);
 
-  pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
+  pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler, pwContactList);
 
   PWFineSearch<dim>                                       pw2;
   std::vector<std::map<int, pw_contact_info_struct<dim>>> pwContactInfo(
@@ -102,7 +102,7 @@ test()
   pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
 
   PWNonLinearForce<dim> pwcf1;
-  pwcf1.calculate_pw_contact_force(pwContactInfo, dem_parameters);
+  pwcf1.calculate_pw_contact_force(&pwContactInfo, dem_parameters);
 
   auto particle = particle_handler.begin();
 
