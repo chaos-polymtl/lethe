@@ -100,7 +100,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim>,
                         Particles::ParticleIterator<dim>>>
     pairs;
-  pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
+  ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor, pairs);
 
   for (unsigned int i = 0; i != pairs.size(); i++)
     {

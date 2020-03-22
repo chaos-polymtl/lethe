@@ -119,7 +119,7 @@ test()
   std::vector<std::pair<Particles::ParticleIterator<dim>,
                         Particles::ParticleIterator<dim>>>
     pairs;
-  pairs = ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor);
+  ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor, pairs);
 
   std::vector<std::map<int, pp_contact_info_struct<dim>>> inContactInfo(
     num_Particles);
@@ -127,7 +127,7 @@ test()
   ppfs.pp_Fine_Search(pairs, inContactInfo, dt);
 
   PPNonLinearForce<dim> ppnlf;
-  ppnlf.calculate_pp_contact_force(inContactInfo, dem_parameters);
+  ppnlf.calculate_pp_contact_force(&inContactInfo, dem_parameters);
 
   auto particle = particle_handler.begin();
 
