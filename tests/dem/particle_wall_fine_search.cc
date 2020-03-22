@@ -79,7 +79,7 @@ test()
                Point<dim>>>
     pwContactList(num_particles);
 
-  pwContactList = pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler);
+  pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler, pwContactList);
 
   PWFineSearch<dim> pw2;
 

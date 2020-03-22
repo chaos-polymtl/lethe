@@ -25,22 +25,18 @@
 using namespace dealii;
 
 #ifndef PPCONTACTFORCE_H_
-#  define PPCONTACTFORCE_H_
+#define PPCONTACTFORCE_H_
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle
  * contact force
  */
 
-template <int dim>
-class PPContactForce
-{
+template <int dim> class PPContactForce {
 public:
-  PPContactForce()
-  {}
+  PPContactForce() {}
 
-  virtual ~PPContactForce()
-  {}
+  virtual ~PPContactForce() {}
 
   /**
    * Carries out the calculation of the contact force using the contact pair
@@ -52,11 +48,10 @@ public:
    * fine search
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void
-  calculate_pp_contact_force(
-    const std::vector<std::map<int, pp_contact_info_struct<dim>>>
-      &                             pairs_in_contact_info,
-    const DEMSolverParameters<dim> &dem_parameters) = 0;
+  virtual void calculate_pp_contact_force(
+      const std::vector<std::map<int, pp_contact_info_struct<dim>>>
+          *pairs_in_contact_info,
+      const DEMSolverParameters<dim> &dem_parameters) = 0;
 };
 
 #endif /* PPCONTACTFORCE_H_ */

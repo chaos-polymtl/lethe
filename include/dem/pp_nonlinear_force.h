@@ -32,7 +32,7 @@
 using namespace dealii;
 
 #ifndef PPNONLINEARFORCE_H_
-#  define PPNONLINEARFORCE_H_
+#define PPNONLINEARFORCE_H_
 
 /**
  * Calculation of the non-linear particle-particle contact force using the
@@ -44,12 +44,9 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PPNonLinearForce : public PPContactForce<dim>
-{
+template <int dim> class PPNonLinearForce : public PPContactForce<dim> {
 public:
-  PPNonLinearForce()
-  {}
+  PPNonLinearForce() {}
 
   /**
    * Carries out the calculation of the particle-particle contact force using
@@ -60,11 +57,10 @@ public:
    * fine search
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void
-  calculate_pp_contact_force(
-    const std::vector<std::map<int, pp_contact_info_struct<dim>>>
-      &                             pairs_in_contact_info,
-    const DEMSolverParameters<dim> &dem_parameters) override;
+  virtual void calculate_pp_contact_force(
+      const std::vector<std::map<int, pp_contact_info_struct<dim>>>
+          *pairs_in_contact_info,
+      const DEMSolverParameters<dim> &dem_parameters) override;
 };
 
 #endif
