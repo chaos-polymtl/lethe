@@ -365,9 +365,6 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
 
   double average_pressure       = pressure_integral / globalVolume_;
   double average_exact_pressure = exact_pressure_integral / globalVolume_;
-  std::cout << " Average pressure is : " << pressure_integral << std::endl;
-  std::cout << " Average exact pressure is : " << pressure_integral
-            << std::endl;
 
 
   double l2errorU = 0.;
@@ -421,8 +418,8 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
         }
     }
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
+  l2errorP = Utilities::MPI::sum(l2errorP, this->mpi_communicator);
 
-  std::cout << "L2 error pressure is : " << std::sqrt(l2errorP) << std::endl;
   return std::sqrt(l2errorU);
 }
 
