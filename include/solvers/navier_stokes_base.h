@@ -159,7 +159,7 @@ protected:
    * Post-processing function
    * Calculates the L2 norm of the error
    */
-  std::pair<double,double>
+  std::pair<double, double>
   calculate_L2_error(const VectorType &evaluation_point);
 
   /**

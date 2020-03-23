@@ -291,7 +291,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 // Find the l2 norm of the error between the finite element sol'n and the exact
 // sol'n
 template <int dim, typename VectorType, typename DofsType>
-std::pair<double,double>
+std::pair<double, double>
 NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   const VectorType &evaluation_point)
 {
@@ -359,8 +359,10 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
       }
   }
 
-  pressure_integral = Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
-  exact_pressure_integral = Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
+  pressure_integral =
+    Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
+  exact_pressure_integral =
+    Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
   double average_pressure       = pressure_integral / globalVolume_;
   double average_exact_pressure = exact_pressure_integral / globalVolume_;
 
@@ -418,7 +420,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
   l2errorP = Utilities::MPI::sum(l2errorP, this->mpi_communicator);
 
-  return std::make_pair(std::sqrt(l2errorU),std::sqrt(l2errorP));
+  return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
 }
 
 /*
@@ -983,7 +985,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         {
           // Update the time of the exact solution to the actual time
           this->exact_solution->set_time(this->simulationControl.getTime());
-          const std::pair<double, double> errors = this->calculate_L2_error(this->present_solution);
+          const std::pair<double, double> errors =
+            this->calculate_L2_error(this->present_solution);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
           if (this->simulationControl.getMethod() ==
@@ -1011,7 +1014,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           if (this->nsparam.analyticalSolution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error velocity : " << error_velocity << std::endl;
+              this->pcout << "L2 error velocity : " << error_velocity
+                          << std::endl;
             }
         }
     }
