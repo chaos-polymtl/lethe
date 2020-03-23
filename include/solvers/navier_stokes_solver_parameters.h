@@ -49,6 +49,8 @@ public:
   Parameters::InitialConditions<dim> *            initialCondition;
   AnalyticalSolutions::NSAnalyticalSolution<dim> *analyticalSolution;
   SourceTerms::NSSourceTerm<dim> *                sourceTerm;
+  Parameters::VelocitySource                      velocitySource;
+
 
   SimulationControl simulationControl;
 
@@ -79,6 +81,8 @@ public:
     sourceTerm = new SourceTerms::NSSourceTerm<dim>;
     sourceTerm->declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
+
+    Parameters::VelocitySource::declare_parameters(prm);
   }
 
   void
@@ -101,6 +105,7 @@ public:
     analyticalSolution->parse_parameters(prm);
     sourceTerm->parse_parameters(prm);
     simulationControl.initialize(prm);
+    velocitySource.parse_parameters(prm);
   }
 };
 
