@@ -155,11 +155,11 @@ protected:
 
   /**
    * @brief calculate_L2_error
-   * @return L2 norm of the error
+   * @return L2 norm of the error for velocity and pressure
    * Post-processing function
    * Calculates the L2 norm of the error
    */
-  double
+  std::pair<double,double>
   calculate_L2_error(const VectorType &evaluation_point);
 
   /**
