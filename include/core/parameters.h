@@ -436,9 +436,9 @@ namespace Parameters
       srf
     };
     VelocitySourceType type;
-    double omega_x;
-    double omega_y;
-    double omega_z;
+    double             omega_x;
+    double             omega_y;
+    double             omega_z;
     static void
     declare_parameters(ParameterHandler &prm);
     void

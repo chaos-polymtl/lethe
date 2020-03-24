@@ -60,7 +60,7 @@ protected:
 private:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
-            Parameters::VelocitySource::VelocitySourceType velocity_source>
+            Parameters::VelocitySource::VelocitySourceType    velocity_source>
   void
   assembleGLS();
 

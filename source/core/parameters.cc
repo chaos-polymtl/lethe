@@ -422,7 +422,8 @@ namespace Parameters
         else if (op == "dealii")
           type = Type::dealii;
         else
-          throw(std::string("Error, invalid mesh type. Choices are gmsh and dealii"));
+          throw(std::string(
+            "Error, invalid mesh type. Choices are gmsh and dealii"));
       }
 
       file_name = prm.get("file name");
@@ -553,7 +554,8 @@ namespace Parameters
       else if (sv == "bicgstab")
         solver = SolverType::bicgstab;
       else
-          throw("Error, invalid iterative solver type. Choices are amg, gmres or bicgstab");
+        throw(
+          "Error, invalid iterative solver type. Choices are amg, gmres or bicgstab");
 
       residual_precision = prm.get_integer("residual precision");
       relative_residual  = prm.get_double("relative residual");
@@ -727,26 +729,28 @@ namespace Parameters
   {
     prm.enter_subsection("velocity source");
     {
+      prm.declare_entry("type",
+                        "none",
+                        Patterns::Selection("none|srf"),
+                        "Velocity-dependent source terms"
+                        "Choices are <none|srf>.");
       prm.declare_entry(
-        "type",
-        "none",
-        Patterns::Selection("none|srf"),
-        "Velocity-dependent source terms"
-        "Choices are <none|srf>.");
-      prm.declare_entry("omega_x",
-                        "0 ",
-                        Patterns::Double(),
-                        "X component of the angular velocity vector of the frame of reference");
+        "omega_x",
+        "0 ",
+        Patterns::Double(),
+        "X component of the angular velocity vector of the frame of reference");
 
-      prm.declare_entry("omega_y",
-                        "0 ",
-                        Patterns::Double(),
-                        "Y component of the angular velocity vector of the frame of reference");
+      prm.declare_entry(
+        "omega_y",
+        "0 ",
+        Patterns::Double(),
+        "Y component of the angular velocity vector of the frame of reference");
 
-      prm.declare_entry("omega_z",
-                        "0 ",
-                        Patterns::Double(),
-                        "Z component of the angular velocity vector of the frame of reference");
+      prm.declare_entry(
+        "omega_z",
+        "0 ",
+        Patterns::Double(),
+        "Z component of the angular velocity vector of the frame of reference");
     }
     prm.leave_subsection();
   }
@@ -764,9 +768,9 @@ namespace Parameters
       else
         throw("Error, invalid velocity source type");
 
-      omega_x=prm.get_double("omega_x");
-      omega_y=prm.get_double("omega_y");
-      omega_z=prm.get_double("omega_z");
+      omega_x = prm.get_double("omega_x");
+      omega_y = prm.get_double("omega_y");
+      omega_z = prm.get_double("omega_z");
     }
     prm.leave_subsection();
   }

@@ -109,10 +109,11 @@ class SRF_postprocessor : public DataPostprocessorVector<dim>
 {
 public:
   SRF_postprocessor(double p_omega_x, double p_omega_y, double p_omega_z)
-    : DataPostprocessorVector<dim>(std::string("velocity_eulerian"), update_values | update_quadrature_points),
-      omega_x(p_omega_x),
-      omega_y(p_omega_y),
-      omega_z(p_omega_z)
+    : DataPostprocessorVector<dim>(std::string("velocity_eulerian"),
+                                   update_values | update_quadrature_points)
+    , omega_x(p_omega_x)
+    , omega_y(p_omega_y)
+    , omega_z(p_omega_z)
   {}
   virtual void
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
@@ -121,10 +122,11 @@ public:
     AssertDimension(input_data.solution_gradients.size(),
                     computed_quantities.size());
 
-    Tensor<1,dim> omega;
-    omega[0]=omega_x;
-    omega[1]=omega_y;
-    if (dim==3) omega[2]=omega_z;
+    Tensor<1, dim> omega;
+    omega[0] = omega_x;
+    omega[1] = omega_y;
+    if (dim == 3)
+      omega[2] = omega_z;
 
     const unsigned int n_quadrature_points = inputs.solution_values.size();
     Assert(computed_quantities.size() == n_quadrature_points,
@@ -132,18 +134,20 @@ public:
     Assert(inputs.solution_values[0].size() == dim, ExcInternalError());
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
       {
-        Tensor<1,dim> velocity;
+        Tensor<1, dim> velocity;
         velocity[0] = inputs.solution_values[q][0];
         velocity[1] = inputs.solution_values[q][1];
-        if (dim==2)
-            velocity = velocity + omega_z * (-1.) * cross_product_2d(inputs.evaluation_points[q]);
+        if (dim == 2)
+          velocity = velocity + omega_z * (-1.) *
+                                  cross_product_2d(inputs.evaluation_points[q]);
 
-        if (dim==3)
+        if (dim == 3)
           {
             velocity[2] = inputs.solution_values[q][2];
-            velocity = velocity + cross_product_3d(omega,inputs.evaluation_points[q]);
+            velocity =
+              velocity + cross_product_3d(omega, inputs.evaluation_points[q]);
           }
-        for (int d = 0 ; d < dim ; ++d)
+        for (int d = 0; d < dim; ++d)
           {
             computed_quantities[q][d] = velocity[d];
           }

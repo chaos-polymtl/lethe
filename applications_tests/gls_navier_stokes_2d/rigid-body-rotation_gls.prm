@@ -17,8 +17,8 @@ end
 # FEM
 #---------------------------------------------------
 subsection FEM
-    set velocity order            = 2
-    set pressure order            = 2
+    set velocity order            = 1
+    set pressure order            = 1
     set qmapping all              = true
 end
 
@@ -116,7 +116,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set tolerance               = 1e-10
+  set tolerance               = 1e-8
   set max iterations          = 10
   set residual precision      = 2
   set verbosity               = quiet

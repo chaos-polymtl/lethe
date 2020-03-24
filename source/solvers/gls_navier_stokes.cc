@@ -225,7 +225,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
 template <int dim>
 template <bool                                              assemble_matrix,
           Parameters::SimulationControl::TimeSteppingMethod scheme,
-          Parameters::VelocitySource::VelocitySourceType velocity_source>
+          Parameters::VelocitySource::VelocitySourceType    velocity_source>
 void
 GLSNavierStokesSolver<dim>::assembleGLS()
 {
@@ -264,13 +264,15 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
   // Velocity dependent source term
   //----------------------------------
-  // Angular velocity of the rotating frame. This is always a 3D vector even in 2D.
-  Tensor<1,dim> omega_vector;
+  // Angular velocity of the rotating frame. This is always a 3D vector even in
+  // 2D.
+  Tensor<1, dim> omega_vector;
 
-  double omega_z = this->nsparam.velocitySource.omega_z;
+  double omega_z  = this->nsparam.velocitySource.omega_z;
   omega_vector[0] = this->nsparam.velocitySource.omega_x;
   omega_vector[1] = this->nsparam.velocitySource.omega_y;
-  if(dim==3)  omega_vector[2] = this->nsparam.velocitySource.omega_z;
+  if (dim == 3)
+    omega_vector[2] = this->nsparam.velocitySource.omega_z;
 
   std::vector<double>         div_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
@@ -349,12 +351,12 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           fe_values[pressure].get_function_gradients(
             this->evaluation_point, present_pressure_gradients);
 
-          std::vector<Point<dim> > quadrature_points = fe_values.get_quadrature_points();
+          std::vector<Point<dim>> quadrature_points =
+            fe_values.get_quadrature_points();
 
           // Calculate forcing term if there is a forcing function
           if (l_forcing_function)
-            l_forcing_function->vector_value_list(
-              quadrature_points, rhs_force);
+            l_forcing_function->vector_value_list(quadrature_points, rhs_force);
 
           // Gather the previous time steps depending on the number of stages
           // of the time integration scheme
@@ -426,18 +428,29 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                 present_pressure_gradients[q] -
                 viscosity_ * present_velocity_laplacians[q] - force;
 
-              if (velocity_source==Parameters::VelocitySource::VelocitySourceType::srf)
+              if (velocity_source ==
+                  Parameters::VelocitySource::VelocitySourceType::srf)
                 {
-                  if (dim==2)
+                  if (dim == 2)
                     {
-                      strong_residual += 2*omega_z * (-1.) * cross_product_2d(present_velocity_values[q]);
-                      auto centrifugal = omega_z * (-1.) * cross_product_2d(omega_z * (-1.) * cross_product_2d(quadrature_points[q]));
+                      strong_residual +=
+                        2 * omega_z * (-1.) *
+                        cross_product_2d(present_velocity_values[q]);
+                      auto centrifugal =
+                        omega_z * (-1.) *
+                        cross_product_2d(
+                          omega_z * (-1.) *
+                          cross_product_2d(quadrature_points[q]));
                       strong_residual += centrifugal;
                     }
-                  else if (dim==3)
+                  else if (dim == 3)
                     {
-                      strong_residual += 2*cross_product_3d(omega_vector,present_velocity_values[q]);
-                      strong_residual +=  cross_product_3d(omega_vector,cross_product_3d(omega_vector,quadrature_points[q]));
+                      strong_residual +=
+                        2 * cross_product_3d(omega_vector,
+                                             present_velocity_values[q]);
+                      strong_residual += cross_product_3d(
+                        omega_vector,
+                        cross_product_3d(omega_vector, quadrature_points[q]));
                     }
                 }
 
@@ -507,12 +520,15 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       if (is_sdirk(scheme))
                         strong_jac += phi_u[j] * sdirk_coefs[0][0];
 
-                      if (velocity_source==Parameters::VelocitySource::VelocitySourceType::srf)
+                      if (velocity_source ==
+                          Parameters::VelocitySource::VelocitySourceType::srf)
                         {
-                          if (dim==2)
-                              strong_jac += 2*omega_z * (-1.) * cross_product_2d(phi_u[j]);
-                          else if (dim==3)
-                              strong_jac += 2*cross_product_3d(omega_vector,phi_u[j]);
+                          if (dim == 2)
+                            strong_jac +=
+                              2 * omega_z * (-1.) * cross_product_2d(phi_u[j]);
+                          else if (dim == 3)
+                            strong_jac +=
+                              2 * cross_product_3d(omega_vector, phi_u[j]);
                         }
 
                       for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -546,13 +562,19 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                           local_matrix(i, j) +=
                             tau * strong_jac * grad_phi_p[i] * fe_values.JxW(q);
 
-                          if (velocity_source==Parameters::VelocitySource::VelocitySourceType::srf)
+                          if (velocity_source == Parameters::VelocitySource::
+                                                   VelocitySourceType::srf)
                             {
-                              if (dim==2)
-                                  local_matrix(i, j) += 2*omega_z * (-1.) * cross_product_2d(phi_u[j]) * phi_u[i] * fe_values.JxW(q);
+                              if (dim == 2)
+                                local_matrix(i, j) +=
+                                  2 * omega_z * (-1.) *
+                                  cross_product_2d(phi_u[j]) * phi_u[i] *
+                                  fe_values.JxW(q);
 
-                              else if (dim==3)
-                                  local_matrix(i, j) += 2*cross_product_3d(omega_vector,phi_u[j]) * phi_u[i] * fe_values.JxW(q);
+                              else if (dim == 3)
+                                local_matrix(i, j) +=
+                                  2 * cross_product_3d(omega_vector, phi_u[j]) *
+                                  phi_u[i] * fe_values.JxW(q);
                             }
 
 
@@ -670,19 +692,36 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                         fe_values.JxW(q);
                     }
 
-                  if (velocity_source==Parameters::VelocitySource::VelocitySourceType::srf)
+                  if (velocity_source ==
+                      Parameters::VelocitySource::VelocitySourceType::srf)
                     {
-                      if (dim==2)
+                      if (dim == 2)
                         {
-                          local_rhs(i) += -2*omega_z * (-1.) * cross_product_2d(present_velocity_values[q]) * phi_u[i] * fe_values.JxW(q);
-                          auto centrifugal = omega_z * (-1.) * cross_product_2d(omega_z * (-1.) * cross_product_2d(quadrature_points[q]));
-                          local_rhs(i) += -centrifugal * phi_u[i] * fe_values.JxW(q);
-
+                          local_rhs(i) +=
+                            -2 * omega_z * (-1.) *
+                            cross_product_2d(present_velocity_values[q]) *
+                            phi_u[i] * fe_values.JxW(q);
+                          auto centrifugal =
+                            omega_z * (-1.) *
+                            cross_product_2d(
+                              omega_z * (-1.) *
+                              cross_product_2d(quadrature_points[q]));
+                          local_rhs(i) +=
+                            -centrifugal * phi_u[i] * fe_values.JxW(q);
                         }
-                      else if (dim==3)
+                      else if (dim == 3)
                         {
-                          local_rhs(i) += -2*cross_product_3d(omega_vector,present_velocity_values[q]) * phi_u[i] * fe_values.JxW(q);
-                          local_rhs(i) += -cross_product_3d(omega_vector,cross_product_3d(omega_vector,quadrature_points[q]))* phi_u[i] * fe_values.JxW(q);
+                          local_rhs(i) +=
+                            -2 *
+                            cross_product_3d(omega_vector,
+                                             present_velocity_values[q]) *
+                            phi_u[i] * fe_values.JxW(q);
+                          local_rhs(i) +=
+                            -cross_product_3d(
+                              omega_vector,
+                              cross_product_3d(omega_vector,
+                                               quadrature_points[q])) *
+                            phi_u[i] * fe_values.JxW(q);
                         }
                     }
 
@@ -902,104 +941,105 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (this->nsparam.velocitySource.type==Parameters::VelocitySource::VelocitySourceType::none)
+  if (this->nsparam.velocitySource.type ==
+      Parameters::VelocitySource::VelocitySourceType::none)
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-            Parameters::VelocitySource::VelocitySourceType::none >();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
         assembleGLS<true,
-            Parameters::SimulationControl::TimeSteppingMethod::steady,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::steady,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
     }
 
-  else
-    if (this->nsparam.velocitySource.type==Parameters::VelocitySource::VelocitySourceType::srf)
-      {
-        if (time_stepping_method ==
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-              Parameters::VelocitySource::VelocitySourceType::srf >();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-        else if (time_stepping_method ==
-                 Parameters::SimulationControl::TimeSteppingMethod::steady)
-          assembleGLS<true,
-              Parameters::SimulationControl::TimeSteppingMethod::steady,
-              Parameters::VelocitySource::VelocitySourceType::srf>();
-      }
+  else if (this->nsparam.velocitySource.type ==
+           Parameters::VelocitySource::VelocitySourceType::srf)
+    {
+      if (time_stepping_method ==
+          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady)
+        assembleGLS<true,
+                    Parameters::SimulationControl::TimeSteppingMethod::steady,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
+    }
 }
 template <int dim>
 void
@@ -1008,101 +1048,103 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (this->nsparam.velocitySource.type==Parameters::VelocitySource::VelocitySourceType::none)
+  if (this->nsparam.velocitySource.type ==
+      Parameters::VelocitySource::VelocitySourceType::none)
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::steady,
-            Parameters::VelocitySource::VelocitySourceType::none>();
+                    Parameters::SimulationControl::TimeSteppingMethod::steady,
+                    Parameters::VelocitySource::VelocitySourceType::none>();
     }
-  if (this->nsparam.velocitySource.type==Parameters::VelocitySource::VelocitySourceType::srf)
+  if (this->nsparam.velocitySource.type ==
+      Parameters::VelocitySource::VelocitySourceType::srf)
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
         assembleGLS<false,
-            Parameters::SimulationControl::TimeSteppingMethod::steady,
-            Parameters::VelocitySource::VelocitySourceType::srf>();
+                    Parameters::SimulationControl::TimeSteppingMethod::steady,
+                    Parameters::VelocitySource::VelocitySourceType::srf>();
     }
 }
 
