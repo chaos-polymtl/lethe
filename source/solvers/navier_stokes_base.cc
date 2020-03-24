@@ -291,7 +291,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 // Find the l2 norm of the error between the finite element sol'n and the exact
 // sol'n
 template <int dim, typename VectorType, typename DofsType>
-double
+std::pair<double, double>
 NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   const VectorType &evaluation_point)
 {
@@ -323,7 +323,52 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
 
   Function<dim> *l_exact_solution = this->exact_solution;
 
+  double pressure_integral       = 0;
+  double exact_pressure_integral = 0;
+
+  // loop over elements to calculate average pressure
+  {
+    typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
+                                                            .begin_active(),
+                                                   endc =
+                                                     this->dof_handler.end();
+    for (; cell != endc; ++cell)
+      {
+        if (cell->is_locally_owned())
+          {
+            fe_values.reinit(cell);
+
+            fe_values[pressure].get_function_values(evaluation_point,
+                                                    local_pressure_values);
+            // Get the exact solution at all gauss points
+            l_exact_solution->vector_value_list(
+              fe_values.get_quadrature_points(), q_exactSol);
+
+
+            // Retrieve the effective "connectivity matrix" for this element
+            cell->get_dof_indices(local_dof_indices);
+
+            for (unsigned int q = 0; q < n_q_points; q++)
+              {
+                pressure_integral +=
+                  local_pressure_values[q] * fe_values.JxW(q);
+                exact_pressure_integral +=
+                  q_exactSol[q][dim] * fe_values.JxW(q);
+              }
+          }
+      }
+  }
+
+  pressure_integral =
+    Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
+  exact_pressure_integral =
+    Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
+  double average_pressure       = pressure_integral / globalVolume_;
+  double average_exact_pressure = exact_pressure_integral / globalVolume_;
+
+
   double l2errorU = 0.;
+  double l2errorP = 0.;
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -364,11 +409,18 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
                   l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
                               fe_values.JxW(q);
                 }
+
+              double p_sim   = local_pressure_values[q] - average_pressure;
+              double p_exact = q_exactSol[q][dim] - average_exact_pressure;
+              l2errorP +=
+                (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
             }
         }
     }
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
-  return std::sqrt(l2errorU);
+  l2errorP = Utilities::MPI::sum(l2errorP, this->mpi_communicator);
+
+  return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
 }
 
 /*
@@ -441,13 +493,14 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
       if (simulationControl.getMethod() ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         {
+          error_table.set_scientific("error_pressure", true);
           error_table.omit_column_from_convergence_rate_evaluation("cells");
           error_table.omit_column_from_convergence_rate_evaluation(
             "total_time");
           error_table.evaluate_all_convergence_rates(
             ConvergenceTable::reduction_rate_log2);
         }
-      error_table.set_scientific("error", true);
+      error_table.set_scientific("error_velocity", true);
 
       if (this->this_mpi_process == 0)
         {
@@ -460,7 +513,8 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               sub_columns.push_back("cells");
-              sub_columns.push_back("error");
+              sub_columns.push_back("error_velocity");
+              sub_columns.push_back("error_pressure");
               error_table.set_column_order(sub_columns);
             }
           error_table.write_text(std::cout);
@@ -931,13 +985,17 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         {
           // Update the time of the exact solution to the actual time
           this->exact_solution->set_time(this->simulationControl.getTime());
-          const double error = this->calculate_L2_error(this->present_solution);
+          const std::pair<double, double> errors =
+            this->calculate_L2_error(this->present_solution);
+          const double error_velocity = errors.first;
+          const double error_pressure = errors.second;
           if (this->simulationControl.getMethod() ==
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               this->error_table.add_value(
                 "cells", this->triangulation->n_global_active_cells());
-              this->error_table.add_value("error", error);
+              this->error_table.add_value("error_velocity", error_velocity);
+              this->error_table.add_value("error_pressure", error_pressure);
               auto summary = computing_timer.get_summary_data(
                 computing_timer.total_wall_time);
               double total_time = 0;
@@ -951,12 +1009,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             {
               this->error_table.add_value("time",
                                           this->simulationControl.getTime());
-              this->error_table.add_value("error", error);
+              this->error_table.add_value("error_velocity", error_velocity);
             }
           if (this->nsparam.analyticalSolution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error : " << error << std::endl;
+              this->pcout << "L2 error velocity : " << error_velocity
+                          << std::endl;
             }
         }
     }

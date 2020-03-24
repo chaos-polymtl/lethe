@@ -29,14 +29,17 @@ subsection physical properties
     set kinematic viscosity            = 1.0000
 end
 
+
 # --------------------------------------------------
 # Analytical Solution
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
     subsection uvw
-            set Function constants = eta=0.25, ri=0.25
-            set Function expression = -sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)) ; 0
+            # A= -(eta_ * eta_) / (1. - eta_ * eta_);
+            # B= ri_ * ri_ / (1. - eta_ * eta_);
+            set Function constants = eta=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667
+            set Function expression = -sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)); cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)) ; A*A*(x^2+y^2)/2 + 2 *A*B *ln(sqrt(x^2+y^2)) - 0.5*B*B/(x^2+y^2)
     end
 end
 
