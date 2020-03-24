@@ -406,8 +406,6 @@ namespace Parameters
 
   struct Testing
   {
-    // Time measurement in the simulation. None, at each iteration, only at the
-    // end
     bool enabled;
     static void
     declare_parameters(ParameterHandler &prm);
@@ -423,6 +421,24 @@ namespace Parameters
     bool         restart;
     bool         checkpoint;
     unsigned int frequency;
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  struct VelocitySource
+  {
+    // Type of linear solver
+    enum class VelocitySourceType
+    {
+      none,
+      srf
+    };
+    VelocitySourceType type;
+    double             omega_x;
+    double             omega_y;
+    double             omega_z;
     static void
     declare_parameters(ParameterHandler &prm);
     void

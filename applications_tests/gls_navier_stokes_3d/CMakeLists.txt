@@ -1,4 +1,5 @@
 SET(TEST_LIBRARIES lethe)
 SET(TEST_TARGET gls_navier_stokes_3d)
+file(COPY cylinder_unstructured.msh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 DEAL_II_PICKUP_TESTS()
 
