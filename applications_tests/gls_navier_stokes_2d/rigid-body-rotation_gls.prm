@@ -102,7 +102,7 @@ end
 #--------------------------------------------------
 subsection velocity source
     set type=srf
-    set omega_z=1
+    set omega_z=-1
 end
 
 # --------------------------------------------------

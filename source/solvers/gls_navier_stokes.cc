@@ -430,8 +430,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                 {
                   if (dim==2)
                     {
-                      strong_residual += 2*omega_z * cross_product_2d(present_velocity_values[q]);
-                      auto centrifugal = omega_z * cross_product_2d(omega_z * cross_product_2d(quadrature_points[q]));
+                      strong_residual += 2*omega_z * (-1.) * cross_product_2d(present_velocity_values[q]);
+                      auto centrifugal = omega_z * (-1.) * cross_product_2d(omega_z * (-1.) * cross_product_2d(quadrature_points[q]));
                       strong_residual += centrifugal;
                     }
                   else if (dim==3)
@@ -510,7 +510,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       if (velocity_source==Parameters::VelocitySource::VelocitySourceType::srf)
                         {
                           if (dim==2)
-                              strong_jac += 2*omega_z * cross_product_2d(phi_u[j]);
+                              strong_jac += 2*omega_z * (-1.) * cross_product_2d(phi_u[j]);
                           else if (dim==3)
                               strong_jac += 2*cross_product_3d(omega_vector,phi_u[j]);
                         }
@@ -549,7 +549,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                           if (velocity_source==Parameters::VelocitySource::VelocitySourceType::srf)
                             {
                               if (dim==2)
-                                  local_matrix(i, j) += 2*omega_z * cross_product_2d(phi_u[j]) * phi_u[i] * fe_values.JxW(q);
+                                  local_matrix(i, j) += 2*omega_z * (-1.) * cross_product_2d(phi_u[j]) * phi_u[i] * fe_values.JxW(q);
 
                               else if (dim==3)
                                   local_matrix(i, j) += 2*cross_product_3d(omega_vector,phi_u[j]) * phi_u[i] * fe_values.JxW(q);
@@ -674,8 +674,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                     {
                       if (dim==2)
                         {
-                          local_rhs(i) += -2*omega_z * cross_product_2d(present_velocity_values[q]) * phi_u[i] * fe_values.JxW(q);
-                          auto centrifugal = omega_z * cross_product_2d(omega_z * cross_product_2d(quadrature_points[q]));
+                          local_rhs(i) += -2*omega_z * (-1.) * cross_product_2d(present_velocity_values[q]) * phi_u[i] * fe_values.JxW(q);
+                          auto centrifugal = omega_z * (-1.) * cross_product_2d(omega_z * (-1.) * cross_product_2d(quadrature_points[q]));
                           local_rhs(i) += -centrifugal * phi_u[i] * fe_values.JxW(q);
 
                         }

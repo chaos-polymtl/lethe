@@ -1172,6 +1172,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                               nsparam.femParameters.qmapping_all);
   vorticity_postprocessor<dim>  vorticity;
   qcriterion_postprocessor<dim> qcriterion;
+  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,nsparam.velocitySource.omega_y,nsparam.velocitySource.omega_z);
   std::vector<std::string>      solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1193,6 +1194,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            data_component_interpretation);
   data_out.add_data_vector(solution, vorticity);
   data_out.add_data_vector(solution, qcriterion);
+  if (nsparam.velocitySource.type == Parameters::VelocitySource::VelocitySourceType::srf)
+    {
+      data_out.add_data_vector(solution, srf);
+    }
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
