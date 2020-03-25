@@ -118,15 +118,12 @@ void PPNonLinearForce<dim>::calculate_pp_contact_force(
       Tensor<1, dim> tangential_force;
       tangential_force = spring_tantential_force + dashpot_tangential_force;
 
-      double maximum_tangential_overlap =
-          (normal_force.norm() *
-               physical_properties.friction_coefficient_particle +
-           dashpot_tangential_force.norm()) /
-          tangential_spring_constant;
+      double coulumb_force_value =
+          physical_properties.friction_coefficient_particle *
+          normal_force.norm();
 
       // Check for gross sliding
-      if (contact_information_iterator_second.tangential_overlap <=
-          maximum_tangential_overlap) {
+      if (tangential_force.norm() <= coulumb_force_value) {
         // No gross sliding here
         total_force = normal_force + tangential_force;
         // Tangential overlap is not changed
@@ -134,15 +131,10 @@ void PPNonLinearForce<dim>::calculate_pp_contact_force(
         // Gross sliding occurs and the tangential overlap and tangnetial
         // force are limited to Coulumb's criterion
         contact_information_iterator_second.tangential_overlap =
-            maximum_tangential_overlap *
-            boost::math::sign(
-                contact_information_iterator_second.tangential_overlap);
+            tangential_force.norm() / tangential_spring_constant;
 
         Tensor<1, dim> coulumb_tangential_force =
-            (physical_properties.friction_coefficient_particle *
-             normal_force.norm() *
-             boost::math::sign(
-                 contact_information_iterator_second.tangential_overlap)) *
+            coulumb_force_value *
             contact_information_iterator_second.tangential_vector;
         total_force = normal_force + coulumb_tangential_force;
       }
@@ -157,16 +149,16 @@ void PPNonLinearForce<dim>::calculate_pp_contact_force(
             total_force[d];
       }
 
-      /*
       // Calculation of torque
       // Torque caused by tangential force (tangential_torque)
       Tensor<1, dim> tangential_torque_particle_one,
           tangential_torque_particle_two =
-            (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
-            cross_product_3d(contact_information_iterator_second.normal_vector,
-                             (-1 * total_force));
+              (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
+              cross_product_3d(
+                  contact_information_iterator_second.normal_vector,
+                  (-1 * total_force));
 
-
+      /*
       // Rolling resistance torque
       // For calculation of rolling resistance torque, we need to obtain
       // omega_ij using rotational velocities of particles one and two
@@ -185,30 +177,26 @@ void PPNonLinearForce<dim>::calculate_pp_contact_force(
               .norm();
       if (omega_value != 0) {
         omega_ij =
-            (particle_one_angular_velocity - particle_two_angular_velocity)
-      / omega_value;
+            (particle_one_angular_velocity - particle_two_angular_velocity) /
+            omega_value;
       }
 
       // Calculation of rolling resistance torque
 
       Tensor<1, dim> rolling_resistance_torque =
-          -1.0 * physical_properties.rolling_friction_coefficient_particle *
+          -1.0 * physical_properties.rolling_friction_particle *
           effective_radius * normal_force.norm() * omega_ij;
 
       // Updating the torque acting on particles
       for (int d = 0; d < dim; ++d) {
         particle_one_properties[DEM::PropertiesIndex::M_x + d] =
             particle_one_properties[DEM::PropertiesIndex::M_x + d] +
-            tangential_torque_particle_one[d] +
-      rolling_resistance_torque[d];
+            tangential_torque_particle_one[d] + rolling_resistance_torque[d];
         particle_two_properties[DEM::PropertiesIndex::M_x + d] =
             particle_two_properties[DEM::PropertiesIndex::M_x + d] +
-            tangential_torque_particle_two[d] +
-      rolling_resistance_torque[d];
+            tangential_torque_particle_two[d] + rolling_resistance_torque[d];
       }
       */
-
-      // ++contact_information_iterator;
     }
   }
 }

@@ -79,6 +79,35 @@ private:
   MappingQGeneric<dim> mapping;
   TimerOutput computing_timer;
   Particles::ParticleHandler<dim, dim> particle_handler;
+  int DEM_step = 0;
+  double DEM_time = 0.0;
+  const int number_of_steps = parameters.simulationControl.final_time_step;
+  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
+      cell_neighbor_list;
+
+  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
+      contact_pair_candidates;
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                         Tensor<1, dim>, Point<dim>>>
+      pw_contact_candidates;
+
+  std::map<int, Particles::ParticleIterator<dim>> particle_container;
+  DEM::DEMProperties<dim> properties_class;
+
+  // Initilization of classes and building objects
+  VelocityVerletIntegrator<dim> integrator_object;
+  // ***** I need to choose the contact model based on input file
+  PPBroadSearch<dim> pp_broad_search_object;
+  PPFineSearch<dim> pp_fine_search_object;
+  // Default particle-particle contact force model in non-linear
+  PPNonLinearForce<dim> pp_force_object;
+  // PPLinearForce<dim> pp_force_object;
+  PWBroadSearch<dim> pw_broad_search_object;
+  PWFineSearch<dim> pw_fine_search_object;
+  // PWLinearForce<dim> pw_force_object;
+  PWNonLinearForce<dim> pw_force_object;
 
   /**
    * Defines or reads the mesh based on the information provided by the user.

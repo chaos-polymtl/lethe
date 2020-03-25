@@ -109,14 +109,11 @@ void PWLinearForce<dim>::calculate_pw_contact_force(
       Tensor<1, dim> tangential_force =
           spring_tangential_force - dashpot_tangential_force;
 
-      double maximum_tangential_overlap =
-          (normal_force.norm() * physical_properties.friction_coefficient_wall +
-           dashpot_tangential_force.norm()) /
-          tangential_spring_constant;
+      double coulumb_force_value =
+          physical_properties.friction_coefficient_wall * normal_force.norm();
 
       // Check for gross sliding
-      if (contact_information.tangential_overlap <=
-          maximum_tangential_overlap) {
+      if (tangential_force.norm() <= coulumb_force_value) {
         // No gross sliding here
         total_force = normal_force + tangential_force;
         // Tangential overlap is not changed
@@ -124,13 +121,10 @@ void PWLinearForce<dim>::calculate_pw_contact_force(
         // Gross sliding occurs and the tangential overlap and tangnetial
         // force are limited to Coulumb's criterion
         contact_information.tangential_overlap =
-            maximum_tangential_overlap *
-            boost::math::sign(contact_information.tangential_overlap);
+            tangential_force.norm() / tangential_spring_constant;
 
         Tensor<1, dim> coulumb_tangential_force =
-            (physical_properties.friction_coefficient_wall *
-             normal_force.norm() *
-             boost::math::sign(contact_information.tangential_overlap)) *
+            (-1.0 * coulumb_force_value) *
             contact_information.tangential_vector;
         total_force = normal_force + coulumb_tangential_force;
       }
@@ -179,8 +173,6 @@ void PWLinearForce<dim>::calculate_pw_contact_force(
             particle_properties[DEM::PropertiesIndex::M_x + d] +
             tangential_toruqe[d] + rolling_resistance_torque[d];
       }
-
-      //++pw_contact_information_iterator;
     }
   }
 }
