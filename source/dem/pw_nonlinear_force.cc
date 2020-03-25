@@ -170,8 +170,6 @@ void PWNonLinearForce<dim>::calculate_pw_contact_force(
             particle_properties[DEM::PropertiesIndex::M_x + d] +
             tangential_toruqe[d] + rolling_resistance_torque[d];
       }
-
-      //++pw_contact_information_iterator;
     }
   }
 }
