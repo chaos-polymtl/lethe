@@ -125,7 +125,6 @@ void DEMSolver<dim>::update_pw_contact_container_iterators(
 }
 
 template <int dim> void DEMSolver<dim>::solve() {
-
   // Reading mesh
   read_mesh();
 
@@ -174,8 +173,8 @@ template <int dim> void DEMSolver<dim>::solve() {
             parameters.simulationControl
                 .total_particle_number) // number < total number
         {
-          NonUniformInsertion<dim> ins2(parameters);
-          // UniformInsertion<dim> ins2(parameters);
+          // NonUniformInsertion<dim> ins2(parameters);
+          UniformInsertion<dim> ins2(parameters);
 
           ins2.insert(particle_handler, triangulation, property_pool,
                       parameters);
