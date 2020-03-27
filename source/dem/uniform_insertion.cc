@@ -79,8 +79,12 @@ void UniformInsertion<dim>::insert(
           // Obtaning position of the inserted particle
           position[0] = insertion_information.x_min +
                         (physical_properties.diameter / 2) +
-                        (k * insertion_information.distance_threshold *
+                        (i * insertion_information.distance_threshold *
                          physical_properties.diameter);
+          // Adding a threshold distance to even rows of insertion
+          if (k % 2 == 0) {
+            position[0] = position[0] + (physical_properties.diameter) / 2.0;
+          }
           position[1] = insertion_information.y_min +
                         (physical_properties.diameter / 2) +
                         (j * insertion_information.distance_threshold *
@@ -88,7 +92,7 @@ void UniformInsertion<dim>::insert(
           if (dim == 3)
             position[2] = insertion_information.z_min +
                           (physical_properties.diameter / 2) +
-                          (i * insertion_information.distance_threshold *
+                          (k * insertion_information.distance_threshold *
                            physical_properties.diameter);
 
           // Since the id of each particle should be unique, we need to use
