@@ -119,9 +119,6 @@ public:
   evaluate_vector_field(const DataPostprocessorInputs::Vector<dim> &inputs,
                         std::vector<Vector<double>> &computed_quantities) const
   {
-    AssertDimension(input_data.solution_gradients.size(),
-                    computed_quantities.size());
-
     Tensor<1, dim> omega;
     omega[0] = omega_x;
     omega[1] = omega_y;
@@ -129,9 +126,6 @@ public:
       omega[2] = omega_z;
 
     const unsigned int n_quadrature_points = inputs.solution_values.size();
-    Assert(computed_quantities.size() == n_quadrature_points,
-           ExcInternalError());
-    Assert(inputs.solution_values[0].size() == dim, ExcInternalError());
     for (unsigned int q = 0; q < n_quadrature_points; ++q)
       {
         Tensor<1, dim> velocity;
