@@ -13,128 +13,147 @@
 #include <string>
 
 #ifndef PARAMETERS_LAGRANGIAN_H_
-#define PARAMETERS_LAGRANGIAN_H_
+#  define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
 
-namespace Parameters {
-namespace Lagrangian {
-struct SimulationControl {
-  // Time step
-  double dt;
+namespace Parameters
+{
+  namespace Lagrangian
+  {
+    struct SimulationControl
+    {
+      // Time step
+      double dt;
 
-  // End time step
-  int final_time_step;
+      // End time step
+      int final_time_step;
 
-  // Total number of particles
-  unsigned int total_particle_number;
+      // Total number of particles
+      unsigned int total_particle_number;
 
-  // Write frequency
-  int write_frequency;
+      // Write frequency
+      int write_frequency;
 
-  static void declare_parameters(ParameterHandler &prm);
-  void parse_parameters(ParameterHandler &prm);
-};
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
-struct PhysicalProperties {
-  // Gravitational acceleration
-  double gx, gy, gz;
+    struct PhysicalProperties
+    {
+      // Gravitational acceleration
+      double gx, gy, gz;
 
-  // Particle diameter and density
-  double diameter;
-  double density;
+      // Particle diameter and density
+      double diameter;
+      double density;
 
-  // Young's modulus of particle and wall
-  double Youngs_modulus_particle;
-  double Youngs_modulus_wall;
+      // Young's modulus of particle and wall
+      double Youngs_modulus_particle;
+      double Youngs_modulus_wall;
 
-  // Poisson's ratios of particle and wall
-  double Poisson_ratio_particle;
-  double Poisson_ratio_wall;
+      // Poisson's ratios of particle and wall
+      double Poisson_ratio_particle;
+      double Poisson_ratio_wall;
 
-  // Coefficients of restituion of particle and wall
-  double restitution_coefficient_particle;
-  double restitution_coefficient_wall;
+      // Coefficients of restituion of particle and wall
+      double restitution_coefficient_particle;
+      double restitution_coefficient_wall;
 
-  // Friction coefficients of particle and wall
-  double friction_coefficient_particle;
-  double friction_coefficient_wall;
+      // Friction coefficients of particle and wall
+      double friction_coefficient_particle;
+      double friction_coefficient_wall;
 
-  // Rollinrg friction coefficients of particle and wall
-  double rolling_friction_particle;
-  double rolling_friction_wall;
+      // Rollinrg friction coefficients of particle and wall
+      double rolling_friction_particle;
+      double rolling_friction_wall;
 
-  static void declare_parameters(ParameterHandler &prm);
-  void parse_parameters(ParameterHandler &prm);
-};
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
-struct InsertionInfo {
-  // Insertion time step
-  int insertion_steps_number;
+    struct InsertionInfo
+    {
+      // Insertion time step
+      int insertion_steps_number;
 
-  // Inserted number of particles at each time step
-  int inserted_this_step;
+      // Inserted number of particles at each time step
+      int inserted_this_step;
 
-  // Insertion frequency
-  int insertion_frequency;
+      // Insertion frequency
+      int insertion_frequency;
 
-  // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
-  double x_min, y_min, z_min, x_max, y_max, z_max;
+      // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
+      double x_min, y_min, z_min, x_max, y_max, z_max;
 
-  // Insertion distance threshold
-  double distance_threshold;
+      // Insertion distance threshold
+      double distance_threshold;
 
-  // Insertion random number range
-  double random_number_bin;
+      // Insertion random number range
+      double random_number_bin;
 
-  static void declare_parameters(ParameterHandler &prm);
-  void parse_parameters(ParameterHandler &prm);
-};
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
-struct OutputProperties {
-  // Number of properties
-  int properties_number;
+    struct OutputProperties
+    {
+      // Number of properties
+      int properties_number;
 
-  // Output directory
-  std::string output_folder;
+      // Output directory
+      std::string output_folder;
 
-  // General information file (.pvtu) prefix
-  std::string general_file_prefix;
+      // General information file (.pvtu) prefix
+      std::string general_file_prefix;
 
-  // Result (.vtu) name prefix
-  std::string result_prefix;
+      // Result (.vtu) name prefix
+      std::string result_prefix;
 
-  static void declare_parameters(ParameterHandler &prm);
-  void parse_parameters(ParameterHandler &prm);
-};
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
-struct ModelParameters {
-  // Particle-particle broad search frequency
-  int pp_broad_search_frequency;
+    struct ModelParameters
+    {
+      // Particle-particle broad search frequency
+      int pp_broad_search_frequency;
 
-  // Particle-wall broad search frequency
-  int pw_broad_search_frequency;
+      // Particle-wall broad search frequency
+      int pw_broad_search_frequency;
 
-  // Print simulation info frequency
-  int print_info_frequency;
+      // Print simulation info frequency
+      int print_info_frequency;
 
-  // Choosing particle-particle contact force model
-  enum class PPContactForceModel {
-    pp_linear,
-    pp_nonlinear
-  } pp_contact_force_method;
+      // Choosing particle-particle contact force model
+      enum class PPContactForceModel
+      {
+        pp_linear,
+        pp_nonlinear
+      } pp_contact_force_method;
 
-  // Choosing particle-wall contact force model
-  enum class PWContactForceModel {
-    pw_linear,
-    pw_nonlinear
-  } pw_contact_force_method;
+      // Choosing particle-wall contact force model
+      enum class PWContactForceModel
+      {
+        pw_linear,
+        pw_nonlinear
+      } pw_contact_force_method;
 
-  static void declare_parameters(ParameterHandler &prm);
-  void parse_parameters(ParameterHandler &prm);
-};
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
-} // namespace Lagrangian
+  } // namespace Lagrangian
 } // namespace Parameters
 
 #endif /* PARAMETERS_H_ */
