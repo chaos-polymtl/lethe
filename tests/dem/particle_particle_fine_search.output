@@ -2,6 +2,5 @@
 DEAL::The normal overlap of contacting paritlce is: 1.00000e-05
 DEAL::The normal vector of collision is: 1.00000 0.00000 0.00000
 DEAL::Normal relative velocity at contact point is: 0.00000
-DEAL::The tangential overlap of contacting paritlce is: 0.00000
-DEAL::The tangential vector of collision is: 0.00000 0.00000 0.00000
-DEAL::Tangential relative velocity at contact point is: 0.00000
+DEAL::The tangential overlap of contacting paritlce is: 0.00000 0.00000 0.00000
+DEAL::Tangential relative velocity at contact point is: 0.00000 0.00000 0.00000
