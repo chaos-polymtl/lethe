@@ -101,9 +101,9 @@ void NonUniformInsertion<dim>::insert(
                           (k * insertion_information.distance_threshold *
                            physical_properties.diameter);
 
-          // Since the id of each particle should be unique, we need to use
-          // the total number of particles in the system to calculate the
-          // ids of new particles
+          // Since the id of each particle should be unique, we
+          // need to use the total number of particles in the
+          // system to calculate the ids of new particles
           if (dim == 3)
             id = i * ny * nz + j * nz + k +
                  particle_handler.n_global_particles();

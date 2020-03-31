@@ -119,7 +119,8 @@ void PWNonLinearForce<dim>::calculate_pw_contact_force(
 
       // Calculation of total force
       total_force = normal_force + tangential_force;
-
+      std::cout << "here " << normal_force << " " << tangential_force
+                << std::endl;
       // Updating the body force of particles in the particle handler
       for (int d = 0; d < dim; ++d) {
         particle_properties[DEM::PropertiesIndex::force_x + d] =

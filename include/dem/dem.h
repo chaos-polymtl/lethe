@@ -106,8 +106,8 @@ private:
   // PPLinearForce<dim> pp_force_object;
   PWBroadSearch<dim> pw_broad_search_object;
   PWFineSearch<dim> pw_fine_search_object;
-  // PWLinearForce<dim> pw_force_object;
-  PWNonLinearForce<dim> pw_force_object;
+  PWLinearForce<dim> pw_force_object;
+  // PWNonLinearForce<dim> pw_force_object;
 
   /**
    * Defines or reads the mesh based on the information provided by the user.
