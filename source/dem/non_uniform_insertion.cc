@@ -1,4 +1,4 @@
-#include <dem/nonuniform_insertion.h>
+#include <dem/non_uniform_insertion.h>
 
 using namespace DEM;
 
