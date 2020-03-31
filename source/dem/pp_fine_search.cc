@@ -137,22 +137,6 @@ void PPFineSearch<dim>::pp_Fine_Search(
         Tensor<1, dim> tangential_relative_velocity =
             contact_relative_velocity - normal_relative_velocity;
 
-        // Calculation of tangential vector using tangential relative
-        // velocity
-        Tensor<1, dim> tangential_vector;
-        tangential_vector[0] = 0.0;
-        tangential_vector[1] = 0.0;
-        if (dim == 3) {
-          tangential_vector[2] = 0.0;
-        }
-
-        double tangential_relative_velocity_value =
-            tangential_relative_velocity.norm();
-        if (tangential_relative_velocity_value != 0.0) {
-          tangential_vector =
-              tangential_relative_velocity / tangential_relative_velocity_value;
-        }
-
         // Calculation of new tangential_overlap, since this value is
         // history-dependent it needs the value at previous time-step This
         // variable is the main reason that we have iteration over two
@@ -161,8 +145,20 @@ void PPFineSearch<dim>::pp_Fine_Search(
         // which were already in contact (pairs_in_contact) needs to
         // modified using its history, while the tangential_overlaps of
         // new particles are equal to zero
-        double tangential_overlap = contact_information.tangential_overlap +
-                                    (tangential_relative_velocity_value * dt);
+        Tensor<1, dim> tangential_overlap =
+            contact_information.tangential_overlap -
+            (contact_information.tangential_overlap * normal_vector) *
+                normal_vector;
+        Tensor<1, dim> modified_tangential_overlap;
+        if (tangential_overlap.norm() != 0.0) {
+          modified_tangential_overlap =
+              (contact_information.tangential_overlap.norm() /
+               tangential_overlap.norm()) *
+                  tangential_overlap +
+              tangential_relative_velocity * dt;
+        } else {
+          modified_tangential_overlap = tangential_relative_velocity * dt;
+        }
 
         // Creating a sample from the pp_contact_info_struct and adding
         // contact info to the sample
@@ -171,10 +167,9 @@ void PPFineSearch<dim>::pp_Fine_Search(
         contact_info.normal_overlap = distance;
         contact_info.normal_vector = normal_vector;
         contact_info.normal_relative_velocity = normal_relative_velocity_value;
-        contact_info.tangential_vector = tangential_vector;
         contact_info.tangential_relative_velocity =
-            tangential_relative_velocity_value;
-        contact_info.tangential_overlap = tangential_overlap;
+            tangential_relative_velocity;
+        contact_info.tangential_overlap = modified_tangential_overlap;
         contact_info.particle_one = particle_one;
         contact_info.particle_two = particle_two;
 
@@ -319,25 +314,14 @@ void PPFineSearch<dim>::pp_Fine_Search(
         Tensor<1, dim> tangential_relative_velocity =
             contact_relative_velocity - normal_relative_velocity;
 
-        // Calculation of tangential vector using tangential relative
-        // velocity
-        Tensor<1, dim> tangential_vector;
-        tangential_vector[0] = 0.0;
-        tangential_vector[1] = 0.0;
-        if (dim == 3) {
-          tangential_vector[2] = 0.0;
-        }
-
-        double tangential_relative_velocity_value =
-            tangential_relative_velocity.norm();
-        if (tangential_relative_velocity_value != 0.0) {
-          tangential_vector =
-              tangential_relative_velocity / tangential_relative_velocity_value;
-        }
-
         // For new pairs added to pairs_in_contact, the tangential overlap
         // is equal to zero
-        double tangential_overlap = 0.0;
+        Tensor<1, dim> tangential_overlap;
+        tangential_overlap[0] = 0.0;
+        tangential_overlap[1] = 0.0;
+        if (dim == 3) {
+          tangential_overlap[2] = 0.0;
+        }
 
         // Creating a sample from the contact_info_struct and adding
         // contact info to the sample
@@ -346,9 +330,8 @@ void PPFineSearch<dim>::pp_Fine_Search(
         contact_info.normal_overlap = distance;
         contact_info.normal_vector = normal_vector;
         contact_info.normal_relative_velocity = normal_relative_velocity_value;
-        contact_info.tangential_vector = tangential_vector;
         contact_info.tangential_relative_velocity =
-            tangential_relative_velocity_value;
+            tangential_relative_velocity;
         contact_info.tangential_overlap = tangential_overlap;
         contact_info.particle_one = particle_one;
         contact_info.particle_two = particle_two;
