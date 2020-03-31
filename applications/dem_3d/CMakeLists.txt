@@ -26,8 +26,8 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include/
   )
 
-ADD_EXECUTABLE(c_dem_3d dem_3d.cc)
-DEAL_II_SETUP_TARGET(c_dem_3d)
-TARGET_LINK_LIBRARIES(c_dem_3d lethe-core lethe-dem)
+ADD_EXECUTABLE(dem_3d dem_3d.cc)
+DEAL_II_SETUP_TARGET(dem_3d)
+TARGET_LINK_LIBRARIES(dem_3d lethe-core lethe-dem)
 
-install(TARGETS c_dem_3d RUNTIME DESTINATION bin)
+install(TARGETS dem_3d RUNTIME DESTINATION bin)
