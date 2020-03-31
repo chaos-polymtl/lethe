@@ -106,12 +106,15 @@ template <int dim> void test() {
     auto pw_pairs_in_contact_iterator = pwContactInfo.begin();
     auto pw_contact_information_iterator =
         pw_pairs_in_contact_iterator->begin();
-    pw_contact_information_iterator->second.tangential_overlap = 0.0;
-    pw_contact_information_iterator->second.tangential_relative_velocity = 0.0;
+
     pwcf1.calculate_pw_contact_force(&pwContactInfo, dem_parameters);
 
     Integ1.integrate(particle_handler, g, dt);
     if (time > 0.0005 && time < 0.0125) {
+      std::cout << "herrrrrrrrrre "
+                << pw_contact_information_iterator->second.normal_overlap << " "
+                << particle->get_properties()[DEM::PropertiesIndex::force_x]
+                << std::endl;
       deallog << " " << pw_contact_information_iterator->second.normal_overlap
               << " "
               << particle->get_properties()[DEM::PropertiesIndex::force_x]

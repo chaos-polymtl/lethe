@@ -124,6 +124,7 @@ void PWFineSearch<dim>::pw_Fine_Search(
                tangential_overlap.norm()) *
                   tangential_overlap +
               tangential_relative_velocity * dt;
+
         } else {
           modified_tangential_overlap = tangential_relative_velocity * dt;
         }
