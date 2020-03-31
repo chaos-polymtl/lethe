@@ -34,7 +34,7 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/nonuniform_insertion.h>
+#include <dem/non_uniform_insertion.h>
 #include <dem/pp_broad_search.h>
 #include <dem/pp_contact_info_struct.h>
 #include <dem/pp_fine_search.h>
