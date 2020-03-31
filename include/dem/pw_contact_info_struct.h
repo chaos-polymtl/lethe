@@ -22,7 +22,7 @@
 #include <deal.II/particles/particle_iterator.h>
 
 #ifndef PWCONTACTINFOSTRUCT_H_
-#define PWCONTACTINFOSTRUCT_H_
+#  define PWCONTACTINFOSTRUCT_H_
 
 /**
  * This struct handles the information related to the calculation of the
@@ -31,14 +31,16 @@
 
 using namespace dealii;
 
-template <int dim> struct pw_contact_info_struct {
+template <int dim>
+struct pw_contact_info_struct
+{
   Particles::ParticleIterator<dim> particle;
-  Tensor<1, dim> normal_vector;
-  Point<dim> point_on_boundary;
-  double normal_overlap;
-  double normal_relative_velocity;
-  Tensor<1, dim> tangential_overlap;
-  Tensor<1, dim> tangential_relative_velocity;
+  Tensor<1, dim>                   normal_vector;
+  Point<dim>                       point_on_boundary;
+  double                           normal_overlap;
+  double                           normal_relative_velocity;
+  Tensor<1, dim>                   tangential_overlap;
+  Tensor<1, dim>                   tangential_relative_velocity;
 };
 
 #endif /* PWCONTACTINFOSTRUCT_H_ */
