@@ -31,7 +31,7 @@
 using namespace dealii;
 
 #ifndef PWBROADSEARCH_H_
-#define PWBROADSEARCH_H_
+#  define PWBROADSEARCH_H_
 
 /**
  * This class is used for broad particle-wall contact search. Broad search
@@ -42,7 +42,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class PWBroadSearch {
+template <int dim>
+class PWBroadSearch
+{
 public:
   PWBroadSearch<dim>();
 
@@ -64,12 +66,13 @@ public:
    * replications and this is the reason it is defined as a separate pair
    */
 
-  void find_PW_Contact_Pairs(
-      std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
-      Particles::ParticleHandler<dim> &particle_handler,
-      std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                             Tensor<1, dim>, Point<dim>>>
-          &pw_contact_candidates);
+  void
+  find_PW_Contact_Pairs(
+    std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
+    Particles::ParticleHandler<dim> &             particle_handler,
+    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                           Tensor<1, dim>,
+                           Point<dim>>> &         pw_contact_candidates);
 };
 
 #endif /* PWBROADSEARCH_H_ */

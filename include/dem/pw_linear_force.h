@@ -31,7 +31,7 @@
 using namespace dealii;
 
 #ifndef PWLINEARFORCE_H_
-#define PWLINEARFORCE_H_
+#  define PWLINEARFORCE_H_
 
 /**
  * Calculation of the linear particle-wall contact force using the
@@ -43,9 +43,12 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim> class PWLinearForce : public PWContactForce<dim> {
+template <int dim>
+class PWLinearForce : public PWContactForce<dim>
+{
 public:
-  PWLinearForce() {}
+  PWLinearForce()
+  {}
 
   /**
    * Carries out the calculation of the particle-wall contact force using
@@ -56,10 +59,11 @@ public:
    * fine search
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void calculate_pw_contact_force(
-      const std::vector<std::map<int, pw_contact_info_struct<dim>>>
-          *pw_pairs_in_contact,
-      const DEMSolverParameters<dim> &dem_parameters) override;
+  virtual void
+  calculate_pw_contact_force(
+    const std::vector<std::map<int, pw_contact_info_struct<dim>>>
+      *                             pw_pairs_in_contact,
+    const DEMSolverParameters<dim> &dem_parameters) override;
 };
 
 #endif

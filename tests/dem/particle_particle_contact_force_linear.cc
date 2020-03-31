@@ -24,60 +24,64 @@
 
 using namespace dealii;
 
-template <int dim> void test() {
+template <int dim>
+void
+test()
+{
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
   GridGenerator::hyper_cube(triangulation, -1, 1, true);
   int numRef = 2;
   triangulation.refine_global(numRef);
-  MappingQ<dim> mapping(1);
+  MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
   const unsigned int n_properties = 21;
-  Tensor<1, dim> g{{0, 0, -9.81}};
-  double dt = 0.00001;
+  Tensor<1, dim>     g{{0, 0, -9.81}};
+  double             dt = 0.00001;
 
-  double particle_diameter = 0.005;
-  int particle_density = 2500;
-  dem_parameters.physicalProperties.Youngs_modulus_particle = 50000000;
-  dem_parameters.physicalProperties.Poisson_ratio_particle = 0.3;
+  double particle_diameter                                           = 0.005;
+  int    particle_density                                            = 2500;
+  dem_parameters.physicalProperties.Youngs_modulus_particle          = 50000000;
+  dem_parameters.physicalProperties.Poisson_ratio_particle           = 0.3;
   dem_parameters.physicalProperties.restitution_coefficient_particle = 0.5;
-  dem_parameters.physicalProperties.friction_coefficient_particle = 0.5;
-  dem_parameters.physicalProperties.rolling_friction_particle = 0.1;
+  dem_parameters.physicalProperties.friction_coefficient_particle    = 0.5;
+  dem_parameters.physicalProperties.rolling_friction_particle        = 0.1;
 
-  Particles::ParticleHandler<dim> particle_handler(triangulation, mapping,
+  Particles::ParticleHandler<dim> particle_handler(triangulation,
+                                                   mapping,
                                                    n_properties);
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cellNeighbor;
+    cellNeighbor;
 
   FindCellNeighbors<dim> cn1;
   cellNeighbor = cn1.find_cell_neighbors(triangulation);
 
   PPBroadSearch<dim> ppbs;
-  PPFineSearch<dim> ppfs;
+  PPFineSearch<dim>  ppfs;
 
-  Point<3> position1 = {0.4, 0, 0};
-  int id1 = 1;
-  Point<3> position2 = {0.40499, 0, 0};
-  int id2 = 2;
-  int num_Particles = 2;
+  Point<3> position1     = {0.4, 0, 0};
+  int      id1           = 1;
+  Point<3> position2     = {0.40499, 0, 0};
+  int      id2           = 2;
+  int      num_Particles = 2;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim>::active_cell_iterator cell1 =
-      GridTools::find_active_cell_around_point(triangulation,
-                                               particle1.get_location());
+    GridTools::find_active_cell_around_point(triangulation,
+                                             particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
-      particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[0] = id1;
-  pit1->get_properties()[1] = 1;
-  pit1->get_properties()[2] = particle_diameter;
-  pit1->get_properties()[3] = particle_density;
-  pit1->get_properties()[4] = 0.01;
-  pit1->get_properties()[5] = 0;
-  pit1->get_properties()[6] = 0;
-  pit1->get_properties()[7] = 0;
-  pit1->get_properties()[8] = 0;
-  pit1->get_properties()[9] = 0;
+    particle_handler.insert_particle(particle1, cell1);
+  pit1->get_properties()[0]  = id1;
+  pit1->get_properties()[1]  = 1;
+  pit1->get_properties()[2]  = particle_diameter;
+  pit1->get_properties()[3]  = particle_density;
+  pit1->get_properties()[4]  = 0.01;
+  pit1->get_properties()[5]  = 0;
+  pit1->get_properties()[6]  = 0;
+  pit1->get_properties()[7]  = 0;
+  pit1->get_properties()[8]  = 0;
+  pit1->get_properties()[9]  = 0;
   pit1->get_properties()[10] = 0;
   pit1->get_properties()[11] = 0;
   pit1->get_properties()[12] = 0;
@@ -89,20 +93,20 @@ template <int dim> void test() {
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
-      GridTools::find_active_cell_around_point(triangulation,
-                                               particle2.get_location());
+    GridTools::find_active_cell_around_point(triangulation,
+                                             particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
-      particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[0] = id2;
-  pit2->get_properties()[1] = 1;
-  pit2->get_properties()[2] = particle_diameter;
-  pit2->get_properties()[3] = particle_density;
-  pit2->get_properties()[4] = 0;
-  pit2->get_properties()[5] = 0;
-  pit2->get_properties()[6] = 0;
-  pit2->get_properties()[7] = 0;
-  pit2->get_properties()[8] = 0;
-  pit2->get_properties()[9] = 0;
+    particle_handler.insert_particle(particle2, cell2);
+  pit2->get_properties()[0]  = id2;
+  pit2->get_properties()[1]  = 1;
+  pit2->get_properties()[2]  = particle_diameter;
+  pit2->get_properties()[3]  = particle_density;
+  pit2->get_properties()[4]  = 0;
+  pit2->get_properties()[5]  = 0;
+  pit2->get_properties()[6]  = 0;
+  pit2->get_properties()[7]  = 0;
+  pit2->get_properties()[8]  = 0;
+  pit2->get_properties()[9]  = 0;
   pit2->get_properties()[10] = 0;
   pit2->get_properties()[11] = 0;
   pit2->get_properties()[12] = 0;
@@ -114,11 +118,11 @@ template <int dim> void test() {
 
   std::vector<std::pair<Particles::ParticleIterator<dim>,
                         Particles::ParticleIterator<dim>>>
-      pairs;
+    pairs;
   ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor, pairs);
 
   std::vector<std::map<int, pp_contact_info_struct<dim>>> inContactInfo(
-      num_Particles);
+    num_Particles);
 
   ppfs.pp_Fine_Search(pairs, inContactInfo, dt);
 
@@ -134,7 +138,9 @@ template <int dim> void test() {
           << particle->get_properties()[12] << " N " << std::endl;
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
   initlog();
   test<3>();
