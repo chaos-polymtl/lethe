@@ -105,39 +105,33 @@ void PPNonLinearForce<dim>::calculate_pp_contact_force(
       Tensor<1, dim> normal_force;
       normal_force = spring_normal_force + dashpot_normal_force;
 
-      // Calculation of tangential force using spring and dashpot tangential
-      // forces
-      Tensor<1, dim> spring_tantential_force =
-          (tangential_spring_constant *
-           contact_information_iterator_second.tangential_overlap) *
-          contact_information_iterator_second.tangential_vector;
-      Tensor<1, dim> dashpot_tangential_force =
-          (tangential_damping_constant *
-           contact_information_iterator_second.tangential_relative_velocity) *
-          contact_information_iterator_second.tangential_vector;
-      Tensor<1, dim> tangential_force;
-      tangential_force = spring_tantential_force + dashpot_tangential_force;
-
-      double coulumb_force_value =
+      double maximum_tangential_overlap =
           physical_properties.friction_coefficient_particle *
-          normal_force.norm();
+          normal_force.norm() / tangential_spring_constant;
 
       // Check for gross sliding
-      if (tangential_force.norm() <= coulumb_force_value) {
-        // No gross sliding here
-        total_force = normal_force + tangential_force;
-        // Tangential overlap is not changed
-      } else {
+      if (contact_information_iterator_second.tangential_overlap.norm() >
+          maximum_tangential_overlap) {
         // Gross sliding occurs and the tangential overlap and tangnetial
         // force are limited to Coulumb's criterion
         contact_information_iterator_second.tangential_overlap =
-            tangential_force.norm() / tangential_spring_constant;
-
-        Tensor<1, dim> coulumb_tangential_force =
-            coulumb_force_value *
-            contact_information_iterator_second.tangential_vector;
-        total_force = normal_force + coulumb_tangential_force;
+            maximum_tangential_overlap *
+            (contact_information_iterator_second.tangential_overlap /
+             contact_information_iterator_second.tangential_overlap.norm());
       }
+      // Calculation of tangential force using spring and dashpot tangential
+      // forces
+      Tensor<1, dim> spring_tangential_force =
+          tangential_spring_constant *
+          contact_information_iterator_second.tangential_overlap;
+      Tensor<1, dim> dashpot_tangential_force =
+          tangential_damping_constant *
+          contact_information_iterator_second.tangential_relative_velocity;
+      Tensor<1, dim> tangential_force;
+      tangential_force = spring_tangential_force + dashpot_tangential_force;
+
+      // Calculation of total force
+      total_force = normal_force + tangential_force;
 
       // Updating the force of particles in the particle handler
       for (int d = 0; d < dim; ++d) {
@@ -148,54 +142,65 @@ void PPNonLinearForce<dim>::calculate_pp_contact_force(
             particle_two_properties[DEM::PropertiesIndex::force_x + d] +
             total_force[d];
       }
-
-      // Calculation of torque
-      // Torque caused by tangential force (tangential_torque)
-      Tensor<1, dim> tangential_torque_particle_one,
-          tangential_torque_particle_two =
-              (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
-              cross_product_3d(
-                  contact_information_iterator_second.normal_vector,
-                  (-1 * total_force));
-
       /*
-      // Rolling resistance torque
-      // For calculation of rolling resistance torque, we need to obtain
-      // omega_ij using rotational velocities of particles one and two
-      Tensor<1, dim> particle_one_angular_velocity,
-          particle_two_angular_velocity, omega_ij;
-      for (int d = 0; d < dim; ++d) {
-        particle_one_angular_velocity[d] =
-            particle_one_properties[DEM::PropertiesIndex::omega_x + d];
-        particle_two_angular_velocity[d] =
-            particle_two_properties[DEM::PropertiesIndex::omega_x + d];
-        omega_ij[d] = 0.0;
-      }
+            // Calculation of torque
+            // Torque caused by tangential force (tangential_torque)
+            Tensor<1, dim> tangential_torque_particle_one,
+                tangential_torque_particle_two;
 
-      double omega_value =
-          (particle_one_angular_velocity - particle_two_angular_velocity)
-              .norm();
-      if (omega_value != 0) {
-        omega_ij =
-            (particle_one_angular_velocity - particle_two_angular_velocity) /
-            omega_value;
-      }
+            tangential_torque_particle_one =
+                (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
+                cross_product_3d(contact_information_iterator_second.normal_vector,
+                                 (-1.0 * total_force));
+            tangential_torque_particle_two =
+                (particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
+                cross_product_3d(contact_information_iterator_second.normal_vector,
+                                 total_force);
+            tangential_torque_particle_one = -1.0 *
+         tangential_torque_particle_two;
 
-      // Calculation of rolling resistance torque
+            // Rolling resistance torque
+            // For calculation of rolling resistance torque, we need to obtain
+            // omega_ij using rotational velocities of particles one and two
+            Tensor<1, dim> particle_one_angular_velocity,
+                particle_two_angular_velocity, omega_ij;
+            for (int d = 0; d < dim; ++d) {
+              particle_one_angular_velocity[d] =
+                  particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+              particle_two_angular_velocity[d] =
+                  particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+              omega_ij[d] = 0.0;
+            }
 
-      Tensor<1, dim> rolling_resistance_torque =
-          -1.0 * physical_properties.rolling_friction_particle *
-          effective_radius * normal_force.norm() * omega_ij;
+            double omega_value =
+                (particle_one_angular_velocity - particle_two_angular_velocity)
+                    .norm();
+            if (omega_value != 0) {
+              omega_ij =
+                  (particle_one_angular_velocity -
+         particle_two_angular_velocity) / omega_value; omega_ij =
+                  (particle_two_angular_velocity -
+         particle_one_angular_velocity) / omega_value;
+            }
 
-      // Updating the torque acting on particles
-      for (int d = 0; d < dim; ++d) {
-        particle_one_properties[DEM::PropertiesIndex::M_x + d] =
-            particle_one_properties[DEM::PropertiesIndex::M_x + d] +
-            tangential_torque_particle_one[d] + rolling_resistance_torque[d];
-        particle_two_properties[DEM::PropertiesIndex::M_x + d] =
-            particle_two_properties[DEM::PropertiesIndex::M_x + d] +
-            tangential_torque_particle_two[d] + rolling_resistance_torque[d];
-      }
+            // Calculation of rolling resistance torque
+
+            Tensor<1, dim> rolling_resistance_torque =
+                -1.0 * physical_properties.rolling_friction_particle *
+                effective_radius * normal_force.norm() * omega_ij;
+
+            // Updating the torque acting on particles
+            for (int d = 0; d < dim; ++d) {
+              particle_one_properties[DEM::PropertiesIndex::M_x + d] =
+                  particle_one_properties[DEM::PropertiesIndex::M_x + d] +
+                  tangential_torque_particle_one[d] +
+         rolling_resistance_torque[d];
+              particle_two_properties[DEM::PropertiesIndex::M_x + d] =
+                  particle_two_properties[DEM::PropertiesIndex::M_x + d] +
+                  tangential_torque_particle_two[d] +
+         rolling_resistance_torque[d];
+
+    }
       */
     }
   }

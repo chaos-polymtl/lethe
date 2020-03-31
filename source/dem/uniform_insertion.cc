@@ -81,14 +81,15 @@ void UniformInsertion<dim>::insert(
                         (physical_properties.diameter / 2) +
                         (i * insertion_information.distance_threshold *
                          physical_properties.diameter);
-          // Adding a threshold distance to even rows of insertion
-          if (k % 2 == 0) {
-            position[0] = position[0] + (physical_properties.diameter) / 2.0;
-          }
           position[1] = insertion_information.y_min +
                         (physical_properties.diameter / 2) +
                         (j * insertion_information.distance_threshold *
                          physical_properties.diameter);
+          // Adding a threshold distance to even rows of insertion
+          if (k % 2 == 0) {
+            position[0] = position[0] + (physical_properties.diameter) / 2.0;
+            position[1] = position[1] + (physical_properties.diameter) / 2.0;
+          }
           if (dim == 3)
             position[2] = insertion_information.z_min +
                           (physical_properties.diameter / 2) +
