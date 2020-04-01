@@ -61,9 +61,9 @@ test()
   PPFineSearch<dim>  ppfs;
 
   Point<3> position1     = {0.4, 0, 0};
-  int      id1           = 1;
+  int      id1           = 0;
   Point<3> position2     = {0.40499, 0, 0};
-  int      id2           = 2;
+  int      id2           = 1;
   int      num_Particles = 2;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
