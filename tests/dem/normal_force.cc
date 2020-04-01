@@ -31,7 +31,8 @@ void
 test()
 {
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
-  GridGenerator::hyper_cube(tr, -1, 1, true);
+  int                                       length = 1;
+  GridGenerator::hyper_cube(tr, -1 * length, length, true);
   int numRef = 2;
   tr.refine_global(numRef);
   MappingQ<dim>            mapping(1);
@@ -102,24 +103,51 @@ test()
     num_particles);
   PWNonLinearForce<dim>         pwcf1;
   VelocityVerletIntegrator<dim> Integ1;
+  double                        distance;
 
   for (double time = 0; time < 0.00115; time += dt)
     {
       auto particle = particle_handler.begin();
       particle->get_properties()[DEM::PropertiesIndex::force_x] = 0;
       particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
-      particle->get_properties()[DEM::PropertiesIndex::force_z] = 0;
-
-      pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
-      auto pw_pairs_in_contact_iterator = pwContactInfo.begin();
-      auto pw_contact_information_iterator =
-        pw_pairs_in_contact_iterator->begin();
-
-      pwcf1.calculate_pw_contact_force(&pwContactInfo, dem_parameters);
-
-      Integ1.integrate(particle_handler, g, dt);
-      if (pw_contact_information_iterator->second.normal_overlap > 0)
+      if (dim == 3)
         {
+          particle->get_properties()[DEM::PropertiesIndex::force_z] = 0;
+        }
+
+      distance = length + particle->get_location()[0] -
+                 particle->get_properties()[DEM::PropertiesIndex::dp] / 2.0;
+      if (distance > 0.0)
+        {
+          Integ1.integrate(particle_handler, g, dt);
+        }
+      else
+        {
+          pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
+          auto pw_pairs_in_contact_iterator = pwContactInfo.begin();
+          auto pw_contact_information_iterator =
+            pw_pairs_in_contact_iterator->begin();
+
+          pw_contact_information_iterator->second.tangential_overlap[0] = 0.0;
+          pw_contact_information_iterator->second.tangential_overlap[1] = 0.0;
+          if (dim == 3)
+            {
+              pw_contact_information_iterator->second.tangential_overlap[2] =
+                0.0;
+            }
+          pw_contact_information_iterator->second
+            .tangential_relative_velocity[0] = 0.0;
+          pw_contact_information_iterator->second
+            .tangential_relative_velocity[1] = 0.0;
+          if (dim == 3)
+            {
+              pw_contact_information_iterator->second
+                .tangential_relative_velocity[2] = 0.0;
+            }
+
+          pwcf1.calculate_pw_contact_force(&pwContactInfo, dem_parameters);
+          Integ1.integrate(particle_handler, g, dt);
+
           deallog << " "
                   << pw_contact_information_iterator->second.normal_overlap
                   << " "
