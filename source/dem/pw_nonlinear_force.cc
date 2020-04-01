@@ -99,9 +99,17 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
           Tensor<1, dim> normal_force =
             spring_normal_force - dashpot_normal_force;
 
-          double maximum_tangential_overlap =
-            physical_properties.friction_coefficient_wall *
-            normal_force.norm() / tangential_spring_constant;
+          double maximum_tangential_overlap;
+          if (tangential_spring_constant != 0.0)
+            {
+              maximum_tangential_overlap =
+                physical_properties.friction_coefficient_wall *
+                normal_force.norm() / tangential_spring_constant;
+            }
+          else
+            {
+              maximum_tangential_overlap = 0.0;
+            }
 
           // Check for gross sliding
           if (contact_information.tangential_overlap.norm() >
