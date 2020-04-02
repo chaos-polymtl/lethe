@@ -5,7 +5,7 @@ using namespace dealii;
 template <int dim>
 void
 PWLinearForce<dim>::calculate_pw_contact_force(
-  const std::vector<std::map<int, pw_contact_info_struct<dim>>>
+  const std::map<int, std::map<int, pw_contact_info_struct<dim>>>
     *                             pw_pairs_in_contact,
   const DEMSolverParameters<dim> &dem_parameters)
 {
@@ -23,12 +23,10 @@ PWLinearForce<dim>::calculate_pw_contact_force(
       // a map which contains the required information for calculation of the
       // contact force for each particle
 
-      // auto pw_contact_information_iterator =
-      //   pw_pairs_in_contact_iterator->begin();
+      auto pairs_in_contact_content = &pw_pairs_in_contact_iterator->second;
       for (auto pw_contact_information_iterator =
-             pw_pairs_in_contact_iterator->begin();
-           pw_contact_information_iterator !=
-           pw_pairs_in_contact_iterator->end();
+             pairs_in_contact_content->begin();
+           pw_contact_information_iterator != pairs_in_contact_content->end();
            ++pw_contact_information_iterator)
         {
           // Defining the iterator's second value (map value) as a local

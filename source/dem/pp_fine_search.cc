@@ -9,10 +9,11 @@ PPFineSearch<dim>::PPFineSearch()
 template <int dim>
 void
 PPFineSearch<dim>::pp_Fine_Search(
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
+  std::map<int,
+           std::pair<Particles::ParticleIterator<dim>,
+                     Particles::ParticleIterator<dim>>>
     &contact_pair_candidates,
-  std::vector<std::map<int, pp_contact_info_struct<dim>>>
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &    pairs_in_contact_info,
   double dt)
 {
@@ -23,13 +24,13 @@ PPFineSearch<dim>::pp_Fine_Search(
        ++pairs_in_contact_info_iterator)
     {
       // Each element of particle_in_contact_info is a map:
-      auto contact_partners_map = pairs_in_contact_info_iterator;
+      auto contact_partners_map = &pairs_in_contact_info_iterator->second;
 
       // Iterating over each map which contains the contact information
       // including particles I and II
 
-      for (auto map_iterator = pairs_in_contact_info_iterator->begin();
-           map_iterator != pairs_in_contact_info_iterator->end();)
+      for (auto map_iterator = contact_partners_map->begin();
+           map_iterator != contact_partners_map->end();)
         {
           // Getting contact information and particles I and II as local
           // variables
@@ -205,7 +206,7 @@ PPFineSearch<dim>::pp_Fine_Search(
               // If the particles are not in contact anymore (i.e. the contact
               // is finished and distance <= 0), this element should be erased
               // from pairs_in_contact_info:
-              contact_partners_map->erase(map_iterator++); // map_iterator++
+              contact_partners_map->erase(map_iterator++);
             }
         }
     }
@@ -217,10 +218,13 @@ PPFineSearch<dim>::pp_Fine_Search(
        contact_pair_candidates_iterator != contact_pair_candidates.end();
        ++contact_pair_candidates_iterator)
     {
+      // Get the value of the map (particle pair candidate) from the
+      // contact_pair_candidates_iterator
+      auto particle_pair_candidates = &contact_pair_candidates_iterator->second;
       // Get particles one and two from the vector and the total array view to
       // the particle properties once to improve efficiency
-      auto particle_one            = contact_pair_candidates_iterator->first;
-      auto particle_two            = contact_pair_candidates_iterator->second;
+      auto particle_one            = particle_pair_candidates->first;
+      auto particle_two            = particle_pair_candidates->second;
       auto particle_one_properties = particle_one->get_properties();
       auto particle_two_properties = particle_two->get_properties();
 
@@ -371,6 +375,7 @@ PPFineSearch<dim>::pp_Fine_Search(
               contact_info.tangential_overlap = tangential_overlap;
               contact_info.particle_one       = particle_one;
               contact_info.particle_two       = particle_two;
+
               pairs_in_contact_info
                 [particle_one_properties[DEM::PropertiesIndex::id]]
                   .insert({particle_two_properties[DEM::PropertiesIndex::id],

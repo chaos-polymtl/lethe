@@ -12,13 +12,18 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
   Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     &cell_Neighbor_List,
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
+  std::map<int,
+           std::pair<Particles::ParticleIterator<dim>,
+                     Particles::ParticleIterator<dim>>>
     &contact_pair_candidates)
 {
   // Since the contact_pair_candidates (which is the real output of the
   // function) is defined as an input of the function, it should be cleared
   contact_pair_candidates.clear();
+
+  // Defining and reseting a local particle-particle candidate counter. This is
+  // used as a key to the output map
+  int contact_candidate_counter = 0;
 
   // Looping over cell_neighbor_list
   for (auto cell_neighbor_list_iterator = cell_Neighbor_List.begin();
@@ -60,7 +65,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                   auto contact_pair =
                     std::make_pair(particles_in_main_cell_iterator_one,
                                    particles_in_main_cell_iterator_two);
-                  contact_pair_candidates.push_back(contact_pair);
+                  contact_pair_candidates.insert(
+                    {contact_candidate_counter, contact_pair});
+                  ++contact_candidate_counter;
                 }
             }
 
@@ -96,7 +103,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                       auto contact_pair =
                         std::make_pair(particles_in_main_cell_iterator,
                                        particles_in_neighbor_cell_iterator);
-                      contact_pair_candidates.push_back(contact_pair);
+                      contact_pair_candidates.insert(
+                        {contact_candidate_counter, contact_pair});
+                      ++contact_candidate_counter;
                     }
                 }
             }

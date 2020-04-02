@@ -38,8 +38,7 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
-  int                num_particles = 1;
-  const unsigned int n_properties  = 21;
+  const unsigned int n_properties = 21;
 
   Tensor<1, dim> g{{0, 0, 0}};
   double         dt = 0.000001;
@@ -91,19 +90,19 @@ test()
   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
   PWBroadSearch<dim> pw1;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                         Tensor<1, dim>,
-                         Point<dim>>>
-    pwContactList(num_particles);
+  std::map<int,
+           std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                      Tensor<1, dim>,
+                      Point<dim>>>
+    pwContactList;
 
   pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler, pwContactList);
 
-  PWFineSearch<dim>                                       pw2;
-  std::vector<std::map<int, pw_contact_info_struct<dim>>> pwContactInfo(
-    num_particles);
-  PWNonLinearForce<dim>         pwcf1;
-  VelocityVerletIntegrator<dim> Integ1;
-  double                        distance;
+  PWFineSearch<dim>                                         pw2;
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>> pwContactInfo;
+  PWNonLinearForce<dim>                                     pwcf1;
+  VelocityVerletIntegrator<dim>                             Integ1;
+  double                                                    distance;
 
   for (double time = 0; time < 0.00115; time += dt)
     {
@@ -124,7 +123,8 @@ test()
       else
         {
           pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
-          auto pw_pairs_in_contact_iterator = pwContactInfo.begin();
+          auto pw_pairs_in_contact_iterator = &pwContactInfo.begin()->second;
+
           auto pw_contact_information_iterator =
             pw_pairs_in_contact_iterator->begin();
 

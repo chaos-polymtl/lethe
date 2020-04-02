@@ -106,23 +106,25 @@ DEMSolver<dim>::update_particle_container(
 template <int dim>
 void
 DEMSolver<dim>::update_pp_contact_container_iterators(
-  std::vector<std::map<int, pp_contact_info_struct<dim>>>
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &                                                    pairs_in_contact_info,
   const std::map<int, Particles::ParticleIterator<dim>> &particle_container)
 {
-  int pp_pairs_in_contact_counter = 0;
   for (auto pp_pairs_in_contact_iterator = pairs_in_contact_info.begin();
        pp_pairs_in_contact_iterator != pairs_in_contact_info.end();
-       ++pp_pairs_in_contact_iterator, ++pp_pairs_in_contact_counter)
+       ++pp_pairs_in_contact_iterator)
     {
-      for (auto pp_map_iterator = pp_pairs_in_contact_iterator->begin();
-           pp_map_iterator != pp_pairs_in_contact_iterator->end();
+      int  particle_one_id          = pp_pairs_in_contact_iterator->first;
+      auto pairs_in_contant_content = &pp_pairs_in_contact_iterator->second;
+      for (auto pp_map_iterator = pairs_in_contant_content->begin();
+           pp_map_iterator != pairs_in_contant_content->end();
            ++pp_map_iterator)
         {
+          int particle_two_id = pp_map_iterator->first;
           pp_map_iterator->second.particle_one =
-            particle_container.at(pp_pairs_in_contact_counter);
+            particle_container.at(particle_one_id);
           pp_map_iterator->second.particle_two =
-            particle_container.at(pp_map_iterator->first);
+            particle_container.at(particle_two_id);
         }
     }
 }
@@ -130,20 +132,21 @@ DEMSolver<dim>::update_pp_contact_container_iterators(
 template <int dim>
 void
 DEMSolver<dim>::update_pw_contact_container_iterators(
-  std::vector<std::map<int, pw_contact_info_struct<dim>>> &pw_pairs_in_contact,
-  const std::map<int, Particles::ParticleIterator<dim>> &  particle_container)
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+    &                                                    pw_pairs_in_contact,
+  const std::map<int, Particles::ParticleIterator<dim>> &particle_container)
 {
-  int pw_pairs_in_contact_counter = 0;
   for (auto pw_pairs_in_contact_iterator = pw_pairs_in_contact.begin();
        pw_pairs_in_contact_iterator != pw_pairs_in_contact.end();
-       ++pw_pairs_in_contact_iterator, ++pw_pairs_in_contact_counter)
+       ++pw_pairs_in_contact_iterator)
     {
-      for (auto pw_map_iterator = pw_pairs_in_contact_iterator->begin();
-           pw_map_iterator != pw_pairs_in_contact_iterator->end();
+      int  particle_id              = pw_pairs_in_contact_iterator->first;
+      auto pairs_in_contant_content = &pw_pairs_in_contact_iterator->second;
+      for (auto pw_map_iterator = pairs_in_contant_content->begin();
+           pw_map_iterator != pairs_in_contant_content->end();
            ++pw_map_iterator)
         {
-          pw_map_iterator->second.particle =
-            particle_container.at(pw_pairs_in_contact_counter);
+          pw_map_iterator->second.particle = particle_container.at(particle_id);
         }
     }
 }
@@ -156,11 +159,10 @@ DEMSolver<dim>::solve()
   read_mesh();
 
   // Initializing variables
-  std::vector<std::map<int, pp_contact_info_struct<dim>>> pairs_in_contact_info(
-    parameters.simulationControl.total_particle_number);
-  std::vector<std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact(
-    parameters.simulationControl.total_particle_number);
-  Tensor<1, dim> g;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+                                                            pairs_in_contact_info;
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact;
+  Tensor<1, dim>                                            g;
   if (dim == 3)
     {
       g[0] = parameters.physicalProperties.gx;
@@ -227,8 +229,10 @@ DEMSolver<dim>::solve()
           particle_handler.sort_particles_into_subdomains_and_cells();
           particle_container.clear();
           particle_container = update_particle_container(particle_handler);
+
           update_pp_contact_container_iterators(pairs_in_contact_info,
                                                 particle_container);
+
           update_pw_contact_container_iterators(pw_pairs_in_contact,
                                                 particle_container);
         }
