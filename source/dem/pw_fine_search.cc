@@ -9,12 +9,13 @@ PWFineSearch<dim>::PWFineSearch()
 template <int dim>
 void
 PWFineSearch<dim>::pw_Fine_Search(
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-               Tensor<1, dim>,
-               Point<dim>>> &pw_contact_pair_candidates,
-  std::vector<std::map<int, pw_contact_info_struct<dim>>> &pw_pairs_in_contact,
-  double                                                   dt)
+  std::map<int,
+           std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                      Tensor<1, dim>,
+                      Point<dim>>> &pw_contact_pair_candidates,
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+    &    pw_pairs_in_contact,
+  double dt)
 {
   // Iterating over all element of pw_pairs_in_contact vector, i.e. lterating
   // over all the particles. The size of this vector (pw_pairs_in_contact) is
@@ -29,7 +30,7 @@ PWFineSearch<dim>::pw_Fine_Search(
     {
       // Defining element (particle->get_id())th of the pw_pairs_in_contact
       // vector as a local map (pw_contact_map)
-      auto pw_contact_map = pw_pairs_in_contact_iterator;
+      auto pw_contact_map = &pw_pairs_in_contact_iterator->second;
 
       // Iterating (with defining the iterator contact_pairs_iterator) over
       // elemens of pw_pairs_in_contact_iterator which is a pointer to a map
@@ -161,8 +162,7 @@ PWFineSearch<dim>::pw_Fine_Search(
               contact_info.tangential_relative_velocity =
                 tangential_relative_velocity;
 
-              pw_pairs_in_contact_iterator->insert_or_assign(boundary_id,
-                                                             contact_info);
+              pw_contact_map->insert_or_assign(boundary_id, contact_info);
               ++contact_pairs_iterator;
             }
 
@@ -185,19 +185,21 @@ PWFineSearch<dim>::pw_Fine_Search(
        pw_contact_pair_candidates_iterator != pw_contact_pair_candidates.end();
        ++pw_contact_pair_candidates_iterator)
     {
+      // Get the value of the map (particle pair candidate) from the
+      // contact_pair_candidates_iterator
+      auto particle_pair_candidates =
+        &pw_contact_pair_candidates_iterator->second;
+
       // Get the particle and boundary id from the vector and the total array
       // view to the particle properties once to improve efficiency
-      auto particle = std::get<0>(*pw_contact_pair_candidates_iterator).first;
+      auto particle            = std::get<0>(*particle_pair_candidates).first;
       auto particle_properties = particle->get_properties();
-      int  boundary_id =
-        std::get<0>(*pw_contact_pair_candidates_iterator).second;
+      int  boundary_id         = std::get<0>(*particle_pair_candidates).second;
 
       // Normal vector of the boundary and a point on the boudary are defined as
       // local parameters
-      Tensor<1, dim> normal_vector =
-        std::get<1>(*pw_contact_pair_candidates_iterator);
-      Point<dim> point_on_boundary =
-        std::get<2>(*pw_contact_pair_candidates_iterator);
+      Tensor<1, dim> normal_vector     = std::get<1>(*particle_pair_candidates);
+      Point<dim>     point_on_boundary = std::get<2>(*particle_pair_candidates);
 
       // A vector (point_to_particle_vector) is defined which connects the
       // center of particle to the point_on_boundary. This vector will then be

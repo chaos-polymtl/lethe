@@ -49,12 +49,11 @@ test()
   PPBroadSearch<dim> ppbs;
   PPFineSearch<dim>  ppfs;
 
-  int      num_Particles = 2;
-  Point<3> position1     = {0.4, 0, 0};
-  int      id1           = 0;
-  Point<3> position2     = {0.40499, 0, 0};
-  int      id2           = 1;
-  float    dt            = 0.00001;
+  Point<3> position1 = {0.4, 0, 0};
+  int      id1       = 0;
+  Point<3> position2 = {0.40499, 0, 0};
+  int      id2       = 1;
+  float    dt        = 0.00001;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim>::active_cell_iterator cell1 =
@@ -106,23 +105,22 @@ test()
   pit2->get_properties()[16] = 1;
   pit2->get_properties()[17] = 1;
 
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
+  std::map<int,
+           std::pair<Particles::ParticleIterator<dim>,
+                     Particles::ParticleIterator<dim>>>
     pairs;
   ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor, pairs);
 
-  std::vector<std::map<int, Particles::ParticleIterator<dim>>> inContactPairs(
-    num_Particles);
-  std::vector<std::map<int, pp_contact_info_struct<dim>>> inContactInfo(
-    num_Particles);
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>> inContactInfo;
 
   ppfs.pp_Fine_Search(pairs, inContactInfo, dt);
 
-  typename std::map<int, pp_contact_info_struct<dim>>::iterator info_it;
-  for (unsigned int i = 0; i < inContactInfo.size(); i++)
+  for (auto in_contact_info_iterator = inContactInfo.begin();
+       in_contact_info_iterator != inContactInfo.end();
+       ++in_contact_info_iterator)
     {
-      info_it = inContactInfo[i].begin();
-      while (info_it != inContactInfo[i].end())
+      auto info_it = (&in_contact_info_iterator->second)->begin();
+      while (info_it != (&in_contact_info_iterator->second)->end())
         {
           deallog << "The normal overlap of contacting paritlce is: "
                   << info_it->second.normal_overlap << std::endl;
