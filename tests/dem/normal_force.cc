@@ -123,8 +123,9 @@ test()
       else
         {
           pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
-          auto pw_pairs_in_contact_iterator = &pwContactInfo.begin()->second;
 
+          auto pw_pairs_in_contact_iterator = &pwContactInfo.begin()->second;
+        
           auto pw_contact_information_iterator =
             pw_pairs_in_contact_iterator->begin();
 
