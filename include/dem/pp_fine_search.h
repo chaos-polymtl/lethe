@@ -64,16 +64,17 @@ public:
    *
    * @param contact_pair_candidates The output of broad search which shows
    * contact pair candidates
-   * @param pairs_in_contact_info A vector of maps which stores all the required
+   * @param pairs_in_contact_info A map of maps which stores all the required
    * information for calculation of the contact force
    * @param time_step DEM time step
    */
 
   void
-  pp_Fine_Search(std::vector<std::pair<Particles::ParticleIterator<dim>,
-                                       Particles::ParticleIterator<dim>>>
+  pp_Fine_Search(std::map<int,
+                          std::pair<Particles::ParticleIterator<dim>,
+                                    Particles::ParticleIterator<dim>>>
                    &contact_pair_candidates,
-                 std::vector<std::map<int, pp_contact_info_struct<dim>>>
+                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
                    &    pairs_in_contact_info,
                  double time_step);
 };

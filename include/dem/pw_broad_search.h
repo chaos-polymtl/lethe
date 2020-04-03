@@ -59,7 +59,7 @@ public:
    * faces. This is the output of the FindBoundaryCellsInformation class
    * @param particle_handler Particle handler of particles located in boundary
    * cells
-   * @param pw_contact_candidates A vector of tuples. Each element of vector
+   * @param pw_contact_candidates A map of tuples. Each element of vector
    * (tuple) contains a contact pair (particle located near boundaries, boundary
    * id), the normal vector of the corresponding face boundary and a point on
    * the boundary. The contact pair is used in the fine search to look for
@@ -70,9 +70,10 @@ public:
   find_PW_Contact_Pairs(
     std::vector<boundary_cells_info_struct<dim>> &boundary_cells_information,
     Particles::ParticleHandler<dim> &             particle_handler,
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                           Tensor<1, dim>,
-                           Point<dim>>> &         pw_contact_candidates);
+    std::map<int,
+             std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                        Tensor<1, dim>,
+                        Point<dim>>> &            pw_contact_candidates);
 };
 
 #endif /* PWBROADSEARCH_H_ */

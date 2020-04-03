@@ -93,12 +93,14 @@ private:
     cell_neighbor_list;
 
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
+  std::map<int,
+           std::pair<Particles::ParticleIterator<dim>,
+                     Particles::ParticleIterator<dim>>>
     contact_pair_candidates;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                         Tensor<1, dim>,
-                         Point<dim>>>
+  std::map<int,
+           std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                      Tensor<1, dim>,
+                      Point<dim>>>
     pw_contact_candidates;
 
   std::map<int, Particles::ParticleIterator<dim>> particle_container;
@@ -156,7 +158,7 @@ private:
    */
   void
   update_pp_contact_container_iterators(
-    std::vector<std::map<int, pp_contact_info_struct<dim>>>
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
       &pairs_in_contact_info,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
 
@@ -169,7 +171,7 @@ private:
    */
   void
   update_pw_contact_container_iterators(
-    std::vector<std::map<int, pw_contact_info_struct<dim>>>
+    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
       &                                                    pw_pairs_in_contact,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
 };

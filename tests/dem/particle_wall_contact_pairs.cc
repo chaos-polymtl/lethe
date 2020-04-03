@@ -26,7 +26,6 @@ test()
   int numRef = 2;
   tr.refine_global(numRef);
   Particles::ParticleHandler<dim> particle_handler;
-  int                             num_particles = 1;
   std::pair<
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>,
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
@@ -65,18 +64,21 @@ test()
     boundary_cell_object.find_boundary_cells_information(tr);
 
   PWBroadSearch<dim> pw1;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-               Tensor<1, dim>,
-               Point<dim>>>
-    pwContactList(num_particles);
+  std::map<int,
+           std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                      Tensor<1, dim>,
+                      Point<dim>>>
+    pwContactList;
   pw1.find_PW_Contact_Pairs(boundary_cells_information,
                             particle_handler,
                             pwContactList);
 
-  for (unsigned int i = 0; i != pwContactList.size(); i++)
+  for (auto pwContactList_iterator = pwContactList.begin();
+       pwContactList_iterator != pwContactList.end();
+       ++pwContactList_iterator)
     {
-      deallog << "Particle " << std::get<0>(pwContactList[i]).first->get_id()
+      deallog << "Particle "
+              << std::get<0>(pwContactList_iterator->second).first->get_id()
               << " is located in a boundary cell" << std::endl;
     }
 }

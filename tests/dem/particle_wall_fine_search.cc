@@ -40,7 +40,6 @@ test()
   double             dt                = 0.00001;
 
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
-  int                             num_particles = 1;
 
   Point<dim>               position1 = {-0.998, 0, 0};
   int                      id1       = 0;
@@ -73,24 +72,25 @@ test()
   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
   PWBroadSearch<dim> pw1;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-               Tensor<1, dim>,
-               Point<dim>>>
-    pwContactList(num_particles);
+  std::map<int,
+           std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+                      Tensor<1, dim>,
+                      Point<dim>>>
+    pwContactList;
 
   pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler, pwContactList);
 
   PWFineSearch<dim> pw2;
 
-  std::vector<std::map<int, pw_contact_info_struct<dim>>> pwContactInfo(
-    num_particles);
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>> pwContactInfo;
 
   pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
-  for (unsigned int i = 0; i != pwContactInfo.size(); i++)
+  for (auto pwContactInfo_iterator = pwContactInfo.begin();
+       pwContactInfo_iterator != pwContactInfo.end();
+       ++pwContactInfo_iterator)
     {
-      auto info_it = pwContactInfo[i].begin();
-      while (info_it != pwContactInfo[i].end())
+      auto info_it = pwContactInfo_iterator->second.begin();
+      while (info_it != pwContactInfo_iterator->second.end())
         {
           deallog << "The normal overlap of contacting paritlce-wall is: "
                   << info_it->second.normal_overlap << std::endl;

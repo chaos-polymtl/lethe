@@ -36,8 +36,7 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
-  int                num_particles = 1;
-  const unsigned int n_properties  = 21;
+  const unsigned int n_properties = 21;
 
   Tensor<1, dim> g{{0, 0, -9.81}};
   double         dt = 0.00001;
@@ -89,16 +88,16 @@ test()
   boundaryCellInfo = boundary_cells_object.find_boundary_cells_information(tr);
 
   PWBroadSearch<dim> pw1;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                         Tensor<1, dim>,
-                         Point<dim>>>
-    pwContactList(num_particles);
+  std::map<int,
+           std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                      Tensor<1, dim>,
+                      Point<dim>>>
+    pwContactList;
 
   pw1.find_PW_Contact_Pairs(boundaryCellInfo, particle_handler, pwContactList);
 
-  PWFineSearch<dim>                                       pw2;
-  std::vector<std::map<int, pw_contact_info_struct<dim>>> pwContactInfo(
-    num_particles);
+  PWFineSearch<dim>                                         pw2;
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>> pwContactInfo;
   pw2.pw_Fine_Search(pwContactList, pwContactInfo, dt);
 
   PWLinearForce<dim> pwcf1;

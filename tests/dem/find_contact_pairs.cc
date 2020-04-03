@@ -97,15 +97,19 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, pt3_info.first);
 
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
+  std::map<int,
+           std::pair<Particles::ParticleIterator<dim>,
+                     Particles::ParticleIterator<dim>>>
     pairs;
   ppbs.find_PP_Contact_Pairs(particle_handler, cellNeighbor, pairs);
 
-  for (unsigned int i = 0; i != pairs.size(); i++)
+  for (auto pairs_iterator = pairs.begin(); pairs_iterator != pairs.end();
+       ++pairs_iterator)
     {
-      deallog << "A pair is detected: particle " << pairs[i].first->get_id()
-              << " and particle " << pairs[i].second->get_id() << std::endl;
+      auto pairs_content = &pairs_iterator->second;
+      deallog << "A pair is detected: particle "
+              << pairs_content->first->get_id() << " and particle "
+              << pairs_content->second->get_id() << std::endl;
     }
 }
 
