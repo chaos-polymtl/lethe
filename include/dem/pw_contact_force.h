@@ -51,7 +51,7 @@ public:
    */
   virtual void
   calculate_pw_contact_force(
-    const std::vector<std::map<int, pw_contact_info_struct<dim>>>
+    const std::map<int, std::map<int, pw_contact_info_struct<dim>>>
       *                             pw_pairs_in_contact,
     const DEMSolverParameters<dim> &dem_parameters) = 0;
 };

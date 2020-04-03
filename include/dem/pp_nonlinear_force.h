@@ -62,7 +62,7 @@ public:
    */
   virtual void
   calculate_pp_contact_force(
-    const std::vector<std::map<int, pp_contact_info_struct<dim>>>
+    const std::map<int, std::map<int, pp_contact_info_struct<dim>>>
       *                             pairs_in_contact_info,
     const DEMSolverParameters<dim> &dem_parameters) override;
 };

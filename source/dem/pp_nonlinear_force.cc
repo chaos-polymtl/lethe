@@ -5,13 +5,12 @@ using namespace dealii;
 template <int dim>
 void
 PPNonLinearForce<dim>::calculate_pp_contact_force(
-  const std::vector<std::map<int, pp_contact_info_struct<dim>>>
+  const std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     *                             pairs_in_contact_info,
   const DEMSolverParameters<dim> &dem_parameters)
 {
   // Defining physical properties as local variable
   const auto physical_properties = dem_parameters.physicalProperties;
-
   // Looping over pairs_in_contact_info, which means looping over all the active
   // particles with iterator pairs_in_contact_info_iterator
   for (auto pairs_in_contact_info_iterator = pairs_in_contact_info->begin();
@@ -24,12 +23,10 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
       // contact  Pointforce for each particle (i.e. each element of the
       // pairs_in_contact_info vector)
 
-      // auto contact_information_iterator =
-      // pairs_in_contact_info_iterator->begin();
+      auto pairs_in_contact_content = &pairs_in_contact_info_iterator->second;
       for (auto contact_information_iterator =
-             pairs_in_contact_info_iterator->begin();
-           contact_information_iterator !=
-           pairs_in_contact_info_iterator->end();
+             pairs_in_contact_content->begin();
+           contact_information_iterator != pairs_in_contact_content->end();
            ++contact_information_iterator)
         {
           // Defining the iterator's second value (map value) as a local

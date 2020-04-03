@@ -58,7 +58,7 @@ public:
    * search
    * @param cellNeighborList This vector is the output of FindCellNeighbors
    * class and shows the neighbor cells of each cell in the triangulation
-   * @param contact_pair_candidates A vector of pairs which contains all the
+   * @param contact_pair_candidates A map of pairs which contains all the
    * particle pairs in adjacent cells which are collision candidates
    */
 
@@ -67,8 +67,9 @@ public:
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
       &cellNeighborList,
-    std::vector<std::pair<Particles::ParticleIterator<dim>,
-                          Particles::ParticleIterator<dim>>>
+    std::map<int,
+             std::pair<Particles::ParticleIterator<dim>,
+                       Particles::ParticleIterator<dim>>>
       &contact_pair_candidates);
 };
 
