@@ -19,9 +19,12 @@ Main developer :
 Contributors (in alphabetical order):
 - Antoine Avrit
 - Lucka Barbeau
+- Valérie Bibeau
+- Toni El Geitani
 - Simon Gauvin
 - Shahab Golshan
 - Rajeshwari Kamble
+- Ghazaleh Mirakhori
 
 Installation:
 ------------
