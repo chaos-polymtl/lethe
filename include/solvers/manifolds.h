@@ -34,7 +34,7 @@ namespace Parameters
     {
       none,
       spherical,
-      cylindrical
+      cad
     };
 
     // ID of boundary condition
@@ -50,6 +50,9 @@ namespace Parameters
     std::vector<double> arg4;
     std::vector<double> arg5;
     std::vector<double> arg6;
+
+    // File names for cad manifolds
+    std::vector<std::string> cad_files;
 
     // Number of boundary conditions
     unsigned int size;

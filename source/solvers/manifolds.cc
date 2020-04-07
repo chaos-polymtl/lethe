@@ -7,14 +7,19 @@ namespace Parameters
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|spherical|cylindrical"),
+                      Patterns::Selection("none|spherical|cad"),
                       "Type of manifold description"
-                      "Choices are <none|spherical|cylindrical>.");
+                      "Choices are <none|spherical|cad>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.declare_entry("cad file",
+                      "none",
+                      Patterns::FileName(),
+                      "IGES file name");
 
     prm.declare_entry("arg1",
                       "0",
@@ -50,8 +55,8 @@ namespace Parameters
       types[i_bc] = ManifoldType::none;
     else if (op == "spherical")
       types[i_bc] = ManifoldType::spherical;
-    else if (op == "cylindrical")
-      types[i_bc] = ManifoldType::cylindrical;
+    else if (op == "cad")
+      types[i_bc] = ManifoldType::cad;
 
     id[i_bc]   = prm.get_integer("id");
     arg1[i_bc] = prm.get_double("arg1");
@@ -60,6 +65,7 @@ namespace Parameters
     arg4[i_bc] = prm.get_double("arg4");
     arg5[i_bc] = prm.get_double("arg5");
     arg6[i_bc] = prm.get_double("arg6");
+    cad_files[i_bc] = prm.get("cad file");
   }
 
   void
@@ -72,6 +78,8 @@ namespace Parameters
     arg4.resize(max_size);
     arg5.resize(max_size);
     arg6.resize(max_size);
+    cad_files.resize(max_size);
+
 
     prm.enter_subsection("manifolds");
     {

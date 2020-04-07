@@ -446,27 +446,8 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
             manifolds.id[i], manifolds.id[i]);
         }
 
-      else if (manifolds.types[i] ==
-               Parameters::Manifolds::ManifoldType::cylindrical)
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::cad)
         {
-          if (dim != 3)
-            throw(std::runtime_error(
-              "Cylindrical manifold can only be used in a 3D solver"));
-          Tensor<1, dim> direction;
-          Point<dim>     point_on_axis;
-          direction[0] = manifolds.arg1[i];
-          direction[1] = manifolds.arg2[i];
-          direction[2] = manifolds.arg3[i];
-          point_on_axis =
-            Point<dim>(manifolds.arg4[i], manifolds.arg5[i], manifolds.arg6[i]);
-          static const CylindricalManifold<dim> manifold_description(
-            direction, point_on_axis);
-          this->triangulation->set_manifold(manifolds.id[i],
-                                            manifold_description);
-
-          //          this->triangulation.set_all_manifold_ids(manifolds.id[i]);
-          this->triangulation->set_all_manifold_ids_on_boundary(
-            manifolds.id[i], manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {}

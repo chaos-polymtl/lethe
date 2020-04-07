@@ -9,23 +9,6 @@ subsection simulation control
   set output name             = poiseuille3d
 end
 
-# --------------------------------------------------
-# Manifolds
-#---------------------------------------------------
-subsection manifolds
-  set number                  = 1
-    subsection manifold 0
-       set type               = cylindrical
-       set id                 = 0
-       set arg1               = 1
-       set arg2               = 0
-       set arg3               = 0
-       set arg4               = 0
-       set arg5               = 0
-       set arg6               = 0
-    end
-end
-
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
