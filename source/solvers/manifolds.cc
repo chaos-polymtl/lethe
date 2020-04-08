@@ -7,9 +7,9 @@ namespace Parameters
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|spherical|cad"),
+                      Patterns::Selection("none|spherical|iges"),
                       "Type of manifold description"
-                      "Choices are <none|spherical|cad>.");
+                      "Choices are <none|spherical|iges>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -55,8 +55,8 @@ namespace Parameters
       types[i_bc] = ManifoldType::none;
     else if (op == "spherical")
       types[i_bc] = ManifoldType::spherical;
-    else if (op == "cad")
-      types[i_bc] = ManifoldType::cad;
+    else if (op == "iges")
+      types[i_bc] = ManifoldType::iges;
 
     id[i_bc]   = prm.get_integer("id");
     arg1[i_bc] = prm.get_double("arg1");
@@ -71,7 +71,7 @@ namespace Parameters
   void
   Manifolds::declare_parameters(ParameterHandler &prm)
   {
-    max_size = 6;
+    max_size = 7;
     arg1.resize(max_size);
     arg2.resize(max_size);
     arg3.resize(max_size);
@@ -79,7 +79,6 @@ namespace Parameters
     arg5.resize(max_size);
     arg6.resize(max_size);
     cad_files.resize(max_size);
-
 
     prm.enter_subsection("manifolds");
     {
@@ -108,6 +107,14 @@ namespace Parameters
 
       prm.enter_subsection("manifold 4");
       declareDefaultEntry(prm, 4);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 5");
+      declareDefaultEntry(prm, 5);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 6");
+      declareDefaultEntry(prm, 6);
       prm.leave_subsection();
     }
     prm.leave_subsection();
@@ -151,7 +158,52 @@ namespace Parameters
           parse_boundary(prm, 4);
           prm.leave_subsection();
         }
+
+      if (size >= 6)
+        {
+          prm.enter_subsection("manifold 5");
+          parse_boundary(prm, 5);
+          prm.leave_subsection();
+        }
+      if (size >= 7)
+        {
+          prm.enter_subsection("manifold 6");
+          parse_boundary(prm, 6);
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
 } // namespace Parameters
+
+void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,std::string cad_name, int manifold_id)
+{
+  throw std::runtime_error("IGES manifolds are not supported in 2D");
+}
+
+void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation, std::string cad_name, int manifold_id)
+{
+  TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
+
+  // Enforce manifold over boundary ID
+  for (const auto &cell : triangulation->active_cell_iterators())
+    {
+      for (const auto &face : cell->face_iterators())
+        {
+          if (face->boundary_id() == manifold_id)
+            {
+              face->set_all_manifold_ids(manifold_id);
+            }
+        }
+    }
+
+  // Define tolerance for interpretation of CAD file
+  const double tolerance = OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
+
+  OpenCASCADE::NormalProjectionManifold<3,3> normal_projector(
+        cad_surface, tolerance);
+//   OpenCASCADE::NormalToMeshProjectionManifold<3, 3> normal_projector(
+//    cad_surface, tolerance);
+
+  triangulation->set_manifold(manifold_id, normal_projector);
+}

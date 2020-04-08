@@ -64,9 +64,10 @@ calculate_torques(
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
 
-  for (unsigned int boundary_id = 0; boundary_id < boundary_conditions.size;
-       ++boundary_id)
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size;
+       ++i_bc)
     {
+      unsigned int boundary_id=boundary_conditions.id[i_bc];
       torque = 0;
       Point<dim> center_of_rotation =
         boundary_conditions.bcFunctions[boundary_id].cor;
@@ -126,7 +127,7 @@ calculate_torques(
                 }
             }
         }
-      torque_vector[boundary_id] =
+      torque_vector[i_bc] =
         Utilities::MPI::sum(torque, mpi_communicator);
     }
   return torque_vector;

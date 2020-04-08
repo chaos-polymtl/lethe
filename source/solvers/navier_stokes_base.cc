@@ -17,11 +17,16 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
+
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
+
+
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -166,20 +171,20 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       std::cout << std::endl;
       TableHandler table;
 
-      for (unsigned int boundary_id = 0;
-           boundary_id < nsparam.boundaryConditions.size;
-           ++boundary_id)
+      for (unsigned int i_boundary = 0;
+           i_boundary < nsparam.boundaryConditions.size;
+           ++i_boundary)
         {
-          table.add_value("Boundary ID", boundary_id);
-          table.add_value("f_x", this->forces_[boundary_id][0]);
-          table.add_value("f_y", this->forces_[boundary_id][1]);
+          table.add_value("Boundary ID", i_boundary);
+          table.add_value("f_x", this->forces_[i_boundary][0]);
+          table.add_value("f_y", this->forces_[i_boundary][1]);
           table.set_precision("f_x",
                               nsparam.forcesParameters.display_precision);
           table.set_precision("f_y",
                               nsparam.forcesParameters.display_precision);
           if (dim == 3)
             {
-              table.add_value("f_z", this->forces_[boundary_id][2]);
+              table.add_value("f_z", this->forces_[i_boundary][2]);
               table.set_precision("f_z",
                                   nsparam.forcesParameters.display_precision);
             }
@@ -190,30 +195,30 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       table.write_text(std::cout);
     }
 
-  for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundaryConditions.size;
-       ++boundary_id)
+  for (unsigned int i_boundary = 0;
+       i_boundary < nsparam.boundaryConditions.size;
+       ++i_boundary)
     {
-      this->forces_tables[boundary_id].add_value("time",
+      this->forces_tables[i_boundary].add_value("time",
                                                  simulationControl.getTime());
-      this->forces_tables[boundary_id].add_value("f_x",
-                                                 this->forces_[boundary_id][0]);
-      this->forces_tables[boundary_id].add_value("f_y",
-                                                 this->forces_[boundary_id][1]);
+      this->forces_tables[i_boundary].add_value("f_x",
+                                                 this->forces_[i_boundary][0]);
+      this->forces_tables[i_boundary].add_value("f_y",
+                                                 this->forces_[i_boundary][1]);
       if (dim == 3)
-        this->forces_tables[boundary_id].add_value(
-          "f_z", this->forces_[boundary_id][2]);
+        this->forces_tables[i_boundary].add_value(
+          "f_z", this->forces_[i_boundary][2]);
       else
-        this->forces_tables[boundary_id].add_value("f_z", 0.);
+        this->forces_tables[i_boundary].add_value("f_z", 0.);
 
       // Precision
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "f_x", nsparam.forcesParameters.output_precision);
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "f_y", nsparam.forcesParameters.output_precision);
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "f_z", nsparam.forcesParameters.output_precision);
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "time", nsparam.forcesParameters.output_precision);
     }
 }
@@ -445,9 +450,9 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
           this->triangulation->set_all_manifold_ids_on_boundary(
             manifolds.id[i], manifolds.id[i]);
         }
-
-      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::cad)
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges )
         {
+          attach_cad_to_manifold(triangulation,manifolds.cad_files[i],manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {}
@@ -455,6 +460,60 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
         throw std::runtime_error("Unsupported manifolds type");
     }
 }
+
+//template <int dim, typename VectorType, typename DofsType>
+//void
+//NavierStokesBase<dim, VectorType, DofsType>::create_manifolds_3d()
+//{
+//  Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
+
+//  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
+//    {
+//      if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
+//        {
+//          Point<dim> circleCenter;
+//          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
+//          static const SphericalManifold<dim> manifold_description(
+//            circleCenter);
+//          this->triangulation->set_manifold(manifolds.id[i],
+//                                            manifold_description);
+//          this->triangulation->set_all_manifold_ids_on_boundary(
+//            manifolds.id[i], manifolds.id[i]);
+//        }
+
+//      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
+//        {
+//          // Open IGES file
+//          TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(manifolds.cad_files[i], 1e-3);
+
+//          // Enforce manifold over boundary ID
+//          for (const auto &cell : triangulation->active_cell_iterators())
+//            {
+//              for (const auto &face : cell->face_iterators())
+//                {
+//                  if (face->boundary_id() == manifolds.id[i])
+//                    {
+//                      face->set_all_manifold_ids(manifolds.id[i]);
+//                    }
+//                }
+//            }
+
+//          // Define tolerance for interpretation of CAD file
+//          const double tolerance = OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
+
+//          OpenCASCADE::NormalProjectionManifold<dim,dim> normal_projector(
+//            cad_surface, tolerance);
+//         // OpenCASCADE::NormalToMeshProjectionManifold<dim, dim> normal_projector(
+//         //  cad_surface, tolerance);
+
+//          triangulation->set_manifold(manifolds.id[i], normal_projector);
+//        }
+//      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
+//        {}
+//      else
+//        throw std::runtime_error("Unsupported manifolds type");
+//    }
+//}
 
 template <int dim, typename VectorType, typename DofsType>
 void
@@ -1192,6 +1251,17 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                          DataOut<dim>::curved_inner_cells);
 
   const int my_id = Utilities::MPI::this_mpi_process(this->mpi_communicator);
+
+  Triangulation<dim,dim> volume_mesh ;
+  volume_mesh.copy_triangulation(*this->triangulation);
+  Triangulation<dim-1,dim> surface_mesh;
+  auto boundary_extract = GridGenerator::extract_boundary_mesh(volume_mesh,surface_mesh);
+  GridOut grid_out;
+  std::string out_bc_name =std::string("boundaries") + "." +
+      Utilities::int_to_string(iter, 4) + "." + ".vtu";
+  std::ofstream bc_output(out_bc_name.c_str());
+
+  grid_out.write_vtu(surface_mesh,bc_output);
 
   // Write master files (.pvtu,.pvd,.visit) on the master process
   if (my_id == 0)

@@ -22,6 +22,12 @@
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
+#include <deal.II/grid/tria.h>
+#include <deal.II/distributed/tria_base.h>
+
+
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
 
 using namespace dealii;
 
@@ -34,7 +40,7 @@ namespace Parameters
     {
       none,
       spherical,
-      cad
+      iges
     };
 
     // ID of boundary condition
@@ -70,6 +76,10 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 } // namespace Parameters
+
+void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,std::string cad_name, int manifold_id);
+
+void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation, std::string cad_name, int manifold_id);
 
 
 #endif
