@@ -17,6 +17,11 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <deal.II/grid/tria_iterator.h>
+
+
+#include <deal.II/numerics/data_out_faces.h>
+
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
@@ -25,7 +30,6 @@
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
-
 
 
 /*
@@ -1245,23 +1249,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
-  // data_out.add_data_vector (rot_u,"vorticity");
+
   data_out.build_patches(mapping,
                          subdivision,
                          DataOut<dim>::curved_inner_cells);
 
   const int my_id = Utilities::MPI::this_mpi_process(this->mpi_communicator);
-
-  Triangulation<dim,dim> volume_mesh ;
-  volume_mesh.copy_triangulation(*this->triangulation);
-  Triangulation<dim-1,dim> surface_mesh;
-  auto boundary_extract = GridGenerator::extract_boundary_mesh(volume_mesh,surface_mesh);
-  GridOut grid_out;
-  std::string out_bc_name =std::string("boundaries") + "." +
-      Utilities::int_to_string(iter, 4) + "." + ".vtu";
-  std::ofstream bc_output(out_bc_name.c_str());
-
-  grid_out.write_vtu(surface_mesh,bc_output);
 
   // Write master files (.pvtu,.pvd,.visit) on the master process
   if (my_id == 0)
@@ -1296,13 +1289,33 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     (group_files == 0 ? my_id : my_id % group_files);
   int color = my_id % group_files;
 
-  MPI_Comm comm;
-  MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
-  const std::string filename =
-    (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
-     Utilities::int_to_string(my_file_id, 4) + ".vtu");
-  data_out.write_vtu_in_parallel(filename.c_str(), comm);
-  MPI_Comm_free(&comm);
+  {
+    MPI_Comm comm;
+    MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
+    const std::string filename =
+        (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
+         Utilities::int_to_string(my_file_id, 4) + ".vtu");
+    data_out.write_vtu_in_parallel(filename.c_str(), comm);
+
+    MPI_Comm_free(&comm);
+  }
+
+  {
+    DataOutFaces<dim> data_out_faces;
+    data_out_faces.attach_dof_handler(this->dof_handler);
+    data_out_faces.build_patches();
+
+    int color = my_id % 1;
+
+    MPI_Comm comm;
+    MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
+
+    const std::string face_filename =
+        (folder + "boundaries." + Utilities::int_to_string(iter, 4) +".vtu");
+    data_out_faces.write_vtu_in_parallel(face_filename.c_str(), comm);
+
+    MPI_Comm_free(&comm);
+  }
 }
 
 template <int dim, typename VectorType, typename DofsType>

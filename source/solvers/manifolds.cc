@@ -1,3 +1,8 @@
+
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
+
+
 #include "solvers/manifolds.h"
 
 namespace Parameters
@@ -176,13 +181,15 @@ namespace Parameters
   }
 } // namespace Parameters
 
-void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,std::string cad_name, int manifold_id)
+void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<2>> ,std::string , unsigned int )
 {
   throw std::runtime_error("IGES manifolds are not supported in 2D");
 }
 
-void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation, std::string cad_name, int manifold_id)
+void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation, std::string cad_name, unsigned int manifold_id)
 {
+#  ifdef DEAL_II_WITH_OPENCASCADE
+
   TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
 
   // Enforce manifold over boundary ID
@@ -200,10 +207,18 @@ void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBa
   // Define tolerance for interpretation of CAD file
   const double tolerance = OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
 
-  OpenCASCADE::NormalProjectionManifold<3,3> normal_projector(
-        cad_surface, tolerance);
-//   OpenCASCADE::NormalToMeshProjectionManifold<3, 3> normal_projector(
-//    cad_surface, tolerance);
+//  OpenCASCADE::NormalProjectionManifold<3,3> normal_projector(
+//        cad_surface, tolerance);
+   OpenCASCADE::NormalToMeshProjectionManifold<3, 3> normal_projector(
+    cad_surface, tolerance);
 
   triangulation->set_manifold(manifold_id, normal_projector);
+#else
+  throw std::runtime_error("IGES manifolds require DEAL_II to be compiled with OPENCASCADE");
+
+#  endif // DEAL_II_WITH_OPENCASCADE
+
 }
+
+
+
