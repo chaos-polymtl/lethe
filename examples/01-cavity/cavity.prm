@@ -55,6 +55,15 @@ subsection boundary conditions
     end
 end
 
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+end
+
+
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
