@@ -3,7 +3,7 @@
 #include <deal.II/opencascade/utilities.h>
 
 
-#include "solvers/manifolds.h"
+#include "core/manifolds.h"
 
 namespace Parameters
 {

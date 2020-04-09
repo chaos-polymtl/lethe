@@ -22,11 +22,11 @@
 
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+#include <core/manifolds.h>
 
 #include "analytical_solutions.h"
 #include "boundary_conditions.h"
 #include "initial_conditions.h"
-#include "manifolds.h"
 #include "source_terms.h"
 
 template <int dim>

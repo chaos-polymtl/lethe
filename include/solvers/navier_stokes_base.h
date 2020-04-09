@@ -95,9 +95,9 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
+#include <core/manifolds.h>
 
 #include "boundary_conditions.h"
-#include "manifolds.h"
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 
