@@ -90,12 +90,12 @@
 
 // Lethe Includes
 #include <core/bdf.h>
+#include <core/manifolds.h>
 #include <core/newton_non_linear_solver.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
-#include <core/manifolds.h>
 
 #include "boundary_conditions.h"
 #include "navier_stokes_solver_parameters.h"

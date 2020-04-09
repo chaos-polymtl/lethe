@@ -20,9 +20,9 @@
 #ifndef LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
 #define LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
 
+#include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/simulation_control.h>
-#include <core/manifolds.h>
 
 #include "analytical_solutions.h"
 #include "boundary_conditions.h"

@@ -63,11 +63,10 @@ calculate_forces(
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
 
-  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size;
-       ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
-      unsigned int boundary_id= boundary_conditions.id[i_bc];
-      force = 0;
+      unsigned int boundary_id = boundary_conditions.id[i_bc];
+      force                    = 0;
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())

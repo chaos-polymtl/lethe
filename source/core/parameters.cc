@@ -60,6 +60,11 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Maximal number of vtu output files");
+
+      prm.declare_entry("output boundary mesh",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable the output of the boundary mesh");
     }
     prm.leave_subsection();
   }
@@ -97,6 +102,7 @@ namespace Parameters
       outputFrequency          = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
+      output_boundary_mesh     = prm.get_bool("output boundary mesh");
     }
     prm.leave_subsection();
   }

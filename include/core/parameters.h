@@ -94,6 +94,9 @@ namespace Parameters
     // Subdivisions of the results in the output
     unsigned int group_files;
 
+    // Enable output of the boundary mesh
+    bool output_boundary_mesh;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

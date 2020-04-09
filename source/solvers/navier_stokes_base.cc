@@ -19,7 +19,6 @@
 
 #include <deal.II/grid/tria_iterator.h>
 
-
 #include <deal.II/numerics/data_out_faces.h>
 
 #include <deal.II/opencascade/manifold_lib.h>
@@ -204,14 +203,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
        ++i_boundary)
     {
       this->forces_tables[i_boundary].add_value("time",
-                                                 simulationControl.getTime());
+                                                simulationControl.getTime());
       this->forces_tables[i_boundary].add_value("f_x",
-                                                 this->forces_[i_boundary][0]);
+                                                this->forces_[i_boundary][0]);
       this->forces_tables[i_boundary].add_value("f_y",
-                                                 this->forces_[i_boundary][1]);
+                                                this->forces_[i_boundary][1]);
       if (dim == 3)
-        this->forces_tables[i_boundary].add_value(
-          "f_z", this->forces_[i_boundary][2]);
+        this->forces_tables[i_boundary].add_value("f_z",
+                                                  this->forces_[i_boundary][2]);
       else
         this->forces_tables[i_boundary].add_value("f_z", 0.);
 
@@ -454,9 +453,11 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
           this->triangulation->set_all_manifold_ids_on_boundary(
             manifolds.id[i], manifolds.id[i]);
         }
-      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges )
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
         {
-          attach_cad_to_manifold(triangulation,manifolds.cad_files[i],manifolds.id[i]);
+          attach_cad_to_manifold(triangulation,
+                                 manifolds.cad_files[i],
+                                 manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {}
@@ -465,15 +466,16 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
     }
 }
 
-//template <int dim, typename VectorType, typename DofsType>
-//void
-//NavierStokesBase<dim, VectorType, DofsType>::create_manifolds_3d()
+// template <int dim, typename VectorType, typename DofsType>
+// void
+// NavierStokesBase<dim, VectorType, DofsType>::create_manifolds_3d()
 //{
 //  Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
 
 //  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
 //    {
-//      if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
+//      if (manifolds.types[i] ==
+//      Parameters::Manifolds::ManifoldType::spherical)
 //        {
 //          Point<dim> circleCenter;
 //          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
@@ -485,10 +487,12 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
 //            manifolds.id[i], manifolds.id[i]);
 //        }
 
-//      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
+//      else if (manifolds.types[i] ==
+//      Parameters::Manifolds::ManifoldType::iges)
 //        {
 //          // Open IGES file
-//          TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(manifolds.cad_files[i], 1e-3);
+//          TopoDS_Shape cad_surface =
+//          OpenCASCADE::read_IGES(manifolds.cad_files[i], 1e-3);
 
 //          // Enforce manifold over boundary ID
 //          for (const auto &cell : triangulation->active_cell_iterators())
@@ -503,16 +507,19 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
 //            }
 
 //          // Define tolerance for interpretation of CAD file
-//          const double tolerance = OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
+//          const double tolerance =
+//          OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
 
 //          OpenCASCADE::NormalProjectionManifold<dim,dim> normal_projector(
 //            cad_surface, tolerance);
-//         // OpenCASCADE::NormalToMeshProjectionManifold<dim, dim> normal_projector(
+//         // OpenCASCADE::NormalToMeshProjectionManifold<dim, dim>
+//         normal_projector(
 //         //  cad_surface, tolerance);
 
 //          triangulation->set_manifold(manifolds.id[i], normal_projector);
 //        }
-//      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
+//      else if (manifolds.types[i] ==
+//      Parameters::Manifolds::ManifoldType::none)
 //        {}
 //      else
 //        throw std::runtime_error("Unsupported manifolds type");
@@ -1293,8 +1300,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     MPI_Comm comm;
     MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
     const std::string filename =
-        (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
-         Utilities::int_to_string(my_file_id, 4) + ".vtu");
+      (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
+       Utilities::int_to_string(my_file_id, 4) + ".vtu");
     data_out.write_vtu_in_parallel(filename.c_str(), comm);
 
     MPI_Comm_free(&comm);
@@ -1311,7 +1318,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
 
     const std::string face_filename =
-        (folder + "boundaries." + Utilities::int_to_string(iter, 4) +".vtu");
+      (folder + "boundaries." + Utilities::int_to_string(iter, 4) + ".vtu");
     data_out_faces.write_vtu_in_parallel(face_filename.c_str(), comm);
 
     MPI_Comm_free(&comm);

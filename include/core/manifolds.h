@@ -20,16 +20,16 @@
 #ifndef LETHE_MANIFOLDS_H
 #define LETHE_MANIFOLDS_H
 
+#include <deal.II/base/data_out_base.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
-#include <deal.II/base/data_out_base.h>
 
-#include <deal.II/grid/tria.h>
+#include <deal.II/distributed/tria.h>
+#include <deal.II/distributed/tria_base.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
-
-#include <deal.II/distributed/tria_base.h>
-#include <deal.II/distributed/tria.h>
+#include <deal.II/grid/tria.h>
 
 
 
@@ -81,8 +81,14 @@ namespace Parameters
   };
 } // namespace Parameters
 
-void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,std::string cad_name, unsigned int manifold_id);
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
+  std::string                                                cad_name,
+  unsigned int                                               manifold_id);
 
-void attach_cad_to_manifold(std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation, std::string cad_name, unsigned int manifold_id);
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
+  std::string                                                cad_name,
+  unsigned int                                               manifold_id);
 
 #endif
