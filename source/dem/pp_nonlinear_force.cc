@@ -109,7 +109,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
           normal_force = spring_normal_force + dashpot_normal_force;
 
           double maximum_tangential_overlap;
-          if (tangential_spring_constant != 0.0)
+          if (tangential_spring_constant > 0)
             {
               maximum_tangential_overlap =
                 physical_properties.friction_coefficient_particle *
@@ -140,7 +140,8 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
             tangential_damping_constant *
             contact_information_iterator_second.tangential_relative_velocity;
           Tensor<1, dim> tangential_force;
-          tangential_force = spring_tangential_force + dashpot_tangential_force;
+          tangential_force =
+            -1.0 * spring_tangential_force + dashpot_tangential_force;
 
           // Calculation of total force
           total_force = normal_force + tangential_force;

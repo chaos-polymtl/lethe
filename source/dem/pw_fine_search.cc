@@ -141,12 +141,13 @@ PWFineSearch<dim>::pw_Fine_Search(
                     (information_tuple.tangential_overlap.norm() /
                      tangential_overlap.norm()) *
                       tangential_overlap +
-                    tangential_relative_velocity * dt;
+                    information_tuple.tangential_relative_velocity * dt;
                 }
               else
                 {
                   modified_tangential_overlap =
-                    tangential_relative_velocity * dt;
+                    tangential_overlap +
+                    information_tuple.tangential_relative_velocity * dt;
                 }
 
               // Creating a sample from the pw_contact_info_struct and adding
@@ -217,7 +218,7 @@ PWFineSearch<dim>::pw_Fine_Search(
                         (projected_vector.norm());
 
       // Check to see if the particle-wall pair is in contact
-      if (distance > 0.0)
+      if (distance > 0)
         {
           // Check to see if in the (particle->get_id())th element of the
           // pw_pairs_in_contact vector, an element with the same key as the
