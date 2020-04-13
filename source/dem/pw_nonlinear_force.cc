@@ -98,7 +98,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             spring_normal_force - dashpot_normal_force;
 
           double maximum_tangential_overlap;
-          if (tangential_spring_constant != 0.0)
+          if (tangential_spring_constant > 0)
             {
               maximum_tangential_overlap =
                 physical_properties.friction_coefficient_wall *
@@ -128,7 +128,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             tangential_damping_constant *
             contact_information.tangential_relative_velocity;
           Tensor<1, dim> tangential_force =
-            spring_tangential_force - dashpot_tangential_force;
+            -1.0 * spring_tangential_force - dashpot_tangential_force;
 
           // Calculation of total force
           total_force = normal_force + tangential_force;
@@ -140,49 +140,47 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
                 particle_properties[DEM::PropertiesIndex::force_x + d] +
                 total_force[d];
             }
+          /*
+                // Calculation of torque
+                // First calculation of torque due to tangential force acting on
+                // particle
+                Tensor<1, dim> tangential_toruqe =
+                    ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+                    cross_product_3d(contact_information.normal_vector,
+             total_force);
 
-          // Calculation of torque
-          // First calculation of torque due to tangential force acting on
-          // particle
-          Tensor<1, dim> tangential_toruqe =
-            ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
-            cross_product_3d(contact_information.normal_vector, total_force);
+                // Getting the angular velocity of particle in the vector format
+                Tensor<1, dim> angular_velocity;
+                for (int d = 0; d < dim; ++d) {
+                  angular_velocity[d] =
+                      particle_properties[DEM::PropertiesIndex::omega_x + d];
+                }
 
-          // Getting the angular velocity of particle in the vector format
-          Tensor<1, dim> angular_velocity;
-          for (int d = 0; d < dim; ++d)
-            {
-              angular_velocity[d] =
-                particle_properties[DEM::PropertiesIndex::omega_x + d];
-            }
+                // Calculation of particle-wall angular velocity (norm of the
 
-          // Calculation of particle-wall angular velocity (norm of the
+                // particle angular velocity)
+                Tensor<1, dim> pw_angular_velocity;
+                for (int d = 0; d < dim; ++d) {
+                  pw_angular_velocity[d] = 0.0;
+                }
+                double omegaNorm = angular_velocity.norm();
+                if (omegaNorm != 0) {
+                  pw_angular_velocity = angular_velocity / omegaNorm;
+                }
 
-          // particle angular velocity)
-          Tensor<1, dim> pw_angular_velocity;
-          for (int d = 0; d < dim; ++d)
-            {
-              pw_angular_velocity[d] = 0.0;
-            }
-          double omegaNorm = angular_velocity.norm();
-          if (omegaNorm != 0)
-            {
-              pw_angular_velocity = angular_velocity / omegaNorm;
-            }
+                // Calcualation of rolling resistance torque
+                Tensor<1, dim> rolling_resistance_torque =
+                    -1.0 * physical_properties.rolling_friction_wall *
+                    ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+                    normal_force.norm() * pw_angular_velocity;
 
-          // Calcualation of rolling resistance torque
-          Tensor<1, dim> rolling_resistance_torque =
-            -1.0 * physical_properties.rolling_friction_wall *
-            ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
-            normal_force.norm() * pw_angular_velocity;
-
-          // Updating the acting toruqe on the particle
-          for (int d = 0; d < dim; ++d)
-            {
-              particle_properties[DEM::PropertiesIndex::M_x + d] =
-                particle_properties[DEM::PropertiesIndex::M_x + d] +
-                tangential_toruqe[d] + rolling_resistance_torque[d];
-            }
+                // Updating the acting toruqe on the particle
+                for (int d = 0; d < dim; ++d) {
+                  particle_properties[DEM::PropertiesIndex::M_x + d] =
+                      particle_properties[DEM::PropertiesIndex::M_x + d] +
+                      tangential_toruqe[d] + rolling_resistance_torque[d];
+                }
+                */
         }
     }
 }
