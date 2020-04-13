@@ -55,11 +55,11 @@ PPFineSearch<dim>::pp_Fine_Search(
           double distance =
             ((particle_one_properties[DEM::PropertiesIndex::dp] +
               particle_two_properties[DEM::PropertiesIndex::dp]) /
-             2) -
+             2.0) -
             particle_one_location.distance(particle_two_location);
 
           // If the pair is still in contact
-          if (distance > 0.0)
+          if (distance > 0)
             {
               // contact_vector shows a vector from location of particle_one to
               // location of particle_two
@@ -169,18 +169,19 @@ PPFineSearch<dim>::pp_Fine_Search(
                 (contact_information.tangential_overlap * normal_vector) *
                   normal_vector;
               Tensor<1, dim> modified_tangential_overlap;
-              if (tangential_overlap.norm() != 0.0)
+              if (tangential_overlap.norm() != 0)
                 {
                   modified_tangential_overlap =
                     (contact_information.tangential_overlap.norm() /
                      tangential_overlap.norm()) *
                       tangential_overlap +
-                    tangential_relative_velocity * dt;
+                    contact_information.tangential_relative_velocity * dt;
                 }
               else
                 {
                   modified_tangential_overlap =
-                    tangential_relative_velocity * dt;
+                    tangential_overlap +
+                    contact_information.tangential_relative_velocity * dt;
                 }
 
               // Creating a sample from the pp_contact_info_struct and adding
@@ -235,11 +236,11 @@ PPFineSearch<dim>::pp_Fine_Search(
       // Calculation of the distance between particles one and two:
       double distance = ((particle_one_properties[DEM::PropertiesIndex::dp] +
                           particle_two_properties[DEM::PropertiesIndex::dp]) /
-                         2) -
+                         2.0) -
                         particle_one_location.distance(particle_two_location);
 
       // Check to see if particle pair is in contact:
-      if (distance > 0.0)
+      if (distance > 0)
         {
           // Check to see if the pair already exists in pairs_in_contact vector
           // or not. Note that the pair shoule be searched in the
