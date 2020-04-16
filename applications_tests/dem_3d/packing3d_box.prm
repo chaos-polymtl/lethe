@@ -4,9 +4,9 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 			 = 0.00001
-  set step end       					 = 200000
-  set n total              				 = 3000
+  set time step                 			 = 1e-5
+  set step end       					 = 2e5
+  set n total              				 = 1000
   set write frequency            			 = 100
 end
 
@@ -30,15 +30,15 @@ subsection physical properties
     set gy            		 			= 0.0
     set gz            		 			= -9.81
     set diameter            	 			= 0.005
-    set density            	 			= 3000
-    set Youngs_modulus_particle         		= 1000000
-    set Youngs_modulus_wall            			= 1000000
+    set density            	 			= 2000
+    set Youngs_modulus_particle         		= 1e6
+    set Youngs_modulus_wall            			= 1e6
     set Poisson_ratio_particle          		= 0.3
     set Poisson_ratio_wall            			= 0.3
-    set restitution_coefficient_particle		= 0.5
-    set restitution_coefficient_wall           		= 0.5
-    set friction_coefficient_particle         		= 0.3
-    set friction_coefficient_wall         		= 0.3
+    set restitution_coefficient_particle		= 0.95
+    set restitution_coefficient_wall           		= 0.95
+    set friction_coefficient_particle         		= 0.05
+    set friction_coefficient_wall         		= 0.05
     set rolling_friction_particle         		= 0.1
     set rolling_friction_wall         	      	  	= 0.1
 end
@@ -47,15 +47,15 @@ end
 # Insertion Info
 #---------------------------------------------------
 subsection insertion info
-    set Insertion time step           		 	= 50000
+    set Insertion time step           		 	= 5e4
     set Inserted number of particles at each time step  = 1000
-    set Insertion frequency            		 	= 15000
+    set Insertion frequency            		 	= 2000
     set Insertion box minimum x            	 	= -0.05
     set Insertion box minimum y            	        = -0.05
-    set Insertion box minimum z            	        = -0.05
+    set Insertion box minimum z            	        = -0.03
     set Insertion box maximum x            	        = 0.05
     set Insertion box maximum y           	 	= 0.05
-    set Insertion box maximum z            	        = 0.05
+    set Insertion box maximum z            	        = 0.07
     set Insertion distance threshold			= 2
     set Insertion random number range			= 0.75
 end
@@ -77,6 +77,6 @@ end
 subsection mesh
     set type                 = dealii
     set grid type            = hyper_cube
-    set grid arguments       = -0.1 : 0.1 : true
+    set grid arguments       = -0.07 : 0.07 : true
     set initial refinement   = 5
 end
