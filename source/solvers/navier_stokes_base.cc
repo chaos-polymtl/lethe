@@ -1249,6 +1249,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     MPI_Comm_free(&comm);
   }
 
+  if(nsparam.postProcessingParameters.output_boundaries)
   {
     DataOutFaces<dim>           data_out_faces;
     boundary_postprocessor<dim> manifold;

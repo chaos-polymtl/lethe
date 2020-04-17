@@ -172,6 +172,9 @@ namespace Parameters
   {
     Verbosity verbosity;
 
+    // Enable output of the boundaries
+    bool output_boundaries;
+
     // Enable total kinetic energy post-processing
     bool calculate_kinetic_energy;
 

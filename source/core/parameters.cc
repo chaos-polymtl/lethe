@@ -278,6 +278,10 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether from the post-processing values should be printed "
         "Choices are <quiet|verbose>.");
+      prm.declare_entry("output boundaries",
+                        "false",
+                        Patterns::Bool(),
+                        "Output the boundaries of the domain");
       prm.declare_entry("calculate kinetic energy",
                         "false",
                         Patterns::Bool(),
@@ -317,7 +321,7 @@ namespace Parameters
       if (op == "quiet")
         verbosity = Verbosity::quiet;
 
-
+      output_boundaries          = prm.get_bool("output boundaries");
       calculate_kinetic_energy   = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy        = prm.get_bool("calculate enstrophy");
       kinetic_energy_output_name = prm.get("kinetic energy name");
