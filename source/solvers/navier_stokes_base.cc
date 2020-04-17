@@ -466,66 +466,6 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
     }
 }
 
-// template <int dim, typename VectorType, typename DofsType>
-// void
-// NavierStokesBase<dim, VectorType, DofsType>::create_manifolds_3d()
-//{
-//  Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
-
-//  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
-//    {
-//      if (manifolds.types[i] ==
-//      Parameters::Manifolds::ManifoldType::spherical)
-//        {
-//          Point<dim> circleCenter;
-//          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
-//          static const SphericalManifold<dim> manifold_description(
-//            circleCenter);
-//          this->triangulation->set_manifold(manifolds.id[i],
-//                                            manifold_description);
-//          this->triangulation->set_all_manifold_ids_on_boundary(
-//            manifolds.id[i], manifolds.id[i]);
-//        }
-
-//      else if (manifolds.types[i] ==
-//      Parameters::Manifolds::ManifoldType::iges)
-//        {
-//          // Open IGES file
-//          TopoDS_Shape cad_surface =
-//          OpenCASCADE::read_IGES(manifolds.cad_files[i], 1e-3);
-
-//          // Enforce manifold over boundary ID
-//          for (const auto &cell : triangulation->active_cell_iterators())
-//            {
-//              for (const auto &face : cell->face_iterators())
-//                {
-//                  if (face->boundary_id() == manifolds.id[i])
-//                    {
-//                      face->set_all_manifold_ids(manifolds.id[i]);
-//                    }
-//                }
-//            }
-
-//          // Define tolerance for interpretation of CAD file
-//          const double tolerance =
-//          OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
-
-//          OpenCASCADE::NormalProjectionManifold<dim,dim> normal_projector(
-//            cad_surface, tolerance);
-//         // OpenCASCADE::NormalToMeshProjectionManifold<dim, dim>
-//         normal_projector(
-//         //  cad_surface, tolerance);
-
-//          triangulation->set_manifold(manifolds.id[i], normal_projector);
-//        }
-//      else if (manifolds.types[i] ==
-//      Parameters::Manifolds::ManifoldType::none)
-//        {}
-//      else
-//        throw std::runtime_error("Unsupported manifolds type");
-//    }
-//}
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
@@ -1223,10 +1163,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                               nsparam.femParameters.qmapping_all);
   vorticity_postprocessor<dim>  vorticity;
   qcriterion_postprocessor<dim> qcriterion;
-  SRF_postprocessor<dim>        srf(nsparam.velocitySource.omega_x,
+
+
+  SRF_postprocessor<dim>   srf(nsparam.velocitySource.omega_x,
                              nsparam.velocitySource.omega_y,
                              nsparam.velocitySource.omega_z);
-  std::vector<std::string>      solution_names(dim, "velocity");
+  std::vector<std::string> solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
@@ -1308,8 +1250,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   }
 
   {
-    DataOutFaces<dim> data_out_faces;
+    DataOutFaces<dim>           data_out_faces;
+    boundary_postprocessor<dim> manifold;
     data_out_faces.attach_dof_handler(this->dof_handler);
+    data_out_faces.add_data_vector(solution, manifold);
     data_out_faces.build_patches();
 
     int color = my_id % 1;
