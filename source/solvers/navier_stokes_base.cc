@@ -1249,25 +1249,25 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     MPI_Comm_free(&comm);
   }
 
-  if(nsparam.postProcessingParameters.output_boundaries)
-  {
-    DataOutFaces<dim>           data_out_faces;
-    boundary_postprocessor<dim> manifold;
-    data_out_faces.attach_dof_handler(this->dof_handler);
-    data_out_faces.add_data_vector(solution, manifold);
-    data_out_faces.build_patches();
+  if (nsparam.postProcessingParameters.output_boundaries)
+    {
+      DataOutFaces<dim>           data_out_faces;
+      boundary_postprocessor<dim> manifold;
+      data_out_faces.attach_dof_handler(this->dof_handler);
+      data_out_faces.add_data_vector(solution, manifold);
+      data_out_faces.build_patches();
 
-    int color = my_id % 1;
+      int color = my_id % 1;
 
-    MPI_Comm comm;
-    MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
+      MPI_Comm comm;
+      MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
 
-    const std::string face_filename =
-      (folder + "boundaries." + Utilities::int_to_string(iter, 4) + ".vtu");
-    data_out_faces.write_vtu_in_parallel(face_filename.c_str(), comm);
+      const std::string face_filename =
+        (folder + "boundaries." + Utilities::int_to_string(iter, 4) + ".vtu");
+      data_out_faces.write_vtu_in_parallel(face_filename.c_str(), comm);
 
-    MPI_Comm_free(&comm);
-  }
+      MPI_Comm_free(&comm);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
