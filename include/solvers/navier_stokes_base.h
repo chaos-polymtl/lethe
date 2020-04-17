@@ -87,8 +87,10 @@
 #include <deal.II/distributed/grid_refinement.h>
 #include <deal.II/distributed/solution_transfer.h>
 
+
 // Lethe Includes
 #include <core/bdf.h>
+#include <core/manifolds.h>
 #include <core/newton_non_linear_solver.h>
 #include <core/parameters.h>
 #include <core/physics_solver.h>
@@ -96,7 +98,6 @@
 #include <core/simulation_control.h>
 
 #include "boundary_conditions.h"
-#include "manifolds.h"
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 

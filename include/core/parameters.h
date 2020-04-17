@@ -94,6 +94,9 @@ namespace Parameters
     // Subdivisions of the results in the output
     unsigned int group_files;
 
+    // Enable output of the boundary mesh
+    bool output_boundary_mesh;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -168,6 +171,9 @@ namespace Parameters
   struct PostProcessing
   {
     Verbosity verbosity;
+
+    // Enable output of the boundaries
+    bool output_boundaries;
 
     // Enable total kinetic energy post-processing
     bool calculate_kinetic_energy;

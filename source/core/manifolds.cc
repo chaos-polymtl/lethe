@@ -1,4 +1,8 @@
-#include "solvers/manifolds.h"
+
+#include "core/manifolds.h"
+
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
 
 namespace Parameters
 {
@@ -7,14 +11,19 @@ namespace Parameters
   {
     prm.declare_entry("type",
                       "none",
-                      Patterns::Selection("none|spherical|cylindrical"),
+                      Patterns::Selection("none|spherical|iges"),
                       "Type of manifold description"
-                      "Choices are <none|spherical|cylindrical>.");
+                      "Choices are <none|spherical|iges>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.declare_entry("cad file",
+                      "none",
+                      Patterns::FileName(),
+                      "IGES file name");
 
     prm.declare_entry("arg1",
                       "0",
@@ -50,28 +59,30 @@ namespace Parameters
       types[i_bc] = ManifoldType::none;
     else if (op == "spherical")
       types[i_bc] = ManifoldType::spherical;
-    else if (op == "cylindrical")
-      types[i_bc] = ManifoldType::cylindrical;
+    else if (op == "iges")
+      types[i_bc] = ManifoldType::iges;
 
-    id[i_bc]   = prm.get_integer("id");
-    arg1[i_bc] = prm.get_double("arg1");
-    arg2[i_bc] = prm.get_double("arg2");
-    arg3[i_bc] = prm.get_double("arg3");
-    arg4[i_bc] = prm.get_double("arg4");
-    arg5[i_bc] = prm.get_double("arg5");
-    arg6[i_bc] = prm.get_double("arg6");
+    id[i_bc]        = prm.get_integer("id");
+    arg1[i_bc]      = prm.get_double("arg1");
+    arg2[i_bc]      = prm.get_double("arg2");
+    arg3[i_bc]      = prm.get_double("arg3");
+    arg4[i_bc]      = prm.get_double("arg4");
+    arg5[i_bc]      = prm.get_double("arg5");
+    arg6[i_bc]      = prm.get_double("arg6");
+    cad_files[i_bc] = prm.get("cad file");
   }
 
   void
   Manifolds::declare_parameters(ParameterHandler &prm)
   {
-    max_size = 6;
+    max_size = 7;
     arg1.resize(max_size);
     arg2.resize(max_size);
     arg3.resize(max_size);
     arg4.resize(max_size);
     arg5.resize(max_size);
     arg6.resize(max_size);
+    cad_files.resize(max_size);
 
     prm.enter_subsection("manifolds");
     {
@@ -100,6 +111,14 @@ namespace Parameters
 
       prm.enter_subsection("manifold 4");
       declareDefaultEntry(prm, 4);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 5");
+      declareDefaultEntry(prm, 5);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 6");
+      declareDefaultEntry(prm, 6);
       prm.leave_subsection();
     }
     prm.leave_subsection();
@@ -143,7 +162,65 @@ namespace Parameters
           parse_boundary(prm, 4);
           prm.leave_subsection();
         }
+
+      if (size >= 6)
+        {
+          prm.enter_subsection("manifold 5");
+          parse_boundary(prm, 5);
+          prm.leave_subsection();
+        }
+      if (size >= 7)
+        {
+          prm.enter_subsection("manifold 6");
+          parse_boundary(prm, 6);
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
 } // namespace Parameters
+
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2>>,
+  std::string,
+  unsigned int)
+{
+  throw std::runtime_error("IGES manifolds are not supported in 2D");
+}
+
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
+  std::string                                                cad_name,
+  unsigned int                                               manifold_id)
+{
+#ifdef DEAL_II_WITH_OPENCASCADE
+
+  TopoDS_Shape cad_surface = OpenCASCADE::read_IGES(cad_name, 1e-3);
+
+  // Enforce manifold over boundary ID
+  for (const auto &cell : triangulation->active_cell_iterators())
+    {
+      for (const auto &face : cell->face_iterators())
+        {
+          if (face->boundary_id() == manifold_id)
+            {
+              face->set_all_manifold_ids(manifold_id);
+            }
+        }
+    }
+
+  // Define tolerance for interpretation of CAD file
+  const double tolerance = OpenCASCADE::get_shape_tolerance(cad_surface) * 5;
+
+  //  OpenCASCADE::NormalProjectionManifold<3,3> normal_projector(
+  //        cad_surface, tolerance);
+  OpenCASCADE::NormalToMeshProjectionManifold<3, 3> normal_projector(
+    cad_surface, tolerance);
+
+  triangulation->set_manifold(manifold_id, normal_projector);
+#else
+  throw std::runtime_error(
+    "IGES manifolds require DEAL_II to be compiled with OPENCASCADE");
+
+#endif // DEAL_II_WITH_OPENCASCADE
+}

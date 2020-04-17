@@ -1,0 +1,144 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 -  by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+
+ *
+ * Author: Bruno Blais, Polytechnique Montreal, 2019 -
+ */
+
+#ifndef lethe_manifolds_h
+#define lethe_manifolds_h
+
+#include <deal.II/base/data_out_base.h>
+#include <deal.II/base/function.h>
+#include <deal.II/base/parsed_function.h>
+
+#include <deal.II/distributed/tria.h>
+#include <deal.II/distributed/tria_base.h>
+
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/tria.h>
+
+#include <deal.II/numerics/data_postprocessor.h>
+
+
+
+using namespace dealii;
+
+namespace Parameters
+{
+  class Manifolds
+  {
+  public:
+    enum class ManifoldType
+    {
+      none,
+      spherical,
+      iges
+    };
+
+    // ID of boundary condition
+    std::vector<unsigned int> id;
+
+    // List of boundary type for each number
+    std::vector<ManifoldType> types;
+
+    // Arguments of manifold
+    std::vector<double> arg1;
+    std::vector<double> arg2;
+    std::vector<double> arg3;
+    std::vector<double> arg4;
+    std::vector<double> arg5;
+    std::vector<double> arg6;
+
+    // File names for cad manifolds
+    std::vector<std::string> cad_files;
+
+    // Number of boundary conditions
+    unsigned int size;
+    unsigned int max_size;
+
+    void
+    parse_boundary(ParameterHandler &prm, unsigned int i_bc);
+
+    void
+    declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
+    void
+    declare_parameters(ParameterHandler &prm);
+
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+} // namespace Parameters
+
+// Outputs the boundary ID of a face
+template <int dim>
+class boundary_postprocessor : public DataPostprocessorScalar<dim>
+{
+public:
+  boundary_postprocessor()
+    : DataPostprocessorScalar<dim>("boundary_id", update_quadrature_points)
+  {}
+  virtual void
+  evaluate_vector_field(
+    const DataPostprocessorInputs::Vector<dim> &input_data,
+    std::vector<Vector<double>> &computed_quantities) const override
+  {
+    const typename DoFHandler<dim>::cell_iterator current_cell =
+      input_data.template get_cell<DoFHandler<dim>>();
+
+    for (unsigned int p = 0; p < input_data.evaluation_points.size(); ++p)
+      {
+        unsigned int boundary_id  = 0;
+        double       min_distance = DBL_MAX;
+
+        for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+             face++)
+          {
+            if (current_cell->face(face)->at_boundary())
+              {
+                for (unsigned int vertex = 0;
+                     vertex < GeometryInfo<dim>::vertices_per_face;
+                     vertex++)
+                  {
+                    double distance = input_data.evaluation_points[p].distance(
+                      current_cell->face(face)->vertex(vertex));
+                    if (distance < min_distance)
+                      {
+                        min_distance = distance;
+
+                        boundary_id = current_cell->face(face)->boundary_id();
+                      }
+                  }
+              }
+          }
+        computed_quantities[p][0] = boundary_id;
+      }
+  }
+};
+
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
+  std::string                                                cad_name,
+  unsigned int                                               manifold_id);
+
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
+  std::string                                                cad_name,
+  unsigned int                                               manifold_id);
+
+#endif

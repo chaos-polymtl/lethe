@@ -17,11 +17,19 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+#include <deal.II/grid/tria_iterator.h>
+
+#include <deal.II/numerics/data_out_faces.h>
+
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
+
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
+
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -166,20 +174,20 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       std::cout << std::endl;
       TableHandler table;
 
-      for (unsigned int boundary_id = 0;
-           boundary_id < nsparam.boundaryConditions.size;
-           ++boundary_id)
+      for (unsigned int i_boundary = 0;
+           i_boundary < nsparam.boundaryConditions.size;
+           ++i_boundary)
         {
-          table.add_value("Boundary ID", boundary_id);
-          table.add_value("f_x", this->forces_[boundary_id][0]);
-          table.add_value("f_y", this->forces_[boundary_id][1]);
+          table.add_value("Boundary ID", i_boundary);
+          table.add_value("f_x", this->forces_[i_boundary][0]);
+          table.add_value("f_y", this->forces_[i_boundary][1]);
           table.set_precision("f_x",
                               nsparam.forcesParameters.display_precision);
           table.set_precision("f_y",
                               nsparam.forcesParameters.display_precision);
           if (dim == 3)
             {
-              table.add_value("f_z", this->forces_[boundary_id][2]);
+              table.add_value("f_z", this->forces_[i_boundary][2]);
               table.set_precision("f_z",
                                   nsparam.forcesParameters.display_precision);
             }
@@ -190,30 +198,30 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       table.write_text(std::cout);
     }
 
-  for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundaryConditions.size;
-       ++boundary_id)
+  for (unsigned int i_boundary = 0;
+       i_boundary < nsparam.boundaryConditions.size;
+       ++i_boundary)
     {
-      this->forces_tables[boundary_id].add_value("time",
-                                                 simulationControl.getTime());
-      this->forces_tables[boundary_id].add_value("f_x",
-                                                 this->forces_[boundary_id][0]);
-      this->forces_tables[boundary_id].add_value("f_y",
-                                                 this->forces_[boundary_id][1]);
+      this->forces_tables[i_boundary].add_value("time",
+                                                simulationControl.getTime());
+      this->forces_tables[i_boundary].add_value("f_x",
+                                                this->forces_[i_boundary][0]);
+      this->forces_tables[i_boundary].add_value("f_y",
+                                                this->forces_[i_boundary][1]);
       if (dim == 3)
-        this->forces_tables[boundary_id].add_value(
-          "f_z", this->forces_[boundary_id][2]);
+        this->forces_tables[i_boundary].add_value("f_z",
+                                                  this->forces_[i_boundary][2]);
       else
-        this->forces_tables[boundary_id].add_value("f_z", 0.);
+        this->forces_tables[i_boundary].add_value("f_z", 0.);
 
       // Precision
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "f_x", nsparam.forcesParameters.output_precision);
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "f_y", nsparam.forcesParameters.output_precision);
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "f_z", nsparam.forcesParameters.output_precision);
-      this->forces_tables[boundary_id].set_precision(
+      this->forces_tables[i_boundary].set_precision(
         "time", nsparam.forcesParameters.output_precision);
     }
 }
@@ -445,28 +453,11 @@ NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
           this->triangulation->set_all_manifold_ids_on_boundary(
             manifolds.id[i], manifolds.id[i]);
         }
-
-      else if (manifolds.types[i] ==
-               Parameters::Manifolds::ManifoldType::cylindrical)
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
         {
-          if (dim != 3)
-            throw(std::runtime_error(
-              "Cylindrical manifold can only be used in a 3D solver"));
-          Tensor<1, dim> direction;
-          Point<dim>     point_on_axis;
-          direction[0] = manifolds.arg1[i];
-          direction[1] = manifolds.arg2[i];
-          direction[2] = manifolds.arg3[i];
-          point_on_axis =
-            Point<dim>(manifolds.arg4[i], manifolds.arg5[i], manifolds.arg6[i]);
-          static const CylindricalManifold<dim> manifold_description(
-            direction, point_on_axis);
-          this->triangulation->set_manifold(manifolds.id[i],
-                                            manifold_description);
-
-          //          this->triangulation.set_all_manifold_ids(manifolds.id[i]);
-          this->triangulation->set_all_manifold_ids_on_boundary(
-            manifolds.id[i], manifolds.id[i]);
+          attach_cad_to_manifold(triangulation,
+                                 manifolds.cad_files[i],
+                                 manifolds.id[i]);
         }
       else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
         {}
@@ -1172,10 +1163,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                               nsparam.femParameters.qmapping_all);
   vorticity_postprocessor<dim>  vorticity;
   qcriterion_postprocessor<dim> qcriterion;
-  SRF_postprocessor<dim>        srf(nsparam.velocitySource.omega_x,
+
+
+  SRF_postprocessor<dim>   srf(nsparam.velocitySource.omega_x,
                              nsparam.velocitySource.omega_y,
                              nsparam.velocitySource.omega_z);
-  std::vector<std::string>      solution_names(dim, "velocity");
+  std::vector<std::string> solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
@@ -1205,7 +1198,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
-  // data_out.add_data_vector (rot_u,"vorticity");
+
   data_out.build_patches(mapping,
                          subdivision,
                          DataOut<dim>::curved_inner_cells);
@@ -1245,13 +1238,36 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
     (group_files == 0 ? my_id : my_id % group_files);
   int color = my_id % group_files;
 
-  MPI_Comm comm;
-  MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
-  const std::string filename =
-    (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
-     Utilities::int_to_string(my_file_id, 4) + ".vtu");
-  data_out.write_vtu_in_parallel(filename.c_str(), comm);
-  MPI_Comm_free(&comm);
+  {
+    MPI_Comm comm;
+    MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
+    const std::string filename =
+      (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
+       Utilities::int_to_string(my_file_id, 4) + ".vtu");
+    data_out.write_vtu_in_parallel(filename.c_str(), comm);
+
+    MPI_Comm_free(&comm);
+  }
+
+  if (nsparam.postProcessingParameters.output_boundaries)
+    {
+      DataOutFaces<dim>           data_out_faces;
+      boundary_postprocessor<dim> manifold;
+      data_out_faces.attach_dof_handler(this->dof_handler);
+      data_out_faces.add_data_vector(solution, manifold);
+      data_out_faces.build_patches();
+
+      int color = my_id % 1;
+
+      MPI_Comm comm;
+      MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
+
+      const std::string face_filename =
+        (folder + "boundaries." + Utilities::int_to_string(iter, 4) + ".vtu");
+      data_out_faces.write_vtu_in_parallel(face_filename.c_str(), comm);
+
+      MPI_Comm_free(&comm);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>

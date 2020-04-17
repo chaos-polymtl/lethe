@@ -63,10 +63,10 @@ calculate_forces(
                                      update_gradients | update_JxW_values |
                                      update_normal_vectors);
 
-  for (unsigned int boundary_id = 0; boundary_id < boundary_conditions.size;
-       ++boundary_id)
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
-      force = 0;
+      unsigned int boundary_id = boundary_conditions.id[i_bc];
+      force                    = 0;
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
@@ -105,7 +105,7 @@ calculate_forces(
                 }
             }
         }
-      force_vector[boundary_id] = Utilities::MPI::sum(force, mpi_communicator);
+      force_vector[i_bc] = Utilities::MPI::sum(force, mpi_communicator);
     }
   return force_vector;
 }

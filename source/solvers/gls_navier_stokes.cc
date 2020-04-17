@@ -1424,11 +1424,13 @@ GLSNavierStokesSolver<dim>::solve()
   while (this->simulationControl.integrate())
     {
       printTime(this->pcout, this->simulationControl);
+
       if (!this->simulationControl.firstIter())
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
         }
+
       this->iterate(this->simulationControl.firstIter());
       this->postprocess(false);
       this->finish_time_step();
