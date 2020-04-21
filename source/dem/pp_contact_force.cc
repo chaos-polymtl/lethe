@@ -18,3 +18,6 @@
  */
 
 #include <dem/pp_contact_force.h>
+
+template class PPContactForce<2>;
+template class PPContactForce<3>;

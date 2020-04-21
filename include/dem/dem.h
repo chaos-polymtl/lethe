@@ -32,10 +32,13 @@
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
+#include <dem/explicit_euler_integrator.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
+#include <dem/integrator.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/pp_broad_search.h>
+#include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
 #include <dem/pp_fine_search.h>
 #include <dem/pp_linear_force.h>
@@ -107,17 +110,13 @@ private:
   DEM::DEMProperties<dim>                         properties_class;
 
   // Initilization of classes and building objects
-  VelocityVerletIntegrator<dim> integrator_object;
-  // ***** I need to choose the contact model based on input file
-  PPBroadSearch<dim> pp_broad_search_object;
-  PPFineSearch<dim>  pp_fine_search_object;
-  // Default particle-particle contact force model in non-linear
-  PPNonLinearForce<dim> pp_force_object;
-  // PPLinearForce<dim> pp_force_object;
-  PWBroadSearch<dim> pw_broad_search_object;
-  PWFineSearch<dim>  pw_fine_search_object;
-  // PWLinearForce<dim> pw_force_object;
-  PWNonLinearForce<dim> pw_force_object;
+  PPBroadSearch<dim>                   pp_broad_search_object;
+  PPFineSearch<dim>                    pp_fine_search_object;
+  PWBroadSearch<dim>                   pw_broad_search_object;
+  PWFineSearch<dim>                    pw_fine_search_object;
+  std::shared_ptr<Integrator<dim>>     integrator_object;
+  std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
+  std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
 
   /**
    * Defines or reads the mesh based on the information provided by the user.
@@ -174,6 +173,35 @@ private:
     std::map<int, std::map<int, pw_contact_info_struct<dim>>>
       &                                                    pw_pairs_in_contact,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
+
+  /**
+   * Sets the chosen integration method in the parameter handler file
+   *
+   * @param dem_parameters DEM parameters
+   * @return A pointer to the integration object
+   */
+  std::shared_ptr<Integrator<dim>>
+  set_integrator_type(const DEMSolverParameters<dim> &dem_parameters);
+
+  /**
+   * Sets the chosen particle-particle contact force model in the parameter
+   * handler file
+   *
+   * @param dem_parameters DEM parameters
+   * @return A pointer to the particle-particle contact force object
+   */
+  std::shared_ptr<PPContactForce<dim>>
+  set_pp_contact_force(const DEMSolverParameters<dim> &dem_parameters);
+
+  /**
+   * Sets the chosen particle-wall contact force model in the parameter handler
+   * file
+   *
+   * @param dem_parameters DEM parameters
+   * @return A pointer to the particle-wall contact force object
+   */
+  std::shared_ptr<PWContactForce<dim>>
+  set_pw_contact_force(const DEMSolverParameters<dim> &dem_parameters);
 };
 
 #endif

@@ -61,8 +61,8 @@ DEMSolver<dim>::read_mesh()
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
-  const int initialSize = parameters.mesh.initialRefinement;
-  triangulation.refine_global(initialSize);
+  const int initial_size = parameters.mesh.initialRefinement;
+  triangulation.refine_global(initial_size);
 }
 
 template <int dim>
@@ -80,12 +80,83 @@ DEMSolver<dim>::reinitialize_force(
       // Reinitializing forces and momentums of particles in the system
       particle_properties[DEM::PropertiesIndex::force_x] = 0;
       particle_properties[DEM::PropertiesIndex::force_y] = 0;
-      particle_properties[DEM::PropertiesIndex::force_z] = 0;
 
       particle_properties[DEM::PropertiesIndex::M_x] = 0;
       particle_properties[DEM::PropertiesIndex::M_y] = 0;
-      particle_properties[DEM::PropertiesIndex::M_z] = 0;
+
+      if (dim == 3)
+        {
+          particle_properties[DEM::PropertiesIndex::force_z] = 0;
+          particle_properties[DEM::PropertiesIndex::M_z]     = 0;
+        }
     }
+}
+
+template <int dim>
+std::shared_ptr<Integrator<dim>>
+DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
+{
+  if (parameters.model_parmeters.integration_method ==
+      Parameters::Lagrangian::ModelParameters::IntegrationMethod::
+        velocity_verlet)
+    {
+      integrator_object = std::make_shared<VelocityVerletIntegrator<dim>>();
+    }
+  else if (parameters.model_parmeters.integration_method ==
+           Parameters::Lagrangian::ModelParameters::IntegrationMethod::
+             explicit_euler)
+    {
+      integrator_object = std::make_shared<ExplicitEulerIntegrator<dim>>();
+    }
+  else
+    {
+      throw "The chosen integration method is invalid";
+    }
+  return integrator_object;
+}
+
+template <int dim>
+std::shared_ptr<PPContactForce<dim>>
+DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
+{
+  if (parameters.model_parmeters.pp_contact_force_method ==
+      Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
+    {
+      pp_contact_force_object = std::make_shared<PPLinearForce<dim>>();
+    }
+  else if (parameters.model_parmeters.pp_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::PPContactForceModel::
+             pp_nonlinear)
+    {
+      pp_contact_force_object = std::make_shared<PPNonLinearForce<dim>>();
+    }
+  else
+    {
+      throw "The chosen particle-particle contact force model is invalid";
+    }
+  return pp_contact_force_object;
+}
+
+template <int dim>
+std::shared_ptr<PWContactForce<dim>>
+DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
+{
+  if (parameters.model_parmeters.pw_contact_force_method ==
+      Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
+    {
+      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>();
+    }
+  else if (parameters.model_parmeters.pw_contact_force_method ==
+           Parameters::Lagrangian::ModelParameters::PWContactForceModel::
+             pw_nonlinear)
+    {
+      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>();
+    }
+  else
+    {
+      throw "The chosen particle-wall contact force model is invalid";
+    }
+  return pw_contact_force_object;
 }
 
 template <int dim>
@@ -187,6 +258,11 @@ DEMSolver<dim>::solve()
   boundary_cells_information =
     boundary_cell_object.find_boundary_cells_information(triangulation);
 
+  // Setting chosen contact force and integration methods
+  integrator_object       = set_integrator_type(parameters);
+  pp_contact_force_object = set_pp_contact_force(parameters);
+  pw_contact_force_object = set_pw_contact_force(parameters);
+
   // DEM engine iterator:
   while (DEM_step < number_of_steps)
     {
@@ -200,7 +276,7 @@ DEMSolver<dim>::solve()
         {
           if (DEM_step < parameters.insertionInfo.insertion_steps_number)
             {
-              // put this if inside the insertion class or use a local variable
+              // put this if inside the insertion class or use a local  variable
               // instead of n_global_particles
               if (particle_handler.n_global_particles() <
                   parameters.simulationControl
@@ -265,8 +341,8 @@ DEMSolver<dim>::solve()
 
       // PP contact force
       computing_timer.enter_subsection("pp_contact_force");
-      pp_force_object.calculate_pp_contact_force(&pairs_in_contact_info,
-                                                 parameters);
+      pp_contact_force_object->calculate_pp_contact_force(
+        &pairs_in_contact_info, parameters);
       computing_timer.leave_subsection();
 
       // PW contact search
@@ -293,15 +369,15 @@ DEMSolver<dim>::solve()
 
       // PW contact force:
       computing_timer.enter_subsection("pw_contact_force");
-      pw_force_object.calculate_pw_contact_force(&pw_pairs_in_contact,
-                                                 parameters);
+      pw_contact_force_object->calculate_pw_contact_force(&pw_pairs_in_contact,
+                                                          parameters);
       computing_timer.leave_subsection();
 
       // Integration
       computing_timer.enter_subsection("integration");
-      integrator_object.integrate(particle_handler,
-                                  g,
-                                  parameters.simulationControl.dt);
+      integrator_object->integrate(particle_handler,
+                                   g,
+                                   parameters.simulationControl.dt);
       computing_timer.leave_subsection();
 
       // Visualization
@@ -327,9 +403,6 @@ DEMSolver<dim>::solve()
                "----------"
             << std::endl;
         }
-
-      // std::cout << "number" << particle_handler.n_global_particles() <<
-      // std::endl;
 
       // Update:
       DEM_step = DEM_step + 1;

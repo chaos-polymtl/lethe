@@ -44,14 +44,13 @@ namespace DEM
     properties[PropertiesIndex::M_x]         = std::make_pair("M", dim);
     properties[PropertiesIndex::M_y]         = std::make_pair("M", 1);
 
-    if (dim == 3)
-      {
-        properties[PropertiesIndex::v_z]   = std::make_pair("Velocity", 1);
-        properties[PropertiesIndex::acc_z] = std::make_pair("Acceleration", 1);
-        properties[PropertiesIndex::force_z] = std::make_pair("Force", 1);
-        properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
-        properties[PropertiesIndex::M_z]     = std::make_pair("M", 1);
-      }
+    // if (dim == 3) {
+    properties[PropertiesIndex::v_z]     = std::make_pair("Velocity", 1);
+    properties[PropertiesIndex::acc_z]   = std::make_pair("Acceleration", 1);
+    properties[PropertiesIndex::force_z] = std::make_pair("Force", 1);
+    properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
+    properties[PropertiesIndex::M_z]     = std::make_pair("M", 1);
+    //}
 
     return properties;
   }
