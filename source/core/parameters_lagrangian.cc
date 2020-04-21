@@ -282,6 +282,12 @@ namespace Parameters
                           Patterns::Selection("pw_linear|pw_nonlinear"),
                           "Choosing particle-wall contact force model. "
                           "Choices are <pw_linear|pw_nonlinear>.");
+
+        prm.declare_entry("integration_method",
+                          "velocity_verlet",
+                          Patterns::Selection("velocity_verlet|explicit_euler"),
+                          "Choosing integration method. "
+                          "Choices are <velocity_verlet|explicit_euler>.");
       }
       prm.leave_subsection();
     }
@@ -317,6 +323,16 @@ namespace Parameters
         else
           {
             std::runtime_error("Invalid particle-wall contact force model");
+          }
+
+        const std::string integration = prm.get("integration_method");
+        if (integration == "velocity_verlet")
+          integration_method = IntegrationMethod::velocity_verlet;
+        else if (integration == "explicit_euler")
+          integration_method = IntegrationMethod::explicit_euler;
+        else
+          {
+            std::runtime_error("Invalid integration method");
           }
       }
       prm.leave_subsection();

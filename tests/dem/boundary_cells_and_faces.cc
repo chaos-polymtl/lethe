@@ -22,48 +22,59 @@
 
 #include <deal.II/base/mpi.h>
 #include <deal.II/base/point.h>
+
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
-#include "../tests.h"
 #include <dem/find_boundary_cells_information.h>
 
 #include <iostream>
 #include <vector>
 
+#include "../tests.h"
+
 using namespace dealii;
 
-template <int dim> void test() {
+template <int dim>
+void
+test()
+{
   // Creating the triangulation and refinement
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  int hyper_cube_length = 1;
-  GridGenerator::hyper_cube(triangulation, -1 * hyper_cube_length,
-                            hyper_cube_length, true);
+  int                                       hyper_cube_length = 1;
+  GridGenerator::hyper_cube(triangulation,
+                            -1 * hyper_cube_length,
+                            hyper_cube_length,
+                            true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
 
   // Fining boundary cellds information
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  FindBoundaryCellsInformation<dim> boundary_cell_object;
+  FindBoundaryCellsInformation<dim>            boundary_cell_object;
   boundary_cells_information =
-      boundary_cell_object.find_boundary_cells_information(triangulation);
+    boundary_cell_object.find_boundary_cells_information(triangulation);
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =
-           boundary_cells_information.begin();
+         boundary_cells_information.begin();
        boundary_cells_information_iterator != boundary_cells_information.end();
-       ++boundary_cells_information_iterator) {
-    deallog << "Cell " << boundary_cells_information_iterator->cell
-            << " is on system boundaries (boundary"
-            << boundary_cells_information_iterator->boundary_id << ")"
-            << std::endl;
-  }
+       ++boundary_cells_information_iterator)
+    {
+      deallog << "Cell " << boundary_cells_information_iterator->cell
+              << " is on system boundaries (boundary"
+              << boundary_cells_information_iterator->boundary_id << ")"
+              << std::endl;
+    }
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
   initlog();
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
-      argc, argv, numbers::invalid_unsigned_int);
+    argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }
