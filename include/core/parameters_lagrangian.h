@@ -147,6 +147,13 @@ namespace Parameters
         pw_nonlinear
       } pw_contact_force_method;
 
+      // Choosing integration method
+      enum class IntegrationMethod
+      {
+        velocity_verlet,
+        explicit_euler
+      } integration_method;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void

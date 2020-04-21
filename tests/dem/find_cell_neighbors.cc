@@ -24,47 +24,58 @@
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
-#include "../tests.h"
 #include <dem/find_cell_neighbors.h>
 
 #include <iostream>
 #include <vector>
 
+#include "../tests.h"
+
 using namespace dealii;
 
-template <int dim> void test() {
+template <int dim>
+void
+test()
+{
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  int hyper_cube_length = 1;
-  GridGenerator::hyper_cube(triangulation, -1 * hyper_cube_length,
-                            hyper_cube_length, true);
+  int                                       hyper_cube_length = 1;
+  GridGenerator::hyper_cube(triangulation,
+                            -1 * hyper_cube_length,
+                            hyper_cube_length,
+                            true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
 
   // Finding the cell neighbors
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cell_neighbors;
+                         cell_neighbors;
   FindCellNeighbors<dim> cell_neighbor_object;
   cell_neighbors = cell_neighbor_object.find_cell_neighbors(triangulation);
 
   // Output
   int i = 0;
   for (auto cell = triangulation.begin_active(); cell != triangulation.end();
-       ++cell) {
-    deallog << "neighbors of cell " << cell << " are: ";
-    for (auto iterator = cell_neighbors[i].begin();
-         iterator != cell_neighbors[i].end(); ++iterator) {
-      deallog << " " << *iterator;
-    }
-    deallog << std::endl;
+       ++cell)
+    {
+      deallog << "neighbors of cell " << cell << " are: ";
+      for (auto iterator = cell_neighbors[i].begin();
+           iterator != cell_neighbors[i].end();
+           ++iterator)
+        {
+          deallog << " " << *iterator;
+        }
+      deallog << std::endl;
 
-    ++i;
-  }
+      ++i;
+    }
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
   initlog();
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
-      argc, argv, numbers::invalid_unsigned_int);
+    argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }
