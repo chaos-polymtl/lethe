@@ -22,16 +22,18 @@
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
+
 #include <deal.II/fe/mapping_q.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
+
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-#include <dem/dem_solver_parameters.h>
 
-#include "../tests.h"
+#include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/pp_broad_search.h>
 #include <dem/pp_fine_search.h>
@@ -40,66 +42,74 @@
 #include <iostream>
 #include <vector>
 
+#include "../tests.h"
+
 using namespace dealii;
 
-template <int dim> void test() {
+template <int dim>
+void
+test()
+{
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  int hyper_cube_length = 1;
-  GridGenerator::hyper_cube(triangulation, -1 * hyper_cube_length,
-                            hyper_cube_length, true);
+  int                                       hyper_cube_length = 1;
+  GridGenerator::hyper_cube(triangulation,
+                            -1 * hyper_cube_length,
+                            hyper_cube_length,
+                            true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
-  MappingQ<dim> mapping(1);
+  MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
   const unsigned int n_properties = 21;
-  Tensor<1, dim> g{{0, 0, -9.81}};
-  double dt = 0.00001;
-  double particle_diameter = 0.005;
-  int particle_density = 2500;
-  dem_parameters.physicalProperties.Youngs_modulus_particle = 50000000;
-  dem_parameters.physicalProperties.Poisson_ratio_particle = 0.3;
+  Tensor<1, dim>     g{{0, 0, -9.81}};
+  double             dt                                              = 0.00001;
+  double             particle_diameter                               = 0.005;
+  int                particle_density                                = 2500;
+  dem_parameters.physicalProperties.Youngs_modulus_particle          = 50000000;
+  dem_parameters.physicalProperties.Poisson_ratio_particle           = 0.3;
   dem_parameters.physicalProperties.restitution_coefficient_particle = 0.5;
-  dem_parameters.physicalProperties.friction_coefficient_particle = 0.5;
-  dem_parameters.physicalProperties.rolling_friction_particle = 0.1;
+  dem_parameters.physicalProperties.friction_coefficient_particle    = 0.5;
+  dem_parameters.physicalProperties.rolling_friction_particle        = 0.1;
 
-  Particles::ParticleHandler<dim> particle_handler(triangulation, mapping,
+  Particles::ParticleHandler<dim> particle_handler(triangulation,
+                                                   mapping,
                                                    n_properties);
 
   // Finding cell neighbors
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      cell_neighbors_list;
+                         cell_neighbors_list;
   FindCellNeighbors<dim> cell_neighbor_object;
   cell_neighbors_list = cell_neighbor_object.find_cell_neighbors(triangulation);
 
   // Creating broad and fine particle-particle search objects
   PPBroadSearch<dim> broad_search_object;
-  PPFineSearch<dim> fine_search_objecct;
+  PPFineSearch<dim>  fine_search_objecct;
 
   // Inserting two particles in contact
   Point<3> position1 = {0.4, 0, 0};
-  int id1 = 0;
+  int      id1       = 0;
   Point<3> position2 = {0.40499, 0, 0};
-  int id2 = 1;
+  int      id2       = 1;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim>::active_cell_iterator cell1 =
-      GridTools::find_active_cell_around_point(triangulation,
-                                               particle1.get_location());
+    GridTools::find_active_cell_around_point(triangulation,
+                                             particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
-      particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[0] = id1;
-  pit1->get_properties()[1] = 1;
-  pit1->get_properties()[2] = particle_diameter;
-  pit1->get_properties()[3] = particle_density;
-  pit1->get_properties()[4] = 0.01;
-  pit1->get_properties()[5] = 0;
-  pit1->get_properties()[6] = 0;
-  pit1->get_properties()[7] = 0;
-  pit1->get_properties()[8] = 0;
-  pit1->get_properties()[9] = 0;
+    particle_handler.insert_particle(particle1, cell1);
+  pit1->get_properties()[0]  = id1;
+  pit1->get_properties()[1]  = 1;
+  pit1->get_properties()[2]  = particle_diameter;
+  pit1->get_properties()[3]  = particle_density;
+  pit1->get_properties()[4]  = 0.01;
+  pit1->get_properties()[5]  = 0;
+  pit1->get_properties()[6]  = 0;
+  pit1->get_properties()[7]  = 0;
+  pit1->get_properties()[8]  = 0;
+  pit1->get_properties()[9]  = 0;
   pit1->get_properties()[10] = 0;
   pit1->get_properties()[11] = 0;
   pit1->get_properties()[12] = 0;
@@ -111,20 +121,20 @@ template <int dim> void test() {
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
-      GridTools::find_active_cell_around_point(triangulation,
-                                               particle2.get_location());
+    GridTools::find_active_cell_around_point(triangulation,
+                                             particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
-      particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[0] = id2;
-  pit2->get_properties()[1] = 1;
-  pit2->get_properties()[2] = particle_diameter;
-  pit2->get_properties()[3] = particle_density;
-  pit2->get_properties()[4] = 0;
-  pit2->get_properties()[5] = 0;
-  pit2->get_properties()[6] = 0;
-  pit2->get_properties()[7] = 0;
-  pit2->get_properties()[8] = 0;
-  pit2->get_properties()[9] = 0;
+    particle_handler.insert_particle(particle2, cell2);
+  pit2->get_properties()[0]  = id2;
+  pit2->get_properties()[1]  = 1;
+  pit2->get_properties()[2]  = particle_diameter;
+  pit2->get_properties()[3]  = particle_density;
+  pit2->get_properties()[4]  = 0;
+  pit2->get_properties()[5]  = 0;
+  pit2->get_properties()[6]  = 0;
+  pit2->get_properties()[7]  = 0;
+  pit2->get_properties()[8]  = 0;
+  pit2->get_properties()[9]  = 0;
   pit2->get_properties()[10] = 0;
   pit2->get_properties()[11] = 0;
   pit2->get_properties()[12] = 0;
@@ -135,15 +145,17 @@ template <int dim> void test() {
   pit2->get_properties()[17] = 1;
 
   // Calling broad search
-  std::map<int, std::pair<Particles::ParticleIterator<dim>,
-                          Particles::ParticleIterator<dim>>>
-      pairs;
+  std::map<int,
+           std::pair<Particles::ParticleIterator<dim>,
+                     Particles::ParticleIterator<dim>>>
+    pairs;
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
-                                            cell_neighbors_list, pairs);
+                                            cell_neighbors_list,
+                                            pairs);
 
   // Calling fine search
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      contact_pairs_information;
+    contact_pairs_information;
 
   fine_search_objecct.pp_Fine_Search(pairs, contact_pairs_information, dt);
 
@@ -161,7 +173,9 @@ template <int dim> void test() {
           << std::endl;
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
   initlog();
   test<3>();

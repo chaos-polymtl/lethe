@@ -18,3 +18,6 @@
  */
 
 #include <dem/pw_contact_force.h>
+
+template class PWContactForce<2>;
+template class PWContactForce<3>;
