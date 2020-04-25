@@ -20,13 +20,19 @@ test()
   deallog << std::endl;
 
   Vector<double> order1_coefficients = bdf_coefficients(1, dt);
-  deallog << "Order 1 : " << order1_coefficients;
+  deallog << "Order 1 : " <<  order1_coefficients[0] <<" " << order1_coefficients[1] << std::endl;
 
   Vector<double> order2_coefficients = bdf_coefficients(2, dt);
-  deallog << "Order 2 : " << order2_coefficients;
+  deallog << "Order 2 : " << order2_coefficients[0] <<" " << order2_coefficients[1] <<" "<<order2_coefficients[2] << std::endl;
 
   Vector<double> order3_coefficients = bdf_coefficients(3, dt);
-  deallog << "Order 3 : " << order3_coefficients;
+  deallog << "Order 3 : " ;
+  for (unsigned int i = 0; i < order3_coefficients.size(); ++i)
+    {
+      deallog << order3_coefficients[i] << " ";
+    }
+  deallog << std::endl;
+
 }
 
 int
