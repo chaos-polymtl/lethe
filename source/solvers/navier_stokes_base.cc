@@ -25,6 +25,7 @@
 #include <deal.II/opencascade/utilities.h>
 
 #include <core/solutions_output.h>
+#include <core/utilities.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
@@ -117,26 +118,15 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
-      TableHandler table;
 
-      for (unsigned int i_boundary = 0;
-           i_boundary < nsparam.boundaryConditions.size;
-           ++i_boundary)
-        {
-          table.add_value("Boundary ID", i_boundary);
-          table.add_value("f_x", this->forces_[i_boundary][0]);
-          table.add_value("f_y", this->forces_[i_boundary][1]);
-          table.set_precision("f_x",
-                              nsparam.forcesParameters.display_precision);
-          table.set_precision("f_y",
-                              nsparam.forcesParameters.display_precision);
-          if (dim == 3)
-            {
-              table.add_value("f_z", this->forces_[i_boundary][2]);
-              table.set_precision("f_z",
-                                  nsparam.forcesParameters.display_precision);
-            }
-        }
+      std::vector<std::string> column_names;
+      column_names.push_back("Boundary ID");
+      column_names.push_back("f_x");
+      column_names.push_back("f_y");
+      column_names.push_back("f_z");
+
+      TableHandler table = make_table_from_vector_of_tensors(this->forces_,column_names,nsparam.forcesParameters.display_precision);
+
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force  summary                          |" << std::endl;
       std::cout << "+------------------------------------------+" << std::endl;
@@ -191,23 +181,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       this->this_mpi_process == 0)
     {
       this->pcout << std::endl;
-      TableHandler table;
+      std::vector<std::string> column_names;
+      column_names.push_back("Boundary ID");
+      column_names.push_back("T_x");
+      column_names.push_back("T_y");
+      column_names.push_back("T_z");
 
-      for (unsigned int boundary_id = 0;
-           boundary_id < nsparam.boundaryConditions.size;
-           ++boundary_id)
-        {
-          table.add_value("Boundary ID", boundary_id);
-          table.add_value("T_x", this->torques_[boundary_id][0]);
-          table.add_value("T_y", this->torques_[boundary_id][1]);
-          table.set_precision("T_x",
-                              nsparam.forcesParameters.display_precision);
-          table.set_precision("T_y",
-                              nsparam.forcesParameters.display_precision);
-          table.add_value("T_z", this->torques_[boundary_id][2]);
-          table.set_precision("T_z",
-                              nsparam.forcesParameters.display_precision);
-        }
+      TableHandler table = make_table_from_vector_of_tensors(this->torques_,column_names,nsparam.forcesParameters.display_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;
@@ -409,14 +389,11 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
 {
   if (nsparam.forcesParameters.calculate_force)
-    {
       this->write_output_forces();
-    }
 
   if (nsparam.forcesParameters.calculate_torque)
-    {
       this->write_output_torques();
-    }
+
   if (nsparam.analyticalSolution->calculate_error())
     {
       if (simulationControl.getMethod() ==
@@ -621,19 +598,15 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 {
   if (this->simulationControl.getIter() %
-        this->nsparam.meshAdaptation.frequency ==
-      0)
+        this->nsparam.meshAdaptation.frequency == 0)
     {
       if (this->nsparam.meshAdaptation.type ==
           Parameters::MeshAdaptation::Type::kelly)
-        {
           refine_mesh_kelly();
-        }
+
       else if (this->nsparam.meshAdaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)
-        {
           refine_mesh_uniform();
-        }
     }
 }
 
