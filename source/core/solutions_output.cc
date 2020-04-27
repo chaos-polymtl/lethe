@@ -68,7 +68,7 @@ template <int dim>
 void
 write_boundaries_vtu(const DataOutFaces<dim> &data_out_faces,
                      const std::string        folder,
-                     const double             time,
+                     const double             ,
                      const unsigned int       iter,
                      const MPI_Comm &         mpi_communicator,
                      const std::string        file_prefix,
