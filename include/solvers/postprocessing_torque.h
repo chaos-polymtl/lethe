@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
-#ifndef LETHE_TORQUECALCULATION_H
-#define LETHE_TORQUECALCULATION_H
+#ifndef lethe_postprocessing_torque_h
+#define lethe_postprocessing_torque_h
 
 // Base
 #include <deal.II/base/quadrature_lib.h>

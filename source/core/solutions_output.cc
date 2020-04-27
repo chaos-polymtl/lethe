@@ -35,11 +35,13 @@ write_vtu_and_pvd(PVDHandler &        pvd_handler,
 
       std::string pvtu_filename =
         (file_prefix + "." + Utilities::int_to_string(iter, digits) + ".pvtu");
-      std::ofstream master_output((folder + pvtu_filename).c_str());
+
+      std::string pvtu_filename_with_folder=folder + pvtu_filename;
+      std::ofstream master_output(pvtu_filename_with_folder.c_str());
 
       data_out.write_pvtu_record(master_output, filenames);
 
-      const std::string pvdPrefix = (folder + file_prefix);
+      std::string pvdPrefix = (folder + file_prefix);
       pvd_handler.append(time, pvtu_filename);
       std::ofstream pvd_output(pvdPrefix + ".pvd");
       DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names_);
