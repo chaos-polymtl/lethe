@@ -189,7 +189,15 @@ protected:
    * Do a regular CFD iteration
    */
   void
-  iterate(const bool first_iteration);
+  iterate();
+
+
+  /**
+   * @brief First iteration
+   * Do the first CFD iteration
+   */
+  void
+  first_iteration();
 
   virtual void
   assemble_matrix_and_rhs(
@@ -264,14 +272,7 @@ protected:
    * Post-processing as parallel VTU files
    */
   void
-  write_output_results(const VectorType & solution,
-                       PVDHandler &       pvdhandler,
-                       const std::string  folder,
-                       const std::string  solutionName,
-                       const unsigned int cycle,
-                       const double       time,
-                       const unsigned int subdivision,
-                       const unsigned int group_files);
+  write_output_results(const VectorType &solution);
 
   /**
    * @brief write_output_forces

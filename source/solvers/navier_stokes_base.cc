@@ -24,6 +24,7 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <core/solutions_output.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
@@ -482,132 +483,136 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
     }
 }
 
-// Do an iteration with the GLS NavierStokes Solver
+// Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial condition
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::iterate(bool firstIteration)
+NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  // Carry out the integration normally if this is not a method that needs to be
-  // started
-  if (!firstIteration || !is_bdf(this->simulationControl.getMethod()))
+  if (this->simulationControl.getMethod() ==
+      Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
     {
-      if (this->simulationControl.getMethod() ==
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
-        {
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-            false,
-            false);
-          this->solution_m2 = this->present_solution;
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+        false,
+        false);
+      this->solution_m2 = this->present_solution;
 
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-            false,
-            false);
-        }
-
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
-        {
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-            false,
-            false);
-
-          this->solution_m2 = this->present_solution;
-
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-            false,
-            false);
-
-          this->solution_m3 = this->present_solution;
-
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-            false,
-            false);
-        }
-      else
-        {
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, false);
-        }
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+        false,
+        false);
     }
-  // This is the first iteration and we are using a BDF scheme
+
+  else if (this->simulationControl.getMethod() ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
+    {
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+        false,
+        false);
+
+      this->solution_m2 = this->present_solution;
+
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+        false,
+        false);
+
+      this->solution_m3 = this->present_solution;
+
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+        false,
+        false);
+    }
   else
     {
-      if (this->simulationControl.getMethod() ==
-          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        PhysicsSolver<VectorType>::solve_non_linear_system(
-          this->simulationControl.getMethod(), false, true);
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        this->simulationControl.getMethod(), false, false);
+    }
+}
 
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        {
-          Parameters::SimulationControl timeParameters =
-            this->simulationControl.getParameters();
+// Do an iteration with the NavierStokes Solver
+// Handles the fact that we may or may not be at a first
+// iteration with the solver and sets the initial condition
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
+{
+  // First step if the method is not a multi-step method
+  if (!is_bdf(this->simulationControl.getMethod()) ||
+      this->simulationControl.getMethod() ==
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+    {
+      iterate();
+    }
 
-          // Start the BDF2 with a single Euler time step with a lower time step
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * timeParameters.startup_timestep_scaling);
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-          this->solution_m2 = this->solution_m1;
-          this->solution_m1 = this->present_solution;
+  // Taking care of the multi-step methods
+  else if (this->simulationControl.getMethod() ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    {
+      Parameters::SimulationControl timeParameters =
+        this->simulationControl.getParameters();
 
-          // Reset the time step and do a bdf 2 newton iteration using the two
-          // steps to complete the full step
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::TimeSteppingMethod::bdf2);
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-        }
+      // Start the BDF2 with a single Euler time step with a lower time step
+      this->simulationControl.setTimeStep(
+        timeParameters.dt * timeParameters.startup_timestep_scaling);
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        this->simulationControl.getMethod(), false, true);
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
 
-      else if (this->simulationControl.getMethod() ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        {
-          Parameters::SimulationControl timeParameters =
-            this->simulationControl.getParameters();
+      // Reset the time step and do a bdf 2 newton iteration using the two
+      // steps to complete the full step
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
+      this->simulationControl.setTimeStep(
+        timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        this->simulationControl.getMethod(), false, true);
+    }
 
-          // Start the BDF2 with a single Euler time step with a lower time step
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * timeParameters.startup_timestep_scaling);
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-          this->solution_m2 = this->solution_m1;
-          this->solution_m1 = this->present_solution;
+  else if (this->simulationControl.getMethod() ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    {
+      Parameters::SimulationControl timeParameters =
+        this->simulationControl.getParameters();
 
-          // Reset the time step and do a bdf 2 newton iteration using the two
-          // steps
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::TimeSteppingMethod::bdf1);
-          this->simulationControl.setTimeStep(
-            timeParameters.dt * timeParameters.startup_timestep_scaling);
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-          this->solution_m3 = this->solution_m2;
-          this->solution_m2 = this->solution_m1;
-          this->solution_m1 = this->present_solution;
+      // Start the BDF2 with a single Euler time step with a lower time step
+      this->simulationControl.setTimeStep(
+        timeParameters.dt * timeParameters.startup_timestep_scaling);
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        this->simulationControl.getMethod(), false, true);
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
 
-          // Reset the time step and do a bdf 3 newton iteration using the two
-          // steps to complete the full step
-          this->simulationControl.setMethod(
-            Parameters::SimulationControl::TimeSteppingMethod::bdf3);
-          this->simulationControl.setTimeStep(
-            timeParameters.dt *
-            (1. - 2. * timeParameters.startup_timestep_scaling));
-          PhysicsSolver<VectorType>::solve_non_linear_system(
-            this->simulationControl.getMethod(), false, true);
-        }
+      // Reset the time step and do a bdf 2 newton iteration using the two
+      // steps
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
+      this->simulationControl.setTimeStep(
+        timeParameters.dt * timeParameters.startup_timestep_scaling);
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        this->simulationControl.getMethod(), false, true);
+      this->solution_m3 = this->solution_m2;
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
+
+      // Reset the time step and do a bdf 3 newton iteration using the two
+      // steps to complete the full step
+      this->simulationControl.setMethod(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
+      this->simulationControl.setTimeStep(
+        timeParameters.dt *
+        (1. - 2. * timeParameters.startup_timestep_scaling));
+      PhysicsSolver<VectorType>::solve_non_linear_system(
+        this->simulationControl.getMethod(), false, true);
     }
 }
 
@@ -806,14 +811,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 {
   if (this->simulationControl.isOutputIteration())
-    this->write_output_results(this->present_solution,
-                               this->pvdhandler,
-                               this->simulationControl.getOutputFolder(),
-                               this->simulationControl.getOuputName(),
-                               this->simulationControl.getIter(),
-                               this->simulationControl.getTime(),
-                               this->simulationControl.getSubdivision(),
-                               this->simulationControl.getGroupFiles());
+    this->write_output_results(this->present_solution);
 
   if (this->nsparam.postProcessingParameters.calculate_enstrophy)
     {
@@ -1088,25 +1086,21 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
-  const VectorType & solution,
-  PVDHandler &       pvdhandler,
-  const std::string  folder,
-  const std::string  solutionName,
-  const unsigned int iter,
-  const double       time,
-  const unsigned int subdivision,
-  const unsigned int group_files)
+  const VectorType &solution)
 {
-  TimerOutput::Scope            t(this->computing_timer, "output");
-  const MappingQ<dim>           mapping(this->degreeVelocity_,
+  TimerOutput::Scope  t(this->computing_timer, "output");
+  const MappingQ<dim> mapping(this->degreeVelocity_,
                               nsparam.femParameters.qmapping_all);
-  vorticity_postprocessor<dim>  vorticity;
-  qcriterion_postprocessor<dim> qcriterion;
 
+  const std::string  folder        = simulationControl.getOutputFolder();
+  const std::string  solution_name = simulationControl.getOuputName();
+  const unsigned int iter          = simulationControl.getIter();
+  const double       time          = simulationControl.getTime();
+  const unsigned int subdivision   = simulationControl.getSubdivision();
+  const unsigned int group_files   = simulationControl.getGroupFiles();
 
-  SRF_postprocessor<dim>   srf(nsparam.velocitySource.omega_x,
-                             nsparam.velocitySource.omega_y,
-                             nsparam.velocitySource.omega_z);
+  // Add the interpretation of the solution. The dim first components are the
+  // velocity vectors and the following one is the pressure.
   std::vector<std::string> solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1115,97 +1109,67 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
+
+  DataOut<dim> data_out;
+
+  // Additional flag to enable the output of high-order elements
   DataOutBase::VtkFlags flags;
   if (this->degreeVelocity_ > 1)
     flags.write_higher_order_cells = true;
-
-  DataOut<dim> data_out;
   data_out.set_flags(flags);
+
+  // Attach the solution data to data_out object
   data_out.attach_dof_handler(this->dof_handler);
   data_out.add_data_vector(solution,
                            solution_names,
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
-  data_out.add_data_vector(solution, vorticity);
-  data_out.add_data_vector(solution, qcriterion);
-  if (nsparam.velocitySource.type ==
-      Parameters::VelocitySource::VelocitySourceType::srf)
-    {
-      data_out.add_data_vector(solution, srf);
-    }
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
 
+
+  // Create additional post-processor that derives information from the solution
+  vorticity_postprocessor<dim> vorticity;
+  data_out.add_data_vector(solution, vorticity);
+
+  qcriterion_postprocessor<dim> qcriterion;
+  data_out.add_data_vector(solution, qcriterion);
+
+  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,
+                             nsparam.velocitySource.omega_y,
+                             nsparam.velocitySource.omega_z);
+
+  if (nsparam.velocitySource.type ==
+      Parameters::VelocitySource::VelocitySourceType::srf)
+    data_out.add_data_vector(solution, srf);
+
+  // Build the patches and write the output
+
   data_out.build_patches(mapping,
                          subdivision,
                          DataOut<dim>::curved_inner_cells);
 
-  const int my_id = Utilities::MPI::this_mpi_process(this->mpi_communicator);
-
-  // Write master files (.pvtu,.pvd,.visit) on the master process
-  if (my_id == 0)
-    {
-      std::vector<std::string> filenames;
-      const unsigned int       n_processes =
-        Utilities::MPI::n_mpi_processes(this->mpi_communicator);
-      const unsigned int n_files =
-        (group_files == 0) ? n_processes : std::min(group_files, n_processes);
-
-      for (unsigned int i = 0;
-           i <
-           n_files; // Utilities::MPI::n_mpi_processes(this->mpi_communicator);
-           ++i)
-        filenames.push_back(solutionName + "." +
-                            Utilities::int_to_string(iter, 4) + "." +
-                            Utilities::int_to_string(i, 4) + ".vtu");
-
-      std::string pvtu_filename =
-        (solutionName + "." + Utilities::int_to_string(iter, 4) + ".pvtu");
-      std::ofstream master_output((folder + pvtu_filename).c_str());
-
-      data_out.write_pvtu_record(master_output, filenames);
-
-      const std::string pvdPrefix = (folder + solutionName);
-      pvdhandler.append(time, pvtu_filename);
-      std::ofstream pvd_output(pvdPrefix + ".pvd");
-      DataOutBase::write_pvd_record(pvd_output, pvdhandler.times_and_names_);
-    }
-
-  const unsigned int my_file_id =
-    (group_files == 0 ? my_id : my_id % group_files);
-  int color = my_id % group_files;
-
-  {
-    MPI_Comm comm;
-    MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
-    const std::string filename =
-      (folder + solutionName + "." + Utilities::int_to_string(iter, 4) + "." +
-       Utilities::int_to_string(my_file_id, 4) + ".vtu");
-    data_out.write_vtu_in_parallel(filename.c_str(), comm);
-
-    MPI_Comm_free(&comm);
-  }
+  write_vtu_and_pvd<dim>(this->pvdhandler,
+                         data_out,
+                         folder,
+                         solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         this->mpi_communicator);
 
   if (nsparam.postProcessingParameters.output_boundaries)
     {
       DataOutFaces<dim>           data_out_faces;
-      boundary_postprocessor<dim> manifold;
+      boundary_postprocessor<dim> boundary_id;
       data_out_faces.attach_dof_handler(this->dof_handler);
-      data_out_faces.add_data_vector(solution, manifold);
+      data_out_faces.add_data_vector(solution, boundary_id);
       data_out_faces.build_patches();
 
-      int color = my_id % 1;
-
-      MPI_Comm comm;
-      MPI_Comm_split(this->mpi_communicator, color, my_id, &comm);
-
-      const std::string face_filename =
-        (folder + "boundaries." + Utilities::int_to_string(iter, 4) + ".vtu");
-      data_out_faces.write_vtu_in_parallel(face_filename.c_str(), comm);
-
-      MPI_Comm_free(&comm);
+      write_boundaries_vtu<dim>(
+        data_out_faces, folder, time, iter, this->mpi_communicator);
     }
 }
 

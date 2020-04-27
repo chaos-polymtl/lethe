@@ -1075,7 +1075,10 @@ GDNavierStokesSolver<dim>::solve()
                            TrilinosWrappers::MPI::BlockVector,
                            std::vector<IndexSet>>::refine_mesh();
         }
-      this->iterate(this->simulationControl.firstIter());
+      if (this->simulationControl.firstIter())
+        this->first_iteration();
+      else
+        this->iterate();
       this->postprocess(false);
       this->finish_time_step();
     }

@@ -39,11 +39,12 @@ subsection velocity source
     set type=srf
     set omega_z=-6.28318
 end
-# --------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-subsection analytical solution
-  set enable                 = false
+
+#--------------------------------------------------
+# Post-processing
+#--------------------------------------------------
+subsection post-processing
+    set output boundaries = true
 end
 
 #---------------------------------------------------
@@ -122,7 +123,7 @@ subsection boundary conditions
 end
 
 # --------------------------------------------------
-# Boundary Conditions
+# Manifolds
 #---------------------------------------------------
 subsection manifolds
   set number                  = 4
