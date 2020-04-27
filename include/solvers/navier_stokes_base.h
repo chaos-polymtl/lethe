@@ -134,17 +134,6 @@ protected:
   virtual ~NavierStokesBase()
   {}
 
-  // Member functions
-
-  /**
-   * @brief calculate_CFL
-   * @return maximum of the CFL
-   * Calculates the maximum CFL reached
-   * throughout all the cells
-   */
-  double
-  calculate_CFL(const VectorType &evaluation_point);
-
   /**
    * @brief calculate_forces
    * Post-processing function
@@ -347,8 +336,6 @@ protected:
   std::vector<TableHandler>   forces_tables;
   std::vector<TableHandler>   torques_tables;
 
-  // Additional information about mesh
-  double globalVolume_;
 };
 
 #endif

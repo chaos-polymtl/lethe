@@ -29,6 +29,7 @@
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
+#include <solvers/postprocessing_cfl.h>
 
 
 /*
@@ -92,62 +93,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
-}
-
-template <int dim, typename VectorType, typename DofsType>
-double
-NavierStokesBase<dim, VectorType, DofsType>::calculate_CFL(
-  const VectorType &evaluation_point)
-{
-  QGauss<dim>                          quadrature_formula(1);
-  const MappingQ<dim>                  mapping(this->degreeVelocity_,
-                              nsparam.femParameters.qmapping_all);
-  FEValues<dim>                        fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
-                          update_values | update_quadrature_points);
-  const unsigned int                   dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int                   n_q_points = quadrature_formula.size();
-  std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const FEValuesExtractors::Vector     velocities(0);
-  const FEValuesExtractors::Scalar     pressure(dim);
-
-  std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
-
-  // Element size
-  double h;
-
-  // Current time step
-  double timeStep = this->simulationControl.getCurrentTimeStep();
-
-  // CFL
-  double CFL = 0;
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          if (dim == 2)
-            h = std::sqrt(4. * cell->measure() / M_PI) / this->degreeVelocity_;
-          else if (dim == 3)
-            h =
-              pow(6 * cell->measure() / M_PI, 1. / 3.) / this->degreeVelocity_;
-          fe_values.reinit(cell);
-          fe_values[velocities].get_function_values(evaluation_point,
-                                                    present_velocity_values);
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              const double localCFL =
-                present_velocity_values[q].norm() / h * timeStep;
-              CFL = std::max(CFL, localCFL);
-            }
-        }
-    }
-  CFL = Utilities::MPI::max(CFL, this->mpi_communicator);
-
-  return CFL;
 }
 
 // This is a primitive first implementation that could be greatly improved by
@@ -310,7 +255,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
                           this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
+                          update_quadrature_points | update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -333,44 +278,40 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   double exact_pressure_integral = 0;
 
   // loop over elements to calculate average pressure
-  {
-    typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                            .begin_active(),
-                                                   endc =
-                                                     this->dof_handler.end();
-    for (; cell != endc; ++cell)
-      {
-        if (cell->is_locally_owned())
-          {
-            fe_values.reinit(cell);
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
 
-            fe_values[pressure].get_function_values(evaluation_point,
-                                                    local_pressure_values);
-            // Get the exact solution at all gauss points
-            l_exact_solution->vector_value_list(
-              fe_values.get_quadrature_points(), q_exactSol);
+          fe_values[pressure].get_function_values(evaluation_point,
+                                                  local_pressure_values);
+          // Get the exact solution at all gauss points
+          l_exact_solution->vector_value_list(
+                fe_values.get_quadrature_points(), q_exactSol);
 
 
-            // Retrieve the effective "connectivity matrix" for this element
-            cell->get_dof_indices(local_dof_indices);
+          // Retrieve the effective "connectivity matrix" for this element
+          cell->get_dof_indices(local_dof_indices);
 
-            for (unsigned int q = 0; q < n_q_points; q++)
-              {
-                pressure_integral +=
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              pressure_integral +=
                   local_pressure_values[q] * fe_values.JxW(q);
-                exact_pressure_integral +=
+              exact_pressure_integral +=
                   q_exactSol[q][dim] * fe_values.JxW(q);
-              }
-          }
-      }
-  }
+            }
+        }
+    }
 
   pressure_integral =
     Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
-  double average_pressure       = pressure_integral / globalVolume_;
-  double average_exact_pressure = exact_pressure_integral / globalVolume_;
+
+  double global_volume = GridTools::volume(*this->triangulation);
+  double average_pressure       = pressure_integral / global_volume;
+  double average_exact_pressure = exact_pressure_integral / global_volume;
 
 
   double l2errorU = 0.;
@@ -521,7 +462,11 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->solution_m3 = this->solution_m2;
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
-      const double CFL  = this->calculate_CFL(this->present_solution);
+      const double CFL  = calculate_CFL(this->dof_handler,
+                                        this->present_solution,
+                                        nsparam.femParameters,
+                                        simulationControl.getCurrentTimeStep(),
+                                        mpi_communicator);
       this->simulationControl.setCFL(CFL);
     }
   if (this->nsparam.restartParameters.checkpoint &&

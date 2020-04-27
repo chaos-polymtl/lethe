@@ -608,13 +608,13 @@ GDNavierStokesSolver<dim>::setup_dofs()
   pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
 
 
-  this->globalVolume_ = GridTools::volume(*this->triangulation);
+  double global_volume = GridTools::volume(*this->triangulation);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
               << "   Number of degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
-  this->pcout << "   Volume of triangulation:      " << this->globalVolume_
+  this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 }
 
@@ -801,7 +801,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   this->computing_timer.enter_subsection("AMG_velocity");
   const bool elliptic_velocity     = false;
   bool       higher_order_elements = false;
-  if (this->degreeVelocity_ > 1)
+  if (this->fe.degree > 1)
     higher_order_elements = true;
   const unsigned int n_cycles = this->nsparam.linearSolver.amg_n_cycles;
   const bool         w_cycle  = this->nsparam.linearSolver.amg_w_cycles;

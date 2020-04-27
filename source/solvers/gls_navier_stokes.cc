@@ -212,13 +212,13 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                        dsp,
                        this->mpi_communicator);
 
-  this->globalVolume_ = GridTools::volume(*this->triangulation);
+  double global_volume = GridTools::volume(*this->triangulation);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
               << "   Number of degrees of freedom: "
               << this->dof_handler.n_dofs() << std::endl;
-  this->pcout << "   Volume of triangulation:      " << this->globalVolume_
+  this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
 }
 
