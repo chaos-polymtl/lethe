@@ -125,7 +125,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       column_names.push_back("f_y");
       column_names.push_back("f_z");
 
-      TableHandler table = make_table_from_vector_of_tensors(this->forces_,column_names,nsparam.forcesParameters.display_precision);
+      TableHandler table = make_table_from_vector_of_tensors(
+        this->forces_,
+        column_names,
+        nsparam.forcesParameters.display_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force  summary                          |" << std::endl;
@@ -187,7 +190,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       column_names.push_back("T_y");
       column_names.push_back("T_z");
 
-      TableHandler table = make_table_from_vector_of_tensors(this->torques_,column_names,nsparam.forcesParameters.display_precision);
+      TableHandler table = make_table_from_vector_of_tensors(
+        this->torques_,
+        column_names,
+        nsparam.forcesParameters.display_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;
@@ -389,10 +395,10 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
 {
   if (nsparam.forcesParameters.calculate_force)
-      this->write_output_forces();
+    this->write_output_forces();
 
   if (nsparam.forcesParameters.calculate_torque)
-      this->write_output_torques();
+    this->write_output_torques();
 
   if (nsparam.analyticalSolution->calculate_error())
     {
@@ -598,15 +604,16 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 {
   if (this->simulationControl.getIter() %
-        this->nsparam.meshAdaptation.frequency == 0)
+        this->nsparam.meshAdaptation.frequency ==
+      0)
     {
       if (this->nsparam.meshAdaptation.type ==
           Parameters::MeshAdaptation::Type::kelly)
-          refine_mesh_kelly();
+        refine_mesh_kelly();
 
       else if (this->nsparam.meshAdaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)
-          refine_mesh_uniform();
+        refine_mesh_uniform();
     }
 }
 

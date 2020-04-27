@@ -43,12 +43,12 @@ write_vtu_and_pvd(PVDHandler &        pvd_handler,
       std::string pvtu_filename =
         (file_prefix + "." + Utilities::int_to_string(iter, digits) + ".pvtu");
 
-      std::string pvtu_filename_with_folder=folder + pvtu_filename;
+      std::string   pvtu_filename_with_folder = folder + pvtu_filename;
       std::ofstream master_output(pvtu_filename_with_folder.c_str());
 
       data_out.write_pvtu_record(master_output, filenames);
 
-      std::string pvdPrefix = (folder + file_prefix+".pvd");
+      std::string pvdPrefix = (folder + file_prefix + ".pvd");
       pvd_handler.append(time, pvtu_filename);
       std::ofstream pvd_output(pvdPrefix.c_str());
       DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names_);
@@ -74,11 +74,11 @@ template <int dim>
 void
 write_boundaries_vtu(const DataOutFaces<dim> &data_out_faces,
                      const std::string        folder,
-                     const double             ,
-                     const unsigned int       iter,
-                     const MPI_Comm &         mpi_communicator,
-                     const std::string        file_prefix,
-                     const unsigned int       digits)
+                     const double,
+                     const unsigned int iter,
+                     const MPI_Comm &   mpi_communicator,
+                     const std::string  file_prefix,
+                     const unsigned int digits)
 {
   const int my_id = Utilities::MPI::this_mpi_process(mpi_communicator);
 

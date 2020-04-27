@@ -32,8 +32,9 @@ using namespace dealii;
 
 /**
  * @brief Output the data out to "group_files" vtu files, with a pvtu file and a pvd to store the timing
- * This function outputs the data out to "group_files" vtu file that are orchestrated by a .pvtu file. An additional pvd file
- * takes care of storing the time associated with each .pvtu file.
+ * This function outputs the data out to "group_files" vtu file that are
+ * orchestrated by a .pvtu file. An additional pvd file takes care of storing
+ * the time associated with each .pvtu file.
  *
  * @param pvd_handler a PVDHandler to store the information about the file name and time associated with it
  *

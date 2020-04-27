@@ -21,14 +21,15 @@
 #include <deal.II/base/tensor.h>
 
 #ifndef lethe_utilities_h
-#define lethe_utilities_h
+#  define lethe_utilities_h
 
 using namespace dealii;
 
 template <int dim>
-TableHandler make_table_from_vector_of_tensors(std::vector<Tensor<1, dim>> vector,
-                                               std::vector<std::string> column_names,
-                                               const unsigned int display_precision);
+TableHandler
+  make_table_from_vector_of_tensors(std::vector<Tensor<1, dim>> vector,
+                                    std::vector<std::string>    column_names,
+                                    const unsigned int display_precision);
 
 
 
