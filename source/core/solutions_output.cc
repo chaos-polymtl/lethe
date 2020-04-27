@@ -28,10 +28,7 @@ write_vtu_and_pvd(PVDHandler &        pvd_handler,
       const unsigned int n_files =
         (group_files == 0) ? n_processes : std::min(group_files, n_processes);
 
-      for (unsigned int i = 0;
-           i <
-           n_files; // Utilities::MPI::n_mpi_processes(this->mpi_communicator);
-           ++i)
+      for (unsigned int i = 0; i < n_files; ++i)
         filenames.push_back(file_prefix + "." +
                             Utilities::int_to_string(iter, digits) + "." +
                             Utilities::int_to_string(i, digits) + ".vtu");
