@@ -1,9 +1,15 @@
-// Lethe includes
+// dealii includes
 #include <deal.II/numerics/data_out.h>
 
+
+// Lethe includes
 #include <core/manifolds.h>
 #include <core/pvd_handler.h>
 #include <core/solutions_output.h>
+
+
+// CPP includes
+#include <iostream>
 
 template <int dim>
 void
@@ -41,9 +47,9 @@ write_vtu_and_pvd(PVDHandler &        pvd_handler,
 
       data_out.write_pvtu_record(master_output, filenames);
 
-      std::string pvdPrefix = (folder + file_prefix);
+      std::string pvdPrefix = (folder + file_prefix+".pvd");
       pvd_handler.append(time, pvtu_filename);
-      std::ofstream pvd_output(pvdPrefix + ".pvd");
+      std::ofstream pvd_output(pvdPrefix.c_str());
       DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names_);
     }
 
