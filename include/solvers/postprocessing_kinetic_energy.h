@@ -49,8 +49,6 @@ using namespace dealii;
  * Post-processing function
  * This function calculates the average kinetic energy in the simulation domain
  *
- * @param fe The finite element system object used for the calculation
- *
  * @param dof_handler The dof_handler used for the calculation
  *
  * @param evaluation_point The solution at which the force is calculated
@@ -61,8 +59,7 @@ using namespace dealii;
  */
 template <int dim, typename VectorType>
 double
-calculate_kinetic_energy(const FESystem<dim> &  fe,
-                         const DoFHandler<dim> &dof_handler,
+calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
                          const VectorType &     evaluation_point,
                          const Parameters::FEM &fem_parameters,
                          const MPI_Comm &       mpi_communicator);

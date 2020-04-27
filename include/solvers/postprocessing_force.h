@@ -51,8 +51,6 @@ using namespace dealii;
  * within the domain. It generates a vector which size is the number of boundary
  * conditions
  *
- * @param fe The finite element system object used for the calculation
- *
  * @param dof_handler The dof_handler used for the calculation
  *
  * @param evaluation_point The solution at which the force is calculated
@@ -68,7 +66,6 @@ using namespace dealii;
 template <int dim, typename VectorType>
 std::vector<Tensor<1, dim>>
 calculate_forces(
-  const FESystem<dim> &                                fe,
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,

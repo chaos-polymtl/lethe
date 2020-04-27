@@ -40,8 +40,11 @@
 *.out
 *.app
 
-# Images
+# Images / post-processing
 *.vtk
+*.pvd
+*.vtu
+*.pvtu
 *.eps
 
 # data

@@ -33,12 +33,12 @@ using namespace dealii;
 // doing a single pass instead of N boundary passes
 template <int dim, typename VectorType>
 double
-calculate_enstrophy(const FESystem<dim> &  fe,
-                    const DoFHandler<dim> &dof_handler,
+calculate_enstrophy(const DoFHandler<dim> &dof_handler,
                     const VectorType &     evaluation_point,
                     const Parameters::FEM &fem_parameters,
                     const MPI_Comm &       mpi_communicator)
 {
+  const FiniteElement<dim> &fe = dof_handler.get_fe();
   QGauss<dim>         quadrature_formula(fe.degree + 1);
   const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
   FEValues<dim>       fe_values(mapping,
@@ -98,7 +98,6 @@ calculate_enstrophy(const FESystem<dim> &  fe,
 
 template double
 calculate_enstrophy<2, TrilinosWrappers::MPI::Vector>(
-  const FESystem<2> &                  fe,
   const DoFHandler<2> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Parameters::FEM &              fem_parameters,
@@ -106,7 +105,6 @@ calculate_enstrophy<2, TrilinosWrappers::MPI::Vector>(
 
 template double
 calculate_enstrophy<3, TrilinosWrappers::MPI::Vector>(
-  const FESystem<3> &                  fe,
   const DoFHandler<3> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Parameters::FEM &              fem_parameters,
@@ -114,7 +112,6 @@ calculate_enstrophy<3, TrilinosWrappers::MPI::Vector>(
 
 template double
 calculate_enstrophy<2, TrilinosWrappers::MPI::BlockVector>(
-  const FESystem<2> &                       fe,
   const DoFHandler<2> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Parameters::FEM &                   fem_parameters,
@@ -122,7 +119,6 @@ calculate_enstrophy<2, TrilinosWrappers::MPI::BlockVector>(
 
 template double
 calculate_enstrophy<3, TrilinosWrappers::MPI::BlockVector>(
-  const FESystem<3> &                       fe,
   const DoFHandler<3> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Parameters::FEM &                   fem_parameters,

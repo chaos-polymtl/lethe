@@ -160,8 +160,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_forces");
 
-  this->forces_ = calculate_forces(this->fe,
-                                   this->dof_handler,
+  this->forces_ = calculate_forces(this->dof_handler,
                                    evaluation_point,
                                    nsparam.physicalProperties,
                                    nsparam.femParameters,
@@ -235,8 +234,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_torques");
 
-  this->torques_ = calculate_torques(this->fe,
-                                     this->dof_handler,
+  this->torques_ = calculate_torques(this->dof_handler,
                                      evaluation_point,
                                      nsparam.physicalProperties,
                                      nsparam.femParameters,
@@ -876,8 +874,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.postProcessingParameters.calculate_enstrophy)
     {
-      double enstrophy = calculate_enstrophy(this->fe,
-                                             this->dof_handler,
+      double enstrophy = calculate_enstrophy(this->dof_handler,
                                              this->present_solution,
                                              nsparam.femParameters,
                                              mpi_communicator);
@@ -911,7 +908,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
   if (this->nsparam.postProcessingParameters.calculate_kinetic_energy)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
-      double             kE = calculate_kinetic_energy(this->fe,
+      double             kE = calculate_kinetic_energy(
                                            this->dof_handler,
                                            this->present_solution,
                                            nsparam.femParameters,
