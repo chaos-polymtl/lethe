@@ -62,7 +62,7 @@ double
 calculate_CFL(const DoFHandler<dim> &dof_handler,
               const VectorType &     evaluation_point,
               const Parameters::FEM &fem_parameters,
-              const double time_step,
+              const double           time_step,
               const MPI_Comm &       mpi_communicator);
 
 #endif

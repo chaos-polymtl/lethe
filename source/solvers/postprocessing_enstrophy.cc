@@ -39,9 +39,9 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
                     const MPI_Comm &       mpi_communicator)
 {
   const FiniteElement<dim> &fe = dof_handler.get_fe();
-  QGauss<dim>         quadrature_formula(fe.degree + 1);
-  const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
+  QGauss<dim>               quadrature_formula(fe.degree + 1);
+  const MappingQ<dim>       mapping(fe.degree, fem_parameters.qmapping_all);
+  FEValues<dim>             fe_values(mapping,
                           fe,
                           quadrature_formula,
                           update_values | update_gradients |

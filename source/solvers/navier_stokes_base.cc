@@ -25,11 +25,11 @@
 #include <deal.II/opencascade/utilities.h>
 
 #include <solvers/navier_stokes_base.h>
+#include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
-#include <solvers/postprocessing_cfl.h>
 
 
 /*
@@ -255,7 +255,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
                           this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
-                          update_quadrature_points | update_JxW_values);
+                            update_quadrature_points | update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -287,8 +287,8 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
           fe_values[pressure].get_function_values(evaluation_point,
                                                   local_pressure_values);
           // Get the exact solution at all gauss points
-          l_exact_solution->vector_value_list(
-                fe_values.get_quadrature_points(), q_exactSol);
+          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
+                                              q_exactSol);
 
 
           // Retrieve the effective "connectivity matrix" for this element
@@ -296,10 +296,8 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              pressure_integral +=
-                  local_pressure_values[q] * fe_values.JxW(q);
-              exact_pressure_integral +=
-                  q_exactSol[q][dim] * fe_values.JxW(q);
+              pressure_integral += local_pressure_values[q] * fe_values.JxW(q);
+              exact_pressure_integral += q_exactSol[q][dim] * fe_values.JxW(q);
             }
         }
     }
@@ -309,7 +307,7 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   exact_pressure_integral =
     Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
 
-  double global_volume = GridTools::volume(*this->triangulation);
+  double global_volume          = GridTools::volume(*this->triangulation);
   double average_pressure       = pressure_integral / global_volume;
   double average_exact_pressure = exact_pressure_integral / global_volume;
 
@@ -463,10 +461,10 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
       const double CFL  = calculate_CFL(this->dof_handler,
-                                        this->present_solution,
-                                        nsparam.femParameters,
-                                        simulationControl.getCurrentTimeStep(),
-                                        mpi_communicator);
+                                       this->present_solution,
+                                       nsparam.femParameters,
+                                       simulationControl.getCurrentTimeStep(),
+                                       mpi_communicator);
       this->simulationControl.setCFL(CFL);
     }
   if (this->nsparam.restartParameters.checkpoint &&
@@ -853,8 +851,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
   if (this->nsparam.postProcessingParameters.calculate_kinetic_energy)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
-      double             kE = calculate_kinetic_energy(
-                                           this->dof_handler,
+      double             kE = calculate_kinetic_energy(this->dof_handler,
                                            this->present_solution,
                                            nsparam.femParameters,
                                            mpi_communicator);

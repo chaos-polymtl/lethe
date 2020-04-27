@@ -36,19 +36,20 @@ double
 calculate_CFL(const DoFHandler<dim> &dof_handler,
               const VectorType &     evaluation_point,
               const Parameters::FEM &fem_parameters,
-              const double time_step,
+              const double           time_step,
               const MPI_Comm &       mpi_communicator)
 {
   const FiniteElement<dim> &fe = dof_handler.get_fe();
-  QGauss<dim>         quadrature_formula(1);
-  const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
-                                fe,
-                                quadrature_formula,
-                                update_values | update_quadrature_points | update_JxW_values);
+  QGauss<dim>               quadrature_formula(1);
+  const MappingQ<dim>       mapping(fe.degree, fem_parameters.qmapping_all);
+  FEValues<dim>             fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_quadrature_points |
+                            update_JxW_values);
 
   const FEValuesExtractors::Vector velocities(0);
-  const unsigned int                   n_q_points = quadrature_formula.size();
+  const unsigned int               n_q_points = quadrature_formula.size();
 
 
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
@@ -69,8 +70,7 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
           if (dim == 2)
             h = std::sqrt(4. * cell->measure() / M_PI) / degree;
           else if (dim == 3)
-            h =
-              pow(6 * cell->measure() / M_PI, 1. / 3.) / degree;
+            h = pow(6 * cell->measure() / M_PI, 1. / 3.) / degree;
           fe_values.reinit(cell);
           fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
@@ -91,7 +91,7 @@ calculate_CFL<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Parameters::FEM &              fem_parameters,
-  const double time_step,
+  const double                         time_step,
   const MPI_Comm &                     mpi_communicator);
 
 template double
@@ -99,7 +99,7 @@ calculate_CFL<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
   const Parameters::FEM &              fem_parameters,
-  const double time_step,
+  const double                         time_step,
   const MPI_Comm &                     mpi_communicator);
 
 template double
@@ -107,7 +107,7 @@ calculate_CFL<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Parameters::FEM &                   fem_parameters,
-  const double time_step,
+  const double                              time_step,
   const MPI_Comm &                          mpi_communicator);
 
 template double
@@ -115,5 +115,5 @@ calculate_CFL<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
   const Parameters::FEM &                   fem_parameters,
-  const double time_step,
+  const double                              time_step,
   const MPI_Comm &                          mpi_communicator);

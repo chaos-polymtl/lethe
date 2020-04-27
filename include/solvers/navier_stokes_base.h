@@ -335,7 +335,6 @@ protected:
   std::vector<Tensor<1, 3>>   torques_;
   std::vector<TableHandler>   forces_tables;
   std::vector<TableHandler>   torques_tables;
-
 };
 
 #endif
