@@ -35,19 +35,13 @@ namespace BoundaryConditions
     periodic
   };
 
-  template <int dim>
-  class BoundaryFunction
-  {
-  public:
-    // Velocity components
-    Functions::ParsedFunction<dim> u;
-    Functions::ParsedFunction<dim> v;
-    Functions::ParsedFunction<dim> w;
-
-    // Point for the center of rotation
-    Point<dim> cor;
-  };
-
+  /**
+   * @brief This class is the base class for all boundary conditions. It stores
+   * the general information that all boundary condition share.
+   * In Lethe, boundary conditions are identified with an id, a type and, in the
+   * special case of periodic boundary conditoin, a periodic matching id
+   * (periodic_id) and a periodic direction
+   */
   template <int dim>
   class BoundaryConditions
   {
@@ -67,12 +61,37 @@ namespace BoundaryConditions
     std::vector<unsigned int> periodic_direction;
   };
 
+  /**
+   * @brief This class managed the functions associated with function boundary conditions
+   * of the Navier-Stokes equations
+   *
+   */
+  template <int dim>
+  class NSBoundaryFunctions
+  {
+  public:
+    // Velocity components
+    Functions::ParsedFunction<dim> u;
+    Functions::ParsedFunction<dim> v;
+    Functions::ParsedFunction<dim> w;
+
+    // Point for the center of rotation
+    Point<dim> cor;
+  };
+
+
+  /**
+   * @brief This class manages the boundary conditions for Navier-Strokes solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently
+   *
+   */
   template <int dim>
   class NSBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
     // Functions for (u,v,w) for all boundaries
-    BoundaryFunction<dim> *bcFunctions;
+    NSBoundaryFunctions<dim> *bcFunctions;
 
     void
     parse_boundary(ParameterHandler &prm, unsigned int i_bc);
@@ -203,7 +222,7 @@ namespace BoundaryConditions
       this->periodic_id.resize(this->max_size);
       this->periodic_direction.resize(this->max_size);
       this->type.resize(this->max_size);
-      bcFunctions = new BoundaryFunction<dim>[this->max_size];
+      bcFunctions = new NSBoundaryFunctions<dim>[this->max_size];
 
       prm.enter_subsection("bc 0");
       {
@@ -317,8 +336,13 @@ namespace BoundaryConditions
   }
 } // namespace BoundaryConditions
 
+
+/**
+ * @brief This class implements a boundary conditions for the Navier-Stokes equation
+ * where the velocity component are defined using individual functions
+ */
 template <int dim>
-class FunctionDefined : public Function<dim>
+class NavierStokesFunctionDefined : public Function<dim>
 {
 private:
   Functions::ParsedFunction<dim> *u;
@@ -326,9 +350,9 @@ private:
   Functions::ParsedFunction<dim> *w;
 
 public:
-  FunctionDefined(Functions::ParsedFunction<dim> *p_u,
-                  Functions::ParsedFunction<dim> *p_v,
-                  Functions::ParsedFunction<dim> *p_w)
+  NavierStokesFunctionDefined(Functions::ParsedFunction<dim> *p_u,
+                              Functions::ParsedFunction<dim> *p_v,
+                              Functions::ParsedFunction<dim> *p_w)
     : Function<dim>(dim + 1)
     , u(p_u)
     , v(p_v)
@@ -336,13 +360,13 @@ public:
   {}
 
   virtual double
-  value(const Point<dim> &p, const unsigned int component) const;
+  value(const Point<dim> &p, const unsigned int component) const override;
 };
 
 template <int dim>
 double
-FunctionDefined<dim>::value(const Point<dim> & p,
-                            const unsigned int component) const
+NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
+                                        const unsigned int component) const
 {
   Assert(component < this->n_components,
          ExcIndexRange(component, 0, this->n_components));

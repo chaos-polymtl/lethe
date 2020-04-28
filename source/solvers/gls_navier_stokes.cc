@@ -73,7 +73,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                                           this->locally_relevant_dofs);
 
   const MappingQ<dim>        mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              this->nsparam.fem_parameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
@@ -82,55 +82,55 @@ GLSNavierStokesSolver<dim>::setup_dofs()
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             this->nonzero_constraints);
-    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundaryConditions.size;
+    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
          ++i_bc)
       {
-        if (this->nsparam.boundaryConditions.type[i_bc] ==
+        if (this->nsparam.boundary_conditions.type[i_bc] ==
             BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
               this->dof_handler,
-              this->nsparam.boundaryConditions.id[i_bc],
+              this->nsparam.boundary_conditions.id[i_bc],
               ZeroFunction<dim>(dim + 1),
               this->nonzero_constraints,
               this->fe.component_mask(velocities));
           }
-        else if (this->nsparam.boundaryConditions.type[i_bc] ==
+        else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
-              this->nsparam.boundaryConditions.id[i_bc]);
+              this->nsparam.boundary_conditions.id[i_bc]);
             VectorTools::compute_no_normal_flux_constraints(
               this->dof_handler,
               0,
               no_normal_flux_boundaries,
               this->nonzero_constraints);
           }
-        else if (this->nsparam.boundaryConditions.type[i_bc] ==
+        else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
               this->dof_handler,
-              this->nsparam.boundaryConditions.id[i_bc],
-              FunctionDefined<dim>(
-                &this->nsparam.boundaryConditions.bcFunctions[i_bc].u,
-                &this->nsparam.boundaryConditions.bcFunctions[i_bc].v,
-                &this->nsparam.boundaryConditions.bcFunctions[i_bc].w),
+              this->nsparam.boundary_conditions.id[i_bc],
+              NavierStokesFunctionDefined<dim>(
+                &this->nsparam.boundary_conditions.bcFunctions[i_bc].u,
+                &this->nsparam.boundary_conditions.bcFunctions[i_bc].v,
+                &this->nsparam.boundary_conditions.bcFunctions[i_bc].w),
               this->nonzero_constraints,
               this->fe.component_mask(velocities));
           }
 
-        else if (this->nsparam.boundaryConditions.type[i_bc] ==
+        else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
-              this->nsparam.boundaryConditions.id[i_bc],
-              this->nsparam.boundaryConditions.periodic_id[i_bc],
-              this->nsparam.boundaryConditions.periodic_direction[i_bc],
+              this->nsparam.boundary_conditions.id[i_bc],
+              this->nsparam.boundary_conditions.periodic_id[i_bc],
+              this->nsparam.boundary_conditions.periodic_direction[i_bc],
               this->nonzero_constraints);
           }
       }
@@ -142,29 +142,29 @@ GLSNavierStokesSolver<dim>::setup_dofs()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             this->zero_constraints);
 
-    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundaryConditions.size;
+    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
          ++i_bc)
       {
-        if (this->nsparam.boundaryConditions.type[i_bc] ==
+        if (this->nsparam.boundary_conditions.type[i_bc] ==
             BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
-              this->nsparam.boundaryConditions.id[i_bc]);
+              this->nsparam.boundary_conditions.id[i_bc]);
             VectorTools::compute_no_normal_flux_constraints(
               this->dof_handler,
               0,
               no_normal_flux_boundaries,
               this->zero_constraints);
           }
-        else if (this->nsparam.boundaryConditions.type[i_bc] ==
+        else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
-              this->nsparam.boundaryConditions.id[i_bc],
-              this->nsparam.boundaryConditions.periodic_id[i_bc],
-              this->nsparam.boundaryConditions.periodic_direction[i_bc],
+              this->nsparam.boundary_conditions.id[i_bc],
+              this->nsparam.boundary_conditions.periodic_id[i_bc],
+              this->nsparam.boundary_conditions.periodic_direction[i_bc],
               this->zero_constraints);
           }
         else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
@@ -173,7 +173,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
             VectorTools::interpolate_boundary_values(
               mapping,
               this->dof_handler,
-              this->nsparam.boundaryConditions.id[i_bc],
+              this->nsparam.boundary_conditions.id[i_bc],
               ZeroFunction<dim>(dim + 1),
               this->zero_constraints,
               this->fe.component_mask(velocities));
@@ -236,12 +236,12 @@ GLSNavierStokesSolver<dim>::assembleGLS()
     system_matrix = 0;
   this->system_rhs = 0;
 
-  double         viscosity_ = this->nsparam.physicalProperties.viscosity;
+  double         viscosity_ = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>                      quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim>              mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              this->nsparam.fem_parameters.qmapping_all);
   FEValues<dim>                    fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -807,9 +807,9 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
       this->set_nodal_values();
-      double viscosity = this->nsparam.physicalProperties.viscosity;
-      this->nsparam.physicalProperties.viscosity =
-        this->nsparam.initialCondition->viscosity;
+      double viscosity = this->nsparam.physical_properties.viscosity;
+      this->nsparam.physical_properties.viscosity =
+        this->nsparam.initial_condition->viscosity;
       Parameters::SimulationControl::TimeSteppingMethod previousControl =
         this->simulationControl.getMethod();
       this->simulationControl.setMethod(
@@ -820,7 +820,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       this->finish_time_step();
       this->postprocess(true);
       this->simulationControl.setMethod(previousControl);
-      this->nsparam.physicalProperties.viscosity = viscosity;
+      this->nsparam.physical_properties.viscosity = viscosity;
     }
   else
     {
@@ -836,7 +836,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   this->system_rhs = 0;
   QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
   const MappingQ<dim>         mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
+                              this->nsparam.fem_parameters.qmapping_all);
   FEValues<dim>               fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -865,7 +865,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
           fe_values.reinit(cell);
           local_matrix = 0;
           local_rhs    = 0;
-          this->nsparam.initialCondition->uvwp.vector_value_list(
+          this->nsparam.initial_condition->uvwp.vector_value_list(
             fe_values.get_quadrature_points(), initial_velocity);
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -1134,22 +1134,23 @@ void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                 const bool renewed_matrix)
 {
-  const double absolute_residual = this->nsparam.linearSolver.minimum_residual;
-  const double relative_residual = this->nsparam.linearSolver.relative_residual;
+  const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
+  const double relative_residual =
+    this->nsparam.linear_solver.relative_residual;
 
-  if (this->nsparam.linearSolver.solver ==
+  if (this->nsparam.linear_solver.solver ==
       Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
-  else if (this->nsparam.linearSolver.solver ==
+  else if (this->nsparam.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::bicgstab)
     solve_system_BiCGStab(initial_step,
                           absolute_residual,
                           relative_residual,
                           renewed_matrix);
-  else if (this->nsparam.linearSolver.solver ==
+  else if (this->nsparam.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step,
                      absolute_residual,
@@ -1165,9 +1166,9 @@ GLSNavierStokesSolver<dim>::setup_ILU()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_ILU");
 
-  const double ilu_fill = this->nsparam.linearSolver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linearSolver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linearSolver.ilu_precond_rtol;
+  const double ilu_fill = this->nsparam.linear_solver.ilu_precond_fill;
+  const double ilu_atol = this->nsparam.linear_solver.ilu_precond_atol;
+  const double ilu_rtol = this->nsparam.linear_solver.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
 
@@ -1197,14 +1198,14 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   bool       higher_order_elements = false;
   if (this->degreeVelocity_ > 1)
     higher_order_elements = true;
-  const unsigned int n_cycles = this->nsparam.linearSolver.amg_n_cycles;
-  const bool         w_cycle  = this->nsparam.linearSolver.amg_w_cycles;
+  const unsigned int n_cycles = this->nsparam.linear_solver.amg_n_cycles;
+  const bool         w_cycle  = this->nsparam.linear_solver.amg_w_cycles;
   const double       aggregation_threshold =
-    this->nsparam.linearSolver.amg_aggregation_threshold;
+    this->nsparam.linear_solver.amg_aggregation_threshold;
   const unsigned int smoother_sweeps =
-    this->nsparam.linearSolver.amg_smoother_sweeps;
+    this->nsparam.linear_solver.amg_smoother_sweeps;
   const unsigned int smoother_overlap =
-    this->nsparam.linearSolver.amg_smoother_overlap;
+    this->nsparam.linear_solver.amg_smoother_overlap;
   const bool                                        output_details = false;
   const char *                                      smoother_type  = "ILU";
   const char *                                      coarse_type    = "ILU";
@@ -1226,9 +1227,9 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   preconditionerOptions.set_parameters(parameter_ml,
                                        distributed_constant_modes,
                                        system_matrix);
-  const double ilu_fill = this->nsparam.linearSolver.amg_precond_ilu_fill;
-  const double ilu_atol = this->nsparam.linearSolver.amg_precond_ilu_atol;
-  const double ilu_rtol = this->nsparam.linearSolver.amg_precond_ilu_rtol;
+  const double ilu_fill = this->nsparam.linear_solver.amg_precond_ilu_fill;
+  const double ilu_atol = this->nsparam.linear_solver.amg_precond_ilu_atol;
+  const double ilu_rtol = this->nsparam.linear_solver.amg_precond_ilu_rtol;
   parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
   parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
   parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
@@ -1252,17 +1253,17 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
+  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
-                       this->nsparam.linearSolver.residual_precision)
+                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);
@@ -1279,7 +1280,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                  this->system_rhs,
                  *ilu_preconditioner);
 
-    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
+    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -1303,17 +1304,17 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
+  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
-                       this->nsparam.linearSolver.residual_precision)
+                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);
@@ -1330,7 +1331,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
                  this->system_rhs,
                  *ilu_preconditioner);
 
-    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
+    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -1352,17 +1353,17 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
+  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << std::setprecision(
-                       this->nsparam.linearSolver.residual_precision)
+                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(this->nsparam.linearSolver.max_iterations,
+  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
                                linear_solver_tolerance,
                                true,
                                true);
@@ -1379,7 +1380,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                  this->system_rhs,
                  *amg_preconditioner);
 
-    if (this->nsparam.linearSolver.verbosity != Parameters::Verbosity::quiet)
+    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -1397,13 +1398,13 @@ GLSNavierStokesSolver<dim>::solve()
 {
   read_mesh_and_manifolds(this->triangulation,
                           this->nsparam.mesh,
-                          this->nsparam.manifoldsParameters,
-                          this->nsparam.boundaryConditions);
+                          this->nsparam.manifolds_parameters,
+                          this->nsparam.boundary_conditions);
 
 
   this->setup_dofs();
-  this->set_initial_condition(this->nsparam.initialCondition->type,
-                              this->nsparam.restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initial_condition->type,
+                              this->nsparam.restart_parameters.restart);
 
   while (this->simulationControl.integrate())
     {

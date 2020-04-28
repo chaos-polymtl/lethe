@@ -43,6 +43,7 @@
 
 
 using namespace dealii;
+
 /**
  * @brief Calculates the torques due to the fluid motion on every boundary conditions
  * @return std::vector of torques on each boundary condition

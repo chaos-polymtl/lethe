@@ -36,6 +36,16 @@
 
 using namespace dealii;
 
+
+/**
+ * @brief Attaches a grid to a triangulation using mesh parameters
+ *
+ * @param triangulation The triangulation to which a grid is attached
+ *
+ * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
+ *
+ * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
+ */
 template <int dim>
 void
 attach_grid_to_triangulation(
@@ -43,6 +53,17 @@ attach_grid_to_triangulation(
   const Parameters::Mesh &                                     mesh_parameters,
   const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions);
 
+/**
+ * @brief Completely set-up a mesh and its manifold
+ *
+ * @param triangulation The triangulation to which a grid is attached
+ *
+ * @param mesh_parameters The mesh parameters used to decide what type of mesh or primitive is  used
+ *
+ * @param manifolds_parameters The information about the type of manifolds attached to the boundary conditions
+ *
+ * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
+ */
 template <int dim>
 void
 read_mesh_and_manifolds(

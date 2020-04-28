@@ -46,12 +46,12 @@ InitialConditionsNavierStokes<dim>::run()
 {
   read_mesh_and_manifolds(this->triangulation,
                           this->nsparam.mesh,
-                          this->nsparam.manifoldsParameters,
-                          this->nsparam.boundaryConditions);
+                          this->nsparam.manifolds_parameters,
+                          this->nsparam.boundary_conditions);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->nsparam.initialCondition->type,
-                              this->nsparam.restartParameters.restart);
+  this->set_initial_condition(this->nsparam.initial_condition->type,
+                              this->nsparam.restart_parameters.restart);
 }
 
 template <int dim>
@@ -112,8 +112,8 @@ main(int argc, char *argv[])
 
       InitialConditionsNavierStokes<2> problem_2d(
         nsparam,
-        nsparam.femParameters.velocityOrder,
-        nsparam.femParameters.pressureOrder);
+        nsparam.fem_parameters.velocityOrder,
+        nsparam.fem_parameters.pressureOrder);
       if (nsparam.test.enabled)
         problem_2d.runTest();
       else
