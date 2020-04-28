@@ -17,10 +17,12 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "solvers/boundary_conditions.h"
+#include "core/boundary_conditions.h"
 
 namespace BoundaryConditions
 {
+  extern template class BoundaryConditions<2>;
+  extern template class BoundaryConditions<3>;
   extern template class NSBoundaryConditions<2>;
   extern template class NSBoundaryConditions<3>;
 } // namespace BoundaryConditions

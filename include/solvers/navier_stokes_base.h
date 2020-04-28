@@ -96,8 +96,8 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
+#include <core/boundary_conditions.h>
 
-#include "boundary_conditions.h"
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 
@@ -224,14 +224,6 @@ protected:
   read_checkpoint();
 
   /**
-   * @brief read_mesh
-   * Reads a GMSH file or create the mesh using dealii primitives
-   */
-  void
-  read_mesh();
-
-
-  /**
    * @brief set_nodal_values
    * Set the nodal values of velocity and pressure
    */
@@ -245,14 +237,6 @@ protected:
    */
   virtual void
   setup_dofs() = 0;
-
-  /**
-   * @brief set_periodicity
-   *
-   * Initialize the periodic boundary conditions
-   */
-  void
-  set_periodicity();
 
   /**
    * @brief write_checkpoint

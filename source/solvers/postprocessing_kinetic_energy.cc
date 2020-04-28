@@ -24,7 +24,6 @@
 
 // Lethe includes
 #include <core/parameters.h>
-#include <solvers/boundary_conditions.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 
 

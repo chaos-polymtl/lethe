@@ -1,5 +1,6 @@
-#include "core/parameters.h"
-#include "solvers/gls_navier_stokes.h"
+#include <core/parameters.h>
+#include <core/grids.h>
+#include <solvers/gls_navier_stokes.h>
 
 template <int dim>
 class ExactInitialSolution : public Function<dim>
@@ -43,7 +44,7 @@ template <int dim>
 void
 InitialConditionsNavierStokes<dim>::run()
 {
-  this->read_mesh();
+  read_mesh_and_manifolds(this->triangulation,this->nsparam.mesh,this->nsparam.manifoldsParameters,this->nsparam.boundaryConditions);
   this->setup_dofs();
   this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(this->nsparam.initialCondition->type,

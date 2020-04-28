@@ -39,7 +39,6 @@
 
 // Lethe includes
 #include <core/parameters.h>
-#include <solvers/boundary_conditions.h>
 
 
 using namespace dealii;

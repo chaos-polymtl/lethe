@@ -28,6 +28,7 @@
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 #include <solvers/navier_stokes_base.h>
+#include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
@@ -188,8 +189,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
     {
       this->pcout << std::endl;
       std::string independent_column_names = "Boundary ID";
-
-
 
       std::vector<std::string> dependent_column_names;
       dependent_column_names.push_back("T_x");
@@ -976,46 +975,6 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   this->solution_m3      = distributed_system_m3;
 }
 
-/*
- * Reads a CFD Mesh from a GMSH file or generates a pre-defined primitive
- */
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
-{
-  attach_grid_to_triangulation(triangulation, nsparam.mesh);
-  const int initialSize = this->nsparam.mesh.initialRefinement;
-  this->set_periodicity();
-  this->triangulation->refine_global(initialSize);
-}
-
-/*
- * Periodicity
- */
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::set_periodicity()
-{
-  // Setup parallelism for periodic boundary conditions
-  for (unsigned int i_bc = 0; i_bc < nsparam.boundaryConditions.size; ++i_bc)
-    {
-      if (nsparam.boundaryConditions.type[i_bc] ==
-          BoundaryConditions::BoundaryType::periodic)
-        {
-          std::vector<GridTools::PeriodicFacePair<
-            typename Triangulation<dim>::cell_iterator>>
-            periodicity_vector;
-          GridTools::collect_periodic_faces(
-            *dynamic_cast<Triangulation<dim> *>(this->triangulation.get()),
-            nsparam.boundaryConditions.id[i_bc],
-            nsparam.boundaryConditions.periodic_id[i_bc],
-            nsparam.boundaryConditions.periodic_direction[i_bc],
-            periodicity_vector);
-          this->triangulation->add_periodicity(periodicity_vector);
-        }
-    }
-}
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
@@ -1070,8 +1029,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   qcriterion_postprocessor<dim> qcriterion;
   data_out.add_data_vector(solution, qcriterion);
 
-  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,
-                             nsparam.velocitySource.omega_y,
+  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,nsparam.velocitySource.omega_y,
                              nsparam.velocitySource.omega_z);
 
   if (nsparam.velocitySource.type ==
