@@ -1,9 +1,13 @@
-#include "core/grids.h"
-
+// Deal.II includes
 #include <deal.II/grid/grid_tools.h>
 
+// Lethe includes
 #include "core/boundary_conditions.h"
+#include "core/grids.h"
 
+// Std
+#include <fstream>
+#include <iostream>
 
 template <int dim>
 void
