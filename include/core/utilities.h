@@ -25,11 +25,32 @@
 
 using namespace dealii;
 
+template <int dim, typename T>
+TableHandler
+make_table_scalars_tensors(
+  const std::vector<T> &             independent_values,
+  const std::string &                independent_column_name,
+  const std::vector<Tensor<1, dim>> &dependent_vector,
+  const std::vector<std::string> &   dependent_column_name,
+  const unsigned int                 display_precision);
+
 template <int dim>
 TableHandler
-  make_table_from_vector_of_tensors(std::vector<Tensor<1, dim>> vector,
-                                    std::vector<std::string>    column_names,
-                                    const unsigned int display_precision);
+make_table_tensors_tensors(
+  const std::vector<Tensor<1, dim>> &independent_vector,
+  const std::vector<std::string> &   independent_column_name,
+  const std::vector<Tensor<1, dim>> &dependent_vector,
+  const std::vector<std::string> &   dependent_column_name,
+  const unsigned int                 display_precision);
+
+template <int dim>
+TableHandler
+make_table_tensors_scalars(
+  const std::vector<Tensor<1, dim>> &independent_vector,
+  const std::vector<std::string> &   independent_column_name,
+  const std::vector<double> &        dependent_values,
+  const std::string &                dependent_column_name,
+  const unsigned int                 display_precision);
 
 
 

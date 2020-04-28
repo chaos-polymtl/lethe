@@ -118,17 +118,19 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
+      std::string independent_column_names = "Boundary ID";
 
-      std::vector<std::string> column_names;
-      column_names.push_back("Boundary ID");
-      column_names.push_back("f_x");
-      column_names.push_back("f_y");
-      column_names.push_back("f_z");
+      std::vector<std::string> dependent_column_names;
+      dependent_column_names.push_back("f_x");
+      dependent_column_names.push_back("f_y");
+      dependent_column_names.push_back("f_z");
 
-      TableHandler table = make_table_from_vector_of_tensors(
-        this->forces_,
-        column_names,
-        nsparam.forcesParameters.display_precision);
+      TableHandler table =
+        make_table_scalars_tensors(nsparam.boundaryConditions.id,
+                                   independent_column_names,
+                                   this->forces_,
+                                   dependent_column_names,
+                                   nsparam.forcesParameters.display_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force  summary                          |" << std::endl;
@@ -184,16 +186,21 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       this->this_mpi_process == 0)
     {
       this->pcout << std::endl;
-      std::vector<std::string> column_names;
-      column_names.push_back("Boundary ID");
-      column_names.push_back("T_x");
-      column_names.push_back("T_y");
-      column_names.push_back("T_z");
+      std::string independent_column_names = "Boundary ID";
 
-      TableHandler table = make_table_from_vector_of_tensors(
-        this->torques_,
-        column_names,
-        nsparam.forcesParameters.display_precision);
+
+
+      std::vector<std::string> dependent_column_names;
+      dependent_column_names.push_back("T_x");
+      dependent_column_names.push_back("T_y");
+      dependent_column_names.push_back("T_z");
+
+      TableHandler table =
+        make_table_scalars_tensors(nsparam.boundaryConditions.id,
+                                   independent_column_names,
+                                   this->torques_,
+                                   dependent_column_names,
+                                   nsparam.forcesParameters.display_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;
