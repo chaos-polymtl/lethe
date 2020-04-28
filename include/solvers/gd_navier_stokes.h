@@ -93,11 +93,9 @@ private:
             Parameters::SimulationControl::TimeSteppingMethod scheme>
   void
   assembleGD();
-  void
-  assemble_L2_projection();
 
   void
-  set_nodal_values();
+  assemble_L2_projection();
 
   virtual void
   setup_dofs();

@@ -796,14 +796,14 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
-      set_nodal_values();
+      this->set_nodal_values();
       this->finish_time_step();
       this->postprocess(true);
     }
 
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
-      set_nodal_values();
+      this->set_nodal_values();
       double viscosity = this->nsparam.physicalProperties.viscosity;
       this->nsparam.physicalProperties.viscosity =
         this->nsparam.initialCondition->viscosity;
@@ -910,28 +910,6 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
     }
   system_matrix.compress(VectorOperation::add);
   this->system_rhs.compress(VectorOperation::add);
-}
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::set_nodal_values()
-{
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  const MappingQ<dim>              mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
-  VectorTools::interpolate(mapping,
-                           this->dof_handler,
-                           this->nsparam.initialCondition->uvwp,
-                           this->newton_update,
-                           this->fe.component_mask(velocities));
-  VectorTools::interpolate(mapping,
-                           this->dof_handler,
-                           this->nsparam.initialCondition->uvwp,
-                           this->newton_update,
-                           this->fe.component_mask(pressure));
-  this->nonzero_constraints.distribute(this->newton_update);
-  this->present_solution = this->newton_update;
 }
 
 template <int dim>

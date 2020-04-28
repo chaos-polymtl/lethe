@@ -931,6 +931,29 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
+{
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+  const MappingQ<dim>              mapping(this->degreeVelocity_,
+                              this->nsparam.femParameters.qmapping_all);
+  VectorTools::interpolate(mapping,
+                           this->dof_handler,
+                           this->nsparam.initialCondition->uvwp,
+                           this->newton_update,
+                           this->fe.component_mask(velocities));
+  VectorTools::interpolate(mapping,
+                           this->dof_handler,
+                           this->nsparam.initialCondition->uvwp,
+                           this->newton_update,
+                           this->fe.component_mask(pressure));
+  this->nonzero_constraints.distribute(this->newton_update);
+  this->present_solution = this->newton_update;
+}
+
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
@@ -1039,29 +1062,6 @@ NavierStokesBase<dim, VectorType, DofsType>::set_periodicity()
         }
     }
 }
-
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
-{
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  const MappingQ<dim>              mapping(this->degreeVelocity_,
-                              this->nsparam.femParameters.qmapping_all);
-  VectorTools::interpolate(mapping,
-                           this->dof_handler,
-                           this->nsparam.initialCondition->uvwp,
-                           this->newton_update,
-                           this->fe.component_mask(velocities));
-  VectorTools::interpolate(mapping,
-                           this->dof_handler,
-                           this->nsparam.initialCondition->uvwp,
-                           this->newton_update,
-                           this->fe.component_mask(pressure));
-  this->nonzero_constraints.distribute(this->newton_update);
-  this->present_solution = this->newton_update;
-}
-
 
 template <int dim, typename VectorType, typename DofsType>
 void

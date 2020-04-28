@@ -237,6 +237,14 @@ protected:
   void
   read_mesh();
 
+
+  /**
+   * @brief set_nodal_values
+   * Set the nodal values of velocity and pressure
+   */
+  void
+  set_nodal_values();
+
   /**
    * @brief set_periodicity
    *
@@ -252,14 +260,6 @@ protected:
    */
   void
   set_periodicity();
-
-  /**
-   * @brief set_nodal_values
-   *
-   * Set nodal values of the pressure and velocity
-   */
-  void
-  set_nodal_values();
 
   /**
    * @brief write_checkpoint
