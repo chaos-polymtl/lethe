@@ -19,9 +19,9 @@
 
 #include "solvers/gls_navier_stokes.h"
 
-#include "core/manifolds.h"
-#include "core/grids.h"
 #include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
 #include "core/sdirk.h"
 
 // Constructor for class GLSNavierStokesSolver
@@ -1395,7 +1395,10 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve()
 {
-  read_mesh_and_manifolds(this->triangulation,this->nsparam.mesh,this->nsparam.manifoldsParameters,this->nsparam.boundaryConditions);
+  read_mesh_and_manifolds(this->triangulation,
+                          this->nsparam.mesh,
+                          this->nsparam.manifoldsParameters,
+                          this->nsparam.boundaryConditions);
 
 
   this->setup_dofs();

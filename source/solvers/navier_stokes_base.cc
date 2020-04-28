@@ -1029,7 +1029,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   qcriterion_postprocessor<dim> qcriterion;
   data_out.add_data_vector(solution, qcriterion);
 
-  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,nsparam.velocitySource.omega_y,
+  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,
+                             nsparam.velocitySource.omega_y,
                              nsparam.velocitySource.omega_z);
 
   if (nsparam.velocitySource.type ==

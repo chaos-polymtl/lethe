@@ -38,8 +38,8 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#include <core/parameters.h>
 #include <core/boundary_conditions.h>
+#include <core/parameters.h>
 
 
 using namespace dealii;

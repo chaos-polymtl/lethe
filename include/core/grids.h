@@ -28,9 +28,9 @@
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/tria.h>
 
-#include <core/parameters.h>
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
+#include <core/parameters.h>
 
 
 using namespace dealii;
@@ -40,15 +40,15 @@ void
 attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<dim>           &boundary_conditions);
+  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions);
 
 template <int dim>
 void
 read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
-  const Parameters::Manifolds &                                manifolds_parameters,
-  const BoundaryConditions::BoundaryConditions<dim>           &boundary_conditions);
+  const Parameters::Manifolds &                      manifolds_parameters,
+  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions);
 
 
 #endif

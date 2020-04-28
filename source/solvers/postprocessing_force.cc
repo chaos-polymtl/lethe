@@ -20,8 +20,8 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#include <core/parameters.h>
 #include <core/boundary_conditions.h>
+#include <core/parameters.h>
 #include <solvers/postprocessing_force.h>
 
 

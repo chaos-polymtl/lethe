@@ -1,6 +1,7 @@
+#include "core/grids.h"
+
 #include <deal.II/grid/grid_tools.h>
 
-#include "core/grids.h"
 #include "core/boundary_conditions.h"
 
 
@@ -9,7 +10,7 @@ void
 attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<dim>           &boundary_conditions)
+  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions)
 
 {
   // GMSH input
@@ -35,7 +36,7 @@ attach_grid_to_triangulation(
 
 
   // Setup periodic boundary conditions
-   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
+  for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
     {
       if (boundary_conditions.type[i_bc] ==
           BoundaryConditions::BoundaryType::periodic)
@@ -49,11 +50,9 @@ attach_grid_to_triangulation(
             boundary_conditions.periodic_id[i_bc],
             boundary_conditions.periodic_direction[i_bc],
             periodicity_vector);
-           triangulation->add_periodicity(periodicity_vector);
+          triangulation->add_periodicity(periodicity_vector);
         }
     }
-
-
 }
 
 template <int dim>
@@ -61,11 +60,13 @@ void
 read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
-  const Parameters::Manifolds &                                manifolds_parameters,
-  const BoundaryConditions::BoundaryConditions<dim>           &boundary_conditions)
+  const Parameters::Manifolds &                      manifolds_parameters,
+  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions)
 {
-  attach_grid_to_triangulation(triangulation, mesh_parameters, boundary_conditions);
-  attach_manifolds_to_triangulation(triangulation,manifolds_parameters);
+  attach_grid_to_triangulation(triangulation,
+                               mesh_parameters,
+                               boundary_conditions);
+  attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
   // Refine the triangulation to its initial size
   const int initialSize = mesh_parameters.initialRefinement;
@@ -75,22 +76,20 @@ read_mesh_and_manifolds(
 template void attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
-const BoundaryConditions::BoundaryConditions<2>           &boundary_conditions);
+  const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
 
 template void attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
-const BoundaryConditions::BoundaryConditions<3>           &boundary_conditions);
+  const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
 
-template void
-read_mesh_and_manifolds(
+template void read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
-  const Parameters::Mesh &                                     mesh_parameters,
-  const Parameters::Manifolds &                                manifolds_parameters,
-  const BoundaryConditions::BoundaryConditions<2>           &boundary_conditions);
-template void
-read_mesh_and_manifolds(
+  const Parameters::Mesh &                                   mesh_parameters,
+  const Parameters::Manifolds &                    manifolds_parameters,
+  const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
+template void read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
-  const Parameters::Mesh &                                     mesh_parameters,
-  const Parameters::Manifolds &                                manifolds_parameters,
-  const BoundaryConditions::BoundaryConditions<3>           &boundary_conditions);
+  const Parameters::Mesh &                                   mesh_parameters,
+  const Parameters::Manifolds &                    manifolds_parameters,
+  const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
