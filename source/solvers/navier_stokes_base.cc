@@ -362,41 +362,6 @@ NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
   return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
 }
 
-/*
- * Attaches manifold to the boundaries of the mesh
- */
-template <int dim, typename VectorType, typename DofsType>
-void
-NavierStokesBase<dim, VectorType, DofsType>::create_manifolds()
-{
-  Parameters::Manifolds manifolds = this->nsparam.manifoldsParameters;
-
-  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
-    {
-      if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
-        {
-          Point<dim> circleCenter;
-          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
-          static const SphericalManifold<dim> manifold_description(
-            circleCenter);
-          this->triangulation->set_manifold(manifolds.id[i],
-                                            manifold_description);
-          this->triangulation->set_all_manifold_ids_on_boundary(
-            manifolds.id[i], manifolds.id[i]);
-        }
-      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
-        {
-          attach_cad_to_manifold(triangulation,
-                                 manifolds.cad_files[i],
-                                 manifolds.id[i]);
-        }
-      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
-        {}
-      else
-        throw std::runtime_error("Unsupported manifolds type");
-    }
-}
-
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()

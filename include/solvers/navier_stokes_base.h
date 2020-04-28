@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#ifndef LETHE_BASERNAVIERSTOKES_H
-#define LETHE_BASERNAVIERSTOKES_H
+#ifndef lethe_navier_stokes_base_h
+#define lethe_navier_stokes_base_h
 
 // Dealii Includes
 
@@ -160,13 +160,6 @@ protected:
   void
   postprocessing_torques(const VectorType &       evaluation_point,
                          const SimulationControl &simulationControl);
-
-  /**
-   * @brief create_manifold
-   * create the manifolds and attaches them to the triangulation
-   */
-  void
-  create_manifolds();
 
   /**
    * @brief finish_time_step

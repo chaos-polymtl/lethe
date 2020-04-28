@@ -19,7 +19,8 @@
 
 #include "solvers/gd_navier_stokes.h"
 
-#include "core/bdf.h"
+#include <core/bdf.h>
+#include <core/utilities.h>
 
 // Constructor for class GDNavierStokesSolver
 template <int dim>
@@ -1034,7 +1035,8 @@ void
 GDNavierStokesSolver<dim>::solve()
 {
   this->read_mesh();
-  this->create_manifolds();
+  attach_manifolds_to_triangulation(this->triangulation,
+                                    this->nsparam.manifoldsParameters);
 
   this->setup_dofs();
   this->set_initial_condition(this->nsparam.initialCondition->type,

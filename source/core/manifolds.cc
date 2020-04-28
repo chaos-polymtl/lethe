@@ -1,8 +1,14 @@
+// Dealii Includes
+// Base
+#include <deal.II/base/point.h>
 
-#include "core/manifolds.h"
+// Grid
+#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
+
+#include "core/manifolds.h"
 
 namespace Parameters
 {
@@ -180,6 +186,37 @@ namespace Parameters
   }
 } // namespace Parameters
 
+template <int dim>
+void
+attach_manifolds_to_triangulation(
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  Parameters::Manifolds                                        manifolds)
+{
+  for (unsigned int i = 0; i < manifolds.types.size(); ++i)
+    {
+      if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
+        {
+          Point<dim> circleCenter;
+          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
+          static const SphericalManifold<dim> manifold_description(
+            circleCenter);
+          triangulation->set_manifold(manifolds.id[i], manifold_description);
+          triangulation->set_all_manifold_ids_on_boundary(manifolds.id[i],
+                                                          manifolds.id[i]);
+        }
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::iges)
+        {
+          attach_cad_to_manifold(triangulation,
+                                 manifolds.cad_files[i],
+                                 manifolds.id[i]);
+        }
+      else if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::none)
+        {}
+      else
+        throw std::runtime_error("Unsupported manifolds type");
+    }
+}
+
 void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>>,
   std::string,
@@ -224,3 +261,12 @@ void attach_cad_to_manifold(
 
 #endif // DEAL_II_WITH_OPENCASCADE
 }
+
+
+template void attach_manifolds_to_triangulation(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
+  Parameters::Manifolds                                      manifolds);
+
+template void attach_manifolds_to_triangulation(
+  std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
+  Parameters::Manifolds                                      manifolds);

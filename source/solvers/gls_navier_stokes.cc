@@ -1393,7 +1393,8 @@ void
 GLSNavierStokesSolver<dim>::solve()
 {
   this->read_mesh();
-  this->create_manifolds();
+  attach_manifolds_to_triangulation(this->triangulation,
+                                    this->nsparam.manifoldsParameters);
 
   this->setup_dofs();
   this->set_initial_condition(this->nsparam.initialCondition->type,
