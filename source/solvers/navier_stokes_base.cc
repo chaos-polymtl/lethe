@@ -125,7 +125,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       std::vector<std::string> dependent_column_names;
       dependent_column_names.push_back("f_x");
       dependent_column_names.push_back("f_y");
-      dependent_column_names.push_back("f_z");
+      if (dim == 3)
+        dependent_column_names.push_back("f_z");
 
       TableHandler table =
         make_table_scalars_tensors(nsparam.boundaryConditions.id,
