@@ -135,7 +135,7 @@ template <int dim>
 void
 attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  Parameters::Manifolds                                        manifolds);
+  const Parameters::Manifolds                                  manifolds);
 
 void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,

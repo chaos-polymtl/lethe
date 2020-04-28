@@ -24,6 +24,7 @@
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
+#include <core/grids.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 #include <solvers/navier_stokes_base.h>
@@ -982,27 +983,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::read_mesh()
 {
-  // GMSH input
-  if (this->nsparam.mesh.type == Parameters::Mesh::Type::gmsh)
-    {
-      GridIn<dim> grid_in;
-      grid_in.attach_triangulation(*this->triangulation);
-      std::ifstream input_file(this->nsparam.mesh.file_name);
-      grid_in.read_msh(input_file);
-    }
-
-  // Dealii grids
-  else if (this->nsparam.mesh.type == Parameters::Mesh::Type::dealii)
-    {
-      GridGenerator::generate_from_name_and_arguments(
-        *this->triangulation,
-        this->nsparam.mesh.grid_type,
-        this->nsparam.mesh.grid_arguments);
-    }
-  else
-    throw std::runtime_error(
-      "Unsupported mesh type - mesh will not be created");
-
+  attach_grid_to_triangulation(triangulation, nsparam.mesh);
   const int initialSize = this->nsparam.mesh.initialRefinement;
   this->set_periodicity();
   this->triangulation->refine_global(initialSize);
