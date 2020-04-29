@@ -434,7 +434,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
   block_component[dim] = 1;
   DoFRenumbering::component_wise(this->dof_handler, block_component);
 
-#if DEAL_II_VERSION_GTE(9, 2, 0)
+#if DEAL_II_VERSION_GTE(9,1,2)
   dofs_per_block =
     DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
 
