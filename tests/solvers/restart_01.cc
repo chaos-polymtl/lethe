@@ -85,12 +85,12 @@ RestartNavierStokes<dim>::run()
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
   this->setup_dofs();
-  this->exact_solution                       = new ExactSolutionMMS<dim>;
-  this->forcing_function                     = new MMSSineForcingFunction<dim>;
-  this->nsparam.physicalProperties.viscosity = 1.;
+  this->exact_solution                        = new ExactSolutionMMS<dim>;
+  this->forcing_function                      = new MMSSineForcingFunction<dim>;
+  this->nsparam.physical_properties.viscosity = 1.;
 
   printTime(this->pcout, this->simulationControl);
-  this->iterate(false);
+  this->first_iteration();
   this->postprocess(false);
   auto   errors_p1 = this->calculate_L2_error(this->present_solution);
   double error1    = errors_p1.first;
@@ -109,7 +109,7 @@ RestartNavierStokes<dim>::run()
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(0);
 
-  this->set_initial_condition(this->nsparam.initialCondition->type, true);
+  this->set_initial_condition(this->nsparam.initial_condition->type, true);
   auto errors_p3 = this->calculate_L2_error(this->present_solution);
 
   double error3 = errors_p3.first;
@@ -131,15 +131,15 @@ main(int argc, char *argv[])
       NSparam.parse(prm);
 
       // Manually alter some of the default parameters of the solver
-      NSparam.restartParameters.checkpoint = true;
-      NSparam.restartParameters.frequency  = 1;
-      NSparam.nonLinearSolver.verbosity    = Parameters::Verbosity::quiet;
-      NSparam.linearSolver.verbosity       = Parameters::Verbosity::quiet;
-      NSparam.boundaryConditions.createDefaultNoSlip();
+      NSparam.restart_parameters.checkpoint = true;
+      NSparam.restart_parameters.frequency  = 1;
+      NSparam.non_linear_solver.verbosity   = Parameters::Verbosity::quiet;
+      NSparam.linear_solver.verbosity       = Parameters::Verbosity::quiet;
+      NSparam.boundary_conditions.createDefaultNoSlip();
 
       RestartNavierStokes<2> problem_2d(NSparam,
-                                        NSparam.femParameters.velocityOrder,
-                                        NSparam.femParameters.pressureOrder);
+                                        NSparam.fem_parameters.velocityOrder,
+                                        NSparam.fem_parameters.pressureOrder);
       problem_2d.run();
     }
   catch (std::exception &exc)

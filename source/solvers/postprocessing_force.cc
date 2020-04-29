@@ -20,8 +20,8 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
+#include <core/boundary_conditions.h>
 #include <core/parameters.h>
-#include <solvers/boundary_conditions.h>
 #include <solvers/postprocessing_force.h>
 
 
@@ -32,7 +32,6 @@ using namespace dealii;
 template <int dim, typename VectorType>
 std::vector<Tensor<1, dim>>
 calculate_forces(
-  const FESystem<dim> &                                fe,
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
@@ -40,6 +39,8 @@ calculate_forces(
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator)
 {
+  const FiniteElement<dim> &fe = dof_handler.get_fe();
+
   double viscosity = physical_properties.viscosity;
 
   QGauss<dim - 1>     face_quadrature_formula(fe.degree + 1);
@@ -112,7 +113,6 @@ calculate_forces(
 
 template std::vector<Tensor<1, 2>>
 calculate_forces<2, TrilinosWrappers::MPI::Vector>(
-  const FESystem<2> &                                fe,
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
@@ -121,7 +121,6 @@ calculate_forces<2, TrilinosWrappers::MPI::Vector>(
   const MPI_Comm &                                   mpi_communicator);
 template std::vector<Tensor<1, 3>>
 calculate_forces<3, TrilinosWrappers::MPI::Vector>(
-  const FESystem<3> &                                fe,
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
@@ -131,7 +130,6 @@ calculate_forces<3, TrilinosWrappers::MPI::Vector>(
 
 template std::vector<Tensor<1, 2>>
 calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
-  const FESystem<2> &                                fe,
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
@@ -141,7 +139,6 @@ calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
 
 template std::vector<Tensor<1, 3>>
 calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
-  const FESystem<3> &                                fe,
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,

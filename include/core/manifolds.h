@@ -131,6 +131,31 @@ public:
   }
 };
 
+
+/**
+ * @brief Attaches manifold to boundaries of the triangulation
+ *
+ * @param triangulation The triangulation to manifolds are attached
+ *
+ * @param manifolds_parameters The information about the type of manifolds attached to the faces
+ */
+template <int dim>
+void
+attach_manifolds_to_triangulation(
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  const Parameters::Manifolds                                  manifolds);
+
+/**
+ * @brief Attaches CAD manifolds using IGES files to boundaries of the triangulation
+ * This function attaches a CAD manifold to the faces of a triangulation. Note
+ * that this only works in 3D.
+ *
+ * @param triangulation The triangulation to manifolds are attached
+ *
+ * @param std::string Filename of the cad file
+ *
+ * @param manifold_id Identifier of the manifold
+ */
 void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   std::string                                                cad_name,
@@ -140,5 +165,7 @@ void attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id);
+
+
 
 #endif

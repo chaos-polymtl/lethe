@@ -35,8 +35,39 @@ namespace BoundaryConditions
     periodic
   };
 
+  /**
+   * @brief This class is the base class for all boundary conditions. It stores
+   * the general information that all boundary condition share.
+   * In Lethe, boundary conditions are identified with an id, a type and, in the
+   * special case of periodic boundary conditoin, a periodic matching id
+   * (periodic_id) and a periodic direction
+   */
   template <int dim>
-  class BoundaryFunction
+  class BoundaryConditions
+  {
+  public:
+    // ID of boundary condition
+    std::vector<unsigned int> id;
+
+    // List of boundary type for each number
+    std::vector<BoundaryType> type;
+
+    // Number of boundary conditions
+    unsigned int size;
+    unsigned int max_size;
+
+    // Periodic boundary condition matching
+    std::vector<unsigned int> periodic_id;
+    std::vector<unsigned int> periodic_direction;
+  };
+
+  /**
+   * @brief This class managed the functions associated with function boundary conditions
+   * of the Navier-Stokes equations
+   *
+   */
+  template <int dim>
+  class NSBoundaryFunctions
   {
   public:
     // Velocity components
@@ -48,26 +79,19 @@ namespace BoundaryConditions
     Point<dim> cor;
   };
 
+
+  /**
+   * @brief This class manages the boundary conditions for Navier-Strokes solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently
+   *
+   */
   template <int dim>
-  class NSBoundaryConditions
+  class NSBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    // ID of boundary condition
-    std::vector<unsigned int> id;
-
-    // List of boundary type for each number
-    std::vector<BoundaryType> type;
-
     // Functions for (u,v,w) for all boundaries
-    BoundaryFunction<dim> *bcFunctions;
-
-    // Number of boundary conditions
-    unsigned int size;
-    unsigned int max_size;
-
-    // Periodic boundary condition matching
-    std::vector<unsigned int> periodic_id;
-    std::vector<unsigned int> periodic_direction;
+    NSBoundaryFunctions<dim> *bcFunctions;
 
     void
     parse_boundary(ParameterHandler &prm, unsigned int i_bc);
@@ -85,11 +109,11 @@ namespace BoundaryConditions
   void
   NSBoundaryConditions<dim>::createDefaultNoSlip()
   {
-    id.resize(1);
-    id[0] = 0;
-    type.resize(1);
-    type[0] = BoundaryType::noslip;
-    size    = 1;
+    this->id.resize(1);
+    this->id[0] = 0;
+    this->type.resize(1);
+    this->type[0] = BoundaryType::noslip;
+    this->size    = 1;
   }
 
   template <int dim>
@@ -147,12 +171,12 @@ namespace BoundaryConditions
   {
     const std::string op = prm.get("type");
     if (op == "noslip")
-      type[i_bc] = BoundaryType::noslip;
+      this->type[i_bc] = BoundaryType::noslip;
     if (op == "slip")
-      type[i_bc] = BoundaryType::slip;
+      this->type[i_bc] = BoundaryType::slip;
     if (op == "function")
       {
-        type[i_bc] = BoundaryType::function;
+        this->type[i_bc] = BoundaryType::function;
         prm.enter_subsection("u");
         bcFunctions[i_bc].u.parse_parameters(prm);
         prm.leave_subsection();
@@ -174,19 +198,19 @@ namespace BoundaryConditions
       }
     if (op == "periodic")
       {
-        type[i_bc]               = BoundaryType::periodic;
-        periodic_id[i_bc]        = prm.get_integer("periodic_id");
-        periodic_direction[i_bc] = prm.get_integer("periodic_direction");
+        this->type[i_bc]               = BoundaryType::periodic;
+        this->periodic_id[i_bc]        = prm.get_integer("periodic_id");
+        this->periodic_direction[i_bc] = prm.get_integer("periodic_direction");
       }
 
-    id[i_bc] = prm.get_integer("id");
+    this->id[i_bc] = prm.get_integer("id");
   }
 
   template <int dim>
   void
   NSBoundaryConditions<dim>::declare_parameters(ParameterHandler &prm)
   {
-    max_size = 7;
+    this->max_size = 7;
 
     prm.enter_subsection("boundary conditions");
     {
@@ -194,11 +218,11 @@ namespace BoundaryConditions
                         "0",
                         Patterns::Integer(),
                         "Number of boundary conditions");
-      id.resize(max_size);
-      periodic_id.resize(max_size);
-      periodic_direction.resize(max_size);
-      type.resize(max_size);
-      bcFunctions = new BoundaryFunction<dim>[max_size];
+      this->id.resize(this->max_size);
+      this->periodic_id.resize(this->max_size);
+      this->periodic_direction.resize(this->max_size);
+      this->type.resize(this->max_size);
+      bcFunctions = new NSBoundaryFunctions<dim>[this->max_size];
 
       prm.enter_subsection("bc 0");
       {
@@ -251,13 +275,13 @@ namespace BoundaryConditions
   {
     prm.enter_subsection("boundary conditions");
     {
-      size = prm.get_integer("number");
-      type.resize(size);
-      id.resize(size);
-      periodic_direction.resize(size);
-      periodic_id.resize(size);
+      this->size = prm.get_integer("number");
+      this->type.resize(this->size);
+      this->id.resize(this->size);
+      this->periodic_direction.resize(this->size);
+      this->periodic_id.resize(this->size);
 
-      if (size >= 1)
+      if (this->size >= 1)
         {
           prm.enter_subsection("bc 0");
           {
@@ -265,7 +289,7 @@ namespace BoundaryConditions
           }
           prm.leave_subsection();
         }
-      if (size >= 2)
+      if (this->size >= 2)
         {
           prm.enter_subsection("bc 1");
           {
@@ -273,7 +297,7 @@ namespace BoundaryConditions
           }
           prm.leave_subsection();
         }
-      if (size >= 3)
+      if (this->size >= 3)
         {
           prm.enter_subsection("bc 2");
           {
@@ -281,7 +305,7 @@ namespace BoundaryConditions
           }
           prm.leave_subsection();
         }
-      if (size >= 4)
+      if (this->size >= 4)
         {
           prm.enter_subsection("bc 3");
           {
@@ -290,7 +314,7 @@ namespace BoundaryConditions
           prm.leave_subsection();
         }
 
-      if (size >= 5)
+      if (this->size >= 5)
         {
           prm.enter_subsection("bc 4");
           {
@@ -299,7 +323,7 @@ namespace BoundaryConditions
           prm.leave_subsection();
         }
 
-      if (size >= 6)
+      if (this->size >= 6)
         {
           prm.enter_subsection("bc 5");
           {
@@ -312,8 +336,13 @@ namespace BoundaryConditions
   }
 } // namespace BoundaryConditions
 
+
+/**
+ * @brief This class implements a boundary conditions for the Navier-Stokes equation
+ * where the velocity component are defined using individual functions
+ */
 template <int dim>
-class FunctionDefined : public Function<dim>
+class NavierStokesFunctionDefined : public Function<dim>
 {
 private:
   Functions::ParsedFunction<dim> *u;
@@ -321,9 +350,9 @@ private:
   Functions::ParsedFunction<dim> *w;
 
 public:
-  FunctionDefined(Functions::ParsedFunction<dim> *p_u,
-                  Functions::ParsedFunction<dim> *p_v,
-                  Functions::ParsedFunction<dim> *p_w)
+  NavierStokesFunctionDefined(Functions::ParsedFunction<dim> *p_u,
+                              Functions::ParsedFunction<dim> *p_v,
+                              Functions::ParsedFunction<dim> *p_w)
     : Function<dim>(dim + 1)
     , u(p_u)
     , v(p_v)
@@ -331,13 +360,13 @@ public:
   {}
 
   virtual double
-  value(const Point<dim> &p, const unsigned int component) const;
+  value(const Point<dim> &p, const unsigned int component) const override;
 };
 
 template <int dim>
 double
-FunctionDefined<dim>::value(const Point<dim> & p,
-                            const unsigned int component) const
+NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
+                                        const unsigned int component) const
 {
   Assert(component < this->n_components,
          ExcIndexRange(component, 0, this->n_components));

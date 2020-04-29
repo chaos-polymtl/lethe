@@ -40,8 +40,8 @@ main(int argc, char *argv[])
       NSparam.parse(prm);
 
       GLSNavierStokesSolver<2> problem_2d(NSparam,
-                                          NSparam.femParameters.velocityOrder,
-                                          NSparam.femParameters.pressureOrder);
+                                          NSparam.fem_parameters.velocityOrder,
+                                          NSparam.fem_parameters.pressureOrder);
       problem_2d.solve();
     }
   catch (std::exception &exc)

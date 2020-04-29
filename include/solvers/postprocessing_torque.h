@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
-#ifndef LETHE_TORQUECALCULATION_H
-#define LETHE_TORQUECALCULATION_H
+#ifndef lethe_postprocessing_torque_h
+#define lethe_postprocessing_torque_h
 
 // Base
 #include <deal.II/base/quadrature_lib.h>
@@ -38,11 +38,12 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
+#include <core/boundary_conditions.h>
 #include <core/parameters.h>
-#include <solvers/boundary_conditions.h>
 
 
 using namespace dealii;
+
 /**
  * @brief Calculates the torques due to the fluid motion on every boundary conditions
  * @return std::vector of torques on each boundary condition
@@ -50,8 +51,6 @@ using namespace dealii;
  * This function calculates the torqueacting on each of the boundary conditions
  * within the domain. It generates a vector which size is the number of boundary
  * conditions.
- *
- * @param fe The finite element system object used for the calculation.
  *
  * @param dof_handler The dof_handler used for the calculation.
  *
@@ -68,7 +67,6 @@ using namespace dealii;
 template <int dim, typename VectorType>
 std::vector<Tensor<1, 3>>
 calculate_torques(
-  const FESystem<dim> &                                fe,
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,

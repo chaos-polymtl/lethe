@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
-#ifndef lethe_postprocessing_kinetic_energy_h
-#define lethe_postprocessing_kinetic_energy_h
+#ifndef lethe_postprocessing_cfl_h
+#define lethe_postprocessing_cfl_h
 
 // Base
 #include <deal.II/base/quadrature_lib.h>
@@ -43,24 +43,25 @@
 
 using namespace dealii;
 /**
- * @brief Calculate the average kinetic energy in the simulation domain
- * @return average kinetic energy in the domain
+ * @brief Calculate the CFL condition on the simulation domain
+ * @return CFL maximal value in the domain
  * Post-processing function
- * This function calculates the average kinetic energy in the simulation domain
+ * This function calculates the maximal CFL value in the domain
  *
  * @param dof_handler The dof_handler used for the calculation
  *
- * @param evaluation_point The solution at which the force is calculated
+ * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
  *
  * @param fem_parameters The fem_parameters of the simulation
  *
- * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
  */
 template <int dim, typename VectorType>
 double
-calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
-                         const VectorType &     evaluation_point,
-                         const Parameters::FEM &fem_parameters,
-                         const MPI_Comm &       mpi_communicator);
+calculate_CFL(const DoFHandler<dim> &dof_handler,
+              const VectorType &     evaluation_point,
+              const Parameters::FEM &fem_parameters,
+              const double           time_step,
+              const MPI_Comm &       mpi_communicator);
 
 #endif

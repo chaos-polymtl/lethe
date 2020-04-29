@@ -76,9 +76,6 @@ private:
   void
   assemble_L2_projection();
 
-  void
-  set_nodal_values();
-
   /**
    * Interface for the solver for the linear system of equations
    */

@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#ifndef LETHE_BASERNAVIERSTOKES_H
-#define LETHE_BASERNAVIERSTOKES_H
+#ifndef lethe_navier_stokes_base_h
+#define lethe_navier_stokes_base_h
 
 // Dealii Includes
 
@@ -90,6 +90,7 @@
 
 // Lethe Includes
 #include <core/bdf.h>
+#include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/newton_non_linear_solver.h>
 #include <core/parameters.h>
@@ -97,7 +98,6 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 
-#include "boundary_conditions.h"
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 
@@ -134,17 +134,6 @@ protected:
   virtual ~NavierStokesBase()
   {}
 
-  // Member functions
-
-  /**
-   * @brief calculate_CFL
-   * @return maximum of the CFL
-   * Calculates the maximum CFL reached
-   * throughout all the cells
-   */
-  double
-  calculate_CFL(const VectorType &evaluation_point);
-
   /**
    * @brief calculate_forces
    * Post-processing function
@@ -173,13 +162,6 @@ protected:
                          const SimulationControl &simulationControl);
 
   /**
-   * @brief create_manifold
-   * create the manifolds and attaches them to the triangulation
-   */
-  void
-  create_manifolds();
-
-  /**
    * @brief finish_time_step
    * Finishes the time step
    * Post-processing and time stepping
@@ -200,7 +182,15 @@ protected:
    * Do a regular CFD iteration
    */
   void
-  iterate(const bool first_iteration);
+  iterate();
+
+
+  /**
+   * @brief First iteration
+   * Do the first CFD iteration
+   */
+  void
+  first_iteration();
 
   virtual void
   assemble_matrix_and_rhs(
@@ -234,11 +224,11 @@ protected:
   read_checkpoint();
 
   /**
-   * @brief read_mesh
-   * Reads a GMSH file or create the mesh using dealii primitives
+   * @brief set_nodal_values
+   * Set the nodal values of velocity and pressure
    */
   void
-  read_mesh();
+  set_nodal_values();
 
   /**
    * @brief set_periodicity
@@ -247,22 +237,6 @@ protected:
    */
   virtual void
   setup_dofs() = 0;
-
-  /**
-   * @brief set_periodicity
-   *
-   * Initialize the periodic boundary conditions
-   */
-  void
-  set_periodicity();
-
-  /**
-   * @brief set_nodal_values
-   *
-   * Set nodal values of the pressure and velocity
-   */
-  void
-  set_nodal_values();
 
   /**
    * @brief write_checkpoint
@@ -275,14 +249,7 @@ protected:
    * Post-processing as parallel VTU files
    */
   void
-  write_output_results(const VectorType & solution,
-                       PVDHandler &       pvdhandler,
-                       const std::string  folder,
-                       const std::string  solutionName,
-                       const unsigned int cycle,
-                       const double       time,
-                       const unsigned int subdivision,
-                       const unsigned int group_files);
+  write_output_results(const VectorType &solution);
 
   /**
    * @brief write_output_forces
@@ -346,9 +313,6 @@ protected:
   std::vector<Tensor<1, 3>>   torques_;
   std::vector<TableHandler>   forces_tables;
   std::vector<TableHandler>   torques_tables;
-
-  // Additional information about mesh
-  double globalVolume_;
 };
 
 #endif

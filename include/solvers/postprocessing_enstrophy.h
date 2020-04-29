@@ -39,7 +39,6 @@
 
 // Lethe includes
 #include <core/parameters.h>
-#include <solvers/boundary_conditions.h>
 
 
 using namespace dealii;
@@ -48,8 +47,6 @@ using namespace dealii;
  * @return average kinetic energy in the domain
  * Post-processing function
  * This function calculates the average enstrophy in the simulation domain
- *
- * @param fe The finite element system object used for the calculation
  *
  * @param dof_handler The dof_handler used for the calculation
  *
@@ -61,8 +58,7 @@ using namespace dealii;
  */
 template <int dim, typename VectorType>
 double
-calculate_enstrophy(const FESystem<dim> &  fe,
-                    const DoFHandler<dim> &dof_handler,
+calculate_enstrophy(const DoFHandler<dim> &dof_handler,
                     const VectorType &     evaluation_point,
                     const Parameters::FEM &fem_parameters,
                     const MPI_Comm &       mpi_communicator);
