@@ -440,8 +440,9 @@ GDNavierStokesSolver<dim>::setup_dofs()
                                  dofs_per_block,
                                  block_component);
 
-  // To be used to replace the above part once 9.2 release is out and TRAVIS-CI version is updated
-  //dofs_per_block =
+  // To be used to replace the above part once 9.2 release is out and TRAVIS-CI
+  // version is updated
+  // dofs_per_block =
   //  DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
 
   unsigned int dof_u = dofs_per_block[0];
