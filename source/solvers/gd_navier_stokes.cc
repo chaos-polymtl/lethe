@@ -434,16 +434,18 @@ GDNavierStokesSolver<dim>::setup_dofs()
   block_component[dim] = 1;
   DoFRenumbering::component_wise(this->dof_handler, block_component);
 
-#if !DEAL_II_VERSION_GTE(9,1,2)
+
+#if (DEAL_II_VERSION_MINOR!=2)
   dofs_per_block.resize(2);
   DoFTools::count_dofs_per_block(this->dof_handler,
                                  dofs_per_block,
                                  block_component);
-
 #else
+
   dofs_per_block =
     DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
 #endif
+
   unsigned int dof_u = dofs_per_block[0];
   unsigned int dof_p = dofs_per_block[1];
 
