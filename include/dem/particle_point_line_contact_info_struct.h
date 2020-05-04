@@ -22,7 +22,7 @@
 #include <deal.II/particles/particle_iterator.h>
 
 #ifndef PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
-#define PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
+#  define PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
 
 /**
  * This struct handles the information related to the calculation of the
@@ -31,11 +31,13 @@
 
 using namespace dealii;
 
-template <int dim> struct particle_point_line_contact_info_struct {
+template <int dim>
+struct particle_point_line_contact_info_struct
+{
   Particles::ParticleIterator<dim> particle;
-  double normal_overlap;
-  Tensor<1, dim> normal_vector;
-  double normal_relative_velocity;
+  double                           normal_overlap;
+  Tensor<1, dim>                   normal_vector;
+  double                           normal_relative_velocity;
 };
 
 #endif /* PARTICLEPOINTLINECONTACTINFOSTRUCT_H_ */

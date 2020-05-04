@@ -27,7 +27,7 @@
 using namespace dealii;
 
 #ifndef PARTICLEPOINTLINEFORCE_H_
-#define PARTICLEPOINTLINEFORCE_H_
+#  define PARTICLEPOINTLINEFORCE_H_
 
 /**
  * Calculation of the non-linear particle-point and particle-line contact force
@@ -41,7 +41,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class ParticlePointLineForce {
+template <int dim>
+class ParticlePointLineForce
+{
 public:
   ParticlePointLineForce<dim>();
 
@@ -54,10 +56,11 @@ public:
    * information were obtained in the fine search
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-  void calculate_particle_point_line_contact_force(
-      const std::map<int, particle_point_line_contact_info_struct<dim>>
-          *particle_point_line_pairs_in_contact,
-      const DEMSolverParameters<dim> &dem_parameters);
+  void
+  calculate_particle_point_line_contact_force(
+    const std::map<int, particle_point_line_contact_info_struct<dim>>
+      *                             particle_point_line_pairs_in_contact,
+    const DEMSolverParameters<dim> &dem_parameters);
 };
 
 #endif

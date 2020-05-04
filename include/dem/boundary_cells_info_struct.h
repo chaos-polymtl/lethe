@@ -22,7 +22,7 @@
 #include <deal.II/distributed/tria.h>
 
 #ifndef BOUNDARYCELLSINFOSTRUCT_H_
-#define BOUNDARYCELLSINFOSTRUCT_H_
+#  define BOUNDARYCELLSINFOSTRUCT_H_
 
 /**
  * This struct handles the information related to the boundary cells which will
@@ -31,8 +31,9 @@
 
 using namespace dealii;
 
-template <int dim> struct boundary_cells_info_struct {
-
+template <int dim>
+struct boundary_cells_info_struct
+{
   // The boundary cell
   typename Triangulation<dim>::active_cell_iterator cell;
 

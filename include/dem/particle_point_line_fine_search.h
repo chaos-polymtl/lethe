@@ -28,7 +28,7 @@
 using namespace dealii;
 
 #ifndef PARTICLEPOINTLINEFINESEARCH_H_
-#define PARTICLEPOINTLINEFINESEARCH_H_
+#  define PARTICLEPOINTLINEFINESEARCH_H_
 
 /**
  * This class is used for fine particle-point and particle-line contact search.
@@ -41,7 +41,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class ParticlePointLineFineSearch {
+template <int dim>
+class ParticlePointLineFineSearch
+{
 public:
   ParticlePointLineFineSearch<dim>();
 
@@ -60,9 +62,8 @@ public:
 
   std::map<int, particle_point_line_contact_info_struct<dim>>
   Particle_Point_Fine_Search(
-      const std::map<int,
-                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-          &particle_point_contact_candidates);
+    const std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+      &particle_point_contact_candidates);
 
   /**
    * Iterates over a map of tuples (particle_line_contact_candidates) to see if
@@ -79,9 +80,10 @@ public:
 
   std::map<int, particle_point_line_contact_info_struct<dim>>
   Particle_Line_Fine_Search(
-      const std::map<int, std::tuple<Particles::ParticleIterator<dim>,
-                                     Point<dim>, Point<dim>>>
-          &particle_line_contact_candidates);
+    const std::map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+      &particle_line_contact_candidates);
 
 private:
   /** This private function is used to find the projection of point_p on
@@ -93,8 +95,10 @@ private:
    * @return The projection of point_p on the line (from point_a to point_b)
    */
 
-  Point<dim> find_projection_point(Point<dim> point_p, Point<dim> point_a,
-                                   Point<dim> point_b);
+  Point<dim>
+  find_projection_point(Point<dim> point_p,
+                        Point<dim> point_a,
+                        Point<dim> point_b);
 };
 
 #endif /* PARTICLEPOINTLINEFINESEARCH_H_ */

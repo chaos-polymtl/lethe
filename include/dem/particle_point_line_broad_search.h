@@ -18,6 +18,7 @@
  */
 
 #include <deal.II/distributed/tria.h>
+
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
@@ -27,7 +28,7 @@
 using namespace dealii;
 
 #ifndef PARTICLEPOINTLINEBROADSEARCH_H_
-#define PARTICLEPOINTLINEBROADSEARCH_H_
+#  define PARTICLEPOINTLINEBROADSEARCH_H_
 
 /**
  * This class is used for broad particle-line and particle-point contact
@@ -39,7 +40,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class ParticlePointLineBroadSearch {
+template <int dim>
+class ParticlePointLineBroadSearch
+{
 public:
   ParticlePointLineBroadSearch<dim>();
 
@@ -59,10 +62,10 @@ public:
 
   std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
   find_Particle_Point_Contact_Pairs(
-      const Particles::ParticleHandler<dim> &particle_handler,
-      const std::vector<std::pair<
-          typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-          &boundary_cells_with_points);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const std::vector<
+      std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+      &boundary_cells_with_points);
 
   /**
    * Finds a map of tuples (tuple of particle and the locations of beginning and
@@ -81,10 +84,11 @@ public:
   std::map<int,
            std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
   find_Particle_Line_Contact_Pairs(
-      const Particles::ParticleHandler<dim> &particle_handler,
-      const std::vector<
-          std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                     Point<dim>, Point<dim>>> &boundary_cells_with_lines);
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const std::vector<
+      std::tuple<typename Triangulation<dim>::active_cell_iterator,
+                 Point<dim>,
+                 Point<dim>>> &boundary_cells_with_lines);
 };
 
 #endif /* PARTICLEPOINTLINEBROADSEARCH_H_ */
