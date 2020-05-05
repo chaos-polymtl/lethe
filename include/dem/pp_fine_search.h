@@ -28,6 +28,9 @@
 #include <iostream>
 #include <vector>
 
+#include <deal.II/base/timer.h>
+
+
 using namespace dealii;
 
 #ifndef PPFINESEARCH_H_
@@ -77,6 +80,8 @@ public:
                  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
                    &    pairs_in_contact_info,
                  double time_step);
+
+  TimerOutput    dummy_timer;
 };
 
 #endif /* PPFINESEARCH_H_ */

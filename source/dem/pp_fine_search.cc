@@ -1,9 +1,13 @@
 #include <dem/pp_fine_search.h>
+#include <deal.II/base/timer.h>
+
 
 using namespace dealii;
 
 template <int dim>
-PPFineSearch<dim>::PPFineSearch()
+PPFineSearch<dim>::PPFineSearch():
+dummy_timer(std::cout,TimerOutput::summary,
+                             TimerOutput::wall_times)
 {}
 
 template <int dim>
@@ -17,8 +21,15 @@ PPFineSearch<dim>::pp_Fine_Search(
     &    pairs_in_contact_info,
   double dt)
 {
+
+
+
   // Iterating over pairs_in_contact_info, which is equivalent to iteration over
   // all the particles
+  {
+//    TimerOutput::Scope t(dummy_timer, "first_loop");
+
+
   for (auto pairs_in_contact_info_iterator = pairs_in_contact_info.begin();
        pairs_in_contact_info_iterator != pairs_in_contact_info.end();
        ++pairs_in_contact_info_iterator)
@@ -52,14 +63,14 @@ PPFineSearch<dim>::pp_Fine_Search(
           // Finding the distance of particles based on their new position, if
           // the particles are still in contact, the distance will be equal to
           // the normal overlap
-          double distance =
-            ((particle_one_properties[DEM::PropertiesIndex::dp] +
-              particle_two_properties[DEM::PropertiesIndex::dp]) /
-             2.0) -
+          double overlap_distance =
+            0.5*(particle_one_properties[DEM::PropertiesIndex::dp] +
+              particle_two_properties[DEM::PropertiesIndex::dp])
+              -
             particle_one_location.distance(particle_two_location);
 
           // If the pair is still in contact
-          if (distance > 0)
+          if (overlap_distance > 0)
             {
               // contact_vector shows a vector from location of particle_one to
               // location of particle_two
@@ -67,7 +78,7 @@ PPFineSearch<dim>::pp_Fine_Search(
                 (particle_two_location - particle_one_location);
 
               // Using contact_vector, the contact normal vector is obtained
-              Tensor<1, dim> normal_vector =
+              Tensor<1, dim> normal_unit_vector =
                 contact_vector / contact_vector.norm();
 
               // Using velocities and angular velocities of particles one and
@@ -129,7 +140,7 @@ PPFineSearch<dim>::pp_Fine_Search(
                        ((particle_two_properties[DEM::PropertiesIndex::dp] /
                          2.0) *
                         particle_two_omega)),
-                      normal_vector));
+                      normal_unit_vector));
                 }
 
               if (dim == 2)
@@ -143,9 +154,9 @@ PPFineSearch<dim>::pp_Fine_Search(
               // sides are vectors, while in the second line the product is
               // scalar and vector product
               double normal_relative_velocity_value =
-                contact_relative_velocity * normal_vector;
+                contact_relative_velocity * normal_unit_vector;
               Tensor<1, dim> normal_relative_velocity =
-                normal_relative_velocity_value * normal_vector;
+                normal_relative_velocity_value * normal_unit_vector;
 
               // Calculation of tangential relative velocity
               Tensor<1, dim> tangential_relative_velocity =
@@ -161,9 +172,10 @@ PPFineSearch<dim>::pp_Fine_Search(
               // new particles are equal to zero
               Tensor<1, dim> tangential_overlap =
                 contact_information.tangential_overlap -
-                (contact_information.tangential_overlap * normal_vector) *
-                  normal_vector;
+                (contact_information.tangential_overlap * normal_unit_vector) *
+                  normal_unit_vector;
               Tensor<1, dim> modified_tangential_overlap;
+              double tangential_overlap_norm= tangential_overlap.norm() + DBL_MIN;
               if (tangential_overlap.norm() != 0)
                 {
                   modified_tangential_overlap =
@@ -183,8 +195,8 @@ PPFineSearch<dim>::pp_Fine_Search(
               // contact info to the sample
               pp_contact_info_struct<dim> contact_info;
 
-              contact_info.normal_overlap = distance;
-              contact_info.normal_vector  = normal_vector;
+              contact_info.normal_overlap = overlap_distance;
+              contact_info.normal_vector  = normal_unit_vector;
               contact_info.normal_relative_velocity =
                 normal_relative_velocity_value;
               contact_info.tangential_relative_velocity =
@@ -206,7 +218,11 @@ PPFineSearch<dim>::pp_Fine_Search(
             }
         }
     }
+  }
 
+  {
+//    TimerOutput::Scope t(dummy_timer, "second_loop");
+//    std::cout << " Size : " << contact_pair_candidates.size() << std::endl;
   // Now iterating over contact candidates from broad search. If a pair is in
   // contact (distance > 0) and does not exist in the pairs_in_contact, it is
   // added to the pairs_in_contact
@@ -214,9 +230,12 @@ PPFineSearch<dim>::pp_Fine_Search(
        contact_pair_candidates_iterator != contact_pair_candidates.end();
        ++contact_pair_candidates_iterator)
     {
+
       // Get the value of the map (particle pair candidate) from the
       // contact_pair_candidates_iterator
       auto particle_pair_candidates = &contact_pair_candidates_iterator->second;
+
+
       // Get particles one and two from the vector and the total array view to
       // the particle properties once to improve efficiency
       auto particle_one            = particle_pair_candidates->first;
@@ -224,19 +243,28 @@ PPFineSearch<dim>::pp_Fine_Search(
       auto particle_one_properties = particle_one->get_properties();
       auto particle_two_properties = particle_two->get_properties();
 
+
+
       // Obtaining locations of particles one and two:
       Point<dim, double> particle_one_location = particle_one->get_location();
       Point<dim, double> particle_two_location = particle_two->get_location();
 
       // Calculation of the distance between particles one and two:
-      double distance = ((particle_one_properties[DEM::PropertiesIndex::dp] +
-                          particle_two_properties[DEM::PropertiesIndex::dp]) /
-                         2.0) -
-                        particle_one_location.distance(particle_two_location);
+      double size_distance = 0.5*((particle_one_properties[DEM::PropertiesIndex::dp] +
+                                  particle_two_properties[DEM::PropertiesIndex::dp]));
+      auto distance_vector = particle_one_location-particle_two_location;
+      double distance = size_distance*size_distance;
+      if (dim==2)
+      distance -= distance_vector[0]*distance_vector[0] + distance_vector[1]*distance_vector[1];
+
+      //double distance = 0.5*((particle_one_properties[DEM::PropertiesIndex::dp] +
+      //                    particle_two_properties[DEM::PropertiesIndex::dp])) -
+      //                  particle_one_location.distance(particle_two_location);
 
       // Check to see if particle pair is in contact:
       if (distance > 0)
         {
+
           // Check to see if the pair already exists in pairs_in_contact vector
           // or not. Note that the pair shoule be searched in the
           // (particle_one_properties[DEM::PropertiesIndex::id])th element of
@@ -247,10 +275,14 @@ PPFineSearch<dim>::pp_Fine_Search(
 
           // Since insert already checks if the element with the same key
           // exists, only the element with key = particle one id, is checked
-          if (pairs_in_contact_info
+          bool are_in_contact=false;
+          {
+            are_in_contact=pairs_in_contact_info
                 [particle_one_properties[DEM::PropertiesIndex::id]]
                   .count(particle_two_properties[DEM::PropertiesIndex::id]) <=
-              0)
+              0;
+          }
+          if (are_in_contact)
             {
               // contact_vector shows a vector from location of particle_one to
               // location of particle_two
@@ -354,6 +386,7 @@ PPFineSearch<dim>::pp_Fine_Search(
 
               // Creating a sample from the contact_info_struct and adding
               // contact info to the sample
+              {
               pp_contact_info_struct<dim> contact_info;
 
               contact_info.normal_overlap = distance;
@@ -366,13 +399,17 @@ PPFineSearch<dim>::pp_Fine_Search(
               contact_info.particle_one       = particle_one;
               contact_info.particle_two       = particle_two;
 
+              {
               pairs_in_contact_info
                 [particle_one_properties[DEM::PropertiesIndex::id]]
                   .insert({particle_two_properties[DEM::PropertiesIndex::id],
                            contact_info});
+              }
+              }
             }
         }
     }
+  }
 }
 
 template class PPFineSearch<2>;
