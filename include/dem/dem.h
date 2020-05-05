@@ -37,6 +37,9 @@
 #include <dem/find_cell_neighbors.h>
 #include <dem/integrator.h>
 #include <dem/non_uniform_insertion.h>
+#include <dem/particle_point_line_broad_search.h>
+#include <dem/particle_point_line_contact_force.h>
+#include <dem/particle_point_line_fine_search.h>
 #include <dem/pp_broad_search.h>
 #include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
@@ -94,7 +97,15 @@ private:
   const int number_of_steps = parameters.simulationControl.final_time_step;
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cell_neighbor_list;
-
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    boundary_cells_with_faces;
+  std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
+                         Point<dim>,
+                         Point<dim>>>
+    boundary_cells_with_lines;
+  std::vector<
+    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+                                               boundary_cells_with_points;
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
   std::map<int,
            std::pair<Particles::ParticleIterator<dim>,
@@ -105,6 +116,13 @@ private:
                       Tensor<1, dim>,
                       Point<dim>>>
     pw_contact_candidates;
+  std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+    particle_point_contact_candidates;
+  std::map<int,
+           std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+    particle_line_contact_candidates;
+  std::map<int, particle_point_line_contact_info_struct<dim>>
+    particle_points_in_contact, particle_lines_in_contact;
 
   std::map<int, Particles::ParticleIterator<dim>> particle_container;
   DEM::DEMProperties<dim>                         properties_class;
@@ -113,7 +131,10 @@ private:
   PPBroadSearch<dim>                   pp_broad_search_object;
   PPFineSearch<dim>                    pp_fine_search_object;
   PWBroadSearch<dim>                   pw_broad_search_object;
+  ParticlePointLineBroadSearch<dim>    particle_point_line_broad_search_object;
   PWFineSearch<dim>                    pw_fine_search_object;
+  ParticlePointLineFineSearch<dim>     particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim>          particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>>     integrator_object;
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
@@ -172,6 +193,22 @@ private:
   update_pw_contact_container_iterators(
     std::map<int, std::map<int, pw_contact_info_struct<dim>>>
       &                                                    pw_pairs_in_contact,
+    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
+
+  /**
+   * Updates the iterators to particles in particle_points_in_contact and
+   * particle_lines_in_contact (output of particle point line fine search)
+   *
+   * @param particle_points_in_contact Output of particle-point fine search
+   * @param particle_lines_in_contact Output of particle-line fine search
+   * @param particle_container Output of update_particle_container function
+   */
+  void
+  update_particle_point_line_contact_container_iterators(
+    std::map<int, particle_point_line_contact_info_struct<dim>>
+      &particle_points_in_contact,
+    std::map<int, particle_point_line_contact_info_struct<dim>>
+      &particle_lines_in_contact,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
 
   /**

@@ -34,7 +34,7 @@ PWBroadSearch<dim>::find_PW_Contact_Pairs(
        boundary_cells_information_iterator != boundary_cells_information.end();
        ++boundary_cells_information_iterator)
     {
-      // Fidning particles located in the corresponding cell
+      // Finding particles located in the corresponding cell
       // (boundary_cells_information_iterator.cell)
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(
@@ -50,8 +50,9 @@ PWBroadSearch<dim>::find_PW_Contact_Pairs(
           pw_contact_candidates.insert(
             {contact_candidate_counter,
              std::make_tuple(
-               std::make_pair(particles_in_cell_iterator,
-                              boundary_cells_information_iterator->boundary_id),
+               std::make_pair(
+                 particles_in_cell_iterator,
+                 boundary_cells_information_iterator->boundary_face_id),
                boundary_cells_information_iterator->normal_vector,
                boundary_cells_information_iterator->point_on_face)});
           ++contact_candidate_counter;

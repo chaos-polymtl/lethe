@@ -17,6 +17,11 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
+#include <deal.II/fe/mapping_q_generic.h>
+
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+
 #include <dem/dem.h>
 
 template <int dim>
@@ -211,14 +216,50 @@ DEMSolver<dim>::update_pw_contact_container_iterators(
        pw_pairs_in_contact_iterator != pw_pairs_in_contact.end();
        ++pw_pairs_in_contact_iterator)
     {
-      int  particle_id              = pw_pairs_in_contact_iterator->first;
+      int particle_id = pw_pairs_in_contact_iterator->first;
+
       auto pairs_in_contant_content = &pw_pairs_in_contact_iterator->second;
+
       for (auto pw_map_iterator = pairs_in_contant_content->begin();
            pw_map_iterator != pairs_in_contant_content->end();
            ++pw_map_iterator)
         {
           pw_map_iterator->second.particle = particle_container.at(particle_id);
         }
+    }
+}
+
+template <int dim>
+void
+DEMSolver<dim>::update_particle_point_line_contact_container_iterators(
+  std::map<int, particle_point_line_contact_info_struct<dim>>
+    &particle_points_in_contact,
+  std::map<int, particle_point_line_contact_info_struct<dim>>
+    &particle_lines_in_contact,
+  const std::map<int, Particles::ParticleIterator<dim>> &particle_container)
+{
+  for (auto particle_point_pairs_in_contact_iterator =
+         particle_points_in_contact.begin();
+       particle_point_pairs_in_contact_iterator !=
+       particle_points_in_contact.end();
+       ++particle_point_pairs_in_contact_iterator)
+    {
+      int  particle_id = particle_point_pairs_in_contact_iterator->first;
+      auto pairs_in_contant_content =
+        &particle_point_pairs_in_contact_iterator->second;
+      pairs_in_contant_content->particle = particle_container.at(particle_id);
+    }
+
+  for (auto particle_line_pairs_in_contact_iterator =
+         particle_lines_in_contact.begin();
+       particle_line_pairs_in_contact_iterator !=
+       particle_lines_in_contact.end();
+       ++particle_line_pairs_in_contact_iterator)
+    {
+      int  particle_id = particle_line_pairs_in_contact_iterator->first;
+      auto pairs_in_contant_content =
+        &particle_line_pairs_in_contact_iterator->second;
+      pairs_in_contant_content->particle = particle_container.at(particle_id);
     }
 }
 
@@ -253,10 +294,18 @@ DEMSolver<dim>::solve()
   FindCellNeighbors<dim> cell_neighbors_object;
   cell_neighbor_list = cell_neighbors_object.find_cell_neighbors(triangulation);
 
-  // Finding boundary cells
+  // Finding boundary cells with faces
   FindBoundaryCellsInformation<dim> boundary_cell_object;
   boundary_cells_information =
-    boundary_cell_object.find_boundary_cells_information(triangulation);
+    boundary_cell_object.find_boundary_cells_information(
+      boundary_cells_with_faces, triangulation);
+
+  // Finding boundary cells with lines and points
+  boundary_cell_object.find_particle_point_and_line_contact_cells(
+    boundary_cells_with_faces,
+    triangulation,
+    boundary_cells_with_lines,
+    boundary_cells_with_points);
 
   // Setting chosen contact force and integration methods
   integrator_object       = set_integrator_type(parameters);
@@ -282,8 +331,8 @@ DEMSolver<dim>::solve()
                   parameters.simulationControl
                     .total_particle_number) // number < total number
                 {
-                  NonUniformInsertion<dim> ins2(parameters);
-                  // UniformInsertion<dim> ins2(parameters);
+                  // NonUniformInsertion<dim> ins2(parameters);
+                  UniformInsertion<dim> ins2(parameters);
 
                   ins2.insert(particle_handler,
                               triangulation,
@@ -311,6 +360,11 @@ DEMSolver<dim>::solve()
 
           update_pw_contact_container_iterators(pw_pairs_in_contact,
                                                 particle_container);
+
+          update_particle_point_line_contact_container_iterators(
+            particle_points_in_contact,
+            particle_lines_in_contact,
+            particle_container);
         }
       computing_timer.leave_subsection();
 
@@ -355,6 +409,19 @@ DEMSolver<dim>::solve()
             boundary_cells_information,
             particle_handler,
             pw_contact_candidates);
+
+          particle_point_contact_candidates =
+            particle_point_line_broad_search_object
+              .find_Particle_Point_Contact_Pairs(particle_handler,
+                                                 boundary_cells_with_points);
+
+          if (dim == 3)
+            {
+              particle_line_contact_candidates =
+                particle_point_line_broad_search_object
+                  .find_Particle_Line_Contact_Pairs(particle_handler,
+                                                    boundary_cells_with_lines);
+            }
         }
       computing_timer.leave_subsection();
 
@@ -365,12 +432,35 @@ DEMSolver<dim>::solve()
                                            pw_pairs_in_contact,
                                            parameters.simulationControl.dt);
 
+      particle_points_in_contact =
+        particle_point_line_fine_search_object.Particle_Point_Fine_Search(
+          particle_point_contact_candidates);
+
+      if (dim == 3)
+        {
+          particle_lines_in_contact =
+            particle_point_line_fine_search_object.Particle_Line_Fine_Search(
+              particle_line_contact_candidates);
+        }
+
       computing_timer.leave_subsection();
 
       // PW contact force:
       computing_timer.enter_subsection("pw_contact_force");
       pw_contact_force_object->calculate_pw_contact_force(&pw_pairs_in_contact,
                                                           parameters);
+
+      particle_point_line_contact_force_object
+        .calculate_particle_point_line_contact_force(
+          &particle_points_in_contact, parameters);
+
+      if (dim == 3)
+        {
+          particle_point_line_contact_force_object
+            .calculate_particle_point_line_contact_force(
+              &particle_lines_in_contact, parameters);
+        }
+
       computing_timer.leave_subsection();
 
       // Integration

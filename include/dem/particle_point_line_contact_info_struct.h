@@ -19,32 +19,25 @@
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
-#include <deal.II/distributed/tria.h>
+#include <deal.II/particles/particle_iterator.h>
 
-#ifndef BOUNDARYCELLSINFOSTRUCT_H_
-#  define BOUNDARYCELLSINFOSTRUCT_H_
+#ifndef PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
+#  define PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
 
 /**
- * This struct handles the information related to the boundary cells which will
- * be used for particle-wall contact detection
+ * This struct handles the information related to the calculation of the
+ * particle-point and particle-line contact forces
  */
 
 using namespace dealii;
 
 template <int dim>
-struct boundary_cells_info_struct
+struct particle_point_line_contact_info_struct
 {
-  // The boundary cell
-  typename Triangulation<dim>::active_cell_iterator cell;
-
-  // The id of the boundary face in the boundary cell
-  unsigned int boundary_face_id;
-
-  // Normal vector of the boundary face
-  Tensor<1, dim> normal_vector;
-
-  // A point on the boundary face
-  Point<dim> point_on_face;
+  Particles::ParticleIterator<dim> particle;
+  double                           normal_overlap;
+  Tensor<1, dim>                   normal_vector;
+  double                           normal_relative_velocity;
 };
 
-#endif /* BOUNDARYCELLSINFOSTRUCT_H_ */
+#endif /* PARTICLEPOINTLINECONTACTINFOSTRUCT_H_ */

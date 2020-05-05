@@ -52,10 +52,13 @@ test()
   triangulation.refine_global(refinement_number);
 
   // Fining boundary cellds information
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+                                               boundary_cells_with_faces;
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  FindBoundaryCellsInformation<dim>            boundary_cell_object;
+  FindBoundaryCellsInformation<dim>            boundary_cells_object;
   boundary_cells_information =
-    boundary_cell_object.find_boundary_cells_information(triangulation);
+    boundary_cells_object.find_boundary_cells_information(
+      boundary_cells_with_faces, triangulation);
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =
@@ -65,7 +68,7 @@ test()
     {
       deallog << "Cell " << boundary_cells_information_iterator->cell
               << " is on system boundaries (boundary"
-              << boundary_cells_information_iterator->boundary_id << ")"
+              << boundary_cells_information_iterator->boundary_face_id << ")"
               << std::endl;
     }
 }

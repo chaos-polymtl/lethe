@@ -84,10 +84,13 @@ test()
 
   // Calling find_boundary_cells_information function to find the information of
   // boundary cells
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+                                               boundary_cells_with_faces;
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  FindBoundaryCellsInformation<dim>            boundary_cell_object;
+  FindBoundaryCellsInformation<dim>            boundary_cells_object;
   boundary_cells_information =
-    boundary_cell_object.find_boundary_cells_information(tr);
+    boundary_cells_object.find_boundary_cells_information(
+      boundary_cells_with_faces, tr);
 
   // Calling particle-wall broad search
   PWBroadSearch<dim> broad_search_object;
