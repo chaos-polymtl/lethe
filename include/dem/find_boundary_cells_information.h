@@ -24,6 +24,8 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <iostream>
 #include <vector>
 
@@ -56,6 +58,8 @@ public:
    * locating on the face are obtained
    *
    * @param triangulation Triangulation to access the information of the cells
+   * @param boundary_cells_with_faces A vector which contains all the boundary
+   * cells which has atleast one boundary face
    * @return A vector of structs (boundary_cells_info_struct), this struct
    * contains 1, an integer which shows the number of boundary face 2, the
    * corresponding boundary cell 3, the face number of the cell 4, normal vector
@@ -65,7 +69,53 @@ public:
 
   std::vector<boundary_cells_info_struct<dim>>
   find_boundary_cells_information(
+    std::vector<typename Triangulation<dim>::active_cell_iterator>
+      &                                              boundary_cells_with_faces,
     const parallel::distributed::Triangulation<dim> &triangulation);
+
+  /**
+   * Loops over all the cells to find cells which should be searched for
+   * particle-line contact, boundary lines and a point locating on each line are
+   * obtained
+   *
+   * @param boundary_cells_with_faces A vector which contains all the boundary
+   * cells which has atleast one boundary face
+   * @param triangulation Triangulation to access the information of the cells
+   * @param boundary_cells_with_lines A vector of tuples which contains the
+   * cells with boundary lines and locations of the beginning and ending
+   * vertices of the boundary line
+   * @param boundary_cells_with_points A vector of pairs which contains the
+   * cells with boundary points, and the location of the point
+   */
+
+  void
+  find_particle_point_and_line_contact_cells(
+    const std::vector<typename Triangulation<dim>::active_cell_iterator>
+      &                                              boundary_cells_with_faces,
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
+                           Point<dim>,
+                           Point<dim>>> &            boundary_cells_with_lines,
+    std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
+                          Point<dim>>> &boundary_cells_with_points);
+
+private:
+  // This vector stores the location of vertices on boundaries for each cell.
+  // The size of this vector can be 1 or 2, since cells with points have one
+  // boundary vertex and cells with lines have two boundary vertices
+  std::vector<Point<dim>> boundary_points;
+
+  // This integer is used to count the number of vertices on boundaries for each
+  // cell
+  unsigned int number_of_boundary_vertices = 0;
+
+  // This vector stores both the cells with boundary lines and cells with
+  // boundary points
+  std::vector<typename Triangulation<dim>::active_cell_iterator>
+    boundary_cells_with_lines_or_points;
+
+  // This map stores the vertex index and position of boundary vertices
+  std::map<int, Point<dim>> boundary_vertices;
 };
 
 #endif /* FINDBOUNDARYCELLSINFORMATION_H_ */
