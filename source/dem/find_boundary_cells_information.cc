@@ -43,7 +43,7 @@ FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
        ++cell_iterator)
     {
       // Iterating over the faces of each cell
-      for (int face_id = 0; face_id < GeometryInfo<dim>::faces_per_cell;
+      for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
            ++face_id)
         {
           // Check to see if the face is located at boundary
