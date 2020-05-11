@@ -30,11 +30,10 @@
 
 #include <deal.II/base/timer.h>
 
-
 using namespace dealii;
 
 #ifndef PPFINESEARCH_H_
-#  define PPFINESEARCH_H_
+#define PPFINESEARCH_H_
 
 /**
  * This class is used for fine particle-particle contact search. Fine search
@@ -46,9 +45,7 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PPFineSearch
-{
+template <int dim> class PPFineSearch {
 public:
   PPFineSearch<dim>();
 
@@ -72,16 +69,14 @@ public:
    * @param time_step DEM time step
    */
 
-  void
-  pp_Fine_Search(std::map<int,
-                          std::pair<Particles::ParticleIterator<dim>,
-                                    Particles::ParticleIterator<dim>>>
-                   &contact_pair_candidates,
-                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-                   &    pairs_in_contact_info,
-                 double time_step);
+  void pp_Fine_Search(
+      std::map<int, std::vector<typename Particles::ParticleIterator<dim>>>
+          &contact_pair_candidates,
+      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+          &pairs_in_contact_info,
+      double time_step);
 
-  TimerOutput    dummy_timer;
+  TimerOutput dummy_timer;
 };
 
 #endif /* PPFINESEARCH_H_ */
