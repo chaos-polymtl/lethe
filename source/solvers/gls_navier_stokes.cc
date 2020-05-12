@@ -205,6 +205,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                                   dsp,
                                   this->nonzero_constraints,
                                   false);
+#if !(DEAL_II_VERSION_GTE(9, 2, 0))
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.compute_n_locally_owned_dofs_per_processor(),
@@ -214,6 +215,18 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                        this->locally_owned_dofs,
                        dsp,
                        this->mpi_communicator);
+#else
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    this->dof_handler.compute_n_locally_owned_dofs_per_processor(),
+    this->mpi_communicator,
+    this->locally_relevant_dofs);
+  system_matrix.reinit(this->locally_owned_dofs,
+                       this->locally_owned_dofs,
+                       dsp,
+                       this->mpi_communicator);
+
+#endif
 
   double global_volume = GridTools::volume(*this->triangulation);
 
