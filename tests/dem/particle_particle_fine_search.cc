@@ -136,9 +136,8 @@ test()
   pit2->get_properties()[17] = 1;
 
   // Calling broad search
-  std::map<int,
-           std::pair<Particles::ParticleIterator<dim>,
-                     Particles::ParticleIterator<dim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
     pairs;
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
                                             cell_neighbors_list,

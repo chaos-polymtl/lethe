@@ -67,9 +67,8 @@ public:
     dealii::Particles::ParticleHandler<dim> &particle_handler,
     std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
       &cellNeighborList,
-    std::map<int,
-             std::pair<Particles::ParticleIterator<dim>,
-                       Particles::ParticleIterator<dim>>>
+    std::vector<std::pair<typename Particles::ParticleIterator<dim>,
+                          typename Particles::ParticleIterator<dim>>>
       &contact_pair_candidates);
 };
 

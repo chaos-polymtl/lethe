@@ -73,11 +73,9 @@ public:
 
   void
   pw_Fine_Search(
-    std::map<
-      int,
-      std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-                 Tensor<1, dim>,
-                 Point<dim>>> &pw_contact_pair_candidates,
+    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                           Tensor<1, dim>,
+                           Point<dim>>> &pw_contact_pair_candidates,
     std::map<int, std::map<int, pw_contact_info_struct<dim>>>
       &    pw_pairs_in_contact,
     double time_step);

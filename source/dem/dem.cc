@@ -41,6 +41,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
 {}
 
+// REFACTOR
+// This function should be replaced by the function in the core/grids.h
 template <int dim>
 void
 DEMSolver<dim>::read_mesh()
@@ -275,16 +277,12 @@ DEMSolver<dim>::solve()
                                                             pairs_in_contact_info;
   std::map<int, std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact;
   Tensor<1, dim>                                            g;
+
+  g[0] = parameters.physicalProperties.gx;
+  g[1] = parameters.physicalProperties.gy;
   if (dim == 3)
     {
-      g[0] = parameters.physicalProperties.gx;
-      g[1] = parameters.physicalProperties.gy;
       g[2] = parameters.physicalProperties.gz;
-    }
-  if (dim == 2)
-    {
-      g[0] = parameters.physicalProperties.gx;
-      g[1] = parameters.physicalProperties.gy;
     }
 
   std::vector<std::pair<std::string, int>> properties =
@@ -321,6 +319,12 @@ DEMSolver<dim>::solve()
       // Defining a bool variable to specify the insertion steps
       bool insertion_step = 0;
       computing_timer.enter_subsection("insertion");
+
+      // REFACTORING
+      // Why is this a floating point modulu? Should be a regular modulo for
+      // integers... It would be better if the insertion class would control
+      // these elements You could have a mother class for insertion and derive
+      // from there the type of insertion
       if (fmod(DEM_step, parameters.insertionInfo.insertion_frequency) == 1)
         {
           if (DEM_step < parameters.insertionInfo.insertion_steps_number)
@@ -331,8 +335,10 @@ DEMSolver<dim>::solve()
                   parameters.simulationControl
                     .total_particle_number) // number < total number
                 {
-                  // NonUniformInsertion<dim> ins2(parameters);
-                  UniformInsertion<dim> ins2(parameters);
+                  // REFACTORING
+                  // Insertion mode should be choseable from the interface
+                  NonUniformInsertion<dim> ins2(parameters);
+                  // UniformInsertion<dim> ins2(parameters);
 
                   ins2.insert(particle_handler,
                               triangulation,
@@ -472,6 +478,8 @@ DEMSolver<dim>::solve()
 
       // Visualization
       computing_timer.enter_subsection("visualization");
+      // REFACTORING
+      // Should be put inside a function
       if (DEM_step % parameters.simulationControl.write_frequency == 0)
         {
           Visualization<dim> visObj;
@@ -483,7 +491,8 @@ DEMSolver<dim>::solve()
       computing_timer.leave_subsection();
 
       // Print iteration
-
+      // REFACTORING
+      // Should be put into a simulation control type of object
       if (fmod(DEM_step, parameters.model_parmeters.print_info_frequency) == 1)
         {
           std::cout << "Step " << DEM_step << std::endl;
