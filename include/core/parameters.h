@@ -97,6 +97,14 @@ namespace Parameters
     // Enable output of the boundary mesh
     bool output_boundary_mesh;
 
+    // REFACTOR
+    // To be deleted!!!
+    // Total number of particles
+    unsigned int total_particle_number;
+    int          final_time_step;
+    // end to delete
+
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

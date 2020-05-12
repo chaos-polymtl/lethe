@@ -65,6 +65,15 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable the output of the boundary mesh");
+
+      // Refactor
+      // To delete!
+      prm.declare_entry("n total",
+                        "1",
+                        Patterns::Integer(),
+                        "Total number of particles");
+
+      prm.declare_entry("step end", "1", Patterns::Integer(), "End step");
     }
     prm.leave_subsection();
   }
@@ -103,6 +112,11 @@ namespace Parameters
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
       output_boundary_mesh     = prm.get_bool("output boundary mesh");
+
+      // Refactor
+      // To delete!
+      total_particle_number = prm.get_integer("n total");
+      final_time_step       = prm.get_integer("step end");
     }
     prm.leave_subsection();
   }

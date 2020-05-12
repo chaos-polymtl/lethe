@@ -31,9 +31,8 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh mesh;
-  Parameters::Lagrangian::SimulationControl
-                                             simulationControl; // To be deprecated
+  Parameters::Mesh              mesh;
+  Parameters::SimulationControl simulationControl; // To be deprecated
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
   Parameters::Lagrangian::InsertionInfo      insertionInfo;
   Parameters::Lagrangian::OutputProperties   outputProperties;
@@ -46,7 +45,6 @@ public:
   {
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
-    Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
