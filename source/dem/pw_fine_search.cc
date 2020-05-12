@@ -9,10 +9,9 @@ PWFineSearch<dim>::PWFineSearch()
 template <int dim>
 void
 PWFineSearch<dim>::pw_Fine_Search(
-  std::map<int,
-           std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-                      Tensor<1, dim>,
-                      Point<dim>>> &pw_contact_pair_candidates,
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                         Tensor<1, dim>,
+                         Point<dim>>> &pw_contact_pair_candidates,
   std::map<int, std::map<int, pw_contact_info_struct<dim>>>
     &    pw_pairs_in_contact,
   double dt)
@@ -176,16 +175,10 @@ PWFineSearch<dim>::pw_Fine_Search(
   // Now iterating over contact candidates from broad search. If a particle-wall
   // pair is in contact (distance > 0) and does not exist in the
   // pw_pairs_in_contact, it is added to the pw_pairs_in_contact
-  for (auto pw_contact_pair_candidates_iterator =
-         pw_contact_pair_candidates.begin();
-       pw_contact_pair_candidates_iterator != pw_contact_pair_candidates.end();
-       ++pw_contact_pair_candidates_iterator)
+  for (auto particle_pair_candidates = pw_contact_pair_candidates.begin();
+       particle_pair_candidates != pw_contact_pair_candidates.end();
+       ++particle_pair_candidates)
     {
-      // Get the value of the map (particle pair candidate) from the
-      // contact_pair_candidates_iterator
-      auto particle_pair_candidates =
-        &pw_contact_pair_candidates_iterator->second;
-
       // Get the particle and boundary id from the vector and the total array
       // view to the particle properties once to improve efficiency
       auto particle            = std::get<0>(*particle_pair_candidates).first;

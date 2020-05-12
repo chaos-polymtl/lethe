@@ -107,14 +107,12 @@ private:
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
                                                boundary_cells_with_points;
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::map<int,
-           std::pair<Particles::ParticleIterator<dim>,
-                     Particles::ParticleIterator<dim>>>
+  std::vector<std::pair<typename Particles::ParticleIterator<dim>,
+                        typename Particles::ParticleIterator<dim>>>
     contact_pair_candidates;
-  std::map<int,
-           std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                      Tensor<1, dim>,
-                      Point<dim>>>
+  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
+                         Tensor<1, dim>,
+                         Point<dim>>>
     pw_contact_candidates;
   std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;

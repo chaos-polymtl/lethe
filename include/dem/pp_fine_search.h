@@ -70,13 +70,13 @@ public:
    */
 
   void
-  pp_Fine_Search(std::map<int,
-                          std::pair<Particles::ParticleIterator<dim>,
-                                    Particles::ParticleIterator<dim>>>
-                   &contact_pair_candidates,
-                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-                   &    pairs_in_contact_info,
-                 double time_step);
+  pp_Fine_Search(
+    std::vector<std::pair<typename Particles::ParticleIterator<dim>,
+                          typename Particles::ParticleIterator<dim>>>
+      &contact_pair_candidates,
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      &    pairs_in_contact_info,
+    double time_step);
 };
 
 #endif /* PPFINESEARCH_H_ */
