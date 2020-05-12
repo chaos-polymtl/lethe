@@ -102,9 +102,8 @@ test()
     particle_handler.insert_particle(particle3, pt3_info.first);
 
   // Calling broad search function
-  std::map<int,
-           std::pair<Particles::ParticleIterator<dim>,
-                     Particles::ParticleIterator<dim>>>
+  std::vector<std::pair<Particles::ParticleIterator<dim>,
+                        Particles::ParticleIterator<dim>>>
     broad_search_pairs;
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
                                             cell_neighbor_list,
@@ -115,10 +114,9 @@ test()
        pairs_iterator != broad_search_pairs.end();
        ++pairs_iterator)
     {
-      auto pairs_content = &pairs_iterator->second;
       deallog << "A pair is detected: particle "
-              << pairs_content->first->get_id() << " and particle "
-              << pairs_content->second->get_id() << std::endl;
+              << pairs_iterator->first->get_id() << " and particle "
+              << pairs_iterator->second->get_id() << std::endl;
     }
 }
 

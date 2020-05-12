@@ -94,10 +94,10 @@ test()
 
   // Calling particle-wall broad search
   PWBroadSearch<dim> broad_search_object;
-  std::map<int,
-           std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-                      Tensor<1, dim>,
-                      Point<dim>>>
+  std::vector<
+    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
+               Tensor<1, dim>,
+               Point<dim>>>
     pw_contact_list;
   broad_search_object.find_PW_Contact_Pairs(boundary_cells_information,
                                             particle_handler,
@@ -108,8 +108,8 @@ test()
        pw_contact_list_iterator != pw_contact_list.end();
        ++pw_contact_list_iterator)
     {
-      deallog << "Particle "
-              << std::get<0>(pw_contact_list_iterator->second).first->get_id()
+      auto pair_element = std::get<0>(*pw_contact_list_iterator);
+      deallog << "Particle " << pair_element.first->get_id()
               << " is located in a boundary cell" << std::endl;
     }
 }
