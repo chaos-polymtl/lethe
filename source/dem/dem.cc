@@ -22,6 +22,7 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 
+#include <core/solutions_output.h>
 #include <dem/dem.h>
 
 template <int dim>
@@ -39,6 +40,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
+  , number_of_steps(parameters.simulationControl.final_time_step)
 {}
 
 // REFACTOR
@@ -267,6 +269,31 @@ DEMSolver<dim>::update_particle_point_line_contact_container_iterators(
 
 template <int dim>
 void
+DEMSolver<dim>::write_output_results()
+{
+  const std::string  folder        = parameters.simulationControl.output_folder;
+  const std::string  solution_name = parameters.simulationControl.output_name;
+  const unsigned int iter          = DEM_step;
+  const double       time          = DEM_time;
+  const unsigned int group_files   = parameters.simulationControl.group_files;
+
+  Visualization<dim> particle_data_out;
+  particle_data_out.build_patches(particle_handler,
+                                  properties_class.get_properties_name());
+
+
+  write_vtu_and_pvd<0, dim>(pvdhandler,
+                            particle_data_out,
+                            folder,
+                            solution_name,
+                            time,
+                            iter,
+                            group_files,
+                            mpi_communicator);
+}
+
+template <int dim>
+void
 DEMSolver<dim>::solve()
 {
   // Reading mesh
@@ -284,9 +311,6 @@ DEMSolver<dim>::solve()
     {
       g[2] = parameters.physicalProperties.gz;
     }
-
-  std::vector<std::pair<std::string, int>> properties =
-    properties_class.get_properties_name();
 
   // Finding cell neighbors
   FindCellNeighbors<dim> cell_neighbors_object;
@@ -480,13 +504,9 @@ DEMSolver<dim>::solve()
       computing_timer.enter_subsection("visualization");
       // REFACTORING
       // Should be put inside a function
-      if (DEM_step % parameters.simulationControl.write_frequency == 0)
+      if (DEM_step % parameters.simulationControl.outputFrequency == 0)
         {
-          Visualization<dim> visObj;
-          visObj.build_patches(particle_handler, properties);
-          WriteVTU<dim> writObj;
-          writObj.write_master_files(visObj, parameters);
-          writObj.writeVTUFiles(visObj, DEM_step, DEM_time, parameters);
+          write_output_results();
         }
       computing_timer.leave_subsection();
 

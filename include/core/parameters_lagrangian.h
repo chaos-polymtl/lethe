@@ -21,26 +21,6 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    struct SimulationControl
-    {
-      // Time step
-      double dt;
-
-      // End time step
-      int final_time_step;
-
-      // Total number of particles
-      unsigned int total_particle_number;
-
-      // Write frequency
-      int write_frequency;
-
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
-
     struct PhysicalProperties
     {
       // Gravitational acceleration

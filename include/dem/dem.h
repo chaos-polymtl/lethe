@@ -30,6 +30,7 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
 
+#include <core/pvd_handler.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
@@ -55,7 +56,6 @@
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/visualization.h>
-#include <dem/write_vtu.h>
 
 #include <fstream>
 #include <iostream>
@@ -94,7 +94,7 @@ private:
   Particles::ParticleHandler<dim, dim>      particle_handler;
   int                                       DEM_step = 0;
   double                                    DEM_time = 0.0;
-  const int number_of_steps = parameters.simulationControl.final_time_step;
+  const int                                 number_of_steps;
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cell_neighbor_list;
   std::vector<typename Triangulation<dim>::active_cell_iterator>
@@ -136,6 +136,10 @@ private:
   std::shared_ptr<Integrator<dim>>     integrator_object;
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
+
+  PVDHandler pvdhandler;
+
+
 
   /**
    * Defines or reads the mesh based on the information provided by the user.
@@ -237,6 +241,13 @@ private:
    */
   std::shared_ptr<PWContactForce<dim>>
   set_pw_contact_force(const DEMSolverParameters<dim> &dem_parameters);
+
+  /**
+   * @brief write_output_results
+   * Post-processing as parallel VTU files
+   */
+  void
+  write_output_results();
 };
 
 #endif
