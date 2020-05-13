@@ -74,6 +74,7 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Maximal number of vtu output files");
+
     }
     prm.leave_subsection();
   }
@@ -123,6 +124,7 @@ namespace Parameters
       output_frequency         = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
+
     }
     prm.leave_subsection();
   }

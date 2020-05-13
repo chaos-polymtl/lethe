@@ -5,41 +5,6 @@ namespace Parameters
   namespace Lagrangian
   {
     void
-    SimulationControl::declare_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("simulation control");
-      {
-        prm.declare_entry("time step",
-                          "1.",
-                          Patterns::Double(),
-                          "Time step value");
-        prm.declare_entry("step end", "1", Patterns::Integer(), "End step");
-        prm.declare_entry("n total",
-                          "1",
-                          Patterns::Integer(),
-                          "Total number of particles");
-        prm.declare_entry("write frequency",
-                          "1",
-                          Patterns::Integer(),
-                          "Write frequency");
-      }
-      prm.leave_subsection();
-    }
-
-    void
-    SimulationControl::parse_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("simulation control");
-      {
-        dt                    = prm.get_double("time step");
-        final_time_step       = prm.get_integer("step end");
-        total_particle_number = prm.get_integer("n total");
-        write_frequency       = prm.get_integer("write frequency");
-      }
-      prm.leave_subsection();
-    }
-
-    void
     PhysicalProperties::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("physical properties");
