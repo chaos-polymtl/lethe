@@ -28,7 +28,7 @@
 using namespace dealii;
 
 #ifndef VISUALIZATION_H_
-#  define VISUALIZATION_H_
+#define VISUALIZATION_H_
 
 /**
  * Building patches of particle properties for visualization
@@ -39,8 +39,7 @@ using namespace dealii;
  */
 
 template <int dim>
-class Visualization : public dealii::DataOutInterface<0, dim>
-{
+class Visualization : public dealii::DataOutInterface<0, dim> {
 public:
   Visualization<dim>();
 
@@ -56,10 +55,18 @@ public:
    * only the size of the first element of the vector is defined equal to the
    * dimension
    */
+  void build_patches(const Particles::ParticleHandler<dim> &particle_handler,
+                     std::vector<std::pair<std::string, int>> properties);
 
+  /**
+   * Prints the data of particles in the xyz format
+   *
+   * @param particle_handler The particle handler of active particles
+   * @param properties Properties of particles
+   */
   void
-  build_patches(const Particles::ParticleHandler<dim> &  particle_handler,
-                std::vector<std::pair<std::string, int>> properties);
+  print_xyz(const dealii::Particles::ParticleHandler<dim> &particle_handler,
+            std::vector<std::pair<std::string, int>> properties);
 
   ~Visualization();
 
@@ -67,26 +74,22 @@ private:
   /**
    * Implementation of the corresponding function of the base class.
    */
-  virtual const std::vector<DataOutBase::Patch<0, dim>> &
-  get_patches() const;
+  virtual const std::vector<DataOutBase::Patch<0, dim>> &get_patches() const;
 
   /**
    * Implementation of the corresponding function of the base class.
    */
-  virtual std::vector<std::string>
-  get_dataset_names() const;
+  virtual std::vector<std::string> get_dataset_names() const;
 
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
   virtual std::vector<
-    std::tuple<unsigned int,
-               unsigned int,
-               std::string,
-               DataComponentInterpretation::DataComponentInterpretation>>
+      std::tuple<unsigned int, unsigned int, std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
   get_nonscalar_data_ranges() const;
-#  else
+#else
   virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
   get_vector_data_ranges() const;
-#  endif
+#endif
 
   /**
    * Output information that is filled by build_patches() and
@@ -102,16 +105,14 @@ private:
   /**
    * Store which of the data fields are vectors.
    */
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
   std::vector<
-    std::tuple<unsigned int,
-               unsigned int,
-               std::string,
-               DataComponentInterpretation::DataComponentInterpretation>>
-    vector_datasets;
-#  else
+      std::tuple<unsigned int, unsigned int, std::string,
+                 DataComponentInterpretation::DataComponentInterpretation>>
+      vector_datasets;
+#else
   std::vector<std::tuple<unsigned int, unsigned int, std::string>>
-    vector_datasets;
-#  endif
+      vector_datasets;
+#endif
 };
 #endif
