@@ -68,6 +68,23 @@ public:
          const Triangulation<dim> &       triangulation,
          Particles::PropertyPool &        property_pool,
          const DEMSolverParameters<dim> & dem_parameters) override;
+
+private:
+  /**
+   * Creates a vector of random numbers with size of particles which are going
+   * to be inserted at each insertion step
+   *
+   * @param inserted_this_step Number of particles which are going to be
+   * inserted at this step
+   * @param random_number_range The range in which the random numbers will be
+   * generated
+   * @param random_number_seed random number seed
+   * @return A vector of random numbers)
+   */
+  std::vector<double>
+  create_random_number_container(const int &   inserted_this_step,
+                                 const double &random_number_range,
+                                 const int &   random_number_seed);
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */

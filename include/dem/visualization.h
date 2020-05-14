@@ -56,10 +56,19 @@ public:
    * only the size of the first element of the vector is defined equal to the
    * dimension
    */
-
   void
   build_patches(const Particles::ParticleHandler<dim> &  particle_handler,
                 std::vector<std::pair<std::string, int>> properties);
+
+  /**
+   * Prints the data of particles in the xyz format
+   *
+   * @param particle_handler The particle handler of active particles
+   * @param properties Properties of particles
+   */
+  void
+  print_xyz(const dealii::Particles::ParticleHandler<dim> &particle_handler,
+            std::vector<std::pair<std::string, int>>       properties);
 
   ~Visualization();
 

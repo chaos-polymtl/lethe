@@ -229,9 +229,10 @@ PPFineSearch<dim>::pp_Fine_Search(
                   particle_two_properties[DEM::PropertiesIndex::dp]));
         auto   contact_vector = particle_two_location - particle_one_location;
         double distance       = size_distance * size_distance;
-        distance -= contact_vector[0] * contact_vector[0] +
-                    contact_vector[1] * contact_vector[1] +
-                    contact_vector[2] * contact_vector[2];
+        for (int d = 0; d < dim; ++d)
+          {
+            distance -= contact_vector[d] * contact_vector[d];
+          }
 
         // Check to see if particle pair is in contact:
         if (distance > 0)

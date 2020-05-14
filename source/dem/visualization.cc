@@ -76,6 +76,26 @@ Visualization<dim>::build_patches(
 }
 
 template <int dim>
+void
+Visualization<dim>::print_xyz(
+  const dealii::Particles::ParticleHandler<dim> &particle_handler,
+  std::vector<std::pair<std::string, int>>       properties)
+{
+  this->build_patches(particle_handler, properties);
+
+  // loop over all patches
+  for (const auto &patch : patches)
+    {
+      unsigned int n_data_sets = properties.size();
+      for (unsigned int data_set = 0; data_set < n_data_sets; ++data_set)
+        {
+          std::cout << patch.data(data_set, 0) << ' ';
+        }
+      std::cout << '\n';
+    }
+}
+
+template <int dim>
 const std::vector<DataOutBase::Patch<0, dim>> &
 Visualization<dim>::get_patches() const
 {

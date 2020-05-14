@@ -144,10 +144,12 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
           // Calculation of torque
           // First calculation of torque due to tangential force acting on
           // particle
-          Tensor<1, dim> tangential_toruqe = cross_product_3d(
-            (((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
-             contact_information.normal_vector),
-            tangential_force);
+          Tensor<1, dim> tangential_toruqe;
+          if (dim == 3)
+            tangential_toruqe = cross_product_3d(
+              (((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+               contact_information.normal_vector),
+              tangential_force);
 
           // Getting the angular velocity of particle in the vector format
           Tensor<1, dim> angular_velocity;
