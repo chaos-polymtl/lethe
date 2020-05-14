@@ -21,39 +21,43 @@
 #include <core/simulation_control.h>
 
 #ifndef PARAMETERS_DEM_H_
-#define PARAMETERS_DEM_H_
+#  define PARAMETERS_DEM_H_
 
 /**
  * Handles all the parameters declared in the parameter handler file
  */
 
-template <int dim> class DEMSolverParameters {
+template <int dim>
+class DEMSolverParameters
+{
 public:
-  Parameters::Mesh mesh;
-  Parameters::Testing test;
-  Parameters::Timer timer;
-  Parameters::Lagrangian::SimulationControl
-      simulationControl; // To be deprecated
+  Parameters::Mesh              mesh;
+  Parameters::Testing           test;
+  Parameters::Timer             timer;
+  Parameters::SimulationControl simulationControl; // To be deprecated
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
-  Parameters::Lagrangian::InsertionInfo insertionInfo;
-  Parameters::Lagrangian::OutputProperties outputProperties;
-  Parameters::Lagrangian::ModelParameters model_parmeters;
+  Parameters::Lagrangian::InsertionInfo      insertionInfo;
+  Parameters::Lagrangian::OutputProperties   outputProperties;
+  Parameters::Lagrangian::ModelParameters    model_parmeters;
 
   SimulationControl simulation_control;
 
-  void declare(ParameterHandler &prm) {
+  void
+  declare(ParameterHandler &prm)
+  {
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
-    Parameters::Lagrangian::SimulationControl::declare_parameters(prm);
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
   }
 
-  void parse(ParameterHandler &prm) {
+  void
+  parse(ParameterHandler &prm)
+  {
     mesh.parse_parameters(prm);
     test.parse_parameters(prm);
     timer.parse_parameters(prm);

@@ -54,17 +54,17 @@ using namespace dealii;
  *
  * @param digits An optional parameter that specifies the amount of digit used to store iteration number in the file name
  */
-template <int dim>
+template <int dim, int spacedim = dim>
 void
-write_vtu_and_pvd(PVDHandler &        pvd_handler,
-                  const DataOut<dim> &data_out,
-                  const std::string   folder,
-                  const std::string   file_prefix,
-                  const double        time,
-                  const unsigned int  iter,
-                  const unsigned int  group_files,
-                  const MPI_Comm &    mpi_communicator,
-                  const unsigned int  digits = 4);
+write_vtu_and_pvd(PVDHandler &                           pvd_handler,
+                  const DataOutInterface<dim, spacedim> &data_out,
+                  const std::string                      folder,
+                  const std::string                      file_prefix,
+                  const double                           time,
+                  const unsigned int                     iter,
+                  const unsigned int                     group_files,
+                  const MPI_Comm &                       mpi_communicator,
+                  const unsigned int                     digits = 4);
 
 /**
  * @brief Output the Data Out Faces to a single vtu file

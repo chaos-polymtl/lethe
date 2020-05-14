@@ -25,7 +25,7 @@
 #include <dem/insertion.h>
 
 #ifndef NONUNIFORMINSERTION_H_
-#define NONUNIFORMINSERTION_H_
+#  define NONUNIFORMINSERTION_H_
 
 /**
  * Non-uniform insertion of particles in a rectangular box
@@ -35,7 +35,9 @@
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim> class NonUniformInsertion : public Insertion<dim> {
+template <int dim>
+class NonUniformInsertion : public Insertion<dim>
+{
 public:
   /**
    * The constructor to the insertion class calculates the maximum number of
@@ -61,10 +63,11 @@ public:
    * @param property_pool Property pool of particles
    * @param dem_parameters DEM parameters declared in the .prm file)
    */
-  virtual void insert(Particles::ParticleHandler<dim> &particle_handler,
-                      const Triangulation<dim> &triangulation,
-                      Particles::PropertyPool &property_pool,
-                      const DEMSolverParameters<dim> &dem_parameters) override;
+  virtual void
+  insert(Particles::ParticleHandler<dim> &particle_handler,
+         const Triangulation<dim> &       triangulation,
+         Particles::PropertyPool &        property_pool,
+         const DEMSolverParameters<dim> & dem_parameters) override;
 
 private:
   /**
@@ -79,9 +82,9 @@ private:
    * @return A vector of random numbers)
    */
   std::vector<double>
-  create_random_number_container(const int &inserted_this_step,
+  create_random_number_container(const int &   inserted_this_step,
                                  const double &random_number_range,
-                                 const int &random_number_seed);
+                                 const int &   random_number_seed);
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */

@@ -7,7 +7,7 @@ subsection simulation control
   set time step                 			 = 0.00001
   set step end       					 = 50000
   set n total              				 = 100
-  set write frequency            			 = 1000000
+  set output frequency            			 = 1000000
 end
 
 #---------------------------------------------------
