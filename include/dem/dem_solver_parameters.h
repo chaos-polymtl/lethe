@@ -32,6 +32,8 @@ class DEMSolverParameters
 {
 public:
   Parameters::Mesh              mesh;
+  Parameters::Testing           test;
+  Parameters::Timer             timer;
   Parameters::SimulationControl simulationControl; // To be deprecated
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
   Parameters::Lagrangian::InsertionInfo      insertionInfo;
@@ -45,6 +47,8 @@ public:
   {
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
+    Parameters::Timer::declare_parameters(prm);
+    Parameters::Testing::declare_parameters(prm);
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
@@ -55,6 +59,8 @@ public:
   parse(ParameterHandler &prm)
   {
     mesh.parse_parameters(prm);
+    test.parse_parameters(prm);
+    timer.parse_parameters(prm);
     physicalProperties.parse_parameters(prm);
     insertionInfo.parse_parameters(prm);
     simulationControl.parse_parameters(prm);

@@ -57,6 +57,13 @@ NonUniformInsertion<dim>::insert(
   const auto physical_properties   = dem_parameters.physicalProperties;
   const auto insertion_information = dem_parameters.insertionInfo;
 
+  // Calling random number generator
+  std::vector<double> random_number_vector;
+  random_number_vector = this->create_random_number_container(
+    insertion_information.inserted_this_step,
+    insertion_information.random_number_range,
+    insertion_information.random_number_seed);
+
   // nx, ny and nz are the results of discretization of the insertion domain in
   // x, y and z directions
   int nx = int(
@@ -95,25 +102,24 @@ NonUniformInsertion<dim>::insert(
                 unsigned int id;
 
                 // Obtaning position of the inserted particle
-                // In non-uniform insertion, two random numbers are created and
-                // added to the position of particles
-                double random_number_one =
-                  (((double)rand()) / ((double)RAND_MAX)) *
-                  insertion_information.random_number_bin;
-                double random_number_two =
-                  (((double)rand()) / ((double)RAND_MAX)) *
-                  insertion_information.random_number_bin;
-
+                // In non-uniform insertion, random numbers were created and are
+                // added to the position of particles. In order to create more
+                // randomness, the random vector is read once from the beginning
+                // and once from the end to be used in positions [0] and [1]
                 position[0] = insertion_information.x_min +
                               (physical_properties.diameter / 2) +
                               (i * insertion_information.distance_threshold *
                                physical_properties.diameter) +
-                              random_number_one * physical_properties.diameter;
+                              random_number_vector[inserted_sofar_step] *
+                                physical_properties.diameter;
                 position[1] = insertion_information.y_min +
                               (physical_properties.diameter / 2) +
                               (j * insertion_information.distance_threshold *
                                physical_properties.diameter) +
-                              random_number_two * physical_properties.diameter;
+                              random_number_vector[insertion_information
+                                                     .inserted_this_step -
+                                                   inserted_sofar_step] *
+                                physical_properties.diameter;
                 if (dim == 3)
                   position[2] = insertion_information.z_min +
                                 (physical_properties.diameter / 2) +
@@ -186,6 +192,23 @@ NonUniformInsertion<dim>::insert(
               }
           }
       }
+}
+
+template <int dim>
+std::vector<double>
+NonUniformInsertion<dim>::create_random_number_container(
+  const int &   inserted_this_step,
+  const double &random_number_range,
+  const int &   random_number_seed)
+{
+  std::vector<double> random_container;
+  for (int i = 0; i < inserted_this_step; ++i)
+    {
+      srand(random_number_seed * (i + 1));
+      random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
+                                 random_number_range);
+    }
+  return random_container;
 }
 
 template class NonUniformInsertion<2>;

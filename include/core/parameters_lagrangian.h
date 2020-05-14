@@ -16,7 +16,6 @@
 #  define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
-
 namespace Parameters
 {
   namespace Lagrangian
@@ -74,7 +73,10 @@ namespace Parameters
       double distance_threshold;
 
       // Insertion random number range
-      double random_number_bin;
+      double random_number_range;
+
+      // Insertion random number seed
+      int random_number_seed;
 
       static void
       declare_parameters(ParameterHandler &prm);

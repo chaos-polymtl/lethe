@@ -148,7 +148,11 @@ namespace Parameters
         prm.declare_entry("Insertion random number range",
                           "1",
                           Patterns::Double(),
-                          "Random number bin");
+                          "Random number range");
+        prm.declare_entry("Insertion random number seed",
+                          "1",
+                          Patterns::Integer(),
+                          "Random number seed");
       }
       prm.leave_subsection();
     }
@@ -169,7 +173,8 @@ namespace Parameters
         y_max               = prm.get_double("Insertion box maximum y");
         z_max               = prm.get_double("Insertion box maximum z");
         distance_threshold  = prm.get_double("Insertion distance threshold");
-        random_number_bin   = prm.get_double("Insertion random number range");
+        random_number_range = prm.get_double("Insertion random number range");
+        random_number_seed  = prm.get_double("Insertion random number seed");
       }
       prm.leave_subsection();
     }

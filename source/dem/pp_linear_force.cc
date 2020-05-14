@@ -169,14 +169,17 @@ PPLinearForce<dim>::calculate_pp_contact_force(
           Tensor<1, dim> tangential_torque_particle_one,
             tangential_torque_particle_two;
 
-          tangential_torque_particle_one = cross_product_3d(
-            ((particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
-             contact_information_iterator_second.normal_vector),
-            tangential_force);
-          tangential_torque_particle_two = cross_product_3d(
-            ((particle_two_properties[DEM::PropertiesIndex::dp] / 2.0) *
-             contact_information_iterator_second.normal_vector),
-            tangential_force);
+          if (dim == 3)
+            {
+              tangential_torque_particle_one = cross_product_3d(
+                ((particle_one_properties[DEM::PropertiesIndex::dp] / 2.0) *
+                 contact_information_iterator_second.normal_vector),
+                tangential_force);
+              tangential_torque_particle_two = cross_product_3d(
+                ((particle_two_properties[DEM::PropertiesIndex::dp] / 2.0) *
+                 contact_information_iterator_second.normal_vector),
+                tangential_force);
+            }
 
           // Rolling resistance torque
           // For calculation of rolling resistance torque, we need to obtain
