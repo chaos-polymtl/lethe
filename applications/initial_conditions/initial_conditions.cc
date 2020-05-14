@@ -61,7 +61,7 @@ InitialConditionsNavierStokes<dim>::runTest()
   const int initialSize = this->nsparam.mesh.initialRefinement;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
-  // this->make_cube_grid(initialSize);
+
   this->setup_dofs();
   this->exact_solution = new ExactInitialSolution<dim>;
   this->set_initial_condition(Parameters::InitialConditionType::L2projection);

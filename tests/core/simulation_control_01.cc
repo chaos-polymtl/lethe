@@ -3,6 +3,7 @@
 #include <core/parameters.h>
 
 #include "../tests.h"
+
 #include "core/simulation_control.h"
 #include "solvers/navier_stokes_solver_parameters.h"
 
@@ -26,8 +27,7 @@ main()
       simulationControlParameters.output_folder   = "canard";
       simulationControlParameters.outputFrequency = 8;
 
-      SimulationControl simulationControl;
-      simulationControl.initialize(simulationControlParameters);
+      SimulationControl simulationControl(simulationControlParameters);
 
       for (int i = 0; i < 10; ++i)
         simulationControl.integrate();

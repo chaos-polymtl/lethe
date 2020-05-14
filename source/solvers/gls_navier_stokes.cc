@@ -23,6 +23,7 @@
 #include "core/grids.h"
 #include "core/manifolds.h"
 #include "core/sdirk.h"
+#include "core/time_integration_utilities.h"
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -823,16 +824,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       double viscosity = this->nsparam.physical_properties.viscosity;
       this->nsparam.physical_properties.viscosity =
         this->nsparam.initial_condition->viscosity;
-      Parameters::SimulationControl::TimeSteppingMethod previousControl =
-        this->simulationControl.getMethod();
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
-      this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
-      this->simulationControl.setMethod(previousControl);
       this->nsparam.physical_properties.viscosity = viscosity;
     }
   else

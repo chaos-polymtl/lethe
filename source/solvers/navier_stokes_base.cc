@@ -35,6 +35,8 @@
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
 
+#include "core/time_integration_utilities.h"
+
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -66,10 +68,10 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , degreeVelocity_(p_degreeVelocity)
   , degreePressure_(p_degreePressure)
   , degreeQuadrature_(p_degreeVelocity + 1)
+  , simulationControl(nsparam.simulation_control)
 {
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
-  this->simulationControl = nsparam.simulationControl;
 
   // Overide default value of quadrature point if they are specified
   if (nsparam.fem_parameters.quadraturePoints > 0)
@@ -375,7 +377,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
 
   if (nsparam.analytical_solution->calculate_error())
     {
-      if (simulationControl.getMethod() ==
+      if (nsparam.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         {
           error_table.set_scientific("error_pressure", true);
@@ -394,7 +396,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
           std::ofstream output(filename.c_str());
           error_table.write_text(output);
           std::vector<std::string> sub_columns;
-          if (simulationControl.getMethod() ==
+          if (nsparam.simulation_control.method ==
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               sub_columns.push_back("cells");
@@ -411,7 +413,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
 {
-  if (this->simulationControl.getMethod() !=
+  if (nsparam.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
       this->solution_m3 = this->solution_m2;
@@ -446,7 +448,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  if (this->simulationControl.getMethod() ==
+  if (nsparam.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -461,7 +463,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         false);
     }
 
-  else if (this->simulationControl.getMethod() ==
+  else if (nsparam.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -486,7 +488,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   else
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, false);
+        nsparam.simulation_control.method, false, false);
     }
 }
 
@@ -498,15 +500,15 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
   // First step if the method is not a multi-step method
-  if (!is_bdf(this->simulationControl.getMethod()) ||
-      this->simulationControl.getMethod() ==
+  if (!is_bdf(nsparam.simulation_control.method) ||
+      nsparam.simulation_control.method ==
         Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     {
       iterate();
     }
 
   // Taking care of the multi-step methods
-  else if (this->simulationControl.getMethod() ==
+  else if (nsparam.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     {
       Parameters::SimulationControl timeParameters =
@@ -515,21 +517,17 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       // Start the BDF2 with a single Euler time step with a lower time step
       this->simulationControl.setTimeStep(
         timeParameters.dt * timeParameters.startup_timestep_scaling);
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2);
       this->simulationControl.setTimeStep(
         timeParameters.dt * (1. - timeParameters.startup_timestep_scaling));
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
     }
 
   else if (this->simulationControl.getMethod() ==
@@ -541,34 +539,28 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       // Start the BDF2 with a single Euler time step with a lower time step
       this->simulationControl.setTimeStep(
         timeParameters.dt * timeParameters.startup_timestep_scaling);
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1);
       this->simulationControl.setTimeStep(
         timeParameters.dt * timeParameters.startup_timestep_scaling);
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m3 = this->solution_m2;
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3);
       this->simulationControl.setTimeStep(
         timeParameters.dt *
         (1. - 2. * timeParameters.startup_timestep_scaling));
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        this->simulationControl.getMethod(), false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
     }
 }
 
