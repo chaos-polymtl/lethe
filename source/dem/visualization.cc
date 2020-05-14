@@ -76,7 +76,7 @@ void Visualization<dim>::print_xyz(
   for (const auto &patch : patches) {
     unsigned int n_data_sets = properties.size();
     for (unsigned int data_set = 0; data_set < n_data_sets; ++data_set) {
-      std::cout << patch.data(0, data_set) << ' ';
+      std::cout << patch.data(data_set, 0) << ' ';
     }
     std::cout << '\n';
   }
