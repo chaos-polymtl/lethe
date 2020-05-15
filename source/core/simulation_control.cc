@@ -26,7 +26,6 @@ printTime(ConditionalOStream pcout, SimulationControl control)
       pcout << std::endl;
       pcout
         << "*****************************************************************"
-           "******************"
         << std::endl;
       pcout << "Transient iteration : " << std::setw(8) << std::left
             << control.getIter() << " Time : " << std::setw(8) << std::left
@@ -35,7 +34,6 @@ printTime(ConditionalOStream pcout, SimulationControl control)
             << std::left << control.getCFL() << std::endl;
       pcout
         << "*****************************************************************"
-           "******************"
         << std::endl;
     }
 }
