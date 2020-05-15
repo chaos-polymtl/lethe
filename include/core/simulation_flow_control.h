@@ -26,6 +26,7 @@
 
 class SimulationFlowControl : public DiscreteTime
 {
+protected:
   // Time step
   std::vector<double> time_step_vector;
   // CFL
@@ -161,8 +162,13 @@ public:
   print_progression(ConditionalOStream &pcout) override;
 };
 
+class SimulationControlSteady : public SimulationFlowControl
+{
+public:
+  SimulationControlSteady(Parameters::SimulationControl param);
 
-// void
-// printTime(ConditionalOStream pcout, SimulationFlowControl control);
+  virtual void
+  print_progression(ConditionalOStream &pcout) override;
+};
 
 #endif

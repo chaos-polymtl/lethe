@@ -13,14 +13,12 @@ printTime(ConditionalOStream pcout, SimulationControl control)
       pcout << std::endl;
       pcout
         << "*****************************************************************"
-           "******************"
         << std::endl;
       pcout << "Steady iteration : " << std::setw(8) << std::right
             << control.getIter() << "/" << control.getNbMeshAdapt() + 1
             << std::endl;
       pcout
         << "*****************************************************************"
-           "******************"
         << std::endl;
     }
   else

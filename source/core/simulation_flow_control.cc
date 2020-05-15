@@ -146,3 +146,18 @@ SimulationControlTransient::print_progression(ConditionalOStream &pcout)
            "******************"
         << std::endl;
 }
+
+void
+SimulationControlSteady::print_progression(ConditionalOStream &pcout)
+{
+  pcout << std::endl;
+  pcout << "*****************************************************************"
+           "******************"
+        << std::endl;
+  pcout << "Steady iteration : " << std::setw(8) << std::right
+        << DiscreteTime::get_step_number() << "/" << number_mesh_adapt + 1
+        << std::endl;
+  pcout << "*****************************************************************"
+           "******************"
+        << std::endl;
+}
