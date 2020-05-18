@@ -77,7 +77,7 @@ namespace Parameters
     double startup_timestep_scaling;
 
     // Number of mesh adaptation (steady simulations)
-    unsigned int nbMeshAdapt;
+    unsigned int number_mesh_adaptation;
 
     // Folder for simulation output
     std::string output_folder;

@@ -88,7 +88,7 @@ SimulationControl::initialize(ParameterHandler &prm)
   dt[0]       = parameterControl.dt;
   endTime     = parameterControl.timeEnd;
   maxCFL      = parameterControl.maxCFL;
-  nbMeshAdapt = parameterControl.nbMeshAdapt;
+  nbMeshAdapt = parameterControl.number_mesh_adaptation;
   time        = 0;
   iter        = 0;
   CFL         = 0;
@@ -103,7 +103,7 @@ SimulationControl::initialize(Parameters::SimulationControl param)
   dt[0]       = parameterControl.dt;
   endTime     = parameterControl.timeEnd;
   maxCFL      = parameterControl.maxCFL;
-  nbMeshAdapt = parameterControl.nbMeshAdapt;
+  nbMeshAdapt = parameterControl.number_mesh_adaptation;
   time        = 0;
   iter        = 0;
   CFL         = 0;

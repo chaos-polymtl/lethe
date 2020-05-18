@@ -21,7 +21,7 @@ main()
       simulationControlParameters.method =
         Parameters::SimulationControl::TimeSteppingMethod::bdf1;
       simulationControlParameters.timeEnd         = 999;
-      simulationControlParameters.nbMeshAdapt     = 9;
+      simulationControlParameters.number_mesh_adaptation     = 9;
       simulationControlParameters.output_name     = "test";
       simulationControlParameters.subdivision     = 7;
       simulationControlParameters.output_folder   = "canard";

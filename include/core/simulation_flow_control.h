@@ -75,6 +75,9 @@ public:
                         double                        p_end_time,
                         double                        p_step);
 
+  virtual bool
+  integrate() = 0;
+
 
   /**
    * @brief print_progress Function that prints the current progress status of the simulation
@@ -128,12 +131,6 @@ public:
     CFL = p_CFL;
   }
 
-  double
-  get_max_CFL()
-  {
-    return max_CFL;
-  }
-
   unsigned int
   get_number_subdivision()
   {
@@ -158,6 +155,9 @@ class SimulationControlTransient : public SimulationFlowControl
 public:
   SimulationControlTransient(Parameters::SimulationControl param);
 
+  virtual bool
+  integrate() override;
+
   virtual void
   print_progression(ConditionalOStream &pcout) override;
 };
@@ -166,6 +166,9 @@ class SimulationControlSteady : public SimulationFlowControl
 {
 public:
   SimulationControlSteady(Parameters::SimulationControl param);
+
+  virtual bool
+  integrate() override;
 
   virtual void
   print_progression(ConditionalOStream &pcout) override;

@@ -16,50 +16,11 @@ SimulationFlowControl::SimulationFlowControl(
   time_step_vector[0] = param.dt;
   end_time            = param.timeEnd;
   max_CFL             = param.maxCFL;
-  number_mesh_adapt   = param.nbMeshAdapt;
+  number_mesh_adapt   = param.number_mesh_adaptation;
   time                = 0;
   iter                = 0;
   CFL                 = 0;
 }
-
-// void
-// printTime(ConditionalOStream pcout, SimulationFlowControl control)
-//{
-//  if (control.getMethod() ==
-//      Parameters::SimulationControl::TimeSteppingMethod::steady)
-//    {
-//      pcout << std::endl;
-//      pcout
-//        << "*****************************************************************"
-//           "******************"
-//        << std::endl;
-//      pcout << "Steady iteration : " << std::setw(8) << std::right
-//            << control.getIter() << "/" << control.getNbMeshAdapt() + 1
-//            << std::endl;
-//      pcout
-//        << "*****************************************************************"
-//           "******************"
-//        << std::endl;
-//    }
-//  else
-//    {
-//      pcout << std::endl;
-//      pcout
-//        << "*****************************************************************"
-//           "******************"
-//        << std::endl;
-//      pcout << "Transient iteration : " << std::setw(8) << std::left
-//            << control.getIter() << " Time : " << std::setw(8) << std::left
-//            << control.getTime() << " Time step : " << std::setw(8) <<
-//            std::left
-//            << control.getCurrentTimeStep() << " CFL : " << std::setw(8)
-//            << std::left << control.getCFL() << std::endl;
-//      pcout
-//        << "*****************************************************************"
-//           "******************"
-//        << std::endl;
-//    }
-//}
 
 void
 SimulationFlowControl::addTimeStep(double p_timestep)
@@ -134,7 +95,6 @@ SimulationControlTransient::print_progression(ConditionalOStream &pcout)
 {
   pcout << std::endl;
   pcout << "*****************************************************************"
-           "******************"
         << std::endl;
   pcout << "Transient iteration : " << std::setw(8) << std::left
         << DiscreteTime::get_step_number() << " Time : " << std::setw(8)
@@ -143,8 +103,41 @@ SimulationControlTransient::print_progression(ConditionalOStream &pcout)
         << DiscreteTime::get_next_step_size() << " CFL : " << std::setw(8)
         << std::left << SimulationFlowControl::get_CFL() << std::endl;
   pcout << "*****************************************************************"
-           "******************"
         << std::endl;
+}
+
+bool
+SimulationControlTransient::integrate()
+{
+  if (!DiscreteTime::is_at_end())
+    {
+      addTimeStep(DiscreteTime::get_next_step_size());
+      DiscreteTime::advance_time();
+      return true;
+    }
+
+  else
+    return false;
+}
+
+
+SimulationControlSteady::SimulationControlSteady(
+  Parameters::SimulationControl param)
+  : SimulationFlowControl(param, 0., param.number_mesh_adaptation, 1)
+{}
+
+
+bool
+SimulationControlSteady::integrate()
+{
+  if (!DiscreteTime::is_at_end())
+    {
+      DiscreteTime::advance_time();
+      return true;
+    }
+
+  else
+    return false;
 }
 
 void
@@ -152,12 +145,10 @@ SimulationControlSteady::print_progression(ConditionalOStream &pcout)
 {
   pcout << std::endl;
   pcout << "*****************************************************************"
-           "******************"
         << std::endl;
   pcout << "Steady iteration : " << std::setw(8) << std::right
         << DiscreteTime::get_step_number() << "/" << number_mesh_adapt + 1
         << std::endl;
   pcout << "*****************************************************************"
-           "******************"
         << std::endl;
 }

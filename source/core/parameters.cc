@@ -96,7 +96,7 @@ namespace Parameters
       adapt                    = prm.get_bool("adapt");
       maxCFL                   = prm.get_double("max cfl");
       startup_timestep_scaling = prm.get_double("startup time scaling");
-      nbMeshAdapt              = prm.get_integer("number mesh adapt");
+      number_mesh_adaptation              = prm.get_integer("number mesh adapt");
       output_folder            = prm.get("output path");
       output_name              = prm.get("output name");
       outputFrequency          = prm.get_integer("output frequency");
