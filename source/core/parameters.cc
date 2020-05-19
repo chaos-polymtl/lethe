@@ -96,10 +96,10 @@ namespace Parameters
       adapt                    = prm.get_bool("adapt");
       maxCFL                   = prm.get_double("max cfl");
       startup_timestep_scaling = prm.get_double("startup time scaling");
-      number_mesh_adaptation              = prm.get_integer("number mesh adapt");
+      number_mesh_adaptation   = prm.get_integer("number mesh adapt");
       output_folder            = prm.get("output path");
       output_name              = prm.get("output name");
-      output_frequency          = prm.get_integer("output frequency");
+      output_frequency         = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
       output_boundary_mesh     = prm.get_bool("output boundary mesh");

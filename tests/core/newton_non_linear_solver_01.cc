@@ -10,7 +10,6 @@
 #include <memory>
 
 #include "../tests.h"
-
 #include "non_linear_test_system_01.h"
 
 /**
