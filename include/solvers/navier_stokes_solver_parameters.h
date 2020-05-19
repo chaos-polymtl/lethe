@@ -23,7 +23,6 @@
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
-#include <core/simulation_control.h>
 
 #include "analytical_solutions.h"
 #include "initial_conditions.h"

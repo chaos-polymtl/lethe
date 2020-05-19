@@ -96,7 +96,6 @@
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
-#include <core/simulation_control.h>
 #include <core/simulation_flow_control.h>
 
 #include "navier_stokes_solver_parameters.h"
@@ -141,8 +140,7 @@ protected:
    * Calculate forces acting on each boundary condition
    */
   void
-  postprocessing_forces(const VectorType &       evaluation_point,
-                        const SimulationControl &simulationControl);
+  postprocessing_forces(const VectorType &evaluation_point);
 
   /**
    * @brief calculate_L2_error
@@ -159,8 +157,7 @@ protected:
    * Calculate torque acting on each boundary condition
    */
   void
-  postprocessing_torques(const VectorType &       evaluation_point,
-                         const SimulationControl &simulationControl);
+  postprocessing_torques(const VectorType &evaluation_point);
 
   /**
    * @brief finish_time_step
@@ -301,7 +298,8 @@ protected:
   unsigned int       degreeQuadrature_;
 
   // Simulation control for time stepping and I/Os
-  SimulationControl simulationControl;
+  std::shared_ptr<SimulationFlowControl> simulationControl;
+  // SimulationControl simulationControl;
 
   // Post-processing variables
   TableHandler enstrophy_table;

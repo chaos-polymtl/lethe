@@ -24,34 +24,37 @@
 
 #include <core/parameters.h>
 
-class SimulationFlowControl : public DiscreteTime
+class SimulationFlowControl
 {
 protected:
+  // Time
+  double time;
+
+  // Time
+  double time_step;
+
+  // Simulation end time
+  double end_time;
+
   // Time step
   std::vector<double> time_step_vector;
+
+  // Iteration
+  unsigned int iteration;
+
+  // Number of mesh adaptation iteration
+  unsigned int number_mesh_adapt;
+
   // CFL
   double CFL;
 
   // Maximal CFL condition
   double max_CFL;
 
-  // Time
-  double time;
-
-  // Simulation end time
-  double end_time;
-
-  // Iteration number
-  unsigned int iter;
-
-  // Number of mesh adaptation iteration
-  unsigned int number_mesh_adapt;
-
   // number of time steps stored
   static const unsigned int numberTimeStepStored = 4;
 
-  // Number of parallel file to generate
-  unsigned int group_files;
+
 
   // Output iteration frequency
   unsigned int output_frequency;
@@ -59,24 +62,41 @@ protected:
   // Subdivision
   unsigned int subdivision;
 
+  // Number of parallel file to generate
+  unsigned int group_files;
+
   // Output name
   std::string output_name;
 
   // Output path
   std::string output_path;
 
-  // Add a time step and stores the previous one in a list
-  void
-  addTimeStep(double p_timestep);
+
 
 public:
-  SimulationFlowControl(Parameters::SimulationControl param,
-                        double                        p_start_time,
-                        double                        p_end_time,
-                        double                        p_step);
+  SimulationFlowControl(Parameters::SimulationControl param);
 
   virtual bool
   integrate() = 0;
+
+  virtual bool
+  is_at_end() = 0;
+
+  // Add a time step and stores the previous one in a list
+  void
+  add_time_step(double p_timestep);
+
+  bool
+  is_at_start()
+  {
+    return iteration == 1;
+  }
+
+  virtual double
+  calculate_time_step()
+  {
+    return time_step;
+  };
 
 
   /**
@@ -86,12 +106,31 @@ public:
   virtual void
   print_progression(ConditionalOStream &pcout) = 0;
 
+  void
+  set_CFL(const double p_CFL)
+  {
+    CFL = p_CFL;
+  }
+
+
+  void
+  set_desired_time_step(const double new_time_step)
+  {
+    time_step = new_time_step;
+  }
+
+  double
+  get_time_step() const
+  {
+    return time_step;
+  }
 
   std::string
   get_output_name()
   {
     return output_name;
   }
+
   std::string
   get_output_path()
   {
@@ -104,16 +143,12 @@ public:
     return group_files;
   }
 
-  void
-  set_time_step(double p_timestep)
-  {
-    addTimeStep(p_timestep);
-  }
   double
-  getCurrentTimeStep()
+  get_current_time()
   {
-    return time_step_vector[0];
+    return time;
   }
+
   std::vector<double>
   get_time_steps_vector()
   {
@@ -125,10 +160,11 @@ public:
   {
     return CFL;
   }
-  void
-  set_CFL(double p_CFL)
+
+  unsigned int
+  get_step_number()
   {
-    CFL = p_CFL;
+    return iteration;
   }
 
   unsigned int
@@ -140,7 +176,7 @@ public:
   bool
   is_output_iteration()
   {
-    return (iter % output_frequency == 0);
+    return (get_step_number() % output_frequency == 0);
   }
 
   void
@@ -155,11 +191,14 @@ class SimulationControlTransient : public SimulationFlowControl
 public:
   SimulationControlTransient(Parameters::SimulationControl param);
 
+  virtual void
+  print_progression(ConditionalOStream &pcout) override;
+
   virtual bool
   integrate() override;
 
-  virtual void
-  print_progression(ConditionalOStream &pcout) override;
+  virtual bool
+  is_at_end() override;
 };
 
 class SimulationControlSteady : public SimulationFlowControl
@@ -167,11 +206,14 @@ class SimulationControlSteady : public SimulationFlowControl
 public:
   SimulationControlSteady(Parameters::SimulationControl param);
 
+  virtual void
+  print_progression(ConditionalOStream &pcout) override;
+
   virtual bool
   integrate() override;
 
-  virtual void
-  print_progression(ConditionalOStream &pcout) override;
+  virtual bool
+  is_at_end() override;
 };
 
 #endif

@@ -86,7 +86,7 @@ namespace Parameters
     std::string output_name;
 
     // Frequency of the output
-    unsigned int outputFrequency;
+    unsigned int output_frequency;
 
     // Subdivisions of the results in the output
     unsigned int subdivision;

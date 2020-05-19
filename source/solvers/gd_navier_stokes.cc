@@ -149,7 +149,8 @@ GDNavierStokesSolver<dim>::assembleGD()
   // Get the BDF coefficients
   Vector<double> alpha_bdf;
 
-  std::vector<double> time_steps = this->simulationControl.getTimeSteps();
+  std::vector<double> time_steps =
+    this->simulationControl->get_time_steps_vector();
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     alpha_bdf = bdf_coefficients(1, time_steps);
@@ -1054,19 +1055,18 @@ GDNavierStokesSolver<dim>::solve()
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
-  while (this->simulationControl.integrate())
+  while (this->simulationControl->integrate())
     {
-      printTime(this->pcout, this->simulationControl);
-      if (!this->simulationControl.firstIter())
+      this->simulationControl->print_progression(this->pcout);
+      if (this->simulationControl->is_at_start())
+        this->first_iteration();
+      else
         {
           NavierStokesBase<dim,
                            TrilinosWrappers::MPI::BlockVector,
                            std::vector<IndexSet>>::refine_mesh();
+          this->iterate();
         }
-      if (this->simulationControl.firstIter())
-        this->first_iteration();
-      else
-        this->iterate();
       this->postprocess(false);
       this->finish_time_step();
     }

@@ -99,7 +99,7 @@ namespace Parameters
       number_mesh_adaptation              = prm.get_integer("number mesh adapt");
       output_folder            = prm.get("output path");
       output_name              = prm.get("output name");
-      outputFrequency          = prm.get_integer("output frequency");
+      output_frequency          = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
       output_boundary_mesh     = prm.get_bool("output boundary mesh");

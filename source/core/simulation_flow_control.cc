@@ -6,24 +6,26 @@
 
 
 SimulationFlowControl::SimulationFlowControl(
-  Parameters::SimulationControl param,
-  double                        p_start_time,
-  double                        p_end_time,
-  double                        p_step)
-  : DiscreteTime(p_start_time, p_end_time, p_step)
+  Parameters::SimulationControl param)
+  : time(0)
+  , time_step(param.dt)
+  , end_time(param.timeEnd)
+  , iteration(0)
+  , number_mesh_adapt(param.number_mesh_adaptation)
+  , CFL(0)
+  , max_CFL(param.maxCFL)
+  , output_frequency(param.output_frequency)
+  , subdivision(param.subdivision)
+  , group_files(param.group_files)
+  , output_name(param.output_name)
+  , output_path(param.output_folder)
 {
   time_step_vector.resize(numberTimeStepStored);
   time_step_vector[0] = param.dt;
-  end_time            = param.timeEnd;
-  max_CFL             = param.maxCFL;
-  number_mesh_adapt   = param.number_mesh_adaptation;
-  time                = 0;
-  iter                = 0;
-  CFL                 = 0;
 }
 
 void
-SimulationFlowControl::addTimeStep(double p_timestep)
+SimulationFlowControl::add_time_step(double p_timestep)
 {
   // Store previous time step in table
   for (unsigned int i_time = time_step_vector.size() - 1; i_time > 0; --i_time)
@@ -32,26 +34,6 @@ SimulationFlowControl::addTimeStep(double p_timestep)
   // Calculate time step, right now this is a dummy function
   time_step_vector[0] = p_timestep;
 }
-
-// bool
-// SimulationFlowControl::integrate()
-//{
-//  if ((parameterControl.method ==
-//         Parameters::SimulationControl::TimeSteppingMethod::steady &&
-//       iter >= (number_mesh_adapt + 1)) ||
-//      (parameterControl.method !=
-//         Parameters::SimulationControl::TimeSteppingMethod::steady &&
-//       time >= (end_time - 1e-6 * dt[0])))
-//    return false;
-//  else
-//    {
-//      iter++;
-//      addTimeStep(calculateTimeStep());
-//      // Increment time
-//      time += dt[0];
-//      return true;
-//    }
-//}
 
 void
 SimulationFlowControl::save(std::string prefix)
@@ -63,7 +45,7 @@ SimulationFlowControl::save(std::string prefix)
     output << "dt_" << i << " " << time_step_vector[i] << std::endl;
   output << "CFL  " << CFL << std::endl;
   output << "Time " << time << std::endl;
-  output << "Iter " << iter << std::endl;
+  output << "Iter " << iteration << std::endl;
 }
 
 void
@@ -81,13 +63,13 @@ SimulationFlowControl::read(std::string prefix)
     input >> buffer >> time_step_vector[i];
   input >> buffer >> CFL;
   input >> buffer >> time;
-  input >> buffer >> iter;
+  input >> buffer >> iteration;
 }
 
 
 SimulationControlTransient::SimulationControlTransient(
   Parameters::SimulationControl param)
-  : SimulationFlowControl(param, 0., param.timeEnd, param.dt)
+  : SimulationFlowControl(param)
 {}
 
 void
@@ -96,12 +78,11 @@ SimulationControlTransient::print_progression(ConditionalOStream &pcout)
   pcout << std::endl;
   pcout << "*****************************************************************"
         << std::endl;
-  pcout << "Transient iteration : " << std::setw(8) << std::left
-        << DiscreteTime::get_step_number() << " Time : " << std::setw(8)
-        << std::left << DiscreteTime::get_next_time()
-        << " Time step : " << std::setw(8) << std::left
-        << DiscreteTime::get_next_step_size() << " CFL : " << std::setw(8)
-        << std::left << SimulationFlowControl::get_CFL() << std::endl;
+  pcout << "Transient iteration : " << std::setw(8) << std::left << iteration
+        << " Time : " << std::setw(8) << std::left << time
+        << " Time step : " << std::setw(8) << std::left << time_step
+        << " CFL : " << std::setw(8) << std::left
+        << SimulationFlowControl::get_CFL() << std::endl;
   pcout << "*****************************************************************"
         << std::endl;
 }
@@ -109,10 +90,11 @@ SimulationControlTransient::print_progression(ConditionalOStream &pcout)
 bool
 SimulationControlTransient::integrate()
 {
-  if (!DiscreteTime::is_at_end())
+  if (!is_at_end())
     {
-      addTimeStep(DiscreteTime::get_next_step_size());
-      DiscreteTime::advance_time();
+      iteration++;
+      add_time_step(calculate_time_step());
+      time += time_step;
       return true;
     }
 
@@ -120,19 +102,27 @@ SimulationControlTransient::integrate()
     return false;
 }
 
+bool
+SimulationControlTransient::is_at_end()
+{
+  return time >= (end_time - 1e-6 * time_step);
+}
+
 
 SimulationControlSteady::SimulationControlSteady(
   Parameters::SimulationControl param)
-  : SimulationFlowControl(param, 0., param.number_mesh_adaptation, 1)
+  : SimulationFlowControl(param)
 {}
 
 
 bool
 SimulationControlSteady::integrate()
 {
-  if (!DiscreteTime::is_at_end())
+  if (!is_at_end())
     {
-      DiscreteTime::advance_time();
+      iteration++;
+      add_time_step(calculate_time_step());
+      time += time_step;
       return true;
     }
 
@@ -146,9 +136,14 @@ SimulationControlSteady::print_progression(ConditionalOStream &pcout)
   pcout << std::endl;
   pcout << "*****************************************************************"
         << std::endl;
-  pcout << "Steady iteration : " << std::setw(8) << std::right
-        << DiscreteTime::get_step_number() << "/" << number_mesh_adapt + 1
-        << std::endl;
+  pcout << "Steady iteration : " << std::setw(8) << std::right << iteration
+        << "/" << number_mesh_adapt + 1 << std::endl;
   pcout << "*****************************************************************"
         << std::endl;
+}
+
+bool
+SimulationControlSteady::is_at_end()
+{
+  return iteration >= (number_mesh_adapt + 1);
 }

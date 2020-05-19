@@ -1,8 +1,8 @@
 // check the read and write of simulationcontrol
 
 #include "../tests.h"
+
 #include "core/parameters.h"
-#include "core/simulation_control.h"
 #include "solvers/gls_navier_stokes.h"
 #include "solvers/navier_stokes_solver_parameters.h"
 
@@ -89,7 +89,7 @@ RestartNavierStokes<dim>::run()
   this->forcing_function                      = new MMSSineForcingFunction<dim>;
   this->nsparam.physical_properties.viscosity = 1.;
 
-  printTime(this->pcout, this->simulationControl);
+  this->simulationControl->print_progression(this->pcout);
   this->first_iteration();
   this->postprocess(false);
   auto   errors_p1 = this->calculate_L2_error(this->present_solution);
@@ -104,7 +104,7 @@ RestartNavierStokes<dim>::run()
 
   deallog << "Error after zeroing the solution: " << error2 << std::endl;
 
-  printTime(this->pcout, this->simulationControl);
+  this->simulationControl->print_progression(this->pcout);
   this->triangulation->clear();
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(0);

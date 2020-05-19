@@ -13,7 +13,7 @@ Kinetic energy : 0.169154
 L2 error velocity : 0.0170422
 
 *****************************************************************
-Transient iteration : 2        Time : 0.2      Time step : 0.1      CFL : 0.441261
+Transient iteration : 2        Time : 0.2      Time step : 0.1      CFL : 0.735435
 *****************************************************************
 Enstrophy  : 0.226752
 Kinetic energy : 0.113376
