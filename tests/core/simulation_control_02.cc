@@ -17,8 +17,8 @@
 * Author: Bruno Blais, Polytechnique Montreal, 2020-
 */
 
-// This test checks the read and write capacities of the
-// SimulationFlowControl class
+// This test checks that the steady-state simulation control stops
+// at the correct moment and behaves in a correct manner
 
 #include <core/parameters.h>
 
@@ -35,11 +35,14 @@ main()
       initlog();
 
       Parameters::SimulationControl simulationControlParameters;
+
       simulationControlParameters.dt     = 0.01;
       simulationControlParameters.adapt  = false;
       simulationControlParameters.maxCFL = 99;
       simulationControlParameters.method =
+
         Parameters::SimulationControl::TimeSteppingMethod::bdf1;
+
       simulationControlParameters.timeEnd                = 999;
       simulationControlParameters.number_mesh_adaptation = 9;
       simulationControlParameters.output_name            = "test";
@@ -47,23 +50,22 @@ main()
       simulationControlParameters.output_folder          = "canard";
       simulationControlParameters.output_frequency       = 8;
 
-      SimulationControlTransient simulationControl(simulationControlParameters);
+      SimulationControlSteady simulation_control(simulationControlParameters);
 
-      for (int i = 0; i < 10; ++i)
-        simulationControl.integrate();
+      deallog << "Iteration : " << simulation_control.get_step_number()
+              << std::endl;
 
-      simulationControl.save("testFile");
-      simulationControl.read("testFile");
+      while (simulation_control.integrate())
+        {
+          deallog << "Iteration : " << simulation_control.get_step_number()
+                  << std::endl;
 
-      deallog << "dt                  : " << simulationControl.get_time_step()
-              << std::endl;
-      deallog << "CFL                 : " << simulationControl.get_CFL()
-              << std::endl;
-      deallog << "time                : "
-              << simulationControl.get_current_time() << std::endl;
-      deallog << "iter                : " << simulationControl.get_step_number()
-              << std::endl;
-      deallog << "OK" << std::endl;
+          if (simulation_control.is_at_start())
+            deallog << "This is the first iteration" << std::endl;
+
+          if (simulation_control.is_output_iteration())
+            deallog << "This is an output iteration" << std::endl;
+        }
     }
   catch (std::exception &exc)
     {

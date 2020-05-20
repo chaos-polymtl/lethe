@@ -51,13 +51,15 @@ protected:
   // Maximal CFL condition
   double max_CFL;
 
+
   // number of time steps stored
   static const unsigned int numberTimeStepStored = 4;
 
-
-
   // Output iteration frequency
   unsigned int output_frequency;
+
+  // Output time frequency
+  double output_time_frequency;
 
   // Subdivision
   unsigned int subdivision;
@@ -96,7 +98,7 @@ public:
   calculate_time_step()
   {
     return time_step;
-  };
+  }
 
 
   /**
@@ -104,7 +106,10 @@ public:
    * @param pcout the ConditionalOSStream that is use to write
    */
   virtual void
-  print_progression(ConditionalOStream &pcout) = 0;
+  print_progression(const ConditionalOStream &pcout) = 0;
+
+  virtual bool
+  is_output_iteration();
 
   void
   set_CFL(const double p_CFL)
@@ -173,11 +178,7 @@ public:
     return subdivision;
   }
 
-  bool
-  is_output_iteration()
-  {
-    return (get_step_number() % output_frequency == 0);
-  }
+
 
   void
   save(std::string filename);
@@ -188,11 +189,22 @@ public:
 
 class SimulationControlTransient : public SimulationFlowControl
 {
+protected:
+  // Enable adaptative time stepping
+  bool adapt;
+
+  // Time step scaling for adaptative time stepping
+  double adaptative_time_step_scaling;
+
+  virtual double
+  calculate_time_step() override;
+
+
 public:
   SimulationControlTransient(Parameters::SimulationControl param);
 
   virtual void
-  print_progression(ConditionalOStream &pcout) override;
+  print_progression(const ConditionalOStream &pcout) override;
 
   virtual bool
   integrate() override;
@@ -201,13 +213,34 @@ public:
   is_at_end() override;
 };
 
+
+class SimulationControlTransientDynamicOutput
+  : public SimulationControlTransient
+{
+protected:
+  // Time step has been forced
+  bool time_step_forced_output;
+
+  // Time at which there was a last output
+  double last_output_time;
+
+  virtual double
+  calculate_time_step() override;
+
+public:
+  SimulationControlTransientDynamicOutput(Parameters::SimulationControl param);
+
+  virtual bool
+  is_output_iteration() override;
+};
+
 class SimulationControlSteady : public SimulationFlowControl
 {
 public:
   SimulationControlSteady(Parameters::SimulationControl param);
 
   virtual void
-  print_progression(ConditionalOStream &pcout) override;
+  print_progression(const ConditionalOStream &pcout) override;
 
   virtual bool
   integrate() override;

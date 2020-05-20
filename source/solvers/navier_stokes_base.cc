@@ -77,8 +77,16 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     simulationControl =
       std::make_shared<SimulationControlSteady>(nsparam.simulation_control);
   else
-    simulationControl =
-      std::make_shared<SimulationControlTransient>(nsparam.simulation_control);
+    {
+      if (nsparam.simulation_control.output_control ==
+          Parameters::SimulationControl::OutputControl::time)
+        simulationControl =
+          std::make_shared<SimulationControlTransientDynamicOutput>(
+            nsparam.simulation_control);
+      else
+        simulationControl = std::make_shared<SimulationControlTransient>(
+          nsparam.simulation_control);
+    }
 
 
   // Overide default value of quadrature point if they are specified

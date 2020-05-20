@@ -36,6 +36,11 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Maximum CFL value");
+
+      prm.declare_entry("adaptative time step scaling",
+                        "1.1",
+                        Patterns::Double(),
+                        "Adaptative time step scaling");
       prm.declare_entry("output path",
                         "./",
                         Patterns::FileName(),
@@ -50,6 +55,15 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
+
+      prm.declare_entry("output time", "1", Patterns::Double(), "Output time");
+
+      prm.declare_entry(
+        "output control",
+        "iteration",
+        Patterns::Selection("iteration|time"),
+        "The control for the output of the simulation results"
+        "Results can be either outputted at constant iteration frequency or at constant time");
 
       prm.declare_entry("subdivision",
                         "1",
@@ -91,10 +105,22 @@ namespace Parameters
         {
           std::runtime_error("Invalid time stepping scheme");
         }
-      dt                       = prm.get_double("time step");
-      timeEnd                  = prm.get_double("time end");
-      adapt                    = prm.get_bool("adapt");
-      maxCFL                   = prm.get_double("max cfl");
+
+      const std::string osv = prm.get("output control");
+      if (osv == "iteration")
+        output_control = OutputControl::iteration;
+      else if (osv == "time")
+        output_control = OutputControl::time;
+      else
+        {
+          std::runtime_error("Invalid output control scheme");
+        }
+      dt      = prm.get_double("time step");
+      timeEnd = prm.get_double("time end");
+      adapt   = prm.get_bool("adapt");
+      maxCFL  = prm.get_double("max cfl");
+      adaptative_time_step_scaling =
+        prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");
       number_mesh_adaptation   = prm.get_integer("number mesh adapt");
       output_folder            = prm.get("output path");
@@ -102,7 +128,6 @@ namespace Parameters
       output_frequency         = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
-      output_boundary_mesh     = prm.get_bool("output boundary mesh");
     }
     prm.leave_subsection();
   }

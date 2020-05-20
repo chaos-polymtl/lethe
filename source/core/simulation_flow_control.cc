@@ -15,6 +15,7 @@ SimulationFlowControl::SimulationFlowControl(
   , CFL(0)
   , max_CFL(param.maxCFL)
   , output_frequency(param.output_frequency)
+  , output_time_frequency(param.output_time)
   , subdivision(param.subdivision)
   , group_files(param.group_files)
   , output_name(param.output_name)
@@ -27,12 +28,19 @@ SimulationFlowControl::SimulationFlowControl(
 void
 SimulationFlowControl::add_time_step(double p_timestep)
 {
+  time_step = p_timestep;
   // Store previous time step in table
   for (unsigned int i_time = time_step_vector.size() - 1; i_time > 0; --i_time)
     time_step_vector[i_time] = time_step_vector[i_time - 1];
 
   // Calculate time step, right now this is a dummy function
   time_step_vector[0] = p_timestep;
+}
+
+bool
+SimulationFlowControl::is_output_iteration()
+{
+  return (get_step_number() % output_frequency == 0);
 }
 
 void
@@ -70,10 +78,12 @@ SimulationFlowControl::read(std::string prefix)
 SimulationControlTransient::SimulationControlTransient(
   Parameters::SimulationControl param)
   : SimulationFlowControl(param)
+  , adapt(param.adapt)
+  , adaptative_time_step_scaling(param.adaptative_time_step_scaling)
 {}
 
 void
-SimulationControlTransient::print_progression(ConditionalOStream &pcout)
+SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
 {
   pcout << std::endl;
   pcout << "*****************************************************************"
@@ -102,10 +112,76 @@ SimulationControlTransient::integrate()
     return false;
 }
 
+
+
 bool
 SimulationControlTransient::is_at_end()
 {
-  return time >= (end_time - 1e-6 * time_step);
+  return time >= (end_time - 1e-12 * time_step);
+}
+
+double
+SimulationControlTransient::calculate_time_step()
+{
+  double new_time_step = time_step;
+
+  if (adapt)
+    {
+      new_time_step = time_step * adaptative_time_step_scaling;
+      if (max_CFL / CFL < adaptative_time_step_scaling)
+        new_time_step = time_step * max_CFL / CFL;
+    }
+  if (time + new_time_step > end_time)
+    new_time_step = end_time - time;
+
+  return new_time_step;
+}
+
+
+SimulationControlTransientDynamicOutput::
+  SimulationControlTransientDynamicOutput(Parameters::SimulationControl param)
+  : SimulationControlTransient(param)
+  , time_step_forced_output(false)
+  , last_output_time(0.)
+{}
+
+double
+SimulationControlTransientDynamicOutput::calculate_time_step()
+{
+  double new_time_step = time_step;
+  if (time_step_forced_output)
+    {
+      new_time_step           = time_step_vector[1];
+      time_step_forced_output = false;
+    }
+  else
+    {
+      new_time_step = time_step * adaptative_time_step_scaling;
+      if (max_CFL / CFL < adaptative_time_step_scaling)
+        new_time_step = time_step * max_CFL / CFL;
+    }
+
+  if (time + new_time_step > end_time)
+    new_time_step = end_time - time;
+
+  if (time + new_time_step > last_output_time + output_time_frequency)
+    {
+      new_time_step           = last_output_time + output_time_frequency - time;
+      time_step_forced_output = true;
+    }
+
+  return new_time_step;
+}
+
+bool
+SimulationControlTransientDynamicOutput::is_output_iteration()
+{
+  bool is_output_time = (time - last_output_time) - output_time_frequency >
+                        -1e-12 * output_time_frequency;
+  if (is_output_time)
+    last_output_time = time;
+
+  return is_output_time;
 }
 
 
@@ -113,7 +189,6 @@ SimulationControlSteady::SimulationControlSteady(
   Parameters::SimulationControl param)
   : SimulationFlowControl(param)
 {}
-
 
 bool
 SimulationControlSteady::integrate()
@@ -131,7 +206,7 @@ SimulationControlSteady::integrate()
 }
 
 void
-SimulationControlSteady::print_progression(ConditionalOStream &pcout)
+SimulationControlSteady::print_progression(const ConditionalOStream &pcout)
 {
   pcout << std::endl;
   pcout << "*****************************************************************"

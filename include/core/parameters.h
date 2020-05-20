@@ -73,6 +73,9 @@ namespace Parameters
     // Max CFL
     double maxCFL;
 
+    // Max CFL
+    double adaptative_time_step_scaling;
+
     // BDF startup time scaling
     double startup_timestep_scaling;
 
@@ -85,17 +88,23 @@ namespace Parameters
     // Prefix for simulation output
     std::string output_name;
 
+    enum class OutputControl
+    {
+      iteration,
+      time
+    } output_control;
+
     // Frequency of the output
     unsigned int output_frequency;
+
+    // Frequency of the output
+    double output_time;
 
     // Subdivisions of the results in the output
     unsigned int subdivision;
 
     // Subdivisions of the results in the output
     unsigned int group_files;
-
-    // Enable output of the boundary mesh
-    bool output_boundary_mesh;
 
     static void
     declare_parameters(ParameterHandler &prm);
