@@ -20,48 +20,65 @@
 #ifndef lethe_simulation_flow_control_h
 #define lethe_simulation_flow_control_h
 
-#include <deal.II/base/discrete_time.h>
-
 #include <core/parameters.h>
 
-class SimulationFlowControl
+/**
+ * @brief The SimulationControl class is responsible for the control of steady-state and transient
+ * simulations carried out with Lethe. This base class is a pure virtual class
+ *and cannot be instantiated. However, it stores the core variables which are
+ *necessary for its serialization (write and read)
+ **/
+
+class SimulationControl
 {
 protected:
-  // Time
-  double time;
+  // Time of the current iteration being solved for
+  double current_time;
 
-  // Time
+  // Time step linking the previous iteration and the current time
   double time_step;
 
   // Simulation end time
   double end_time;
 
-  // Time step
+  // Time step vector. This vector accumulates the time steps of the previous
+  // iterations. This is required for multiple steps methods such as the bdfs.
   std::vector<double> time_step_vector;
 
-  // Iteration
-  unsigned int iteration;
+  // Iteration. Iterations start at 0, but the first actual iteration is
+  // iteration 1.
+  unsigned int iteration_number;
 
   // Number of mesh adaptation iteration
   unsigned int number_mesh_adapt;
 
-  // CFL
+  // Courant-Friedrich-Levy (CFL) condition
+  // Since the simulation control is unaware of the information propagation
+  // mechanism (for instance the velocity), the current CFL must be set by the
   double CFL;
 
-  // Maximal CFL condition
+  // Maximal CFL condition. This is used to control adaptative time stepping. In
+  // the case of constant time stepping or steady-state simulations, this
+  // parameter remains unused.
   double max_CFL;
 
-
-  // number of time steps stored
+  // Number of time steps stored
+  // BDF methods require a number of previous time steps. This number is known a
+  // priori and depends on the method used. We do not keep all the time steps to
+  // prevent the accumualtion within a large vector.
   static const unsigned int numberTimeStepStored = 4;
 
   // Output iteration frequency
+  // Controls the output of the simulation results when the output is controlled
+  // by the iteration number.
   unsigned int output_frequency;
 
   // Output time frequency
+  // Controls the output of the simulation results when the output is controlled
+  // by the time
   double output_time_frequency;
 
-  // Subdivision
+  // Number of mesh subdivision to be used when outputting the results
   unsigned int subdivision;
 
   // Number of parallel file to generate
@@ -76,24 +93,52 @@ protected:
 
 
 public:
-  SimulationFlowControl(Parameters::SimulationControl param);
+  /**
+   * @brief The simulation control class is constructed by a simple parameter structure
+   * from which it draws it's arguments. This structure is not kept internally.
+   * This means that require information is copied from the struct to the class.
+   **/
+  SimulationControl(Parameters::SimulationControl param);
 
+  /**
+   * @brief Pure virtual functoin to controls the progression of the simulation.
+   **/
   virtual bool
   integrate() = 0;
 
+  /**
+   * @brief Establishes if a simulation has reached it's end or not. The concrete
+   * implementation of the class decides what is the stopping criteria
+   * (iteration number, time_end reached, etc.)
+   **/
   virtual bool
   is_at_end() = 0;
 
-  // Add a time step and stores the previous one in a list
+  /**
+   * @brief Add a time step and stores the previous one in a list.
+   *
+   *  @param p_timestep the new value of the time step for the present iteration.
+   **/
   void
   add_time_step(double p_timestep);
 
+
+  /**
+   * @brief Establish if the iteration is the first iteration or if the simulation
+   * has not begun
+   *
+   */
   bool
   is_at_start()
   {
-    return iteration == 1;
+    return iteration_number <= 1;
   }
 
+  /**
+   * @brief Calculates the next value of the time step. The base function returns
+   * the value of the time step, but derived class implement adaptative time
+   * stepping
+   */
   virtual double
   calculate_time_step()
   {
@@ -108,6 +153,10 @@ public:
   virtual void
   print_progression(const ConditionalOStream &pcout) = 0;
 
+  /**
+   * @brief Check if the present iteration is an output iteration depending on the
+   * output control chosen.
+   */
   virtual bool
   is_output_iteration();
 
@@ -117,12 +166,33 @@ public:
     CFL = p_CFL;
   }
 
-
+  /**
+   * @brief Manually force the value of the time step for the present iteration
+   *
+   * @param new_time_step The new value of the time step.
+   * This time step is appended to the time step history
+   */
   void
-  set_desired_time_step(const double new_time_step)
+  set_current_time_step(const double new_time_step)
+  {
+    time_step = new_time_step;
+    add_time_step(new_time_step);
+  }
+
+  /**
+   * @brief Suggest the value of the time step for the next iteration. Note that
+   * for adaptative simulations this time step may be altered
+   *
+   * @param new_time_step The new value of the time step.
+   * This time step is not added to the time step vector
+   */
+  void
+  set_suggested_time_step(const double new_time_step)
   {
     time_step = new_time_step;
   }
+
+  // Relatively trivial getters.
 
   double
   get_time_step() const
@@ -151,7 +221,7 @@ public:
   double
   get_current_time()
   {
-    return time;
+    return current_time;
   }
 
   std::vector<double>
@@ -169,7 +239,7 @@ public:
   unsigned int
   get_step_number()
   {
-    return iteration;
+    return iteration_number;
   }
 
   unsigned int
@@ -187,7 +257,7 @@ public:
 };
 
 
-class SimulationControlTransient : public SimulationFlowControl
+class SimulationControlTransient : public SimulationControl
 {
 protected:
   // Enable adaptative time stepping
@@ -196,6 +266,15 @@ protected:
   // Time step scaling for adaptative time stepping
   double adaptative_time_step_scaling;
 
+  /**
+   * @brief Calculates the next value of the time step. If adaptation
+   * is enabled, the time step is calculated in order to ensure
+   * that the CFL condition is bound by the maximal CFL value.
+   * The new time step is equal to adaptative_time_step_scaling * the previous
+   * time step. If this surpasses the simulation time or if it surpasses the
+   * maximal CFL value, the time step is scaled down to ensure that this is
+   * respected.
+   */
   virtual double
   calculate_time_step() override;
 
@@ -206,9 +285,16 @@ public:
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
+  /**
+   * @brief Proceeds with the simulation until the end condition is reached
+   */
   virtual bool
   integrate() override;
 
+
+  /**
+   * @brief Ends the simulation when the end time is reached
+   */
   virtual bool
   is_at_end() override;
 };
@@ -224,17 +310,30 @@ protected:
   // Time at which there was a last output
   double last_output_time;
 
+  /**
+   * @brief Calculates the next value of the time step. The time step is calculated in order to ensure
+   * that the CFL condition is bound by the maximal CFL value.
+   * The new time step is equal to adaptative_time_step_scaling * the previous
+   * time step. If this surpasses the simulation time, the output_time or if it
+   * surpasses the maximal CFL value, the time step is scaled down to ensure
+   * that these elements are respected.
+   */
   virtual double
   calculate_time_step() override;
 
 public:
   SimulationControlTransientDynamicOutput(Parameters::SimulationControl param);
 
+
+  /**
+   * @brief Output iterations are calculated based on the value of the time
+   * and the time frequency of the output
+   */
   virtual bool
   is_output_iteration() override;
 };
 
-class SimulationControlSteady : public SimulationFlowControl
+class SimulationControlSteady : public SimulationControl
 {
 public:
   SimulationControlSteady(Parameters::SimulationControl param);
@@ -242,9 +341,15 @@ public:
   virtual void
   print_progression(const ConditionalOStream &pcout) override;
 
+  /**
+   * @brief Proceeds with the simulation until the end condition is reached
+   */
   virtual bool
   integrate() override;
 
+  /**
+   * @brief Ends the simulation when the number of mesh adaptation is reached
+   */
   virtual bool
   is_at_end() override;
 };

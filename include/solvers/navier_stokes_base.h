@@ -298,7 +298,7 @@ protected:
   unsigned int       degreeQuadrature_;
 
   // Simulation control for time stepping and I/Os
-  std::shared_ptr<SimulationFlowControl> simulationControl;
+  std::shared_ptr<SimulationControl> simulationControl;
   // SimulationControl simulationControl;
 
   // Post-processing variables

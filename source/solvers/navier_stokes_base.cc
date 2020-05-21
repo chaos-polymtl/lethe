@@ -530,8 +530,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       // Start the BDF2 with a single Euler time step with a lower time step
       double time_step =
         timeParameters.dt * timeParameters.startup_timestep_scaling;
-      simulationControl->set_desired_time_step(time_step);
-      simulationControl->add_time_step(time_step);
+      simulationControl->set_current_time_step(time_step);
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
@@ -543,13 +542,12 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       time_step =
         timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
 
-      simulationControl->set_desired_time_step(time_step);
-      simulationControl->add_time_step(time_step);
+      simulationControl->set_current_time_step(time_step);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
 
-      simulationControl->set_desired_time_step(timeParameters.dt);
+      simulationControl->set_suggested_time_step(timeParameters.dt);
     }
 
   else if (nsparam.simulation_control.method ==
@@ -561,8 +559,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       double time_step =
         timeParameters.dt * timeParameters.startup_timestep_scaling;
 
-      simulationControl->set_desired_time_step(time_step);
-      simulationControl->add_time_step(time_step);
+      simulationControl->set_current_time_step(time_step);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
@@ -572,8 +569,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
 
-      simulationControl->set_desired_time_step(time_step);
-      simulationControl->add_time_step(time_step);
+      simulationControl->set_current_time_step(time_step);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
@@ -585,12 +581,11 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       // steps to complete the full step
       time_step =
         timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
-      simulationControl->set_desired_time_step(time_step);
-      simulationControl->add_time_step(time_step);
+      simulationControl->set_current_time_step(time_step);
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
-      simulationControl->set_desired_time_step(timeParameters.dt);
+      simulationControl->set_suggested_time_step(timeParameters.dt);
     }
 }
 
