@@ -73,11 +73,14 @@ namespace Parameters
     // Max CFL
     double maxCFL;
 
+    // Max CFL
+    double adaptative_time_step_scaling;
+
     // BDF startup time scaling
     double startup_timestep_scaling;
 
     // Number of mesh adaptation (steady simulations)
-    unsigned int nbMeshAdapt;
+    unsigned int number_mesh_adaptation;
 
     // Folder for simulation output
     std::string output_folder;
@@ -85,17 +88,23 @@ namespace Parameters
     // Prefix for simulation output
     std::string output_name;
 
+    enum class OutputControl
+    {
+      iteration,
+      time
+    } output_control;
+
     // Frequency of the output
-    unsigned int outputFrequency;
+    unsigned int output_frequency;
+
+    // Frequency of the output
+    double output_time;
 
     // Subdivisions of the results in the output
     unsigned int subdivision;
 
     // Subdivisions of the results in the output
     unsigned int group_files;
-
-    // Enable output of the boundary mesh
-    bool output_boundary_mesh;
 
     static void
     declare_parameters(ParameterHandler &prm);

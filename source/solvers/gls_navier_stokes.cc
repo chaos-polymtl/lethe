@@ -23,6 +23,7 @@
 #include "core/grids.h"
 #include "core/manifolds.h"
 #include "core/sdirk.h"
+#include "core/time_integration_utilities.h"
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -303,8 +304,11 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> p2_velocity_values(n_q_points);
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
 
+  std::vector<double> time_steps_vector =
+    this->simulationControl->get_time_steps_vector();
+
   // Time steps and inverse time steps which is used for numerous calculations
-  const double dt  = this->simulationControl.getTimeSteps()[0];
+  const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
   // Vector for the BDF coefficients
@@ -314,14 +318,15 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   // 2 - n-1
   // 3 - n-2
   Vector<double> bdf_coefs;
+
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    bdf_coefs = bdf_coefficients(1, this->simulationControl.getTimeSteps());
+    bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    bdf_coefs = bdf_coefficients(2, this->simulationControl.getTimeSteps());
+    bdf_coefs = bdf_coefficients(2, time_steps_vector);
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    bdf_coefs = bdf_coefficients(3, this->simulationControl.getTimeSteps());
+    bdf_coefs = bdf_coefficients(3, time_steps_vector);
 
   // Matrix of coefficients for the SDIRK methods
   // The lines store the information required for each step
@@ -823,16 +828,10 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       double viscosity = this->nsparam.physical_properties.viscosity;
       this->nsparam.physical_properties.viscosity =
         this->nsparam.initial_condition->viscosity;
-      Parameters::SimulationControl::TimeSteppingMethod previousControl =
-        this->simulationControl.getMethod();
-      this->simulationControl.setMethod(
-        Parameters::SimulationControl::TimeSteppingMethod::steady);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
-      this->simulationControl.setMethod(previousControl);
       this->finish_time_step();
       this->postprocess(true);
-      this->simulationControl.setMethod(previousControl);
       this->nsparam.physical_properties.viscosity = viscosity;
     }
   else
@@ -1414,29 +1413,25 @@ GLSNavierStokesSolver<dim>::solve()
                           this->nsparam.manifolds_parameters,
                           this->nsparam.boundary_conditions);
 
-
   this->setup_dofs();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
-  while (this->simulationControl.integrate())
+  while (this->simulationControl->integrate())
     {
-      printTime(this->pcout, this->simulationControl);
-
-      if (!this->simulationControl.firstIter())
+      this->simulationControl->print_progression(this->pcout);
+      if (this->simulationControl->is_at_start())
+        this->first_iteration();
+      else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          this->iterate();
         }
-
-      if (this->simulationControl.firstIter())
-        this->first_iteration();
-      else
-        this->iterate();
-
       this->postprocess(false);
       this->finish_time_step();
     }
+
 
   this->finish_simulation();
 }

@@ -23,7 +23,6 @@
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
-#include <core/simulation_control.h>
 
 #include "analytical_solutions.h"
 #include "initial_conditions.h"
@@ -39,6 +38,7 @@ public:
   Parameters::MeshAdaptation                      mesh_adaptation;
   Parameters::Mesh                                mesh;
   Parameters::PhysicalProperties                  physical_properties;
+  Parameters::SimulationControl                   simulation_control;
   Parameters::Timer                               timer;
   Parameters::FEM                                 fem_parameters;
   Parameters::Forces                              forces_parameters;
@@ -50,9 +50,6 @@ public:
   AnalyticalSolutions::NSAnalyticalSolution<dim> *analytical_solution;
   SourceTerms::NSSourceTerm<dim> *                sourceTerm;
   Parameters::VelocitySource                      velocitySource;
-
-
-  SimulationControl simulationControl;
 
   void
   declare(ParameterHandler &prm)
@@ -104,7 +101,7 @@ public:
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);
     sourceTerm->parse_parameters(prm);
-    simulationControl.initialize(prm);
+    simulation_control.parse_parameters(prm);
     velocitySource.parse_parameters(prm);
   }
 };

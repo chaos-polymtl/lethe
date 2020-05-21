@@ -4,8 +4,8 @@
 #include <deal.II/lac/vector.h>
 
 #include <core/newton_non_linear_solver.h>
+#include <core/parameters.h>
 #include <core/physics_solver.h>
-#include <core/simulation_control.h>
 
 #include <iostream>
 #include <memory>

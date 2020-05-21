@@ -5,7 +5,6 @@
 
 #include <core/newton_non_linear_solver.h>
 #include <core/physics_solver.h>
-#include <core/simulation_control.h>
 
 #include <iostream>
 #include <memory>
