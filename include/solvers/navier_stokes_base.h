@@ -96,7 +96,7 @@
 #include <core/parameters.h>
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
-#include <core/simulation_flow_control.h>
+#include <core/simulation_control.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"

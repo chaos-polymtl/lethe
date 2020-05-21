@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
-#ifndef lethe_simulation_flow_control_h
-#define lethe_simulation_flow_control_h
+#ifndef lethe_simulation_control_h
+#define lethe_simulation_control_h
 
 #include <core/parameters.h>
 

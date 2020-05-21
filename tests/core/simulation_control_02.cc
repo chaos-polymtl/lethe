@@ -23,7 +23,8 @@
 #include <core/parameters.h>
 
 #include "../tests.h"
-#include "core/simulation_flow_control.h"
+
+#include "core/simulation_control.h"
 #include "solvers/navier_stokes_solver_parameters.h"
 
 int
