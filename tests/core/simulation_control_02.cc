@@ -60,8 +60,6 @@ main()
           deallog << "Iteration : " << simulation_control.get_step_number()
                   << "    Time : " << simulation_control.get_current_time()
                   << std::endl;
-
-
           if (simulation_control.is_at_start())
             deallog << "This is the first iteration" << std::endl;
 
