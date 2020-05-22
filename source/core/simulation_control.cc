@@ -196,6 +196,9 @@ SimulationControlSteady::integrate()
   if (!is_at_end())
     {
       iteration_number++;
+      // Fix the time to the iteration number so that pvd outputs
+      // do not lead to confusing results
+      current_time = iteration_number;
       return true;
     }
 
