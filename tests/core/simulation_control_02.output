@@ -1,14 +1,14 @@
 
 DEAL::Iteration : 0
-DEAL::Iteration : 1
+DEAL::Iteration : 1    Time : 1.00000
 DEAL::This is the first iteration
-DEAL::Iteration : 2
-DEAL::Iteration : 3
-DEAL::Iteration : 4
-DEAL::Iteration : 5
-DEAL::Iteration : 6
-DEAL::Iteration : 7
-DEAL::Iteration : 8
+DEAL::Iteration : 2    Time : 2.00000
+DEAL::Iteration : 3    Time : 3.00000
+DEAL::Iteration : 4    Time : 4.00000
+DEAL::Iteration : 5    Time : 5.00000
+DEAL::Iteration : 6    Time : 6.00000
+DEAL::Iteration : 7    Time : 7.00000
+DEAL::Iteration : 8    Time : 8.00000
 DEAL::This is an output iteration
-DEAL::Iteration : 9
-DEAL::Iteration : 10
+DEAL::Iteration : 9    Time : 9.00000
+DEAL::Iteration : 10    Time : 10.0000
