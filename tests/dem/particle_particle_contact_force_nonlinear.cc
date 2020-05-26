@@ -73,6 +73,7 @@ test()
   dem_parameters.physicalProperties.restitution_coefficient_particle = 0.5;
   dem_parameters.physicalProperties.friction_coefficient_particle    = 0.5;
   dem_parameters.physicalProperties.rolling_friction_particle        = 0.1;
+  double neighborhood_threshold = 1.3 * particle_diameter;
 
   Particles::ParticleHandler<dim> particle_handler(triangulation,
                                                    mapping,
@@ -153,14 +154,16 @@ test()
                                             pairs);
 
   // Calling fine search
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    contact_pairs_information;
-  fine_search_object.pp_Fine_Search(pairs, contact_pairs_information, dt);
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>> adjacent_particles;
+  fine_search_object.pp_Fine_Search(pairs,
+                                    adjacent_particles,
+                                    neighborhood_threshold);
 
   // Calling linear force
   PPNonLinearForce<dim> nonlinear_force_object;
-  nonlinear_force_object.calculate_pp_contact_force(&contact_pairs_information,
-                                                    dem_parameters);
+  nonlinear_force_object.calculate_pp_contact_force(&adjacent_particles,
+                                                    dem_parameters,
+                                                    dt);
 
   // Output
   auto particle = particle_handler.begin();

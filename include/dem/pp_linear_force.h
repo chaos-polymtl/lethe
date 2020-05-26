@@ -20,7 +20,6 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
@@ -62,9 +61,28 @@ public:
    */
   virtual void
   calculate_pp_contact_force(
-    const std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *                             pairs_in_contact_info,
-    const DEMSolverParameters<dim> &dem_parameters) override;
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      *                             adjacent_particles,
+    const DEMSolverParameters<dim> &dem_parameters,
+    const double &                  dt) override;
+
+private:
+  /**
+   * Carries out the calculation of the particle-particle linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param physical_properties Physical properties of the system
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   */
+  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  calculate_linear_contact_force_and_torque(
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    pp_contact_info_struct<dim> &                     contact_info,
+    const ArrayView<const double> &                   particle_one_properties,
+    const ArrayView<const double> &                   particle_two_propertie);
 };
 
 #endif

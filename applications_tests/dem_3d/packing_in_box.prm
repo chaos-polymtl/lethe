@@ -6,7 +6,7 @@
 subsection simulation control
   set time step                 			 = 1e-5
   set step end       					 = 20000
-  set n total              				 = 50
+  set n total              				 = 500
   set output frequency            			 = 1000000
 end
 
@@ -29,7 +29,9 @@ end
 #---------------------------------------------------
 subsection model parameters
   set pp_broad_search_frequency                 	 = 10
+  set pp_fine_search_frequency                 		 = 10
   set pw_broad_search_frequency      			 = 10
+  set neighborhood_threshold				 = 1.3
   set pp_contact_force_method                   	 = pp_nonlinear
   set pw_contact_force_method                   	 = pw_nonlinear
   set integration_method				 = velocity_verlet
@@ -62,8 +64,8 @@ end
 #---------------------------------------------------
 subsection insertion info
     set Insertion time step           		 	= 50000
-    set Inserted number of particles at each time step  = 100
-    set Insertion frequency            		 	= 2000
+    set Inserted number of particles at each time step  = 500
+    set Insertion frequency            		 	= 20000
     set Insertion box minimum x            	 	= -0.05
     set Insertion box minimum y            	        = -0.05
     set Insertion box minimum z            	        = -0.03

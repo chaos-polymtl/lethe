@@ -83,17 +83,19 @@ test()
   int      id1       = 0;
   Point<3> position2 = {0.40499, 0, 0};
   int      id2       = 1;
-  float    dt        = 0.00001;
 
   Particles::Particle<dim> particle1(position1, position1, id1);
   typename Triangulation<dim>::active_cell_iterator cell1 =
     GridTools::find_active_cell_around_point(triangulation,
                                              particle1.get_location());
+  double particle_diameter      = 0.005;
+  double neighborhood_threshold = 1.3 * particle_diameter;
+
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
   pit1->get_properties()[0]  = id1;
   pit1->get_properties()[1]  = 1;
-  pit1->get_properties()[2]  = 0.005;
+  pit1->get_properties()[2]  = particle_diameter;
   pit1->get_properties()[3]  = 2500;
   pit1->get_properties()[4]  = 0;
   pit1->get_properties()[5]  = 0;
@@ -144,41 +146,32 @@ test()
                                             pairs);
 
   // Calling fine search
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    contact_pairs_information;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>> adjacent_particles;
 
-  fine_search_obejct.pp_Fine_Search(pairs, contact_pairs_information, dt);
+  fine_search_obejct.pp_Fine_Search(pairs,
+                                    adjacent_particles,
+                                    neighborhood_threshold);
 
   // Output
-  for (auto in_contact_info_iterator = contact_pairs_information.begin();
-       in_contact_info_iterator != contact_pairs_information.end();
-       ++in_contact_info_iterator)
+  for (auto adjacent_particles_iterator = adjacent_particles.begin();
+       adjacent_particles_iterator != adjacent_particles.end();
+       ++adjacent_particles_iterator)
     {
-      auto information_iterator = (&in_contact_info_iterator->second)->begin();
-      while (information_iterator != (&in_contact_info_iterator->second)->end())
+      auto information_iterator =
+        (&adjacent_particles_iterator->second)->begin();
+      while (information_iterator !=
+             (&adjacent_particles_iterator->second)->end())
         {
-          deallog << "The normal overlap of contacting paritlce is: "
-                  << information_iterator->second.normal_overlap << std::endl;
-          deallog << "The normal vector of collision is: "
-                  << information_iterator->second.normal_vector[0] << " "
-                  << information_iterator->second.normal_vector[1] << " "
-                  << information_iterator->second.normal_vector[2] << std::endl;
-          deallog << "Normal relative velocity at contact point is: "
-                  << information_iterator->second.normal_relative_velocity
+          deallog << "The particle pair in contact are particles: "
+                  << information_iterator->second.particle_one->get_id()
+                  << " and "
+                  << information_iterator->second.particle_two->get_id()
                   << std::endl;
-          deallog << "The tangential overlap of contacting paritlce is: "
+          deallog << "Tangential overlap at the beginning of contact is: "
                   << information_iterator->second.tangential_overlap[0] << " "
                   << information_iterator->second.tangential_overlap[1] << " "
                   << information_iterator->second.tangential_overlap[2]
                   << std::endl;
-          deallog
-            << "Tangential relative velocity at contact point is: "
-            << information_iterator->second.tangential_relative_velocity[0]
-            << " "
-            << information_iterator->second.tangential_relative_velocity[1]
-            << " "
-            << information_iterator->second.tangential_relative_velocity[2]
-            << std::endl;
           ++information_iterator;
         }
     }
