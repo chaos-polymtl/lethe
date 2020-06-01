@@ -19,6 +19,7 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_info_struct.h>
 
@@ -54,9 +55,50 @@ public:
    */
   virtual void
   calculate_pp_contact_force(
-    const std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *                             pairs_in_contact_info,
-    const DEMSolverParameters<dim> &dem_parameters) = 0;
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      *                             adjacent_particles,
+    const DEMSolverParameters<dim> &dem_parameters,
+    const double &                  dt) = 0;
+
+protected:
+  /**
+   * Carries out updating the contact pair information for both non-linear and
+   * linear contact force calculations
+   *
+   * @param adjacent_pair_information Contact information of a particle pair in
+   * neighborhood
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   * @param particle_one_location Location of particle one in contact
+   * @param particle_two_location Location of particle two in contact
+   * @param dt DEM time step
+   */
+  void
+  update_contact_information(
+    pp_contact_info_struct<dim> &  adjacent_pair_information,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    const Point<dim> &             particle_one_location,
+    const Point<dim> &             particle_two_location,
+    const double &                 dt);
+
+  /**
+   * Carries out applying the calculated force and torque on the particle pair
+   * in contact, for both non-linear and linear contact force calculations
+   *
+   * @param particle_one_properties Properties of particle one in contact
+   * @param particle_two_properties Properties of particle two in contact
+   * @param forces_and_torques A tuple which contains: 1, normal force, 2,
+   * tangential force, 3, tangential torque and 4, rolling resistance torque of
+   * a contact pair
+   */
+  void
+  apply_force_and_torque(ArrayView<double> &particle_one_properties,
+                         ArrayView<double> &particle_two_properties,
+                         const std::tuple<Tensor<1, dim>,
+                                          Tensor<1, dim>,
+                                          Tensor<1, dim>,
+                                          Tensor<1, dim>> &forces_and_torques);
 };
 
 #endif /* PPCONTACTFORCE_H_ */
