@@ -52,3 +52,13 @@
 
 # meshes
 *.msh
+
+# Ignore all build file 
+build/*
+cmake-build-debug/*
+cmake-build-release/*
+
+# Ignore clion recommandation file
+.idea/*
+
+
