@@ -163,14 +163,9 @@ test()
   linear_force_object.calculate_pp_contact_force(&adjacent_particles,
                                                  dem_parameters,
                                                  dt);
-  std::cout << "ggggggggggggggggggggggggggggggggggggggggg " << std::endl;
 
   // Output
   auto particle = particle_handler.begin();
-  std::cout << particle->get_properties()[DEM::PropertiesIndex::force_x] << " "
-            << particle->get_properties()[DEM::PropertiesIndex::force_y] << " "
-            << particle->get_properties()[DEM::PropertiesIndex::force_z]
-            << " N " << std::endl;
   deallog << "The contact force vector for particle 1 is: "
           << particle->get_properties()[DEM::PropertiesIndex::force_x] << " "
           << particle->get_properties()[DEM::PropertiesIndex::force_y] << " "
