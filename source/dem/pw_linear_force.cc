@@ -51,45 +51,42 @@ PWLinearForce<dim>::calculate_pw_contact_force(
           // Calculation of normal and tangential spring and dashpot constants
           // using particle properties
           double normal_spring_constant =
-            1.2024 *
-            pow((pow(particle_properties[DEM::PropertiesIndex::mass], 0.5) *
-                 pow(effective_youngs_modulus, 2.0) *
-                 (particle_properties[DEM::PropertiesIndex::dp] / 2.0) *
-                 abs(contact_information.normal_relative_velocity)),
-                0.4);
+            1.0667 *
+            sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+            effective_youngs_modulus *
+            pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
+                 contact_information.normal_relative_velocity *
+                 contact_information.normal_relative_velocity /
+                 (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+                  effective_youngs_modulus)),
+                0.2);
+
           double tangential_spring_constant =
-            1.2024 *
-            pow((pow(particle_properties[DEM::PropertiesIndex::mass], 0.5) *
-                 pow(effective_youngs_modulus, 2.0) *
-                 (particle_properties[DEM::PropertiesIndex::dp] / 2.0) *
-                 abs(contact_information.tangential_relative_velocity.norm())),
-                0.4);
-          double normal_damping_constant =
-            (-2.0 * log(physical_properties.restitution_coefficient_wall) *
-             sqrt(particle_properties[DEM::PropertiesIndex::mass] *
-                  normal_spring_constant)) /
-            (sqrt((pow(log(physical_properties.restitution_coefficient_wall),
-                       2.0)) +
-                  pow(3.1415, 2.0)));
-          double tangential_damping_constant = 0;
-          if (physical_properties.restitution_coefficient_wall == 0)
-            {
-              tangential_damping_constant =
-                2.0 * sqrt(2.0 / 7.0 *
-                           particle_properties[DEM::PropertiesIndex::mass] *
-                           tangential_spring_constant);
-            }
-          else
-            {
-              tangential_damping_constant =
-                (-2.0 * log(physical_properties.restitution_coefficient_wall) *
-                 sqrt(2.0 / 7.0 *
-                      particle_properties[DEM::PropertiesIndex::mass] *
-                      tangential_spring_constant)) /
-                (sqrt(pow(3.1415, 2.0) +
-                      pow(log(physical_properties.restitution_coefficient_wall),
-                          2.0)));
-            }
+            1.0667 *
+              sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+              effective_youngs_modulus *
+              pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
+                   contact_information.tangential_relative_velocity *
+                   contact_information.tangential_relative_velocity /
+                   (sqrt(
+                      (particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+                    effective_youngs_modulus)),
+                  0.2) +
+            DBL_MIN;
+          double normal_damping_constant = sqrt(
+            (4 * particle_properties[DEM::PropertiesIndex::mass] *
+             normal_spring_constant) /
+            (1 + pow((3.1415 /
+                      (log(physical_properties.restitution_coefficient_wall) +
+                       DBL_MIN)),
+                     2)));
+          double tangential_damping_constant = sqrt(
+            (4 * particle_properties[DEM::PropertiesIndex::mass] *
+             tangential_spring_constant) /
+            (1 + pow((3.1415 /
+                      (log(physical_properties.restitution_coefficient_wall) +
+                       DBL_MIN)),
+                     2)));
 
           // Calculation of normal force using spring and dashpot normal forces
           Tensor<1, dim> spring_normal_force =

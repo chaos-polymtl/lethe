@@ -34,7 +34,7 @@ template <int dim>
 struct pp_contact_info_struct
 {
   double                           normal_overlap;
-  Tensor<1, dim>                   normal_vector;
+  Tensor<1, dim>                   normal_unit_vector;
   double                           normal_relative_velocity;
   Tensor<1, dim>                   tangential_relative_velocity;
   Tensor<1, dim>                   tangential_overlap;

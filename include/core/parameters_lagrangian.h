@@ -109,8 +109,15 @@ namespace Parameters
       // Particle-particle broad search frequency
       int pp_broad_search_frequency;
 
+      // Particle-particle fine search frequency
+      int pp_fine_search_frequency;
+
       // Particle-wall broad search frequency
       int pw_broad_search_frequency;
+
+      // Contact search neighborhood threshold (neighborhood diameter to
+      // particle diameter)
+      double neighborhood_threshold;
 
       // Print simulation info frequency
       int print_info_frequency;

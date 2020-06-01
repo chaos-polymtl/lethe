@@ -71,12 +71,12 @@ public:
 
   void
   pp_Fine_Search(
-    std::vector<std::pair<typename Particles::ParticleIterator<dim>,
-                          typename Particles::ParticleIterator<dim>>>
+    const std::vector<std::pair<typename Particles::ParticleIterator<dim>,
+                                typename Particles::ParticleIterator<dim>>>
       &contact_pair_candidates,
     std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &    pairs_in_contact_info,
-    double time_step);
+      &          pairs_in_contact_info,
+    const double neighborhood_threshold);
 };
 
 #endif /* PPFINESEARCH_H_ */

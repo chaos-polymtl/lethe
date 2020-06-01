@@ -113,16 +113,16 @@ private:
     const Particles::ParticleHandler<dim> &particle_handler);
 
   /**
-   * Updates the iterators to particles in pp_contact_container (output of pp
+   * Updates the iterators to particles in adjacent_particles (output of pp
    * fine search)
    *
-   * @param pairs_in_contact_info Output of particle-particle fine search
+   * @param adjacent_particles Output of particle-particle fine search
    * @param particle_container Output of update_particle_container function
    */
   void
   update_pp_contact_container_iterators(
     std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &pairs_in_contact_info,
+      &                                                    adjacent_particles,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
 
   /**
@@ -201,8 +201,24 @@ private:
   TimerOutput                               computing_timer;
   Particles::ParticleHandler<dim, dim>      particle_handler;
   int                                       DEM_step = 1;
-  double    DEM_time        = parameters.simulationControl.dt;
+  double       DEM_time = parameters.simulationControl.dt;
+  const double dt       = parameters.simulationControl.dt;
+  // particle diameter should be replaced by maximum diameter. I should ask
+  // Bruno how to do it.
+  const double neighborhood_threshold =
+    parameters.model_parmeters.neighborhood_threshold *
+    parameters.physicalProperties.diameter;
   const int number_of_steps = parameters.simulationControl.final_time_step;
+  const int pp_broad_search_frequency =
+    parameters.model_parmeters.pp_broad_search_frequency;
+  const int pp_fine_search_frequency =
+    parameters.model_parmeters.pp_fine_search_frequency;
+  const int pw_broad_search_frequency =
+    parameters.model_parmeters.pw_broad_search_frequency;
+  const int output_frequency = parameters.simulationControl.outputFrequency;
+  const int print_info_frequency =
+    parameters.model_parmeters.print_info_frequency;
+
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cell_neighbor_list;
   std::vector<typename Triangulation<dim>::active_cell_iterator>
@@ -217,7 +233,9 @@ private:
   std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
   std::vector<std::pair<typename Particles::ParticleIterator<dim>,
                         typename Particles::ParticleIterator<dim>>>
-    contact_pair_candidates;
+                                                            contact_pair_candidates;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>> adjacent_particles;
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact;
   std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
                          Tensor<1, dim>,
                          Point<dim>>>
