@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/gls_navier_stokes.h"
+#include "solvers/gls_sharp_navier_stokes.h"
 
 #include "core/bdf.h"
 #include "core/grids.h"
@@ -27,7 +27,7 @@
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
-GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
+GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
@@ -38,7 +38,7 @@ GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
 {}
 
 template <int dim>
-GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver()
+GLSSharpNavierStokesSolver<dim>::~GLSSharpNavierStokesSolver()
 {
   this->dof_handler.clear();
 }
@@ -47,14 +47,14 @@ GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::set_solution_vector(double value)
+GLSSharpNavierStokesSolver<dim>::set_solution_vector(double value)
 {
   this->present_solution = value;
 }
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_dofs()
+GLSSharpNavierStokesSolver<dim>::setup_dofs()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_dofs");
 
@@ -244,7 +244,7 @@ template <bool                                              assemble_matrix,
           Parameters::SimulationControl::TimeSteppingMethod scheme,
           Parameters::VelocitySource::VelocitySourceType    velocity_source>
 void
-GLSNavierStokesSolver<dim>::assembleGLS()
+GLSSharpNavierStokesSolver<dim>::assembleGLS()
 {
   if (assemble_matrix)
     system_matrix = 0;
@@ -795,7 +795,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
  **/
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::set_initial_condition(
+GLSSharpNavierStokesSolver<dim>::set_initial_condition(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
@@ -842,7 +842,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_L2_projection()
+GLSSharpNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
@@ -929,7 +929,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
+GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
@@ -1036,7 +1036,7 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 }
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_rhs(
+GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
@@ -1143,7 +1143,7 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
+GLSSharpNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                 const bool renewed_matrix)
 {
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
@@ -1174,7 +1174,7 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_ILU()
+GLSSharpNavierStokesSolver<dim>::setup_ILU()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_ILU");
 
@@ -1191,7 +1191,7 @@ GLSNavierStokesSolver<dim>::setup_ILU()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_AMG()
+GLSSharpNavierStokesSolver<dim>::setup_AMG()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
@@ -1255,7 +1255,7 @@ GLSNavierStokesSolver<dim>::setup_AMG()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
+GLSSharpNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double absolute_residual,
                                                const double relative_residual,
                                                const bool   renewed_matrix)
@@ -1304,7 +1304,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
+GLSSharpNavierStokesSolver<dim>::solve_system_BiCGStab(
   const bool   initial_step,
   const double absolute_residual,
   const double relative_residual,
@@ -1355,7 +1355,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
+GLSSharpNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const double absolute_residual,
                                              const double relative_residual,
                                              const bool   renewed_matrix)
@@ -1406,7 +1406,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve()
+GLSSharpNavierStokesSolver<dim>::solve()
 {
   read_mesh_and_manifolds(this->triangulation,
                           this->nsparam.mesh,
@@ -1439,5 +1439,5 @@ GLSNavierStokesSolver<dim>::solve()
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging
-template class GLSNavierStokesSolver<2>;
-template class GLSNavierStokesSolver<3>;
+template class GLSSharpNavierStokesSolver<2>;
+template class GLSSharpNavierStokesSolver<3>;

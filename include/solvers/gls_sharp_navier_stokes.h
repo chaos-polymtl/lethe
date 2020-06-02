@@ -35,14 +35,14 @@ using namespace dealii;
  */
 
 template <int dim>
-class GLSNavierStokesSolver
+class GLSSharpNavierStokesSolver
   : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
 {
 public:
-  GLSNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
+  GLSSharpNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
                         const unsigned int                 degreeVelocity,
                         const unsigned int                 degreePressure);
-  ~GLSNavierStokesSolver();
+  ~GLSSharpNavierStokesSolver();
 
   void
   solve();
