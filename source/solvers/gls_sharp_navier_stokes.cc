@@ -240,6 +240,702 @@ GLSSharpNavierStokesSolver<dim>::setup_dofs()
 }
 
 template <int dim>
+void GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
+{
+    //map the vertex index to the cell that include that vertex used later in which cell a point falls in
+    //vertices_to_cell is a vector of vectof of dof handler active cell iterator each element i of the vector is a vector of all the cell in contact with the vertex i
+    //std::cout << "this MPI porcess start vertex mapping : "<< this->this_mpi_process<< std::endl;
+    vertices_to_cell.clear();
+    vertices_to_cell.resize(this->dof_handler.n_dofs()/(dim+1));
+    const auto &cell_iterator=this->dof_handler.active_cell_iterators();
+    //loop on all the cell and
+    for (const auto &cell : cell_iterator) {
+        if (cell->is_locally_owned()| cell->is_ghost()) {
+            unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+            for (unsigned int i = 0; i < vertices_per_cell; i++) {
+                //add this cell as neighbors for all it's vertex
+                unsigned int v_index = cell->vertex_index(i);
+                std::vector<typename DoFHandler<dim>::active_cell_iterator> adjacent = vertices_to_cell[v_index];
+                //can only add the cell if it's a set and not a vector
+                std::set<typename DoFHandler<dim>::active_cell_iterator> adjacent_2(adjacent.begin(), adjacent.end());
+                adjacent_2.insert(cell);
+                //convert back the set to a vector and add it in the vertices_to_cell;
+                std::vector<typename DoFHandler<dim>::active_cell_iterator> adjacent_3(adjacent_2.begin(),
+                                                                                       adjacent_2.end());
+                vertices_to_cell[v_index] = adjacent_3;
+            }
+        }
+    }
+    //std::cout << "this MPI porcess finish vertex mapping : "<< this->this_mpi_process<< std::endl;
+}
+
+template <int dim>
+void GLSSharpNavierStokesSolver<dim>::define_particules() {
+    //define position and velocity of particules
+    particules.resize(this->nsparam.particulesParameters.nb);
+    // define position of particules
+    //x y z
+    if (dim ==2) {
+        for (unsigned int i=0 ; i< this->nsparam.particulesParameters.nb;++i) {
+            particules[i].resize(3 * dim);
+            //x y
+            particules[i][0] = this->nsparam.particulesParameters.particules[i][0];
+            particules[i][1] = this->nsparam.particulesParameters.particules[i][1];
+            //Vx Vy
+            particules[i][2] = this->nsparam.particulesParameters.particules[i][3];
+            particules[i][3] = this->nsparam.particulesParameters.particules[i][4];
+            //omega
+            particules[i][4] = this->nsparam.particulesParameters.particules[i][8];
+            //radius
+            particules[i][5] = this->nsparam.particulesParameters.particules[i][9];;
+        }
+    }
+
+    if (dim ==3) {
+        for (unsigned int i=0 ; i< this->nsparam.particulesParameters.nb;++i) {
+            particules[i].resize(3 * dim+1);
+            //x y
+            particules[i][0] = this->nsparam.particulesParameters.particules[i][0];
+            particules[i][1] = this->nsparam.particulesParameters.particules[i][1];
+            particules[i][2] = this->nsparam.particulesParameters.particules[i][2];
+            //Vx Vy
+            particules[i][3] = this->nsparam.particulesParameters.particules[i][3];
+            particules[i][4] = this->nsparam.particulesParameters.particules[i][4];
+            particules[i][5] = this->nsparam.particulesParameters.particules[i][5];
+            //omega
+            particules[i][6] = this->nsparam.particulesParameters.particules[i][6];
+            particules[i][7] = this->nsparam.particulesParameters.particules[i][7];
+            particules[i][8] = this->nsparam.particulesParameters.particules[i][8];
+            //radius
+            particules[i][9] = this->nsparam.particulesParameters.particules[i][9];;
+        }
+    }
+}
+
+template <int dim>
+void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
+    //This function define a immersed boundary base on the sharp edge method on a hyper_shere of dim 2 or 3
+
+    //define stuff  in a later version the center of the hyper_sphere would be defined by a particule handler and the boundary condition associeted with it also.
+
+    using numbers::PI;
+    Point<dim> center_immersed;
+    Point<dim> pressure_bridge;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_2;
+    Vector <int> dof_done;
+    dof_done.reinit(this->dof_handler.n_dofs());
+    //define a map to all dof and it's support point
+    MappingQ1<dim> immersed_map;
+    std::map< types::global_dof_index, Point< dim >>  	support_points;
+    DoFTools::map_dofs_to_support_points(immersed_map,this->dof_handler,support_points);
+
+    // initalise fe value object in order to do calculation with it later
+    QGauss<dim> q_formula(this->degreeQuadrature_);
+    FEValues<dim> fe_values(this->fe, q_formula,update_quadrature_points|update_JxW_values);
+    const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+    unsigned int vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
+
+
+    unsigned int n_q_points  = q_formula.size();
+    // define multiple local_dof_indices one for the cell iterator one for the cell with the second point for
+    // the sharp edge stancil and one for manipulation on the neighbors cell.
+    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+    std::vector<types::global_dof_index> local_dof_indices_2(dofs_per_cell);
+    std::vector<types::global_dof_index> local_dof_indices_3(dofs_per_cell);
+    std::vector<types::global_dof_index> local_dof_indices_4(dofs_per_cell);
+
+    double dr = (GridTools::minimal_cell_diameter(*this->triangulation) *
+                 GridTools::minimal_cell_diameter(*this->triangulation)) / sqrt(2 *
+                                                                                (GridTools::minimal_cell_diameter(
+                                                                                        *this->triangulation) *
+                                                                                 GridTools::minimal_cell_diameter(
+                                                                                         *this->triangulation)));
+
+
+    //define cell iterator
+    const auto &cell_iterator=this->dof_handler.active_cell_iterators();
+    std::vector<unsigned int> dof_proc;
+    dof_proc.resize(this->dof_handler.n_dofs(),100);
+    for (const auto &cell : cell_iterator) {
+        if (cell->is_locally_owned() ){
+            cell->get_dof_indices(local_dof_indices);
+            for (unsigned int l = 0; l < local_dof_indices.size(); ++l  ) {
+                dof_proc[local_dof_indices[l]] =  Utilities::MPI::this_mpi_process(this->mpi_communicator);
+            }
+        }
+    }
+
+
+
+    for (unsigned int ip = 0; ip < dof_proc.size(); ++ip) {
+        dof_proc[ip] = Utilities::MPI::min(dof_proc[ip], this->mpi_communicator);
+    }
+
+
+
+    std::vector<double> active_solution;
+    std::vector<double> last_solution;
+    active_solution.resize(this->dof_handler.n_dofs());
+    last_solution.resize(this->dof_handler.n_dofs());
+    for (unsigned int i=0 ; i<this->dof_handler.n_dofs(); ++i){
+        if(dof_proc[i]==Utilities::MPI::this_mpi_process(this->mpi_communicator)){
+            active_solution[i]=this->local_evaluation_point(i);
+            last_solution[i]=this->solution_m1(i);
+        }
+
+    }
+    for (unsigned int i=0 ; i<this->dof_handler.n_dofs(); ++i){
+
+        active_solution[i]=Utilities::MPI::sum(active_solution[i],this->mpi_communicator);
+        last_solution[i]=Utilities::MPI::sum(last_solution[i],this->mpi_communicator);
+    }
+
+
+    //loop on all the cell to define if the sharp edge cut them
+    for (const auto &cell : cell_iterator) {
+        if (cell->is_locally_owned()) {
+            double sum_line=0 ;
+            fe_values.reinit(cell);
+            cell->get_dof_indices(local_dof_indices);
+            std::vector<int> set_pressure_cell;
+            set_pressure_cell.resize(particules.size());
+            // define the order of magnetude for the stencil.
+            for(unsigned int qf =0 ; qf<n_q_points  ; ++qf) {
+                sum_line += fe_values.JxW(qf)*10;
+            }
+            // loop over all particule  to see if one of them is cutting this cell
+            for (unsigned int p = 0; p < particules.size(); ++p) {
+                unsigned int count_small = 0;
+                if (dim == 2) {
+                    center_immersed(0) = particules[p][0];
+                    center_immersed(1) = particules[p][1];
+                    // define arbitrary point on the boundary where the pressure will be link between the 2 domain
+                    pressure_bridge(0) = particules[p][0]-this->nsparam.particulesParameters.pressure_offset[p][0];
+                    pressure_bridge(1) = particules[p][1]-this->nsparam.particulesParameters.pressure_offset[p][1];
+                }
+                else if (dim == 3) {
+                    center_immersed(0) = particules[p][0];
+                    center_immersed(1) = particules[p][1];
+                    center_immersed(2) = particules[p][2];
+                    // define arbitrary point on the boundary where the pressure will be link between the 2 domain
+                    pressure_bridge(0) = particules[p][0]-this->nsparam.particulesParameters.pressure_offset[p][0];
+                    pressure_bridge(1) = particules[p][1]-this->nsparam.particulesParameters.pressure_offset[p][1];
+                    pressure_bridge(2) = particules[p][2]-this->nsparam.particulesParameters.pressure_offset[p][2];
+
+                }
+
+                for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
+                    //count the number of dof that ar smaller or larger then the radius of the particules
+                    //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
+                    if ((support_points[local_dof_indices[j]] - center_immersed).norm() <= particules[p][particules[p].size()-1]) {
+                        ++count_small;
+                    }
+                }
+
+                // impose the pressure inside the particule if the inside of the particule is solved
+                if(this->nsparam.particulesParameters.assemble_inside & this->nsparam.particulesParameters.P_assemble==Parameters::Particule_Assemble_type::NS ) {
+                    bool cell_found = false;
+                    try {
+                        //define the cell and check if the point is inside of the cell
+                        const Point<dim, double> p_cell = immersed_map.transform_real_to_unit_cell(
+                                cell, pressure_bridge);
+                        const double dist_2 = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+
+                        //define the cell and check if the point is inside of the cell
+                        if (dist_2 == 0) {
+                            //if the point is in this cell then the dist is equal to 0 and we have found our cell
+                            cell_found = true;
+                            //std::cout << "Pressure bridge cell found " << std::endl;
+                        }
+                    }
+                        // may cause error if the point is not in cell
+                    catch (typename MappingQGeneric<dim>::ExcTransformationFailed) {
+                    }
+
+                    if (cell_found) {
+                        //std::cout << "pressure cell found dof index " << local_dof_indices[dim]<< std::endl;
+                        unsigned int inside_index = local_dof_indices[dim];
+                        //loop over all the pressure point in the cell and impose the pressure on one dof inside to be equal to the pressure of one dof outside
+                        for (unsigned int m = 0; m < this->dof_handler.n_dofs(); m++) {
+                            this->system_matrix.set(inside_index, m, 0);
+                        }
+
+                        system_matrix.set(inside_index, local_dof_indices[dim], sum_line);
+
+                        if (initial_step)
+                            this->system_rhs(inside_index) = 0-this->present_solution(inside_index)*sum_line;
+                        else
+                            this->system_rhs(inside_index) = 0;
+
+                    }
+
+                }
+
+
+                //if the cell is cut by the IB the count wont equal 0 or the number of total dof in a cell
+
+                if (count_small != 0 and count_small != local_dof_indices.size()) {
+
+                    //if we are here the cell is cut by the immersed boundary
+                    //loops on the dof that reprensant the velocity   in x and y and pressure separatly
+                    for (unsigned int k = 0; k < dim + 1; ++k) {
+                        if (k < dim) {
+                            //we are working on the velocity of th
+                            //loops on the dof that are for vx or vy separatly
+                            //unsigned int vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
+                            unsigned int l = k;
+                            while (l < local_dof_indices.size()) {
+
+
+                                if (dof_done(local_dof_indices[l])==0) {
+                                    //dof_done(local_dof_indices[l]) += 1;
+                                    // define which dof is going to be redefine
+                                    unsigned int global_index_overrigth = local_dof_indices[l];
+
+                                    //define the distance vector between the immersed boundary and the dof support point for each dof
+                                    Tensor<1, dim, double> vect_dist = (support_points[local_dof_indices[l]] -
+                                                                        center_immersed -
+                                                                        particules[p][particules[p].size() - 1] *
+                                                                        (support_points[local_dof_indices[l]] -
+                                                                         center_immersed) /
+                                                                        (support_points[local_dof_indices[l]] -
+                                                                         center_immersed).norm());
+
+
+                                    //define the other point for or 3 point stencil ( IB point, original dof and this point)
+                                    unsigned int length_ratio=8;
+
+                                    double length_fraction = 1./length_ratio;
+
+                                    Point<dim, double> second_point(
+                                            support_points[local_dof_indices[l]] + vect_dist*length_fraction );
+                                    Point<dim, double> third_point(
+                                            support_points[local_dof_indices[l]] + vect_dist*length_fraction*1/2);
+
+                                    Point<dim, double> fourth_point(
+                                            support_points[local_dof_indices[l]] + vect_dist *length_fraction*3/4);
+
+                                    Point<dim, double> fifth_point(
+                                            support_points[local_dof_indices[l]] + vect_dist *length_fraction*1/4);
+
+                                    double dof_2;
+                                    double sp_2 ;
+
+                                    double dof_3;
+                                    double sp_3 ;
+                                    double tp_3 ;
+
+                                    double dof_5;
+                                    double fp2_5;
+                                    double tp_5 ;
+                                    double fp1_5 ;
+                                    double sp_5 ;
+
+                                    if (length_ratio == 4) {
+                                        dof_2 = 5;
+                                        sp_2 = -4;
+
+                                        dof_3 = 45;
+                                        sp_3 = 36;
+                                        tp_3 = -80;
+
+                                        dof_5 = 4845;
+                                        fp2_5 = -18240;
+                                        tp_5 = 25840;
+                                        fp1_5 = -16320;
+                                        sp_5 = 3876;
+
+                                    }
+                                    else if(length_ratio == 2){
+                                        dof_2 = 3;
+                                        sp_2 = -2;
+
+                                        dof_3 = 15;
+                                        sp_3 = 10;
+                                        tp_3 = -24;
+
+                                        dof_5 = 495;
+                                        fp2_5 = -1760;
+                                        tp_5 = 2376;
+                                        fp1_5 = -1440;
+                                        sp_5 = 330;
+                                    }
+                                    else if(length_ratio == 8){
+                                        dof_2 = 9;
+                                        sp_2 = -8;
+
+                                        dof_3 = 153;
+                                        sp_3 = 136;
+                                        tp_3 = -288;
+
+                                        dof_5 = 58905;
+                                        fp2_5 = -228480;
+                                        tp_5 = 332640;
+                                        fp1_5 = -215424;
+                                        sp_5 = 52360;
+                                    }
+
+
+
+
+
+                                    //define the vertex associated with the dof
+                                    unsigned int cell_found = 0;
+                                    bool break_bool = false;
+                                    //unsigned int vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
+                                    for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
+                                        unsigned int v_index = cell->vertex_index(vi);
+
+                                        //get a cell iterator for all the cell neighbors of that vertex
+                                        active_neighbors_set = this->vertices_to_cell[v_index];
+                                        unsigned int n_active_cells = active_neighbors_set.size();
+
+                                        //loops on those cell to find in which of them the new point for or sharp edge stencil is
+                                        for (unsigned int cell_index = 0; cell_index < n_active_cells; ++cell_index) {
+                                            try {
+                                                //define the cell and check if the point is inside of the cell
+                                                const Point<dim, double> p_cell = immersed_map.transform_real_to_unit_cell(
+                                                        active_neighbors_set[cell_index], second_point);
+                                                const double dist_2 = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+
+                                                //define the cell and check if the point is inside of the cell
+                                                if (dist_2 == 0 ) {
+                                                    //if the point is in this cell then the dist is equal to 0 and we have found our cell
+                                                    cell_found = cell_index;
+                                                    break_bool = true;
+                                                    active_neighbors = active_neighbors_set;
+                                                    break;
+                                                }
+                                            }
+                                                // may cause error if the point is not in cell
+                                            catch (typename MappingQGeneric<dim>::ExcTransformationFailed) {
+                                            }
+                                        }
+
+                                    }
+
+                                    auto &cell_2 = active_neighbors[cell_found];
+                                    bool skip_stencil=false;
+
+
+                                    if (break_bool == false) {
+                                        std::cout << "cell not found around point " << std::endl;
+                                        std::cout << "cell index " << cell_found << std::endl;
+                                        cell_2 = GridTools::find_active_cell_around_point(this->dof_handler,
+                                                                                          second_point);
+                                        cell_2->get_dof_indices(local_dof_indices_2);
+                                        std::cout << "dof point  " << support_points[global_index_overrigth]
+                                                  << std::endl;
+                                        std::cout << "second point  " << second_point << std::endl;
+                                    }
+                                    //we have or next cell need to complet the stencil and we define stuff around it
+
+                                    //cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, second_point);
+                                    //define the unit cell point for the 3rd point of our stencil for a interpolation
+                                    Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2,second_point);
+                                    Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_2,third_point);
+                                    Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_2,fourth_point);
+                                    Point<dim> fifth_point_v = immersed_map.transform_real_to_unit_cell(cell_2,fifth_point);
+
+                                    cell_2->get_dof_indices(local_dof_indices_2);
+
+                                    //clear the current line of this dof  by looping on the neighbors cell of this dof and clear all the associated dof
+                                    for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
+                                        unsigned int v_index = cell->vertex_index(vi);
+                                        active_neighbors_set = this->vertices_to_cell[v_index];
+                                        for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
+                                            const auto &cell_3 = active_neighbors_set[m];
+                                            cell_3->get_dof_indices(local_dof_indices_3);
+                                            for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
+                                                this->system_matrix.set(global_index_overrigth, local_dof_indices_3[o],
+                                                                        0);
+                                            }
+                                        }
+                                    }
+
+                                    //this->system_matrix.clear_row(global_index_overrigth);
+                                    bool do_rhs=false;
+                                    if(cell_2==cell)
+                                    {
+                                        skip_stencil=true;
+                                        this->system_matrix.set(global_index_overrigth,global_index_overrigth, sum_line);
+                                        this->system_rhs(global_index_overrigth)=0;
+                                        if (vect_dist.norm()<=0.000000000001)
+                                        {
+                                            do_rhs=true;
+                                        }
+                                        else{
+                                            this->system_rhs(global_index_overrigth)=0;
+                                        }
+                                    }
+
+
+
+                                    double local_interp_sol=0;
+                                    double local_interp_sol_2=0;
+                                    double local_interp_sol_3=0;
+                                    double local_interp_sol_4=0;
+                                    double last_local_interp_sol=0;
+                                    double last_local_interp_sol_2=0;
+                                    double last_local_interp_sol_3=0;
+                                    double last_local_interp_sol_4=0;
+                                    //define the new matrix entry for this dof
+                                    if (skip_stencil==false) {
+                                        // first the dof itself
+                                        unsigned int n=k;
+                                        while (n < local_dof_indices_2.size()) {
+                                            // first the dof itself
+                                            if (global_index_overrigth == local_dof_indices_2[n]) {
+
+                                                if (this->nsparam.particulesParameters.order==2) {
+                                                    this->system_matrix.set(global_index_overrigth,local_dof_indices_2[n],sp_2 *this->fe.shape_value(n, second_point_v) *sum_line + dof_2 * sum_line);
+                                                    local_interp_sol +=1 * this->fe.shape_value(n, second_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol+=1 * this->fe.shape_value(n, second_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                }
+
+                                                if (this->nsparam.particulesParameters.order==3) {
+                                                    this->system_matrix.set(global_index_overrigth,local_dof_indices_2[n],sp_3 *this->fe.shape_value(n, second_point_v) *sum_line + dof_3 * sum_line + tp_3*this->fe.shape_value(n,third_point_v) *sum_line );
+
+                                                    local_interp_sol +=1 * this->fe.shape_value(n, second_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_2 +=1 * this->fe.shape_value(n, third_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol+=1 * this->fe.shape_value(n, second_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_2+=1 * this->fe.shape_value(n, third_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                }
+                                                if (this->nsparam.particulesParameters.order>3) {
+                                                    this->system_matrix.set(global_index_overrigth,
+                                                                            local_dof_indices_2[n],dof_5*sum_line +sp_5 *this->fe.shape_value(n, second_point_v) *sum_line +tp_5 *this->fe.shape_value(n,third_point_v) *sum_line+fp1_5 *this->fe.shape_value(n,fourth_point_v) *sum_line +fp2_5 *this->fe.shape_value(n,fifth_point_v) *sum_line);
+
+                                                    local_interp_sol +=1 * this->fe.shape_value(n, second_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_2 +=1 * this->fe.shape_value(n, third_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_3 +=1 * this->fe.shape_value(n, fourth_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_4 +=1 * this->fe.shape_value(n, fifth_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol+=1 * this->fe.shape_value(n, second_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_2+=1 * this->fe.shape_value(n, third_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_3+=1 * this->fe.shape_value(n, fourth_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_4+=1 * this->fe.shape_value(n, fifth_point_v)  *last_solution[local_dof_indices_2[n]];
+
+                                                }
+                                            }
+                                                // then the third point trough interpolation from the dof of the cell in which the third point is
+                                            else {
+                                                if (this->nsparam.particulesParameters.order==2) {
+                                                    this->system_matrix.set(global_index_overrigth,local_dof_indices_2[n],sp_2 *this->fe.shape_value(n, second_point_v) *sum_line );
+                                                    local_interp_sol +=1 * this->fe.shape_value(n, second_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol+=1 * this->fe.shape_value(n, second_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                }
+
+                                                if (this->nsparam.particulesParameters.order==3) {
+                                                    this->system_matrix.set(global_index_overrigth,
+                                                                            local_dof_indices_2[n],sp_3 *this->fe.shape_value(n, second_point_v) *sum_line +tp_3 *this->fe.shape_value(n,third_point_v) *sum_line);
+
+                                                    local_interp_sol +=1 * this->fe.shape_value(n, second_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_2 +=1 * this->fe.shape_value(n, third_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol+=1 * this->fe.shape_value(n, second_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_2+=1 * this->fe.shape_value(n, third_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                }
+                                                if (this->nsparam.particulesParameters.order>3) {
+                                                    this->system_matrix.set(global_index_overrigth,
+                                                                            local_dof_indices_2[n],sp_5 *this->fe.shape_value(n, second_point_v) *sum_line +tp_5 *this->fe.shape_value(n,third_point_v) *sum_line+fp1_5 *this->fe.shape_value(n,fourth_point_v) *sum_line +fp2_5 *this->fe.shape_value(n,fifth_point_v) *sum_line);
+
+                                                    local_interp_sol +=1 * this->fe.shape_value(n, second_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_2 +=1 * this->fe.shape_value(n, third_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_3 +=1 * this->fe.shape_value(n, fourth_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    local_interp_sol_4 +=1 * this->fe.shape_value(n, fifth_point_v) * sum_line *active_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol+=1 * this->fe.shape_value(n, second_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_2+=1 * this->fe.shape_value(n, third_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_3+=1 * this->fe.shape_value(n, fourth_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                    last_local_interp_sol_4+=1 * this->fe.shape_value(n, fifth_point_v)  *last_solution[local_dof_indices_2[n]];
+                                                }
+                                            }
+
+                                            if (n < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
+                                                n = n + dim + 1;
+                                            } else {
+                                                n = n + dim;
+                                            }
+                                        }
+                                    }
+
+
+
+                                    // define our second point and last to be define the immersed boundary one  this point is where we applied the boundary condition as a dirichlet
+                                    if (skip_stencil==false or do_rhs ) {
+                                        if(do_rhs ){
+
+                                        }
+                                        // different boundary condition depending if the odf is vx or vy and if the problem we solve
+                                        if (k == 0) {
+                                            if (dim==2) {
+                                                double vx=-particules[p][4]*particules[p][5]*((support_points[local_dof_indices[l]] -
+                                                                                               center_immersed) /
+                                                                                              (support_points[local_dof_indices[l]] -
+                                                                                               center_immersed).norm())[1]+particules[p][2];
+                                                double rhs_add;
+                                                double correction;
+                                                double last_interp_last_sol;
+
+                                                if (this->nsparam.particulesParameters.order==2) {
+                                                    last_interp_last_sol =last_solution[global_index_overrigth] *dof_2 +last_local_interp_sol * sp_2 ;
+                                                    rhs_add= -active_solution[global_index_overrigth]*sum_line*dof_2-local_interp_sol*sp_2;
+                                                }
+                                                if (this->nsparam.particulesParameters.order==3) {
+                                                    last_interp_last_sol =last_solution[global_index_overrigth] * dof_3 +last_local_interp_sol * sp_3+last_local_interp_sol_2 * tp_3;
+                                                    rhs_add =-active_solution[global_index_overrigth] *sum_line * dof_3 -local_interp_sol * sp_3 -local_interp_sol_2 *tp_3;
+                                                }
+                                                if (this->nsparam.particulesParameters.order>3) {
+                                                    last_interp_last_sol=last_solution[global_index_overrigth] * dof_5 + last_local_interp_sol * sp_5+last_local_interp_sol_2 * tp_5 + last_local_interp_sol_3*fp1_5 + last_local_interp_sol_4*fp2_5;
+                                                    rhs_add = -active_solution[global_index_overrigth] *sum_line * dof_5 -local_interp_sol * sp_5 -local_interp_sol_2 *tp_5 -local_interp_sol_3 *fp1_5 -local_interp_sol_4 *fp2_5;
+                                                }
+
+                                                correction=(last_interp_last_sol-vx)*(1-particules[p][2]*this->nsparam.simulation_control.dt/dr)* abs(particules[p][2]*((support_points[local_dof_indices[l]] -center_immersed) /(support_points[local_dof_indices[l]] -center_immersed).norm())[0]+particules[p][3]*((support_points[local_dof_indices[l]] -center_immersed) /(support_points[local_dof_indices[l]] -center_immersed).norm())[1]);
+                                                if(!this->simulationControl->is_at_start())
+                                                    vx=vx+correction;
+                                                this->system_rhs(global_index_overrigth)=vx*sum_line+rhs_add;
+                                                if(do_rhs )
+                                                    this->system_rhs(global_index_overrigth) =vx*sum_line-active_solution[global_index_overrigth]*sum_line;
+
+                                            }
+                                            if (dim==3) {
+                                                double vx=particules[p][2];
+                                                if (this->nsparam.particulesParameters.order==2)
+                                                    this->system_rhs(global_index_overrigth) =vx*sum_line-active_solution[global_index_overrigth]*sum_line*dof_2-local_interp_sol*sp_2;
+                                                if (this->nsparam.particulesParameters.order==3)
+                                                    this->system_rhs(global_index_overrigth) =vx*sum_line-active_solution[global_index_overrigth]*sum_line*dof_3-local_interp_sol*sp_3-local_interp_sol_2*tp_3;
+                                                if (this->nsparam.particulesParameters.order>3)
+                                                    this->system_rhs(global_index_overrigth) =vx*sum_line-active_solution[global_index_overrigth]*sum_line*dof_5-local_interp_sol*sp_5-local_interp_sol_2*tp_5 -local_interp_sol_3*fp1_5-local_interp_sol_4*fp2_5;
+                                                if(do_rhs )
+                                                    this->system_rhs(global_index_overrigth) =vx*sum_line-active_solution[global_index_overrigth]*sum_line;
+                                            }
+
+                                        }
+                                        else if(k==1){
+                                            if (dim==2) {
+                                                double vy=particules[p][4]*particules[p][5]*((support_points[local_dof_indices[l]] -
+                                                                                              center_immersed) /
+                                                                                             (support_points[local_dof_indices[l]] -
+                                                                                              center_immersed).norm())[0]+particules[p][3];
+                                                double rhs_add;
+                                                double correction;
+                                                double last_interp_last_sol;
+                                                last_interp_last_sol =
+                                                        last_solution[global_index_overrigth] * dof_2 +
+                                                        last_local_interp_sol * sp_2 ;
+
+                                                correction =(last_interp_last_sol-vy)*(1-particules[p][2]*this->nsparam.simulation_control.dt/dr)* abs(particules[p][2]*((support_points[local_dof_indices[l]] -
+                                                                                                                                                        center_immersed) /
+                                                                                                                                                       (support_points[local_dof_indices[l]] -
+                                                                                                                                                        center_immersed).norm())[0]+particules[p][3]*((support_points[local_dof_indices[l]] -
+                                                                                                                                                                                                       center_immersed) /
+                                                                                                                                                                                                      (support_points[local_dof_indices[l]] -
+                                                                                                                                                                                                       center_immersed).norm())[1]);
+
+
+
+                                                if (this->nsparam.particulesParameters.order==2) {
+                                                    last_interp_last_sol =last_solution[global_index_overrigth] * dof_2 +last_local_interp_sol * sp_2 ;
+                                                    rhs_add = -active_solution[global_index_overrigth] *sum_line * dof_2 -local_interp_sol * sp_2;
+
+                                                }
+                                                if (this->nsparam.particulesParameters.order==3) {
+                                                    last_interp_last_sol =last_solution[global_index_overrigth] * dof_3 +last_local_interp_sol * sp_3+last_local_interp_sol_2 * tp_3;
+                                                    rhs_add = -active_solution[global_index_overrigth] *sum_line * dof_3 -local_interp_sol * sp_3 -local_interp_sol_2 *tp_3;
+                                                }
+                                                if (this->nsparam.particulesParameters.order>3) {
+                                                    last_interp_last_sol=last_solution[global_index_overrigth] * dof_5 + last_local_interp_sol * sp_5+last_local_interp_sol_2 * tp_5 + last_local_interp_sol_3*fp1_5 + last_local_interp_sol_4*fp2_5;
+                                                    rhs_add = -active_solution[global_index_overrigth] *sum_line * dof_5 -local_interp_sol * sp_5 -local_interp_sol_2 *tp_5 -local_interp_sol_3 *fp1_5 -local_interp_sol_4 *fp2_5;
+                                                }
+
+                                                correction =(last_interp_last_sol-vy)*(1-particules[p][2]*this->nsparam.simulation_control.dt/dr)* abs(particules[p][2]*((support_points[local_dof_indices[l]] -center_immersed) /(support_points[local_dof_indices[l]] -center_immersed).norm())[0]+particules[p][3]*((support_points[local_dof_indices[l]] -center_immersed) /(support_points[local_dof_indices[l]] -center_immersed).norm())[1]);
+
+                                                if(!this->simulationControl->is_at_start() )
+                                                    vy=vy+correction;
+                                                this->system_rhs(global_index_overrigth)=vy*sum_line+rhs_add;
+                                                if(do_rhs )
+                                                    this->system_rhs(global_index_overrigth) =vy*sum_line-active_solution[global_index_overrigth]*sum_line;
+
+                                            }
+                                            if (dim==3) {
+                                                double vy=particules[p][3];
+                                                if (this->nsparam.particulesParameters.order==2)
+                                                    this->system_rhs(global_index_overrigth) =vy*sum_line-active_solution[global_index_overrigth]*sum_line*dof_2-local_interp_sol*sp_2;
+                                                if (this->nsparam.particulesParameters.order==3)
+                                                    this->system_rhs(global_index_overrigth) =vy*sum_line-active_solution[global_index_overrigth]*sum_line*dof_3-local_interp_sol*sp_3-local_interp_sol_2*tp_3;
+                                                if (this->nsparam.particulesParameters.order>3)
+                                                    this->system_rhs(global_index_overrigth) =vy*sum_line-active_solution[global_index_overrigth]*sum_line*dof_5-local_interp_sol*sp_5-local_interp_sol_2*tp_5 -local_interp_sol_3*fp1_5-local_interp_sol_4*fp2_5;
+                                                if(do_rhs)
+                                                    this->system_rhs(global_index_overrigth) =vy*sum_line-active_solution[global_index_overrigth]*sum_line;
+                                            }
+                                        }
+                                        else if(k==2 & dim==3){
+                                            double vz=particules[p][5];
+                                            if (this->nsparam.particulesParameters.order==2)
+                                                this->system_rhs(global_index_overrigth) =vz*sum_line-active_solution[global_index_overrigth]*sum_line*dof_2-local_interp_sol*sp_2;
+                                            if (this->nsparam.particulesParameters.order==3)
+                                                this->system_rhs(global_index_overrigth) =vz*sum_line-active_solution[global_index_overrigth]*sum_line*dof_3-local_interp_sol*sp_3-local_interp_sol_2*tp_3;
+                                            if (this->nsparam.particulesParameters.order>3)
+                                                this->system_rhs(global_index_overrigth) =vz*sum_line-active_solution[global_index_overrigth]*sum_line*dof_5-local_interp_sol*sp_5-local_interp_sol_2*tp_5 -local_interp_sol_3*fp1_5-local_interp_sol_4*fp2_5;
+                                            if(do_rhs)
+                                                this->system_rhs(global_index_overrigth) =vz*sum_line-active_solution[global_index_overrigth]*sum_line;
+                                        }
+                                    }
+
+                                }
+
+                                if (l < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
+                                    l = l + dim + 1;
+                                } else {
+                                    l = l + dim;
+                                }
+                            }
+                        }
+
+                        if (k==dim ){
+                            unsigned int vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
+                            unsigned int l=k;
+                            while (l < local_dof_indices.size()) {
+
+                                bool pressure_impose= true;
+                                for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
+                                    unsigned int v_index = cell->vertex_index(vi);
+                                    active_neighbors_set = this->vertices_to_cell[v_index];
+                                    for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
+                                        const auto &cell_3 = active_neighbors_set[m];
+                                        cell_3->get_dof_indices(local_dof_indices_3);
+                                        for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
+                                            if (system_matrix.el(local_dof_indices[l],local_dof_indices_3[o])!=0 | this->system_rhs(local_dof_indices[l])!=0)
+                                                pressure_impose= false;
+                                        }
+                                    }
+                                }
+
+                                if (pressure_impose){
+                                    unsigned int global_index_overrigth = local_dof_indices[l];
+                                    this->system_matrix.set(global_index_overrigth,global_index_overrigth,sum_line);
+                                    this->system_rhs(global_index_overrigth)=0;
+                                }
+
+                                if (l < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
+                                    l = l + dim + 1;
+                                } else {
+                                    l = l + dim;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    system_matrix.compress(VectorOperation::insert);
+    this->system_rhs.compress(VectorOperation::insert);
+    initial_step_bool=false;
+    // Check if line are equal to zeros
+}
+
+template <int dim>
 template <bool                                              assemble_matrix,
           Parameters::SimulationControl::TimeSteppingMethod scheme,
           Parameters::VelocitySource::VelocitySourceType    velocity_source>
@@ -1033,6 +1729,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
+    vertices_cell_mapping();
+    sharp_edge(initial_step_bool);
 }
 template <int dim>
 void
@@ -1139,6 +1837,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
+    vertices_cell_mapping();
+    sharp_edge(initial_step_bool);
 }
 
 template <int dim>

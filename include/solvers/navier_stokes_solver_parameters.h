@@ -50,6 +50,7 @@ public:
   AnalyticalSolutions::NSAnalyticalSolution<dim> *analytical_solution;
   SourceTerms::NSSourceTerm<dim> *                sourceTerm;
   Parameters::VelocitySource                      velocitySource;
+  Parameters::Particules                          particulesParameters;
 
   void
   declare(ParameterHandler &prm)
@@ -70,6 +71,7 @@ public:
     Parameters::NonLinearSolver::declare_parameters(prm);
     Parameters::LinearSolver::declare_parameters(prm);
     Parameters::PostProcessing::declare_parameters(prm);
+    Parameters::Particules::declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
 
     analytical_solution = new AnalyticalSolutions::NSAnalyticalSolution<dim>;
@@ -103,6 +105,7 @@ public:
     sourceTerm->parse_parameters(prm);
     simulation_control.parse_parameters(prm);
     velocitySource.parse_parameters(prm);
+    particulesParameters.parse_parameters(prm);
   }
 };
 

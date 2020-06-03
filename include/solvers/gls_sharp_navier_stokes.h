@@ -65,6 +65,29 @@ private:
   assembleGLS();
 
   void
+  vertices_cell_mapping();
+
+  void
+  define_particules();
+
+  void
+  force_on_ib();
+
+  void
+  sharp_edge(const bool initial_step);
+
+  void
+  integrate_particules();
+
+  double
+  calculate_L2_error_particules();
+  void
+  finish_time_step_particules();
+
+  void
+  clear_pressure();
+
+  void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
@@ -129,13 +152,25 @@ private:
    * Members
    */
 private:
-  SparsityPattern                                    sparsity_pattern;
-  TrilinosWrappers::SparseMatrix                     system_matrix;
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+    SparsityPattern                                    sparsity_pattern;
+    TrilinosWrappers::SparseMatrix                     system_matrix;
+    std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+    std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+    std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>> vertices_to_cell;
+    const bool   SUPG        = false;
+    const bool   PSPG        = true;
+    const double GLS_u_scale = 1;
+    double radius=0.21;
+    double radius_2=0.6;
+    bool couette= false;
+    std::vector<std::vector<double>> particules;
+    bool initial_step_bool;
+    unsigned int iter_ib=0;
+    Vector<double> ib_dof;
 
-  const bool   SUPG        = true;
-  const double GLS_u_scale = 1;
+    TableHandler table_f;
+    TableHandler table_t;
+
 };
 
 
