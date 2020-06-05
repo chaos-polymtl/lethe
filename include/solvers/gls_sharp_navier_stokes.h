@@ -53,7 +53,6 @@ protected:
   void
   set_initial_condition(Parameters::InitialConditionType initial_condition_type,
                         bool                             restart = false);
-
   void
   set_solution_vector(double value);
 
@@ -76,16 +75,16 @@ private:
   void
   sharp_edge(const bool initial_step);
 
-  void
-  integrate_particules();
 
   double
   calculate_L2_error_particules();
   void
   finish_time_step_particules();
 
+
+
   void
-  clear_pressure();
+  refine_ib();
 
   void
   assemble_matrix_and_rhs(
