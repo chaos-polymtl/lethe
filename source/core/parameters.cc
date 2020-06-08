@@ -74,11 +74,6 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Maximal number of vtu output files");
-
-      prm.declare_entry("output boundary mesh",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable the output of the boundary mesh");
     }
     prm.leave_subsection();
   }
