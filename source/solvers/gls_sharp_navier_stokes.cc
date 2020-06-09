@@ -858,7 +858,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                         system_matrix.set(inside_index, local_dof_indices[dim], sum_line);
 
                         if (initial_step)
-                            this->system_rhs(inside_index) = 0-this->present_solution(inside_index)*sum_line;
+                            this->system_rhs(inside_index) = 0-this->local_evaluation_point(inside_index)*sum_line;
                         else
                             this->system_rhs(inside_index) = 0;
 
@@ -2489,6 +2489,12 @@ GLSSharpNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                      absolute_residual,
                      relative_residual,
                      renewed_matrix);
+  else if (this->nsparam.linear_solver.solver ==
+           Parameters::LinearSolver::SolverType::direct)
+    solve_system_direct(initial_step,
+                        absolute_residual,
+                        relative_residual,
+                        renewed_matrix);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
@@ -2572,6 +2578,34 @@ GLSSharpNavierStokesSolver<dim>::setup_AMG()
   parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
   amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
   amg_preconditioner->initialize(system_matrix, parameter_ml);
+}
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
+                                                     const double absolute_residual,
+                                                     const double relative_residual,
+                                                     const bool   renewed_matrix)
+{
+    const AffineConstraints<double> &constraints_used =
+            initial_step ? this->nonzero_constraints : this->zero_constraints;
+    const double linear_solver_tolerance =
+            std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+
+    TrilinosWrappers::MPI::Vector completely_distributed_solution(
+            this->locally_owned_dofs, this->mpi_communicator);
+
+    SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
+                                 linear_solver_tolerance,
+                                 true,
+                                 true);
+    TrilinosWrappers::SolverDirect solver(solver_control);
+
+    if (renewed_matrix || !ilu_preconditioner)
+        setup_ILU();
+    solver.initialize(system_matrix);
+    solver.solve(completely_distributed_solution,this->system_rhs);
+    constraints_used.distribute(completely_distributed_solution);
+    this->newton_update = completely_distributed_solution;
 }
 
 template <int dim>
@@ -2769,8 +2803,8 @@ GLSSharpNavierStokesSolver<dim>::solve()
       iter_ib+=1;
       initial_step_bool=true;
       MPI_Barrier(this->mpi_communicator);
+        //this->present_solution=0;
     }
-
 
   this->finish_simulation();
 }

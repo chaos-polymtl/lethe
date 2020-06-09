@@ -107,6 +107,11 @@ private:
     const bool initial_step,
     const bool renewed_matrix = true) override; // Interface function
 
+  void
+  solve_system_direct(const bool   initial_step,
+                     const double absolute_residual,
+                     const double relative_residual,
+                     const bool   renewed_matrix);
   /**
    * GMRES solver with ILU(N) preconditioning
    */
