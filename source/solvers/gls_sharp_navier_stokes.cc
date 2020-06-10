@@ -251,7 +251,7 @@ void GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
     const auto &cell_iterator=this->dof_handler.active_cell_iterators();
     //loop on all the cell and
     for (const auto &cell : cell_iterator) {
-        if (cell->is_locally_owned()| cell->is_ghost()) {
+        if (cell->is_locally_owned() | cell->is_ghost()) {
             unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
             for (unsigned int i = 0; i < vertices_per_cell; i++) {
                 //add this cell as neighbors for all it's vertex
@@ -854,6 +854,18 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                     if (cell_found) {
                         unsigned int inside_index = local_dof_indices[dim];
                         this->system_matrix.clear_row(inside_index);
+                        for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
+                            unsigned int v_index = cell->vertex_index(vi);
+                            active_neighbors_set = this->vertices_to_cell[v_index];
+                            for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
+                                const auto &cell_3 = active_neighbors_set[m];
+                                cell_3->get_dof_indices(local_dof_indices_3);
+                                for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
+                                    this->system_matrix.set(inside_index, local_dof_indices_3[o],
+                                                            0);
+                                }
+                            }
+                        }
 
                         system_matrix.set(inside_index, local_dof_indices[dim], sum_line);
 
@@ -879,7 +891,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                             //loops on the dof that are for vx or vy separatly
                             unsigned int l = k;
                             while (l < local_dof_indices.size()) {
-                                if(dof_proc[local_dof_indices[l]]==Utilities::MPI::this_mpi_process(this->mpi_communicator)) {
+                               // if(dof_proc[local_dof_indices[l]]==Utilities::MPI::this_mpi_process(this->mpi_communicator)) {
                                     if (dof_done(local_dof_indices[l]) == 0) {
                                         dof_done(local_dof_indices[l]) += 1;
                                         // define which dof is going to be redefine
@@ -1039,6 +1051,21 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                         //clear the current line of this dof  by looping on the neighbors cell of this dof and clear all the associated dof
 
                                         this->system_matrix.clear_row(global_index_overrigth);
+
+                                        for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
+                                            unsigned int v_index = cell->vertex_index(vi);
+                                            active_neighbors_set = this->vertices_to_cell[v_index];
+                                            for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
+                                                const auto &cell_3 = active_neighbors_set[m];
+                                                cell_3->get_dof_indices(local_dof_indices_3);
+                                                for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
+
+                                                    this->system_matrix.set(global_index_overrigth, local_dof_indices_3[o],
+                                                                            0);
+                                                }
+                                            }
+                                        }
+
                                         bool do_rhs = false;
                                         if (cell_2 == cell) {
                                             skip_stencil = true;
@@ -1320,6 +1347,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                                                        center_immersed) /
                                                                                                       (support_points[local_dof_indices[l]] -
                                                                                                        center_immersed).norm())[1]);
+                                                    correction=0;
                                                     if (!this->simulationControl->is_at_start())
                                                         vx = vx + correction;
                                                     this->system_rhs(global_index_overrigth) = vx * sum_line + rhs_add;
@@ -1418,7 +1446,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                                                        center_immersed) /
                                                                                                       (support_points[local_dof_indices[l]] -
                                                                                                        center_immersed).norm())[1]);
-
+                                                    correction=0;
                                                     if (!this->simulationControl->is_at_start())
                                                         vy = vy + correction;
                                                     this->system_rhs(global_index_overrigth) = vy * sum_line + rhs_add;
@@ -1492,7 +1520,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                                                sum_line;
                                             }
                                         }
-                                    }
+                                   // }
                                 }
 
                                 if (l < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
@@ -1503,13 +1531,10 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                             }
                         }
 
-                        if (k==dim ){
-
+                       if (k==dim ){
                             unsigned int vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
                             unsigned int l=k;
                             while (l < local_dof_indices.size()) {
-                                if (dof_proc[local_dof_indices[l]] ==
-                                    Utilities::MPI::this_mpi_process(this->mpi_communicator)) {
 
                                     bool pressure_impose = true;
                                     for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
@@ -1519,20 +1544,20 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                             const auto &cell_3 = active_neighbors_set[m];
                                             cell_3->get_dof_indices(local_dof_indices_3);
                                             for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
-                                                if (system_matrix.el(local_dof_indices[l], local_dof_indices_3[o]) !=
-                                                    0 | this->system_rhs(local_dof_indices[l]) != 0)
+                                                if (this->system_matrix.el(local_dof_indices[l], local_dof_indices_3[o]) !=
+                                                    0 | this->system_rhs(local_dof_indices[l]) != 0 )
                                                     pressure_impose = false;
                                             }
                                         }
                                     }
-
                                     if (pressure_impose) {
+
                                         unsigned int global_index_overrigth = local_dof_indices[l];
                                         this->system_matrix.set(global_index_overrigth, global_index_overrigth,
                                                                 sum_line);
                                         this->system_rhs(global_index_overrigth) = 0;
                                     }
-                                }
+
                                 if (l < (dim + 1) * pow(1 + this->nsparam.fem_parameters.pressureOrder, dim)) {
                                     l = l + dim + 1;
                                 } else {
@@ -1546,7 +1571,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
         }
     }
 
-    system_matrix.compress(VectorOperation::insert);
+    this->system_matrix.compress(VectorOperation::insert);
     this->system_rhs.compress(VectorOperation::insert);
     initial_step_bool=false;
 }
