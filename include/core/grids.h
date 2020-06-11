@@ -46,7 +46,7 @@ using namespace dealii;
  *
  * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
  */
-template <int dim>
+template <int dim, int spacedim = dim>
 void
 attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
@@ -64,7 +64,7 @@ attach_grid_to_triangulation(
  *
  * @param boundary_conditions The information about the boundary conditions id. This is used to set-up the periodicity of the domain
  */
-template <int dim>
+template <int dim, int spacedim = dim>
 void
 read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
