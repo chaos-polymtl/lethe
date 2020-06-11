@@ -12,9 +12,9 @@
 template <int dim, int spacedim>
 void
 attach_grid_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions)
+  const BoundaryConditions::BoundaryConditions<dim, spacedim> &boundary_conditions)
 
 {
   // GMSH input
