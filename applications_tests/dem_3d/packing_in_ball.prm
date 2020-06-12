@@ -4,9 +4,9 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 			 = 0.00001
-  set step end       					 = 50000
-  set n total              				 = 50
+  set time step                 			 = 1e-5
+  set step end       					 = 20000
+  set n total              				 = 200
   set output frequency            			 = 1000000
 end
 
@@ -31,7 +31,7 @@ subsection model parameters
   set pp_broad_search_frequency                 	 = 10
   set pp_fine_search_frequency                 		 = 10
   set pw_broad_search_frequency      			 = 10
-  set neighborhood_threshold				 = 1.5
+  set neighborhood_threshold				 = 1.3
   set pp_contact_force_method                   	 = pp_nonlinear
   set pw_contact_force_method                   	 = pw_nonlinear
   set integration_method				 = velocity_verlet
@@ -44,7 +44,8 @@ end
 #---------------------------------------------------
 subsection physical properties
     set gx            		 			= 0.0
-    set gy            		 			= -9.81
+    set gy            		 			= 0.0
+    set gz            		 			= -9.81
     set diameter            	 			= 0.005
     set density            	 			= 2000
     set Youngs_modulus_particle         		= 1000000
@@ -63,12 +64,14 @@ end
 # Insertion Info
 #---------------------------------------------------
 subsection insertion info
-    set Inserted number of particles at each time step  = 50
+    set Inserted number of particles at each time step  = 200
     set Insertion frequency            		 	= 20000
     set Insertion box minimum x            	 	= -0.05
     set Insertion box minimum y            	        = -0.05
+    set Insertion box minimum z            	        = -0.03
     set Insertion box maximum x            	        = 0.05
     set Insertion box maximum y           	 	= 0.05
+    set Insertion box maximum z            	        = 0.07
     set Insertion distance threshold			= 2
     set Insertion random number range			= 0.75
     set Insertion random number seed			= 19
@@ -78,7 +81,7 @@ end
 # Properties of particles (for visualization)
 #---------------------------------------------------
 subsection output properties
-    set Number of properties           		 	= 15
+    set Number of properties           		 	= 21
     set Output directory				= results
     set General information file prefix                 = Globals
     set Result name prefix                              = Output
@@ -90,7 +93,7 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments       = -0.07 : 0.07 : true
+    set grid type      	     = hyper_ball
+    set grid arguments       = 0.0, 0.0, 0.0 : 0.1 : false
     set initial refinement   = 3
 end

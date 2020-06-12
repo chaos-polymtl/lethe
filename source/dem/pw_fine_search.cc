@@ -36,18 +36,17 @@ PWFineSearch<dim>::pw_Fine_Search(
       for (auto contact_pairs_iterator = pw_contact_map->begin();
            contact_pairs_iterator != pw_contact_map->end();)
         {
-          // For each contact, the boundary id (map key) and particle are taken
+          // For each contact, the particle is taken
           // from the iterator and defined as local parameters. Similarly the
           // information tuple is also defined as a local variable
-          int  boundary_id         = contact_pairs_iterator->first;
-          auto information_tuple   = contact_pairs_iterator->second;
-          auto particle            = information_tuple.particle;
+          auto information_tuple   = &contact_pairs_iterator->second;
+          auto particle            = information_tuple->particle;
           auto particle_properties = particle->get_properties();
 
           // Normal vector of the boundary and a point on the boudary are
           // defined as local parameters
-          Tensor<1, dim> normal_vector = information_tuple.normal_vector;
-          Point<dim> point_on_boundary = information_tuple.point_on_boundary;
+          Tensor<1, dim> normal_vector = information_tuple->normal_vector;
+          Point<dim> point_on_boundary = information_tuple->point_on_boundary;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -124,24 +123,24 @@ PWFineSearch<dim>::pw_Fine_Search(
               // Calculation of new tangential_overlap, since this value is
               // history-dependent, it needs the value at previous time-step
               Tensor<1, dim> tangential_overlap =
-                information_tuple.tangential_overlap -
-                (information_tuple.tangential_overlap * normal_vector) *
+                information_tuple->tangential_overlap -
+                (information_tuple->tangential_overlap * normal_vector) *
                   normal_vector;
 
               Tensor<1, dim> modified_tangential_overlap;
               if (tangential_overlap.norm() != 0.0)
                 {
                   modified_tangential_overlap =
-                    (information_tuple.tangential_overlap.norm() /
+                    (information_tuple->tangential_overlap.norm() /
                      tangential_overlap.norm()) *
                       tangential_overlap +
-                    information_tuple.tangential_relative_velocity * dt;
+                    information_tuple->tangential_relative_velocity * dt;
                 }
               else
                 {
                   modified_tangential_overlap =
                     tangential_overlap +
-                    information_tuple.tangential_relative_velocity * dt;
+                    information_tuple->tangential_relative_velocity * dt;
                 }
 
               // Creating a sample from the pw_contact_info_struct and adding
@@ -157,7 +156,8 @@ PWFineSearch<dim>::pw_Fine_Search(
               contact_info.tangential_relative_velocity =
                 tangential_relative_velocity;
 
-              pw_contact_map->insert_or_assign(boundary_id, contact_info);
+              // pw_contact_map[face_id] = contact_info;
+              *information_tuple = contact_info;
               ++contact_pairs_iterator;
             }
 
@@ -179,11 +179,11 @@ PWFineSearch<dim>::pw_Fine_Search(
        particle_pair_candidates != pw_contact_pair_candidates.end();
        ++particle_pair_candidates)
     {
-      // Get the particle and boundary id from the vector and the total array
+      // Get the particle and face id from the vector and the total array
       // view to the particle properties once to improve efficiency
       auto particle            = std::get<0>(*particle_pair_candidates).first;
       auto particle_properties = particle->get_properties();
-      int  boundary_id         = std::get<0>(*particle_pair_candidates).second;
+      int  face_id             = std::get<0>(*particle_pair_candidates).second;
 
       // Normal vector of the boundary and a point on the boudary are defined as
       // local parameters
@@ -213,7 +213,7 @@ PWFineSearch<dim>::pw_Fine_Search(
           // boundary exists or not. If there exist an element with this key
           // value, it shows that this particle-wall pair has already been found
           // and there is no need to calculate its properties again
-          if (pw_pairs_in_contact[particle->get_id()].count(boundary_id) <= 0)
+          if (pw_pairs_in_contact[particle->get_id()].count(face_id) <= 0)
             {
               // If the pair is in contact (distance>0) and the pair does not
               // exist in the pw_pairs_in_contact vector, the contact properties
@@ -291,7 +291,7 @@ PWFineSearch<dim>::pw_Fine_Search(
                 tangential_relative_velocity;
 
               pw_pairs_in_contact[particle->get_id()].insert(
-                {boundary_id, contact_info});
+                {face_id, contact_info});
             }
         }
     }

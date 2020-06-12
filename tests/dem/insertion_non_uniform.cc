@@ -31,7 +31,7 @@
 #include <deal.II/particles/particle.h>
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/uniform_insertion.h>
+#include <dem/non_uniform_insertion.h>
 
 #include <iostream>
 #include <vector>
@@ -77,11 +77,11 @@ test()
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
   // Calling uniform insertion
-  UniformInsertion<dim> insertion_object(dem_parameters,
-                                         inserted_this_step,
-                                         number_of_particles_x_direction,
-                                         number_of_particles_y_direction,
-                                         number_of_particles_z_direction);
+  NonUniformInsertion<dim> insertion_object(dem_parameters,
+                                            inserted_this_step,
+                                            number_of_particles_x_direction,
+                                            number_of_particles_y_direction,
+                                            number_of_particles_z_direction);
   insertion_object.insert(particle_handler,
                           tr,
                           dem_parameters,

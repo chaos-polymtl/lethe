@@ -40,17 +40,13 @@ template <int dim>
 class UniformInsertion : public Insertion<dim>
 {
 public:
-  /**
-   * The constructor to the insertion class calculates the maximum number of
-   * particles (maximum_particle_number) which can be inserted in the insertion
-   * box and prints a warning if the number of particles to be inserted at this
-   * step exceeds this calculated number Note that in the current version only
-   * the insertion in a rectangular box is defined
-   *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   */
-  UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
+  UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
+                        unsigned int &                  inserted_this_step,
+                        unsigned int &                  nx,
+                        unsigned int &                  ny,
+                        unsigned int &                  nz);
 
+  // UPDATE
   /**
    * Carries out the insertion of particles by discretizing and looping over the
    * insertion box, finding the initial position of particles in the insertion
@@ -65,10 +61,23 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &particle_handler,
-         const Triangulation<dim> &       triangulation,
-         Particles::PropertyPool &        property_pool,
-         const DEMSolverParameters<dim> & dem_parameters) override;
+  insert(Particles::ParticleHandler<dim> &                particle_handler,
+         const parallel::distributed::Triangulation<dim> &triangulation,
+         const DEMSolverParameters<dim> &                 dem_parameters,
+         unsigned int &                                   inserted_this_step,
+         const unsigned int &                             nx,
+         const unsigned int &                             ny,
+         const unsigned int &                             nz,
+         unsigned int &remained_particles) override;
+
+private:
+  // add discription
+  virtual std::vector<Point<dim>>
+  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters,
+                          const unsigned int &            inserted_at_this_step,
+                          const unsigned int &            nx,
+                          const unsigned int &            ny,
+                          const unsigned int &            nz) override;
 };
 
 #endif /* UNIFORMINSERTION_H_ */

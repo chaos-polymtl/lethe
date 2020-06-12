@@ -57,9 +57,6 @@ namespace Parameters
 
     struct InsertionInfo
     {
-      // Insertion time step
-      int insertion_steps_number;
-
       // Inserted number of particles at each time step
       int inserted_this_step;
 
@@ -142,6 +139,13 @@ namespace Parameters
         velocity_verlet,
         explicit_euler
       } integration_method;
+
+      // Choosing insertion method
+      enum class InsertionMethod
+      {
+        uniform,
+        non_uniform
+      } insertion_method;
 
       static void
       declare_parameters(ParameterHandler &prm);

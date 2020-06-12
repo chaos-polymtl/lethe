@@ -40,34 +40,53 @@ class NonUniformInsertion : public Insertion<dim>
 {
 public:
   /**
-   * The constructor to the insertion class calculates the maximum number of
-   * particles (maximum_particle_number) which can be inserted in the insertion
-   * box and prints a warning if the number of particles to be inserted at this
-   * step exceeds this calculated number. Note that in the current version only
-   * the insertion in a rectangular box is defined
+   * The constructor investigates if the insertion box is large enough to handle
+   * to insert the desired number of particles with the specified insertion
+   * parameters. If the insertion box is not adequately large, the number of
+   * inserted particles at each insertion step is updated. It also finds the
+   * insertion points in each direction (nx, ny and nz).
    *
-   * @param dem_parameters DEM parameters declared in the .prm file)
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param inserted_this_step Number of particles that is going to be inserted
+   * at each insetion step. This value can change in the last insertion step to
+   * reach the desired number of particles
+   * @param nx Number of insertion points in the x direction
+   * @param ny Number of insertion points in the y direction
+   * @param nz Number of insertion points in the z direction
    */
-  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
+  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
+                           unsigned int &                  inserted_this_step,
+                           unsigned int &                  nx,
+                           unsigned int &                  ny,
+                           unsigned int &                  nz);
 
   /**
-   * Carries out the insertion of particles by discretizing and looping over the
-   * insertion box, finding the initial position of particles in the insertion
-   * box, their id and other initial properties of the particles. This virtual
-   * function that serves as a template for all insertion functions.
+   * Carries out the non-uniform insertion of particles.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
-   * @param property_pool Property pool of particles
-   * @param dem_parameters DEM parameters declared in the .prm file)
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param inserted_this_step Number of particles that is going to be
+   * inserted at each insetion step. This value can change in the last insertion
+   * step to reach the desired number of particles
+   * @param nx Number of insertion points in the x direction
+   * @param ny Number of insertion points in the y direction
+   * @param nz Number of insertion points in the z direction
+   * @param remained_particles The number of remained particles that are going
+   * to be inserted in following insertion steps
+   *
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &particle_handler,
-         const Triangulation<dim> &       triangulation,
-         Particles::PropertyPool &        property_pool,
-         const DEMSolverParameters<dim> & dem_parameters) override;
+  insert(Particles::ParticleHandler<dim> &                particle_handler,
+         const parallel::distributed::Triangulation<dim> &triangulation,
+         const DEMSolverParameters<dim> &                 dem_parameters,
+         unsigned int &                                   inserted_this_step,
+         const unsigned int &                             nx,
+         const unsigned int &                             ny,
+         const unsigned int &                             nz,
+         unsigned int &remained_particles) override;
 
 private:
   /**
@@ -85,6 +104,24 @@ private:
   create_random_number_container(const int &   inserted_this_step,
                                  const double &random_number_range,
                                  const int &   random_number_seed);
+
+  /**
+   * Creates a vector of insertion points for non-uniform insertion. The output
+   * of this function is used as input argument in insert_global_particles
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param inserted_this_step Number of particles which are going to be
+   * inserted at this step
+   * @param nx Number of insertion points in the x direction
+   * @param ny Number of insertion points in the y direction
+   * @param nz Number of insertion points in the z direction
+   */
+  virtual std::vector<Point<dim>>
+  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters,
+                          const unsigned int &            inserted_at_this_step,
+                          const unsigned int &            nx,
+                          const unsigned int &            ny,
+                          const unsigned int &            nz) override;
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */
