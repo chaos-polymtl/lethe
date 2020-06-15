@@ -2,6 +2,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
+set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-pedantic)
 add_compile_options(-pedantic-errors)
 add_compile_options(-Wextra)
