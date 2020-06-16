@@ -134,7 +134,7 @@ public:
                           std::string                               fprefix,
                           const unsigned int                        iter,
                           const double                              time) const;
-  Particles::ParticleHandler<spacedim>  get_solid_particle_handler();
+  Particles::ParticleHandler<spacedim>  generate_solid_particle_handler();
 
 private:
 
@@ -147,6 +147,7 @@ private:
   const unsigned int this_mpi_process;
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim,spacedim>>  solid_tria;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim,spacedim>>  fluid_tria;
   DoFHandler<dim, spacedim>                                              solid_dh;
   FESystem<dim, spacedim>                                                solid_fe;
   std::unique_ptr<Quadrature<dim>>                                       solid_quadrature_formula;
