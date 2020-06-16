@@ -25,7 +25,7 @@ template <int dim>
 std::vector<std::vector<double>>
 Insertion<dim>::assign_particle_propertis(
   const DEMSolverParameters<dim> &dem_parameters,
-  const unsigned int &            inserted_at_this_step,
+  const unsigned int &            inserted_this_step,
   const unsigned int &            inserted_so_far)
 {
   // Defining output vector
@@ -37,8 +37,7 @@ Insertion<dim>::assign_particle_propertis(
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
-  for (unsigned int particle_counter = 0;
-       particle_counter < inserted_at_this_step;
+  for (unsigned int particle_counter = 0; particle_counter < inserted_this_step;
        ++particle_counter)
     {
       double id       = (inserted_so_far + particle_counter);

@@ -5,15 +5,16 @@ using namespace DEM;
 // The constructor of non-uniform insertion class. In the constructor, we
 // investigate if the insertion box is adequately large to handle the desired
 // number of inserted particles. The number of insertion points in each
-// direction (nx, ny and nz) are also obtained.
+// direction (number_of_particles_x_direction, number_of_particles_y_direction
+// and number_of_particles_z_direction) are also obtained
 template <int dim>
 UniformInsertion<dim>::UniformInsertion(
-  const DEMSolverParameters<dim> &dem_parameters,
-  unsigned int &                  inserted_this_step,
-  unsigned int &                  nx,
-  unsigned int &                  ny,
-  unsigned int &                  nz)
+  const DEMSolverParameters<dim> &dem_parameters)
+  : remained_particles(dem_parameters.simulationControl.total_particle_number)
+  , inserted_this_step(0)
 {
+  std::cout << dem_parameters.simulationControl.total_particle_number
+            << std::endl;
   // Getting properties as local parameters
   const auto physical_properties   = dem_parameters.physicalProperties;
   const auto insertion_information = dem_parameters.insertionInfo;
@@ -59,19 +60,21 @@ UniformInsertion<dim>::UniformInsertion(
       inserted_this_step = insertion_information.inserted_this_step;
     }
 
-  // nx, ny and nz are the results of discretization of the insertion domain in
-  // x, y and z directions
-  nx = int(
+  // number_of_particles_x_direction, number_of_particles_y_direction and
+  // number_of_particles_z_direction are the results of discretization of the
+  // insertion domain in x, y and z directions
+  number_of_particles_x_direction = int(
     (insertion_information.x_max - insertion_information.x_min) /
     (insertion_information.distance_threshold * physical_properties.diameter));
-  ny = int(
+  number_of_particles_y_direction = int(
     (insertion_information.y_max - insertion_information.y_min) /
     (insertion_information.distance_threshold * physical_properties.diameter));
   if (dim == 3)
     {
-      nz = int((insertion_information.z_max - insertion_information.z_min) /
-               (insertion_information.distance_threshold *
-                physical_properties.diameter));
+      number_of_particles_z_direction =
+        int((insertion_information.z_max - insertion_information.z_min) /
+            (insertion_information.distance_threshold *
+             physical_properties.diameter));
     }
 }
 
@@ -82,12 +85,7 @@ void
 UniformInsertion<dim>::insert(
   Particles::ParticleHandler<dim> &                particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim> &                 dem_parameters,
-  unsigned int &                                   inserted_this_step,
-  const unsigned int &                             nx,
-  const unsigned int &                             ny,
-  const unsigned int &                             nz,
-  unsigned int &                                   remained_particles)
+  const DEMSolverParameters<dim> &                 dem_parameters)
 {
   // Check to see if the remained uninserted particles is equal to zero or not
   if (remained_particles != 0)
@@ -105,8 +103,7 @@ UniformInsertion<dim>::insert(
 
       // Finding insertion points using assign_insertion_points function
       std::vector<Point<dim>> insertion_points;
-      insertion_points = this->assign_insertion_points(
-        dem_parameters, inserted_this_step, nx, ny, nz);
+      insertion_points = this->assign_insertion_points(dem_parameters);
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
@@ -130,11 +127,7 @@ UniformInsertion<dim>::insert(
 template <int dim>
 std::vector<Point<dim>>
 UniformInsertion<dim>::assign_insertion_points(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const unsigned int &            inserted_this_step,
-  const unsigned int &            nx,
-  const unsigned int &            ny,
-  const unsigned int &            nz)
+  const DEMSolverParameters<dim> &dem_parameters)
 {
   std::vector<Point<dim>> insertion_positions;
 
@@ -145,11 +138,11 @@ UniformInsertion<dim>::assign_insertion_points(
   // Creating a particle counter
   unsigned int particle_counter = 0;
 
-  for (unsigned int i = 0; i < nx; ++i)
-    for (unsigned int j = 0; j < ny; ++j)
+  for (unsigned int i = 0; i < number_of_particles_x_direction; ++i)
+    for (unsigned int j = 0; j < number_of_particles_y_direction; ++j)
       {
         // Adapt the last index to the dimensionality of the problem
-        unsigned int dim_nz = (dim == 3) ? nz : 1;
+        unsigned int dim_nz = (dim == 3) ? number_of_particles_z_direction : 1;
         for (unsigned int k = 0; k < dim_nz; ++k)
           {
             // We need to check if the number of inserted particles so far at

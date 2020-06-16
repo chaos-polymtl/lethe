@@ -44,21 +44,12 @@ public:
    * to insert the desired number of particles with the specified insertion
    * parameters. If the insertion box is not adequately large, the number of
    * inserted particles at each insertion step is updated. It also finds the
-   * insertion points in each direction (nx, ny and nz).
+   * insertion points in each direction (number_of_particles_x_direction,
+   * number_of_particles_y_direction and number_of_particles_z_direction).
    *
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step Number of particles that is going to be inserted
-   * at each insetion step. This value can change in the last insertion step to
-   * reach the desired number of particles
-   * @param nx Number of insertion points in the x direction
-   * @param ny Number of insertion points in the y direction
-   * @param nz Number of insertion points in the z direction
    */
-  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                           unsigned int &                  inserted_this_step,
-                           unsigned int &                  nx,
-                           unsigned int &                  ny,
-                           unsigned int &                  nz);
+  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the non-uniform insertion of particles.
@@ -68,41 +59,25 @@ public:
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step Number of particles that is going to be
-   * inserted at each insetion step. This value can change in the last insertion
-   * step to reach the desired number of particles
-   * @param nx Number of insertion points in the x direction
-   * @param ny Number of insertion points in the y direction
-   * @param nz Number of insertion points in the z direction
-   * @param remained_particles The number of remained particles that are going
-   * to be inserted in following insertion steps
    *
    */
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &                 dem_parameters,
-         unsigned int &                                   inserted_this_step,
-         const unsigned int &                             nx,
-         const unsigned int &                             ny,
-         const unsigned int &                             nz,
-         unsigned int &remained_particles) override;
+         const DEMSolverParameters<dim> &dem_parameters) override;
 
 private:
   /**
    * Creates a vector of random numbers with size of particles which are going
    * to be inserted at each insertion step
    *
-   * @param inserted_this_step Number of particles which are going to be
-   * inserted at this step
    * @param random_number_range The range in which the random numbers will be
    * generated
    * @param random_number_seed random number seed
    * @return A vector of random numbers)
    */
   std::vector<double>
-  create_random_number_container(const int &   inserted_this_step,
-                                 const double &random_number_range,
+  create_random_number_container(const double &random_number_range,
                                  const int &   random_number_seed);
 
   /**
@@ -110,18 +85,23 @@ private:
    * of this function is used as input argument in insert_global_particles
    *
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step Number of particles which are going to be
-   * inserted at this step
-   * @param nx Number of insertion points in the x direction
-   * @param ny Number of insertion points in the y direction
-   * @param nz Number of insertion points in the z direction
    */
   virtual std::vector<Point<dim>>
-  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters,
-                          const unsigned int &            inserted_at_this_step,
-                          const unsigned int &            nx,
-                          const unsigned int &            ny,
-                          const unsigned int &            nz) override;
+  assign_insertion_points(
+    const DEMSolverParameters<dim> &dem_parameters) override;
+
+  // Number of remained particles that should be inserted in the upcoming
+  // insertion steps
+  unsigned int remained_particles;
+
+  // Number of particles that is going to be inserted at each insetion step.This
+  // value can change in the last insertion step to reach the desired number of
+  // particles
+  unsigned int inserted_this_step;
+
+  //  Number of insertion points in the x, y and z directions, respectively
+  unsigned int number_of_particles_x_direction, number_of_particles_y_direction,
+    number_of_particles_z_direction;
 };
 
 #endif /* NONUNIFORMINSERTION_H_ */

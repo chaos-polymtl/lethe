@@ -56,40 +56,27 @@ test()
 
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
-  unsigned int             inserted_this_step, number_of_particles_x_direction,
-    number_of_particles_y_direction, number_of_particles_z_direction,
-    remained_particles;
 
   // Defining simulation general parameters
-  const unsigned int n_properties                 = 21;
-  dem_parameters.insertionInfo.x_min              = -0.05;
-  dem_parameters.insertionInfo.y_min              = -0.05;
-  dem_parameters.insertionInfo.z_min              = -0.05;
-  dem_parameters.insertionInfo.x_max              = 0.05;
-  dem_parameters.insertionInfo.y_max              = 0.05;
-  dem_parameters.insertionInfo.z_max              = 0.05;
-  dem_parameters.insertionInfo.inserted_this_step = 10;
-  dem_parameters.insertionInfo.distance_threshold = 2;
-  dem_parameters.physicalProperties.diameter      = 0.005;
-  dem_parameters.physicalProperties.density       = 2500;
+  const unsigned int n_properties                        = 21;
+  dem_parameters.insertionInfo.x_min                     = -0.05;
+  dem_parameters.insertionInfo.y_min                     = -0.05;
+  dem_parameters.insertionInfo.z_min                     = -0.05;
+  dem_parameters.insertionInfo.x_max                     = 0.05;
+  dem_parameters.insertionInfo.y_max                     = 0.05;
+  dem_parameters.insertionInfo.z_max                     = 0.05;
+  dem_parameters.insertionInfo.inserted_this_step        = 10;
+  dem_parameters.insertionInfo.distance_threshold        = 2;
+  dem_parameters.physicalProperties.diameter             = 0.005;
+  dem_parameters.physicalProperties.density              = 2500;
+  dem_parameters.simulationControl.total_particle_number = 10;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
   // Calling uniform insertion
-  NonUniformInsertion<dim> insertion_object(dem_parameters,
-                                            inserted_this_step,
-                                            number_of_particles_x_direction,
-                                            number_of_particles_y_direction,
-                                            number_of_particles_z_direction);
-  insertion_object.insert(particle_handler,
-                          tr,
-                          dem_parameters,
-                          inserted_this_step,
-                          number_of_particles_x_direction,
-                          number_of_particles_y_direction,
-                          number_of_particles_z_direction,
-                          remained_particles);
+  NonUniformInsertion<dim> insertion_object(dem_parameters);
+  insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output
   int particle_number = 1;

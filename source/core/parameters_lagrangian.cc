@@ -105,6 +105,11 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
+        prm.declare_entry("insertion_method",
+                          "non_uniform",
+                          Patterns::Selection("uniform|non_uniform"),
+                          "Choosing insertion method. "
+                          "Choices are <uniform|non_uniform>.");
         prm.declare_entry("Inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -158,6 +163,15 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
+        const std::string insertion = prm.get("insertion_method");
+        if (insertion == "uniform")
+          insertion_method = InsertionMethod::uniform;
+        else if (insertion == "non_uniform")
+          insertion_method = InsertionMethod::non_uniform;
+        else
+          {
+            std::runtime_error("Invalid insertion method");
+          }
         inserted_this_step =
           prm.get_integer("Inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("Insertion frequency");
@@ -264,12 +278,6 @@ namespace Parameters
                           Patterns::Selection("velocity_verlet|explicit_euler"),
                           "Choosing integration method. "
                           "Choices are <velocity_verlet|explicit_euler>.");
-
-        prm.declare_entry("insertion_method",
-                          "non_uniform",
-                          Patterns::Selection("uniform|non_uniform"),
-                          "Choosing insertion method. "
-                          "Choices are <uniform|non_uniform>.");
       }
       prm.leave_subsection();
     }
@@ -317,16 +325,6 @@ namespace Parameters
         else
           {
             std::runtime_error("Invalid integration method");
-          }
-
-        const std::string insertion = prm.get("insertion_method");
-        if (insertion == "uniform")
-          insertion_method = InsertionMethod::uniform;
-        else if (insertion == "non_uniform")
-          insertion_method = InsertionMethod::non_uniform;
-        else
-          {
-            std::runtime_error("Invalid insertion method");
           }
       }
       prm.leave_subsection();

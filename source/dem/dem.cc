@@ -109,26 +109,15 @@ template <int dim>
 std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.insertion_method ==
-      Parameters::Lagrangian::ModelParameters::InsertionMethod::uniform)
+  if (parameters.insertionInfo.insertion_method ==
+      Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
     {
-      insertion_object = std::make_shared<UniformInsertion<dim>>(
-        parameters,
-        inserted_this_step,
-        number_of_particles_x_direction,
-        number_of_particles_y_direction,
-        number_of_particles_z_direction);
+      insertion_object = std::make_shared<UniformInsertion<dim>>(parameters);
     }
-  else if (parameters.model_parmeters.insertion_method ==
-           Parameters::Lagrangian::ModelParameters::InsertionMethod::
-             non_uniform)
+  else if (parameters.insertionInfo.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
     {
-      insertion_object = std::make_shared<NonUniformInsertion<dim>>(
-        parameters,
-        inserted_this_step,
-        number_of_particles_x_direction,
-        number_of_particles_y_direction,
-        number_of_particles_z_direction);
+      insertion_object = std::make_shared<NonUniformInsertion<dim>>(parameters);
     }
   else
     {
@@ -387,14 +376,7 @@ DEMSolver<dim>::solve()
         {
           computing_timer.enter_subsection("insertion");
           // REFACTORING
-          insertion_object->insert(particle_handler,
-                                   triangulation,
-                                   parameters,
-                                   inserted_this_step,
-                                   number_of_particles_x_direction,
-                                   number_of_particles_y_direction,
-                                   number_of_particles_z_direction,
-                                   remained_particles);
+          insertion_object->insert(particle_handler, triangulation, parameters);
           insertion_step = 1;
           computing_timer.leave_subsection();
         }

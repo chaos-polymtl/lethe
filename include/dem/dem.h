@@ -210,15 +210,10 @@ private:
   TimerOutput                               computing_timer;
   Particles::ParticleHandler<dim, dim>      particle_handler;
   int                                       DEM_step = 1;
-  double       DEM_time           = parameters.simulationControl.dt;
-  const double dt                 = parameters.simulationControl.dt;
-  unsigned int inserted_this_step = 0;
-  unsigned int remained_particles =
-    parameters.simulationControl.total_particle_number;
-  bool         insertion_step = 0;
-  unsigned int number_of_particles_x_direction, number_of_particles_y_direction,
-    number_of_particles_z_direction;
+  double       DEM_time = parameters.simulationControl.dt;
+  const double dt       = parameters.simulationControl.dt;
 
+  bool insertion_step = 0;
   // particle diameter should be replaced by maximum diameter. I should ask
   // Bruno how to do it.
   const double neighborhood_threshold =

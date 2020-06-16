@@ -35,7 +35,6 @@ subsection model parameters
   set pp_contact_force_method                   	 = pp_nonlinear
   set pw_contact_force_method                   	 = pw_nonlinear
   set integration_method				 = velocity_verlet
-  set insertion_method					 = non_uniform
   set print_info_frequency				 = 1000000
 end
 
@@ -64,6 +63,7 @@ end
 # Insertion Info
 #---------------------------------------------------
 subsection insertion info
+    set insertion_method				= non_uniform
     set Inserted number of particles at each time step  = 500
     set Insertion frequency            		 	= 20000
     set Insertion box minimum x            	 	= -0.05

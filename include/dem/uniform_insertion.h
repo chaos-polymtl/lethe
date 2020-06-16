@@ -40,11 +40,7 @@ template <int dim>
 class UniformInsertion : public Insertion<dim>
 {
 public:
-  UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                        unsigned int &                  inserted_this_step,
-                        unsigned int &                  nx,
-                        unsigned int &                  ny,
-                        unsigned int &                  nz);
+  UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
   // UPDATE
   /**
@@ -63,21 +59,26 @@ public:
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &                 dem_parameters,
-         unsigned int &                                   inserted_this_step,
-         const unsigned int &                             nx,
-         const unsigned int &                             ny,
-         const unsigned int &                             nz,
-         unsigned int &remained_particles) override;
+         const DEMSolverParameters<dim> &dem_parameters) override;
 
 private:
   // add discription
   virtual std::vector<Point<dim>>
-  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters,
-                          const unsigned int &            inserted_at_this_step,
-                          const unsigned int &            nx,
-                          const unsigned int &            ny,
-                          const unsigned int &            nz) override;
+  assign_insertion_points(
+    const DEMSolverParameters<dim> &dem_parameters) override;
+
+  // Number of remained particles that should be inserted in the upcoming
+  // insertion steps
+  unsigned int remained_particles;
+
+  // Number of particles that is going to be inserted at each insetion step.This
+  // value can change in the last insertion step to reach the desired number of
+  // particles
+  unsigned int inserted_this_step;
+
+  //  Number of insertion points in the x, y and z directions, respectively
+  unsigned int number_of_particles_x_direction, number_of_particles_y_direction,
+    number_of_particles_z_direction;
 };
 
 #endif /* UNIFORMINSERTION_H_ */

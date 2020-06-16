@@ -55,12 +55,6 @@ template <int dim>
 class Insertion
 {
 public:
-  Insertion<dim>()
-  {}
-
-  virtual ~Insertion()
-  {}
-
   /**
    * Carries out the insertion of particles. This is the base class of
    * uniform_insertion and non_uniform_insertion classes.
@@ -70,24 +64,11 @@ public:
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step Number of particles that is going to be inserted
-   * at each insetion step. This value can change in the last insertion step to
-   * reach the desired number of particles
-   * @param nx Number of insertion points in the x direction
-   * @param ny Number of insertion points in the y direction
-   * @param nz Number of insertion points in the z direction
-   * @param remained_particles Remained number of particles that should be
-   * inserted in the following steps
    */
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &                 dem_parameters,
-         unsigned int &                                   inserted_this_step,
-         const unsigned int &                             nx,
-         const unsigned int &                             ny,
-         const unsigned int &                             nz,
-         unsigned int &remained_particles) = 0;
+         const DEMSolverParameters<dim> &                 dem_parameters) = 0;
 
 protected:
   /**
@@ -101,26 +82,16 @@ protected:
    */
   std::vector<std::vector<double>>
   assign_particle_propertis(const DEMSolverParameters<dim> &dem_parameters,
-                            const unsigned int &inserted_at_this_step,
-                            const unsigned int &inserted_so_far);
+                            const unsigned int &            inserted_this_step,
+                            const unsigned int &            inserted_so_far);
 
   /**
    * Carries out finding the insertion points of inserted particles.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step Number of particles that is going to be inserted
-   * at each insetion step. This value can change in the last insertion step to
-   * reach the desired number of particles
-   * @param nx Number of insertion points in the x direction
-   * @param ny Number of insertion points in the y direction
-   * @param nz Number of insertion points in the z direction
    */
   virtual std::vector<Point<dim>>
-  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters,
-                          const unsigned int &            inserted_at_this_step,
-                          const unsigned int &            nx,
-                          const unsigned int &            ny,
-                          const unsigned int &            nz) = 0;
+  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters) = 0;
 };
 
 #endif /* INSERTION_H_ */
