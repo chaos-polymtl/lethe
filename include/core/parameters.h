@@ -420,6 +420,19 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
+  
+  struct Nitsche
+  {
+    Mesh solid_mesh
+
+    // Penalization term
+    double beta;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
   /**
    * @brief MeshAdaption - Parameters that control dynamic mesh adaptation.
