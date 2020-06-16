@@ -38,12 +38,12 @@ using namespace dealii;
 
 template <int dim, int spacedim = dim>
 class GLSNitscheNavierStokesSolver
-  : public GLSNavierStokesSolver<dim>
+  : public GLSNavierStokesSolver<spacedim>
 {
 public:
-  GLSNitscheNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                               const unsigned int                 degreeVelocity,
-                               const unsigned int                 degreePressure);
+  GLSNitscheNavierStokesSolver(NavierStokesSolverParameters<spacedim> &nsparam,
+                               const unsigned int                      degreeVelocity,
+                               const unsigned int                      degreePressure);
   ~GLSNitscheNavierStokesSolver();
 
 private:

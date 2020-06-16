@@ -19,6 +19,8 @@
 
 #include "solvers/gls_nitsche_navier_stokes.h"
 
+#include <deal.II/particles/data_out.h>
+
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
@@ -28,10 +30,10 @@
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
 GLSNitscheNavierStokesSolver<dim,spacedim>::GLSNitscheNavierStokesSolver(
-  NavierStokesSolverParameters<dim> &p_nsparam,
-  const unsigned int                 p_degreeVelocity,
-  const unsigned int                 p_degreePressure)
-  : GLSNavierStokesSolver<dim>(
+  NavierStokesSolverParameters<spacedim> &p_nsparam,
+  const unsigned int                      p_degreeVelocity,
+  const unsigned int                      p_degreePressure)
+  : GLSNavierStokesSolver<spacedim>(
       p_nsparam,
       p_degreeVelocity,
       p_degreePressure)
@@ -47,7 +49,7 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim,spacedim>::assemble_nitsche_restriction()
 {
-  solid.get_solid_particle_handler();
+  Particles::ParticleHandler solid_ph = solid.get_solid_particle_handler();
 }
 
 template <int dim, int spacedim>
