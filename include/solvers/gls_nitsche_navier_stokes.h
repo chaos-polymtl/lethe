@@ -20,7 +20,8 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
-#include "navier_stokes_base.h"
+#include "gls_navier_stokes.h"
+#include "solid_base.h"
 
 using namespace dealii;
 
@@ -35,108 +36,27 @@ using namespace dealii;
  * @author Bruno Blais, 2019
  */
 
-template <int dim>
+template <int dim, int spacedim = dim>
 class GLSNitscheNavierStokesSolver
-  : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
+  : public GLSNavierStokesSolver<dim>
 {
 public:
   GLSNitscheNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                        const unsigned int                 degreeVelocity,
-                        const unsigned int                 degreePressure);
+                               const unsigned int                 degreeVelocity,
+                               const unsigned int                 degreePressure);
   ~GLSNitscheNavierStokesSolver();
 
-  void
-  solve();
-
-protected:
-  virtual void
-  setup_dofs();
-  void
-  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
-                        bool                             restart = false);
-
-  void
-  set_solution_vector(double value);
-
 private:
-  template <bool                                              assemble_matrix,
-            Parameters::SimulationControl::TimeSteppingMethod scheme,
-            Parameters::VelocitySource::VelocitySourceType    velocity_source>
-  void
-  assembleGLS();
+
+  SolidBase<dim,spacedim>  solid;
 
   void
+  assemble_nitsche_restriction();
+
+  virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
-
-  void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
-
-  void
-  assemble_L2_projection();
-
-  /**
-   * Interface for the solver for the linear system of equations
-   */
-
-  void
-  solve_linear_system(
-    const bool initial_step,
-    const bool renewed_matrix = true) override; // Interface function
-
-  /**
-   * GMRES solver with ILU(N) preconditioning
-   */
-  void
-  solve_system_GMRES(const bool   initial_step,
-                     const double absolute_residual,
-                     const double relative_residual,
-                     const bool   renewed_matrix);
-
-  /**
-   * BiCGStab solver with ILU(N) preconditioning
-   */
-  void
-  solve_system_BiCGStab(const bool   initial_step,
-                        const double absolute_residual,
-                        const double relative_residual,
-                        const bool   renewed_matrix);
-
-  /**
-   * AMG preconditioner with ILU smoother and coarsener and GMRES final solver
-   */
-  void
-  solve_system_AMG(const bool   initial_step,
-                   const double absolute_residual,
-                   const double relative_residual,
-                   const bool   renewed_matrix);
-
-  /**
-   * Set-up AMG preconditioner
-   */
-  void
-  setup_AMG();
-
-  /**
-   * Set-up ILU preconditioner
-   */
-  void
-  setup_ILU();
-
-
-  /**
-   * Members
-   */
-private:
-  SparsityPattern                                    sparsity_pattern;
-  TrilinosWrappers::SparseMatrix                     system_matrix;
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
-
-  const bool   SUPG        = true;
-  const double GLS_u_scale = 1;
 };
 
 
