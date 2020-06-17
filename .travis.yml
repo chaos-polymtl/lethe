@@ -32,7 +32,7 @@ matrix:
 
 before_script:
   - if [ "$STEP" = "compile_and_test" ]; then
-      docker pull rrastak/dealii:master-bare-gcc;
+      docker pull blaisb/dealii_docker:dealii_full_9.2;
     fi
 
 script:
@@ -42,6 +42,6 @@ script:
       python contrib/utilities/run-clang-format.py -r source include;
     fi
   - if [ "$STEP" = "compile_and_test" ]; then
-      docker run heltai/dealii:v9.1.1-gcc-mpi /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest -j";
+      docker run blaisb/dealii_docker:dealii_full_9.2 /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DDEAL_II_DIR=/home/dealii/candi/deal.II-v9.2.0 && make -j2 && ctest -j";
     fi
  
