@@ -51,7 +51,7 @@ void
 attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<dim, spacedim> &boundary_conditions);
+  const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 /**
  * @brief Completely set-up a mesh and its manifold
@@ -70,7 +70,7 @@ read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> triangulation,
   const Parameters::Mesh &                                     mesh_parameters,
   const Parameters::Manifolds &                      manifolds_parameters,
-  const BoundaryConditions::BoundaryConditions<dim, spacedim> &boundary_conditions);
+  const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 
 #endif
