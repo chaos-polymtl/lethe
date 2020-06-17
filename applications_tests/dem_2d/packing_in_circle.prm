@@ -6,7 +6,6 @@
 subsection simulation control
   set time step                 			 = 0.00001
   set step end       					 = 50000
-  set n total              				 = 50
   set output frequency            			 = 1000000
 end
 
@@ -63,6 +62,7 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion_method				= non_uniform
+    set n total              				= 50
     set Inserted number of particles at each time step  = 50
     set Insertion frequency            		 	= 20000
     set Insertion box minimum x            	 	= -0.05
@@ -78,7 +78,6 @@ end
 # Properties of particles (for visualization)
 #---------------------------------------------------
 subsection output properties
-    set Number of properties           		 	= 15
     set Output directory				= results
     set General information file prefix                 = Globals
     set Result name prefix                              = Output
