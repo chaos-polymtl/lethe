@@ -186,10 +186,10 @@ namespace Parameters
   }
 } // namespace Parameters
 
-template <int dim>
+template <int dim, int spacedim>
 void
 attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> triangulation,
   Parameters::Manifolds                                        manifolds)
 {
   for (unsigned int i = 0; i < manifolds.types.size(); ++i)

@@ -46,10 +46,10 @@ attach_grid_to_triangulation(
           BoundaryConditions::BoundaryType::periodic)
         {
           std::vector<GridTools::PeriodicFacePair<
-            typename Triangulation<dim>::cell_iterator>>
+            typename Triangulation<dim, spacedim>::cell_iterator>>
             periodicity_vector;
           GridTools::collect_periodic_faces(
-            *dynamic_cast<Triangulation<dim> *>(triangulation.get()),
+            *dynamic_cast<Triangulation<dim, spacedim> *>(triangulation.get()),
             boundary_conditions.id[i_bc],
             boundary_conditions.periodic_id[i_bc],
             boundary_conditions.periodic_direction[i_bc],

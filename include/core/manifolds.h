@@ -147,10 +147,10 @@ public:
  *
  * @param manifolds_parameters The information about the type of manifolds attached to the faces
  */
-template <int dim>
+template <int dim, int spacedim = dim>
 void
 attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> triangulation,
   const Parameters::Manifolds                                  manifolds);
 
 /**
