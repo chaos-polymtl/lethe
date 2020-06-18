@@ -64,10 +64,11 @@ FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
                   // Storing these information into the
                   // boundary_cells_info_struct
                   boundary_cells_info_struct<dim> boundary_information;
-                  boundary_information.cell             = cell_iterator;
-                  boundary_information.boundary_face_id = face_id;
-                  boundary_information.normal_vector    = normal_vector;
-                  boundary_information.point_on_face    = quad_point;
+                  boundary_information.cell = cell_iterator;
+                  boundary_information.boundary_face_id =
+                    cell_iterator->face_index(face_id);
+                  boundary_information.normal_vector = normal_vector;
+                  boundary_information.point_on_face = quad_point;
 
                   // Searching to see if boundary with these information were
                   // already found or not. If this is a new boundary face, it

@@ -516,7 +516,8 @@ namespace Parameters
         "gmres",
         Patterns::Selection("gmres|bicgstab|amg"),
         "The iterative solver for the linear system of equations. "
-        "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative solver "
+        "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative "
+        "solver "
         "with ILU preconditioning. bicgstab is a BICGSTAB iterative solver "
         "with ILU preconditioning. "
         "amg is GMRES + AMG preconditioning with an ILU coarsener and "

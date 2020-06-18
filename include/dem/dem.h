@@ -110,7 +110,7 @@ private:
    */
   std::map<int, Particles::ParticleIterator<dim>>
   update_particle_container(
-    const Particles::ParticleHandler<dim> &particle_handler);
+    const Particles::ParticleHandler<dim> *particle_handler);
 
   /**
    * Updates the iterators to particles in adjacent_particles (output of pp
@@ -153,6 +153,15 @@ private:
     std::map<int, particle_point_line_contact_info_struct<dim>>
       &particle_lines_in_contact,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
+
+  /**
+   * Sets the chosen insertion method in the parameter handler file
+   *
+   * @param dem_parameters DEM parameters
+   * @return A pointer to the insertion object
+   */
+  std::shared_ptr<Insertion<dim>>
+  set_insertion_type(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Sets the chosen integration method in the parameter handler file
@@ -203,6 +212,8 @@ private:
   int                                       DEM_step = 1;
   double       DEM_time = parameters.simulationControl.dt;
   const double dt       = parameters.simulationControl.dt;
+
+  bool insertion_step = 0;
   // particle diameter should be replaced by maximum diameter. I should ask
   // Bruno how to do it.
   const double neighborhood_threshold =
@@ -261,6 +272,7 @@ private:
   ParticlePointLineFineSearch<dim>     particle_point_line_fine_search_object;
   ParticlePointLineForce<dim>          particle_point_line_contact_force_object;
   std::shared_ptr<Integrator<dim>>     integrator_object;
+  std::shared_ptr<Insertion<dim>>      insertion_object;
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
   PVDHandler                           pvdhandler;

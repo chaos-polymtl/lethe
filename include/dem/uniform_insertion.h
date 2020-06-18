@@ -40,17 +40,9 @@ template <int dim>
 class UniformInsertion : public Insertion<dim>
 {
 public:
-  /**
-   * The constructor to the insertion class calculates the maximum number of
-   * particles (maximum_particle_number) which can be inserted in the insertion
-   * box and prints a warning if the number of particles to be inserted at this
-   * step exceeds this calculated number Note that in the current version only
-   * the insertion in a rectangular box is defined
-   *
-   * @param dem_parameters DEM parameters declared in the .prm file
-   */
   UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
+  // UPDATE
   /**
    * Carries out the insertion of particles by discretizing and looping over the
    * insertion box, finding the initial position of particles in the insertion
@@ -65,10 +57,28 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &particle_handler,
-         const Triangulation<dim> &       triangulation,
-         Particles::PropertyPool &        property_pool,
-         const DEMSolverParameters<dim> & dem_parameters) override;
+  insert(Particles::ParticleHandler<dim> &                particle_handler,
+         const parallel::distributed::Triangulation<dim> &triangulation,
+         const DEMSolverParameters<dim> &dem_parameters) override;
+
+private:
+  // add discription
+  virtual std::vector<Point<dim>>
+  assign_insertion_points(
+    const DEMSolverParameters<dim> &dem_parameters) override;
+
+  // Number of remained particles that should be inserted in the upcoming
+  // insertion steps
+  unsigned int remained_particles;
+
+  // Number of particles that is going to be inserted at each insetion step.This
+  // value can change in the last insertion step to reach the desired number of
+  // particles
+  unsigned int inserted_this_step;
+
+  //  Number of insertion points in the x, y and z directions, respectively
+  unsigned int number_of_particles_x_direction, number_of_particles_y_direction,
+    number_of_particles_z_direction;
 };
 
 #endif /* UNIFORMINSERTION_H_ */

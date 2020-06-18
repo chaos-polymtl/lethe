@@ -106,6 +106,27 @@ DEMSolver<dim>::reinitialize_force(
 }
 
 template <int dim>
+std::shared_ptr<Insertion<dim>>
+DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
+{
+  if (parameters.insertionInfo.insertion_method ==
+      Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
+    {
+      insertion_object = std::make_shared<UniformInsertion<dim>>(parameters);
+    }
+  else if (parameters.insertionInfo.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
+    {
+      insertion_object = std::make_shared<NonUniformInsertion<dim>>(parameters);
+    }
+  else
+    {
+      throw "The chosen insertion method is invalid";
+    }
+  return insertion_object;
+}
+
+template <int dim>
 std::shared_ptr<Integrator<dim>>
 DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 {
@@ -175,15 +196,16 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 template <int dim>
 std::map<int, Particles::ParticleIterator<dim>>
 DEMSolver<dim>::update_particle_container(
-  const Particles::ParticleHandler<dim> &particle_handler)
+  const Particles::ParticleHandler<dim> *particle_handler)
 {
   std::map<int, Particles::ParticleIterator<dim>> particle_container;
-  for (auto particle_iterator = particle_handler.begin();
-       particle_iterator != particle_handler.end();
+  for (auto particle_iterator = particle_handler->begin();
+       particle_iterator != particle_handler->end();
        ++particle_iterator)
     {
       particle_container[particle_iterator->get_id()] = particle_iterator;
     }
+
   return particle_container;
 }
 
@@ -302,7 +324,6 @@ DEMSolver<dim>::solve()
   read_mesh();
 
   // Initializing variables
-
   Tensor<1, dim> g;
 
   g[0] = parameters.physicalProperties.gx;
@@ -331,7 +352,8 @@ DEMSolver<dim>::solve()
     boundary_cells_with_lines,
     boundary_cells_with_points);
 
-  // Setting chosen contact force and integration methods
+  // Setting chosen contact force, insertion and integration methods
+  insertion_object        = set_insertion_type(parameters);
   integrator_object       = set_integrator_type(parameters);
   pp_contact_force_object = set_pp_contact_force(parameters);
   pw_contact_force_object = set_pw_contact_force(parameters);
@@ -352,28 +374,11 @@ DEMSolver<dim>::solve()
       // from there the type of insertion
       if (fmod(DEM_step, parameters.insertionInfo.insertion_frequency) == 1)
         {
-          if (DEM_step < parameters.insertionInfo.insertion_steps_number)
-            {
-              // put this if inside the insertion class or use a local  variable
-              // instead of n_global_particles
-              if (particle_handler.n_global_particles() <
-                  parameters.simulationControl
-                    .total_particle_number) // number < total number
-                {
-                  computing_timer.enter_subsection("insertion");
-                  // REFACTORING
-                  // Insertion mode should be choseable from the interface
-                  NonUniformInsertion<dim> ins2(parameters);
-                  // UniformInsertion<dim> ins2(parameters);
-
-                  ins2.insert(particle_handler,
-                              triangulation,
-                              property_pool,
-                              parameters);
-                  insertion_step = 1;
-                  computing_timer.leave_subsection();
-                }
-            }
+          computing_timer.enter_subsection("insertion");
+          // REFACTORING
+          insertion_object->insert(particle_handler, triangulation, parameters);
+          insertion_step = 1;
+          computing_timer.leave_subsection();
         }
 
       // Sort particles in cells
@@ -383,7 +388,7 @@ DEMSolver<dim>::solve()
           computing_timer.enter_subsection("sort_particles_in_cells");
           particle_handler.sort_particles_into_subdomains_and_cells();
           particle_container.clear();
-          particle_container = update_particle_container(particle_handler);
+          particle_container = update_particle_container(&particle_handler);
           update_pp_contact_container_iterators(adjacent_particles,
                                                 particle_container);
           update_pw_contact_container_iterators(pw_pairs_in_contact,

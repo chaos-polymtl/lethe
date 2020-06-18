@@ -105,10 +105,15 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
-        prm.declare_entry("Insertion time step",
+        prm.declare_entry("insertion_method",
+                          "non_uniform",
+                          Patterns::Selection("uniform|non_uniform"),
+                          "Choosing insertion method. "
+                          "Choices are <uniform|non_uniform>.");
+        prm.declare_entry("n total",
                           "1",
                           Patterns::Integer(),
-                          "Insertion time steps");
+                          "Total number of particles");
         prm.declare_entry("Inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -162,7 +167,16 @@ namespace Parameters
     {
       prm.enter_subsection("insertion info");
       {
-        insertion_steps_number = prm.get_integer("Insertion time step");
+        const std::string insertion = prm.get("insertion_method");
+        if (insertion == "uniform")
+          insertion_method = InsertionMethod::uniform;
+        else if (insertion == "non_uniform")
+          insertion_method = InsertionMethod::non_uniform;
+        else
+          {
+            std::runtime_error("Invalid insertion method");
+          }
+        total_particle_number = prm.get_integer("n total");
         inserted_this_step =
           prm.get_integer("Inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("Insertion frequency");
@@ -184,11 +198,6 @@ namespace Parameters
     {
       prm.enter_subsection("output properties");
       {
-        prm.declare_entry("Number of properties",
-                          "1",
-                          Patterns::Integer(),
-                          "Number of properties for visualization");
-
         prm.declare_entry("Output directory",
                           "1",
                           Patterns::FileName(),
@@ -212,7 +221,6 @@ namespace Parameters
     {
       prm.enter_subsection("output properties");
       {
-        properties_number   = prm.get_integer("Number of properties");
         output_folder       = prm.get("Output directory");
         general_file_prefix = prm.get("General information file prefix");
         result_prefix       = prm.get("Result name prefix");

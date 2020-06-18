@@ -24,6 +24,7 @@
 
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
@@ -54,30 +55,43 @@ template <int dim>
 class Insertion
 {
 public:
-  Insertion()
-  {}
-
-  virtual ~Insertion()
-  {}
-
   /**
-   * Carries out the insertion of particles by discretizing and looping over the
-   * insertion region, finding the initial position of particles in the
-   * insertion region, their id and other initial properties of the particles.
-   * This virtual class serves as a template for all insertion functions.
+   * Carries out the insertion of particles. This is the base class of
+   * uniform_insertion and non_uniform_insertion classes.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
-   * @param property_pool Property pool of particles
-   * @param dem_parameters DEM parameters declared in the .prm file)
+   * @param dem_parameters DEM parameters declared in the .prm file
    */
   virtual void
-  insert(Particles::ParticleHandler<dim> &particle_handler,
-         const Triangulation<dim> &       triangulation,
-         Particles::PropertyPool &        property_pool,
-         const DEMSolverParameters<dim> & dem_parameters) = 0;
+  insert(Particles::ParticleHandler<dim> &                particle_handler,
+         const parallel::distributed::Triangulation<dim> &triangulation,
+         const DEMSolverParameters<dim> &                 dem_parameters) = 0;
+
+protected:
+  /**
+   * Carries out assigning the properties of inserted particles.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param inserted_this_step Number of particles that is going to be inserted
+   * at each insetion step. This value can change in the last insertion step to
+   * reach the desired number of particles
+   * @param inserted_so_far Number of particles are already inserted
+   */
+  std::vector<std::vector<double>>
+  assign_particle_propertis(const DEMSolverParameters<dim> &dem_parameters,
+                            const unsigned int &            inserted_this_step,
+                            const unsigned int &            inserted_so_far);
+
+  /**
+   * Carries out finding the insertion points of inserted particles.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+  virtual std::vector<Point<dim>>
+  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters) = 0;
 };
 
 #endif /* INSERTION_H_ */
