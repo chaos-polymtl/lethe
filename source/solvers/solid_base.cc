@@ -27,12 +27,13 @@
 #include <deal.II/fe/fe.h> 
 #include <core/grids.h>
 #include <deal.II/grid/grid_in.h> 
+#include <deal.II/base/std_cxx14/memory.h>
 
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
   NavierStokesSolverParameters<dim> &param,
-  parallel::DistributedTriangulationBase<spacedim> fluid_tria):
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria):
     mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -49,20 +50,20 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::initial_setup()
 {
-  FE_Nothing<dim, spacedim> solid_fe;
-  solid_dh.distribute_dofs(solid_fe);
+  std_cxx14::make_unique<FE_Nothing<dim, spacedim>> solid_fe;
+  solid_dh->distribute_dofs(*solid_fe);
   
   if (param.nitsche.solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
       GridIn<dim, spacedim> grid_in;
-      grid_in.attach_triangulation(solid_tria);
+      grid_in.attach_triangulation(*solid_tria);
       std::ifstream input_file(param.nitsche.solid_mesh.file_name);
       grid_in.read_msh(input_file);
     }
   else if (param.nitsche.solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
-        solid_tria,
+        *solid_tria,
         param.nitsche.solid_mesh.grid_type,
         param.nitsche.solid_mesh.grid_arguments);
     }
@@ -78,7 +79,7 @@ SolidBase<dim, spacedim>::setup_particles()
 {
   QGauss<dim> quadrature(param.fem_parameters.velocityOrder + 1);
   const unsigned int n_properties = 1;
-  solid_particle_handler.initialize(fluid_tria,
+  solid_particle_handler->initialize(*fluid_tria,
                                     StaticMappingQ1<spacedim>::mapping,
                                     n_properties);
   std::vector<Point<spacedim>> quadrature_points_vec;
@@ -87,10 +88,10 @@ SolidBase<dim, spacedim>::setup_particles()
   std::vector<std::vector<double>> properties;
   properties.reserve(quadrature.size() *
                       solid_tria.n_locally_owned_active_cells());
-  FEValues<dim, spacedim> fe_v(solid_fe,
+  FEValues<dim, spacedim> fe_v(*solid_fe,
                                 quadrature,
                                 update_JxW_values | update_quadrature_points);
-  for (const auto &cell : solid_dh.active_cell_iterators())
+  for (const auto &cell : solid_dh->active_cell_iterators())
     if (cell->is_locally_owned())
       {
         fe_v.reinit(cell);
@@ -113,14 +114,14 @@ SolidBase<dim, spacedim>::setup_particles()
   const auto local_boxes = extract_rtree_level(tree, par.fluid_rtree_extraction_level);
   global_fluid_bounding_boxes = Utilities::MPI::all_gather(mpi_communicator, local_boxes);
 
-  solid_particle_handler.insert_global_particles(quadrature_points_vec,
+  solid_particle_handler->insert_global_particles(quadrature_points_vec,
                                                   global_fluid_bounding_boxes,
                                                   properties);
 
   fluid_tria.signals.pre_distributed_refinement.connect(
-    [&]() { solid_particle_handler.register_store_callback_function(); });
+    [&]() { solid_particle_handler->register_store_callback_function(); });
   fluid_tria.signals.post_distributed_refinement.connect(
-    [&]() { solid_particle_handler.register_load_callback_function(false); });
+    [&]() { solid_particle_handler->register_load_callback_function(false); });
 }
 
 template <int dim, int spacedim>

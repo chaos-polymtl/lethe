@@ -37,13 +37,15 @@ GLSNitscheNavierStokesSolver<dim,spacedim>::GLSNitscheNavierStokesSolver(
       p_nsparam,
       p_degreeVelocity,
       p_degreePressure)
-{}
+{
+  //solid = SolidBase<dim, spacedim>(this->nsparam, this->triangulation);
+}
 
 template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim,spacedim>::assemble_nitsche_restriction()
 {
-  Particles::ParticleHandler<spacedim> solid_ph = solid.generate_solid_particle_handler();
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph = solid.generate_solid_particle_handler();
 
   TimerOutput::Scope t(this->computing_timer, "Assemble Nitsche terms");
 
@@ -63,8 +65,8 @@ GLSNitscheNavierStokesSolver<dim,spacedim>::assemble_nitsche_restriction()
   double     beta = this->nsparam.nitsche.beta;
   
   // Loop over all local particles
-  auto particle = solid_ph.begin();
-  while (particle != solid_ph.end())
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
     {
       local_matrix = 0;
       local_rhs = 0;
@@ -74,12 +76,12 @@ GLSNitscheNavierStokesSolver<dim,spacedim>::assemble_nitsche_restriction()
         typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
 
-      const auto pic = solid_ph.particles_in_cell(cell);
+      const auto pic = solid_ph->particles_in_cell(cell);
       Assert(pic.begin() == particle, ExcInternalError());
       for (const auto &p : pic)
         {
           const auto &ref_q   = p.get_reference_location();
-          const auto &real_q  = p.get_location();
+          //const auto &real_q  = p.get_location();
           const auto &JxW     = p.get_properties()[0];
 
           for (unsigned int i = 0; i < dofs_per_cell; ++i)

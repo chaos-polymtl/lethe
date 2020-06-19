@@ -41,7 +41,7 @@
 
 // Lethe Includes
 #include <core/parameters.h>
-#include <navier_stokes_solver_parameters.h> 
+#include <solvers/navier_stokes_solver_parameters.h> 
 
 // Std
 #include <fstream>
@@ -69,12 +69,12 @@ class SolidBase
 public:
 
   //Member functions
-  SolidBase(NavierStokesSolverParameters<dim> &param
-  parallel::DistributedTriangulationBase<spacedim> fluid_tria);
+  SolidBase(NavierStokesSolverParameters<dim> &param,
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria);
   void initial_setup();
   void setup_particles();
   void output_particles(std::string fprefix) const;
-  Particles::ParticleHandler<spacedim>  generate_solid_particle_handler();
+  std::shared_ptr<Particles::ParticleHandler<spacedim>>  generate_solid_particle_handler();
 
 private:
 
@@ -83,11 +83,11 @@ private:
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
 
-  parallel::DistributedTriangulationBase<dim,spacedim>                   solid_tria;
-  parallel::DistributedTriangulationBase<spacedim>                       fluid_tria;
-  DoFHandler<dim, spacedim>                                              solid_dh;
-  FESystem<dim, spacedim>                                                solid_fe;
-  Particles::ParticleHandler<spacedim>                                   solid_particle_handler;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> solid_tria;
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>      fluid_tria;
+  std::unique_ptr<DoFHandler<dim, spacedim>>                             solid_dh;
+  std::unique_ptr<FESystem<dim, spacedim>>                               solid_fe;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>>                  solid_particle_handler;
 
   NavierStokesSolverParameters<dim>                                      param;
 };

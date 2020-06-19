@@ -44,11 +44,10 @@ public:
   GLSNitscheNavierStokesSolver(NavierStokesSolverParameters<spacedim> &nsparam,
                                const unsigned int                      degreeVelocity,
                                const unsigned int                      degreePressure);
-  ~GLSNitscheNavierStokesSolver();
 
 private:
 
-  SolidBase<dim,spacedim>  solid;
+  SolidBase<dim, spacedim>  solid;
 
   void
   assemble_nitsche_restriction();
