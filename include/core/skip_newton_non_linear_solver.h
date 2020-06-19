@@ -1,5 +1,5 @@
-#ifndef LETHE_SKIPNEWTONNONLINEARSOLVER
-#define LETHE_SKIPNEWTONNONLINEARSOLVER
+#ifndef lethe_skip_newton_non_linear_solver
+#define lethe_skip_newton_non_linear_solver
 
 #include "non_linear_solver.h"
 

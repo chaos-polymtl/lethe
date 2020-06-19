@@ -1,6 +1,6 @@
 
-#ifndef LETHE_POSTPROCESSORS_H
-#define LETHE_POSTPROCESSORS_H
+#ifndef lethe_post_processors_h
+#define lethe_post_processors_h
 
 // DEALII INCLUDES
 // Base

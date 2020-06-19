@@ -73,7 +73,7 @@ read_mesh_and_manifolds(
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
   // Refine the triangulation to its initial size
-  const int initialSize = mesh_parameters.initialRefinement;
+  const int initialSize = mesh_parameters.initial_refinement;
   triangulation->refine_global(initialSize);
 }
 

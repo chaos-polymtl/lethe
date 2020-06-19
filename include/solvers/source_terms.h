@@ -20,8 +20,8 @@
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer
 //        to a function. This would be a lot more coherent...
 
-#ifndef LETHE_SOURCETERMS_H
-#define LETHE_SOURCETERMS_H
+#ifndef lethe_source_terms_h
+#define lethe_source_terms_h
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>

@@ -108,8 +108,8 @@ GDNavierStokesSolver<dim>::assembleGD()
 
   this->system_rhs = 0;
 
-  QGauss<dim>         quadrature_formula(this->degreeQuadrature_);
-  const MappingQ<dim> mapping(this->degreeVelocity_,
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
 
   FEValues<dim> fe_values(mapping,
@@ -339,20 +339,20 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
-  QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
-  const MappingQ<dim>         mapping(this->degreeVelocity_,
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
-  FEValues<dim>               fe_values(mapping,
+  FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values);
-  const unsigned int          dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int          n_q_points    = quadrature_formula.size();
-  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>              local_rhs(dofs_per_cell);
-  std::vector<Vector<double>> initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
+  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int  n_q_points    = quadrature_formula.size();
+  FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>      local_rhs(dofs_per_cell);
+  std::vector<Vector<double>>          initial_velocity(n_q_points,
+                                                        Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -469,7 +469,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
   this->locally_relevant_dofs[1] =
     locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
 
-  const MappingQ<dim>        mapping(this->degreeVelocity_,
+  const MappingQ<dim>        mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
@@ -833,7 +833,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   this->computing_timer.enter_subsection("AMG_pressure");
   const bool elliptic_pressure = true;
   higher_order_elements        = false;
-  if (this->degreePressure_ > 1)
+  if (this->pressure_fem_degree > 1)
     higher_order_elements = true;
   TrilinosWrappers::PreconditionAMG::AdditionalData
                                       pressure_preconditioner_options(elliptic_pressure,

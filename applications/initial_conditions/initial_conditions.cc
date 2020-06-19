@@ -58,7 +58,7 @@ template <int dim>
 void
 InitialConditionsNavierStokes<dim>::runTest()
 {
-  const int initialSize = this->nsparam.mesh.initialRefinement;
+  const int initialSize = this->nsparam.mesh.initial_refinement;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
 

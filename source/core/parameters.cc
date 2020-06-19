@@ -485,7 +485,7 @@ namespace Parameters
 
       file_name = prm.get("file name");
 
-      initialRefinement = prm.get_integer("initial refinement");
+      initial_refinement = prm.get_integer("initial refinement");
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");
@@ -728,10 +728,13 @@ namespace Parameters
   {
     prm.enter_subsection("test");
     {
-      prm.declare_entry("enable",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable testing mode of a solver");
+      prm.declare_entry(
+        "enable",
+        "false",
+        Patterns::Bool(),
+        "Enable testing mode of a solver. Some solvers have a specific"
+        "testing mode which enables the output of debug variables. This"
+        "testing mode is generally used only for the automatic testing bench using ctest.");
     }
     prm.leave_subsection();
   }
@@ -759,10 +762,13 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Frequency for checkpointing");
-      prm.declare_entry("checkpoint",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable checkpointing");
+      prm.declare_entry(
+        "checkpoint",
+        "false",
+        Patterns::Bool(),
+        "Enable checkpointing. Checkpointing creates a restart"
+        "point from which the simulation can be restarted from.");
+
       prm.declare_entry("frequency",
                         "1",
                         Patterns::Integer(),
@@ -789,11 +795,15 @@ namespace Parameters
   {
     prm.enter_subsection("velocity source");
     {
-      prm.declare_entry("type",
-                        "none",
-                        Patterns::Selection("none|srf"),
-                        "Velocity-dependent source terms"
-                        "Choices are <none|srf>.");
+      prm.declare_entry(
+        "type",
+        "none",
+        Patterns::Selection("none|srf"),
+        "Velocity-dependent source terms"
+        "Choices are <none|srf>. The srf stands"
+        "for single rotating frame and adds"
+        "the coriolis and the centrifugal force to the Navier-Stokes equations");
+
       prm.declare_entry(
         "omega_x",
         "0 ",
@@ -826,7 +836,7 @@ namespace Parameters
       else if (op == "srf")
         type = VelocitySourceType::srf;
       else
-        throw("Error, invalid velocity source type");
+        throw std::runtime_error("Error, invalid velocity source type");
 
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");

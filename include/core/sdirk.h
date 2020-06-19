@@ -18,8 +18,8 @@
  */
 
 
-#ifndef LETHE_SDIRK_H
-#define LETHE_SDIRK_H
+#ifndef lethe_sdirk_h
+#define lethe_sdirk_h
 
 #include <deal.II/lac/full_matrix.h>
 
