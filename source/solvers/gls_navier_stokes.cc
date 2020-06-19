@@ -914,7 +914,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 }
 
 template <int dim>
-virtual void
+void
 GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
@@ -1021,7 +1021,7 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     }
 }
 template <int dim>
-virtual void
+void
 GLSNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
