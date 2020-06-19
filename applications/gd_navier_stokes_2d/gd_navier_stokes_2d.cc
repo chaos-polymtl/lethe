@@ -23,8 +23,8 @@ main(int argc, char *argv[])
       NSparam.parse(prm);
 
       GDNavierStokesSolver<2> problem_2d(NSparam,
-                                         NSparam.fem_parameters.velocityOrder,
-                                         NSparam.fem_parameters.pressureOrder);
+                                         NSparam.fem_parameters.velocity_order,
+                                         NSparam.fem_parameters.pressure_order);
       problem_2d.solve();
     }
   catch (std::exception &exc)

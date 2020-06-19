@@ -190,7 +190,7 @@ namespace Parameters
     // Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
-    // Frequency of the output
+    // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
 
     // Frequency of the output
@@ -211,13 +211,13 @@ namespace Parameters
   struct FEM
   {
     // Interpolation order velocity
-    unsigned int velocityOrder;
+    unsigned int velocity_order;
 
     // Interpolation order pressure
-    unsigned int pressureOrder;
+    unsigned int pressure_order;
 
     // Number of quadrature points
-    unsigned int quadraturePoints;
+    unsigned int number_quadrature_points;
 
     // Apply high order mapping everywhere
     bool qmapping_all;
@@ -396,22 +396,22 @@ namespace Parameters
     } fractionType;
 
     // Maximum number of elements
-    unsigned int maxNbElements;
+    unsigned int maximum_number_elements;
 
     // Maximum refinement level
-    unsigned int maxRefLevel;
+    unsigned int maximum_refinement_level;
 
-    // Maximum refinement level
-    unsigned int minRefLevel;
+    // Minimum refinement level
+    unsigned int minimum_refinement_level;
 
     // Refinement after frequency iter
     unsigned int frequency;
 
-    // Refinement fractioni havent used ILUT much)
-    double fractionRefinement;
+    // Refinement fraction
+    double refinement_fraction;
 
     // Coarsening fraction
-    double fractionCoarsening;
+    double coarsening_fraction;
 
     static void
     declare_parameters(ParameterHandler &prm);

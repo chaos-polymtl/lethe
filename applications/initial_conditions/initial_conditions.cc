@@ -112,8 +112,8 @@ main(int argc, char *argv[])
 
       InitialConditionsNavierStokes<2> problem_2d(
         nsparam,
-        nsparam.fem_parameters.velocityOrder,
-        nsparam.fem_parameters.pressureOrder);
+        nsparam.fem_parameters.velocity_order,
+        nsparam.fem_parameters.pressure_order);
       if (nsparam.test.enabled)
         problem_2d.runTest();
       else

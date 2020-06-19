@@ -90,8 +90,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
 
   // Overide default value of quadrature point if they are specified
-  if (nsparam.fem_parameters.quadraturePoints > 0)
-    degreeQuadrature_ = nsparam.fem_parameters.quadraturePoints;
+  if (nsparam.fem_parameters.number_quadrature_points > 0)
+    degreeQuadrature_ = nsparam.fem_parameters.number_quadrature_points;
 
   // Change the behavior of the timer for situations when you don't want outputs
   if (nsparam.timer.type == Parameters::Timer::Type::none)
@@ -656,27 +656,30 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
       tria,
       estimated_error_per_cell,
-      this->nsparam.mesh_adaptation.fractionRefinement,
-      this->nsparam.mesh_adaptation.fractionCoarsening,
-      this->nsparam.mesh_adaptation.maxNbElements);
+      this->nsparam.mesh_adaptation.refinement_fraction,
+      this->nsparam.mesh_adaptation.coarsening_fraction,
+      this->nsparam.mesh_adaptation.maximum_number_elements);
 
   else if (this->nsparam.mesh_adaptation.fractionType ==
            Parameters::MeshAdaptation::FractionType::fraction)
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
       tria,
       estimated_error_per_cell,
-      this->nsparam.mesh_adaptation.fractionRefinement,
-      this->nsparam.mesh_adaptation.fractionCoarsening);
+      this->nsparam.mesh_adaptation.refinement_fraction,
+      this->nsparam.mesh_adaptation.coarsening_fraction);
 
-  if (tria.n_levels() > this->nsparam.mesh_adaptation.maxRefLevel)
+  if (tria.n_levels() > this->nsparam.mesh_adaptation.maximum_refinement_level)
     for (typename Triangulation<dim>::active_cell_iterator cell =
-           tria.begin_active(this->nsparam.mesh_adaptation.maxRefLevel);
+           tria.begin_active(
+             this->nsparam.mesh_adaptation.maximum_refinement_level);
          cell != tria.end();
          ++cell)
       cell->clear_refine_flag();
   for (typename Triangulation<dim>::active_cell_iterator cell =
-         tria.begin_active(this->nsparam.mesh_adaptation.minRefLevel);
-       cell != tria.end_active(this->nsparam.mesh_adaptation.minRefLevel);
+         tria.begin_active(
+           this->nsparam.mesh_adaptation.minimum_refinement_level);
+       cell !=
+       tria.end_active(this->nsparam.mesh_adaptation.minimum_refinement_level);
        ++cell)
     cell->clear_coarsen_flag();
 
