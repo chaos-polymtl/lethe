@@ -17,8 +17,8 @@
  * Author: Simon Gauvin, Polytechnique Montreal, 2019
  */
 
-#ifndef LETHE_NONLINEARSOLVER
-#define LETHE_NONLINEARSOLVER
+#ifndef lethe_non_linear_solver_h
+#define lethe_non_linear_solver_h
 
 #include <deal.II/lac/affine_constraints.h>
 

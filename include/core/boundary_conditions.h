@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#ifndef LETHE_BOUNDARYCONDITIONS_H
-#define LETHE_BOUNDARYCONDITIONS_H
+#ifndef lethe_boundary_conditions_h
+#define lethe_boundary_conditions_h
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
