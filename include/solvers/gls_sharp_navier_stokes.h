@@ -67,7 +67,7 @@ private:
   vertices_cell_mapping();
 
   void
-  define_particules();
+  define_particles();
 
   void
   force_on_ib();
@@ -77,9 +77,9 @@ private:
 
 
   double
-  calculate_L2_error_particules();
+  calculate_L2_error_particles();
   void
-  finish_time_step_particules();
+  finish_time_step_particles();
 
 
 
@@ -167,7 +167,7 @@ private:
     double radius=0.21;
     double radius_2=0.6;
     bool couette= false;
-    std::vector<std::vector<double>> particules;
+    std::vector<std::vector<double>> particles;
     bool initial_step_bool;
     unsigned int iter_ib=0;
     Vector<double> ib_dof;

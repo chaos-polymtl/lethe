@@ -855,7 +855,7 @@ namespace Parameters
   }
 
   void
-  Particules::declare_default_entry(ParameterHandler &prm)
+  Particles::declare_default_entry(ParameterHandler &prm)
   {
     prm.declare_entry("X", "0", Patterns::Double(), "X cor ");
     prm.declare_entry("Y", "0", Patterns::Double(), "Y cor ");
@@ -870,48 +870,49 @@ namespace Parameters
       "pressure X",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particule  for the location of the point where the pressure is impose inside the particule  in X ");
+      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in X ");
     prm.declare_entry(
       "pressure Y",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particule  for the location of the point where the pressure is impose inside the particule  in Y ");
+      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in Y ");
     prm.declare_entry(
       "pressure Z",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particule  for the location of the point where the pressure is impose inside the particule  in Z ");
+      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in Z ");
     prm.declare_entry("radius",
                       "0.2",
                       Patterns::Double(),
-                      "Particules raidus ");
+                      "Particles raidus ");
   }
 
   void
-  Particules::declare_parameters(ParameterHandler &prm)
+  Particles::declare_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("particules");
+    prm.enter_subsection("particles");
     {
       prm.declare_entry(
-        "number of particules",
+        "number of particles",
         "1",
         Patterns::Integer(),
-        "Number of particules reprensented by IB max number of particules = 10 ");
+        "Number of particles reprensented by IB max number of particles = 10 ");
+
       prm.declare_entry(
         "initial refinement",
         "0",
         Patterns::Integer(),
-        "number of refinement around the particules before the start of the simulation ");
+        "number of refinement around the particles before the start of the simulation ");
       prm.declare_entry(
         "stencil order",
         "2",
         Patterns::Integer(),
-        "Number of particules reprensented by IB max number of particules = 10 ");
+        "Number of particles reprensented by IB max number of particles = 10 ");
       prm.declare_entry(
         "assemble inside",
         "true",
         Patterns::Bool(),
-        "Bool to know if the solver assemble the equation inside the particule");
+        "Bool to know if the solver assemble the equation inside the particle");
       prm.declare_entry(
         "assemble type",
         "NS",
@@ -927,10 +928,15 @@ namespace Parameters
         "1.5",
         Patterns::Double(),
         "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
+      prm.declare_entry(
+                "nb force evaluation",
+                "100",
+                Patterns::Integer(),
+                "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
       prm.declare_entry("pressure mpi",
                         "true",
                         Patterns::Bool(),
-                        "Bool if using the mpi pressure inside the particule");
+                        "Bool if using the mpi pressure inside the particle");
       prm.declare_entry(
         "nb skip",
         "2",
@@ -938,64 +944,64 @@ namespace Parameters
         "Number of step skip per integration step of the position ");
 
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 0");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 0");
       {
         declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 1");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 1");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
 
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 2");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 2");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 3");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 3");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 4");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 4");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 5");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 5");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 6");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 6");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 7");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 7");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 8");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 8");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particule 9");
+        "x y z vx vy vz omega_x omega_y omega_z radius particle 9");
       {
-        Particules::declare_default_entry(prm);
+        Particles::declare_default_entry(prm);
       }
       prm.leave_subsection();
     }
@@ -1003,44 +1009,44 @@ namespace Parameters
   }
 
   void
-  Particules::parse_parameters(ParameterHandler &prm)
+  Particles::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("particules");
+    prm.enter_subsection("particles");
     {
-      nb                 = prm.get_integer("number of particules");
+      nb                 = prm.get_integer("number of particles");
       order              = prm.get_integer("stencil order");
       initial_refinement = prm.get_integer("initial refinement");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       assemble_inside    = prm.get_bool("assemble inside");
       pressure_mpi       = prm.get_bool("pressure mpi");
-      int_p_per_nb_iter  = prm.get_integer("nb skip");
+      nb_force_eval      = prm.get_integer("nb force evaluation");
       const std::string op = prm.get("assemble type");
       if (op == "NS")
-        P_assemble = Particule_Assemble_type ::NS;
+        P_assemble = Particle_Assemble_type ::NS;
       if (op == "mass")
-        P_assemble = Particule_Assemble_type ::mass;
+        P_assemble = Particle_Assemble_type ::mass;
 
-      particules.resize(nb);
+      particles.resize(nb);
       pressure_offset.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          particules[i].resize(10);
+          particles[i].resize(10);
           pressure_offset[i].resize(3);
           std::string section =
-            "x y z vx vy vz omega_x omega_y omega_z radius particule " +
+            "x y z vx vy vz omega_x omega_y omega_z radius particle " +
             std::to_string(i);
           prm.enter_subsection(section);
-          particules[i][0]      = prm.get_double("X");
-          particules[i][1]      = prm.get_double("Y");
-          particules[i][2]      = prm.get_double("Z");
-          particules[i][3]      = prm.get_double("VX");
-          particules[i][4]      = prm.get_double("VY");
-          particules[i][5]      = prm.get_double("VZ");
-          particules[i][6]      = prm.get_double("omega X");
-          particules[i][7]      = prm.get_double("omega Y");
-          particules[i][8]      = prm.get_double("omega Z");
-          particules[i][9]      = prm.get_double("radius");
+          particles[i][0]      = prm.get_double("X");
+          particles[i][1]      = prm.get_double("Y");
+          particles[i][2]      = prm.get_double("Z");
+          particles[i][3]      = prm.get_double("VX");
+          particles[i][4]      = prm.get_double("VY");
+          particles[i][5]      = prm.get_double("VZ");
+          particles[i][6]      = prm.get_double("omega X");
+          particles[i][7]      = prm.get_double("omega Y");
+          particles[i][8]      = prm.get_double("omega Z");
+          particles[i][9]      = prm.get_double("radius");
           pressure_offset[i][0] = prm.get_double("pressure X");
           pressure_offset[i][1] = prm.get_double("pressure Y");
           pressure_offset[i][2] = prm.get_double("pressure Z");
