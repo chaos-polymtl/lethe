@@ -209,17 +209,15 @@ private:
   MappingQGeneric<dim>                      mapping;
   TimerOutput                               computing_timer;
   Particles::ParticleHandler<dim, dim>      particle_handler;
-  int                                       DEM_step = 1;
-  double       DEM_time = parameters.simulation_control.dt;
-  const double dt       = parameters.simulation_control.dt;
 
-  bool insertion_step = 0;
+  // Simulation control for time stepping and I/Os
+  std::shared_ptr<SimulationControl> simulation_control;
+
   // particle diameter should be replaced by maximum diameter. I should ask
   // Bruno how to do it.
   const double neighborhood_threshold =
     parameters.model_parmeters.neighborhood_threshold *
     parameters.physicalProperties.diameter;
-  const int number_of_steps = parameters.simulationControl.final_time_step;
   const int pp_broad_search_frequency =
     parameters.model_parmeters.pp_broad_search_frequency;
   const int pp_fine_search_frequency =
