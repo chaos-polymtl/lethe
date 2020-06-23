@@ -210,8 +210,8 @@ private:
   TimerOutput                               computing_timer;
   Particles::ParticleHandler<dim, dim>      particle_handler;
   int                                       DEM_step = 1;
-  double       DEM_time = parameters.simulationControl.dt;
-  const double dt       = parameters.simulationControl.dt;
+  double       DEM_time = parameters.simulation_control.dt;
+  const double dt       = parameters.simulation_control.dt;
 
   bool insertion_step = 0;
   // particle diameter should be replaced by maximum diameter. I should ask
@@ -226,7 +226,6 @@ private:
     parameters.model_parmeters.pp_fine_search_frequency;
   const int pw_broad_search_frequency =
     parameters.model_parmeters.pw_broad_search_frequency;
-  const int output_frequency = parameters.simulationControl.outputFrequency;
   const int print_info_frequency =
     parameters.model_parmeters.print_info_frequency;
 

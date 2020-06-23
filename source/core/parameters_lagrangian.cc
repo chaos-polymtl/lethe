@@ -194,42 +194,6 @@ namespace Parameters
     }
 
     void
-    OutputProperties::declare_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("output properties");
-      {
-        prm.declare_entry("Output directory",
-                          "1",
-                          Patterns::FileName(),
-                          "Visulization output folder");
-
-        prm.declare_entry("General information file prefix",
-                          "1",
-                          Patterns::FileName(),
-                          "General information file (.pvtu) prefix");
-
-        prm.declare_entry("Result name prefix",
-                          "1",
-                          Patterns::FileName(),
-                          "Result (.vtu) name prefix");
-      }
-      prm.leave_subsection();
-    }
-
-    void
-    OutputProperties::parse_parameters(ParameterHandler &prm)
-    {
-      prm.enter_subsection("output properties");
-      {
-        output_folder       = prm.get("Output directory");
-        general_file_prefix = prm.get("General information file prefix");
-        result_prefix       = prm.get("Result name prefix");
-      }
-
-      prm.leave_subsection();
-    }
-
-    void
     ModelParameters::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("model parameters");

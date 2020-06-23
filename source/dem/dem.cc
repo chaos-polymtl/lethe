@@ -40,7 +40,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
-  , number_of_steps(parameters.simulationControl.final_time_step)
+  , number_of_steps(parameters.simulation_control.timeEnd < 0.25 ? 20000 :
+                                                                   50000)
 {
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
@@ -74,7 +75,7 @@ DEMSolver<dim>::read_mesh()
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
-  const int initial_size = parameters.mesh.initialRefinement;
+  const int initial_size = parameters.mesh.initial_refinement;
   triangulation.refine_global(initial_size);
 }
 
@@ -296,11 +297,11 @@ template <int dim>
 void
 DEMSolver<dim>::write_output_results()
 {
-  const std::string  folder        = parameters.simulationControl.output_folder;
-  const std::string  solution_name = parameters.simulationControl.output_name;
+  const std::string  folder = parameters.simulation_control.output_folder;
+  const std::string  solution_name = parameters.simulation_control.output_name;
   const unsigned int iter          = DEM_step;
   const double       time          = DEM_time;
-  const unsigned int group_files   = parameters.simulationControl.group_files;
+  const unsigned int group_files   = parameters.simulation_control.group_files;
 
   Visualization<dim> particle_data_out;
   particle_data_out.build_patches(particle_handler,
@@ -497,7 +498,7 @@ DEMSolver<dim>::solve()
       computing_timer.enter_subsection("visualization");
       // REFACTORING
       // Should be put inside a function
-      if (DEM_step % output_frequency == 0)
+      if (DEM_step % parameters.simulation_control.output_frequency == 0)
         {
           write_output_results();
         }

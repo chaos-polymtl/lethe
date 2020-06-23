@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 0.00001
-  set step end       					 = 50000
+  set time end       					 = 0.5
   set output frequency            			 = 1000000
 end
 
@@ -72,16 +72,6 @@ subsection insertion info
     set Insertion distance threshold			= 2
     set Insertion random number range			= 0.75
     set Insertion random number seed			= 19
-end
-
-#---------------------------------------------------
-# Properties of particles (for visualization)
-#---------------------------------------------------
-subsection output properties
-    set Output directory				= results
-    set General information file prefix                 = Globals
-    set Result name prefix                              = Output
-
 end
 
 #---------------------------------------------------

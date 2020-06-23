@@ -91,23 +91,6 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
-    struct OutputProperties
-    {
-      // Output directory
-      std::string output_folder;
-
-      // General information file (.pvtu) prefix
-      std::string general_file_prefix;
-
-      // Result (.vtu) name prefix
-      std::string result_prefix;
-
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
-
     struct ModelParameters
     {
       // Particle-particle broad search frequency

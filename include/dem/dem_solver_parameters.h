@@ -31,16 +31,14 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh              mesh;
-  Parameters::Testing           test;
-  Parameters::Timer             timer;
-  Parameters::SimulationControl simulationControl; // To be deprecated
+  Parameters::Mesh                           mesh;
+  Parameters::Testing                        test;
+  Parameters::Timer                          timer;
+  Parameters::SimulationControl              simulation_control;
   Parameters::Lagrangian::PhysicalProperties physicalProperties;
   Parameters::Lagrangian::InsertionInfo      insertionInfo;
-  Parameters::Lagrangian::OutputProperties   outputProperties;
   Parameters::Lagrangian::ModelParameters    model_parmeters;
 
-  SimulationControl simulation_control;
 
   void
   declare(ParameterHandler &prm)
@@ -51,7 +49,6 @@ public:
     Parameters::Testing::declare_parameters(prm);
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
-    Parameters::Lagrangian::OutputProperties::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
   }
 
@@ -63,10 +60,8 @@ public:
     timer.parse_parameters(prm);
     physicalProperties.parse_parameters(prm);
     insertionInfo.parse_parameters(prm);
-    simulationControl.parse_parameters(prm);
-    outputProperties.parse_parameters(prm);
     model_parmeters.parse_parameters(prm);
-    simulation_control.initialize(prm);
+    simulation_control.parse_parameters(prm);
   }
 };
 
