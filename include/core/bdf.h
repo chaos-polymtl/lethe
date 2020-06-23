@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#ifndef LETHE_BDF_H
-#define LETHE_BDF_H
+#ifndef lethe_bdf_h
+#define lethe_bdf_h
 
 #include <deal.II/lac/vector.h>
 
@@ -27,13 +27,36 @@
 using namespace dealii;
 
 /**
- * Calculate the coefficients required for BDF integration of order n
- * from order $n=1$ to order $n=5$.
- * The formulas are derived analytically, but the coefficients
- * Could also be determined through recursion on the fly.
+ * @brief Calculate the coefficients required for BDF integration of order n.
+ * The coefficients are determined through a recursion algorithm.
+ * The algorithm is taken from : Hay, Alexander, et al. "hp-Adaptive time
+ * integration based on the BDF for viscous flows." Journal of Computational
+ * Physics 291 (2015): 151-176.
+ *
+ * @param order The order of the BDF method. The BDF method of order n requires n+1 arrays
+ *
+ * @param time_steps a vector containing all the time steps. The time steps should be in reverse order.
+ * For example, if the method is a BDF2, it uses three values for the time : (t)
+ * (t-dt_1) and (t-dt_2). Thus the time step vector should contain dt_1 and
+ * dt_2.
  */
 Vector<double>
-bdf_coefficients(unsigned int order, const std::vector<double> dt);
+bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
+
+
+/**
+ * @brief Recursion function to calculate the bdf coefficient
+ *
+ * @param order Order of the bdf method
+ *
+ * @param n Integer required for the recursive function calculation
+ *
+ * @param j Integer required for the recursive function calculation
+ *
+ * @param times Vector of the times corresponding to the various iteration in reverse order.
+ * For example in a BDF2 method, three values of the time must be in the array :
+ * t, t-dt_1 and t-dt_2.
+ */
 Vector<double>
 delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
 

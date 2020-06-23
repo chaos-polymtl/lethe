@@ -25,6 +25,25 @@
 
 using namespace dealii;
 
+// Utility function to create tables from vectors of scalars/tensors as
+// dependent or independent variables.
+
+
+/**
+ * @brief Generate a table from a vector of scalar and a vector of tensor<1,dim>
+ *
+ * @param independent_values A vector of scalar values that serve as the independent
+ * variable. For example time.
+ *
+ * @param independent_column_name The name of the independent variable
+ *
+ * @param dependent_vector. A vector of Tensor<1,dim> which are the dependent variable. For example force.
+ *
+ * @param dependent_column_names. A vector of string which are the label of dependent tensor
+ *
+ * @param display_precision. An integer which indicate the precision at which the tables are written
+ *
+ */
 template <int dim, typename T>
 TableHandler
 make_table_scalars_tensors(
@@ -34,6 +53,21 @@ make_table_scalars_tensors(
   const std::vector<std::string> &   dependent_column_name,
   const unsigned int                 display_precision);
 
+/**
+ * @brief Generate a table from a vector of tensor<1,dim> and a vector of tensor<1,dim>
+ *
+ * @param independent_values A vector of Tensor<1,dim> that serve as the independent
+ * variable. For example position.
+ *
+ * @param independent_column_name A vector of string which are the label of the independent tensor.
+ *
+ * @param dependent_vector. A vector of Tensor<1,dim> which are the dependent variable. For example force.
+ *
+ * @param dependent_column_names. A vector of string which are the label of dependent tensor.
+ *
+ * @param display_precision. An integer which indicate the precision at which the tables are written.
+ *
+ */
 template <int dim>
 TableHandler
 make_table_tensors_tensors(
@@ -43,6 +77,22 @@ make_table_tensors_tensors(
   const std::vector<std::string> &   dependent_column_name,
   const unsigned int                 display_precision);
 
+
+/**
+ * @brief Generate a table from a vector of tensor<1,dim> and a vector of tensor<1,dim>.
+ *
+ * @param independent_values A vector of Tensor<1,dim> that serve as the independent
+ * variable. For example position.
+ *
+ * @param independent_column_name The name of the independent variable.
+ *
+ * @param dependent_vector. A vector of scalar which are the dependent variable. For example energy.
+ *
+ * @param dependent_column_names. The label of the dependent scalar.
+ *
+ * @param display_precision. An integer which indicate the precision at which the tables are written.
+ *
+ */
 template <int dim>
 TableHandler
 make_table_tensors_scalars(

@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#ifndef LETHE_INITIALCONDITIONS_H
-#define LETHE_INITIALCONDITIONS_H
+#ifndef lethe_initial_conditions_h
+#define lethe_initial_conditions_h
 
 #include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/function.h>

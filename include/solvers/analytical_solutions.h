@@ -31,7 +31,7 @@
 using namespace dealii;
 /**
  * The analytical solution class provides an interface for all common
- * Element required for the calculation of analytical solution
+ * dlement required for the calculation of analytical solution
  * All equation-specific analytical solution should derive
  * from the base class but also call it's declare_parameters and
  *parse_parameters routine. This allows specialize class to focus on their

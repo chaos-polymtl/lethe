@@ -51,7 +51,7 @@ write_vtu_and_pvd(PVDHandler &        pvd_handler,
       std::string pvdPrefix = (folder + file_prefix + ".pvd");
       pvd_handler.append(time, pvtu_filename);
       std::ofstream pvd_output(pvdPrefix.c_str());
-      DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names_);
+      DataOutBase::write_pvd_record(pvd_output, pvd_handler.times_and_names);
     }
 
   const unsigned int my_file_id =

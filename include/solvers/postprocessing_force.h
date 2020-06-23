@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
-#ifndef LETHE_FORCECALCULATION_H
-#define LETHE_FORCECALCULATION_H
+#ifndef lethe_postprocessing_force_h
+#define lethe_postprocessing_force_h
 
 // Base
 #include <deal.II/base/quadrature_lib.h>

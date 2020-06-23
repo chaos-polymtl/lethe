@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#ifndef LETHE_GDNS_H
-#define LETHE_GDNS_H
+#ifndef lethe_gd_navier_stokes_h
+#define lethe_gd_navier_stokes_h
 
 #include <deal.II/lac/trilinos_block_sparse_matrix.h>
 
@@ -54,7 +54,7 @@ private:
 };
 
 /**
- * A solver class for the Steady-Sate  Navier-Stokes equation using Grad-Div
+ * A solver class for the Navier-Stokes equation using Grad-Div
  * stabilization
  *
  * @tparam dim An integer that denotes the dimension of the space in which
@@ -72,7 +72,7 @@ class GDNavierStokesSolver
 {
 public:
   GDNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                       const unsigned int                 degreeVelocity,
+                       const unsigned int                 velocity_fem_degree,
                        const unsigned int                 degreePressure);
   ~GDNavierStokesSolver();
 

@@ -18,8 +18,8 @@
  */
 
 
-#ifndef LETHE_SDIRK_H
-#define LETHE_SDIRK_H
+#ifndef lethe_sdirk_h
+#define lethe_sdirk_h
 
 #include <deal.II/lac/full_matrix.h>
 
@@ -28,9 +28,12 @@
 using namespace dealii;
 
 /**
- * Returns the SDIRK coefficient for a given order of the scheme
+ * @brief Calculates the SDIRK coefficient
+ *
+ * @param order Order of the SDIRK method to be used
+ *
+ * @param time_step Value of the time step used for time integration.
  */
-
 FullMatrix<double>
 sdirk_coefficients(const unsigned int order, const double time_step);
 

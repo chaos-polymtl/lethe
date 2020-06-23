@@ -210,10 +210,10 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocityOrder    = prm.get_integer("velocity order");
-      pressureOrder    = prm.get_integer("pressure order");
-      quadraturePoints = prm.get_integer("quadrature points");
-      qmapping_all     = prm.get_bool("qmapping all");
+      velocity_order           = prm.get_integer("velocity order");
+      pressure_order           = prm.get_integer("pressure order");
+      number_quadrature_points = prm.get_integer("quadrature points");
+      qmapping_all             = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
   }
@@ -298,30 +298,42 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether from the post-processing values should be printed "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("output boundaries",
-                        "false",
-                        Patterns::Bool(),
-                        "Output the boundaries of the domain");
-      prm.declare_entry("calculate kinetic energy",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of total kinetic energy");
-      prm.declare_entry("calculate enstrophy",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable calculation of total enstrophy");
+
+      prm.declare_entry(
+        "output boundaries",
+        "false",
+        Patterns::Bool(),
+        "Output the boundaries of the domain along with their ID");
+
+      prm.declare_entry(
+        "calculate kinetic energy",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of total kinetic energy. The total kinetic "
+        "energy is calculated from the volumetric integral of the kinetic energy over the domain.");
+
+      prm.declare_entry(
+        "calculate enstrophy",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of total enstrophy. The total enstrophy "
+        "is calculated from the volumetric integral of the enstrophy over the domain.");
+
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
                         Patterns::FileName(),
                         "File output kinetic energy");
+
       prm.declare_entry("enstrophy name",
                         "enstrophy",
                         Patterns::FileName(),
                         "File output enstrophy");
+
       prm.declare_entry("calculation frequency",
                         "1",
                         Patterns::Integer(),
                         "Calculation frequency");
+
       prm.declare_entry("output frequency",
                         "1",
                         Patterns::Integer(),
@@ -361,14 +373,19 @@ namespace Parameters
         "verbosity",
         "verbose",
         Patterns::Selection("quiet|verbose"),
-        "State whether from the non-linear solver should be printed "
+        "State whether the outputs from the non-linear solver should be printed. "
         "Choices are <quiet|verbose>.");
 
-      prm.declare_entry("solver",
-                        "newton",
-                        Patterns::Selection("newton|skip_newton"),
-                        "Non-linear solver that will be used "
-                        "Choices are <newton|skip_newton>.");
+      prm.declare_entry(
+        "solver",
+        "newton",
+        Patterns::Selection("newton|skip_newton"),
+        "Non-linear solver that will be used "
+        "Choices are <newton|skip_newton>."
+        " The newton solver is a traditional newton solver with"
+        "an analytical jacobian formulation. The jacobian matrix and the preconditioner"
+        "are assembled every iteration. In the skip_newton method, the jacobian matrix and"
+        "the pre-conditioner are re-assembled every skip_iteration.");
 
       prm.declare_entry("tolerance",
                         "1e-6",
@@ -378,10 +395,14 @@ namespace Parameters
                         "10",
                         Patterns::Integer(),
                         "Maximum number of Newton Iterations");
-      prm.declare_entry("skip iterations",
-                        "1",
-                        Patterns::Integer(),
-                        "Time steps to skip before rebuilding the matrix");
+
+      prm.declare_entry(
+        "skip iterations",
+        "1",
+        Patterns::Integer(),
+        "Non-linear iterations to skip before rebuilding the jacobian matrix "
+        "and the preconditioner");
+
       prm.declare_entry("residual precision",
                         "4",
                         Patterns::Integer(),
@@ -398,13 +419,19 @@ namespace Parameters
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Parameters::Verbosity::verbose;
-      if (op == "quiet")
+      else if (op == "quiet")
         verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(std::runtime_error("Invalid verbosity level"));
+
       const std::string str_solver = prm.get("solver");
       if (str_solver == "newton")
         solver = SolverType::newton;
-      if (str_solver == "skip_newton")
+      else if (str_solver == "skip_newton")
         solver = SolverType::skip_newton;
+      else
+        throw(std::runtime_error("Invalid non-linear solver "));
+
       tolerance         = prm.get_double("tolerance");
       max_iterations    = prm.get_integer("max iterations");
       skip_iterations   = prm.get_integer("skip iterations");
@@ -452,13 +479,13 @@ namespace Parameters
         else if (op == "dealii")
           type = Type::dealii;
         else
-          throw(std::string(
+          throw(std::runtime_error(
             "Error, invalid mesh type. Choices are gmsh and dealii"));
       }
 
       file_name = prm.get("file name");
 
-      initialRefinement = prm.get_integer("initial refinement");
+      initial_refinement = prm.get_integer("initial refinement");
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");
@@ -485,7 +512,7 @@ namespace Parameters
       prm.declare_entry(
         "method",
         "gmres",
-        Patterns::Selection("gmres|bicgstab|amg|direct"),
+        Patterns::Selection("gmres|bicgstab|amg"),
         "The iterative solver for the linear system of equations. "
         "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative solver "
         "with ILU preconditioning. bicgstab is a BICGSTAB iterative solver "
@@ -510,12 +537,12 @@ namespace Parameters
                         "Maximum solver iterations");
 
       prm.declare_entry("ilu preconditioner fill",
-                        "1",
+                        "0",
                         Patterns::Double(),
                         "Ilu preconditioner fill");
 
       prm.declare_entry("ilu preconditioner absolute tolerance",
-                        "1e-6",
+                        "1e-8",
                         Patterns::Double(),
                         "Ilu preconditioner tolerance");
 
@@ -525,7 +552,7 @@ namespace Parameters
                         "Ilu relative tolerance");
 
       prm.declare_entry("amg preconditioner ilu fill",
-                        "1",
+                        "0",
                         Patterns::Double(),
                         "amg preconditioner ilu smoother/coarsener fill");
 
@@ -573,8 +600,11 @@ namespace Parameters
       const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Parameters::Verbosity::verbose;
-      if (op == "quiet")
+      else if (op == "quiet")
         verbosity = Parameters::Verbosity::quiet;
+      else
+        throw(
+          std::runtime_error("Unknown verbosity mode for the linear solver"));
 
       const std::string sv = prm.get("method");
       if (sv == "amg")
@@ -584,7 +614,7 @@ namespace Parameters
       else if (sv == "bicgstab")
         solver = SolverType::bicgstab;
       else
-        throw(
+        throw std::runtime_error(
           "Error, invalid iterative solver type. Choices are amg, gmres or bicgstab");
 
       residual_precision = prm.get_integer("residual precision");
@@ -683,12 +713,12 @@ namespace Parameters
         fractionType = FractionType::number;
       if (fop == "fraction")
         fractionType = FractionType::fraction;
-      maxNbElements      = prm.get_integer("max number elements");
-      maxRefLevel        = prm.get_integer("max refinement level");
-      minRefLevel        = prm.get_integer("min refinement level");
-      frequency          = prm.get_integer("frequency");
-      fractionCoarsening = prm.get_double("fraction coarsening");
-      fractionRefinement = prm.get_double("fraction refinement");
+      maximum_number_elements  = prm.get_integer("max number elements");
+      maximum_refinement_level = prm.get_integer("max refinement level");
+      minimum_refinement_level = prm.get_integer("min refinement level");
+      frequency                = prm.get_integer("frequency");
+      coarsening_fraction      = prm.get_double("fraction coarsening");
+      refinement_fraction      = prm.get_double("fraction refinement");
     }
     prm.leave_subsection();
   }
@@ -698,10 +728,13 @@ namespace Parameters
   {
     prm.enter_subsection("test");
     {
-      prm.declare_entry("enable",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable testing mode of a solver");
+      prm.declare_entry(
+        "enable",
+        "false",
+        Patterns::Bool(),
+        "Enable testing mode of a solver. Some solvers have a specific"
+        "testing mode which enables the output of debug variables. This"
+        "testing mode is generally used only for the automatic testing bench using ctest.");
     }
     prm.leave_subsection();
   }
@@ -729,10 +762,13 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Frequency for checkpointing");
-      prm.declare_entry("checkpoint",
-                        "false",
-                        Patterns::Bool(),
-                        "Enable checkpointing");
+      prm.declare_entry(
+        "checkpoint",
+        "false",
+        Patterns::Bool(),
+        "Enable checkpointing. Checkpointing creates a restart"
+        "point from which the simulation can be restarted from.");
+
       prm.declare_entry("frequency",
                         "1",
                         Patterns::Integer(),
@@ -759,11 +795,15 @@ namespace Parameters
   {
     prm.enter_subsection("velocity source");
     {
-      prm.declare_entry("type",
-                        "none",
-                        Patterns::Selection("none|srf"),
-                        "Velocity-dependent source terms"
-                        "Choices are <none|srf>.");
+      prm.declare_entry(
+        "type",
+        "none",
+        Patterns::Selection("none|srf"),
+        "Velocity-dependent source terms"
+        "Choices are <none|srf>. The srf stands"
+        "for single rotating frame and adds"
+        "the coriolis and the centrifugal force to the Navier-Stokes equations");
+
       prm.declare_entry(
         "omega_x",
         "0 ",
@@ -796,7 +836,7 @@ namespace Parameters
       else if (op == "srf")
         type = VelocitySourceType::srf;
       else
-        throw("Error, invalid velocity source type");
+        throw std::runtime_error("Error, invalid velocity source type");
 
       omega_x = prm.get_double("omega_x");
       omega_y = prm.get_double("omega_y");

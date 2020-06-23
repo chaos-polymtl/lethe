@@ -128,7 +128,7 @@ class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
   NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,
-                   const unsigned int                 degreeVelocity,
+                   const unsigned int                 velocity_fem_degree,
                    const unsigned int                 degreePressure);
 
   virtual ~NavierStokesBase()
@@ -293,9 +293,9 @@ protected:
   VectorType solution_m3;
 
   // Finite element order used
-  const unsigned int degreeVelocity_;
-  const unsigned int degreePressure_;
-  unsigned int       degreeQuadrature_;
+  const unsigned int velocity_fem_degree;
+  const unsigned int pressure_fem_degree;
+  unsigned int       number_quadrature_points;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulationControl;
@@ -308,8 +308,8 @@ protected:
   ConvergenceTable error_table;
 
   // Force analysis
-  std::vector<Tensor<1, dim>> forces_;
-  std::vector<Tensor<1, 3>>   torques_;
+  std::vector<Tensor<1, dim>> forces_on_boundaries;
+  std::vector<Tensor<1, 3>>   torques_on_boundaries;
   std::vector<TableHandler>   forces_tables;
   std::vector<TableHandler>   torques_tables;
 };

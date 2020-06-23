@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2019 by the Lethe authors
+ * Copyright (C) 2019 - 2020 by the Lethe authors
  *
  * This file is part of the Lethe library
  *
@@ -14,7 +14,16 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Simon Gauvin, Polytechnique Montreal, 2019
+ * Author: Simon Gauvin, Bruno Blais, Polytechnique Montreal, 2019-
+ */
+
+/*
+ * This file defines the parameter namespace. This namespace
+ * contains the classical structures which are used to structure
+ * the various simulations that can be carried out using Lethe.
+ * The parameters structures are constructed in logical building
+ * blocks so that a solver can adequately choose which blocks
+ * are required.
  */
 
 #include <deal.II/base/conditional_ostream.h>
@@ -23,8 +32,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
-#ifndef LETHE_GLS_PARAMETERS_H
-#  define LETHE_GLS_PARAMETERS_H
+#ifndef lethe_parameters_h
+#  define lethe_parameters_h
 
 using namespace dealii;
 
@@ -35,6 +44,11 @@ namespace Parameters
     quiet,
     verbose
   };
+
+  /**
+   * @brief SimulationControl - Defines the parameter that control the flow of the simulation
+   * as well as the frequency of the output of the solutions.
+   */
 
   struct SimulationControl
   {
@@ -112,9 +126,14 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief PhysicalProperties - Define the possible physical properties.
+   * All continuum equations share the same physical properties object but only
+   * take the subset of properties they require
+   */
   struct PhysicalProperties
   {
-    // Kinematic viscosity (mu/rho)
+    // Kinematic viscosity (mu/rho) in units of L^2/s
     double viscosity;
 
     static void
@@ -123,6 +142,13 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
+  /**
+   * @brief Timer - Defines the parameters that control the timing of the simulation.
+   * Lethe supports advanced timing features which supports the monitoring of
+   * specific sub-sections of the software to evaluate the relative
+   * workload.
+   */
   struct Timer
   {
     // Time measurement in the simulation. None, at each iteration, only at the
@@ -133,6 +159,7 @@ namespace Parameters
       iteration,
       end
     };
+
     Type type;
     static void
     declare_parameters(ParameterHandler &prm);
@@ -140,10 +167,13 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Forces - Defines the parameters for the
+   * force calculation on boundaries of the domain.
+   */
   struct Forces
   {
-    // Type of verbosity for the iterative solver
-
+    // Type of verbosity for the force calculation
     Verbosity verbosity;
 
     // Enable force post-processing
@@ -176,7 +206,13 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-
+  /**
+   * @brief Postprocessing - Defines the parameters
+   * for the post-processing. In Lethe, post-processing
+   * implies the calculation of quantities derived from the principal
+   * variables. For example, the integral kinetic energy or the integral
+   * enstrophy.
+   */
   struct PostProcessing
   {
     Verbosity verbosity;
@@ -190,7 +226,7 @@ namespace Parameters
     // Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
-    // Frequency of the output
+    // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
 
     // Frequency of the output
@@ -208,16 +244,24 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief FEM - The finite element section
+   * controls the properties of the finite element method. This section
+   * constrols the order of polynomial integration and the number of quadrature
+   * points within the cells.
+   */
   struct FEM
   {
     // Interpolation order velocity
-    unsigned int velocityOrder;
+    unsigned int velocity_order;
 
     // Interpolation order pressure
-    unsigned int pressureOrder;
+    unsigned int pressure_order;
 
-    // Number of quadrature points
-    unsigned int quadraturePoints;
+    // Number of quadrature points per dimension
+    // The final number of quadrature point will be
+    // number_quadrature_points^dim
+    unsigned int number_quadrature_points;
 
     // Apply high order mapping everywhere
     bool qmapping_all;
@@ -228,6 +272,11 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
+  /**
+   * @brief NonLinearSolver - Parameter that controls the solution of the
+   * non-linear problems.
+   */
   struct NonLinearSolver
   {
     // Type of linear solver
@@ -261,6 +310,10 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief LinearSolver - Parameters that controls the solution of the
+   * linear system of equations that arise from the finite element problem.
+   */
   struct LinearSolver
   {
     // Type of linear solver
@@ -325,34 +378,18 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Mesh - Parameters that control mesh reading and mesh generation.
+   */
   struct Mesh
   {
-    // GMSH or dealii primitive
+    // GMSH or dealii
     enum class Type
     {
       gmsh,
-      dealii,
-      primitive
+      dealii
     };
     Type type;
-
-    // Primitive types
-    enum class PrimitiveType
-    {
-      hyper_cube,
-      hyper_shell,
-      cylinder
-    };
-    PrimitiveType primitiveType;
-
-    bool colorize;
-
-    double arg1;
-    double arg2;
-    double arg3;
-    double arg4;
-    double arg5;
-    double arg6;
 
     // File name of the mesh
     std::string file_name;
@@ -364,7 +401,7 @@ namespace Parameters
     std::string grid_arguments;
 
     // Initial refinement level of primitive mesh
-    unsigned int initialRefinement;
+    unsigned int initial_refinement;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -372,6 +409,11 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief MeshAdaption - Parameters that control dynamic mesh adaptation.
+   * Dynamic mesh adaptation in Lethe is very flexible and can be both local
+   * and global.
+   */
   struct MeshAdaptation
   {
     // Type of mesh adaptation
@@ -388,7 +430,7 @@ namespace Parameters
       pressure
     } variable;
 
-    // Decision factor for KELLY refinement (number or fraction)
+    // Decision factor for Kelly refinement (number or fraction)
     enum class FractionType
     {
       number,
@@ -396,22 +438,22 @@ namespace Parameters
     } fractionType;
 
     // Maximum number of elements
-    unsigned int maxNbElements;
+    unsigned int maximum_number_elements;
 
     // Maximum refinement level
-    unsigned int maxRefLevel;
+    unsigned int maximum_refinement_level;
 
-    // Maximum refinement level
-    unsigned int minRefLevel;
+    // Minimum refinement level
+    unsigned int minimum_refinement_level;
 
     // Refinement after frequency iter
     unsigned int frequency;
 
-    // Refinement fractioni havent used ILUT much)
-    double fractionRefinement;
+    // Refinement fraction
+    double refinement_fraction;
 
     // Coarsening fraction
-    double fractionCoarsening;
+    double coarsening_fraction;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -419,6 +461,12 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
+  /**
+   * @brief Testing - Some solvers have a specific testing
+   * mode that can be enabled to output more variables to the
+   * terminal. This is enabled using the Testing parameters.
+   */
   struct Testing
   {
     bool enabled;
@@ -428,10 +476,14 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+
+  /**
+   * @brief Restart - Controls writing and reading
+   * simulation checkpoints.
+   */
+
   struct Restart
   {
-    // Time measurement in the simulation. None, at each iteration, only at the
-    // end
     std::string  filename;
     bool         restart;
     bool         checkpoint;
@@ -442,9 +494,17 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief VelocitySource - Adds velocity-dependent
+   * source term to the Navier-Stokes equations with
+   * the appropriate jacobian matrix. Currently only
+   * a change to a rotating frame is supported, but additional
+   * terms such as a Darcy force or similar could be easily
+   * added.
+   */
+
   struct VelocitySource
   {
-    // Type of linear solver
     enum class VelocitySourceType
     {
       none,

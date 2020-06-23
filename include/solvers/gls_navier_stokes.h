@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#ifndef LETHE_GLSNS_H
-#define LETHE_GLSNS_H
+#ifndef lethe_gls_navier_stokes_h
+#define lethe_gls_navier_stokes_h
 
 #include "navier_stokes_base.h"
 
@@ -40,7 +40,7 @@ class GLSNavierStokesSolver
 {
 public:
   GLSNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                        const unsigned int                 degreeVelocity,
+                        const unsigned int                 velocity_fem_degree,
                         const unsigned int                 degreePressure);
   ~GLSNavierStokesSolver();
 

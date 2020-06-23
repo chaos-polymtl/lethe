@@ -17,8 +17,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#ifndef LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
-#define LETHE_NAVIERSTOKESSOLVERPARAMETERS_H
+#ifndef lethe_navier_stokes_solver_parameters_h
+#define lethe_navier_stokes_solver_parameters_h
 
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>

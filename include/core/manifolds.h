@@ -41,6 +41,11 @@ using namespace dealii;
 
 namespace Parameters
 {
+  /**
+   * @brief Manifolds - This class manages attaching manifolds to
+   * faces when a manual attachment is required (for example if the mesh
+   * is coming from a GMSH file)
+   */
   class Manifolds
   {
   public:
@@ -85,12 +90,15 @@ namespace Parameters
   };
 } // namespace Parameters
 
-// Outputs the boundary ID of a face
+/**
+ * @brief BounearyPostprocessor Post-processor class used to attach the boundary
+ * id to the faces when outputting the surfaces within the domain.
+ */
 template <int dim>
-class boundary_postprocessor : public DataPostprocessorScalar<dim>
+class BoundaryPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
-  boundary_postprocessor()
+  BoundaryPostprocessor()
     : DataPostprocessorScalar<dim>("boundary_id", update_quadrature_points)
   {}
   virtual void

@@ -56,15 +56,34 @@ public:
     delete non_linear_solver;
   }
 
+  /**
+   * @brief Call for the assembly of the matrix and the right-hand side
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) = 0;
 
+  /**
+   * @brief Call for the assembly of right-hand side
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) = 0;
 
+
+  /**
+   * @brief Call for the solution of the linear system of equation
+   *
+   * @param initial_step Provides the linear solver with indication if this solution is the first
+   * one for the system of equation or not
+   *
+   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated
+   */
   virtual void
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true) = 0;
