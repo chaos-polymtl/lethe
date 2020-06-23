@@ -36,9 +36,9 @@ GLSNitscheNavierStokesSolver<dim,spacedim>::GLSNitscheNavierStokesSolver(
   : GLSNavierStokesSolver<spacedim>(
       p_nsparam,
       p_degreeVelocity,
-      p_degreePressure)
+      p_degreePressure), solid(p_nsparam, this->triangulation)
 {
-  //solid = SolidBase<dim, spacedim>(this->nsparam, this->triangulation);
+  
 }
 
 template <int dim, int spacedim>

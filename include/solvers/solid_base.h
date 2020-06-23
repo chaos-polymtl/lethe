@@ -69,7 +69,7 @@ class SolidBase
 public:
 
   //Member functions
-  SolidBase(NavierStokesSolverParameters<dim> &param,
+  SolidBase(NavierStokesSolverParameters<spacedim> &param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria);
   void initial_setup();
   void setup_particles();
@@ -86,10 +86,10 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> solid_tria;
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>      fluid_tria;
   std::unique_ptr<DoFHandler<dim, spacedim>>                             solid_dh;
-  std::unique_ptr<FESystem<dim, spacedim>>                               solid_fe;
+  FESystem<dim, spacedim>                                                solid_fe;
   std::shared_ptr<Particles::ParticleHandler<spacedim>>                  solid_particle_handler;
 
-  NavierStokesSolverParameters<dim>                                      param;
+  NavierStokesSolverParameters<spacedim>                                 param;
 };
 
 #endif
