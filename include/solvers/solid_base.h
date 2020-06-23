@@ -24,24 +24,24 @@
 
 // Dofs
 #include <deal.II/dofs/dof_accessor.h>
-#include <deal.II/dofs/dof_handler.h> 
+#include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#include <deal.II/fe/fe_q.h> 
-#include <deal.II/fe/fe_system.h> 
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
 
 // Distributed
-#include <deal.II/distributed/tria_base.h> 
-#include <deal.II/distributed/tria.h> 
+#include <deal.II/distributed/tria.h>
+#include <deal.II/distributed/tria_base.h>
 
 // Particles
-#include <deal.II/particles/data_out.h> 
-#include <deal.II/particles/particle_handler.h> 
+#include <deal.II/particles/data_out.h>
 #include <deal.II/particles/particle_accessor.h>
+#include <deal.II/particles/particle_handler.h>
 
 // Lethe Includes
 #include <core/parameters.h>
-#include <solvers/navier_stokes_solver_parameters.h> 
+#include <solvers/navier_stokes_solver_parameters.h>
 
 // Std
 #include <fstream>
@@ -50,7 +50,7 @@
 using namespace dealii;
 
 /**
- * A base class that generates a particle handler for the solid 
+ * A base class that generates a particle handler for the solid
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
@@ -64,32 +64,35 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim = dim>
-class SolidBase 
+class SolidBase
 {
 public:
-
-  //Member functions
+  // Member functions
   SolidBase(NavierStokesSolverParameters<spacedim> &param,
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria);
-  void initial_setup();
-  void setup_particles();
-  void output_particles(std::string fprefix) const;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>>  generate_solid_particle_handler();
+            std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
+              fluid_tria);
+  void
+  initial_setup();
+  void
+  setup_particles();
+  void
+  output_particles(std::string fprefix) const;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>>
+  generate_solid_particle_handler();
 
 private:
-
   // Member variables
   MPI_Comm           mpi_communicator;
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
 
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>> solid_tria;
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>      fluid_tria;
-  std::unique_ptr<DoFHandler<dim, spacedim>>                             solid_dh;
-  FESystem<dim, spacedim>                                                solid_fe;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>>                  solid_particle_handler;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+                                                                    solid_tria;
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
+  DoFHandler<dim, spacedim>                                         solid_dh;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
 
-  NavierStokesSolverParameters<spacedim>                                 param;
+  NavierStokesSolverParameters<spacedim> param;
 };
 
 #endif
