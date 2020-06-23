@@ -39,8 +39,8 @@ namespace BoundaryConditions
    * @brief This class is the base class for all boundary conditions. It stores
    * the general information that all boundary condition share.
    * In Lethe, boundary conditions are identified with an id, a type and, in the
-   * special case of periodic boundary conditoin, a periodic matching id
-   * (periodic_id) and a periodic direction
+   * special case of periodic boundary condition, a periodic matching id
+   * (periodic_id) and a periodic direction (0, 1 or 2).
    */
   template <int dim>
   class BoundaryConditions
@@ -62,7 +62,7 @@ namespace BoundaryConditions
   };
 
   /**
-   * @brief This class managed the functions associated with function boundary conditions
+   * @brief This class manages the functions associated with function-type boundary conditions
    * of the Navier-Stokes equations
    *
    */
@@ -81,10 +81,9 @@ namespace BoundaryConditions
 
 
   /**
-   * @brief This class manages the boundary conditions for Navier-Strokes solver
+   * @brief This class manages the boundary conditions for Navier-Stokes solver
    * It introduces the boundary functions and declares the boundary conditions
-   * coherently
-   *
+   * coherently.
    */
   template <int dim>
   class NSBoundaryConditions : public BoundaryConditions<dim>
@@ -105,6 +104,10 @@ namespace BoundaryConditions
     createDefaultNoSlip();
   };
 
+
+  /**
+   * @brief Creates a default no-slip boundary condition for id=0
+   */
   template <int dim>
   void
   NSBoundaryConditions<dim>::createDefaultNoSlip()
@@ -116,6 +119,14 @@ namespace BoundaryConditions
     this->size    = 1;
   }
 
+
+  /**
+   * @brief Declares the default parameter for a boundary condition id i_bc
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition id.
+   */
   template <int dim>
   void
   NSBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
@@ -124,8 +135,8 @@ namespace BoundaryConditions
     prm.declare_entry("type",
                       "noslip",
                       Patterns::Selection("noslip|slip|function|periodic"),
-                      "Type of boundary conditoin"
-                      "Choices are <noslip|slip|function>.");
+                      "Type of boundary condition"
+                      "Choices are <noslip|slip|function|periodic>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
@@ -157,6 +168,7 @@ namespace BoundaryConditions
     prm.set("Function expression", "0");
     prm.leave_subsection();
 
+    // Center of mass of the boundary condition for torque calculation
     prm.enter_subsection("cor");
     prm.declare_entry("x", "0", Patterns::Double(), "X COR");
     prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
@@ -164,6 +176,14 @@ namespace BoundaryConditions
     prm.leave_subsection();
   }
 
+
+  /**
+   * @brief Parse the information for a boundary condition
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition number (and not necessarily it's id).
+   */
   template <int dim>
   void
   NSBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
@@ -206,6 +226,12 @@ namespace BoundaryConditions
     this->id[i_bc] = prm.get_integer("id");
   }
 
+
+  /**
+   * @brief Declare the boundary conditions default parameters
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
   template <int dim>
   void
   NSBoundaryConditions<dim>::declare_parameters(ParameterHandler &prm)
@@ -269,6 +295,11 @@ namespace BoundaryConditions
     prm.leave_subsection();
   }
 
+  /**
+   * @brief Parse the boundary conditions
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
   template <int dim>
   void
   NSBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
@@ -363,6 +394,14 @@ public:
   value(const Point<dim> &p, const unsigned int component) const override;
 };
 
+
+/**
+ * @brief Calculates the value of a Function-type Navier-Stokes equations
+ *
+ * @param p A point (generally a gauss point)
+ *
+ * @param component The vector component of the boundary condition (0-x, 1-y and 2-z)
+ */
 template <int dim>
 double
 NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,

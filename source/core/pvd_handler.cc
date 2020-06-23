@@ -10,11 +10,11 @@ PVDHandler::save(std::string prefix)
 {
   std::string   filename = prefix + ".pvdhandler";
   std::ofstream output(filename.c_str());
-  output << times_and_names_.size() << std::endl;
+  output << times_and_names.size() << std::endl;
   output << "Time File" << std::endl;
-  for (unsigned int i = 0; i < times_and_names_.size(); ++i)
+  for (unsigned int i = 0; i < times_and_names.size(); ++i)
     {
-      output << times_and_names_[i].first << " " << times_and_names_[i].second
+      output << times_and_names[i].first << " " << times_and_names[i].second
              << std::endl;
     }
 }
@@ -22,7 +22,7 @@ PVDHandler::save(std::string prefix)
 void
 PVDHandler::read(std::string prefix)
 {
-  times_and_names_.clear();
+  times_and_names.clear();
   std::string   filename = prefix + ".pvdhandler";
   std::ifstream input(filename.c_str());
   if (!input)
@@ -44,6 +44,6 @@ PVDHandler::read(std::string prefix)
       append(time, filename);
     }
 
-  if (size != times_and_names_.size())
+  if (size != times_and_names.size())
     throw std::runtime_error("Error when reading pvd restart file ");
 }

@@ -1043,15 +1043,15 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
 
   // Create additional post-processor that derives information from the solution
-  vorticity_postprocessor<dim> vorticity;
+  VorticityPostprocessor<dim> vorticity;
   data_out.add_data_vector(solution, vorticity);
 
-  qcriterion_postprocessor<dim> qcriterion;
+  QCriterionPostprocessor<dim> qcriterion;
   data_out.add_data_vector(solution, qcriterion);
 
-  SRF_postprocessor<dim> srf(nsparam.velocitySource.omega_x,
-                             nsparam.velocitySource.omega_y,
-                             nsparam.velocitySource.omega_z);
+  SRFPostprocessor<dim> srf(nsparam.velocitySource.omega_x,
+                            nsparam.velocitySource.omega_y,
+                            nsparam.velocitySource.omega_z);
 
   if (nsparam.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
@@ -1074,8 +1074,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   if (nsparam.post_processing.output_boundaries)
     {
-      DataOutFaces<dim>           data_out_faces;
-      boundary_postprocessor<dim> boundary_id;
+      DataOutFaces<dim>          data_out_faces;
+      BoundaryPostprocessor<dim> boundary_id;
       data_out_faces.attach_dof_handler(this->dof_handler);
       data_out_faces.add_data_vector(solution, boundary_id);
       data_out_faces.build_patches();

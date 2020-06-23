@@ -44,6 +44,19 @@ Vector<double>
 bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
 
 
+/**
+ * @brief Recursion function to calculate the bdf coefficient
+ *
+ * @param order Order of the bdf method
+ *
+ * @param n Integer required for the recursive function calculation
+ *
+ * @param j Integer required for the recursive function calculation
+ *
+ * @param times Vector of the times corresponding to the various iteration in reverse order.
+ * For example in a BDF2 method, three values of the time must be in the array :
+ * t, t-dt_1 and t-dt_2.
+ */
 Vector<double>
 delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
 

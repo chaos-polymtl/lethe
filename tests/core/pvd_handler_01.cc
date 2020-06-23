@@ -22,19 +22,20 @@ main()
       PVDHandler pvdhandlerWorker;
       pvdhandlerWorker.read("restart");
 
-      if (pvdhandlerWorker.size() != pvdhandlerMaster.size())
+      if (pvdhandlerWorker.times_and_names.size() !=
+          pvdhandlerMaster.times_and_names.size())
         throw std::runtime_error("Size are not equal");
-      unsigned int size = pvdhandlerWorker.size();
+      unsigned int size = pvdhandlerWorker.times_and_names.size();
       for (unsigned int i = 0; i < size; ++i)
         {
-          deallog << pvdhandlerWorker.times_and_names_[i].first << " "
-                  << pvdhandlerWorker.times_and_names_[i].second << std::endl;
-          if (!approximatelyEqual(pvdhandlerMaster.times_and_names_[i].first,
-                                  pvdhandlerWorker.times_and_names_[i].first,
+          deallog << pvdhandlerWorker.times_and_names[i].first << " "
+                  << pvdhandlerWorker.times_and_names[i].second << std::endl;
+          if (!approximatelyEqual(pvdhandlerMaster.times_and_names[i].first,
+                                  pvdhandlerWorker.times_and_names[i].first,
                                   1e-8))
             throw std::runtime_error("Time not equal");
-          if (pvdhandlerMaster.times_and_names_[i].second !=
-              pvdhandlerWorker.times_and_names_[i].second)
+          if (pvdhandlerMaster.times_and_names[i].second !=
+              pvdhandlerWorker.times_and_names[i].second)
             throw std::runtime_error("File not equal");
         }
       deallog << "OK" << std::endl;

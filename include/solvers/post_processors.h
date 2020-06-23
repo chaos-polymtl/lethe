@@ -12,17 +12,22 @@
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
 
-// STD includes
+// standard library includes includes
 #include <vector>
 
 using namespace dealii;
 
-// Calculates the vorticity within each element using the velocity vector
+/**
+ * @brief VorticityPostprocessor Post-processor class used to calculate
+ * the vorticity field within the domain. The vorticity is defined
+ * as $\mathbf{\omega} = \nabla \times \mathbf{u}$ or, in other notation,
+ * $\mathbf{\omega} = rot(\mathbf{u})$.
+ */
 template <int dim>
-class vorticity_postprocessor : public DataPostprocessorVector<dim>
+class VorticityPostprocessor : public DataPostprocessorVector<dim>
 {
 public:
-  vorticity_postprocessor()
+  VorticityPostprocessor()
     : DataPostprocessorVector<dim>("vorticity", update_gradients)
   {}
   virtual void
@@ -56,12 +61,16 @@ public:
   }
 };
 
-// Calculate the Q criterion within each element
+/**
+ * @brief QCriterionPostprocessor Post-processor class used to calculate
+ * the QCriterion field within the domain. The Q Criterion is defined as
+ * as $Q = ||\Omega||^2 -||S||^2$ where $S$ is the symetric deformation tensor
+ */
 template <int dim>
-class qcriterion_postprocessor : public DataPostprocessorScalar<dim>
+class QCriterionPostprocessor : public DataPostprocessorScalar<dim>
 {
 public:
-  qcriterion_postprocessor()
+  QCriterionPostprocessor()
     : DataPostprocessorScalar<dim>("q_criterion", update_gradients)
   {}
   virtual void
@@ -103,12 +112,18 @@ public:
 };
 
 
-// Calculate the velocity field in the eulerian frame of reference
+/**
+ * @brief Calculates the velocity in the Eulerian frame of reference
+ * for simulations which are carried out in a rotating frame.
+ * The velocity in the Eulerian frame is $\mathbf{u}_E=\mathbf{u}_L+
+ * \mathbf{\Omega} \times \mathbf{R}$ where $\Omega$ is the velocity of the
+ * frame of reference and $\mathbf{R}$ the position vector
+ */
 template <int dim>
-class SRF_postprocessor : public DataPostprocessorVector<dim>
+class SRFPostprocessor : public DataPostprocessorVector<dim>
 {
 public:
-  SRF_postprocessor(double p_omega_x, double p_omega_y, double p_omega_z)
+  SRFPostprocessor(double p_omega_x, double p_omega_y, double p_omega_z)
     : DataPostprocessorVector<dim>(std::string("velocity_eulerian"),
                                    update_values | update_quadrature_points)
     , omega_x(p_omega_x)

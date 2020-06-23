@@ -54,7 +54,7 @@ private:
 };
 
 /**
- * A solver class for the Steady-Sate  Navier-Stokes equation using Grad-Div
+ * A solver class for the Navier-Stokes equation using Grad-Div
  * stabilization
  *
  * @tparam dim An integer that denotes the dimension of the space in which

@@ -22,13 +22,41 @@
 
 #include "non_linear_solver.h"
 
+/**
+ * @brief NewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
+ * method with \alpha relaxation to ensure that the residual is monotonically
+ * decreasing.
+ */
 template <typename VectorType>
 class NewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
+  /**
+   * @brief Constructor for the NewtonNonLinearSolver.
+   *
+   * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
+   *
+   * @param param Non-linear solver parameters
+   *
+   */
   NewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
                         const Parameters::NonLinearSolver &param);
 
+
+  /**
+   * @brief Solve the non-linear system of equation.
+   *
+   * @param time_stepping_method Time stepping method being used. This is
+   * required since the jacobian of the matrix is going to depend on the method
+   * used
+   *
+   * @param is_initial_step Boolean variable that controls which constraints are
+   * going to be applied to the equations
+   *
+   * @param force_matrix_renewal Boolean variable that controls if the Newton non-linear
+   * solver will force the re-caculation of the jacobian matrix and the
+   * reconstruction of the preconditioner at every iteration.
+   */
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,

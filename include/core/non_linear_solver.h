@@ -20,23 +20,48 @@
 #ifndef lethe_non_linear_solver_h
 #define lethe_non_linear_solver_h
 
-#include <deal.II/lac/affine_constraints.h>
-
 #include "parameters.h"
 
 template <typename VectorType>
 class PhysicsSolver;
 
+
+/**
+ * @brief NonlinearSolver. Base class for all non-linear solver for non-linear systems of equations.
+ * This class is an interface.
+ */
 template <typename VectorType>
 class NonLinearSolver
 {
 public:
+  /**
+   * @brief Constructor for the NonLinearSolver.
+   *
+   * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
+   *
+   * @param param Non-linear solver parameters
+   *
+   */
   NonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
                   const Parameters::NonLinearSolver &params);
 
   virtual ~NonLinearSolver()
   {}
 
+  /**
+   * @brief Solve the non-linear system of equation.
+   *
+   * @param time_stepping_method Time stepping method being used. This is
+   * required since the jacobian of the matrix is going to depend on the method
+   * used
+   *
+   * @param is_initial_step Boolean variable that controls which constraints are
+   * going to be applied to the equations
+   *
+   * @param force_matrix_renewal Boolean variable that controls if the Newton non-linear
+   * solver will force the re-caculation of the jacobian matrix and the
+   * reconstruction of the preconditioner at every iteration.
+   */
   virtual void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,

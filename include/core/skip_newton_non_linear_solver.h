@@ -3,10 +3,29 @@
 
 #include "non_linear_solver.h"
 
+/**
+ * @brief SkipNewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
+ * method with \alpha relaxation to ensure that the residual is monotonically
+ * decreasing. This non-linear solver only recalculates the jacobian matrix at a
+ * given frequency.
+ */
 template <typename VectorType>
 class SkipNewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
+  /**
+   * @brief Constructor for the SkipNewtonNonLinearSolver.
+   *
+   * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
+   *
+   * @param param Non-linear solver parameters
+   *
+   * @param force_matrix_renewal A boolean variables that controls if the matrix and the preconditioner
+   * will be forced to be recalculated even if the number of skipped iteration
+   * has not been reached. This is generally used when the value of the time
+   * step or the time stepping scheme changes.
+   *
+   */
   SkipNewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
                             const Parameters::NonLinearSolver &param);
 
