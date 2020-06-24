@@ -10,12 +10,12 @@ using namespace DEM;
 template <int dim>
 UniformInsertion<dim>::UniformInsertion(
   const DEMSolverParameters<dim> &dem_parameters)
-  : remained_particles(dem_parameters.insertionInfo.total_particle_number)
+  : remained_particles(dem_parameters.insertion_info.total_particle_number)
   , inserted_this_step(0)
 {
   // Getting properties as local parameters
-  const auto physical_properties   = dem_parameters.physicalProperties;
-  const auto insertion_information = dem_parameters.insertionInfo;
+  const auto physical_properties   = dem_parameters.physical_properties;
+  const auto insertion_information = dem_parameters.insertion_info;
 
   // This variable is used for calculation of the maximum number of particles
   // that can fit in the chosen insertion box
@@ -107,9 +107,9 @@ UniformInsertion<dim>::insert(
       // assign_particle_properties function
       std::vector<std::vector<double>> particle_properties;
       particle_properties =
-        this->assign_particle_propertis(dem_parameters,
-                                        inserted_this_step,
-                                        particle_handler.n_global_particles());
+        this->assign_particle_properties(dem_parameters,
+                                         inserted_this_step,
+                                         particle_handler.n_global_particles());
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points,
@@ -130,8 +130,8 @@ UniformInsertion<dim>::assign_insertion_points(
   std::vector<Point<dim>> insertion_positions;
 
   // Getting properties as local parameters
-  const auto physical_properties   = dem_parameters.physicalProperties;
-  const auto insertion_information = dem_parameters.insertionInfo;
+  const auto physical_properties   = dem_parameters.physical_properties;
+  const auto insertion_information = dem_parameters.insertion_info;
 
   // Creating a particle counter
   unsigned int particle_counter = 0;

@@ -45,8 +45,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
 
-  simulation_control =
-    std::make_shared<SimulationControlTransient>(parameters.simulation_control);
+  simulation_control = std::make_shared<SimulationControlTransientDEM>(
+    parameters.simulation_control);
 }
 
 template <int dim>
@@ -83,7 +83,7 @@ bool
 DEMSolver<dim>::insert_particles()
 {
   if (fmod(simulation_control->get_step_number(),
-           parameters.insertionInfo.insertion_frequency) == 1)
+           parameters.insertion_info.insertion_frequency) == 1)
     {
       computing_timer.enter_subsection("insertion");
       insertion_object->insert(particle_handler, triangulation, parameters);
@@ -219,12 +219,12 @@ template <int dim>
 std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.insertionInfo.insertion_method ==
+  if (parameters.insertion_info.insertion_method ==
       Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
     {
       insertion_object = std::make_shared<UniformInsertion<dim>>(parameters);
     }
-  else if (parameters.insertionInfo.insertion_method ==
+  else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
     {
       insertion_object = std::make_shared<NonUniformInsertion<dim>>(parameters);
@@ -240,13 +240,13 @@ template <int dim>
 std::shared_ptr<Integrator<dim>>
 DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.integration_method ==
+  if (parameters.model_parameters.integration_method ==
       Parameters::Lagrangian::ModelParameters::IntegrationMethod::
         velocity_verlet)
     {
       integrator_object = std::make_shared<VelocityVerletIntegrator<dim>>();
     }
-  else if (parameters.model_parmeters.integration_method ==
+  else if (parameters.model_parameters.integration_method ==
            Parameters::Lagrangian::ModelParameters::IntegrationMethod::
              explicit_euler)
     {
@@ -263,12 +263,12 @@ template <int dim>
 std::shared_ptr<PPContactForce<dim>>
 DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.pp_contact_force_method ==
+  if (parameters.model_parameters.pp_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
     {
       pp_contact_force_object = std::make_shared<PPLinearForce<dim>>();
     }
-  else if (parameters.model_parmeters.pp_contact_force_method ==
+  else if (parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
              pp_nonlinear)
     {
@@ -285,12 +285,12 @@ template <int dim>
 std::shared_ptr<PWContactForce<dim>>
 DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.pw_contact_force_method ==
+  if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
       pw_contact_force_object = std::make_shared<PWLinearForce<dim>>();
     }
-  else if (parameters.model_parmeters.pw_contact_force_method ==
+  else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
              pw_nonlinear)
     {
@@ -436,11 +436,11 @@ DEMSolver<dim>::solve()
   // Initialize DEM body force
   Tensor<1, dim> g;
 
-  g[0] = parameters.physicalProperties.gx;
-  g[1] = parameters.physicalProperties.gy;
+  g[0] = parameters.physical_properties.gx;
+  g[1] = parameters.physical_properties.gy;
   if (dim == 3)
     {
-      g[2] = parameters.physicalProperties.gz;
+      g[2] = parameters.physical_properties.gz;
     }
 
 
@@ -468,16 +468,17 @@ DEMSolver<dim>::solve()
   pw_contact_force_object = set_pw_contact_force(parameters);
 
   const unsigned int pp_broad_search_frequency =
-    parameters.model_parmeters.pp_broad_search_frequency;
+    parameters.model_parameters.pp_broad_search_frequency;
   const unsigned int pw_broad_search_frequency =
-    parameters.model_parmeters.pw_broad_search_frequency;
+    parameters.model_parameters.pw_broad_search_frequency;
   const unsigned int pp_fine_search_frequency =
-    parameters.model_parmeters.pp_fine_search_frequency;
+    parameters.model_parameters.pp_fine_search_frequency;
 
 
   // DEM engine iterator:
   while (simulation_control->integrate())
     {
+      simulation_control->print_progression(pcout);
       const unsigned int step_number = simulation_control->get_step_number();
 
       // Keep track if particles were inserted this step
@@ -505,27 +506,27 @@ DEMSolver<dim>::solve()
           computing_timer.leave_subsection();
         }
 
-      // PP fine search
+      // Particle-particle fine search
       if (particles_were_inserted ||
           step_number % pp_fine_search_frequency == 0)
         {
           computing_timer.enter_subsection("pp_fine_search");
           const double neighborhood_threshold =
-            parameters.model_parmeters.neighborhood_threshold *
-            parameters.physicalProperties.diameter;
+            parameters.model_parameters.neighborhood_threshold *
+            parameters.physical_properties.diameter;
           pp_fine_search_object.pp_Fine_Search(contact_pair_candidates,
                                                adjacent_particles,
                                                neighborhood_threshold);
           computing_timer.leave_subsection();
         }
 
-      // PP contact force
+      // Particle-particle contact force
       computing_timer.enter_subsection("pp_contact_force");
       pp_contact_force_object->calculate_pp_contact_force(
         &adjacent_particles, parameters, simulation_control->get_time_step());
       computing_timer.leave_subsection();
 
-      // Particles-wall broad contact search
+      // Particle-wall broad contact search
       if (particles_were_inserted ||
           step_number % pw_broad_search_frequency == 0)
         particle_wall_broad_search();

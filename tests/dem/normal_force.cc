@@ -68,19 +68,19 @@ test()
   // Defining general simulation parameters
   const unsigned int n_properties = 21;
   Tensor<1, dim>     g{{0, 0, 0}};
-  double             dt                                     = 0.000001;
-  double             particle_diameter                      = 0.001;
-  int                particle_density                       = 7850;
-  dem_parameters.physicalProperties.Youngs_modulus_particle = 200000000000;
-  dem_parameters.physicalProperties.Youngs_modulus_wall     = 200000000000;
-  dem_parameters.physicalProperties.Poisson_ratio_particle  = 0.3;
-  dem_parameters.physicalProperties.Poisson_ratio_wall      = 0.3;
-  dem_parameters.physicalProperties.restitution_coefficient_particle = 0.5;
-  dem_parameters.physicalProperties.restitution_coefficient_wall     = 0.5;
-  dem_parameters.physicalProperties.friction_coefficient_particle    = 0.3;
-  dem_parameters.physicalProperties.friction_coefficient_wall        = 0.3;
-  dem_parameters.physicalProperties.rolling_friction_particle        = 0.1;
-  dem_parameters.physicalProperties.rolling_friction_wall            = 0.1;
+  double             dt                                      = 0.000001;
+  double             particle_diameter                       = 0.001;
+  int                particle_density                        = 7850;
+  dem_parameters.physical_properties.Youngs_modulus_particle = 200000000000;
+  dem_parameters.physical_properties.Youngs_modulus_wall     = 200000000000;
+  dem_parameters.physical_properties.Poisson_ratio_particle  = 0.3;
+  dem_parameters.physical_properties.Poisson_ratio_wall      = 0.3;
+  dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
+  dem_parameters.physical_properties.restitution_coefficient_wall     = 0.5;
+  dem_parameters.physical_properties.friction_coefficient_particle    = 0.3;
+  dem_parameters.physical_properties.friction_coefficient_wall        = 0.3;
+  dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
+  dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);

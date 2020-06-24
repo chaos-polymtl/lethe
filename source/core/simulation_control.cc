@@ -15,6 +15,7 @@ SimulationControl::SimulationControl(Parameters::SimulationControl param)
   , max_CFL(param.maxCFL)
   , output_frequency(param.output_frequency)
   , output_time_frequency(param.output_time)
+  , log_frequency(param.log_frequency)
   , subdivision(param.subdivision)
   , group_files(param.group_files)
   , output_name(param.output_name)
@@ -40,6 +41,12 @@ bool
 SimulationControl::is_output_iteration()
 {
   return (get_step_number() % output_frequency == 0);
+}
+
+bool
+SimulationControl::is_verbose_iteration()
+{
+  return (get_step_number() % log_frequency == 0);
 }
 
 void
@@ -84,6 +91,9 @@ SimulationControlTransient::SimulationControlTransient(
 void
 SimulationControlTransient::print_progression(const ConditionalOStream &pcout)
 {
+  if (!is_verbose_iteration())
+    return;
+
   pcout << std::endl;
   pcout << "*****************************************************************"
         << std::endl;
@@ -134,6 +144,29 @@ SimulationControlTransient::calculate_time_step()
     new_time_step = end_time - current_time;
 
   return new_time_step;
+}
+
+SimulationControlTransientDEM::SimulationControlTransientDEM(
+  Parameters::SimulationControl param)
+  : SimulationControlTransient(param)
+{}
+
+void
+SimulationControlTransientDEM::print_progression(
+  const ConditionalOStream &pcout)
+{
+  if (!is_verbose_iteration())
+    return;
+
+  pcout << std::endl;
+  pcout << "*****************************************************************"
+        << std::endl;
+  pcout << "Transient iteration : " << std::setw(8) << std::left
+        << iteration_number << " Time : " << std::setw(8) << std::left
+        << current_time << " Time step : " << std::setw(8) << std::left
+        << time_step << std::endl;
+  pcout << "*****************************************************************"
+        << std::endl;
 }
 
 
@@ -209,6 +242,9 @@ SimulationControlSteady::integrate()
 void
 SimulationControlSteady::print_progression(const ConditionalOStream &pcout)
 {
+  if (!is_verbose_iteration())
+    return;
+
   pcout << std::endl;
   pcout << "*****************************************************************"
         << std::endl;
