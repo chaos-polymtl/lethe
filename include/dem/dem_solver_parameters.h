@@ -35,9 +35,9 @@ public:
   Parameters::Testing                        test;
   Parameters::Timer                          timer;
   Parameters::SimulationControl              simulation_control;
-  Parameters::Lagrangian::PhysicalProperties physicalProperties;
-  Parameters::Lagrangian::InsertionInfo      insertionInfo;
-  Parameters::Lagrangian::ModelParameters    model_parmeters;
+  Parameters::Lagrangian::PhysicalProperties physical_properties;
+  Parameters::Lagrangian::InsertionInfo      insertion_info;
+  Parameters::Lagrangian::ModelParameters    model_parameters;
 
 
   void
@@ -58,9 +58,9 @@ public:
     mesh.parse_parameters(prm);
     test.parse_parameters(prm);
     timer.parse_parameters(prm);
-    physicalProperties.parse_parameters(prm);
-    insertionInfo.parse_parameters(prm);
-    model_parmeters.parse_parameters(prm);
+    physical_properties.parse_parameters(prm);
+    insertion_info.parse_parameters(prm);
+    model_parameters.parse_parameters(prm);
     simulation_control.parse_parameters(prm);
   }
 };

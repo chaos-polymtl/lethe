@@ -23,7 +23,7 @@
 // is used in insert_global_particles as input argument
 template <int dim>
 std::vector<std::vector<double>>
-Insertion<dim>::assign_particle_propertis(
+Insertion<dim>::assign_particle_properties(
   const DEMSolverParameters<dim> &dem_parameters,
   const unsigned int &            inserted_this_step,
   const unsigned int &            inserted_so_far)
@@ -33,7 +33,7 @@ Insertion<dim>::assign_particle_propertis(
 
   // Getting properties as local parameters
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
-  const auto physical_properties = dem_parameters.physicalProperties;
+  const auto physical_properties = dem_parameters.physical_properties;
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step

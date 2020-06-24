@@ -40,16 +40,15 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
-  , number_of_steps(parameters.simulation_control.timeEnd < 0.25 ? 20000 :
-                                                                   50000)
 {
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
+
+  simulation_control = std::make_shared<SimulationControlTransientDEM>(
+    parameters.simulation_control);
 }
 
-// REFACTOR
-// This function should be replaced by the function in the core/grids.h
 template <int dim>
 void
 DEMSolver<dim>::read_mesh()
@@ -77,6 +76,116 @@ DEMSolver<dim>::read_mesh()
 
   const int initial_size = parameters.mesh.initial_refinement;
   triangulation.refine_global(initial_size);
+}
+
+template <int dim>
+bool
+DEMSolver<dim>::insert_particles()
+{
+  if (fmod(simulation_control->get_step_number(),
+           parameters.insertion_info.insertion_frequency) == 1)
+    {
+      computing_timer.enter_subsection("insertion");
+      insertion_object->insert(particle_handler, triangulation, parameters);
+      computing_timer.leave_subsection();
+      return true;
+    }
+  return false;
+}
+
+template <int dim>
+void
+DEMSolver<dim>::locate_particles_in_cells()
+{
+  computing_timer.enter_subsection("sort_particles_in_cells");
+  particle_handler.sort_particles_into_subdomains_and_cells();
+  particle_container.clear();
+  particle_container = update_particle_container(&particle_handler);
+  update_pp_contact_container_iterators(adjacent_particles, particle_container);
+  update_pw_contact_container_iterators(pw_pairs_in_contact,
+                                        particle_container);
+  update_particle_point_line_contact_container_iterators(
+    particle_points_in_contact, particle_lines_in_contact, particle_container);
+  computing_timer.leave_subsection();
+}
+
+template <int dim>
+void
+DEMSolver<dim>::particle_wall_broad_search()
+{
+  computing_timer.enter_subsection("pw_broad_search");
+  pw_broad_search_object.find_PW_Contact_Pairs(boundary_cells_information,
+                                               particle_handler,
+                                               pw_contact_candidates);
+
+  particle_point_contact_candidates =
+    particle_point_line_broad_search_object.find_Particle_Point_Contact_Pairs(
+      particle_handler, boundary_cells_with_points);
+  if (dim == 3)
+    {
+      particle_line_contact_candidates =
+        particle_point_line_broad_search_object
+          .find_Particle_Line_Contact_Pairs(particle_handler,
+                                            boundary_cells_with_lines);
+    }
+  computing_timer.leave_subsection();
+}
+
+template <int dim>
+void
+DEMSolver<dim>::particle_wall_fine_search()
+{
+  computing_timer.enter_subsection("pw_fine_search");
+  pw_fine_search_object.pw_Fine_Search(pw_contact_candidates,
+                                       pw_pairs_in_contact,
+                                       simulation_control->get_time_step());
+  particle_points_in_contact =
+    particle_point_line_fine_search_object.Particle_Point_Fine_Search(
+      particle_point_contact_candidates);
+  if (dim == 3)
+    {
+      particle_lines_in_contact =
+        particle_point_line_fine_search_object.Particle_Line_Fine_Search(
+          particle_line_contact_candidates);
+    }
+  computing_timer.leave_subsection();
+}
+
+template <int dim>
+void
+DEMSolver<dim>::particle_wall_contact_force()
+{
+  computing_timer.enter_subsection("pw_contact_force");
+  pw_contact_force_object->calculate_pw_contact_force(&pw_pairs_in_contact,
+                                                      parameters);
+  particle_point_line_contact_force_object
+    .calculate_particle_point_line_contact_force(&particle_points_in_contact,
+                                                 parameters);
+
+  if (dim == 3)
+    {
+      particle_point_line_contact_force_object
+        .calculate_particle_point_line_contact_force(&particle_lines_in_contact,
+                                                     parameters);
+    }
+  computing_timer.leave_subsection();
+}
+
+template <int dim>
+void
+DEMSolver<dim>::finish_simulation()
+{
+  // Timer output
+  if (parameters.timer.type == Parameters::Timer::Type::end)
+    this->computing_timer.print_summary();
+
+  // Testing
+  if (parameters.test.enabled)
+    {
+      auto               properties = properties_class.get_properties_name();
+      Visualization<dim> visualization_object;
+      visualization_object.print_xyz(particle_handler, properties);
+    }
 }
 
 template <int dim>
@@ -110,12 +219,12 @@ template <int dim>
 std::shared_ptr<Insertion<dim>>
 DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.insertionInfo.insertion_method ==
+  if (parameters.insertion_info.insertion_method ==
       Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
     {
       insertion_object = std::make_shared<UniformInsertion<dim>>(parameters);
     }
-  else if (parameters.insertionInfo.insertion_method ==
+  else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
     {
       insertion_object = std::make_shared<NonUniformInsertion<dim>>(parameters);
@@ -131,13 +240,13 @@ template <int dim>
 std::shared_ptr<Integrator<dim>>
 DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.integration_method ==
+  if (parameters.model_parameters.integration_method ==
       Parameters::Lagrangian::ModelParameters::IntegrationMethod::
         velocity_verlet)
     {
       integrator_object = std::make_shared<VelocityVerletIntegrator<dim>>();
     }
-  else if (parameters.model_parmeters.integration_method ==
+  else if (parameters.model_parameters.integration_method ==
            Parameters::Lagrangian::ModelParameters::IntegrationMethod::
              explicit_euler)
     {
@@ -154,12 +263,12 @@ template <int dim>
 std::shared_ptr<PPContactForce<dim>>
 DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.pp_contact_force_method ==
+  if (parameters.model_parameters.pp_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
     {
       pp_contact_force_object = std::make_shared<PPLinearForce<dim>>();
     }
-  else if (parameters.model_parmeters.pp_contact_force_method ==
+  else if (parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
              pp_nonlinear)
     {
@@ -176,12 +285,12 @@ template <int dim>
 std::shared_ptr<PWContactForce<dim>>
 DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 {
-  if (parameters.model_parmeters.pw_contact_force_method ==
+  if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
       pw_contact_force_object = std::make_shared<PWLinearForce<dim>>();
     }
-  else if (parameters.model_parmeters.pw_contact_force_method ==
+  else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
              pw_nonlinear)
     {
@@ -299,8 +408,8 @@ DEMSolver<dim>::write_output_results()
 {
   const std::string  folder = parameters.simulation_control.output_folder;
   const std::string  solution_name = parameters.simulation_control.output_name;
-  const unsigned int iter          = DEM_step;
-  const double       time          = DEM_time;
+  const unsigned int iter          = simulation_control->get_step_number();
+  const double       time          = simulation_control->get_current_time();
   const unsigned int group_files   = parameters.simulation_control.group_files;
 
   Visualization<dim> particle_data_out;
@@ -324,17 +433,16 @@ DEMSolver<dim>::solve()
   // Reading mesh
   read_mesh();
 
-  // Initializing variables
+  // Initialize DEM body force
   Tensor<1, dim> g;
 
-  g[0] = parameters.physicalProperties.gx;
-  g[1] = parameters.physicalProperties.gy;
+  g[0] = parameters.physical_properties.gx;
+  g[1] = parameters.physical_properties.gy;
   if (dim == 3)
     {
-      g[2] = parameters.physicalProperties.gz;
+      g[2] = parameters.physical_properties.gz;
     }
 
-  auto properties = properties_class.get_properties_name();
 
   // Finding cell neighbors
   FindCellNeighbors<dim> cell_neighbors_object;
@@ -359,56 +467,37 @@ DEMSolver<dim>::solve()
   pp_contact_force_object = set_pp_contact_force(parameters);
   pw_contact_force_object = set_pw_contact_force(parameters);
 
+  const unsigned int pp_broad_search_frequency =
+    parameters.model_parameters.pp_broad_search_frequency;
+  const unsigned int pw_broad_search_frequency =
+    parameters.model_parameters.pw_broad_search_frequency;
+  const unsigned int pp_fine_search_frequency =
+    parameters.model_parameters.pp_fine_search_frequency;
+
+
   // DEM engine iterator:
-  while (DEM_step < number_of_steps)
+  while (simulation_control->integrate())
     {
-      // Moving walls
+      simulation_control->print_progression(pcout);
+      const unsigned int step_number = simulation_control->get_step_number();
 
-      // Insertion
-      // Defining a bool variable to specify the insertion steps
-      bool insertion_step = 0;
-
-      // REFACTORING
-      // Why is this a floating point modulu? Should be a regular modulo for
-      // integers... It would be better if the insertion class would control
-      // these elements You could have a mother class for insertion and derive
-      // from there the type of insertion
-      if (fmod(DEM_step, parameters.insertionInfo.insertion_frequency) == 1)
-        {
-          computing_timer.enter_subsection("insertion");
-          // REFACTORING
-          insertion_object->insert(particle_handler, triangulation, parameters);
-          insertion_step = 1;
-          computing_timer.leave_subsection();
-        }
+      // Keep track if particles were inserted this step
+      bool particles_were_inserted = insert_particles();
 
       // Sort particles in cells
-      if (insertion_step == 1 || DEM_step % pp_broad_search_frequency == 0 ||
-          DEM_step % pw_broad_search_frequency == 0)
-        {
-          computing_timer.enter_subsection("sort_particles_in_cells");
-          particle_handler.sort_particles_into_subdomains_and_cells();
-          particle_container.clear();
-          particle_container = update_particle_container(&particle_handler);
-          update_pp_contact_container_iterators(adjacent_particles,
-                                                particle_container);
-          update_pw_contact_container_iterators(pw_pairs_in_contact,
-                                                particle_container);
-          update_particle_point_line_contact_container_iterators(
-            particle_points_in_contact,
-            particle_lines_in_contact,
-            particle_container);
-          computing_timer.leave_subsection();
-        }
+      if (particles_were_inserted ||
+          step_number % pp_broad_search_frequency == 0 ||
+          step_number % pw_broad_search_frequency == 0)
+        locate_particles_in_cells();
 
       // Force reinitilization
       computing_timer.enter_subsection("reinitialize_forces");
       reinitialize_force(particle_handler);
       computing_timer.leave_subsection();
 
-      // PP contact search
-      // PP broad search
-      if (insertion_step == 1 || DEM_step % pp_broad_search_frequency == 0)
+      // Broad particle-particle contact search
+      if (particles_were_inserted ||
+          step_number % pp_broad_search_frequency == 0)
         {
           computing_timer.enter_subsection("pp_broad_search");
           pp_broad_search_object.find_PP_Contact_Pairs(particle_handler,
@@ -417,124 +506,54 @@ DEMSolver<dim>::solve()
           computing_timer.leave_subsection();
         }
 
-      // PP fine search
-      if (insertion_step == 1 || DEM_step % pp_fine_search_frequency == 0)
+      // Particle-particle fine search
+      if (particles_were_inserted ||
+          step_number % pp_fine_search_frequency == 0)
         {
           computing_timer.enter_subsection("pp_fine_search");
+          const double neighborhood_threshold =
+            parameters.model_parameters.neighborhood_threshold *
+            parameters.physical_properties.diameter;
           pp_fine_search_object.pp_Fine_Search(contact_pair_candidates,
                                                adjacent_particles,
                                                neighborhood_threshold);
           computing_timer.leave_subsection();
         }
 
-      // PP contact force
+      // Particle-particle contact force
       computing_timer.enter_subsection("pp_contact_force");
-      pp_contact_force_object->calculate_pp_contact_force(&adjacent_particles,
-                                                          parameters,
-                                                          dt);
+      pp_contact_force_object->calculate_pp_contact_force(
+        &adjacent_particles, parameters, simulation_control->get_time_step());
       computing_timer.leave_subsection();
 
-      // PW contact search
-      // PW broad search
-      if (insertion_step == 1 || DEM_step % pw_broad_search_frequency == 0)
-        {
-          computing_timer.enter_subsection("pw_broad_search");
-          pw_broad_search_object.find_PW_Contact_Pairs(
-            boundary_cells_information,
-            particle_handler,
-            pw_contact_candidates);
+      // Particle-wall broad contact search
+      if (particles_were_inserted ||
+          step_number % pw_broad_search_frequency == 0)
+        particle_wall_broad_search();
 
-          particle_point_contact_candidates =
-            particle_point_line_broad_search_object
-              .find_Particle_Point_Contact_Pairs(particle_handler,
-                                                 boundary_cells_with_points);
-          if (dim == 3)
-            {
-              particle_line_contact_candidates =
-                particle_point_line_broad_search_object
-                  .find_Particle_Line_Contact_Pairs(particle_handler,
-                                                    boundary_cells_with_lines);
-            }
-          computing_timer.leave_subsection();
-        }
+      // Particles-wall fine search
+      particle_wall_fine_search();
 
-      // PW fine search
-      computing_timer.enter_subsection("pw_fine_search");
-      pw_fine_search_object.pw_Fine_Search(pw_contact_candidates,
-                                           pw_pairs_in_contact,
-                                           dt);
-      particle_points_in_contact =
-        particle_point_line_fine_search_object.Particle_Point_Fine_Search(
-          particle_point_contact_candidates);
-      if (dim == 3)
-        {
-          particle_lines_in_contact =
-            particle_point_line_fine_search_object.Particle_Line_Fine_Search(
-              particle_line_contact_candidates);
-        }
-      computing_timer.leave_subsection();
-
-      // PW contact force:
-      computing_timer.enter_subsection("pw_contact_force");
-      pw_contact_force_object->calculate_pw_contact_force(&pw_pairs_in_contact,
-                                                          parameters);
-      particle_point_line_contact_force_object
-        .calculate_particle_point_line_contact_force(
-          &particle_points_in_contact, parameters);
-      if (dim == 3)
-        {
-          particle_point_line_contact_force_object
-            .calculate_particle_point_line_contact_force(
-              &particle_lines_in_contact, parameters);
-        }
-      computing_timer.leave_subsection();
+      // Particles-walls contact force:
+      particle_wall_contact_force();
 
       // Integration
       computing_timer.enter_subsection("integration");
-      integrator_object->integrate(particle_handler, g, dt);
+      integrator_object->integrate(particle_handler,
+                                   g,
+                                   simulation_control->get_time_step());
       computing_timer.leave_subsection();
 
       // Visualization
-      computing_timer.enter_subsection("visualization");
-      // REFACTORING
-      // Should be put inside a function
-      if (DEM_step % parameters.simulation_control.output_frequency == 0)
+      if (simulation_control->is_output_iteration())
         {
+          computing_timer.enter_subsection("visualization");
           write_output_results();
+          computing_timer.leave_subsection();
         }
-      computing_timer.leave_subsection();
-
-      // Print iteration
-      // REFACTORING
-      // Should be put into a simulation control type of object
-      if (DEM_step % print_info_frequency == 0)
-        {
-          std::cout << "Step " << DEM_step << std::endl;
-        }
-
-      // Update:
-      DEM_step = DEM_step + 1;
-      DEM_time = DEM_step * dt;
     }
 
-  // Timer output
-  if (parameters.timer.type == Parameters::Timer::Type::end)
-    {
-      this->computing_timer.print_summary();
-    }
-
-  // Testing
-  if (parameters.test.enabled)
-    {
-      visualization_object.print_xyz(particle_handler, properties);
-    }
-
-  /*
-    while (parameters.simulation_control.integrate()) {
-      printTime(this->pcout, parameters.simulation_control);
-
-    }
-        */
+  finish_simulation();
 }
 
 template class DEMSolver<2>;

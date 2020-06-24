@@ -56,6 +56,11 @@ namespace Parameters
                         Patterns::Integer(),
                         "Output frequency");
 
+      prm.declare_entry("log frequency",
+                        "1",
+                        Patterns::Integer(),
+                        "log frequency");
+
       prm.declare_entry("output time", "1", Patterns::Double(), "Output time");
 
       prm.declare_entry(
@@ -123,6 +128,7 @@ namespace Parameters
       output_frequency         = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
+      log_frequency            = prm.get_integer("log frequency");
     }
     prm.leave_subsection();
   }

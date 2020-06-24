@@ -99,6 +99,50 @@ private:
   reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
 
   /**
+   * @brief Manages the call to the particle insertion. Returns true if particles were inserted
+   *
+   */
+  bool
+  insert_particles();
+
+  /**
+   * @brief Manages the sorting of the particles into cell and processors
+   *
+   */
+  void
+  locate_particles_in_cells();
+
+  /**
+   * @brief Carries out the broad contact detection search using the
+   * background triangulation for particle-walls contact.
+   *
+   */
+  void
+  particle_wall_broad_search();
+
+  /**
+   * @brief Carries out the fine particled-wall contact detection
+   *
+   */
+  void
+  particle_wall_fine_search();
+
+  /**
+   * @brief Calculates particles-wall contact forces
+   *
+   */
+  void
+  particle_wall_contact_force();
+
+  /**
+   * @brief finish_simulation
+   * Finishes the simulation by calling all
+   * the post-processing elements that are required
+   */
+  void
+  finish_simulation();
+
+  /**
    * Updates the iterators to particles in a map of particles
    * (particle_container) after calling sorting particles in cells function
    *
@@ -209,25 +253,9 @@ private:
   MappingQGeneric<dim>                      mapping;
   TimerOutput                               computing_timer;
   Particles::ParticleHandler<dim, dim>      particle_handler;
-  int                                       DEM_step = 1;
-  double       DEM_time = parameters.simulation_control.dt;
-  const double dt       = parameters.simulation_control.dt;
 
-  bool insertion_step = 0;
-  // particle diameter should be replaced by maximum diameter. I should ask
-  // Bruno how to do it.
-  const double neighborhood_threshold =
-    parameters.model_parmeters.neighborhood_threshold *
-    parameters.physicalProperties.diameter;
-  const int number_of_steps = parameters.simulationControl.final_time_step;
-  const int pp_broad_search_frequency =
-    parameters.model_parmeters.pp_broad_search_frequency;
-  const int pp_fine_search_frequency =
-    parameters.model_parmeters.pp_fine_search_frequency;
-  const int pw_broad_search_frequency =
-    parameters.model_parmeters.pw_broad_search_frequency;
-  const int print_info_frequency =
-    parameters.model_parmeters.print_info_frequency;
+  // Simulation control for time stepping and I/Os
+  std::shared_ptr<SimulationControl> simulation_control;
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
     cell_neighbor_list;
@@ -265,7 +293,6 @@ private:
   PPBroadSearch<dim>                   pp_broad_search_object;
   PPFineSearch<dim>                    pp_fine_search_object;
   PWBroadSearch<dim>                   pw_broad_search_object;
-  Visualization<dim>                   visualization_object;
   ParticlePointLineBroadSearch<dim>    particle_point_line_broad_search_object;
   PWFineSearch<dim>                    pw_fine_search_object;
   ParticlePointLineFineSearch<dim>     particle_point_line_fine_search_object;

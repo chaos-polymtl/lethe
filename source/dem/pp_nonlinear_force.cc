@@ -50,7 +50,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
               // Defining physical properties as local variable
               const auto physical_properties =
-                dem_parameters.physicalProperties;
+                dem_parameters.physical_properties;
 
               // Since the normal overlap is already calculated we update this
               // element of the container here. The rest of information are

@@ -81,9 +81,9 @@ protected:
    * @param inserted_so_far Number of particles are already inserted
    */
   std::vector<std::vector<double>>
-  assign_particle_propertis(const DEMSolverParameters<dim> &dem_parameters,
-                            const unsigned int &            inserted_this_step,
-                            const unsigned int &            inserted_so_far);
+  assign_particle_properties(const DEMSolverParameters<dim> &dem_parameters,
+                             const unsigned int &            inserted_this_step,
+                             const unsigned int &            inserted_so_far);
 
   /**
    * Carries out finding the insertion points of inserted particles.

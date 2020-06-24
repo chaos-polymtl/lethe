@@ -18,7 +18,7 @@ ParticlePointLineForce<dim>::calculate_particle_point_line_contact_force(
 
 {
   // Defining physical properties as local variable
-  const auto physical_properties = dem_parameters.physicalProperties;
+  const auto physical_properties = dem_parameters.physical_properties;
 
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator =

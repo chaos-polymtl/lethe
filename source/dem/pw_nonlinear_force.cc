@@ -10,7 +10,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
   const DEMSolverParameters<dim> &dem_parameters)
 {
   // Defining physical properties as local variable
-  const auto physical_properties = dem_parameters.physicalProperties;
+  const auto physical_properties = dem_parameters.physical_properties;
 
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator

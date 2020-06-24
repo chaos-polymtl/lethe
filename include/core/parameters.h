@@ -114,6 +114,9 @@ namespace Parameters
     // Frequency of the output
     double output_time;
 
+    // Frequency of the log output to the terminal
+    unsigned int log_frequency;
+
     // Subdivisions of the results in the output
     unsigned int subdivision;
 
