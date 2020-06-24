@@ -35,7 +35,6 @@ subsection model parameters
   set pp_contact_force_method                   	 = pp_nonlinear
   set pw_contact_force_method                   	 = pw_nonlinear
   set integration_method				 = velocity_verlet
-  set print_info_frequency				 = 1000000
 end
 
 #---------------------------------------------------

@@ -219,11 +219,6 @@ namespace Parameters
           Patterns::Double(),
           "Contact search zone diameter to particle diameter ratio");
 
-        prm.declare_entry("print_info_frequency",
-                          "1",
-                          Patterns::Integer(),
-                          "Print simulation info frequency");
-
         prm.declare_entry("pp_contact_force_method",
                           "pp_nonlinear",
                           Patterns::Selection("pp_linear|pp_nonlinear"),
@@ -256,7 +251,6 @@ namespace Parameters
         pw_broad_search_frequency =
           prm.get_integer("pw_broad_search_frequency");
         neighborhood_threshold = prm.get_double("neighborhood_threshold");
-        print_info_frequency   = prm.get_integer("print_info_frequency");
 
         const std::string ppcf = prm.get("pp_contact_force_method");
         if (ppcf == "pp_linear")
