@@ -106,9 +106,6 @@ namespace Parameters
       // particle diameter)
       double neighborhood_threshold;
 
-      // Print simulation info frequency
-      int print_info_frequency;
-
       // Choosing particle-particle contact force model
       enum class PPContactForceModel
       {
