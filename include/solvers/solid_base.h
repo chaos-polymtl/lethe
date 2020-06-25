@@ -93,6 +93,8 @@ private:
   std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
 
   NavierStokesSolverParameters<spacedim> param;
+
+  bool setup_done = false;
 };
 
 #endif

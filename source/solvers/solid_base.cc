@@ -133,6 +133,8 @@ SolidBase<dim, spacedim>::setup_particles()
     [&]() { solid_particle_handler->register_store_callback_function(); });
   fluid_tria->signals.post_distributed_refinement.connect(
     [&]() { solid_particle_handler->register_load_callback_function(false); });
+
+    setup_done = true;
 }
 
 template <int dim, int spacedim>
@@ -149,8 +151,10 @@ template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>>
 SolidBase<dim, spacedim>::generate_solid_particle_handler()
 {
-  initial_setup();
-  setup_particles();
+  if (!setup_done) {
+    initial_setup();
+    setup_particles();
+  }
   return solid_particle_handler;
 }
 
