@@ -56,6 +56,11 @@ namespace Parameters
                         Patterns::Integer(),
                         "Output frequency");
 
+      prm.declare_entry("log frequency",
+                        "1",
+                        Patterns::Integer(),
+                        "log frequency");
+
       prm.declare_entry("output time", "1", Patterns::Double(), "Output time");
 
       prm.declare_entry(
@@ -123,6 +128,7 @@ namespace Parameters
       output_frequency         = prm.get_integer("output frequency");
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
+      log_frequency            = prm.get_integer("log frequency");
     }
     prm.leave_subsection();
   }
@@ -514,7 +520,8 @@ namespace Parameters
         "gmres",
         Patterns::Selection("gmres|bicgstab|amg"),
         "The iterative solver for the linear system of equations. "
-        "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative solver "
+        "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative "
+        "solver "
         "with ILU preconditioning. bicgstab is a BICGSTAB iterative solver "
         "with ILU preconditioning. "
         "amg is GMRES + AMG preconditioning with an ILU coarsener and "

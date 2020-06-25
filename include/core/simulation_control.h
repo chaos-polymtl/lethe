@@ -78,6 +78,11 @@ protected:
   // by the time
   double output_time_frequency;
 
+  // Log iteration frequency
+  // Controls the frequency at which status of the simulation is written to
+  // the terminal
+  unsigned int log_frequency;
+
   // Number of mesh subdivision to be used when outputting the results
   unsigned int subdivision;
 
@@ -159,6 +164,13 @@ public:
    */
   virtual bool
   is_output_iteration();
+
+  /**
+   * @brief Check if the present iteration is a verbose iteration where
+   * output should be written to the terminal
+   */
+  virtual bool
+  is_verbose_iteration();
 
   void
   set_CFL(const double p_CFL)
@@ -299,6 +311,17 @@ public:
   is_at_end() override;
 };
 
+/**
+ * @brief Transient simulation control tailored around the discrete element method
+ */
+class SimulationControlTransientDEM : public SimulationControlTransient
+{
+public:
+  SimulationControlTransientDEM(Parameters::SimulationControl param);
+
+  virtual void
+  print_progression(const ConditionalOStream &pcout) override;
+};
 
 class SimulationControlTransientDynamicOutput
   : public SimulationControlTransient

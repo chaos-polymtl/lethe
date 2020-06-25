@@ -1,6 +1,6 @@
 language: cpp
 
-os: linux
+os: linux 
 
 notifications:
   email: false

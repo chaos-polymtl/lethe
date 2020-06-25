@@ -2,6 +2,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 SET_PROPERTY(GLOBAL PROPERTY TARGET_SUPPORTS_SHARED_LIBS TRUE)
 
+set(CMAKE_CXX_STANDARD 17)
 add_compile_options(-pedantic)
 add_compile_options(-pedantic-errors)
 add_compile_options(-Wextra)
@@ -10,7 +11,7 @@ add_compile_options(-Wdisabled-optimization)
 #add_compile_options(-Werror)
 #add_compile_options(-Weffc++)
 
-FIND_PACKAGE(deal.II 9.0.0 QUIET
+FIND_PACKAGE(deal.II 9.1.1 QUIET
   HINTS ${deal.II_DIR} ${DEAL_II_DIR} ../ ../../ $ENV{DEAL_II_DIR}
   )
 IF(NOT ${deal.II_FOUND})
