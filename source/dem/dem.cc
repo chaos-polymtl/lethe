@@ -40,6 +40,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
+  , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
@@ -76,6 +77,14 @@ DEMSolver<dim>::read_mesh()
 
   const int initial_size = parameters.mesh.initial_refinement;
   triangulation.refine_global(initial_size);
+}
+
+template <int dim>
+void
+DEMSolver<dim>::setup_background_dofs()
+{
+  FE_Q<dim> background_fe(1);
+  background_dh.distribute_dofs(background_fe);
 }
 
 template <int dim>
@@ -406,24 +415,51 @@ template <int dim>
 void
 DEMSolver<dim>::write_output_results()
 {
-  const std::string  folder = parameters.simulation_control.output_folder;
-  const std::string  solution_name = parameters.simulation_control.output_name;
-  const unsigned int iter          = simulation_control->get_step_number();
-  const double       time          = simulation_control->get_current_time();
-  const unsigned int group_files   = parameters.simulation_control.group_files;
+  const std::string folder = parameters.simulation_control.output_folder;
+  const std::string particles_solution_name =
+    parameters.simulation_control.output_name;
+  const unsigned int iter        = simulation_control->get_step_number();
+  const double       time        = simulation_control->get_current_time();
+  const unsigned int group_files = parameters.simulation_control.group_files;
 
+  // Write particles
   Visualization<dim> particle_data_out;
   particle_data_out.build_patches(particle_handler,
                                   properties_class.get_properties_name());
 
-  write_vtu_and_pvd<0, dim>(pvdhandler,
+  write_vtu_and_pvd<0, dim>(particles_pvdhandler,
                             particle_data_out,
                             folder,
-                            solution_name,
+                            particles_solution_name,
                             time,
                             iter,
                             group_files,
                             mpi_communicator);
+
+  // Write background grid
+  DataOut<dim> background_data_out;
+
+  background_data_out.attach_dof_handler(background_dh);
+
+  // Attach the solution data to data_out object
+  Vector<float> subdomain(triangulation.n_active_cells());
+  for (unsigned int i = 0; i < subdomain.size(); ++i)
+    subdomain(i) = triangulation.locally_owned_subdomain();
+  background_data_out.add_data_vector(subdomain, "subdomain");
+
+  const std::string grid_solution_name =
+    parameters.simulation_control.output_name + "-grid";
+
+  background_data_out.build_patches();
+
+  write_vtu_and_pvd<dim>(grid_pvdhandler,
+                         background_data_out,
+                         folder,
+                         grid_solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         mpi_communicator);
 }
 
 template <int dim>
@@ -432,6 +468,7 @@ DEMSolver<dim>::solve()
 {
   // Reading mesh
   read_mesh();
+  setup_background_dofs();
 
   // Initialize DEM body force
   Tensor<1, dim> g;

@@ -237,6 +237,13 @@ private:
   set_pw_contact_force(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
+   * Sets the background degree of freedom used for paralle grid output
+   *
+   */
+  void
+  setup_background_dofs();
+
+  /**
    * @brief write_output_results
    * Post-processing as parallel VTU files
    */
@@ -301,7 +308,11 @@ private:
   std::shared_ptr<Insertion<dim>>      insertion_object;
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
-  PVDHandler                           pvdhandler;
+  PVDHandler                           particles_pvdhandler;
+
+  // Information for parallel grid processing
+  DoFHandler<dim> background_dh;
+  PVDHandler      grid_pvdhandler;
 };
 
 #endif
