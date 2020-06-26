@@ -28,15 +28,16 @@ sdirk_coefficients(unsigned int order, double time_step)
   if (order == 3)
     {
       sdirk_coefs.reinit(3, 4);
-      sdirk_coefs[0][0] = 2.29428036032357 * sdt;
-      sdirk_coefs[0][1] = -2.29428036032357 * sdt;
-      sdirk_coefs[1][0] = 2.29428036032357 * sdt;
-      sdirk_coefs[1][1] = -0.809559354865318 * sdt;
-      sdirk_coefs[1][2] = -1.48472100545825 * sdt;
-      sdirk_coefs[2][0] = 2.29428036032357 * sdt;
-      sdirk_coefs[2][1] = 2.87009860266089 * sdt;
-      sdirk_coefs[2][2] = -8.55612780171952 * sdt;
-      sdirk_coefs[2][3] = 3.39174883873506 * sdt;
+
+      sdirk_coefs[0][0] = 2.29428036027904 * sdt;
+      sdirk_coefs[0][1] = -2.29428036027904 * sdt;
+      sdirk_coefs[1][0] = 2.29428036027904 * sdt;
+      sdirk_coefs[1][1] = -0.809559354637498 * sdt;
+      sdirk_coefs[1][2] = -1.48472100564154 * sdt;
+      sdirk_coefs[2][0] = 2.29428036027904 * sdt;
+      sdirk_coefs[2][1] = 2.87009860433106 * sdt;
+      sdirk_coefs[2][2] = -8.55612780155264 * sdt;
+      sdirk_coefs[2][3] = 3.39174883694255 * sdt;
     }
 
   return sdirk_coefs;
