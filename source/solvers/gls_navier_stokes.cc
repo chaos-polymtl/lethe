@@ -93,7 +93,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               mapping,
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
-              ZeroFunction<dim>(dim + 1),
+              dealii::Functions::ZeroFunction<dim>(dim + 1),
               this->nonzero_constraints,
               this->fe.component_mask(velocities));
           }
@@ -175,7 +175,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               mapping,
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
-              ZeroFunction<dim>(dim + 1),
+              dealii::Functions::ZeroFunction<dim>(dim + 1),
               this->zero_constraints,
               this->fe.component_mask(velocities));
           }
