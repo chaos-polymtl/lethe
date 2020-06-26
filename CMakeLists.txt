@@ -36,8 +36,8 @@ IF(EXISTS ${CMAKE_SOURCE_DIR}/tests/CMakeLists.txt)
   SET(DEAL_II_HAVE_TESTS_DIRECTORY TRUE)
 ENDIF()
 
-set(PROTOTYPES "FALSE" CACHE FORCE BOOL)
-
+#set(PROTOTYPES "FALSE" CACHE BOOL)
+option(PROTOTYPES "Enable prototypes applications" OFF)
 
 Project(lethe)
 SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
@@ -47,8 +47,9 @@ ADD_SUBDIRECTORY(applications)
 ADD_SUBDIRECTORY(applications_tests)
 ADD_SUBDIRECTORY(tests)
 IF(PROTOTYPES)
+    MESSAGE("Adding prototypes")
     ADD_SUBDIRECTORY(prototypes)
-ENDIF()
+ ENDIF()
 
 
 
