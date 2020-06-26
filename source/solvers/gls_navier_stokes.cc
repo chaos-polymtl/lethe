@@ -93,7 +93,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               mapping,
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
-              ZeroFunction<dim>(dim + 1),
+              dealii::Functions::ZeroFunction<dim>(dim + 1),
               this->nonzero_constraints,
               this->fe.component_mask(velocities));
           }
@@ -175,7 +175,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               mapping,
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
-              ZeroFunction<dim>(dim + 1),
+              dealii::Functions::ZeroFunction<dim>(dim + 1),
               this->zero_constraints,
               this->fe.component_mask(velocities));
           }
@@ -857,7 +857,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
