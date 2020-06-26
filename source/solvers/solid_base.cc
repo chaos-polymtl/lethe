@@ -36,8 +36,9 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  NavierStokesSolverParameters<spacedim> &                          param,
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria)
+  Parameters::Nitsche                                                &param,
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>   fluid_tria,
+  const unsigned int                                                  degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -51,6 +52,7 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_tria(fluid_tria)
   , solid_dh(*solid_tria)
   , param(param)
+  , degree_velocity(degree_velocity)
 {}
 
 template <int dim, int spacedim>
@@ -60,19 +62,19 @@ SolidBase<dim, spacedim>::initial_setup()
   FE_Nothing<dim, spacedim> solid_fe;
   solid_dh.distribute_dofs(solid_fe);
 
-  if (param.nitsche.solid_mesh.type == Parameters::Mesh::Type::gmsh)
+  if (param.solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
       GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(*solid_tria);
-      std::ifstream input_file(param.nitsche.solid_mesh.file_name);
+      std::ifstream input_file(param.solid_mesh.file_name);
       grid_in.read_msh(input_file);
     }
-  else if (param.nitsche.solid_mesh.type == Parameters::Mesh::Type::dealii)
+  else if (param.solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         *solid_tria,
-        param.nitsche.solid_mesh.grid_type,
-        param.nitsche.solid_mesh.grid_arguments);
+        param.solid_mesh.grid_type,
+        param.solid_mesh.grid_arguments);
     }
   else
     throw std::runtime_error(
@@ -84,7 +86,7 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::setup_particles()
 {
-  QGauss<dim>        quadrature(param.fem_parameters.velocityOrder + 1);
+  QGauss<dim>        quadrature(degree_velocity + 1);
   const unsigned int n_properties = 1;
   solid_particle_handler->initialize(*fluid_tria,
                                      StaticMappingQ1<spacedim>::mapping,
@@ -149,7 +151,7 @@ SolidBase<dim, spacedim>::output_particles(std::string fprefix) const
 
 template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>>
-SolidBase<dim, spacedim>::generate_solid_particle_handler()
+SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
   if (!setup_done) {
     initial_setup();

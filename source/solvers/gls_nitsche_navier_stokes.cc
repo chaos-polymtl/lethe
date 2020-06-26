@@ -37,7 +37,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
   : GLSNavierStokesSolver<spacedim>(p_nsparam,
                                     p_degreeVelocity,
                                     p_degreePressure)
-  , solid(p_nsparam, this->triangulation)
+  , solid(this->nsparam.nitsche, this->triangulation, p_degreeVelocity)
 {}
 
 template <int dim, int spacedim>
@@ -45,7 +45,7 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
   std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
-    solid.generate_solid_particle_handler();
+    solid.get_solid_particle_handler();
 
   TimerOutput::Scope t(this->computing_timer, "Assemble Nitsche terms");
 
@@ -128,85 +128,49 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::bdf1,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::bdf2,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::bdf3,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::steady,
             Parameters::VelocitySource::VelocitySourceType::none>();
-          assemble_nitsche_restriction();
-        }
     }
 
   else if (this->nsparam.velocitySource.type ==
@@ -214,86 +178,51 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::bdf1,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::bdf2,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::bdf3,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
-        {
-          GLSNavierStokesSolver<spacedim>::template assembleGLS<
-            true,
+          GLSNavierStokesSolver<spacedim>::template assembleGLS<true,
             Parameters::SimulationControl::TimeSteppingMethod::steady,
             Parameters::VelocitySource::VelocitySourceType::srf>();
-          assemble_nitsche_restriction();
-        }
     }
+  assemble_nitsche_restriction();
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is

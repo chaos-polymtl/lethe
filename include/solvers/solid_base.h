@@ -68,9 +68,9 @@ class SolidBase
 {
 public:
   // Member functions
-  SolidBase(NavierStokesSolverParameters<spacedim> &param,
-            std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
-              fluid_tria);
+  SolidBase(Parameters::Nitsche                                                &param,
+            std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>   fluid_tria,
+            const unsigned int                                                  degree_velocity);
   void
   initial_setup();
   void
@@ -78,7 +78,7 @@ public:
   void
   output_particles(std::string fprefix) const;
   std::shared_ptr<Particles::ParticleHandler<spacedim>>
-  generate_solid_particle_handler();
+  get_solid_particle_handler();
 
 private:
   // Member variables
@@ -86,13 +86,14 @@ private:
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
 
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
-                                                                    solid_tria;
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
-  DoFHandler<dim, spacedim>                                         solid_dh;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>    solid_tria;
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>         fluid_tria;
+  DoFHandler<dim, spacedim>                                                 solid_dh;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>>                     solid_particle_handler;
 
-  NavierStokesSolverParameters<spacedim> param;
+  Parameters::Nitsche               param;
+
+  const unsigned int                degree_velocity;
 
   bool setup_done = false;
 };
