@@ -33,6 +33,18 @@ using namespace dealii;
  * @param order Order of the SDIRK method to be used
  *
  * @param time_step Value of the time step used for time integration.
+ *
+ * #SDIRK 33 - Coefficients from Kennedy and Carpenter 2016
+ * gamma = 0.435866521508458999416019
+ * b = 1.20849664917601007033648
+ * c =0.717933260754229499708010
+ *
+ * Butcher's Tableau for SDIRK33
+ * --------------------------
+ * | gamma      0        0  |
+ * |c-gamma   gamma      0  |
+ * |   b    1-b-gamma  gamma|
+ * --------------------------
  */
 FullMatrix<double>
 sdirk_coefficients(const unsigned int order, const double time_step);
