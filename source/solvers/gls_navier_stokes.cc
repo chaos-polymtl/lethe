@@ -127,12 +127,21 @@ GLSNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
+#if DEAL_II_VERSION_GTE(9, 2, 0)
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              this->nsparam.boundary_conditions.id[i_bc],
+              this->nsparam.boundary_conditions.periodic_id[i_bc],
+              this->nsparam.boundary_conditions.periodic_direction[i_bc],
+              this->zero_constraints);
+#else
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
               this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->nonzero_constraints);
+              this->zero_constraints);
+#endif
           }
       }
   }
@@ -161,12 +170,21 @@ GLSNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
+#if DEAL_II_VERSION_GTE(9, 2, 0)
+            DoFTools::make_periodicity_constraints(
+              this->dof_handler,
+              this->nsparam.boundary_conditions.id[i_bc],
+              this->nsparam.boundary_conditions.periodic_id[i_bc],
+              this->nsparam.boundary_conditions.periodic_direction[i_bc],
+              this->zero_constraints);
+#else
             DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
               this->nsparam.boundary_conditions.periodic_direction[i_bc],
               this->zero_constraints);
+#endif
           }
         else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
           // || Parameters::function)
@@ -857,7 +875,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
