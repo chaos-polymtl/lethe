@@ -55,7 +55,8 @@ public:
    */
 
   std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-  find_cell_neighbors(const Triangulation<dim> &triangulation);
+  find_cell_neighbors(
+    const parallel::distributed::Triangulation<dim> &triangulation);
 };
 
 #endif /* FINDCELLNEIGHBORS_H_ */

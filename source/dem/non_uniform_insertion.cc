@@ -92,24 +92,36 @@ NonUniformInsertion<dim>::insert(
       // inserted_this_step
       inserted_this_step = std::min(remained_particles, inserted_this_step);
 
+      MPI_Comm communicator = triangulation.get_communicator();
+
+
       // Obtaining global bounding boxes
       const auto my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
           triangulation, IteratorFilters::LocallyOwnedCell());
       const auto global_bounding_boxes =
-        Utilities::MPI::all_gather(MPI_COMM_WORLD, my_bounding_box);
+        Utilities::MPI::all_gather(communicator, my_bounding_box);
+
+
+      unsigned int this_mpi_process =
+        Utilities::MPI::this_mpi_process(communicator);
+
 
       // Finding insertion points using assign_insertion_points function
       std::vector<Point<dim>> insertion_points;
-      insertion_points = this->assign_insertion_points(dem_parameters);
+      insertion_points.resize(0);
+      if (this_mpi_process == 0)
+        insertion_points = this->assign_insertion_points(dem_parameters);
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
       std::vector<std::vector<double>> particle_properties;
-      particle_properties =
-        this->assign_particle_properties(dem_parameters,
-                                         inserted_this_step,
-                                         particle_handler.n_global_particles());
+      particle_properties.resize(0);
+      if (this_mpi_process == 0)
+        particle_properties = this->assign_particle_properties(
+          dem_parameters,
+          inserted_this_step,
+          particle_handler.n_global_particles());
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points,
@@ -191,7 +203,7 @@ NonUniformInsertion<dim>::assign_insertion_points(
                                physical_properties.diameter) +
                               random_number_vector[insertion_information
                                                      .inserted_this_step -
-                                                   particle_counter] *
+                                                   particle_counter - 1] *
                                 physical_properties.diameter;
                 if (dim == 3)
                   {
