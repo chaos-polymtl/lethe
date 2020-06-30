@@ -372,14 +372,18 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
     //std::cout << "dr " << dr  << std::endl;
 
     using numbers::PI;
+    Point<dim> center_immersed;
 
-    if (dim==2) {
+    if (dim == 2) {
         // loop on all particule
         for (unsigned int p = 0; p < particles.size(); ++p) {
 
             // define stuff usefull for the evaluation
-            const double center_x = particles[p][0];
-            const double center_y = particles[p][1];
+
+            if (dim == 2) {
+                center_immersed(0) = particles[p][0];
+                center_immersed(1) = particles[p][1];
+            }
 
 
             QGauss<dim> q_formula(this->fe.degree + 1);
@@ -388,6 +392,10 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             double mu = this->nsparam.physical_properties.viscosity;
 
             MappingQ1<dim> immersed_map;
+            std::map<types::global_dof_index, Point<dim >> support_points;
+            DoFTools::map_dofs_to_support_points(immersed_map, this->dof_handler, support_points);
+
+
             std::vector<types::global_dof_index> local_dof_indices(this->fe.dofs_per_cell);
             std::vector<types::global_dof_index> local_dof_indices_2(this->fe.dofs_per_cell);
             std::vector<types::global_dof_index> local_dof_indices_3(this->fe.dofs_per_cell);
@@ -404,212 +412,230 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                 // define the normal to the surface evaluated.
                 Tensor<1, dim, double> surf_normal;
                 Tensor<1, dim, double> surf_vect;
-                double step_ratio=2;
-                surf_normal[0]=dr * cos(i * 2 * PI / (nb_evaluation));
-                surf_normal[1]=dr * sin(i * 2 * PI / (nb_evaluation));
-                surf_vect[0]=-surf_normal[1];
-                surf_vect[1]=surf_normal[0];
+                double step_ratio = 0.5;
+                surf_normal[0] = dr * cos(i * 2 * PI / (nb_evaluation));
+                surf_normal[1] = dr * sin(i * 2 * PI / (nb_evaluation));
+                surf_vect[0] = -surf_normal[1];
+                surf_vect[1] = surf_normal[0];
+                double da = 2 * PI * particles[p][5] / (nb_evaluation);
                 // define the reference point for the surface evaluated.
-                const Point<dim> eval_point(particles[p][5] * cos(i * 2 * PI / (nb_evaluation)) + center_x,
-                                            particles[p][5] * sin(i * 2 * PI / (nb_evaluation)) + center_y);
+                const Point<dim> eval_point(particles[p][5] * cos(i * 2 * PI / (nb_evaluation)) + center_immersed(0),
+                                            particles[p][5] * sin(i * 2 * PI / (nb_evaluation)) + center_immersed(1));
 
                 // define the point used for the evaluation
                 // points normal to the surface surface
 
                 // step in the normal direction of the surface until we find a cell that is not the cell where the immersed boundary is found.
                 const auto &cell = GridTools::find_active_cell_around_point(this->dof_handler, eval_point);
-                Point<dim> eval_point_2(eval_point[0] + surf_normal[0]*step_ratio,
-                                              eval_point[1] + surf_normal[1]*step_ratio);
+                Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * step_ratio,
+                                        eval_point[1] + surf_normal[1] * step_ratio);
                 cell->get_dof_indices(local_dof_indices_3);
 
-                unsigned int nb_step=0;
-                bool cell_found=false;
-                try {
-                    //define the cell and check if the point is inside of the cell
-                    Point<dim, double> p_cell = immersed_map.transform_real_to_unit_cell(
-                            cell, eval_point_2);
-                    double dist_2 = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+                unsigned int nb_step = 0;
+                bool cell_found = false;
 
-                    if (dist_2 != 0) {
-                        //if the point is in this cell then the dist is equal to 0 and we have found our cell
-                        cell_found = true;
+                while (cell_found == false) {
+                    Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                                            eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
+                    const auto &cell_iter = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_2);
+                    cell_iter->get_dof_indices(local_dof_indices);
+
+                    unsigned int count_small = 0;
+                    if (dim == 2) {
+                        center_immersed(0) = particles[p][0];
+                        center_immersed(1) = particles[p][1];
+
                     }
-                }
-                    // may cause error if the point is not in cell
-                catch (typename MappingQGeneric<dim>::ExcTransformationFailed) {
-                }
-
-
-                while (cell_found==false){
-                    Point<dim> eval_point_2(eval_point[0] + surf_normal[0]*(nb_step+1)*step_ratio,
-                                                  eval_point[1] + surf_normal[1]*(nb_step+1)*step_ratio);
-                    try {
-                        //define the cell and check if the point is inside of the cell
-                        const Point<dim, double> p_cell = immersed_map.transform_real_to_unit_cell(
-                                cell, eval_point_2);
-                        const double dist_2 = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-                        if (dist_2 <= 0.000000001*dr) {
-                            //if the point is in this cell then the dist is equal to 0 and we have found our cell
-                            cell_found = true;
+                    for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
+                        //count the number of dof that ar smaller or larger then the radius of the particles
+                        //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
+                        if ((support_points[local_dof_indices[j]] - center_immersed).norm() <=
+                            particles[p][particles[p].size() - 1]) {
+                            ++count_small;
                         }
                     }
-                        // may cause error if the point is not in cell
-                    catch (typename MappingQGeneric<dim>::ExcTransformationFailed) {
+
+                    if (count_small != 0 and count_small != local_dof_indices.size()) {
+                        cell_found = false;
+                    } else {
+                        cell_found = true;
                     }
-                    if (cell_found==false)
-                        nb_step+=1;
+
+
+                    if (cell_found == false)
+                        nb_step += 1;
 
                 }
 
-                Point<dim> eval_point_4(eval_point[0] + surf_normal[0]*(nb_step+1)*step_ratio,
-                                        eval_point[1] + surf_normal[1]*(nb_step+1)*step_ratio);
-                const Point<dim> eval_point_3(eval_point_4[0] + surf_normal[0]*step_ratio,
-                                              eval_point_4[1] + surf_normal[1]*step_ratio);
-                //std::cout << "eval point " << i <<" "<< eval_point_4<< " nb_step "<< nb_step << std::endl;
+
+                const Point<dim> eval_point_4(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                                              eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
+                const Point<dim> eval_point_3(eval_point_4[0] + surf_normal[0] * step_ratio,
+                                              eval_point_4[1] + surf_normal[1] * step_ratio);
+                const Point<dim> eval_point_5(eval_point_3[0] + surf_normal[0] * step_ratio,
+                                              eval_point_3[1] + surf_normal[1] * step_ratio);
+
+                //std::cout << "eval_point " << eval_point_4  << " n " << nb_step << std::endl;
                 const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_4);
                 const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_3);
+                const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_5);
 
-                cell_3->get_dof_indices(local_dof_indices_2);
                 cell_2->get_dof_indices(local_dof_indices);
+                cell_3->get_dof_indices(local_dof_indices_2);
+                cell_4->get_dof_indices(local_dof_indices_3);
+
                 if (cell_2->is_locally_owned()) {
 
-                   // define the tensor used for the velocity evaluation.
+                    // define the tensor used for the velocity evaluation.
                     Tensor<1, dim, double> u_1;
                     Tensor<1, dim, double> u_2;
                     Tensor<1, dim, double> u_3;
+                    double P1 = 0;
+                    double P2 = 0;
+                    double P3 = 0;
 
-                    // define the velocity component of the particle at the boundary on the reference point
-                    u_1[0] = -particles[p][4]*particles[p][5]*sin(i * 2 * PI / (nb_evaluation))+particles[p][2];
-                    u_1[1] = particles[p][4]*particles[p][5]*cos(i * 2 * PI / (nb_evaluation))+particles[p][3];
-                    // projection of the speed of the boundary on the plan of the surface used for evalaution
-                    double U1 =(surf_vect[0]*u_1[0]+surf_vect[1]*u_1[1])/surf_vect.norm();
+                    // define the velocity component of the particle at the boundary on the reference point we put the reference for the velocity
+                    // at the center of the particle this simplifie the evaluation of the force if the particule is moving
+                    u_1[0] = -particles[p][4] * particles[p][5] * sin(i * 2 * PI / (nb_evaluation));
+                    u_1[1] = particles[p][4] * particles[p][5] * cos(i * 2 * PI / (nb_evaluation));
+                    // projection of the speed of the boundary on the plan of the surface used for evaluation
+                    double U1 = (surf_vect[0] * u_1[0] + surf_vect[1] * u_1[1]) / surf_vect.norm();
 
 
                     // used support function of the cell to define the interpolation of the velocity
                     Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2, eval_point_4);
                     Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_3, eval_point_3);
+                    Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_4, eval_point_5);
 
-
+                    u_2[0] = 0;
+                    u_2[1] = 0;
+                    u_3[0] = 0;
+                    u_3[1] = 0;
+                    cell_2->get_dof_indices(local_dof_indices);
                     cell_3->get_dof_indices(local_dof_indices_2);
-                    unsigned  int j=0;
-                    while(j < this->fe.dofs_per_cell){
+                    cell_4->get_dof_indices(local_dof_indices_3);
 
-                        u_2[0] += this->fe.shape_value(j, second_point_v) * this->present_solution(local_dof_indices[j]);
-                        u_2[1] += this->fe.shape_value(j + 1, second_point_v) * this->present_solution(local_dof_indices[j + 1]);
-                        u_3[0] += this->fe.shape_value(j, third_point_v) * this->present_solution(local_dof_indices_2[j]);
-                        u_3[1] += this->fe.shape_value(j + 1, third_point_v) * this->present_solution(local_dof_indices_2[j + 1]);
 
-                        if (j < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
+                    unsigned int j = 0;
+                    while (j < this->fe.dofs_per_cell) {
+
+                        //std::cout << "dof _indices " << local_dof_indices[j] << std::endl;
+                        //std::cout << "present " << this->present_solution(local_dof_indices[j]) << std::endl;
+                        //std::cout << "fe.shape  " << this->fe.shape_value(j, second_point_v)  << std::endl;
+
+                        u_2[0] +=
+                                this->fe.shape_value(j, second_point_v) * this->present_solution(local_dof_indices[j]);
+                        u_2[1] += this->fe.shape_value(j + 1, second_point_v) *
+                                  this->present_solution(local_dof_indices[j + 1]);
+                        u_3[0] +=
+                                this->fe.shape_value(j, third_point_v) * this->present_solution(local_dof_indices_2[j]);
+                        u_3[1] += this->fe.shape_value(j + 1, third_point_v) *
+                                  this->present_solution(local_dof_indices_2[j + 1]);
+
+                        if (j < (dim + 1) * pow(1 + this->nsparam.fem_parameters.pressureOrder, dim)) {
+                            P1 += this->fe.shape_value(j + 2, second_point_v) *
+                                  this->present_solution(local_dof_indices[j + 2]);
+                            P2 += this->fe.shape_value(j + 2, third_point_v) *
+                                  this->present_solution(local_dof_indices_2[j + 2]);
+                            P3 += this->fe.shape_value(j + 2, fourth_point_v) *
+                                  this->present_solution(local_dof_indices_3[j + 2]);
+                        }
+
+                        if (j < (dim + 1) * pow(1 + this->nsparam.fem_parameters.pressureOrder, dim)) {
                             j = j + dim + 1;
                         } else {
                             j = j + dim;
                         }
                     }
+                    u_2[0] = u_2[0] - particles[p][2];
+                    u_2[1] = u_2[1] - particles[p][3];
+                    u_3[0] = u_3[0] - particles[p][2];
+                    u_3[1] = u_3[1] - particles[p][3];
 
-                    double U2 = (surf_vect[0]*u_2[0]+surf_vect[1]*u_2[1])/surf_vect.norm();
-                    double U3 = (surf_vect[0]*u_3[0]+surf_vect[1]*u_3[1])/surf_vect.norm();
-                    double du_dn_1=(U2/(particles[p][5]+surf_normal.norm()*(nb_step+1)*step_ratio)-U1/particles[p][5])/((nb_step+1)*surf_normal.norm()*step_ratio);
-                    double du_dn_2=(U3/(particles[p][5]+surf_normal.norm()*(nb_step+2)*step_ratio)-U2/(particles[p][5]+surf_normal.norm()*(nb_step+1)*step_ratio))/(surf_normal.norm()*step_ratio);
-                    //std::cout << "U1 " << U1 <<" U2 "<<U2 <<" U3 "<< U3 << std::endl;
+                    double U2 = (surf_vect[0] * u_2[0] + surf_vect[1] * u_2[1]) / surf_vect.norm();
+                    double U3 = (surf_vect[0] * u_3[0] + surf_vect[1] * u_3[1]) / surf_vect.norm();
+
+                    double U1_r = (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) / surf_normal.norm();
+                    double U2_r = (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) / surf_normal.norm();
+                    double U3_r = (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) / surf_normal.norm();
+
+                    ////
+                    double du_dn_1 = (U2 / (particles[p][5] + surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                                      U1 / particles[p][5]) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                    double du_dn_2 = (U3 / (particles[p][5] + surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                                      U2 / (particles[p][5] + surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                                     (surf_normal.norm() * step_ratio);
+
+                    double du_dr_1 = (U2_r - U1_r) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                    double du_dr_2 = (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
+
+                    //std::cout << "nb " << nb_step+1  << std::endl;
+                    //std::cout << "u2 " << u_2 << std::endl;
+                    //std::cout << "point " << eval_point_4  << std::endl;
+                    //std::cout << "U1 " << U1  << " U2 " << U2 << " U3 "<< U3<< std::endl;
+
+                    double du_dn = du_dn_1 - (du_dn_2 - du_dn_1) * (nb_step + 1) / ((nb_step + 1) + 1);
+                    double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) / ((nb_step + 1) + 1);
+
+                    double P_local = P1 + (nb_step + 1) * (P1 - P2) +
+                                     ((nb_step + 2) * (nb_step + 1) / 2) * ((P1 - P2) - (P2 - P3));
+
+                    /*
 
 
+                    double local_fx_v=(du_dn* particles[p][5]) * mu  * 2 * PI * particles[p][5] / (nb_evaluation ) *
+                                      sin(i * 2 * PI / (nb_evaluation))+(-mu*2*du_dr*surf_normal[0]/dr * 2 * PI * particles[p][5] / (nb_evaluation ));
+                    double local_fy_v=-(du_dn * particles[p][5]) * mu  * 2 * PI * particles[p][5] / (nb_evaluation ) *
+                                      cos(i * 2 * PI / (nb_evaluation))+(-mu*2*du_dr*surf_normal[1]/dr * 2 * PI * particles[p][5] / (nb_evaluation ));
 
-                    double du_dn = du_dn_1 - (du_dn_2-du_dn_1)*(nb_step+1)/((nb_step+1)+1) ;
-                    //std::cout << "du/dn " << du_dn  << " du/dr " << du_dr << std::endl;
+                     */
+                    double local_fx_v = ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
+                                         (-particles[p][5] * mu * du_dn * surf_vect[0] / surf_vect.norm())) * da;
+                    double local_fy_v = ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
+                                         (-particles[p][5] * mu * du_dn * surf_vect[1] / surf_vect.norm())) * da;
 
-                    double local_fx_v=(du_dn* particles[p][5]) * mu  * 2 * PI * particles[p][5] / (nb_evaluation - 1) *
-                                      sin(i * 2 * PI / (nb_evaluation));
-                    double local_fy_v=-(du_dn * particles[p][5]) * mu  * 2 * PI * particles[p][5] / (nb_evaluation - 1) *
-                                      cos(i * 2 * PI / (nb_evaluation));
+                    double local_fx_p_2 = P_local * da * surf_normal[0] / surf_normal.norm();
+                    double local_fy_p_2 = P_local * da * surf_normal[1] / surf_normal.norm();
+
 
                     fx_v += local_fx_v;
                     fy_v += local_fy_v;
-                    t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation) )* particles[p][5]-local_fy_v*cos(i * 2 * PI / (nb_evaluation))* particles[p][5];
+                    fx_p_2 += local_fx_p_2;
+                    fy_p_2 += local_fy_p_2;
+                    t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) * particles[p][5] -
+                                local_fy_v * cos(i * 2 * PI / (nb_evaluation)) * particles[p][5];
                 }
             }
 
-            double t_torque_ =Utilities::MPI::sum(t_torque, this->mpi_communicator);
+            double t_torque_ = Utilities::MPI::sum(t_torque, this->mpi_communicator);
+            double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
+            double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
+            double fx_v_ = Utilities::MPI::sum(fx_v, this->mpi_communicator);
+            double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
 
 
+            if (this->this_mpi_process == 0) {
 
-            fx_p_2 = 0;
-            fy_p_2 = 0;
-            for (unsigned int i = 0; i < nb_evaluation; ++i) {
-                const Point<dim> eval_point(particles[p][5] * cos(i * 2 * PI / (nb_evaluation)) + center_x,
-                                            particles[p][5] * sin(i * 2 * PI / (nb_evaluation)) + center_y);
-                const Point<dim> eval_point_2(eval_point[0] + 1 * dr * cos(i * 2 * PI / (nb_evaluation)),
-                                              eval_point[1] + 1 * dr * sin(i * 2 * PI / (nb_evaluation)));
-                const Point<dim> eval_point_3(eval_point[0] + 2 * dr * cos(i * 2 * PI / (nb_evaluation)),
-                                              eval_point[1] + 2 * dr * sin(i * 2 * PI / (nb_evaluation)));
-                const Point<dim> eval_point_4(eval_point[0] + 3 * dr * cos(i * 2 * PI / (nb_evaluation)),
-                                              eval_point[1] + 3 * dr * sin(i * 2 * PI / (nb_evaluation)));
-                const auto &cell = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_2);
-                if (cell->is_locally_owned()) {
-                    const auto &cell2 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_3);
-                    const auto &cell3 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_4);
-
-                    Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell, eval_point_2);
-                    Point<dim> second_point_v_2 = immersed_map.transform_real_to_unit_cell(cell2, eval_point_3);
-                    Point<dim> second_point_v_3 = immersed_map.transform_real_to_unit_cell(cell3, eval_point_4);
-                    cell->get_dof_indices(local_dof_indices);
-
-                    cell2->get_dof_indices(local_dof_indices_2);
-                    cell3->get_dof_indices(local_dof_indices_3);
-                    double P_1 = 0;
-                    double P_2 = 0;
-                    double P_3 = 0;
-                    unsigned int j=dim;
-                    while(j<(dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)){
-                        P_1 += this->fe.shape_value(j, second_point_v) * this->present_solution(local_dof_indices[j]);
-                        P_2 += this->fe.shape_value(j, second_point_v_2) *
-                               this->present_solution(local_dof_indices_2[j]);
-                        P_3 += this->fe.shape_value(j, second_point_v_3) *
-                               this->present_solution(local_dof_indices_3[j]);
-                        if (j < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
-                            j = j + dim + 1;
-                        } else {
-                            j = j + dim;
-                        }
-                    }
-                    double P2 = P_1 + (P_1 - P_2) + ((P_1 - P_2) - (P_2 - P_3));
-                    fx_p_2 += P2 * -cos(i * 2 * PI / (nb_evaluation)) * 2 * PI * particles[p][5] / (nb_evaluation - 1);
-                    fy_p_2 += P2 * -sin(i * 2 * PI / (nb_evaluation)) * 2 * PI * particles[p][5] / (nb_evaluation - 1);
-                }
-            }
-            double fx_p_2_ =Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
-            double fy_p_2_ =Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
-            double fx_v_ =Utilities::MPI::sum(fx_v, this->mpi_communicator);
-            double fy_v_ =Utilities::MPI::sum(fy_v, this->mpi_communicator);
-
-
-
-
-
-            if  (this->this_mpi_process == 0){
-
-                force_vect[0]=fx_p_2_+fx_v_;
-                force_vect[1]=fy_p_2_+fy_v_;
+                force_vect[0] = fx_p_2_ + fx_v_;
+                force_vect[1] = fy_p_2_ + fy_v_;
                 if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
-                    this->this_mpi_process == 0)
-                {
-                    std::cout <<"particle : "<< p << " total_torque :" << t_torque_ << std::endl;
-                    std::cout <<"particle : "<< p << " total_torque :" << t_torque_ << std::endl;
+                    this->this_mpi_process == 0) {
+                    std::cout << "particle : " << p << " total_torque :" << t_torque_ << std::endl;
+                    std::cout << "particle : " << p << " total_torque :" << t_torque_ << std::endl;
                     std::cout << "fx_P: " << fx_p_2_ << std::endl;
                     std::cout << "fy_P: " << fy_p_2_ << std::endl;
                     std::cout << "fx_v: " << fx_v_ << std::endl;
                     std::cout << "fy_v: " << fy_v_ << std::endl;
                     table_f.add_value("particle ID", p);
-                    table_f.add_value("f_x", fx_p_2_+fx_v_);
-                    table_f.add_value("f_y", fy_p_2_+fy_v_);
+                    table_f.add_value("f_x", fx_p_2_ + fx_v_);
+                    table_f.add_value("f_y", fy_p_2_ + fy_v_);
 
                     table_f.set_precision("f_x",
                                           this->nsparam.forces_parameters.display_precision);
                     table_f.set_precision("f_y",
                                           this->nsparam.forces_parameters.display_precision);
-                    if (dim == 3)
-                    {
-                        table_f.add_value("f_z", fy_p_2_+fy_v_);
+                    if (dim == 3) {
+                        table_f.add_value("f_z", fy_p_2_ + fy_v_);
                         table_f.set_precision("f_z",
                                               this->nsparam.forces_parameters.display_precision);
                     }
@@ -625,8 +651,306 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
         table_f.write_text(std::cout);
     }
-}
 
+
+    if (dim == 3) {
+        for (unsigned int p = 0; p < particles.size(); ++p) {
+            const double center_x = particles[p][0];
+            const double center_y = particles[p][1];
+            const double center_z = particles[p][2];
+            if (dim == 2) {
+                center_immersed(0) = particles[p][0];
+                center_immersed(1) = particles[p][1];
+            }
+
+            QGauss<dim> q_formula(this->fe.degree + 1);
+            FEValues<dim> fe_values(this->fe, q_formula, update_quadrature_points);
+
+            double mu = this->nsparam.physical_properties.viscosity;
+            MappingQ1<dim> immersed_map;
+            std::map<types::global_dof_index, Point<dim >> support_points;
+            DoFTools::map_dofs_to_support_points(immersed_map, this->dof_handler, support_points);
+
+
+            std::vector<types::global_dof_index> local_dof_indices(this->fe.dofs_per_cell);
+            std::vector<types::global_dof_index> local_dof_indices_2(this->fe.dofs_per_cell);
+            std::vector<types::global_dof_index> local_dof_indices_3(this->fe.dofs_per_cell);
+            unsigned int nb_evaluation = this->nsparam.particlesParameters.nb_force_eval;
+            nb_evaluation = ceil(pow(nb_evaluation, 0.5));
+            double t_torque = 0;
+
+            double fx_v = 0;
+            double fy_v = 0;
+            double fz_v = 0;
+            double fx_p_2 = 0;
+            double fy_p_2 = 0;
+            double fz_p_2 = 0;
+            double A = 0;
+            for (unsigned int i = 0; i < nb_evaluation - 1; ++i) {
+                for (unsigned int j = 0; j < nb_evaluation; ++j) {
+                    Tensor<1, dim, double> surf_normal;
+                    Tensor<1, dim, double> surf_vect_1;
+                    Tensor<1, dim, double> surf_vect_2;
+                    double theta = (i + 0.5) * PI / (nb_evaluation);
+                    double phi = j * 2 * PI / (nb_evaluation);
+                    double da = particles[p][9] * particles[p][9] * 2 * PI / (nb_evaluation) * PI / (nb_evaluation) *
+                                sin(theta);
+
+                    const Point<dim> eval_point(particles[p][9] * sin(theta) * cos(phi) + center_x,
+                                                particles[p][9] * sin(theta) * sin(phi) + center_y,
+                                                particles[p][9] * cos(theta) + center_z);
+                    double step_ratio = 0.5;
+                    surf_normal[0] = dr * (sin(theta) * cos(phi));
+                    surf_normal[1] = dr * (sin(theta) * sin(phi));
+                    surf_normal[2] = dr * (cos(theta));
+
+                    surf_vect_1[0] = dr * (sin(theta + PI / 2) * cos(phi));
+                    surf_vect_1[1] = dr * (sin(theta + PI / 2) * sin(phi));
+                    surf_vect_1[2] = dr * (cos(theta + PI / 2));
+
+                    surf_vect_2 = cross_product_3d(surf_normal, surf_vect_1);
+
+
+
+
+                    const auto &cell = GridTools::find_active_cell_around_point(this->dof_handler, eval_point);
+                    Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * step_ratio,
+                                            eval_point[1] + surf_normal[1] * step_ratio,
+                                            eval_point[2] + surf_normal[2] * step_ratio);
+
+                    cell->get_dof_indices(local_dof_indices_3);
+
+                    unsigned int nb_step = 0;
+                    bool cell_found = false;
+
+                    while (cell_found == false) {
+                        Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                                                eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
+                        const auto &cell_iter = GridTools::find_active_cell_around_point(this->dof_handler,
+                                                                                         eval_point_2);
+                        cell_iter->get_dof_indices(local_dof_indices);
+
+                        unsigned int count_small = 0;
+                        if (dim == 3) {
+                            center_immersed(0) = particles[p][0];
+                            center_immersed(1) = particles[p][1];
+                            center_immersed(2) = particles[p][2];
+                        }
+                        for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
+                            //count the number of dof that ar smaller or larger then the radius of the particles
+                            //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
+                            if ((support_points[local_dof_indices[j]] - center_immersed).norm() <=
+                                particles[p][particles[p].size() - 1]) {
+                                ++count_small;
+                            }
+                        }
+
+                        if (count_small != 0 and count_small != local_dof_indices.size()) {
+                            cell_found = false;
+                        } else {
+                            cell_found = true;
+                        }
+
+
+                        if (cell_found == false)
+                            nb_step += 1;
+
+                    }
+
+                    Point<dim> eval_point_4(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                                            eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio,
+                                            eval_point[2] + surf_normal[2] * (nb_step + 1) * step_ratio);
+                    const Point<dim> eval_point_3(eval_point_4[0] + surf_normal[0] * step_ratio,
+                                                  eval_point_4[1] + surf_normal[1] * step_ratio,
+                                                  eval_point_4[2] + surf_normal[2] * step_ratio);
+                    const Point<dim> eval_point_5(eval_point_3[0] + surf_normal[0] * step_ratio,
+                                                  eval_point_3[1] + surf_normal[1] * step_ratio,
+                                                  eval_point_3[2] + surf_normal[2] * step_ratio);
+
+                    const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_4);
+                    const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_3);
+                    const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_5);
+
+                    cell_2->get_dof_indices(local_dof_indices);
+                    cell_3->get_dof_indices(local_dof_indices_2);
+                    cell_4->get_dof_indices(local_dof_indices_3);
+                    if (cell_2->is_locally_owned()) {
+                        // define the tensor used for the velocity evaluation.
+                        Tensor<1, dim, double> u_1;
+                        Tensor<1, dim, double> u_2;
+                        Tensor<1, dim, double> u_3;
+                        double P1 = 0;
+                        double P2 = 0;
+                        double P3 = 0;
+
+                        // define the velocity component of the particle at the boundary on the reference point in 3 d the only rotation is around the z axis
+                        u_1[0] = -particles[p][8] * particles[p][9] * sin(phi) * sin(theta);
+                        u_1[1] = particles[p][8] * particles[p][9] * cos(phi) * sin(theta);
+                        u_1[2] = 0;
+
+                        // projection of the speed of the boundary on the plan of the surface used for evaluation
+                        double U1_1 = (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] + surf_vect_1[2] * u_1[2]) /
+                                      surf_vect_1.norm();
+                        double U1_2 = (surf_vect_2[0] * u_1[0] + surf_vect_2[1] * u_1[1] + surf_vect_2[2] * u_1[2]) /
+                                      surf_vect_2.norm();
+
+
+                        // used support function of the cell to define the interpolation of the velocity
+                        Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2, eval_point_4);
+                        Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_3, eval_point_3);
+                        Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_4, eval_point_5);
+
+
+                        cell_3->get_dof_indices(local_dof_indices_2);
+                        unsigned int j = 0;
+                        while (j < this->fe.dofs_per_cell) {
+
+                            u_2[0] += this->fe.shape_value(j, second_point_v) *
+                                      this->present_solution(local_dof_indices[j]);
+                            u_2[1] += this->fe.shape_value(j + 1, second_point_v) *
+                                      this->present_solution(local_dof_indices[j + 1]);
+                            u_2[2] += this->fe.shape_value(j + 2, second_point_v) *
+                                      this->present_solution(local_dof_indices[j + 2]);
+                            u_3[0] += this->fe.shape_value(j, third_point_v) *
+                                      this->present_solution(local_dof_indices_2[j]);
+                            u_3[1] += this->fe.shape_value(j + 1, third_point_v) *
+                                      this->present_solution(local_dof_indices_2[j + 1]);
+                            u_3[2] += this->fe.shape_value(j + 2, third_point_v) *
+                                      this->present_solution(local_dof_indices_2[j + 2]);
+                            if (j < (dim + 1) * pow(1 + this->nsparam.fem_parameters.pressureOrder, dim)) {
+                                P1 += this->fe.shape_value(j + 3, second_point_v) *
+                                      this->present_solution(local_dof_indices[j + 3]);
+                                P2 += this->fe.shape_value(j + 3, third_point_v) *
+                                      this->present_solution(local_dof_indices_2[j + 3]);
+                                P3 += this->fe.shape_value(j + 3, fourth_point_v) *
+                                      this->present_solution(local_dof_indices_3[j + 3]);
+                            }
+                            if (j < (dim + 1) * pow(1 + this->nsparam.fem_parameters.pressureOrder, dim)) {
+                                j = j + dim + 1;
+                            } else {
+                                j = j + dim;
+                            }
+                        }
+
+                        double U2_1 = (surf_vect_1[0] * u_2[0] + surf_vect_1[1] * u_2[1] + surf_vect_1[2] * u_2[2]) /
+                                      surf_vect_1.norm();
+                        double U3_1 = (surf_vect_1[0] * u_3[0] + surf_vect_1[1] * u_3[1] + surf_vect_1[2] * u_3[2]) /
+                                      surf_vect_1.norm();
+                        double U2_2 = (surf_vect_2[0] * u_2[0] + surf_vect_2[1] * u_2[1] + surf_vect_2[2] * u_2[2]) /
+                                      surf_vect_2.norm();
+                        double U3_2 = (surf_vect_2[0] * u_3[0] + surf_vect_2[1] * u_3[1] + surf_vect_2[2] * u_3[2]) /
+                                      surf_vect_2.norm();
+                        std::cout << "U2_1 " << U2_1<<" U3_1 "<<  U3_1 << "U2_2 " << U2_2<<" U3_2 "<<  U3_2  << std::endl;
+                        double U1_r = (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) / surf_normal.norm();
+                        double U2_r = (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) / surf_normal.norm();
+                        double U3_r = (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) / surf_normal.norm();
+
+                        double du_dn_1_1 = (U2_1 / (particles[p][9] + surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                                            U1_1 / particles[p][9]) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                        double du_dn_2_1 = (U3_1 / (particles[p][9] + surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                                            U2_1 /
+                                            (particles[p][9] + surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                                           (surf_normal.norm() * step_ratio);
+
+                        double du_dn_1_2 = (U2_2 / (particles[p][9] + surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                                            U1_2 / particles[p][9]) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                        double du_dn_2_2 = (U3_2 / (particles[p][9] + surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                                            U2_2 /
+                                            (particles[p][9] + surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                                           (surf_normal.norm() * step_ratio);
+
+
+                        double du_dr_1 = (U2_r - U1_r) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                        double du_dr_2 = (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
+
+                        double du_dn_1 = du_dn_1_1 - (du_dn_2_1 - du_dn_1_1) * (nb_step + 1) / ((nb_step + 1) + 1);
+                        double du_dn_2 = du_dn_1_2 - (du_dn_2_2 - du_dn_1_2) * (nb_step + 1) / ((nb_step + 1) + 1);
+                        double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) / ((nb_step + 1) + 1);
+                        std::cout << "du_dr " << du_dr<<" du_dn_1 "<<  du_dn_1 <<" du_dn_2 "<<  du_dn_2  << std::endl;
+
+                        double P_local = P1 + (nb_step + 1) * (P1 - P2) +
+                                         ((nb_step + 2) * (nb_step + 1) / 2) * ((P1 - P2) - (P2 - P3));
+
+                        double local_fx_v = ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
+                                             (-particles[p][9] * mu * du_dn_1 * surf_vect_1[0] / surf_vect_1.norm()) +
+                                             (-particles[p][9] * mu * du_dn_2 * surf_vect_2[0] / surf_vect_2.norm())) *
+                                            da;
+                        double local_fy_v = ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
+                                             (-particles[p][9] * mu * du_dn_1 * surf_vect_1[1] / surf_vect_1.norm()) +
+                                             (-particles[p][9] * mu * du_dn_2 * surf_vect_2[1] / surf_vect_2.norm())) *
+                                            da;
+                        double local_fz_v = ((-mu * du_dr * 2 * surf_normal[2] / surf_normal.norm()) +
+                                             (-particles[p][9] * mu * du_dn_1 * surf_vect_1[2] / surf_vect_1.norm()) +
+                                             (-particles[p][9] * mu * du_dn_2 * surf_vect_2[2] / surf_vect_2.norm())) *
+                                            da;
+
+                        double local_fx_p_2 = P_local * da * surf_normal[0] / surf_normal.norm();
+                        double local_fy_p_2 = P_local * da * surf_normal[1] / surf_normal.norm();
+                        double local_fz_p_2 = P_local * da * surf_normal[2] / surf_normal.norm();
+
+                        fx_v += local_fx_v;
+                        fy_v += local_fy_v;
+                        fz_v += local_fz_v;
+                        fx_p_2 += local_fx_p_2;
+                        fy_p_2 += local_fy_p_2;
+                        fz_p_2 += local_fz_p_2;
+                        A += da;
+                        t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) * particles[p][5] -
+                                    local_fy_v * cos(i * 2 * PI / (nb_evaluation)) * particles[p][5];
+
+
+                    }
+                }
+            }
+            double t_torque_ = Utilities::MPI::sum(t_torque, this->mpi_communicator);
+            double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
+            double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
+            double fz_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
+            double fx_v_ = Utilities::MPI::sum(fx_v, this->mpi_communicator);
+            double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
+            double fz_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
+
+            std::cout << "A : " << A << std::endl;
+            if (this->this_mpi_process == 0) {
+
+                force_vect[0] = fx_p_2_ + fx_v_;
+                force_vect[1] = fy_p_2_ + fy_v_;
+                if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
+                    this->this_mpi_process == 0) {
+                    std::cout << "particle : " << p << " total_torque :" << t_torque_ << std::endl;
+                    std::cout << "fx_P: " << fx_p_2_ << std::endl;
+                    std::cout << "fy_P: " << fy_p_2_ << std::endl;
+                    std::cout << "fz_P: " << fz_p_2_ << std::endl;
+                    std::cout << "fx_v: " << fx_v_ << std::endl;
+                    std::cout << "fy_v: " << fy_v_ << std::endl;
+                    std::cout << "fz_v: " << fz_v_ << std::endl;
+
+                    table_f.add_value("particle ID", p);
+                    table_f.add_value("f_x", fx_p_2_ + fx_v_);
+                    table_f.add_value("f_y", fy_p_2_ + fy_v_);
+
+                    table_f.set_precision("f_x",
+                                          this->nsparam.forces_parameters.display_precision);
+                    table_f.set_precision("f_y",
+                                          this->nsparam.forces_parameters.display_precision);
+
+                    if (dim == 3) {
+                        table_f.add_value("f_z", fz_p_2_ + fz_v_);
+                        table_f.set_precision("f_z",
+                                              this->nsparam.forces_parameters.display_precision);
+                    }
+                    std::cout << "+------------------------------------------+" << std::endl;
+                    std::cout << "|  Force  summary                          |" << std::endl;
+                    std::cout << "+------------------------------------------+" << std::endl;
+
+
+                }
+
+            }
+        }
+        table_f.write_text(std::cout);
+    }
+}
 
 
 
@@ -962,8 +1286,12 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
 
                                         double length_fraction = 1. / length_ratio;
 
+                                        Point<dim, double> first_point(
+                                                support_points[local_dof_indices[l]] - vect_dist );
+
                                         Point<dim, double> second_point(
                                                 support_points[local_dof_indices[l]] + vect_dist * length_fraction);
+
                                         Point<dim, double> third_point(
                                                 support_points[local_dof_indices[l]] +
                                                 vect_dist * length_fraction * 1 / 2);
@@ -1092,6 +1420,8 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                         //we have or next cell needed to complete the stencil
 
                                         //define the unit cell points for the points used in the stencil for extrapolation.
+                                        Point<dim> first_point_v = immersed_map.transform_real_to_unit_cell(cell_2,
+                                                                                                             first_point);
                                         Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2,
                                                                                                              second_point);
                                         Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_2,
@@ -1191,7 +1521,18 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                         this->evaluation_point(local_dof_indices_2[n]);
 
                                                     }
-                                                    if (this->nsparam.particlesParameters.order > 3) {
+                                                    if (this->nsparam.particlesParameters.order == 4) {
+                                                        this->system_matrix.set(global_index_overrigth,
+                                                                                local_dof_indices_2[n],
+                                                                                                        this->fe.shape_value(
+                                                                                                                n,
+                                                                                                                first_point_v) *
+                                                                                                        sum_line );
+                                                        local_interp_sol += this->fe.shape_value(n, first_point_v) * sum_line *
+                                                                           this->evaluation_point(local_dof_indices_2[n]);
+
+                                                    }
+                                                    if (this->nsparam.particlesParameters.order == 5) {
                                                         this->system_matrix.set(global_index_overrigth,
                                                                                 local_dof_indices_2[n],
                                                                                 dof_5 * sum_line + sp_5 *
@@ -1263,7 +1604,18 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                         this->evaluation_point(local_dof_indices_2[n]);
 
                                                     }
-                                                    if (this->nsparam.particlesParameters.order > 3) {
+                                                    if (this->nsparam.particlesParameters.order == 4) {
+                                                        this->system_matrix.set(global_index_overrigth,
+                                                                                local_dof_indices_2[n],
+                                                                                this->fe.shape_value(
+                                                                                        n,
+                                                                                        first_point_v) *
+                                                                                sum_line );
+                                                        local_interp_sol +=this->fe.shape_value(n, first_point_v) * sum_line *
+                                                                this->evaluation_point(local_dof_indices_2[n]);
+
+                                                    }
+                                                    if (this->nsparam.particlesParameters.order == 5) {
                                                         this->system_matrix.set(global_index_overrigth,
                                                                                 local_dof_indices_2[n], sp_5 *
                                                                                                         this->fe.shape_value(
@@ -1317,13 +1669,18 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                         if (skip_stencil == false or do_rhs) {
                                             // different boundary condition depending if the dof is vx ,vy or vz and if the problem we solve is 2d or 3d.
                                             if (k == 0) {
+                                                double vx=0;
+                                                double rhs_add=0;
                                                 if (dim == 2) {
-                                                    double vx = -particles[p][4] * particles[p][5] *
+                                                    vx = -particles[p][4] * particles[p][5] *
                                                                 ((support_points[local_dof_indices[l]] -
                                                                   center_immersed) /
                                                                  (support_points[local_dof_indices[l]] -
-                                                                  center_immersed).norm())[1] + particles[p][2];
-                                                    double rhs_add=0;
+                                                                  center_immersed).norm())[1] + particles[p][2];}
+                                                if (dim == 3) {
+                                                    vx = particles[p][2];
+                                                }
+
 
 
 
@@ -1337,7 +1694,10 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                   dof_3 - local_interp_sol * sp_3 -
                                                                   local_interp_sol_2 * tp_3;
                                                     }
-                                                    if (this->nsparam.particlesParameters.order > 3) {
+                                                    if (this->nsparam.particlesParameters.order == 4)
+                                                        rhs_add= - local_interp_sol ;
+
+                                                    if (this->nsparam.particlesParameters.order > 4) {
 
                                                         rhs_add = -this->evaluation_point(global_index_overrigth) * sum_line *
                                                                   dof_5 - local_interp_sol * sp_5 -
@@ -1354,48 +1714,20 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                                                    this->evaluation_point(global_index_overrigth) *
                                                                                                    sum_line;
                                                 }
-                                                if (dim == 3) {
-                                                    double vx = particles[p][2];
-                                                    if (this->nsparam.particlesParameters.order == 2)
-                                                        this->system_rhs(global_index_overrigth) = vx * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth) *
-                                                                                                   sum_line * dof_2 -
-                                                                                                   local_interp_sol *
-                                                                                                   sp_2;
-                                                    if (this->nsparam.particlesParameters.order == 3)
-                                                        this->system_rhs(global_index_overrigth) = vx * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth) *
-                                                                                                   sum_line * dof_3 -
-                                                                                                   local_interp_sol *
-                                                                                                   sp_3 -
-                                                                                                   local_interp_sol_2 *
-                                                                                                   tp_3;
-                                                    if (this->nsparam.particlesParameters.order > 3)
-                                                        this->system_rhs(global_index_overrigth) = vx * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth) *
-                                                                                                   sum_line * dof_5 -
-                                                                                                   local_interp_sol *
-                                                                                                   sp_5 -
-                                                                                                   local_interp_sol_2 *
-                                                                                                   tp_5 -
-                                                                                                   local_interp_sol_3 *
-                                                                                                   fp1_5 -
-                                                                                                   local_interp_sol_4 *
-                                                                                                   fp2_5;
-                                                    if (do_rhs)
-                                                        this->system_rhs(global_index_overrigth) = vx * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth) *
-                                                                                                   sum_line;
-                                                }
-                                            } else if (k == 1) {
+
+                                            else if (k == 1) {
+                                                double vy =0;
+                                                double rhs_add = 0;
                                                 if (dim == 2) {
-                                                    double vy = particles[p][4] * particles[p][5] *
+                                                    vy = particles[p][4] * particles[p][5] *
                                                                 ((support_points[local_dof_indices[l]] -
                                                                   center_immersed) /
                                                                  (support_points[local_dof_indices[l]] -
                                                                   center_immersed).norm())[0] + particles[p][3];
-                                                    double rhs_add = 0;
-
+                                                }
+                                                if (dim == 3) {
+                                                    vy = particles[p][3];
+                                                }
 
 
                                                     if (this->nsparam.particlesParameters.order == 2) {
@@ -1410,7 +1742,9 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                   dof_3 - local_interp_sol * sp_3 -
                                                                   local_interp_sol_2 * tp_3;
                                                     }
-                                                    if (this->nsparam.particlesParameters.order > 3) {
+                                                    if (this->nsparam.particlesParameters.order == 4)
+                                                        rhs_add= - local_interp_sol ;
+                                                    if (this->nsparam.particlesParameters.order == 5) {
                                                         rhs_add = -this->evaluation_point(global_index_overrigth)* sum_line *
                                                                   dof_5 - local_interp_sol * sp_5 -
                                                                   local_interp_sol_2 * tp_5 -
@@ -1419,7 +1753,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                     }
                                                     // the correction is a value that modified the IB stencil when the patricule is in movement  but is always going to be 0 in this version of the code.
 
-                                                    
+
                                                     this->system_rhs(global_index_overrigth) = vy * sum_line + rhs_add;
                                                     if (do_rhs)
                                                         this->system_rhs(global_index_overrigth) = vy * sum_line -
@@ -1427,64 +1761,34 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                                                    sum_line;
 
                                                 }
-                                                if (dim == 3) {
-                                                    double vy = particles[p][3];
-                                                    if (this->nsparam.particlesParameters.order == 2)
-                                                        this->system_rhs(global_index_overrigth) = vy * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth) *
-                                                                                                   sum_line * dof_2 -
-                                                                                                   local_interp_sol *
-                                                                                                   sp_2;
-                                                    if (this->nsparam.particlesParameters.order == 3)
-                                                        this->system_rhs(global_index_overrigth) = vy * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth)*
-                                                                                                   sum_line * dof_3 -
-                                                                                                   local_interp_sol *
-                                                                                                   sp_3 -
-                                                                                                   local_interp_sol_2 *
-                                                                                                   tp_3;
-                                                    if (this->nsparam.particlesParameters.order > 3)
-                                                        this->system_rhs(global_index_overrigth) = vy * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth)*
-                                                                                                   sum_line * dof_5 -
-                                                                                                   local_interp_sol *
-                                                                                                   sp_5 -
-                                                                                                   local_interp_sol_2 *
-                                                                                                   tp_5 -
-                                                                                                   local_interp_sol_3 *
-                                                                                                   fp1_5 -
-                                                                                                   local_interp_sol_4 *
-                                                                                                   fp2_5;
-                                                    if (do_rhs)
-                                                        this->system_rhs(global_index_overrigth) = vy * sum_line -
-                                                                                                   this->evaluation_point(global_index_overrigth) *
-                                                                                                   sum_line;
-                                                }
-                                            } else if (k == 2 & dim == 3) {
+                                            else if (k == 2 & dim == 3) {
                                                 double vz = particles[p][5];
-                                                if (this->nsparam.particlesParameters.order == 2)
-                                                    this->system_rhs(global_index_overrigth) = vz * sum_line -
-                                                                                               this->evaluation_point(global_index_overrigth)*
-                                                                                               sum_line * dof_2 -
-                                                                                               local_interp_sol * sp_2;
-                                                if (this->nsparam.particlesParameters.order == 3)
-                                                    this->system_rhs(global_index_overrigth) = vz * sum_line -
-                                                                                               this->evaluation_point(global_index_overrigth) *
-                                                                                               sum_line * dof_3 -
-                                                                                               local_interp_sol * sp_3 -
-                                                                                               local_interp_sol_2 *
-                                                                                               tp_3;
-                                                if (this->nsparam.particlesParameters.order > 3)
-                                                    this->system_rhs(global_index_overrigth) = vz * sum_line -
-                                                                                               this->evaluation_point(global_index_overrigth) *
-                                                                                               sum_line * dof_5 -
-                                                                                               local_interp_sol * sp_5 -
-                                                                                               local_interp_sol_2 *
-                                                                                               tp_5 -
-                                                                                               local_interp_sol_3 *
-                                                                                               fp1_5 -
-                                                                                               local_interp_sol_4 *
-                                                                                               fp2_5;
+                                                double rhs_add = 0;
+                                                if (this->nsparam.particlesParameters.order == 2) {
+
+                                                    rhs_add = -this->evaluation_point(global_index_overrigth)* sum_line *
+                                                              dof_2 - local_interp_sol * sp_2;
+
+                                                }
+                                                if (this->nsparam.particlesParameters.order == 3) {
+
+                                                    rhs_add = -this->evaluation_point(global_index_overrigth) * sum_line *
+                                                              dof_3 - local_interp_sol * sp_3 -
+                                                              local_interp_sol_2 * tp_3;
+                                                }
+                                                if (this->nsparam.particlesParameters.order == 4)
+                                                    rhs_add= - local_interp_sol ;
+                                                if (this->nsparam.particlesParameters.order == 5) {
+                                                    rhs_add = -this->evaluation_point(global_index_overrigth)* sum_line *
+                                                              dof_5 - local_interp_sol * sp_5 -
+                                                              local_interp_sol_2 * tp_5 -
+                                                              local_interp_sol_3 * fp1_5 -
+                                                              local_interp_sol_4 * fp2_5;
+                                                }
+                                                // the correction is a value that modified the IB stencil when the patricule is in movement  but is always going to be 0 in this version of the code.
+
+
+                                                this->system_rhs(global_index_overrigth) = vz * sum_line + rhs_add;
                                                 if (do_rhs)
                                                     this->system_rhs(global_index_overrigth) = vz * sum_line -
                                                                                                this->evaluation_point(global_index_overrigth) *
