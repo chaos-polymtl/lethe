@@ -127,7 +127,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-#if DEAL_II_VERSION_GTE(9, 2, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
@@ -170,7 +170,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-#if DEAL_II_VERSION_GTE(9, 2, 0)
+#if DEAL_II_VERSION_GTE(9, 3, 0)
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
