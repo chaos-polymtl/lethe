@@ -91,12 +91,12 @@ template <int dim>
 bool
 DEMSolver<dim>::insert_particles()
 {
+  TimerOutput::Scope t(computing_timer, "insertion");
+
   if (fmod(simulation_control->get_step_number(),
            parameters.insertion_info.insertion_frequency) == 1)
     {
-      computing_timer.enter_subsection("insertion");
       insertion_object->insert(particle_handler, triangulation, parameters);
-      computing_timer.leave_subsection();
       return true;
     }
   return false;
@@ -107,15 +107,29 @@ void
 DEMSolver<dim>::locate_particles_in_cells()
 {
   computing_timer.enter_subsection("sort_particles_in_cells");
+  pcout << "--> sort into subdomain and cells" << std::endl;
   particle_handler.sort_particles_into_subdomains_and_cells();
+  particle_handler.exchange_ghost_particles();
   particle_container.clear();
   particle_container = update_particle_container(&particle_handler);
   update_pp_contact_container_iterators(adjacent_particles, particle_container);
+  MPI_Barrier(MPI_COMM_WORLD);
+  pcout << "--> After pp" << std::endl;
+
   update_pw_contact_container_iterators(pw_pairs_in_contact,
                                         particle_container);
+  MPI_Barrier(MPI_COMM_WORLD);
+  pcout << "--> After pw" << std::endl;
+
   update_particle_point_line_contact_container_iterators(
     particle_points_in_contact, particle_lines_in_contact, particle_container);
+  MPI_Barrier(MPI_COMM_WORLD);
+  pcout << "--> After pL" << std::endl;
+
+
   computing_timer.leave_subsection();
+
+  pcout << "--> leaving locate" << std::endl;
 }
 
 template <int dim>
@@ -317,13 +331,28 @@ std::map<int, Particles::ParticleIterator<dim>>
 DEMSolver<dim>::update_particle_container(
   const Particles::ParticleHandler<dim> *particle_handler)
 {
+  pcout << "particle container start" << std::endl;
+
   std::map<int, Particles::ParticleIterator<dim>> particle_container;
   for (auto particle_iterator = particle_handler->begin();
        particle_iterator != particle_handler->end();
        ++particle_iterator)
     {
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 1)
+        std::cout << "id " << particle_iterator->get_id() << std::endl;
       particle_container[particle_iterator->get_id()] = particle_iterator;
     }
+
+  // Loop over the ghost particles
+  for (auto particle_iterator = particle_handler->begin_ghost();
+       particle_iterator != particle_handler->end_ghost();
+       ++particle_iterator)
+    {
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 1)
+        std::cout << "ghost id " << particle_iterator->get_id() << std::endl;
+      particle_container[particle_iterator->get_id()] = particle_iterator;
+    }
+
 
   return particle_container;
 }
@@ -334,6 +363,10 @@ DEMSolver<dim>::update_pp_contact_container_iterators(
   std::map<int, std::map<int, pp_contact_info_struct<dim>>> &adjacent_particles,
   const std::map<int, Particles::ParticleIterator<dim>> &    particle_container)
 {
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 1)
+    std::cout << "********************************" << std::endl;
+
+
   for (auto adjacent_particles_iterator = adjacent_particles.begin();
        adjacent_particles_iterator != adjacent_particles.end();
        ++adjacent_particles_iterator)
@@ -345,12 +378,19 @@ DEMSolver<dim>::update_pp_contact_container_iterators(
            ++pp_map_iterator)
         {
           int particle_two_id = pp_map_iterator->first;
+
+          if (Utilities::MPI::this_mpi_process(mpi_communicator) == 1)
+            std::cout << "id " << particle_one_id << " " << particle_two_id
+                      << std::endl;
+
           pp_map_iterator->second.particle_one =
             particle_container.at(particle_one_id);
           pp_map_iterator->second.particle_two =
             particle_container.at(particle_two_id);
         }
     }
+  MPI_Barrier(MPI_COMM_WORLD);
+  pcout << "PP contact iterator went through" << std::endl;
 }
 
 template <int dim>
@@ -375,6 +415,8 @@ DEMSolver<dim>::update_pw_contact_container_iterators(
           pw_map_iterator->second.particle = particle_container.at(particle_id);
         }
     }
+
+  pcout << "Pw went through" << std::endl;
 }
 
 template <int dim>
@@ -393,9 +435,9 @@ DEMSolver<dim>::update_particle_point_line_contact_container_iterators(
        ++particle_point_pairs_in_contact_iterator)
     {
       int  particle_id = particle_point_pairs_in_contact_iterator->first;
-      auto pairs_in_contant_content =
+      auto pairs_in_contact_content =
         &particle_point_pairs_in_contact_iterator->second;
-      pairs_in_contant_content->particle = particle_container.at(particle_id);
+      pairs_in_contact_content->particle = particle_container.at(particle_id);
     }
 
   for (auto particle_line_pairs_in_contact_iterator =
@@ -409,6 +451,8 @@ DEMSolver<dim>::update_particle_point_line_contact_container_iterators(
         &particle_line_pairs_in_contact_iterator->second;
       pairs_in_contant_content->particle = particle_container.at(particle_id);
     }
+
+  pcout << "Particle-point went through" << std::endl;
 }
 
 template <int dim>
@@ -527,10 +571,65 @@ DEMSolver<dim>::solve()
           step_number % pw_broad_search_frequency == 0)
         locate_particles_in_cells();
 
+      pcout << "-> cell located" << std::endl;
+
       // Force reinitilization
       computing_timer.enter_subsection("reinitialize_forces");
       reinitialize_force(particle_handler);
       computing_timer.leave_subsection();
+
+      pcout << "-> force re-init" << std::endl;
+
+      std::cout << "****************** Proc 0 ***********" << std::endl;
+      // Output
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+        {
+          int i = 0;
+          for (auto cell = triangulation.begin_active();
+               cell != triangulation.end();
+               ++cell)
+            {
+              if (cell->is_locally_owned())
+                {
+                  std::cout << "neighbors of cell " << cell << " are: ";
+                  for (auto iterator = cell_neighbor_list[i].begin();
+                       iterator != cell_neighbor_list[i].end();
+                       ++iterator)
+                    {
+                      std::cout << " " << *iterator;
+                    }
+                  std::cout << std::endl;
+
+                  ++i;
+                }
+            }
+        }
+      MPI_Barrier(MPI_COMM_WORLD);
+
+      std::cout << "****************** Proc 1 ***********" << std::endl;
+      // Output
+      if (Utilities::MPI::this_mpi_process(mpi_communicator) == 1)
+        {
+          int i = 0;
+          for (auto cell = triangulation.begin_active();
+               cell != triangulation.end();
+               ++cell)
+            {
+              if (cell->is_locally_owned())
+                {
+                  std::cout << "neighbors of cell " << cell << " are: ";
+                  for (auto iterator = cell_neighbor_list[i].begin();
+                       iterator != cell_neighbor_list[i].end();
+                       ++iterator)
+                    {
+                      std::cout << " " << *iterator;
+                    }
+                  std::cout << std::endl;
+
+                  ++i;
+                }
+            }
+        }
 
       // Broad particle-particle contact search
       if (particles_were_inserted ||
@@ -542,6 +641,10 @@ DEMSolver<dim>::solve()
                                                        contact_pair_candidates);
           computing_timer.leave_subsection();
         }
+
+
+
+      pcout << "-> p-broad search" << std::endl;
 
       // Particle-particle fine search
       if (particles_were_inserted ||
@@ -557,22 +660,34 @@ DEMSolver<dim>::solve()
           computing_timer.leave_subsection();
         }
 
+      pcout << "-> p-fine search" << std::endl;
+
       // Particle-particle contact force
       computing_timer.enter_subsection("pp_contact_force");
       pp_contact_force_object->calculate_pp_contact_force(
         &adjacent_particles, parameters, simulation_control->get_time_step());
       computing_timer.leave_subsection();
 
+      pcout << "-> p-force" << std::endl;
+
+
       // Particle-wall broad contact search
       if (particles_were_inserted ||
           step_number % pw_broad_search_frequency == 0)
         particle_wall_broad_search();
 
+      pcout << "-> w-broad" << std::endl;
+
+
       // Particles-wall fine search
       particle_wall_fine_search();
 
+      pcout << "-> w-fine" << std::endl;
+
       // Particles-walls contact force:
       particle_wall_contact_force();
+
+      pcout << "-> w-force" << std::endl;
 
       // Integration
       computing_timer.enter_subsection("integration");
@@ -581,13 +696,18 @@ DEMSolver<dim>::solve()
                                    simulation_control->get_time_step());
       computing_timer.leave_subsection();
 
-      // Visualization
+      pcout << "-> integration" << std::endl;
+
+
+      //      // Visualization
       if (simulation_control->is_output_iteration())
         {
           computing_timer.enter_subsection("visualization");
           write_output_results();
           computing_timer.leave_subsection();
         }
+
+      pcout << "-> viz" << std::endl;
     }
 
   finish_simulation();

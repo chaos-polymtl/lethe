@@ -12,7 +12,7 @@ FindCellNeighbors<dim>::FindCellNeighbors()
 template <int dim>
 std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
 FindCellNeighbors<dim>::find_cell_neighbors(
-  const Triangulation<dim> &triangulation)
+  const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // Number of active cells in the triangulation
   int cell_number = triangulation.n_active_cells();
@@ -44,27 +44,31 @@ FindCellNeighbors<dim>::find_cell_neighbors(
        cell != triangulation.end();
        ++cell, ++cell_number_iterator)
     {
-      // The first element of each set (each element of the vector) is the cell
-      // itself.
-      cellNeighborList[cell_number_iterator].insert(cell);
-      totall_cell_list.push_back(cell);
-
-      for (unsigned int vertex = 0;
-           vertex < GeometryInfo<dim>::vertices_per_cell;
-           ++vertex)
+      if (!cell->is_locally_owned())
         {
-          for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
-            {
-              auto search_iterator = std::find(totall_cell_list.begin(),
-                                               totall_cell_list.end(),
-                                               neighbor);
+          // The first element of each set (each element of the vector) is the
+          // cell itself.
+          cellNeighborList[cell_number_iterator].insert(cell);
+          totall_cell_list.push_back(cell);
 
-              // If the cell (neighbor) is not present in the total_cell_list
-              // vector, it will be added as the neighbor of the main cell
-              // ("cell") and also to the total_cell_list to avoid repetition
-              // for next cells.
-              if (search_iterator == totall_cell_list.end())
-                cellNeighborList[cell_number_iterator].insert(neighbor);
+          for (unsigned int vertex = 0;
+               vertex < GeometryInfo<dim>::vertices_per_cell;
+               ++vertex)
+            {
+              for (const auto &neighbor : v_to_c[cell->vertex_index(vertex)])
+                {
+                  auto search_iterator = std::find(totall_cell_list.begin(),
+                                                   totall_cell_list.end(),
+                                                   neighbor);
+
+                  // If the cell (neighbor) is not present in the
+                  // total_cell_list vector, it will be added as the neighbor of
+                  // the main cell
+                  // ("cell") and also to the total_cell_list to avoid
+                  // repetition for next cells.
+                  if (search_iterator == totall_cell_list.end())
+                    cellNeighborList[cell_number_iterator].insert(neighbor);
+                }
             }
         }
     }
