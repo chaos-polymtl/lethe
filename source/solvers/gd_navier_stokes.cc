@@ -522,21 +522,21 @@ GDNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-#if DEAL_II_VERSION_GTE(9, 3, 0)
+            //#if DEAL_II_VERSION_GTE(9, 3, 0)
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
               this->nsparam.boundary_conditions.periodic_direction[i_bc],
               this->zero_constraints);
-#else
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              this->nsparam.boundary_conditions.periodic_id[i_bc],
-              this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->zero_constraints);
-#endif
+            //#else
+            //            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
+            //              this->dof_handler,
+            //              this->nsparam.boundary_conditions.id[i_bc],
+            //              this->nsparam.boundary_conditions.periodic_id[i_bc],
+            //              this->nsparam.boundary_conditions.periodic_direction[i_bc],
+            //              this->zero_constraints);
+            //#endif
           }
       }
   }
@@ -565,21 +565,21 @@ GDNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-#if DEAL_II_VERSION_GTE(9, 3, 0)
+            //#if DEAL_II_VERSION_GTE(9, 3, 0)
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
               this->nsparam.boundary_conditions.periodic_direction[i_bc],
               this->zero_constraints);
-#else
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              this->nsparam.boundary_conditions.periodic_id[i_bc],
-              this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->zero_constraints);
-#endif
+            //#else
+            //            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
+            //              this->dof_handler,
+            //              this->nsparam.boundary_conditions.id[i_bc],
+            //              this->nsparam.boundary_conditions.periodic_id[i_bc],
+            //              this->nsparam.boundary_conditions.periodic_direction[i_bc],
+            //              this->zero_constraints);
+            //#endif
           }
         else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
           // || Parameters::function)
