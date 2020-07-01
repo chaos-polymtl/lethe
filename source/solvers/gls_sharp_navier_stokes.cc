@@ -369,7 +369,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                                                                                         *this->triangulation) *
                                                                                  GridTools::minimal_cell_diameter(
                                                                                          *this->triangulation)));
-    //std::cout << "dr " << dr  << std::endl;
+
 
     using numbers::PI;
     Point<dim> center_immersed;
@@ -406,6 +406,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             double fy_v = 0;
             double fx_p_2 = 0;
             double fy_p_2 = 0;
+
 
             // loop on all the evaluation point
             for (unsigned int i = 0; i < nb_evaluation; ++i) {
@@ -475,7 +476,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                 const Point<dim> eval_point_5(eval_point_3[0] + surf_normal[0] * step_ratio,
                                               eval_point_3[1] + surf_normal[1] * step_ratio);
 
-                //std::cout << "eval_point " << eval_point_4  << " n " << nb_step << std::endl;
+
                 const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_4);
                 const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_3);
                 const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_5);
@@ -519,16 +520,10 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     unsigned int j = 0;
                     while (j < this->fe.dofs_per_cell) {
 
-                        //std::cout << "dof _indices " << local_dof_indices[j] << std::endl;
-                        //std::cout << "present " << this->present_solution(local_dof_indices[j]) << std::endl;
-                        //std::cout << "fe.shape  " << this->fe.shape_value(j, second_point_v)  << std::endl;
-
-                        u_2[0] +=
-                                this->fe.shape_value(j, second_point_v) * this->present_solution(local_dof_indices[j]);
+                        u_2[0] +=this->fe.shape_value(j, second_point_v) * this->present_solution(local_dof_indices[j]);
                         u_2[1] += this->fe.shape_value(j + 1, second_point_v) *
                                   this->present_solution(local_dof_indices[j + 1]);
-                        u_3[0] +=
-                                this->fe.shape_value(j, third_point_v) * this->present_solution(local_dof_indices_2[j]);
+                        u_3[0] +=this->fe.shape_value(j, third_point_v) * this->present_solution(local_dof_indices_2[j]);
                         u_3[1] += this->fe.shape_value(j + 1, third_point_v) *
                                   this->present_solution(local_dof_indices_2[j + 1]);
 
@@ -559,7 +554,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     double U2_r = (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) / surf_normal.norm();
                     double U3_r = (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) / surf_normal.norm();
 
-                    ////
+
                     double du_dn_1 = (U2 / (particles[p][5] + surf_normal.norm() * (nb_step + 1) * step_ratio) -
                                       U1 / particles[p][5]) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
                     double du_dn_2 = (U3 / (particles[p][5] + surf_normal.norm() * (nb_step + 2) * step_ratio) -
@@ -569,10 +564,6 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     double du_dr_1 = (U2_r - U1_r) / ((nb_step + 1) * surf_normal.norm() * step_ratio);
                     double du_dr_2 = (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
 
-                    //std::cout << "nb " << nb_step+1  << std::endl;
-                    //std::cout << "u2 " << u_2 << std::endl;
-                    //std::cout << "point " << eval_point_4  << std::endl;
-                    //std::cout << "U1 " << U1  << " U2 " << U2 << " U3 "<< U3<< std::endl;
 
                     double du_dn = du_dn_1 - (du_dn_2 - du_dn_1) * (nb_step + 1) / ((nb_step + 1) + 1);
                     double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) / ((nb_step + 1) + 1);
@@ -580,15 +571,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     double P_local = P1 + (nb_step + 1) * (P1 - P2) +
                                      ((nb_step + 2) * (nb_step + 1) / 2) * ((P1 - P2) - (P2 - P3));
 
-                    /*
 
-
-                    double local_fx_v=(du_dn* particles[p][5]) * mu  * 2 * PI * particles[p][5] / (nb_evaluation ) *
-                                      sin(i * 2 * PI / (nb_evaluation))+(-mu*2*du_dr*surf_normal[0]/dr * 2 * PI * particles[p][5] / (nb_evaluation ));
-                    double local_fy_v=-(du_dn * particles[p][5]) * mu  * 2 * PI * particles[p][5] / (nb_evaluation ) *
-                                      cos(i * 2 * PI / (nb_evaluation))+(-mu*2*du_dr*surf_normal[1]/dr * 2 * PI * particles[p][5] / (nb_evaluation ));
-
-                     */
                     double local_fx_v = ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
                                          (-particles[p][5] * mu * du_dn * surf_vect[0] / surf_vect.norm())) * da;
                     double local_fy_v = ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
@@ -604,6 +587,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     fy_p_2 += local_fy_p_2;
                     t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) * particles[p][5] -
                                 local_fy_v * cos(i * 2 * PI / (nb_evaluation)) * particles[p][5];
+
                 }
             }
 
@@ -612,6 +596,8 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
             double fx_v_ = Utilities::MPI::sum(fx_v, this->mpi_communicator);
             double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
+
+
 
 
             if (this->this_mpi_process == 0) {
@@ -685,16 +671,18 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             double fx_p_2 = 0;
             double fy_p_2 = 0;
             double fz_p_2 = 0;
-            double A = 0;
-            for (unsigned int i = 0; i < nb_evaluation - 1; ++i) {
+
+            for (unsigned int i = 0; i < nb_evaluation ; ++i) {
                 for (unsigned int j = 0; j < nb_evaluation; ++j) {
                     Tensor<1, dim, double> surf_normal;
                     Tensor<1, dim, double> surf_vect_1;
                     Tensor<1, dim, double> surf_vect_2;
                     double theta = (i + 0.5) * PI / (nb_evaluation);
                     double phi = j * 2 * PI / (nb_evaluation);
-                    double da = particles[p][9] * particles[p][9] * 2 * PI / (nb_evaluation) * PI / (nb_evaluation) *
-                                sin(theta);
+                    double dtheta  =  PI / (nb_evaluation);
+                    double dphi= 2 * PI / (nb_evaluation);
+
+                    double da = particles[p][9] * particles[p][9] * dphi * (-cos(theta+dtheta/2)+cos(theta-dtheta/2));
 
                     const Point<dim> eval_point(particles[p][9] * sin(theta) * cos(phi) + center_x,
                                                 particles[p][9] * sin(theta) * sin(phi) + center_y,
@@ -840,7 +828,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                                       surf_vect_2.norm();
                         double U3_2 = (surf_vect_2[0] * u_3[0] + surf_vect_2[1] * u_3[1] + surf_vect_2[2] * u_3[2]) /
                                       surf_vect_2.norm();
-                        std::cout << "U2_1 " << U2_1<<" U3_1 "<<  U3_1 << "U2_2 " << U2_2<<" U3_2 "<<  U3_2  << std::endl;
+
                         double U1_r = (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) / surf_normal.norm();
                         double U2_r = (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) / surf_normal.norm();
                         double U3_r = (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) / surf_normal.norm();
@@ -866,7 +854,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                         double du_dn_1 = du_dn_1_1 - (du_dn_2_1 - du_dn_1_1) * (nb_step + 1) / ((nb_step + 1) + 1);
                         double du_dn_2 = du_dn_1_2 - (du_dn_2_2 - du_dn_1_2) * (nb_step + 1) / ((nb_step + 1) + 1);
                         double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) / ((nb_step + 1) + 1);
-                        std::cout << "du_dr " << du_dr<<" du_dn_1 "<<  du_dn_1 <<" du_dn_2 "<<  du_dn_2  << std::endl;
+
 
                         double P_local = P1 + (nb_step + 1) * (P1 - P2) +
                                          ((nb_step + 2) * (nb_step + 1) / 2) * ((P1 - P2) - (P2 - P3));
@@ -894,7 +882,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                         fx_p_2 += local_fx_p_2;
                         fy_p_2 += local_fy_p_2;
                         fz_p_2 += local_fz_p_2;
-                        A += da;
+
                         t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) * particles[p][5] -
                                     local_fy_v * cos(i * 2 * PI / (nb_evaluation)) * particles[p][5];
 
@@ -910,7 +898,8 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
             double fz_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
 
-            std::cout << "A : " << A << std::endl;
+
+
             if (this->this_mpi_process == 0) {
 
                 force_vect[0] = fx_p_2_ + fx_v_;
