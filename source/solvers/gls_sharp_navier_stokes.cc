@@ -581,10 +581,10 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     double local_fy_p_2 = P_local * da * surf_normal[1] / surf_normal.norm();
 
 
-                    fx_v += local_fx_v;
-                    fy_v += local_fy_v;
-                    fx_p_2 += local_fx_p_2;
-                    fy_p_2 += local_fy_p_2;
+                    fx_v += -local_fx_v;
+                    fy_v += -local_fy_v;
+                    fx_p_2 += -local_fx_p_2;
+                    fy_p_2 += -local_fy_p_2;
                     t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) * particles[p][5] -
                                 local_fy_v * cos(i * 2 * PI / (nb_evaluation)) * particles[p][5];
 
@@ -663,7 +663,9 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             std::vector<types::global_dof_index> local_dof_indices_3(this->fe.dofs_per_cell);
             unsigned int nb_evaluation = this->nsparam.particlesParameters.nb_force_eval;
             nb_evaluation = ceil(pow(nb_evaluation, 0.5));
-            double t_torque = 0;
+            double torque_x = 0;
+            double torque_y = 0;
+            double torque_z = 0;
 
             double fx_v = 0;
             double fy_v = 0;
@@ -772,9 +774,9 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                         double P3 = 0;
 
                         // define the velocity component of the particle at the boundary on the reference point in 3 d the only rotation is around the z axis
-                        u_1[0] = -particles[p][8] * particles[p][9] * sin(phi) * sin(theta);
-                        u_1[1] = particles[p][8] * particles[p][9] * cos(phi) * sin(theta);
-                        u_1[2] = 0;
+                        u_1[0] = particles[p][7] * particles[p][9] * surf_normal[2]/surf_normal.norm()  -particles[p][8] * particles[p][9] * surf_normal[1]/surf_normal.norm()   ;
+                        u_1[1] = particles[p][8] * particles[p][9] * surf_normal[0]/surf_normal.norm()  -particles[p][6] * particles[p][9] * surf_normal[2]/surf_normal.norm()   ;
+                        u_1[2] = particles[p][6] * particles[p][9] * surf_normal[1]/surf_normal.norm()  -particles[p][7] * particles[p][9] * surf_normal[0]/surf_normal.norm()   ;;
 
                         // projection of the speed of the boundary on the plan of the surface used for evaluation
                         double U1_1 = (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] + surf_vect_1[2] * u_1[2]) /
@@ -876,27 +878,32 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                         double local_fy_p_2 = P_local * da * surf_normal[1] / surf_normal.norm();
                         double local_fz_p_2 = P_local * da * surf_normal[2] / surf_normal.norm();
 
-                        fx_v += local_fx_v;
-                        fy_v += local_fy_v;
-                        fz_v += local_fz_v;
-                        fx_p_2 += local_fx_p_2;
-                        fy_p_2 += local_fy_p_2;
-                        fz_p_2 += local_fz_p_2;
+                        fx_v += -local_fx_v;
+                        fy_v += -local_fy_v;
+                        fz_v += -local_fz_v;
+                        fx_p_2 += -local_fx_p_2;
+                        fy_p_2 += -local_fy_p_2;
+                        fz_p_2 += -local_fz_p_2;
 
-                        t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) * particles[p][5] -
-                                    local_fy_v * cos(i * 2 * PI / (nb_evaluation)) * particles[p][5];
-
+                        torque_x += local_fy_v * surf_normal[2]/surf_normal.norm() * particles[p][9] -
+                                      local_fz_v * surf_normal[1]/surf_normal.norm() * particles[p][9];
+                        torque_y += local_fz_v * surf_normal[0]/surf_normal.norm() * particles[p][9] -
+                                      local_fx_v * surf_normal[2]/surf_normal.norm() * particles[p][9];
+                        torque_z += local_fx_v * surf_normal[1]/surf_normal.norm() * particles[p][9] -
+                                      local_fy_v * surf_normal[0]/surf_normal.norm() * particles[p][9];
 
                     }
                 }
             }
-            double t_torque_ = Utilities::MPI::sum(t_torque, this->mpi_communicator);
+            double t_torque_x = Utilities::MPI::sum(torque_x, this->mpi_communicator);
+            double t_torque_y = Utilities::MPI::sum(torque_y, this->mpi_communicator);
+            double t_torque_z = Utilities::MPI::sum(torque_z, this->mpi_communicator);
             double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
             double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
-            double fz_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
+            double fz_p_2_ = Utilities::MPI::sum(fz_p_2, this->mpi_communicator);
             double fx_v_ = Utilities::MPI::sum(fx_v, this->mpi_communicator);
             double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
-            double fz_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
+            double fz_v_ = Utilities::MPI::sum(fz_v, this->mpi_communicator);
 
 
 
@@ -906,7 +913,9 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                 force_vect[1] = fy_p_2_ + fy_v_;
                 if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
                     this->this_mpi_process == 0) {
-                    std::cout << "particle : " << p << " total_torque :" << t_torque_ << std::endl;
+                    std::cout << "particle : " << p << " total_torque_x :" << t_torque_x << std::endl;
+                    std::cout << "particle : " << p << " total_torque_y :" << t_torque_y << std::endl;
+                    std::cout << "particle : " << p << " total_torque_z :" << t_torque_z << std::endl;
                     std::cout << "fx_P: " << fx_p_2_ << std::endl;
                     std::cout << "fy_P: " << fy_p_2_ << std::endl;
                     std::cout << "fz_P: " << fz_p_2_ << std::endl;
@@ -1667,7 +1676,14 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                  (support_points[local_dof_indices[l]] -
                                                                   center_immersed).norm())[1] + particles[p][2];}
                                                 if (dim == 3) {
-                                                    vx = particles[p][2];
+                                                    vx = particles[p][7]*((support_points[local_dof_indices[l]] -
+                                                                           center_immersed) /
+                                                                          (support_points[local_dof_indices[l]] -
+                                                                           center_immersed).norm())[2]* particles[p][9]-
+                                                            particles[p][8]*((support_points[local_dof_indices[l]] -
+                                                                              center_immersed) /
+                                                                             (support_points[local_dof_indices[l]] -
+                                                                              center_immersed).norm())[1]* particles[p][9]+particles[p][3];
                                                 }
 
 
@@ -1715,7 +1731,14 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                   center_immersed).norm())[0] + particles[p][3];
                                                 }
                                                 if (dim == 3) {
-                                                    vy = particles[p][3];
+                                                    vy = particles[p][8]*((support_points[local_dof_indices[l]] -
+                                                                           center_immersed) /
+                                                                          (support_points[local_dof_indices[l]] -
+                                                                           center_immersed).norm())[0]* particles[p][9]-
+                                                         particles[p][6]*((support_points[local_dof_indices[l]] -
+                                                                           center_immersed) /
+                                                                          (support_points[local_dof_indices[l]] -
+                                                                           center_immersed).norm())[2]* particles[p][9]+particles[p][4];
                                                 }
 
 
@@ -1751,7 +1774,16 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
 
                                                 }
                                             else if (k == 2 & dim == 3) {
-                                                double vz = particles[p][5];
+
+                                                double vz = particles[p][6]*((support_points[local_dof_indices[l]] -
+                                                                           center_immersed) /
+                                                                          (support_points[local_dof_indices[l]] -
+                                                                           center_immersed).norm())[1]* particles[p][9]-
+                                                         particles[p][7]*((support_points[local_dof_indices[l]] -
+                                                                           center_immersed) /
+                                                                          (support_points[local_dof_indices[l]] -
+                                                                           center_immersed).norm())[0]* particles[p][9]+particles[p][5];
+
                                                 double rhs_add = 0;
                                                 if (this->nsparam.particlesParameters.order == 2) {
 
