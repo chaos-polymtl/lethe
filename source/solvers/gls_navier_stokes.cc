@@ -127,7 +127,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
+            DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
@@ -161,7 +161,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
+            DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
@@ -206,17 +206,6 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                                   dsp,
                                   this->nonzero_constraints,
                                   false);
-#if !(DEAL_II_VERSION_GTE(9, 2, 0))
-  SparsityTools::distribute_sparsity_pattern(
-    dsp,
-    this->dof_handler.compute_n_locally_owned_dofs_per_processor(),
-    this->mpi_communicator,
-    this->locally_relevant_dofs);
-  system_matrix.reinit(this->locally_owned_dofs,
-                       this->locally_owned_dofs,
-                       dsp,
-                       this->mpi_communicator);
-#else
   SparsityTools::distribute_sparsity_pattern(
     dsp,
     this->dof_handler.locally_owned_dofs(),
@@ -227,7 +216,6 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                        dsp,
                        this->mpi_communicator);
 
-#endif
 
   double global_volume = GridTools::volume(*this->triangulation);
 

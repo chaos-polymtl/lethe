@@ -522,7 +522,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
+            DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
@@ -556,7 +556,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
+            DoFTools::make_periodicity_constraints(
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
