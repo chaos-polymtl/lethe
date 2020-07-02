@@ -479,17 +479,17 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
                 }
                 // when the point is found outside cell that are cut by the boundayr we define the 3 point that will be used to create interpolation and  extrapolation of the solution  to evalutate the force on the boundart
-                const Point<dim> eval_point_4(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                const Point<dim> second_point(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
                                               eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
-                const Point<dim> eval_point_3(eval_point_4[0] + surf_normal[0] * step_ratio,
-                                              eval_point_4[1] + surf_normal[1] * step_ratio);
-                const Point<dim> eval_point_5(eval_point_3[0] + surf_normal[0] * step_ratio,
-                                              eval_point_3[1] + surf_normal[1] * step_ratio);
+                const Point<dim> third_point(second_point[0] + surf_normal[0] * step_ratio,
+                                             second_point[1] + surf_normal[1] * step_ratio);
+                const Point<dim> fourth_point(third_point[0] + surf_normal[0] * step_ratio,
+                                              third_point[1] + surf_normal[1] * step_ratio);
 
 
-                const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_4);
-                const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_3);
-                const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_5);
+                const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, second_point);
+                const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, third_point);
+                const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, fourth_point);
 
                 cell_2->get_dof_indices(local_dof_indices);
                 cell_3->get_dof_indices(local_dof_indices_2);
@@ -515,9 +515,9 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
 
                     // used support function of the cell to define the interpolation of the velocity
-                    Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2, eval_point_4);
-                    Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_3, eval_point_3);
-                    Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_4, eval_point_5);
+                    Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2, second_point);
+                    Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_3, third_point);
+                    Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_4, fourth_point);
 
                     // initialise the component of the velocity
                     u_2[0] = 0;
@@ -625,6 +625,10 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             if (this->this_mpi_process == 0) {
                 if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
                     this->this_mpi_process == 0) {
+                    std::cout << "+------------------------------------------+" << std::endl;
+                    std::cout << "|  Force  summary particle : "<< p <<"             |" << std::endl;
+                    std::cout << "+------------------------------------------+" << std::endl;
+
                     std::cout << "particle : " << p << " total_torque :" << t_torque_ << std::endl;
                     std::cout << "particle : " << p << " total_torque :" << t_torque_ << std::endl;
                     std::cout << "fx_P: " << fx_p_2_ << std::endl;
@@ -644,17 +648,20 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                         table_f.set_precision("f_z",
                                               this->nsparam.forces_parameters.display_precision);
                     }
-                    std::cout << "+------------------------------------------+" << std::endl;
-                    std::cout << "|  Force  summary                          |" << std::endl;
-                    std::cout << "+------------------------------------------+" << std::endl;
-
-
                 }
 
             }
         }
 
-        table_f.write_text(std::cout);
+        if (this->this_mpi_process == 0) {
+            if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
+                this->this_mpi_process == 0) {
+                std::cout << "+------------------------------------------+" << std::endl;
+                std::cout << "|  Force  summary                          |" << std::endl;
+                std::cout << "+------------------------------------------+" << std::endl;
+                table_f.write_text(std::cout);
+            }
+        }
     }
 
     // same structure as for the 2d case but used 3 d variable  so there is 1 more vectore on the surface for the evaluation
@@ -725,15 +732,6 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                     surf_vect_2 = dr *surf_vect_2/surf_vect_2.norm();
 
 
-
-
-                    const auto &cell = GridTools::find_active_cell_around_point(this->dof_handler, eval_point);
-                    Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * step_ratio,
-                                            eval_point[1] + surf_normal[1] * step_ratio,
-                                            eval_point[2] + surf_normal[2] * step_ratio);
-
-                    cell->get_dof_indices(local_dof_indices_3);
-
                     unsigned int nb_step = 0;
                     bool cell_found = false;
 
@@ -772,19 +770,19 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
                     }
 
-                    const Point<dim> eval_point_4(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                    const Point<dim> second_point(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
                                             eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio,
                                             eval_point[2] + surf_normal[2] * (nb_step + 1) * step_ratio);
-                    const Point<dim> eval_point_3(eval_point_4[0] + surf_normal[0] * step_ratio,
-                                                  eval_point_4[1] + surf_normal[1] * step_ratio,
-                                                  eval_point_4[2] + surf_normal[2] * step_ratio);
-                    const Point<dim> eval_point_5(eval_point_3[0] + surf_normal[0] * step_ratio,
-                                                  eval_point_3[1] + surf_normal[1] * step_ratio,
-                                                  eval_point_3[2] + surf_normal[2] * step_ratio);
+                    const Point<dim> third_point(second_point[0] + surf_normal[0] * step_ratio,
+                                                 second_point[1] + surf_normal[1] * step_ratio,
+                                                 second_point[2] + surf_normal[2] * step_ratio);
+                    const Point<dim> fourth_point(third_point[0] + surf_normal[0] * step_ratio,
+                                                  third_point[1] + surf_normal[1] * step_ratio,
+                                                  third_point[2] + surf_normal[2] * step_ratio);
 
-                    const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_4);
-                    const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_3);
-                    const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_5);
+                    const auto &cell_2 = GridTools::find_active_cell_around_point(this->dof_handler, second_point);
+                    const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, third_point);
+                    const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, fourth_point);
 
                     cell_2->get_dof_indices(local_dof_indices);
                     cell_3->get_dof_indices(local_dof_indices_2);
@@ -811,9 +809,9 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
 
                         // used support function of the cell to define the interpolation of the velocity
-                        Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2, eval_point_4);
-                        Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_3, eval_point_3);
-                        Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_4, eval_point_5);
+                        Point<dim> second_point_v = immersed_map.transform_real_to_unit_cell(cell_2,second_point);
+                        Point<dim> third_point_v = immersed_map.transform_real_to_unit_cell(cell_3, third_point);
+                        Point<dim> fourth_point_v = immersed_map.transform_real_to_unit_cell(cell_4, fourth_point);
 
 
                         cell_3->get_dof_indices(local_dof_indices_2);
@@ -943,6 +941,11 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
             if (this->this_mpi_process == 0) {
                 if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
                     this->this_mpi_process == 0) {
+
+                    std::cout << "+------------------------------------------+" << std::endl;
+                    std::cout << "|  Force  summary particle : "<< p <<"             |" << std::endl;
+                    std::cout << "+------------------------------------------+" << std::endl;
+
                     std::cout << "particle : " << p << " total_torque_x :" << t_torque_x << std::endl;
                     std::cout << "particle : " << p << " total_torque_y :" << t_torque_y << std::endl;
                     std::cout << "particle : " << p << " total_torque_z :" << t_torque_z << std::endl;
@@ -967,16 +970,19 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                         table_f.set_precision("f_z",
                                               this->nsparam.forces_parameters.display_precision);
                     }
-                    std::cout << "+------------------------------------------+" << std::endl;
-                    std::cout << "|  Force  summary                          |" << std::endl;
-                    std::cout << "+------------------------------------------+" << std::endl;
-
-
                 }
 
             }
         }
-        table_f.write_text(std::cout);
+        if (this->this_mpi_process == 0) {
+            if (this->nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
+                this->this_mpi_process == 0) {
+                std::cout << "+------------------------------------------+" << std::endl;
+                std::cout << "|  Force  summary                          |" << std::endl;
+                std::cout << "+------------------------------------------+" << std::endl;
+                table_f.write_text(std::cout);
+            }
+        }
     }
 }
 
