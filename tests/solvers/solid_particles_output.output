@@ -1,0 +1,10 @@
+
+DEAL::Check 6	0.00106594
+DEAL::Convergence step 6 value 0.00106594
+DEAL::Check 4	9.12334e-05
+DEAL::Convergence step 4 value 9.12334e-05
+DEAL::Check 6	6.18532e-08
+DEAL::Convergence step 6 value 6.18532e-08
+DEAL::Error after first simulation : 0.0343628
+DEAL::Error after zeroing the solution: 0.612372
+DEAL::Error after restarting the simulation: 0.0343628

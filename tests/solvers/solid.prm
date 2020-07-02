@@ -1,0 +1,59 @@
+# Listing of Parameters
+# ---------------------
+
+
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = steady
+  set number mesh adapt       = 1
+  set output name             = solid_particles_output
+  set output frequency        = 1
+  set subdivision             = 1
+end
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order        = 1
+    set pressure order        = 1
+end
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+    set kinematic viscosity            = 1.0000
+end
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 1
+    subsection bc 0
+        set type              = noslip
+    end
+end
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = dealii
+    set file name            = hyper_cube
+    set grid arguments	     = -1 : 1 : true
+    set initial refinement   = 6
+end
+#---------------------------------------------------
+# Nitsche
+#---------------------------------------------------
+subsection nitsche
+    subsection mesh
+	set type                 = dealii
+	set file name            = hyper_shell
+	set grid arguments	 = 0, 0 : 0 : 0.75 : 48 : true
+	set initial refinement   = 6
+    end
+    set beta = 1
+end
+
+
