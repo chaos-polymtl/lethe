@@ -1144,7 +1144,7 @@ double GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles() {
     l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
     div = Utilities::MPI::sum(div, this->mpi_communicator);
 
-    this->pcout << "div: " << div << std::endl;
+    this->pcout << "div u : " << div << std::endl;
 
     return std::sqrt(l2errorU);
 
@@ -1395,9 +1395,6 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                             fp1_5 = -215424;
                                             sp_5 = 52360;
                                         }
-
-
-
 
 
                                         //define the vertex associated with the dof
