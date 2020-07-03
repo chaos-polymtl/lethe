@@ -31,8 +31,10 @@
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_dgq.h>
+#include <deal.II/fe/fe_interface_values.h>
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/manifold_lib.h>
@@ -46,6 +48,8 @@
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/vector.h>
+
+#include <deal.II/meshworker/mesh_loop.h>
 
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/matrix_tools.h>
@@ -62,53 +66,69 @@ enum simCase
 };
 
 template <int dim>
-class DGHeat
+struct ScratchData
 {
-public:
-  DGHeat(simCase scase, int refinementLevel);
-  void
-  run();
-  double
-  getL2Error()
-  {
-    return L2Error_;
-  }
+  ScratchData(const Mapping<dim> &      mapping,
+              const FiniteElement<dim> &fe,
+              const unsigned int        quadrature_degree,
+              const UpdateFlags         update_flags = update_values |
+                                               update_gradients |
+                                               update_quadrature_points |
+                                               update_JxW_values,
+              const UpdateFlags interface_update_flags =
+                update_values | update_gradients | update_quadrature_points |
+                update_JxW_values | update_normal_vectors)
+    : fe_values(mapping, fe, QGauss<dim>(quadrature_degree), update_flags)
+    , fe_interface_values(mapping,
+                          fe,
+                          QGauss<dim - 1>(quadrature_degree),
+                          interface_update_flags)
+  {}
 
-private:
-  void
-  make_grid();
-  void
-  make_cube_grid();
-  void
-  make_ring_grid();
-  void
-  setup_system();
-  void
-  assemble_system();
-  void
-  solve();
-  void
-  output_results() const;
-  void
-  calculateL2Error();
 
-  Triangulation<dim> triangulation;
-  FE_Q<dim>          fe;
-  DoFHandler<dim>    dof_handler;
+  ScratchData(const ScratchData<dim> &scratch_data)
+    : fe_values(scratch_data.fe_values.get_mapping(),
+                scratch_data.fe_values.get_fe(),
+                scratch_data.fe_values.get_quadrature(),
+                scratch_data.fe_values.get_update_flags())
+    , fe_interface_values(scratch_data.fe_values.get_mapping(),
+                          scratch_data.fe_values.get_fe(),
+                          scratch_data.fe_interface_values.get_quadrature(),
+                          scratch_data.fe_interface_values.get_update_flags())
+  {}
 
-  SparsityPattern      sparsity_pattern;
-  SparseMatrix<double> system_matrix;
-
-  Vector<double> solution;
-  Vector<double> system_rhs;
-  Point<dim>     center;
-
-  simCase simulationCase_;
-  int     refinementLevel_;
-  double  L2Error_;
+  FEValues<dim>          fe_values;
+  FEInterfaceValues<dim> fe_interface_values;
 };
 
 
+
+struct CopyDataFace
+{
+  FullMatrix<double>                   cell_matrix;
+  std::vector<types::global_dof_index> joint_dof_indices;
+};
+
+
+
+struct CopyData
+{
+  FullMatrix<double>                   cell_matrix;
+  Vector<double>                       cell_rhs;
+  std::vector<types::global_dof_index> local_dof_indices;
+  std::vector<CopyDataFace>            face_data;
+
+  template <class Iterator>
+  void
+  reinit(const Iterator &cell, unsigned int dofs_per_cell)
+  {
+    cell_matrix.reinit(dofs_per_cell, dofs_per_cell);
+    cell_rhs.reinit(dofs_per_cell);
+
+    local_dof_indices.resize(dofs_per_cell);
+    cell->get_dof_indices(local_dof_indices);
+  }
+};
 
 template <int dim>
 class RightHandSideMMS : public Function<dim>
@@ -161,8 +181,65 @@ BoundaryValues<dim>::value(const Point<dim> &p,
 }
 
 template <int dim>
+class DGHeat
+{
+public:
+  DGHeat(simCase scase, int refinementLevel);
+  void
+  run();
+  double
+  getL2Error()
+  {
+    return L2Error_;
+  }
+
+private:
+  void
+  make_grid();
+  void
+  make_cube_grid();
+  void
+  make_ring_grid();
+  void
+  setup_system();
+  void
+  assemble_system_DG();
+  void
+  assemble_system_CG();
+  void
+  solve();
+  void
+  output_results() const;
+  void
+  calculateL2Error();
+
+  Triangulation<dim> triangulation;
+  FE_Q<dim>          fe;
+  DoFHandler<dim>    dof_handler;
+
+  const MappingQ<dim> mapping;
+
+  RightHandSideMMS<dim> right_hand_side;
+
+
+  SparsityPattern      sparsity_pattern;
+  SparseMatrix<double> system_matrix;
+
+  Vector<double> solution;
+  Vector<double> system_rhs;
+  Point<dim>     center;
+
+  simCase simulationCase_;
+  int     refinementLevel_;
+  double  L2Error_;
+};
+
+
+
+template <int dim>
 DGHeat<dim>::DGHeat(simCase scase, int refinementLevel)
   : fe(1)
+  , mapping(1)
   , dof_handler(triangulation)
   , simulationCase_(scase)
   , refinementLevel_(refinementLevel)
@@ -233,7 +310,167 @@ DGHeat<dim>::setup_system()
 
 template <int dim>
 void
-DGHeat<dim>::assemble_system()
+DGHeat<dim>::assemble_system_DG()
+{
+  using Iterator = typename DoFHandler<dim>::active_cell_iterator;
+  const BoundaryValues<dim> boundary_function;
+
+  auto cell_worker = [&](const Iterator &  cell,
+                         ScratchData<dim> &scratch_data,
+                         CopyData &        copy_data) {
+    const unsigned int n_dofs = scratch_data.fe_values.get_fe().dofs_per_cell;
+    copy_data.reinit(cell, n_dofs);
+    scratch_data.fe_values.reinit(cell);
+
+    const auto &q_points = scratch_data.fe_values.get_quadrature_points();
+
+    const FEValues<dim> &      fe_v = scratch_data.fe_values;
+    const std::vector<double> &JxW  = fe_v.get_JxW_values();
+
+    std::vector<double> f(q_points.size());
+    right_hand_side.value_list(q_points, f);
+
+    for (unsigned int point = 0; point < fe_v.n_quadrature_points; ++point)
+      {
+        auto beta_q = beta(q_points[point]);
+        for (unsigned int i = 0; i < n_dofs; ++i)
+          {
+            for (unsigned int j = 0; j < n_dofs; ++j)
+              {
+                copy_data.cell_matrix(i, j) +=
+                  fe_v.shape_grad(i, point)   // \nabla \phi_i
+                  * fe_v.shape_grad(j, point) // \nabla \phi_j
+                  * JxW[point];               // dx
+              }
+            // Right Hand Side
+            copy_data.cell_rhs(i) +=
+              (fe_v.shape_grad(i, point) * f[point] * JxW[point]);
+          }
+      }
+  };
+
+  auto boundary_worker = [&](const Iterator &    cell,
+                             const unsigned int &face_no,
+                             ScratchData<dim> &  scratch_data,
+                             CopyData &          copy_data) {
+    scratch_data.fe_interface_values.reinit(cell, face_no);
+    const FEFaceValuesBase<dim> &fe_face =
+      scratch_data.fe_interface_values.get_fe_face_values(0);
+
+    const auto &q_points = fe_face.get_quadrature_points();
+
+    const unsigned int n_facet_dofs        = fe_face.get_fe().n_dofs_per_cell();
+    const std::vector<double> &        JxW = fe_face.get_JxW_values();
+    const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+
+    std::vector<double> g(q_points.size());
+    boundary_function.value_list(q_points, g);
+
+    for (unsigned int point = 0; point < q_points.size(); ++point)
+      {
+        //        const double beta_dot_n = beta(q_points[point]) *
+        //        normals[point];
+
+        //        if (beta_dot_n > 0)
+        //          {
+        //            for (unsigned int i = 0; i < n_facet_dofs; ++i)
+        //              for (unsigned int j = 0; j < n_facet_dofs; ++j)
+        //                copy_data.cell_matrix(i, j) +=
+        //                  fe_face.shape_value(i, point)   // \phi_i
+        //                  * fe_face.shape_value(j, point) // \phi_j
+        //                  * beta_dot_n                    // \beta . n
+        //                  * JxW[point];                   // dx
+        //          }
+        //        else
+        //          for (unsigned int i = 0; i < n_facet_dofs; ++i)
+        //            copy_data.cell_rhs(i) += -fe_face.shape_value(i, point) //
+        //            \phi_i
+        //                                     * g[point]                     //
+        //                                     g
+        //                                     * beta_dot_n                   //
+        //                                     \beta . n
+        //                                     * JxW[point];                  //
+        //                                     dx
+      }
+  };
+
+  auto face_worker = [&](const Iterator &    cell,
+                         const unsigned int &f,
+                         const unsigned int &sf,
+                         const Iterator &    ncell,
+                         const unsigned int &nf,
+                         const unsigned int &nsf,
+                         ScratchData<dim> &  scratch_data,
+                         CopyData &          copy_data) {
+    FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values;
+    fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+    const auto &q_points = fe_iv.get_quadrature_points();
+
+    copy_data.face_data.emplace_back();
+    CopyDataFace &copy_data_face = copy_data.face_data.back();
+
+    const unsigned int n_dofs        = fe_iv.n_current_interface_dofs();
+    copy_data_face.joint_dof_indices = fe_iv.get_interface_dof_indices();
+
+    copy_data_face.cell_matrix.reinit(n_dofs, n_dofs);
+
+    const std::vector<double> &        JxW     = fe_iv.get_JxW_values();
+    const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
+
+    for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
+      {
+        //        const double beta_dot_n = beta(q_points[qpoint]) *
+        //        normals[qpoint]; for (unsigned int i = 0; i < n_dofs; ++i)
+        //          for (unsigned int j = 0; j < n_dofs; ++j)
+        //            copy_data_face.cell_matrix(i, j) +=
+        //              fe_iv.jump(i, qpoint)                            //
+        //              [\phi_i]
+        //              * fe_iv.shape_value((beta_dot_n > 0), j, qpoint) //
+        //              phi_j^{upwind}
+        //              * beta_dot_n                                     //
+        //              (\beta . n)
+        //              * JxW[qpoint];                                   // dx
+      }
+  };
+
+  AffineConstraints<double> constraints;
+
+  auto copier = [&](const CopyData &c) {
+    constraints.distribute_local_to_global(c.cell_matrix,
+                                           c.cell_rhs,
+                                           c.local_dof_indices,
+                                           system_matrix,
+                                           system_rhs);
+
+    for (auto &cdf : c.face_data)
+      {
+        constraints.distribute_local_to_global(cdf.cell_matrix,
+                                               cdf.joint_dof_indices,
+                                               system_matrix);
+      }
+  };
+
+  const unsigned int n_gauss_points = dof_handler.get_fe().degree + 1;
+
+  ScratchData<dim> scratch_data(mapping, fe, n_gauss_points);
+  CopyData         copy_data;
+
+  MeshWorker::mesh_loop(dof_handler.begin_active(),
+                        dof_handler.end(),
+                        cell_worker,
+                        copier,
+                        scratch_data,
+                        copy_data,
+                        MeshWorker::assemble_own_cells |
+                          MeshWorker::assemble_boundary_faces |
+                          MeshWorker::assemble_own_interior_faces_once,
+                        boundary_worker,
+                        face_worker);
+}
+
+template <int dim>
+void
+DGHeat<dim>::assemble_system_CG()
 {
   QGauss<dim> quadrature_formula(5);
 
@@ -429,7 +666,7 @@ DGHeat<dim>::run()
 {
   make_grid();
   setup_system();
-  assemble_system();
+  assemble_system_CG();
   solve();
   output_results();
   calculateL2Error();
