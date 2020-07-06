@@ -17,36 +17,37 @@
 * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2019-
 */
 
-#include "solvers/gls_navier_stokes.h"
-#include "core/grids.h"
+#include "deal.II/grid/grid_generator.h"
 #include "solvers/solid_base.h"
 
 int
-main(int argc, char *argv[])
+main()
 {
   try
     {
-      if (argc != 2)
-        {
-          std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
-          std::exit(1);
-        }
-      Utilities::MPI::MPI_InitFinalize mpi_initialization(
-        argc, argv, numbers::invalid_unsigned_int);
+      Parameters::Nitsche                                          param;
+      std::shared_ptr<parallel::DistributedTriangulationBase<3>>   fluid_tria;
 
-      ParameterHandler                prm;
-      NavierStokesSolverParameters<3> param;
-      param.declare(prm);
-      // Parsing of the file
-      prm.parse_input(argv[1]);
-      param.parse(prm);
+      // Mesh of the solid
+      // param.solid_mesh.type = Parameters::Mesh::Type::gmsh;
+      // param.solid_mesh.file_name = "50.msh";
 
-      read_mesh_and_manifold(fluid_tria, param.mesh, param.manifolds_parameters, param.boundary_conditions);
+      param.solid_mesh.type = Parameters::Mesh::Type::dealii;
+      param.solid_mesh.grid_type = "hyper_shell";
+      param.solid_mesh.grid_arguments = "0, 0 : 0 : 0.75 : 48 : true";
 
-      SolidBase<3,3> solid(param.nitsche,
-                          fluid_tria,
-                          param.fem_parameters.velocityOrder);
-      
+      // Mesh of the fluid
+      GridGenerator::generate_from_name_and_arguments(
+              *fluid_tria,
+              "hyper_cube",
+              "-1 : 1 : true");
+
+      const unsigned int degree_velocity = 1;
+
+      SolidBase<3,3> solid(param, fluid_tria, degree_velocity);
+      solid.initial_setup();
+      solid.setup_particles();
+      solid.output_particles("output_particles");
 
     }
   catch (std::exception &exc)
