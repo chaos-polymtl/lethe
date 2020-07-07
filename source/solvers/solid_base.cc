@@ -36,9 +36,9 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  Parameters::Nitsche                                                &param,
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>   fluid_tria,
-  const unsigned int                                                  degree_velocity)
+  Parameters::Nitsche &                                             param,
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
+  const unsigned int degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -59,9 +59,6 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::initial_setup()
 {
-  FE_Nothing<dim, spacedim> solid_fe;
-  solid_dh.distribute_dofs(solid_fe);
-
   if (param.solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
       GridIn<dim, spacedim> grid_in;
@@ -86,8 +83,14 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::setup_particles()
 {
+  FE_Q<dim, spacedim> fe(1);
+  solid_dh.distribute_dofs(fe);
+
   QGauss<dim>        quadrature(degree_velocity + 1);
   const unsigned int n_properties = 1;
+  solid_particle_handler =
+    std::make_shared<Particles::ParticleHandler<spacedim>>();
+
   solid_particle_handler->initialize(*fluid_tria,
                                      StaticMappingQ1<spacedim>::mapping,
                                      n_properties);
@@ -98,7 +101,7 @@ SolidBase<dim, spacedim>::setup_particles()
   properties.reserve(quadrature.size() *
                      solid_tria->n_locally_owned_active_cells());
 
-  FE_Q<dim, spacedim>     fe(1);
+
   FEValues<dim, spacedim> fe_v(fe,
                                quadrature,
                                update_JxW_values | update_quadrature_points);
@@ -136,7 +139,7 @@ SolidBase<dim, spacedim>::setup_particles()
   fluid_tria->signals.post_distributed_refinement.connect(
     [&]() { solid_particle_handler->register_load_callback_function(false); });
 
-    setup_done = true;
+  setup_done = true;
 }
 
 template <int dim, int spacedim>
@@ -146,17 +149,18 @@ SolidBase<dim, spacedim>::output_particles(std::string fprefix) const
   Particles::DataOut<spacedim, spacedim> particles_out;
   particles_out.build_patches(*solid_particle_handler);
   const std::string filename = (fprefix + ".vtu");
-  particles_out.write_vtu_in_parallel("/" + filename, mpi_communicator);
+  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
 }
 
 template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>>
 SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
-  if (!setup_done) {
-    initial_setup();
-    setup_particles();
-  }
+  if (!setup_done)
+    {
+      initial_setup();
+      setup_particles();
+    }
   return solid_particle_handler;
 }
 

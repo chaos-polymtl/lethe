@@ -60,7 +60,7 @@ using namespace dealii;
  * @tparam DofsType the type of dof storage indices
  *
  * @ingroup solvers
- * @author Bruno Blais, 2019
+ * @author Carole-Anne Daunais, Valerie Bibeau, 2020
  */
 
 template <int dim, int spacedim = dim>
@@ -68,9 +68,10 @@ class SolidBase
 {
 public:
   // Member functions
-  SolidBase(Parameters::Nitsche                                                &param,
-            std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>   fluid_tria,
-            const unsigned int                                                  degree_velocity);
+  SolidBase(Parameters::Nitsche &param,
+            std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
+                               fluid_tria,
+            const unsigned int degree_velocity);
   void
   initial_setup();
   void
@@ -86,14 +87,15 @@ private:
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
 
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>    solid_tria;
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>         fluid_tria;
-  DoFHandler<dim, spacedim>                                                 solid_dh;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>>                     solid_particle_handler;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+                                                                    solid_tria;
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
+  DoFHandler<dim, spacedim>                                         solid_dh;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
 
-  Parameters::Nitsche               param;
+  Parameters::Nitsche param;
 
-  const unsigned int                degree_velocity;
+  const unsigned int degree_velocity;
 
   bool setup_done = false;
 };
