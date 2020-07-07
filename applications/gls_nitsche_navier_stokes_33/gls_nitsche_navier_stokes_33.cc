@@ -33,17 +33,16 @@ main(int argc, char *argv[])
         argc, argv, numbers::invalid_unsigned_int);
 
       ParameterHandler                prm;
-      NavierStokesSolverParameters<2> NSparam;
+      NavierStokesSolverParameters<3> NSparam;
       NSparam.declare(prm);
       // Parsing of the file
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
-      GLSNitscheNavierStokesSolver<2> problem_2d(
-        NSparam,
-        NSparam.fem_parameters.velocityOrder,
-        NSparam.fem_parameters.pressureOrder);
-      problem_2d.solve();
+      GLSNitscheNavierStokesSolver<3> problem_33(NSparam,
+                                                 NSparam.fem_parameters.velocityOrder,
+                                                 NSparam.fem_parameters.pressureOrder);
+      problem_33.solve();
     }
   catch (std::exception &exc)
     {
