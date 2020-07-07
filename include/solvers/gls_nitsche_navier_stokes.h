@@ -14,7 +14,8 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Bruno Blais, Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
+ * Author: Bruno Blais, Carole-Anne Daunais, Valérie Bibeau, Polytechnique
+ Montreal, 2020-
  */
 
 #ifndef lethe_gls_nitsche_navier_stokes_h
@@ -37,17 +38,15 @@ using namespace dealii;
  */
 
 template <int dim, int spacedim = dim>
-class GLSNitscheNavierStokesSolver
-  : public GLSNavierStokesSolver<spacedim>
+class GLSNitscheNavierStokesSolver : public GLSNavierStokesSolver<spacedim>
 {
 public:
   GLSNitscheNavierStokesSolver(NavierStokesSolverParameters<spacedim> &nsparam,
-                               const unsigned int                      degreeVelocity,
-                               const unsigned int                      degreePressure);
+                               const unsigned int degreeVelocity,
+                               const unsigned int degreePressure);
 
 private:
-
-  SolidBase<dim, spacedim>  solid;
+  SolidBase<dim, spacedim> solid;
 
   void
   assemble_nitsche_restriction();
