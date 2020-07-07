@@ -213,11 +213,11 @@ private:
   void
   calculateL2Error();
 
-  Triangulation<dim> triangulation;
-  FE_Q<dim>          fe;
-  DoFHandler<dim>    dof_handler;
-
+  Triangulation<dim>  triangulation;
+  FE_DGQ<dim>         fe;
   const MappingQ<dim> mapping;
+  DoFHandler<dim>     dof_handler;
+
 
   RightHandSideMMS<dim> right_hand_side;
 
@@ -238,8 +238,8 @@ private:
 
 template <int dim>
 DGHeat<dim>::DGHeat(simCase scase, int refinementLevel)
-  : fe(1)
-  , mapping(1)
+  : fe(2)
+  , mapping(2)
   , dof_handler(triangulation)
   , simulationCase_(scase)
   , refinementLevel_(refinementLevel)
@@ -298,7 +298,7 @@ DGHeat<dim>::setup_system()
             << std::endl;
 
   DynamicSparsityPattern dsp(dof_handler.n_dofs());
-  DoFTools::make_sparsity_pattern(dof_handler, dsp);
+  DoFTools::make_flux_sparsity_pattern(dof_handler, dsp);
   sparsity_pattern.copy_from(dsp);
 
   system_matrix.reinit(sparsity_pattern);
@@ -332,7 +332,6 @@ DGHeat<dim>::assemble_system_DG()
 
     for (unsigned int point = 0; point < fe_v.n_quadrature_points; ++point)
       {
-        auto beta_q = beta(q_points[point]);
         for (unsigned int i = 0; i < n_dofs; ++i)
           {
             for (unsigned int j = 0; j < n_dofs; ++j)
@@ -344,7 +343,7 @@ DGHeat<dim>::assemble_system_DG()
               }
             // Right Hand Side
             copy_data.cell_rhs(i) +=
-              (fe_v.shape_grad(i, point) * f[point] * JxW[point]);
+              (fe_v.shape_value(i, point) * f[point] * JxW[point]);
           }
       }
   };
@@ -354,43 +353,45 @@ DGHeat<dim>::assemble_system_DG()
                              ScratchData<dim> &  scratch_data,
                              CopyData &          copy_data) {
     scratch_data.fe_interface_values.reinit(cell, face_no);
+
     const FEFaceValuesBase<dim> &fe_face =
       scratch_data.fe_interface_values.get_fe_face_values(0);
 
-    const auto &q_points = fe_face.get_quadrature_points();
+    const auto &       q_points     = fe_face.get_quadrature_points();
+    const unsigned int n_facet_dofs = fe_face.get_fe().n_dofs_per_cell();
+    const std::vector<double> &JxW  = fe_face.get_JxW_values();
 
-    const unsigned int n_facet_dofs        = fe_face.get_fe().n_dofs_per_cell();
-    const std::vector<double> &        JxW = fe_face.get_JxW_values();
     const std::vector<Tensor<1, dim>> &normals = fe_face.get_normal_vectors();
+    std::vector<double>                g(q_points.size());
 
-    std::vector<double> g(q_points.size());
     boundary_function.value_list(q_points, g);
+
+    double h;
+    if (dim == 2)
+      h = std::sqrt(4. * cell->measure() / M_PI);
+    else if (dim == 3)
+      h = pow(6 * cell->measure() / M_PI, 1. / 3.);
+
+
+    const double beta = 10.;
 
     for (unsigned int point = 0; point < q_points.size(); ++point)
       {
-        //        const double beta_dot_n = beta(q_points[point]) *
-        //        normals[point];
+        for (unsigned int i = 0; i < n_facet_dofs; ++i)
+          for (unsigned int j = 0; j < n_facet_dofs; ++j)
+            {
+              copy_data.cell_matrix(i, j) +=
+                -normals[point] *
+                fe_face.shape_grad(i, point)    // n*\nabla \phi_i
+                * fe_face.shape_value(j, point) // \phi_j
+                * JxW[point];                   // dx
 
-        //        if (beta_dot_n > 0)
-        //          {
-        //            for (unsigned int i = 0; i < n_facet_dofs; ++i)
-        //              for (unsigned int j = 0; j < n_facet_dofs; ++j)
-        //                copy_data.cell_matrix(i, j) +=
-        //                  fe_face.shape_value(i, point)   // \phi_i
-        //                  * fe_face.shape_value(j, point) // \phi_j
-        //                  * beta_dot_n                    // \beta . n
-        //                  * JxW[point];                   // dx
-        //          }
-        //        else
-        //          for (unsigned int i = 0; i < n_facet_dofs; ++i)
-        //            copy_data.cell_rhs(i) += -fe_face.shape_value(i, point) //
-        //            \phi_i
-        //                                     * g[point]                     //
-        //                                     g
-        //                                     * beta_dot_n                   //
-        //                                     \beta . n
-        //                                     * JxW[point];                  //
-        //                                     dx
+              copy_data.cell_matrix(i, j) +=
+                -fe_face.shape_value(i, point) // \phi_i
+                * fe_face.shape_grad(j, point) *
+                normals[point] // n*\nabla \phi_j
+                * JxW[point];  // dx
+            }
       }
   };
 
@@ -403,7 +404,9 @@ DGHeat<dim>::assemble_system_DG()
                          ScratchData<dim> &  scratch_data,
                          CopyData &          copy_data) {
     FEInterfaceValues<dim> &fe_iv = scratch_data.fe_interface_values;
+
     fe_iv.reinit(cell, f, sf, ncell, nf, nsf);
+
     const auto &q_points = fe_iv.get_quadrature_points();
 
     copy_data.face_data.emplace_back();
@@ -417,19 +420,36 @@ DGHeat<dim>::assemble_system_DG()
     const std::vector<double> &        JxW     = fe_iv.get_JxW_values();
     const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
 
+
+    double h;
+    if (dim == 2)
+      h = std::sqrt(4. * cell->measure() / M_PI);
+    else if (dim == 3)
+      h = pow(6 * cell->measure() / M_PI, 1. / 3.);
+
+    const double beta = 10.;
+
     for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
       {
-        //        const double beta_dot_n = beta(q_points[qpoint]) *
-        //        normals[qpoint]; for (unsigned int i = 0; i < n_dofs; ++i)
-        //          for (unsigned int j = 0; j < n_dofs; ++j)
-        //            copy_data_face.cell_matrix(i, j) +=
-        //              fe_iv.jump(i, qpoint)                            //
-        //              [\phi_i]
-        //              * fe_iv.shape_value((beta_dot_n > 0), j, qpoint) //
-        //              phi_j^{upwind}
-        //              * beta_dot_n                                     //
-        //              (\beta . n)
-        //              * JxW[qpoint];                                   // dx
+        for (unsigned int i = 0; i < n_dofs; ++i)
+          {
+            for (unsigned int j = 0; j < n_dofs; ++j)
+              {
+                copy_data_face.cell_matrix(i, j) +=
+                  -normals[qpoint] * fe_iv.average_gradient(i, qpoint) *
+                  fe_iv.jump(j, qpoint) * JxW[qpoint];
+
+                copy_data_face.cell_matrix(i, j) +=
+                  -fe_iv.jump(i, qpoint) // \phi_i
+                  * fe_iv.average_gradient(j, qpoint) *
+                  normals[qpoint] // n*\nabla \phi_j
+                  * JxW[qpoint];  // dx
+
+                copy_data_face.cell_matrix(i, j) +=
+                  beta * 1. / h * fe_iv.jump(i, qpoint) *
+                  fe_iv.jump(j, qpoint) * JxW[qpoint];
+              }
+          }
       }
   };
 
@@ -666,7 +686,8 @@ DGHeat<dim>::run()
 {
   make_grid();
   setup_system();
-  assemble_system_CG();
+  //  assemble_system_CG();
+  assemble_system_DG();
   solve();
   output_results();
   calculateL2Error();
@@ -678,25 +699,26 @@ main()
   deallog.depth_console(0);
 
   // Taylor couette
-  {
-    int                 nsim = 5;
-    std::vector<double> l2error;
-    std::vector<int>    size;
-    for (int m = 1; m < 1 + nsim; ++m)
-      {
-        std::cout << "Solving Taylor-Couette problem 2D - "
-                  << " with mesh - " << m << std::endl;
-        DGHeat<2> taylorCouette_problem_2d(TaylorCouette, m);
-        taylorCouette_problem_2d.run();
-        l2error.push_back(taylorCouette_problem_2d.getL2Error());
-        size.push_back(m);
-      }
-    std::ofstream output_file("./L2Error-TaylorCouette.dat");
-    for (unsigned int i = 0; i < size.size(); ++i)
-      {
-        output_file << size[i] << " " << l2error[i] << std::endl;
-      }
-  }
+  if (1 == 0)
+    {
+      int                 nsim = 5;
+      std::vector<double> l2error;
+      std::vector<int>    size;
+      for (int m = 1; m < 1 + nsim; ++m)
+        {
+          std::cout << "Solving Taylor-Couette problem 2D - "
+                    << " with mesh - " << m << std::endl;
+          DGHeat<2> taylorCouette_problem_2d(TaylorCouette, m);
+          taylorCouette_problem_2d.run();
+          l2error.push_back(taylorCouette_problem_2d.getL2Error());
+          size.push_back(m);
+        }
+      std::ofstream output_file("./L2Error-TaylorCouette.dat");
+      for (unsigned int i = 0; i < size.size(); ++i)
+        {
+          output_file << size[i] << " " << l2error[i] << std::endl;
+        }
+    }
 
   // MMS
   {
