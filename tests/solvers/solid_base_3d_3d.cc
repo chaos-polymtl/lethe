@@ -14,19 +14,25 @@
  * ---------------------------------------------------------------------
 
 *
-* Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2019-
+* Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
 */
 
 #include "deal.II/grid/grid_generator.h"
 #include "solvers/solid_base.h"
+#include <mpi.h>
 
-int
-main()
+int main(int argc, char *argv[])
 {
   try
     {
-      Parameters::Nitsche                                          param;
-      std::shared_ptr<parallel::DistributedTriangulationBase<3>>   fluid_tria;
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, numbers::invalid_unsigned_int);
+
+      MPI_Comm mpi_communicator = MPI_COMM_WOLRD;
+      Parameters::Nitsche                                         param;
+      std::shared_ptr<parallel::DistributedTriangulationBase<3>>  fluid_tria = std::make_shared<parallel::distributed::Triangulation<3>>(mpi_communicator,
+            typename Triangulation<3>::MeshSmoothing(
+              Triangulation<3>::smoothing_on_refinement |
+              Triangulation<3>::smoothing_on_coarsening));
 
       // Mesh of the solid
       // param.solid_mesh.type = Parameters::Mesh::Type::gmsh;
@@ -37,10 +43,7 @@ main()
       param.solid_mesh.grid_arguments = "0, 0 : 0 : 0.75 : 48 : true";
 
       // Mesh of the fluid
-      GridGenerator::generate_from_name_and_arguments(
-              *fluid_tria,
-              "hyper_cube",
-              "-1 : 1 : true");
+      GridGenerator::generate_from_name_and_arguments(*fluid_tria, "hyper_cube", "-1 : 1 : true");
 
       const unsigned int degree_velocity = 1;
 
