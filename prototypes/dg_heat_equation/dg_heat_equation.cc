@@ -22,6 +22,7 @@
 
 // The first few (many?) include files have already been used in the previous
 // example, so we will not explain their meaning here again.
+#include <deal.II/base/convergence_table.h>
 #include <deal.II/base/function.h>
 #include <deal.II/base/logstream.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -177,21 +178,19 @@ double
 BoundaryValues<dim>::value(const Point<dim> &p,
                            const unsigned int /*component*/) const
 {
-  return p.square();
+  if (p.square() > 0.9)
+    return 1;
+  else
+    return 0.;
 }
 
 template <int dim>
 class DGHeat
 {
 public:
-  DGHeat(simCase scase, int refinementLevel);
+  DGHeat(simCase scase, unsigned int initial_level, unsigned int final_level);
   void
   run();
-  double
-  getL2Error()
-  {
-    return L2Error_;
-  }
 
 private:
   void
@@ -203,13 +202,11 @@ private:
   void
   setup_system();
   void
-  assemble_system_DG();
-  void
-  assemble_system_CG();
+  assemble_system();
   void
   solve();
   void
-  output_results() const;
+  output_results(unsigned int it) const;
   void
   calculateL2Error();
 
@@ -229,29 +226,35 @@ private:
   Vector<double> system_rhs;
   Point<dim>     center;
 
-  simCase simulationCase_;
-  int     refinementLevel_;
-  double  L2Error_;
+  ConvergenceTable error_table;
+
+  simCase simulation_case;
+
+  unsigned int initial_refinement_level;
+  unsigned int number_refinement;
 };
 
 
 
 template <int dim>
-DGHeat<dim>::DGHeat(simCase scase, int refinementLevel)
-  : fe(2)
-  , mapping(2)
+DGHeat<dim>::DGHeat(simCase      scase,
+                    unsigned int initial_refinement,
+                    unsigned int number_refinement)
+  : fe(1)
+  , mapping(1)
   , dof_handler(triangulation)
-  , simulationCase_(scase)
-  , refinementLevel_(refinementLevel)
+  , simulation_case(scase)
+  , initial_refinement_level(initial_refinement)
+  , number_refinement(number_refinement)
 {}
 
 template <int dim>
 void
 DGHeat<dim>::make_grid()
 {
-  if (simulationCase_ == MMS)
+  if (simulation_case == MMS)
     make_cube_grid();
-  else if (simulationCase_ == TaylorCouette)
+  else if (simulation_case == TaylorCouette)
     make_ring_grid();
 }
 
@@ -260,7 +263,7 @@ void
 DGHeat<dim>::make_cube_grid()
 {
   GridGenerator::hyper_cube(triangulation, -1, 1);
-  triangulation.refine_global(refinementLevel_);
+  triangulation.refine_global(initial_refinement_level);
 
   std::cout << "   Number of active cells: " << triangulation.n_active_cells()
             << std::endl
@@ -278,7 +281,7 @@ DGHeat<dim>::make_ring_grid()
   GridGenerator::hyper_shell(
     triangulation, center, inner_radius, outer_radius, 10, true);
 
-  triangulation.refine_global(refinementLevel_);
+  triangulation.refine_global(initial_refinement_level);
 
   std::cout << "Number of active cells: " << triangulation.n_active_cells()
             << std::endl;
@@ -310,7 +313,7 @@ DGHeat<dim>::setup_system()
 
 template <int dim>
 void
-DGHeat<dim>::assemble_system_DG()
+DGHeat<dim>::assemble_system()
 {
   using Iterator = typename DoFHandler<dim>::active_cell_iterator;
   const BoundaryValues<dim> boundary_function;
@@ -341,9 +344,11 @@ DGHeat<dim>::assemble_system_DG()
                   * fe_v.shape_grad(j, point) // \nabla \phi_j
                   * JxW[point];               // dx
               }
-            // Right Hand Side
-            copy_data.cell_rhs(i) +=
-              (fe_v.shape_value(i, point) * f[point] * JxW[point]);
+
+            if (simulation_case == MMS)
+              // Right Hand Side
+              copy_data.cell_rhs(i) +=
+                (fe_v.shape_value(i, point) * f[point] * JxW[point]);
           }
       }
   };
@@ -378,19 +383,39 @@ DGHeat<dim>::assemble_system_DG()
     for (unsigned int point = 0; point < q_points.size(); ++point)
       {
         for (unsigned int i = 0; i < n_facet_dofs; ++i)
-          for (unsigned int j = 0; j < n_facet_dofs; ++j)
-            {
-              copy_data.cell_matrix(i, j) +=
-                -normals[point] *
-                fe_face.shape_grad(i, point)    // n*\nabla \phi_i
-                * fe_face.shape_value(j, point) // \phi_j
-                * JxW[point];                   // dx
+          {
+            for (unsigned int j = 0; j < n_facet_dofs; ++j)
+              {
+                copy_data.cell_matrix(i, j) +=
+                  -normals[point] *
+                  fe_face.shape_grad(i, point)    // n*\nabla \phi_i
+                  * fe_face.shape_value(j, point) // \phi_j
+                  * JxW[point];                   // dx
 
-              copy_data.cell_matrix(i, j) +=
-                -fe_face.shape_value(i, point) // \phi_i
-                * fe_face.shape_grad(j, point) *
-                normals[point] // n*\nabla \phi_j
-                * JxW[point];  // dx
+                copy_data.cell_matrix(i, j) +=
+                  -fe_face.shape_value(i, point) // \phi_i
+                  * fe_face.shape_grad(j, point) *
+                  normals[point] // n*\nabla \phi_j
+                  * JxW[point];  // dx
+
+                copy_data.cell_matrix(i, j) +=
+                  beta * 1. / h * fe_face.shape_value(i, point) // \phi_i
+                  * fe_face.shape_value(j, point) * JxW[point]; // dx
+              }
+          }
+
+        if (simulation_case == TaylorCouette)
+          for (unsigned int i = 0; i < n_facet_dofs; ++i)
+            {
+              copy_data.cell_rhs(i) += beta * 1. / h *
+                                       fe_face.shape_value(i, point) // \phi_i
+                                       * g[point]                    // g
+                                       * JxW[point];                 // dx
+              copy_data.cell_rhs(i) +=
+                -normals[point] *
+                fe_face.shape_grad(i, point) // n*\nabla \phi_i
+                * g[point]                   // g
+                * JxW[point];                // dx
             }
       }
   };
@@ -490,96 +515,6 @@ DGHeat<dim>::assemble_system_DG()
 
 template <int dim>
 void
-DGHeat<dim>::assemble_system_CG()
-{
-  QGauss<dim> quadrature_formula(5);
-
-  RightHandSideMMS<dim> right_hand_side;
-
-  FEValues<dim> fe_values(fe,
-                          quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const unsigned int dofs_per_cell = fe.dofs_per_cell;
-  const unsigned int n_q_points    = quadrature_formula.size();
-
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
-
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  typename DoFHandler<dim>::active_cell_iterator cell =
-                                                   dof_handler.begin_active(),
-                                                 endc = dof_handler.end();
-
-  for (; cell != endc; ++cell)
-    {
-      fe_values.reinit(cell);
-      cell_matrix = 0;
-      cell_rhs    = 0;
-
-      for (unsigned int q_index = 0; q_index < n_q_points; ++q_index)
-        for (unsigned int i = 0; i < dofs_per_cell; ++i)
-          {
-            for (unsigned int j = 0; j < dofs_per_cell; ++j)
-              // Stiffness Matrix
-              cell_matrix(i, j) +=
-                (fe_values.shape_grad(i, q_index) *
-                 fe_values.shape_grad(j, q_index) * fe_values.JxW(q_index));
-
-            if (simulationCase_ == MMS)
-              {
-                // Right Hand Side
-                cell_rhs(i) +=
-                  (fe_values.shape_value(i, q_index) *
-                   right_hand_side.value(fe_values.quadrature_point(q_index)) *
-                   fe_values.JxW(q_index));
-              }
-          }
-
-
-      // Assemble global matrix
-      cell->get_dof_indices(local_dof_indices);
-      for (unsigned int i = 0; i < dofs_per_cell; ++i)
-        {
-          for (unsigned int j = 0; j < dofs_per_cell; ++j)
-            system_matrix.add(local_dof_indices[i],
-                              local_dof_indices[j],
-                              cell_matrix(i, j));
-
-          system_rhs(local_dof_indices[i]) += cell_rhs(i);
-        }
-    }
-
-
-  std::map<types::global_dof_index, double> boundary_values;
-  if (simulationCase_ == TaylorCouette)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               0,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(
-        dof_handler, 1, Functions::ConstantFunction<dim>(1.), boundary_values);
-    }
-
-  if (simulationCase_ == MMS)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler,
-                                               0,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values);
-    }
-
-  MatrixTools::apply_boundary_values(boundary_values,
-                                     system_matrix,
-                                     solution,
-                                     system_rhs);
-}
-
-template <int dim>
-void
 DGHeat<dim>::solve()
 {
   SolverControl solver_control(10000, 1e-12);
@@ -594,7 +529,7 @@ DGHeat<dim>::solve()
 
 template <int dim>
 void
-DGHeat<dim>::output_results() const
+DGHeat<dim>::output_results(unsigned int it) const
 {
   DataOut<dim> data_out;
 
@@ -605,8 +540,8 @@ DGHeat<dim>::output_results() const
 
   std::string dimension(dim == 2 ? "solution-2d-case-" : "solution-3d-case-");
 
-  std::string fname = dimension + Utilities::int_to_string(simulationCase_) +
-                      "-" + Utilities::int_to_string(refinementLevel_) + ".vtk";
+  std::string fname = dimension + Utilities::int_to_string(simulation_case) +
+                      "-" + Utilities::int_to_string(it) + ".vtk";
 
   std::ofstream output(fname.c_str());
   data_out.write_vtk(output);
@@ -655,9 +590,9 @@ DGHeat<dim>::calculateL2Error()
           const double r       = std::sqrt(x * x + y * y);
           const double lnratio = std::log(1. / 0.25);
           double       u_exact = 0.;
-          if (simulationCase_ == TaylorCouette)
+          if (simulation_case == TaylorCouette)
             u_exact = 1. / (lnratio)*std::log(r / 0.25);
-          if (simulationCase_ == MMS)
+          if (simulation_case == MMS)
             u_exact = -sin(M_PI * x) * std::sin(M_PI * y);
           double u_sim = 0;
 
@@ -674,8 +609,11 @@ DGHeat<dim>::calculateL2Error()
           //       std::endl;
         }
     }
+
+
   std::cout << "L2Error is : " << std::sqrt(l2error) << std::endl;
-  L2Error_ = std::sqrt(l2error);
+  error_table.add_value("error", std::sqrt(l2error));
+  error_table.add_value("cells", triangulation.n_global_active_cells());
 }
 
 
@@ -685,12 +623,24 @@ void
 DGHeat<dim>::run()
 {
   make_grid();
-  setup_system();
-  //  assemble_system_CG();
-  assemble_system_DG();
-  solve();
-  output_results();
-  calculateL2Error();
+  for (unsigned int it = 0; it < number_refinement; ++it)
+    {
+      if (it > 0)
+        triangulation.refine_global(1);
+      setup_system();
+      assemble_system();
+      solve();
+      output_results(it);
+      calculateL2Error();
+    }
+
+  error_table.omit_column_from_convergence_rate_evaluation("cells");
+  error_table.evaluate_all_convergence_rates(
+    ConvergenceTable::reduction_rate_log2);
+
+  error_table.set_scientific("error", true);
+
+  error_table.write_text(std::cout);
 }
 
 int
@@ -699,47 +649,17 @@ main()
   deallog.depth_console(0);
 
   // Taylor couette
-  if (1 == 0)
-    {
-      int                 nsim = 5;
-      std::vector<double> l2error;
-      std::vector<int>    size;
-      for (int m = 1; m < 1 + nsim; ++m)
-        {
-          std::cout << "Solving Taylor-Couette problem 2D - "
-                    << " with mesh - " << m << std::endl;
-          DGHeat<2> taylorCouette_problem_2d(TaylorCouette, m);
-          taylorCouette_problem_2d.run();
-          l2error.push_back(taylorCouette_problem_2d.getL2Error());
-          size.push_back(m);
-        }
-      std::ofstream output_file("./L2Error-TaylorCouette.dat");
-      for (unsigned int i = 0; i < size.size(); ++i)
-        {
-          output_file << size[i] << " " << l2error[i] << std::endl;
-        }
-    }
+  {
+    std::cout << "Solving Taylor-Couette problem 2D  " << std::endl;
+    DGHeat<2> taylorCouette_problem_2d(TaylorCouette, 1, 6);
+    taylorCouette_problem_2d.run();
+  }
 
   // MMS
   {
-    int                 nsim = 8;
-    std::vector<double> l2error;
-    std::vector<int>    size;
-    for (int m = 2; m < 1 + nsim; ++m)
-      {
-        std::cout << "Solving MMS problem 2D - "
-                  << " with mesh - " << m << std::endl;
-        DGHeat<2> mms_problem_2d(MMS, m);
-        mms_problem_2d.run();
-        l2error.push_back(mms_problem_2d.getL2Error());
-        size.push_back(m);
-      }
-    std::ofstream output_file("./L2Error-MMS.dat");
-    for (unsigned int i = 0; i < size.size(); ++i)
-      {
-        output_file << size[i] << " " << l2error[i] << std::endl;
-      }
+    std::cout << "Solving MMS problem 2D " << std::endl;
+    DGHeat<2> mms_problem_2d(MMS, 2, 8);
+    mms_problem_2d.run();
   }
-
   return 0;
 }
