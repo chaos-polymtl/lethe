@@ -210,11 +210,12 @@ DirectSteadyGLSNavierStokes<dim>::setup_dofs()
     nonzero_constraints.clear();
 
     DoFTools::make_hanging_node_constraints(dof_handler, nonzero_constraints);
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             0,
-                                             ZeroFunction<dim>(dim + 1),
-                                             nonzero_constraints,
-                                             fe.component_mask(velocities));
+    VectorTools::interpolate_boundary_values(
+      dof_handler,
+      0,
+      dealii::Functions::ZeroFunction<dim>(dim + 1),
+      nonzero_constraints,
+      fe.component_mask(velocities));
 
     if (simulationCase_ == TaylorCouette)
       {
@@ -230,20 +231,22 @@ DirectSteadyGLSNavierStokes<dim>::setup_dofs()
   {
     zero_constraints.clear();
     DoFTools::make_hanging_node_constraints(dof_handler, zero_constraints);
-    VectorTools::interpolate_boundary_values(dof_handler,
-                                             0,
-                                             ZeroFunction<dim>(dim + 1),
-                                             zero_constraints,
-                                             fe.component_mask(velocities));
+    VectorTools::interpolate_boundary_values(
+      dof_handler,
+      0,
+      dealii::Functions::ZeroFunction<dim>(dim + 1),
+      zero_constraints,
+      fe.component_mask(velocities));
 
 
     if (simulationCase_ == TaylorCouette)
       {
-        VectorTools::interpolate_boundary_values(dof_handler,
-                                                 1,
-                                                 ZeroFunction<dim>(dim + 1),
-                                                 zero_constraints,
-                                                 fe.component_mask(velocities));
+        VectorTools::interpolate_boundary_values(
+          dof_handler,
+          1,
+          dealii::Functions::ZeroFunction<dim>(dim + 1),
+          zero_constraints,
+          fe.component_mask(velocities));
       }
   }
   zero_constraints.close();
