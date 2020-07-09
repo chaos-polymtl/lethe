@@ -59,7 +59,7 @@ public:
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::PhysicalProperties::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
-    Parameters::Nitsche::declare_parameters(prm);
+    nitsche.declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
     boundary_conditions.declare_parameters(prm);
 

@@ -19,7 +19,7 @@
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature_lib.h>
-#include <deal.II/base/std_cxx14/memory.h>
+#include <memory.h>
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_nothing.h>

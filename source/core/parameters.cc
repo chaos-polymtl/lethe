@@ -504,6 +504,7 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
+      solid_mesh.declare_parameters(prm);
       prm.declare_entry("beta",
                         "1",
                         Patterns::Double(),
@@ -517,6 +518,7 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
+      solid_mesh.parse_parameters(prm);
       beta = prm.get_double("beta");
     }
     prm.leave_subsection();

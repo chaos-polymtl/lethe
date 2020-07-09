@@ -428,7 +428,7 @@ namespace Parameters
     // Penalization term
     double beta;
 
-    static void
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);

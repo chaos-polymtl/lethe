@@ -67,9 +67,10 @@ main(int argc, char *argv[])
 
       for (const auto &particle : (*solid_particle_handler))
         {
-          deallog << "Particle index " << particle.get_id() << std::endl;
+          deallog << "Particle index: " << particle.get_id() << std::endl;
           deallog << "Particle location: " << particle.get_location()
                   << std::endl;
+          deallog << "Particle JxW: " << particle.get_properties()[0] << std::endl;
         }
     }
   catch (std::exception &exc)

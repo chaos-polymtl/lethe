@@ -1,0 +1,5 @@
+SET(TEST_LIBRARIES lethe)
+SET(TEST_TARGET gls_nitsche_navier_stokes_23)
+file(COPY packed_bed_10p_2d.msh DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+DEAL_II_PICKUP_TESTS()
+

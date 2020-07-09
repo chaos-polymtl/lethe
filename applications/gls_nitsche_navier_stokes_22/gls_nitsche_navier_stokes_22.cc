@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
 
 *
-* Author: Bruno Blais, Polytechnique Montreal, 2019-
+* Author: Carole-Anne Daunais, Valerie Bibeau, Polytechnique Montreal, 2019-
 */
 
 #include "solvers/gls_nitsche_navier_stokes.h"
