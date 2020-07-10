@@ -415,6 +415,7 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
             // loop on all the evaluation point
             for (unsigned int i = 0; i < nb_evaluation; ++i) {
+
                 // define the normal to the surface evaluated and the vector that is along the surface.
                 Tensor<1, dim, double> surf_normal;
                 Tensor<1, dim, double> surf_vect;
@@ -435,49 +436,57 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
 
 
                 // step in the normal direction of the surface until we find a cell that is not cut by the immersed boundary of the particule p.
-                const auto &cell = GridTools::find_active_cell_around_point(this->dof_handler, eval_point);
-                Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * step_ratio,
-                                        eval_point[1] + surf_normal[1] * step_ratio);
-                cell->get_dof_indices(local_dof_indices_3);
+
+
 
                 unsigned int nb_step = 0;
                 bool cell_found = false;
-                // step in the normal direction to the surface until the point used for the ib stencil is not in a cell that is cut by the boundary.
+                const Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                                              eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
 
+
+
+                // step in the normal direction to the surface until the point used for the ib stencil is not in a cell that is cut by the boundary.
                 while (cell_found == false) {
                     // define the new point
-                    Point<dim> eval_point_2(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
-                                            eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
-                    const auto &cell_iter = GridTools::find_active_cell_around_point(this->dof_handler, eval_point_2);
-                    cell_iter->get_dof_indices(local_dof_indices);
+                    Point<dim> eval_point_iter(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                            eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
+                    const auto &cell_iter = GridTools::find_active_cell_around_point(this->dof_handler,
+                                                                                         eval_point_iter);
+                    if (cell_iter->is_artificial()==false) {
+                        cell_iter->get_dof_indices(local_dof_indices);
 
-                    unsigned int count_small = 0;
-                    if (dim == 2) {
-                        center_immersed(0) = particles[p][0];
-                        center_immersed(1) = particles[p][1];
-
-                    }
-                    //check if the cell is cut
-                    for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
-                        //count the number of dof that ar smaller or larger then the radius of the particles
-                        //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
-                        if ((support_points[local_dof_indices[j]] - center_immersed).norm() <=
-                            particles[p][particles[p].size() - 1]) {
-                            ++count_small;
+                        unsigned int count_small = 0;
+                        if (dim == 2) {
+                            center_immersed(0) = particles[p][0];
+                            center_immersed(1) = particles[p][1];
                         }
+                        //check if the cell is cut
+                        for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
+                            //count the number of dof that ar smaller or larger then the radius of the particles
+                            //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
+                            if ((support_points[local_dof_indices[j]] - center_immersed).norm() <=
+                                particles[p][particles[p].size() - 1]) {
+                                ++count_small;
+                            }
+                        }
+
+                        if (count_small != 0 and count_small != local_dof_indices.size()) {
+                            cell_found = false;
+                        } else {
+                            cell_found = true;
+                        }
+
+                        // step a bit further away from the boundary.
+                        if (cell_found == false)
+                            nb_step += 1;
                     }
-
-                    if (count_small != 0 and count_small != local_dof_indices.size()) {
-                        cell_found = false;
-                    } else {
-                        cell_found = true;
+                    else{
+                        break;
                     }
-
-                    // step a bit further away from the boundary.
-                    if (cell_found == false)
-                        nb_step += 1;
-
                 }
+
+
                 // when the point is found outside cell that are cut by the boundayr we define the 3 point that will be used to create interpolation and  extrapolation of the solution  to evalutate the force on the boundart
                 const Point<dim> second_point(eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
                                               eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
@@ -491,12 +500,12 @@ void GLSSharpNavierStokesSolver<dim>::force_on_ib() {
                 const auto &cell_3 = GridTools::find_active_cell_around_point(this->dof_handler, third_point);
                 const auto &cell_4 = GridTools::find_active_cell_around_point(this->dof_handler, fourth_point);
 
-                cell_2->get_dof_indices(local_dof_indices);
-                cell_3->get_dof_indices(local_dof_indices_2);
-                cell_4->get_dof_indices(local_dof_indices_3);
-                // check if the cell is locally owned before doing the evalation.
-                if (cell_2->is_locally_owned()) {
 
+                // check if the cell is locally owned before doing the evalation.
+                if (cell_2->is_locally_owned()  ) {
+                    cell_2->get_dof_indices(local_dof_indices);
+                    cell_3->get_dof_indices(local_dof_indices_2);
+                    cell_4->get_dof_indices(local_dof_indices_3);
                     // define the tensor used for the velocity evaluation.
                     Tensor<1, dim, double> u_1;
                     Tensor<1, dim, double> u_2;
@@ -1193,10 +1202,86 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                                                  GridTools::minimal_cell_diameter(
                                                                                          *this->triangulation)));
 
+    //clear all for dof
+
+
 
     //define cell iterator
     const auto &cell_iterator=this->dof_handler.active_cell_iterators();
+    //clear all for dof velocity ligne of cell that are cut.
+    for (const auto &cell : cell_iterator) {
+        if (cell->is_locally_owned()) {
+            cell->get_dof_indices(local_dof_indices);
 
+            for (unsigned int k = 0; k < dim ; ++k) {
+                unsigned int l = k;
+                // loops on all the dof of the the cell that represent a specific component
+                while (l < local_dof_indices.size()) {
+                    unsigned int global_index_overrigth=local_dof_indices[l];
+                    for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
+                        unsigned int v_index = cell->vertex_index(vi);
+                        active_neighbors_set = this->vertices_to_cell[v_index];
+                        for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
+                            const auto &cell_3 = active_neighbors_set[m];
+                            cell_3->get_dof_indices(local_dof_indices_3);
+                            for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
+                                if (global_index_overrigth == local_dof_indices_3[o]) {
+                                    //cell_3 contain the same dof check if this cell is cut if it's not cut this dof must not be overright
+
+                                    // loop over all particle  to see if one of them is cutting this cell
+                                    for (unsigned int p1 = 0; p1 < particles.size(); ++p1) {
+                                        unsigned int count_small_1 = 0;
+                                        if (dim == 2) {
+                                            center_immersed(0) = particles[p1][0];
+                                            center_immersed(1) = particles[p1][1];
+                                            // define arbitrary point on the boundary where the pressure will be link between the 2 domain
+                                            pressure_bridge(0) = particles[p1][0] -
+                                                                 this->nsparam.particlesParameters.pressure_offset[p1][0];
+                                            pressure_bridge(1) = particles[p1][1] -
+                                                                 this->nsparam.particlesParameters.pressure_offset[p1][1];
+                                        } else if (dim == 3) {
+                                            center_immersed(0) = particles[p1][0];
+                                            center_immersed(1) = particles[p1][1];
+                                            center_immersed(2) = particles[p1][2];
+                                            // define arbitrary point on the boundary where the pressure will be link between the 2 domain
+                                            pressure_bridge(0) = particles[p1][0] -
+                                                                 this->nsparam.particlesParameters.pressure_offset[p1][0];
+                                            pressure_bridge(1) = particles[p1][1] -
+                                                                 this->nsparam.particlesParameters.pressure_offset[p1][1];
+                                            pressure_bridge(2) = particles[p1][2] -
+                                                                 this->nsparam.particlesParameters.pressure_offset[p1][2];
+
+                                        }
+
+                                        for (unsigned int q = 0; q < local_dof_indices_3.size(); ++q) {
+                                            //count the number of dof that ar smaller or larger then the radius of the particles
+                                            //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
+                                            if ((support_points[local_dof_indices_3[q]] -
+                                                 center_immersed).norm() <=
+                                                particles[p1][particles[p1].size() - 1]) {
+                                                ++count_small_1;
+                                            }
+                                        }
+
+                                        if (count_small_1 != 0 and count_small_1 != local_dof_indices_3.size())
+                                            this->system_matrix.clear_row(global_index_overrigth);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (l < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
+                        l = l + dim + 1;
+                    } else {
+                        l = l + dim;
+                    }
+                }
+            }
+        }
+    }
+
+    this->system_matrix.compress(VectorOperation::insert);
 
     //loop on all the cell to define if the sharp edge cut them
     for (const auto &cell : cell_iterator) {
@@ -1259,7 +1344,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
 
                     if (cell_found) {
 
-                        // cleart the line in the matrix
+                        // clear the line in the matrix
                         unsigned int inside_index = local_dof_indices[dim];
                         this->system_matrix.clear_row(inside_index);
                         for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
@@ -1269,11 +1354,15 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                 const auto &cell_3 = active_neighbors_set[m];
                                 cell_3->get_dof_indices(local_dof_indices_3);
                                 for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
-                                    this->system_matrix.set(inside_index, local_dof_indices_3[o],
-                                                            0);
+                                    if (this->system_matrix.el(inside_index, local_dof_indices_3[o])!=0) {
+                                        this->system_matrix.set(inside_index, local_dof_indices_3[o],
+                                                                0);
+                                    }
                                 }
                             }
                         }
+
+                        //this->system_matrix.clear_row(inside_index);
                         // set new equation for the first pressure dof of the cell. this is the new reference pressure inside a particle
                         system_matrix.set(inside_index, local_dof_indices[dim], sum_line);
 
@@ -1301,6 +1390,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                             // loops on all the dof of the the cell that represent a specific component
                             while (l < local_dof_indices.size()) {
                                     if (true) {
+
                                         // define which dof is going to be redefine
                                         unsigned int global_index_overrigth = local_dof_indices[l];
                                         //define the distance vector between the immersed boundary and the dof support point for each dof
@@ -1448,6 +1538,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                         }
 
 
+
                                         //we have or next cell needed to complete the stencil
 
                                         //define the unit cell points for the points used in the stencil for extrapolation.
@@ -1466,7 +1557,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
 
                                         //clear the current line of this dof  by looping on the neighbors cell of this dof and clear all the associated dof
 
-                                        this->system_matrix.clear_row(global_index_overrigth);
+                                        //this->system_matrix.clear_row(global_index_overrigth);
 
                                         for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
                                             unsigned int v_index = cell->vertex_index(vi);
@@ -1475,12 +1566,15 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                                 const auto &cell_3 = active_neighbors_set[m];
                                                 cell_3->get_dof_indices(local_dof_indices_3);
                                                 for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
-
-                                                    this->system_matrix.set(global_index_overrigth, local_dof_indices_3[o],
-                                                                            0);
+                                                    if (this->system_matrix.el(global_index_overrigth, local_dof_indices_3[o])!=0) {
+                                                        this->system_matrix.set(global_index_overrigth,
+                                                                                local_dof_indices_3[o],
+                                                                                0);
+                                                    }
                                                 }
                                             }
                                         }
+
 
 
                                         // check if the DOF intersect the IB
@@ -1697,6 +1791,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
 
 
 
+
                                         // define the rhs of the stencil used for the Ib
                                         if (skip_stencil == false or do_rhs) {
                                             // different boundary condition depending if the dof is vx ,vy or vz and if the problem we solve is 2d or 3d.
@@ -1849,6 +1944,7 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                             }
                                         }
                                 }
+
                                     // step in the local dof
 
                                 if (l < (dim + 1) *pow(1+this->nsparam.fem_parameters.pressureOrder,dim)) {
@@ -1859,13 +1955,13 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                             }
                         }
 
-                       if (k==dim ){
+                       if (k==dim){
                            // applied equation on dof that have no equation define for them. those DOF become Dummy dof
                            // This is usefull for high order cell or when a dof is only element of cell that are cuts
                             unsigned int vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
                             unsigned int l=k;
                             while (l < local_dof_indices.size()) {
-
+                                unsigned int global_index_overrigth = local_dof_indices[l];
                                     bool pressure_impose = true;
                                     for (unsigned int vi = 0; vi < vertex_per_cell; ++vi) {
                                         unsigned int v_index = cell->vertex_index(vi);
@@ -1874,26 +1970,64 @@ void GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step) {
                                             const auto &cell_3 = active_neighbors_set[m];
                                             cell_3->get_dof_indices(local_dof_indices_3);
                                             for (unsigned int o = 0; o < local_dof_indices_3.size(); ++o) {
-                                                if (this->system_matrix.el(local_dof_indices[l], local_dof_indices_3[o]) !=
-                                                    0 | this->system_rhs(local_dof_indices[l]) != 0 )
-                                                    pressure_impose = false;
+                                                if (global_index_overrigth == local_dof_indices_3[o]) {
+                                                    //cell_3 contain the same dof check if this cell is cut if it's not cut this dof must not be overright
+
+                                                    // loop over all particle  to see if one of them is cutting this cell
+                                                    for (unsigned int p1 = 0; p1 < particles.size(); ++p1) {
+                                                        unsigned int count_small_1 = 0;
+                                                        if (dim == 2) {
+                                                            center_immersed(0) = particles[p1][0];
+                                                            center_immersed(1) = particles[p1][1];
+                                                            // define arbitrary point on the boundary where the pressure will be link between the 2 domain
+                                                            pressure_bridge(0) = particles[p1][0] -
+                                                                                 this->nsparam.particlesParameters.pressure_offset[p1][0];
+                                                            pressure_bridge(1) = particles[p1][1] -
+                                                                                 this->nsparam.particlesParameters.pressure_offset[p1][1];
+                                                        } else if (dim == 3) {
+                                                            center_immersed(0) = particles[p1][0];
+                                                            center_immersed(1) = particles[p1][1];
+                                                            center_immersed(2) = particles[p1][2];
+                                                            // define arbitrary point on the boundary where the pressure will be link between the 2 domain
+                                                            pressure_bridge(0) = particles[p1][0] -
+                                                                                 this->nsparam.particlesParameters.pressure_offset[p1][0];
+                                                            pressure_bridge(1) = particles[p1][1] -
+                                                                                 this->nsparam.particlesParameters.pressure_offset[p1][1];
+                                                            pressure_bridge(2) = particles[p1][2] -
+                                                                                 this->nsparam.particlesParameters.pressure_offset[p1][2];
+
+                                                        }
+
+                                                        for (unsigned int q = 0; q < local_dof_indices_3.size(); ++q) {
+                                                            //count the number of dof that ar smaller or larger then the radius of the particles
+                                                            //if all the dof are on one side the cell is not cut by the boundary meaning we dont have to do anything
+                                                            if ((support_points[local_dof_indices_3[q]] -
+                                                                 center_immersed).norm() <=
+                                                                particles[p1][particles[p1].size() - 1]) {
+                                                                ++count_small_1;
+                                                            }
+                                                        }
+                                                        if (count_small_1 == 0 or count_small_1 == local_dof_indices_3.size())
+                                                            pressure_impose = false;
+                                                    }
+                                                }
                                             }
                                         }
                                     }
+
                                     if (pressure_impose) {
 
-                                        unsigned int global_index_overrigth = local_dof_indices[l];
                                         this->system_matrix.set(global_index_overrigth, global_index_overrigth,
                                                                 sum_line);
-                                        this->system_rhs(global_index_overrigth) = 0;
+                                        this->system_rhs(global_index_overrigth)=0;
                                     }
-
                                 if (l < (dim + 1) * pow(1 + this->nsparam.fem_parameters.pressureOrder, dim)) {
                                     l = l + dim + 1;
                                 } else {
                                     l = l + dim;
                                 }
                             }
+
                         }
                     }
                 }
