@@ -934,44 +934,44 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       const auto &cell_iter =
                         GridTools::find_active_cell_around_point(
                           this->dof_handler, eval_point_2);
-                      cell_iter->get_dof_indices(local_dof_indices);
+                      if(cell_iter->is_artificial()==false) {
+                          cell_iter->get_dof_indices(local_dof_indices);
 
-                      unsigned int count_small = 0;
-                      if (dim == 3)
-                        {
-                          center_immersed(0) = particles[p][0];
-                          center_immersed(1) = particles[p][1];
-                          center_immersed(2) = particles[p][2];
-                        }
-                      for (unsigned int j = 0; j < local_dof_indices.size();
-                           ++j)
-                        {
-                          // count the number of dof that ar smaller or larger
-                          // then the radius of the particles if all the dof are
-                          // on one side the cell is not cut by the boundary
-                          // meaning we dont have to do anything
-                          if ((support_points[local_dof_indices[j]] -
-                               center_immersed)
-                                .norm() <=
-                              particles[p][particles[p].size() - 1])
-                            {
-                              ++count_small;
-                            }
-                        }
+                          unsigned int count_small = 0;
+                          if (dim == 3) {
+                              center_immersed(0) = particles[p][0];
+                              center_immersed(1) = particles[p][1];
+                              center_immersed(2) = particles[p][2];
+                          }
+                          for (unsigned int j = 0; j < local_dof_indices.size();
+                               ++j) {
+                              // count the number of dof that ar smaller or larger
+                              // then the radius of the particles if all the dof are
+                              // on one side the cell is not cut by the boundary
+                              // meaning we dont have to do anything
+                              if ((support_points[local_dof_indices[j]] -
+                                   center_immersed)
+                                          .norm() <=
+                                  particles[p][particles[p].size() - 1]) {
+                                  ++count_small;
+                              }
+                          }
 
-                      if (count_small != 0 and
-                          count_small != local_dof_indices.size())
-                        {
-                          cell_found = false;
-                        }
+                          if (count_small != 0 and
+                              count_small != local_dof_indices.size()) {
+                              cell_found = false;
+                          } else {
+                              cell_found = true;
+                          }
+
+
+                          if (cell_found == false)
+                              nb_step += 1;
+                      }
                       else
-                        {
-                          cell_found = true;
-                        }
-
-
-                      if (cell_found == false)
-                        nb_step += 1;
+                          {
+                          break ;
+                      }
                     }
 
                   const Point<dim> second_point(
@@ -998,11 +998,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     GridTools::find_active_cell_around_point(this->dof_handler,
                                                              fourth_point);
 
-                  cell_2->get_dof_indices(local_dof_indices);
-                  cell_3->get_dof_indices(local_dof_indices_2);
-                  cell_4->get_dof_indices(local_dof_indices_3);
+
                   if (cell_2->is_locally_owned())
                     {
+                      cell_2->get_dof_indices(local_dof_indices);
+                      cell_3->get_dof_indices(local_dof_indices_2);
+                      cell_4->get_dof_indices(local_dof_indices_3);
                       // define the tensor used for the velocity evaluation.
                       Tensor<1, dim, double> u_1;
                       Tensor<1, dim, double> u_2;
