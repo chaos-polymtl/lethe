@@ -881,10 +881,7 @@ namespace Parameters
       "0",
       Patterns::Double(),
       "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in Z ");
-    prm.declare_entry("radius",
-                      "0.2",
-                      Patterns::Double(),
-                      "Particles raidus ");
+    prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles raidus ");
   }
 
   void
@@ -929,10 +926,10 @@ namespace Parameters
         Patterns::Double(),
         "The factor that multiplie the radius to define the outside bound for the refinement of the mesh");
       prm.declare_entry(
-                "nb force evaluation",
-                "100",
-                Patterns::Integer(),
-                "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
+        "nb force evaluation",
+        "100",
+        Patterns::Integer(),
+        "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
       prm.declare_entry("pressure mpi",
                         "true",
                         Patterns::Bool(),
@@ -1037,16 +1034,16 @@ namespace Parameters
             "x y z vx vy vz omega_x omega_y omega_z radius particle " +
             std::to_string(i);
           prm.enter_subsection(section);
-          particles[i][0]      = prm.get_double("X");
-          particles[i][1]      = prm.get_double("Y");
-          particles[i][2]      = prm.get_double("Z");
-          particles[i][3]      = prm.get_double("VX");
-          particles[i][4]      = prm.get_double("VY");
-          particles[i][5]      = prm.get_double("VZ");
-          particles[i][6]      = prm.get_double("omega X");
-          particles[i][7]      = prm.get_double("omega Y");
-          particles[i][8]      = prm.get_double("omega Z");
-          particles[i][9]      = prm.get_double("radius");
+          particles[i][0]       = prm.get_double("X");
+          particles[i][1]       = prm.get_double("Y");
+          particles[i][2]       = prm.get_double("Z");
+          particles[i][3]       = prm.get_double("VX");
+          particles[i][4]       = prm.get_double("VY");
+          particles[i][5]       = prm.get_double("VZ");
+          particles[i][6]       = prm.get_double("omega X");
+          particles[i][7]       = prm.get_double("omega Y");
+          particles[i][8]       = prm.get_double("omega Z");
+          particles[i][9]       = prm.get_double("radius");
           pressure_offset[i][0] = prm.get_double("pressure X");
           pressure_offset[i][1] = prm.get_double("pressure Y");
           pressure_offset[i][2] = prm.get_double("pressure Z");

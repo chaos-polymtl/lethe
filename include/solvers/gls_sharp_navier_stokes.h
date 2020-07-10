@@ -40,8 +40,8 @@ class GLSSharpNavierStokesSolver
 {
 public:
   GLSSharpNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                        const unsigned int                 degreeVelocity,
-                        const unsigned int                 degreePressure);
+                             const unsigned int                 degreeVelocity,
+                             const unsigned int                 degreePressure);
   ~GLSSharpNavierStokesSolver();
 
   void
@@ -109,9 +109,9 @@ private:
 
   void
   solve_system_direct(const bool   initial_step,
-                     const double absolute_residual,
-                     const double relative_residual,
-                     const bool   renewed_matrix);
+                      const double absolute_residual,
+                      const double relative_residual,
+                      const bool   renewed_matrix);
   /**
    * GMRES solver with ILU(N) preconditioning
    */
@@ -156,25 +156,25 @@ private:
    * Members
    */
 private:
-    SparsityPattern                                    sparsity_pattern;
-    TrilinosWrappers::SparseMatrix                     system_matrix;
-    std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-    std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
-    std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>> vertices_to_cell;
-    const bool   SUPG        = false;
-    const bool   PSPG        = true;
-    const double GLS_u_scale = 1;
-    double radius=0.21;
-    double radius_2=0.6;
-    bool couette= false;
-    std::vector<std::vector<double>> particles;
-    bool initial_step_bool;
-    unsigned int iter_ib=0;
-    Vector<double> ib_dof;
+  SparsityPattern                                    sparsity_pattern;
+  TrilinosWrappers::SparseMatrix                     system_matrix;
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+  std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>>
+                                   vertices_to_cell;
+  const bool                       SUPG        = false;
+  const bool                       PSPG        = true;
+  const double                     GLS_u_scale = 1;
+  double                           radius      = 0.21;
+  double                           radius_2    = 0.6;
+  bool                             couette     = false;
+  std::vector<std::vector<double>> particles;
+  bool                             initial_step_bool;
+  unsigned int                     iter_ib = 0;
+  Vector<double>                   ib_dof;
 
-    TableHandler table_f;
-    TableHandler table_t;
-
+  TableHandler table_f;
+  TableHandler table_t;
 };
 
 

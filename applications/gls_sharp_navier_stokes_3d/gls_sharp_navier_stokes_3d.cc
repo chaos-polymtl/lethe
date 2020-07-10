@@ -39,9 +39,10 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
-      GLSSharpNavierStokesSolver<3> problem_3d(NSparam,
-                                          NSparam.fem_parameters.velocityOrder,
-                                          NSparam.fem_parameters.pressureOrder);
+      GLSSharpNavierStokesSolver<3> problem_3d(
+        NSparam,
+        NSparam.fem_parameters.velocityOrder,
+        NSparam.fem_parameters.pressureOrder);
       problem_3d.solve();
     }
   catch (std::exception &exc)

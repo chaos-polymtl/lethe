@@ -51,11 +51,14 @@ namespace Parameters
   };
 
 
+<<<<<<< HEAD
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
    * as well as the frequency of the output of the solutions.
    */
 
+=======
+>>>>>>> Fixed indentation
   struct SimulationControl
   {
     // Method used for time progression of eulerian solvers (steady, unsteady)
@@ -529,27 +532,28 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-    class Particles{
-    public:
-        unsigned int nb ;
-        unsigned int order;
-        unsigned int nb_force_eval;
-        unsigned int initial_refinement;
-        double inside_radius;
-        double outside_radius;
-        bool assemble_inside ;
-        bool pressure_mpi ;
-        Particle_Assemble_type P_assemble;
-        std::vector<std::vector<double>>  particles;
-        std::vector<std::vector<double>>  pressure_offset;
+  class Particles
+  {
+  public:
+    unsigned int                     nb;
+    unsigned int                     order;
+    unsigned int                     nb_force_eval;
+    unsigned int                     initial_refinement;
+    double                           inside_radius;
+    double                           outside_radius;
+    bool                             assemble_inside;
+    bool                             pressure_mpi;
+    Particle_Assemble_type           P_assemble;
+    std::vector<std::vector<double>> particles;
+    std::vector<std::vector<double>> pressure_offset;
 
-        static void
-        declare_parameters(ParameterHandler &prm);
-        static void
-        declare_default_entry(ParameterHandler &prm);
-        void
-        parse_parameters(ParameterHandler &prm);
-    };
+    static void
+    declare_parameters(ParameterHandler &prm);
+    static void
+    declare_default_entry(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
 
 
 } // namespace Parameters

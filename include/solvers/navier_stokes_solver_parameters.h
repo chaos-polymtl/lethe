@@ -50,7 +50,7 @@ public:
   AnalyticalSolutions::NSAnalyticalSolution<dim> *analytical_solution;
   SourceTerms::NSSourceTerm<dim> *                sourceTerm;
   Parameters::VelocitySource                      velocitySource;
-  Parameters::Particles                          particlesParameters;
+  Parameters::Particles                           particlesParameters;
 
   void
   declare(ParameterHandler &prm)
