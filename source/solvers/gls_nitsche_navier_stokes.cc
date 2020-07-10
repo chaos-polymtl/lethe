@@ -240,7 +240,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
           Parameters::SimulationControl::TimeSteppingMethod::steady,
           Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  assemble_nitsche_restriction();
+   assemble_nitsche_restriction();
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
