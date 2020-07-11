@@ -64,9 +64,20 @@ private:
   void
   assembleGLS();
 
+
+  // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
+  // and Adjacent_3 needs to be renamed if possible to a clearer notation
+
+  // Map the vertex index to the cell that include that vertex used later in
+  // which cell a point falls in vertices_to_cell is a vector of vectof of dof
+  // handler active cell iterator each element i of the vector is a vector of
+  // all the cell in contact with the vertex i
   void
   vertices_cell_mapping();
 
+  // BB - TODO The particles structure should be refactored to use a small class
+  // to store the information or a struct instead of just using a vector where
+  // the things are hardcoded within.
   void
   define_particles();
 

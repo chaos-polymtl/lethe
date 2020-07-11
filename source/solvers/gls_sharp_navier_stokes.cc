@@ -243,30 +243,28 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
-  // map the vertex index to the cell that include that vertex used later in
-  // which cell a point falls in vertices_to_cell is a vector of vectof of dof
-  // handler active cell iterator each element i of the vector is a vector of
-  // all the cell in contact with the vertex i
-
   vertices_to_cell.clear();
   vertices_to_cell.resize(this->dof_handler.n_dofs() / (dim + 1));
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+
   // loop on all the cell and
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned() | cell->is_ghost())
         {
-          unsigned int vertices_per_cell = GeometryInfo<dim>::vertices_per_cell;
+          const unsigned int vertices_per_cell =
+            GeometryInfo<dim>::vertices_per_cell;
           for (unsigned int i = 0; i < vertices_per_cell; i++)
             {
-              // add this cell as neighbors for all it's vertex
+              // Add this cell as neighbors for all it's vertex
               unsigned int v_index = cell->vertex_index(i);
               std::vector<typename DoFHandler<dim>::active_cell_iterator>
                 adjacent = vertices_to_cell[v_index];
-              // can only add the cell if it's a set and not a vector
+
               std::set<typename DoFHandler<dim>::active_cell_iterator>
                 adjacent_2(adjacent.begin(), adjacent.end());
               adjacent_2.insert(cell);
+
               // convert back the set to a vector and add it in the
               // vertices_to_cell;
               std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -281,10 +279,9 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
-  // define position and velocity of particles
+  // Define position and velocity of particles
   particles.resize(this->nsparam.particlesParameters.nb);
-  // define position of particles
-  // x y z
+
   if (dim == 2)
     {
       for (unsigned int i = 0; i < this->nsparam.particlesParameters.nb; ++i)
@@ -293,10 +290,10 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
           // x y
           particles[i][0] = this->nsparam.particlesParameters.particles[i][0];
           particles[i][1] = this->nsparam.particlesParameters.particles[i][1];
-          // Vx Vy
+          // V_x V_y
           particles[i][2] = this->nsparam.particlesParameters.particles[i][3];
           particles[i][3] = this->nsparam.particlesParameters.particles[i][4];
-          // omega
+          // omega_x omega_y
           particles[i][4] = this->nsparam.particlesParameters.particles[i][8];
           // radius
           particles[i][5] = this->nsparam.particlesParameters.particles[i][9];
@@ -309,21 +306,20 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
       for (unsigned int i = 0; i < this->nsparam.particlesParameters.nb; ++i)
         {
           particles[i].resize(3 * dim + 1);
-          // x y
+          // x y z
           particles[i][0] = this->nsparam.particlesParameters.particles[i][0];
           particles[i][1] = this->nsparam.particlesParameters.particles[i][1];
           particles[i][2] = this->nsparam.particlesParameters.particles[i][2];
-          // Vx Vy
+          // V_x V_y V_z
           particles[i][3] = this->nsparam.particlesParameters.particles[i][3];
           particles[i][4] = this->nsparam.particlesParameters.particles[i][4];
           particles[i][5] = this->nsparam.particlesParameters.particles[i][5];
-          // omega
+          // omega_x omega_y omega_z
           particles[i][6] = this->nsparam.particlesParameters.particles[i][6];
           particles[i][7] = this->nsparam.particlesParameters.particles[i][7];
           particles[i][8] = this->nsparam.particlesParameters.particles[i][8];
           // radius
           particles[i][9] = this->nsparam.particlesParameters.particles[i][9];
-          ;
         }
     }
 }
@@ -340,7 +336,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                                        support_points);
   const unsigned int                   dofs_per_cell = this->fe.dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  // define cell iterator
+
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
   for (const auto &cell : cell_iterator)
     {
@@ -363,7 +359,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                 }
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // count the number of dof that ar smaller or larger then the
+                  // Count the number of dof that are smaller or larger then the
                   // radius of the particles if all the dof are on one side the
                   // cell is not cut by the boundary meaning we dont have to do
                   // anything
@@ -393,22 +389,21 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::force_on_ib()
 {
-  // calculate the torque and force on a immersed boundary the boundary is a
-  // hyper ball ( circle in 2d sphere in 3d)
+  // Calculate the torque and force on a immersed boundary
+  // The boundary is a circle in 2D or a sphere in 3D
 
-  double dr =
-    (GridTools::minimal_cell_diameter(*this->triangulation) *
-     GridTools::minimal_cell_diameter(*this->triangulation)) /
-    sqrt(2 * (GridTools::minimal_cell_diameter(*this->triangulation) *
-              GridTools::minimal_cell_diameter(*this->triangulation)));
+  const double min_cell_diameter =
+    GridTools::minimal_cell_diameter(*this->triangulation);
 
-  // define stuff for later use
+  double dr = (min_cell_diameter) / std::sqrt(2);
+
+  // Define stuff for later use
   using numbers::PI;
   Point<dim> center_immersed;
 
   if (dim == 2)
     {
-      // define general stuff usefull for the evaluation of force with stencil
+      // Define general stuff useful for the evaluation of force with stencil
       QGauss<dim>   q_formula(this->fe.degree + 1);
       FEValues<dim> fe_values(this->fe, q_formula, update_quadrature_points);
 
@@ -427,23 +422,20 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         this->fe.dofs_per_cell);
       std::vector<types::global_dof_index> local_dof_indices_3(
         this->fe.dofs_per_cell);
-      unsigned int nb_evaluation =
+      const unsigned int nb_evaluation =
         this->nsparam.particlesParameters.nb_force_eval;
 
-      // loop on all particule
+      // Loop on all particles
       for (unsigned int p = 0; p < particles.size(); ++p)
         {
-          // define the center
-
+          // Define the center
           if (dim == 2)
             {
               center_immersed(0) = particles[p][0];
               center_immersed(1) = particles[p][1];
             }
 
-
-
-          //  initialise the output variable for this particule
+          // Initialise the output variable for this particle
 
           double t_torque = 0;
 
@@ -478,21 +470,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                 particles[p][5] * sin(i * 2 * PI / (nb_evaluation)) +
                   center_immersed(1));
 
-
-
               // step in the normal direction of the surface until we find a
               // cell that is not cut by the immersed boundary of the particule
               // p.
-
-
-
               unsigned int     nb_step    = 0;
               bool             cell_found = false;
               const Point<dim> eval_point_2(
                 eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
                 eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
-
-
 
               // step in the normal direction to the surface until the point
               // used for the ib stencil is not in a cell that is cut by the
@@ -1012,7 +997,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       cell_2->get_dof_indices(local_dof_indices);
                       cell_3->get_dof_indices(local_dof_indices_2);
                       cell_4->get_dof_indices(local_dof_indices_3);
-                      // define the tensor used for the velocity evaluation.
+                      // Define the tensor used for the velocity evaluation.
                       Tensor<1, dim, double> u_1;
                       Tensor<1, dim, double> u_2;
                       Tensor<1, dim, double> u_3;
@@ -1020,7 +1005,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       double                 P2 = 0;
                       double                 P3 = 0;
 
-                      // define the velocity component of the particle at the
+                      // Define the velocity component of the particle at the
                       // boundary on the reference point in 3 d the only
                       // rotation is around the z axis
                       u_1[0] = particles[p][7] * particles[p][9] *
