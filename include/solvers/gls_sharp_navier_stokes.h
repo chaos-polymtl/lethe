@@ -25,13 +25,14 @@
 using namespace dealii;
 
 /**
- * A solver class for the Navier-Stokes equation using GLS stabilization
+ * A solver class for the Navier-Stokes equation using GLS stabilization and
+ * Sharp-Edge immersed boundaries
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
  *
  * @ingroup solvers
- * @author Bruno Blais, 2019
+ * @author Lucka Barbeau, Bruno Blais, 2020
  */
 
 template <int dim>
@@ -78,8 +79,6 @@ private:
 
   double
   calculate_L2_error_particles();
-  void
-  finish_time_step_particles();
 
   virtual void
   postprocess(bool firstIter) override;
@@ -104,11 +103,9 @@ private:
   /**
    * Interface for the solver for the linear system of equations
    */
-
   void
-  solve_linear_system(
-    const bool initial_step,
-    const bool renewed_matrix = true) override; // Interface function
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix = true) override;
 
   void
   solve_system_direct(const bool   initial_step,
@@ -170,7 +167,6 @@ private:
   const double                     GLS_u_scale = 1;
   std::vector<std::vector<double>> particles;
   bool                             initial_step_bool;
-  Vector<double>                   ib_dof;
 
   TableHandler table_f;
   TableHandler table_t;

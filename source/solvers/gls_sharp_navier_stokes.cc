@@ -1383,41 +1383,6 @@ GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
 }
 
 template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
-{
-  if (this->nsparam.analytical_solution->calculate_error())
-    {
-      // Update the time of the exact solution to the actual time
-      this->exact_solution->set_time(
-        this->simulationControl->get_current_time());
-      const double error = this->calculate_L2_error_particles();
-      if (this->nsparam.simulation_control.method ==
-          Parameters::SimulationControl::TimeSteppingMethod::steady)
-        {
-          this->error_table.clear_current_row();
-          this->error_table.add_value(
-            "cells", this->triangulation->n_global_active_cells());
-          this->error_table.add_value("error_velocity", error);
-          this->error_table.add_value("error_pressure", 0);
-        }
-      else
-        {
-          this->error_table.clear_current_row();
-          this->error_table.add_value(
-            "time", this->simulationControl->get_current_time());
-          this->error_table.add_value("error", error);
-        }
-      if (this->nsparam.analytical_solution->verbosity ==
-          Parameters::Verbosity::verbose)
-        {
-          this->pcout << "L2 error : " << error << std::endl;
-        }
-    }
-}
-
-
-template <int dim>
 double
 GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
@@ -1836,7 +1801,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                         }
                     }
                   // may cause error if the point is not in cell
-                  catch (typename MappingQGeneric<dim>::ExcTransformationFailed)
+                  catch (
+                    const typename MappingQGeneric<dim>::ExcTransformationFailed
+                      &)
                     {}
 
                   if (cell_found)
@@ -2077,8 +2044,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                             }
                                           // may cause error if the point is not
                                           // in cell
-                                          catch (typename MappingQGeneric<
-                                                 dim>::ExcTransformationFailed)
+                                          catch (
+                                            const typename MappingQGeneric<
+                                              dim>::ExcTransformationFailed &)
                                             {}
                                         }
                                     }
