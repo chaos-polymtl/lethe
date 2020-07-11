@@ -81,6 +81,9 @@ private:
   void
   finish_time_step_particles();
 
+  virtual void
+  postprocess(bool firstIter) override;
+
 
 
   void
@@ -165,12 +168,8 @@ private:
   const bool                       SUPG        = false;
   const bool                       PSPG        = true;
   const double                     GLS_u_scale = 1;
-  double                           radius      = 0.21;
-  double                           radius_2    = 0.6;
-  bool                             couette     = false;
   std::vector<std::vector<double>> particles;
   bool                             initial_step_bool;
-  unsigned int                     iter_ib = 0;
   Vector<double>                   ib_dof;
 
   TableHandler table_f;

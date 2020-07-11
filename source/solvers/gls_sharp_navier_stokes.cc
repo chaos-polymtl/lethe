@@ -934,44 +934,52 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       const auto &cell_iter =
                         GridTools::find_active_cell_around_point(
                           this->dof_handler, eval_point_2);
-                      if(cell_iter->is_artificial()==false) {
+                      if (cell_iter->is_artificial() == false)
+                        {
                           cell_iter->get_dof_indices(local_dof_indices);
 
                           unsigned int count_small = 0;
-                          if (dim == 3) {
+                          if (dim == 3)
+                            {
                               center_immersed(0) = particles[p][0];
                               center_immersed(1) = particles[p][1];
                               center_immersed(2) = particles[p][2];
-                          }
+                            }
                           for (unsigned int j = 0; j < local_dof_indices.size();
-                               ++j) {
-                              // count the number of dof that ar smaller or larger
-                              // then the radius of the particles if all the dof are
-                              // on one side the cell is not cut by the boundary
-                              // meaning we dont have to do anything
+                               ++j)
+                            {
+                              // count the number of dof that ar smaller or
+                              // larger then the radius of the particles if all
+                              // the dof are on one side the cell is not cut by
+                              // the boundary meaning we dont have to do
+                              // anything
                               if ((support_points[local_dof_indices[j]] -
                                    center_immersed)
-                                          .norm() <=
-                                  particles[p][particles[p].size() - 1]) {
+                                    .norm() <=
+                                  particles[p][particles[p].size() - 1])
+                                {
                                   ++count_small;
-                              }
-                          }
+                                }
+                            }
 
                           if (count_small != 0 and
-                              count_small != local_dof_indices.size()) {
+                              count_small != local_dof_indices.size())
+                            {
                               cell_found = false;
-                          } else {
+                            }
+                          else
+                            {
                               cell_found = true;
-                          }
+                            }
 
 
                           if (cell_found == false)
-                              nb_step += 1;
-                      }
+                            nb_step += 1;
+                        }
                       else
-                          {
-                          break ;
-                      }
+                        {
+                          break;
+                        }
                     }
 
                   const Point<dim> second_point(
@@ -1327,6 +1335,52 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 }
 
 
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
+{
+  if (this->simulationControl->is_output_iteration())
+    this->write_output_results(this->present_solution);
+
+  // Calculate error with respect to analytical solution
+  if (!firstIter && this->nsparam.analytical_solution->calculate_error())
+    {
+      // Update the time of the exact solution to the actual time
+      this->exact_solution->set_time(
+        this->simulationControl->get_current_time());
+      const double error = this->calculate_L2_error_particles();
+
+      if (this->nsparam.simulation_control.method ==
+          Parameters::SimulationControl::TimeSteppingMethod::steady)
+        {
+          this->error_table.add_value(
+            "cells", this->triangulation->n_global_active_cells());
+          this->error_table.add_value("error_velocity", error);
+          this->error_table.add_value("error_pressure", 0);
+
+          auto summary = this->computing_timer.get_summary_data(
+            this->computing_timer.total_wall_time);
+          double total_time = 0;
+          for (auto it = summary.begin(); it != summary.end(); ++it)
+            {
+              total_time += summary[it->first];
+            }
+          this->error_table.add_value("total_time", total_time);
+        }
+      else
+        {
+          this->error_table.add_value(
+            "time", this->simulationControl->get_current_time());
+          this->error_table.add_value("error_velocity", error);
+        }
+      if (this->nsparam.analytical_solution->verbosity ==
+          Parameters::Verbosity::verbose)
+        {
+          this->pcout << "L2 error velocity : " << error << std::endl;
+        }
+    }
+}
 
 template <int dim>
 void
@@ -4216,12 +4270,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
         }
 
       this->postprocess(false);
+
       this->finish_time_step();
 
       force_on_ib();
-      finish_time_step_particles();
+      // finish_time_step_particles();
 
-      iter_ib += 1;
       initial_step_bool = true;
       MPI_Barrier(this->mpi_communicator);
     }
