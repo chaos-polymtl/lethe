@@ -334,6 +334,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
   DoFTools::map_dofs_to_support_points(immersed_map,
                                        this->dof_handler,
                                        support_points);
+
   const unsigned int                   dofs_per_cell = this->fe.dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
@@ -4194,7 +4195,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
                           this->nsparam.boundary_conditions);
 
   define_particles();
-
+  this->setup_dofs();
   for (unsigned int i = 0;
        i < this->nsparam.particlesParameters.initial_refinement;
        ++i)
@@ -4204,7 +4205,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
         refine_mesh();
     }
 
-  this->setup_dofs();
+
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
   initial_step_bool = true;
