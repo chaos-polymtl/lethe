@@ -2048,6 +2048,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                         << std::endl;
                                       std::cout << "cell index " << cell_found
                                                 << std::endl;
+                                      std::cout << "second point  "<< second_point << std::endl;
                                       cell_2 = GridTools::
                                         find_active_cell_around_point(
                                           this->dof_handler, second_point);
@@ -2057,8 +2058,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 << support_points
                                                      [global_index_overrigth]
                                                 << std::endl;
-                                      std::cout << "second point  "
-                                                << second_point << std::endl;
                                     }
 
 
