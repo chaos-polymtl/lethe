@@ -1593,91 +1593,72 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                         {
                           const auto &cell_3 = active_neighbors_set[m];
                           cell_3->get_dof_indices(local_dof_indices_3);
+
+                            // loop over all particle  to see if one of
+                            // them is cutting this cell
+                          bool cell_cut = false;
+                          for (unsigned int p1 = 0;
+                            p1 < particles.size();
+                                ++p1) {
+                              unsigned int count_small_1 = 0;
+                              if (dim == 2)
+                                {
+                                  center_immersed(0) = particles[p1][0];
+                                  center_immersed(1) = particles[p1][1];
+                                }
+                              else if (dim == 3)
+                                {
+                                    center_immersed(0) = particles[p1][0];
+                                    center_immersed(1) = particles[p1][1];
+                                    center_immersed(2) = particles[p1][2];
+
+                                }
+
+                                for (unsigned int q = 0;
+                                     q < local_dof_indices_3.size();
+                                     ++q) {
+                                    // count the number of dof that ar
+                                    // smaller or larger then the radius
+                                    // of the particles if all the dof are
+                                    // on one side the cell is not cut by
+                                    // the boundary meaning we dont have
+                                    // to do anything
+                                    if ((support_points
+                                         [local_dof_indices_3[q]] -
+                                         center_immersed)
+                                                .norm() <=
+                                        particles[p1]
+                                        [particles[p1].size() -
+                                         1]) {
+                                        ++count_small_1;
+                                    }
+                                }
+                                if (count_small_1 != 0 and
+                                    count_small_1 !=
+                                    local_dof_indices_3.size()){
+                                    cell_cut=true;
+
+                                }
+                            }
                           for (unsigned int o = 0;
                                o < local_dof_indices_3.size();
                                ++o)
                             {
-                              if (global_index_overrigth ==
-                                  local_dof_indices_3[o])
-                                {
-                                  // cell_3 contain the same dof check if this
-                                  // cell is cut if it's not cut this dof must
-                                  // not be overright
+                              if (cell_cut) {
+                                  if (global_index_overrigth ==
+                                      local_dof_indices_3[o]) {
+                                      // cell_3 contain the same dof check if this
+                                      // cell is cut if it's not cut this dof must
+                                      // not be overright
 
-                                  // loop over all particle  to see if one of
-                                  // them is cutting this cell
-                                  for (unsigned int p1 = 0;
-                                       p1 < particles.size();
-                                       ++p1)
-                                    {
-                                      unsigned int count_small_1 = 0;
-                                      if (dim == 2)
-                                        {
-                                          center_immersed(0) = particles[p1][0];
-                                          center_immersed(1) = particles[p1][1];
-                                          // define arbitrary point on the
-                                          // boundary where the pressure will be
-                                          // link between the 2 domain
-                                          pressure_bridge(0) =
-                                            particles[p1][0] -
-                                            this->nsparam.particlesParameters
-                                              .pressure_offset[p1][0];
-                                          pressure_bridge(1) =
-                                            particles[p1][1] -
-                                            this->nsparam.particlesParameters
-                                              .pressure_offset[p1][1];
-                                        }
-                                      else if (dim == 3)
-                                        {
-                                          center_immersed(0) = particles[p1][0];
-                                          center_immersed(1) = particles[p1][1];
-                                          center_immersed(2) = particles[p1][2];
-                                          // define arbitrary point on the
-                                          // boundary where the pressure will be
-                                          // link between the 2 domain
-                                          pressure_bridge(0) =
-                                            particles[p1][0] -
-                                            this->nsparam.particlesParameters
-                                              .pressure_offset[p1][0];
-                                          pressure_bridge(1) =
-                                            particles[p1][1] -
-                                            this->nsparam.particlesParameters
-                                              .pressure_offset[p1][1];
-                                          pressure_bridge(2) =
-                                            particles[p1][2] -
-                                            this->nsparam.particlesParameters
-                                              .pressure_offset[p1][2];
-                                        }
+                                      // loop over all particle  to see if one of
+                                      // them is cutting this cell
+                                      
+                                      this->system_matrix.clear_row(
+                                              global_index_overrigth);
 
-                                      for (unsigned int q = 0;
-                                           q < local_dof_indices_3.size();
-                                           ++q)
-                                        {
-                                          // count the number of dof that ar
-                                          // smaller or larger then the radius
-                                          // of the particles if all the dof are
-                                          // on one side the cell is not cut by
-                                          // the boundary meaning we dont have
-                                          // to do anything
-                                          if ((support_points
-                                                 [local_dof_indices_3[q]] -
-                                               center_immersed)
-                                                .norm() <=
-                                              particles[p1]
-                                                       [particles[p1].size() -
-                                                        1])
-                                            {
-                                              ++count_small_1;
-                                            }
-                                        }
-
-                                      if (count_small_1 != 0 and
-                                          count_small_1 !=
-                                            local_dof_indices_3.size())
-                                        this->system_matrix.clear_row(
-                                          global_index_overrigth);
-                                    }
-                                }
+                                  }
+                              }
                             }
                         }
                     }
