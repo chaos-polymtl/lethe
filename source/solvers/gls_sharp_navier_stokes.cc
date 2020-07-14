@@ -1555,6 +1555,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
   std::vector<types::global_dof_index> local_dof_indices_2(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices_3(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices_4(dofs_per_cell);
+  std::set<unsigned int> clear_line;
   // define minimal cell length
 
   double dr =
@@ -1563,120 +1564,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
     sqrt(2 * (GridTools::minimal_cell_diameter(*this->triangulation) *
               GridTools::minimal_cell_diameter(*this->triangulation)));
 
-  // clear all for dof
-
-
-
   // define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-  // clear all for dof velocity ligne of cell that are cut.
-  for (const auto &cell : cell_iterator)
-    {
-      if (cell->is_locally_owned())
-        {
-          cell->get_dof_indices(local_dof_indices);
-
-          for (unsigned int k = 0; k < dim; ++k)
-            {
-              unsigned int l = k;
-              // loops on all the dof of the the cell that represent a specific
-              // component
-              while (l < local_dof_indices.size())
-                {
-                  unsigned int global_index_overrigth = local_dof_indices[l];
-                  for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                    {
-                      unsigned int v_index = cell->vertex_index(vi);
-                      active_neighbors_set = this->vertices_to_cell[v_index];
-                      for (unsigned int m = 0; m < active_neighbors_set.size();
-                           m++)
-                        {
-                          const auto &cell_3 = active_neighbors_set[m];
-                          cell_3->get_dof_indices(local_dof_indices_3);
-
-                            // loop over all particle  to see if one of
-                            // them is cutting this cell
-                          bool cell_cut = false;
-                          for (unsigned int p1 = 0;
-                            p1 < particles.size();
-                                ++p1) {
-                              unsigned int count_small_1 = 0;
-                              if (dim == 2)
-                                {
-                                  center_immersed(0) = particles[p1][0];
-                                  center_immersed(1) = particles[p1][1];
-                                }
-                              else if (dim == 3)
-                                {
-                                    center_immersed(0) = particles[p1][0];
-                                    center_immersed(1) = particles[p1][1];
-                                    center_immersed(2) = particles[p1][2];
-
-                                }
-
-                                for (unsigned int q = 0;
-                                     q < local_dof_indices_3.size();
-                                     ++q) {
-                                    // count the number of dof that ar
-                                    // smaller or larger then the radius
-                                    // of the particles if all the dof are
-                                    // on one side the cell is not cut by
-                                    // the boundary meaning we dont have
-                                    // to do anything
-                                    if ((support_points
-                                         [local_dof_indices_3[q]] -
-                                         center_immersed)
-                                                .norm() <=
-                                        particles[p1]
-                                        [particles[p1].size() -
-                                         1]) {
-                                        ++count_small_1;
-                                    }
-                                }
-                                if (count_small_1 != 0 and
-                                    count_small_1 !=
-                                    local_dof_indices_3.size()){
-                                    cell_cut=true;
-
-                                }
-                            }
-                          for (unsigned int o = 0;
-                               o < local_dof_indices_3.size();
-                               ++o)
-                            {
-                              if (cell_cut) {
-                                  if (global_index_overrigth ==
-                                      local_dof_indices_3[o]) {
-                                      // cell_3 contain the same dof check if this
-                                      // cell is cut if it's not cut this dof must
-                                      // not be overright
-
-                                      // loop over all particle  to see if one of
-                                      // them is cutting this cell
-                                      
-                                      this->system_matrix.clear_row(
-                                              global_index_overrigth);
-
-                                  }
-                              }
-                            }
-                        }
-                    }
-
-                  if (l < (dim + 1) *
-                            pow(1 + this->nsparam.fem_parameters.pressureOrder,
-                                dim))
-                    {
-                      l = l + dim + 1;
-                    }
-                  else
-                    {
-                      l = l + dim;
-                    }
-                }
-            }
-        }
-    }
 
   this->system_matrix.compress(VectorOperation::insert);
 
@@ -1777,7 +1666,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                     {
                       // clear the line in the matrix
                       unsigned int inside_index = local_dof_indices[dim];
-                      this->system_matrix.clear_row(inside_index);
                       for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
                         {
                           unsigned int v_index = cell->vertex_index(vi);
@@ -1793,14 +1681,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                    o < local_dof_indices_3.size();
                                    ++o)
                                 {
-                                  if (this->system_matrix.el(
-                                        inside_index, local_dof_indices_3[o]) !=
-                                      0)
-                                    {
-                                      this->system_matrix.set(
-                                        inside_index,
-                                        local_dof_indices_3[o],
-                                        0);
+                                    if (std::find(local_dof_indices_3.begin(),local_dof_indices_3.end(),inside_index)!=local_dof_indices_3.end()) {
+                                        for (unsigned int o = 0;
+                                             o < local_dof_indices_3.size();
+                                             ++o) {
+                                            this->system_matrix.set(
+                                                    inside_index,
+                                                    local_dof_indices_3[o],
+                                                    0);
+
+                                        }
                                     }
                                 }
                             }
@@ -1843,8 +1733,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                           // a specific component
                           while (l < local_dof_indices.size())
                             {
-                              if (true)
-                                {
                                   // define which dof is going to be redefine
                                   unsigned int global_index_overrigth =
                                     local_dof_indices[l];
@@ -2070,7 +1958,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                   // looping on the neighbors cell of this dof
                                   // and clear all the associated dof
 
-                                  // this->system_matrix.clear_row(global_index_overrigth);
 
                                   for (unsigned int vi = 0;
                                        vi < vertex_per_cell;
@@ -2082,28 +1969,23 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                         this->vertices_to_cell[v_index];
                                       for (unsigned int m = 0;
                                            m < active_neighbors_set.size();
-                                           m++)
-                                        {
+                                           m++) {
                                           const auto &cell_3 =
-                                            active_neighbors_set[m];
+                                                  active_neighbors_set[m];
                                           cell_3->get_dof_indices(
-                                            local_dof_indices_3);
-                                          for (unsigned int o = 0;
-                                               o < local_dof_indices_3.size();
-                                               ++o)
-                                            {
-                                              if (this->system_matrix.el(
-                                                    global_index_overrigth,
-                                                    local_dof_indices_3[o]) !=
-                                                  0)
-                                                {
+                                                  local_dof_indices_3);
+                                          if (std::find(local_dof_indices_3.begin(),local_dof_indices_3.end(),global_index_overrigth)!=local_dof_indices_3.end()) {
+                                              for (unsigned int o = 0;
+                                                   o < local_dof_indices_3.size();
+                                                   ++o) {
                                                   this->system_matrix.set(
-                                                    global_index_overrigth,
-                                                    local_dof_indices_3[o],
-                                                    0);
-                                                }
-                                            }
-                                        }
+                                                          global_index_overrigth,
+                                                          local_dof_indices_3[o],
+                                                          0);
+
+                                              }
+                                          }
+                                      }
                                     }
 
 
@@ -2708,7 +2590,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 sum_line;
                                         }
                                     }
-                                }
+
 
                               // step in the local dof
 
