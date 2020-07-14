@@ -620,49 +620,32 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   cell_4->get_dof_indices(local_dof_indices_3);
 
 
-                  unsigned int j = 0;
+
                   // define the interpolation of the cell in order to have the
                   // solution at the point previously define
-                  while (j < this->fe.dofs_per_cell)
+                  for(unsigned int j=0 ; j<local_dof_indices.size() ; ++j )
                     {
-                      u_2[0] += this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
-                      u_2[1] +=
-                        this->fe.shape_value(j + 1, second_point_v) *
-                        this->present_solution(local_dof_indices[j + 1]);
-                      u_3[0] += this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
-                      u_3[1] +=
-                        this->fe.shape_value(j + 1, third_point_v) *
-                        this->present_solution(local_dof_indices_2[j + 1]);
+                      const unsigned int component_i = this->fe.system_to_component_index(j).first;
+                      if (component_i< dim ) {
+                          u_2[component_i] += this->fe.shape_value(j, second_point_v) *
+                                    this->present_solution(local_dof_indices[j]);
 
-                      if (j <
-                          (dim + 1) *
-                            pow(1 + this->nsparam.fem_parameters.pressureOrder,
-                                dim))
+                          u_3[component_i] += this->fe.shape_value(j, third_point_v) *
+                                    this->present_solution(local_dof_indices_2[j]);
+                      }
+                      if (component_i == dim )
                         {
                           P1 +=
-                            this->fe.shape_value(j + 2, second_point_v) *
-                            this->present_solution(local_dof_indices[j + 2]);
+                            this->fe.shape_value(j, second_point_v) *
+                            this->present_solution(local_dof_indices[j ]);
                           P2 +=
-                            this->fe.shape_value(j + 2, third_point_v) *
-                            this->present_solution(local_dof_indices_2[j + 2]);
+                            this->fe.shape_value(j , third_point_v) *
+                            this->present_solution(local_dof_indices_2[j]);
                           P3 +=
-                            this->fe.shape_value(j + 2, fourth_point_v) *
-                            this->present_solution(local_dof_indices_3[j + 2]);
+                            this->fe.shape_value(j , fourth_point_v) *
+                            this->present_solution(local_dof_indices_3[j]);
                         }
 
-                      if (j <
-                          (dim + 1) *
-                            pow(1 + this->nsparam.fem_parameters.pressureOrder,
-                                dim))
-                        {
-                          j = j + dim + 1;
-                        }
-                      else
-                        {
-                          j = j + dim;
-                        }
                     }
                   // evaluate the solution in the reference frame of the
                   // particle
@@ -1049,55 +1032,29 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
                       cell_3->get_dof_indices(local_dof_indices_2);
-                      unsigned int j = 0;
-                      while (j < this->fe.dofs_per_cell)
+                      for(unsigned int j=0 ; j<local_dof_indices.size() ; ++j )
                         {
-                          u_2[0] +=
-                            this->fe.shape_value(j, second_point_v) *
-                            this->present_solution(local_dof_indices[j]);
-                          u_2[1] +=
-                            this->fe.shape_value(j + 1, second_point_v) *
-                            this->present_solution(local_dof_indices[j + 1]);
-                          u_2[2] +=
-                            this->fe.shape_value(j + 2, second_point_v) *
-                            this->present_solution(local_dof_indices[j + 2]);
-                          u_3[0] +=
-                            this->fe.shape_value(j, third_point_v) *
-                            this->present_solution(local_dof_indices_2[j]);
-                          u_3[1] +=
-                            this->fe.shape_value(j + 1, third_point_v) *
-                            this->present_solution(local_dof_indices_2[j + 1]);
-                          u_3[2] +=
-                            this->fe.shape_value(j + 2, third_point_v) *
-                            this->present_solution(local_dof_indices_2[j + 2]);
-                          if (j <
-                              (dim + 1) * pow(1 + this->nsparam.fem_parameters
-                                                    .pressureOrder,
-                                              dim))
-                            {
-                              P1 +=
-                                this->fe.shape_value(j + 3, second_point_v) *
-                                this->present_solution(
-                                  local_dof_indices[j + 3]);
-                              P2 += this->fe.shape_value(j + 3, third_point_v) *
-                                    this->present_solution(
-                                      local_dof_indices_2[j + 3]);
-                              P3 +=
-                                this->fe.shape_value(j + 3, fourth_point_v) *
-                                this->present_solution(
-                                  local_dof_indices_3[j + 3]);
+                            const unsigned int component_i = this->fe.system_to_component_index(j).first;
+                            if (component_i< dim ) {
+                                u_2[component_i] += this->fe.shape_value(j, second_point_v) *
+                                                    this->present_solution(local_dof_indices[j]);
+
+                                u_3[component_i] += this->fe.shape_value(j, third_point_v) *
+                                                    this->present_solution(local_dof_indices_2[j]);
                             }
-                          if (j <
-                              (dim + 1) * pow(1 + this->nsparam.fem_parameters
-                                                    .pressureOrder,
-                                              dim))
+                            if (component_i == dim )
                             {
-                              j = j + dim + 1;
+                                P1 +=
+                                        this->fe.shape_value(j, second_point_v) *
+                                        this->present_solution(local_dof_indices[j ]);
+                                P2 +=
+                                        this->fe.shape_value(j , third_point_v) *
+                                        this->present_solution(local_dof_indices_2[j]);
+                                P3 +=
+                                        this->fe.shape_value(j , fourth_point_v) *
+                                        this->present_solution(local_dof_indices_3[j]);
                             }
-                          else
-                            {
-                              j = j + dim;
-                            }
+
                         }
 
                       // evaluate the solution in the reference frame of the
