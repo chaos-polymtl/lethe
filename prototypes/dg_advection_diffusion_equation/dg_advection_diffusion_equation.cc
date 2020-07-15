@@ -47,6 +47,8 @@
 #include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/precondition.h>
 #include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/sparse_direct.h>
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/vector.h>
 
@@ -137,6 +139,7 @@ class RightHandSideMMS : public Function<dim>
 public:
   RightHandSideMMS()
     : Function<dim>()
+
   {}
 
   virtual double
@@ -185,26 +188,35 @@ template <int dim>
 class VelocityFieldMMS : public Function<dim>
 {
 public:
-  VelocityFieldMMS()
+  VelocityFieldMMS(double Pe)
     : Function<dim>(dim)
+    , Pe(Pe)
   {}
 
-  virtual void
-  vector_value(const Point<dim> &p, Vector<double> &value) const override;
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override;
+
+  // virtual void
+  // vector_value(const Point<dim> &p, Vector<double> &value) const override;
+private:
+  const double Pe;
 };
 
+
 template <int dim>
-void
-VelocityFieldMMS<dim>::vector_value(const Point<dim> &p,
-                                    Vector<double> &  value) const
+double
+VelocityFieldMMS<dim>::value(const Point<dim> & p,
+                             const unsigned int component) const
 {
   double x = p(0);
   double y = p(1);
 
-  value[0] = std::sin(M_PI * x) * std::sin(M_PI * x) * std::sin(M_PI * x) *
-             std::cos(M_PI * y);
-  value[1] = -std::cos(M_PI * x) * std::sin(M_PI * x) * std::sin(M_PI * x) *
-             std::sin(M_PI * y);
+  if (component == 0)
+    return Pe * std::sin(M_PI * x) * std::sin(M_PI * x) * std::sin(M_PI * y) *
+           std::cos(M_PI * y);
+  else // (component==1)
+    return -Pe * std::cos(M_PI * x) * std::sin(M_PI * x) * std::sin(M_PI * y) *
+           std::sin(M_PI * y);
 }
 
 template <int dim>
@@ -258,6 +270,8 @@ private:
 
   unsigned int initial_refinement_level;
   unsigned int number_refinement;
+
+  const double beta;
 };
 
 
@@ -269,9 +283,11 @@ DGAdvectionDiffusion<dim>::DGAdvectionDiffusion(simCase      scase,
   : fe(1)
   , mapping(1)
   , dof_handler(triangulation)
+  , velocity_function(1e6)
   , simulation_case(scase)
   , initial_refinement_level(initial_refinement)
   , number_refinement(number_refinement)
+  , beta(1.)
 {}
 
 template <int dim>
@@ -341,8 +357,16 @@ DGAdvectionDiffusion<dim>::assemble_system()
 
     velocity_function.vector_value_list(q_points, velocity_list);
 
+    Tensor<1, dim> velocity_q;
+
+
     for (unsigned int point = 0; point < fe_v.n_quadrature_points; ++point)
       {
+        // Establish the velocity
+        for (int i = 0; i < dim; ++i)
+          {
+            velocity_q[i] = velocity_function.value(q_points[point], i);
+          }
         for (unsigned int i = 0; i < n_dofs; ++i)
           {
             for (unsigned int j = 0; j < n_dofs; ++j)
@@ -351,6 +375,10 @@ DGAdvectionDiffusion<dim>::assemble_system()
                   fe_v.shape_grad(i, point)   // \nabla \phi_i
                   * fe_v.shape_grad(j, point) // \nabla \phi_j
                   * JxW[point];               // dx
+
+                copy_data.cell_matrix(i, j) +=
+                  fe_v.shape_value(i, point) * velocity_q *
+                  fe_v.shape_grad(j, point) * JxW[point];
               }
 
             if (simulation_case == MMS)
@@ -379,17 +407,31 @@ DGAdvectionDiffusion<dim>::assemble_system()
 
     boundary_function.value_list(q_points, g);
 
+    std::vector<Vector<double>> velocity_list(q_points.size(),
+                                              Vector<double>(dim));
+
+    velocity_function.vector_value_list(q_points, velocity_list);
+
+    Tensor<1, dim> velocity_q;
+
     double h;
     if (dim == 2)
       h = std::sqrt(4. * cell->measure() / M_PI);
     else if (dim == 3)
       h = pow(6 * cell->measure() / M_PI, 1. / 3.);
 
-
-    const double beta = 10.;
-
     for (unsigned int point = 0; point < q_points.size(); ++point)
       {
+        // Establish the velocity
+        for (int i = 0; i < dim; ++i)
+          {
+            const unsigned int component_i =
+              this->fe.system_to_component_index(i).first;
+            velocity_q[i] = velocity_list[point](component_i);
+          }
+
+        const double velocity_dot_n = velocity_q * normals[point];
+
         for (unsigned int i = 0; i < n_facet_dofs; ++i)
           {
             for (unsigned int j = 0; j < n_facet_dofs; ++j)
@@ -409,6 +451,10 @@ DGAdvectionDiffusion<dim>::assemble_system()
                 copy_data.cell_matrix(i, j) +=
                   beta * 1. / h * fe_face.shape_value(i, point) // \phi_i
                   * fe_face.shape_value(j, point) * JxW[point]; // dx
+
+                copy_data.cell_matrix(i, j) +=
+                  -velocity_dot_n * fe_face.shape_value(i, point) // \phi_i
+                  * fe_face.shape_value(j, point) * JxW[point];   // dx
               }
           }
 
@@ -453,6 +499,12 @@ DGAdvectionDiffusion<dim>::assemble_system()
     const std::vector<double> &        JxW     = fe_iv.get_JxW_values();
     const std::vector<Tensor<1, dim>> &normals = fe_iv.get_normal_vectors();
 
+    std::vector<Vector<double>> velocity_list(q_points.size(),
+                                              Vector<double>(dim));
+
+    velocity_function.vector_value_list(q_points, velocity_list);
+
+    Tensor<1, dim> velocity_q;
 
     double h;
     if (dim == 2)
@@ -460,10 +512,20 @@ DGAdvectionDiffusion<dim>::assemble_system()
     else if (dim == 3)
       h = pow(6 * cell->measure() / M_PI, 1. / 3.);
 
-    const double beta = 10.;
-
     for (unsigned int qpoint = 0; qpoint < q_points.size(); ++qpoint)
       {
+        // Establish the velocity
+        for (int i = 0; i < dim; ++i)
+          {
+            const unsigned int component_i =
+              this->fe.system_to_component_index(i).first;
+            velocity_q[i] = velocity_list[qpoint](component_i);
+          }
+
+        const double velocity_dot_n = velocity_q * normals[qpoint];
+
+        const double gamma = velocity_dot_n > 0 ? 0.5 : -0.5;
+
         for (unsigned int i = 0; i < n_dofs; ++i)
           {
             for (unsigned int j = 0; j < n_dofs; ++j)
@@ -481,6 +543,20 @@ DGAdvectionDiffusion<dim>::assemble_system()
                 copy_data_face.cell_matrix(i, j) +=
                   beta * 1. / h * fe_iv.jump(i, qpoint) *
                   fe_iv.jump(j, qpoint) * JxW[qpoint];
+
+                copy_data_face.cell_matrix(i, j) +=
+                  -fe_iv.average(i, qpoint) // [\phi_i]
+                  * velocity_dot_n *
+                  fe_iv.jump(j,
+                             qpoint) // phi_j^{upwind}
+                  * JxW[qpoint];
+
+                copy_data_face.cell_matrix(i, j) +=
+                  -gamma * fe_iv.jump(i, qpoint) // [\phi_i]
+                  * velocity_dot_n *
+                  fe_iv.jump(j,
+                             qpoint) // phi_j^{upwind}
+                  * JxW[qpoint];
               }
           }
       }
@@ -525,14 +601,18 @@ template <int dim>
 void
 DGAdvectionDiffusion<dim>::solve()
 {
-  SolverControl solver_control(10000, 1e-12);
-  SolverCG<>    solver(solver_control);
-  solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
+  // SolverControl solver_control(50000, 1e-12);
+  // SolverGMRES<> solver(solver_control);
+  // solver.solve(system_matrix, solution, system_rhs, PreconditionIdentity());
+  //
+  //// We have made one addition, though: since we suppress output from the
+  //// linear solvers, we have to print the number of iterations by hand.
+  // std::cout << "   " << solver_control.last_step()
+  //          << " GMRES iterations needed to obtain convergence." << std::endl;
 
-  // We have made one addition, though: since we suppress output from the
-  // linear solvers, we have to print the number of iterations by hand.
-  std::cout << "   " << solver_control.last_step()
-            << " CG iterations needed to obtain convergence." << std::endl;
+  SparseDirectUMFPACK direct;
+  direct.initialize(system_matrix);
+  direct.vmult(solution, system_rhs);
 }
 
 template <int dim>
@@ -592,12 +672,8 @@ DGAdvectionDiffusion<dim>::calculateL2Error()
         {
           const double x = fe_values.quadrature_point(q)[0];
           const double y = fe_values.quadrature_point(q)[1];
-          if (dim > 2)
-            const double z = fe_values.quadrature_point(q)[2];
 
-          const double r       = std::sqrt(x * x + y * y);
-          const double lnratio = std::log(1. / 0.25);
-          double       u_exact = 0.;
+          double u_exact = 0.;
           if (simulation_case == MMS)
             u_exact = sin(M_PI * x) * std::sin(M_PI * y);
           double u_sim = 0;
@@ -657,7 +733,7 @@ main()
   // MMS
   {
     std::cout << "Solving MMS problem 2D " << std::endl;
-    DGAdvectionDiffusion<2> mms_problem_2d(MMS, 2, 8);
+    DGAdvectionDiffusion<2> mms_problem_2d(MMS, 2, 5);
     mms_problem_2d.run();
   }
   return 0;
