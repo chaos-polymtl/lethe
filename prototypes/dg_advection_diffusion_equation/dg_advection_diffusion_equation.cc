@@ -38,6 +38,7 @@
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
@@ -137,13 +138,16 @@ template <int dim>
 class RightHandSideMMS : public Function<dim>
 {
 public:
-  RightHandSideMMS()
+  RightHandSideMMS(const double Pe_diff)
     : Function<dim>()
+    , Pe_diff(Pe_diff)
 
   {}
 
   virtual double
   value(const Point<dim> &p, const unsigned int component = 0) const;
+
+  const double Pe_diff;
 };
 
 template <int dim>
@@ -155,7 +159,8 @@ RightHandSideMMS<dim>::value(const Point<dim> &p,
   double x            = p(0);
   double y            = p(1);
 
-  return_value = 2. * M_PI * M_PI * std::sin(M_PI * x) * std::sin(M_PI * y);
+  return_value =
+    1. / Pe_diff * 2. * M_PI * M_PI * std::sin(M_PI * x) * std::sin(M_PI * y);
 
 
   return return_value;
@@ -178,10 +183,14 @@ double
 BoundaryValues<dim>::value(const Point<dim> &p,
                            const unsigned int /*component*/) const
 {
-  if (p.square() > 0.9)
-    return 1;
+  double alpha = 100.;
+  double x     = p(0);
+  double y     = p(1);
+
+  if (y < 1e-16)
+    return 1 + std::tanh(alpha * (2 * x + 1));
   else
-    return 0.;
+    return 1 + std::tanh(alpha * (-1.));
 }
 
 template <int dim>
@@ -220,12 +229,46 @@ VelocityFieldMMS<dim>::value(const Point<dim> & p,
 }
 
 template <int dim>
+class VelocityFieldSmithHutton : public Function<dim>
+{
+public:
+  VelocityFieldSmithHutton(double Pe)
+    : Function<dim>(dim)
+    , Pe(Pe)
+  {}
+
+  virtual double
+  value(const Point<dim> &p, const unsigned int component) const override;
+
+  // virtual void
+  // vector_value(const Point<dim> &p, Vector<double> &value) const override;
+private:
+  const double Pe;
+};
+
+
+template <int dim>
+double
+VelocityFieldSmithHutton<dim>::value(const Point<dim> & p,
+                                     const unsigned int component) const
+{
+  double x = p(0);
+  double y = p(1);
+
+  if (component == 0)
+    return Pe * 2 * y * (1. - x * x);
+  else // (component==1)
+    return -Pe * 2 * x * (1. - y * y);
+}
+
+template <int dim>
 class DGAdvectionDiffusion
 {
 public:
   DGAdvectionDiffusion(simCase      scase,
                        unsigned int initial_level,
-                       unsigned int final_level);
+                       unsigned int final_level,
+                       const double Pe);
   void
   run();
 
@@ -234,6 +277,8 @@ private:
   make_grid();
   void
   make_cube_grid();
+  void
+  make_smith_hutton_grid();
   void
   setup_system();
   void
@@ -250,10 +295,12 @@ private:
   const MappingQ<dim> mapping;
   DoFHandler<dim>     dof_handler;
 
+  const double Pe_diff;
 
   RightHandSideMMS<dim> right_hand_side_function;
 
-  VelocityFieldMMS<dim> velocity_function;
+  std::unique_ptr<Function<dim>> velocity_function;
+  // VelocityFieldMMS<dim> velocity_function;
 
 
 
@@ -279,22 +326,34 @@ private:
 template <int dim>
 DGAdvectionDiffusion<dim>::DGAdvectionDiffusion(simCase      scase,
                                                 unsigned int initial_refinement,
-                                                unsigned int number_refinement)
+                                                unsigned int number_refinement,
+                                                const double Pe)
   : fe(1)
   , mapping(1)
   , dof_handler(triangulation)
-  , velocity_function(1e6)
+  , Pe_diff(Pe)
+  , right_hand_side_function(Pe_diff)
   , simulation_case(scase)
   , initial_refinement_level(initial_refinement)
   , number_refinement(number_refinement)
-  , beta(1.)
-{}
+  , beta(10.)
+{
+  if (simulation_case == MMS)
+    velocity_function = std::make_unique<VelocityFieldMMS<dim>>(1);
+
+  else if (simulation_case == SmithHutton)
+    velocity_function = std::make_unique<VelocityFieldSmithHutton<dim>>(1);
+}
 
 template <int dim>
 void
 DGAdvectionDiffusion<dim>::make_grid()
 {
-  make_cube_grid();
+  if (simulation_case == MMS)
+    make_cube_grid();
+
+  else if (simulation_case == SmithHutton)
+    make_smith_hutton_grid();
 }
 
 template <int dim>
@@ -302,6 +361,23 @@ void
 DGAdvectionDiffusion<dim>::make_cube_grid()
 {
   GridGenerator::hyper_cube(triangulation, -1, 1);
+  triangulation.refine_global(initial_refinement_level);
+
+  std::cout << "   Number of active cells: " << triangulation.n_active_cells()
+            << std::endl
+            << "   Total number of cells: " << triangulation.n_cells()
+            << std::endl;
+}
+
+template <int dim>
+void
+DGAdvectionDiffusion<dim>::make_smith_hutton_grid()
+{
+  GridIn<dim> grid_in;
+  grid_in.attach_triangulation(triangulation);
+  std::ifstream input_file("smith_hutton.msh");
+  grid_in.read_msh(input_file);
+
   triangulation.refine_global(initial_refinement_level);
 
   std::cout << "   Number of active cells: " << triangulation.n_active_cells()
@@ -355,7 +431,7 @@ DGAdvectionDiffusion<dim>::assemble_system()
     std::vector<Vector<double>> velocity_list(q_points.size(),
                                               Vector<double>(dim));
 
-    velocity_function.vector_value_list(q_points, velocity_list);
+    velocity_function->vector_value_list(q_points, velocity_list);
 
     Tensor<1, dim> velocity_q;
 
@@ -364,17 +440,16 @@ DGAdvectionDiffusion<dim>::assemble_system()
       {
         // Establish the velocity
         for (int i = 0; i < dim; ++i)
-          {
-            velocity_q[i] = velocity_function.value(q_points[point], i);
-          }
+          velocity_q[i] = velocity_function->value(q_points[point], i);
+
         for (unsigned int i = 0; i < n_dofs; ++i)
           {
             for (unsigned int j = 0; j < n_dofs; ++j)
               {
                 copy_data.cell_matrix(i, j) +=
-                  fe_v.shape_grad(i, point)   // \nabla \phi_i
-                  * fe_v.shape_grad(j, point) // \nabla \phi_j
-                  * JxW[point];               // dx
+                  1. / Pe_diff * fe_v.shape_grad(i, point) // \nabla \phi_i
+                  * fe_v.shape_grad(j, point)              // \nabla \phi_j
+                  * JxW[point];                            // dx
 
                 copy_data.cell_matrix(i, j) +=
                   fe_v.shape_value(i, point) * velocity_q *
@@ -410,7 +485,7 @@ DGAdvectionDiffusion<dim>::assemble_system()
     std::vector<Vector<double>> velocity_list(q_points.size(),
                                               Vector<double>(dim));
 
-    velocity_function.vector_value_list(q_points, velocity_list);
+    velocity_function->vector_value_list(q_points, velocity_list);
 
     Tensor<1, dim> velocity_q;
 
@@ -420,57 +495,58 @@ DGAdvectionDiffusion<dim>::assemble_system()
     else if (dim == 3)
       h = pow(6 * cell->measure() / M_PI, 1. / 3.);
 
-    for (unsigned int point = 0; point < q_points.size(); ++point)
+    if (cell->face(face_no)->boundary_id() == 0)
       {
-        // Establish the velocity
-        for (int i = 0; i < dim; ++i)
+        for (unsigned int point = 0; point < q_points.size(); ++point)
           {
-            const unsigned int component_i =
-              this->fe.system_to_component_index(i).first;
-            velocity_q[i] = velocity_list[point](component_i);
-          }
+            // Establish the velocity
+            for (int i = 0; i < dim; ++i)
+              velocity_q[i] = velocity_function->value(q_points[point], i);
 
-        const double velocity_dot_n = velocity_q * normals[point];
+            const double velocity_dot_n = velocity_q * normals[point];
 
-        for (unsigned int i = 0; i < n_facet_dofs; ++i)
-          {
-            for (unsigned int j = 0; j < n_facet_dofs; ++j)
+            for (unsigned int i = 0; i < n_facet_dofs; ++i)
               {
-                copy_data.cell_matrix(i, j) +=
-                  -normals[point] *
-                  fe_face.shape_grad(i, point)    // n*\nabla \phi_i
-                  * fe_face.shape_value(j, point) // \phi_j
-                  * JxW[point];                   // dx
+                for (unsigned int j = 0; j < n_facet_dofs; ++j)
+                  {
+                    copy_data.cell_matrix(i, j) +=
+                      -1. / Pe_diff * normals[point] *
+                      fe_face.shape_grad(i, point)    // n*\nabla \phi_i
+                      * fe_face.shape_value(j, point) // \phi_j
+                      * JxW[point];                   // dx
 
-                copy_data.cell_matrix(i, j) +=
-                  -fe_face.shape_value(i, point) // \phi_i
-                  * fe_face.shape_grad(j, point) *
-                  normals[point] // n*\nabla \phi_j
-                  * JxW[point];  // dx
+                    copy_data.cell_matrix(i, j) +=
+                      -1. / Pe_diff * fe_face.shape_value(i, point) // \phi_i
+                      * fe_face.shape_grad(j, point) *
+                      normals[point] // n*\nabla \phi_j
+                      * JxW[point];  // dx
 
-                copy_data.cell_matrix(i, j) +=
-                  beta * 1. / h * fe_face.shape_value(i, point) // \phi_i
-                  * fe_face.shape_value(j, point) * JxW[point]; // dx
+                    copy_data.cell_matrix(i, j) +=
+                      beta * 1. / h / Pe_diff *
+                      fe_face.shape_value(i, point)                 // \phi_i
+                      * fe_face.shape_value(j, point) * JxW[point]; // dx
 
-                copy_data.cell_matrix(i, j) +=
-                  -velocity_dot_n * fe_face.shape_value(i, point) // \phi_i
-                  * fe_face.shape_value(j, point) * JxW[point];   // dx
+                    copy_data.cell_matrix(i, j) +=
+                      -velocity_dot_n * fe_face.shape_value(i, point) // \phi_i
+                      * fe_face.shape_value(j, point) * JxW[point];   // dx
+                  }
               }
-          }
 
-        if (simulation_case == SmithHutton)
-          for (unsigned int i = 0; i < n_facet_dofs; ++i)
-            {
-              copy_data.cell_rhs(i) += beta * 1. / h *
-                                       fe_face.shape_value(i, point) // \phi_i
-                                       * g[point]                    // g
-                                       * JxW[point];                 // dx
-              copy_data.cell_rhs(i) +=
-                -normals[point] *
-                fe_face.shape_grad(i, point) // n*\nabla \phi_i
-                * g[point]                   // g
-                * JxW[point];                // dx
-            }
+            if (simulation_case == SmithHutton)
+              for (unsigned int i = 0; i < n_facet_dofs; ++i)
+                {
+                  copy_data.cell_rhs(i) +=
+                    beta * 1. / h / Pe_diff *
+                    fe_face.shape_value(i, point) // \phi_i
+                    * g[point]                    // g
+                    * JxW[point];                 // dx
+                  copy_data.cell_rhs(i) +=
+                    -1. / Pe_diff * normals[point] *
+                    fe_face.shape_grad(i, point) // n*\nabla \phi_i
+                    * g[point]                   // g
+                    * JxW[point];                // dx
+                }
+          }
       }
   };
 
@@ -502,7 +578,7 @@ DGAdvectionDiffusion<dim>::assemble_system()
     std::vector<Vector<double>> velocity_list(q_points.size(),
                                               Vector<double>(dim));
 
-    velocity_function.vector_value_list(q_points, velocity_list);
+    velocity_function->vector_value_list(q_points, velocity_list);
 
     Tensor<1, dim> velocity_q;
 
@@ -516,11 +592,7 @@ DGAdvectionDiffusion<dim>::assemble_system()
       {
         // Establish the velocity
         for (int i = 0; i < dim; ++i)
-          {
-            const unsigned int component_i =
-              this->fe.system_to_component_index(i).first;
-            velocity_q[i] = velocity_list[qpoint](component_i);
-          }
+          velocity_q[i] = velocity_function->value(q_points[qpoint], i);
 
         const double velocity_dot_n = velocity_q * normals[qpoint];
 
@@ -531,17 +603,18 @@ DGAdvectionDiffusion<dim>::assemble_system()
             for (unsigned int j = 0; j < n_dofs; ++j)
               {
                 copy_data_face.cell_matrix(i, j) +=
-                  -normals[qpoint] * fe_iv.average_gradient(i, qpoint) *
-                  fe_iv.jump(j, qpoint) * JxW[qpoint];
+                  -1. / Pe_diff * normals[qpoint] *
+                  fe_iv.average_gradient(i, qpoint) * fe_iv.jump(j, qpoint) *
+                  JxW[qpoint];
 
                 copy_data_face.cell_matrix(i, j) +=
-                  -fe_iv.jump(i, qpoint) // \phi_i
+                  -1. / Pe_diff * fe_iv.jump(i, qpoint) // \phi_i
                   * fe_iv.average_gradient(j, qpoint) *
                   normals[qpoint] // n*\nabla \phi_j
                   * JxW[qpoint];  // dx
 
                 copy_data_face.cell_matrix(i, j) +=
-                  beta * 1. / h * fe_iv.jump(i, qpoint) *
+                  beta * 1. / h / Pe_diff * fe_iv.jump(i, qpoint) *
                   fe_iv.jump(j, qpoint) * JxW[qpoint];
 
                 copy_data_face.cell_matrix(i, j) +=
@@ -713,16 +786,20 @@ DGAdvectionDiffusion<dim>::run()
       assemble_system();
       solve();
       output_results(it);
-      calculateL2Error();
+      if (simulation_case == MMS)
+        calculateL2Error();
     }
 
-  error_table.omit_column_from_convergence_rate_evaluation("cells");
-  error_table.evaluate_all_convergence_rates(
-    ConvergenceTable::reduction_rate_log2);
+  if (simulation_case == MMS)
+    {
+      error_table.omit_column_from_convergence_rate_evaluation("cells");
+      error_table.evaluate_all_convergence_rates(
+        ConvergenceTable::reduction_rate_log2);
 
-  error_table.set_scientific("error", true);
+      error_table.set_scientific("error", true);
 
-  error_table.write_text(std::cout);
+      error_table.write_text(std::cout);
+    }
 }
 
 int
@@ -733,8 +810,15 @@ main()
   // MMS
   {
     std::cout << "Solving MMS problem 2D " << std::endl;
-    DGAdvectionDiffusion<2> mms_problem_2d(MMS, 2, 5);
+    DGAdvectionDiffusion<2> mms_problem_2d(MMS, 2, 6, 10);
     mms_problem_2d.run();
+  }
+
+  // Smith Hutton
+  {
+    std::cout << "Solving Smith-Hutton problem 2D " << std::endl;
+    DGAdvectionDiffusion<2> problem_2d(SmithHutton, 2, 6, 1e6);
+    problem_2d.run();
   }
   return 0;
 }
