@@ -526,9 +526,12 @@ DGAdvectionDiffusion<dim>::assemble_system()
                       fe_face.shape_value(i, point)                 // \phi_i
                       * fe_face.shape_value(j, point) * JxW[point]; // dx
 
-                    copy_data.cell_matrix(i, j) +=
-                      -velocity_dot_n * fe_face.shape_value(i, point) // \phi_i
-                      * fe_face.shape_value(j, point) * JxW[point];   // dx
+
+                    //                    copy_data.cell_matrix(i, j) +=
+                    //                      -velocity_dot_n *
+                    //                      fe_face.shape_value(i, point) *
+                    //                      fe_face.shape_value(j, point) *
+                    //                      JxW[point];
                   }
               }
 
@@ -545,6 +548,13 @@ DGAdvectionDiffusion<dim>::assemble_system()
                     fe_face.shape_grad(i, point) // n*\nabla \phi_i
                     * g[point]                   // g
                     * JxW[point];                // dx
+
+                  //                  if (velocity_dot_n < 0)
+                  //                    copy_data.cell_rhs(i) +=
+                  //                    -fe_face.shape_value(i, point) *
+                  //                                             g[point] *
+                  //                                             velocity_dot_n
+                  //                                             * JxW[point];
                 }
           }
       }
@@ -618,18 +628,23 @@ DGAdvectionDiffusion<dim>::assemble_system()
                   fe_iv.jump(j, qpoint) * JxW[qpoint];
 
                 copy_data_face.cell_matrix(i, j) +=
-                  -fe_iv.average(i, qpoint) // [\phi_i]
-                  * velocity_dot_n *
-                  fe_iv.jump(j,
-                             qpoint) // phi_j^{upwind}
-                  * JxW[qpoint];
+                  fe_iv.jump(j, qpoint) // [\phi_i]
+                  * fe_iv.shape_value((velocity_dot_n > 0), i, qpoint) *
+                  velocity_dot_n * JxW[qpoint];
 
-                copy_data_face.cell_matrix(i, j) +=
-                  -gamma * fe_iv.jump(i, qpoint) // [\phi_i]
-                  * velocity_dot_n *
-                  fe_iv.jump(j,
-                             qpoint) // phi_j^{upwind}
-                  * JxW[qpoint];
+                // copy_data_face.cell_matrix(i, j) +=
+                //  -fe_iv.average(i, qpoint) // [\phi_i]
+                //  * velocity_dot_n *
+                //  fe_iv.jump(j,
+                //             qpoint) // phi_j^{upwind}
+                //  * JxW[qpoint];
+                //
+                // copy_data_face.cell_matrix(i, j) +=
+                //  -gamma * fe_iv.jump(i, qpoint) // [\phi_i]
+                //  * velocity_dot_n *
+                //  fe_iv.jump(j,
+                //             qpoint) // phi_j^{upwind}
+                //  * JxW[qpoint];
               }
           }
       }
@@ -817,7 +832,7 @@ main()
   // Smith Hutton
   {
     std::cout << "Solving Smith-Hutton problem 2D " << std::endl;
-    DGAdvectionDiffusion<2> problem_2d(SmithHutton, 2, 6, 1e6);
+    DGAdvectionDiffusion<2> problem_2d(SmithHutton, 2, 6, 1e3);
     problem_2d.run();
   }
   return 0;
