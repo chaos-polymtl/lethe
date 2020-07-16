@@ -39,6 +39,7 @@
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_accessor.h>
@@ -328,8 +329,8 @@ DGAdvectionDiffusion<dim>::DGAdvectionDiffusion(simCase      scase,
                                                 unsigned int initial_refinement,
                                                 unsigned int number_refinement,
                                                 const double Pe)
-  : fe(1)
-  , mapping(1)
+  : fe(2)
+  , mapping(2)
   , dof_handler(triangulation)
   , Pe_diff(Pe)
   , right_hand_side_function(Pe_diff)
@@ -363,6 +364,8 @@ DGAdvectionDiffusion<dim>::make_cube_grid()
   GridGenerator::hyper_cube(triangulation, -1, 1);
   triangulation.refine_global(initial_refinement_level);
 
+  GridTools::distort_random(0.1, triangulation, true);
+
   std::cout << "   Number of active cells: " << triangulation.n_active_cells()
             << std::endl
             << "   Total number of cells: " << triangulation.n_cells()
@@ -379,6 +382,9 @@ DGAdvectionDiffusion<dim>::make_smith_hutton_grid()
   grid_in.read_msh(input_file);
 
   triangulation.refine_global(initial_refinement_level);
+
+  GridTools::distort_random(0.1, triangulation, true);
+
 
   std::cout << "   Number of active cells: " << triangulation.n_active_cells()
             << std::endl
