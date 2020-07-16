@@ -49,10 +49,8 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments	     = -2 : 2 : true
-    set initial refinement   = 4
+    set type                 = gmsh
+    set file name 	     = box.msh
 end
 
 #---------------------------------------------------
@@ -61,9 +59,9 @@ end
 subsection nitsche
     subsection mesh
 	set type                 = gmsh
-	set file name		 = sphere_33.msh
+	set file name		 = sphere.msh
     end
-    set beta = 5
+    set beta = 100
 end
 
 
@@ -73,18 +71,6 @@ end
 subsection boundary conditions
   set number                  = 5
     subsection bc 0
-        set type              = slip
-    end
-    subsection bc 1
-        set type              = slip
-    end
-    subsection bc 2
-        set type              = slip
-    end
-    subsection bc 3
-        set type              = slip
-    end
-    subsection bc 4
 	set type              = function
         subsection u
             set Function expression = 0
@@ -96,6 +82,9 @@ subsection boundary conditions
             set Function expression = 1
         end
     end
+    subsection bc 1
+        set type              = slip
+    end
 end
 
 # --------------------------------------------------
@@ -103,7 +92,7 @@ end
 #---------------------------------------------------
 subsection post-processing
   # Output the boundaries of the domain
-  set output boundaries        = true
+  set output boundaries        = false
 end
 
 # --------------------------------------------------

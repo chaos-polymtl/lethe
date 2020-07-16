@@ -63,7 +63,7 @@ subsection nitsche
 	set type                 = gmsh
 	set file name		 = sphere_23.msh
     end
-    set beta = 5
+    set beta = 100
 end
 
 
