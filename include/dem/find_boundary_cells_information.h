@@ -34,7 +34,7 @@
 using namespace dealii;
 
 #ifndef FINDBOUNDARYCELLSINFORMATION_H_
-#  define FINDBOUNDARYCELLSINFORMATION_H_
+#define FINDBOUNDARYCELLSINFORMATION_H_
 
 /**
  * Finds all the boundary cells and faces in the triangulation, for each cell
@@ -46,9 +46,7 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class FindBoundaryCellsInformation
-{
+template <int dim> class FindBoundaryCellsInformation {
 public:
   FindBoundaryCellsInformation<dim>();
 
@@ -67,11 +65,11 @@ public:
    * distance between center of particles and the face
    */
 
-  std::vector<boundary_cells_info_struct<dim>>
+  std::map<int, boundary_cells_info_struct<dim>>
   find_boundary_cells_information(
-    std::vector<typename Triangulation<dim>::active_cell_iterator>
-      &                                              boundary_cells_with_faces,
-    const parallel::distributed::Triangulation<dim> &triangulation);
+      std::vector<typename Triangulation<dim>::active_cell_iterator>
+          &boundary_cells_with_faces,
+      const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -88,16 +86,15 @@ public:
    * cells with boundary points, and the location of the point
    */
 
-  void
-  find_particle_point_and_line_contact_cells(
-    const std::vector<typename Triangulation<dim>::active_cell_iterator>
-      &                                              boundary_cells_with_faces,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                           Point<dim>,
-                           Point<dim>>> &            boundary_cells_with_lines,
-    std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
-                          Point<dim>>> &boundary_cells_with_points);
+  void find_particle_point_and_line_contact_cells(
+      const std::vector<typename Triangulation<dim>::active_cell_iterator>
+          &boundary_cells_with_faces,
+      const parallel::distributed::Triangulation<dim> &triangulation,
+      std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
+                             Point<dim>, Point<dim>>>
+          &boundary_cells_with_lines,
+      std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
+                            Point<dim>>> &boundary_cells_with_points);
 
 private:
   // This vector stores the location of vertices on boundaries for each cell.
@@ -112,7 +109,7 @@ private:
   // This vector stores both the cells with boundary lines and cells with
   // boundary points
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-    boundary_cells_with_lines_or_points;
+      boundary_cells_with_lines_or_points;
 
   // This map stores the vertex index and position of boundary vertices
   std::map<int, Point<dim>> boundary_vertices;

@@ -32,7 +32,7 @@
 using namespace dealii;
 
 #ifndef PPBROADSEARCH_H_
-#  define PPBROADSEARCH_H_
+#define PPBROADSEARCH_H_
 
 /**
  * This class is used for broad particle-particle contact search. Broad search
@@ -43,9 +43,7 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PPBroadSearch
-{
+template <int dim> class PPBroadSearch {
 public:
   PPBroadSearch<dim>();
 
@@ -62,14 +60,22 @@ public:
    * particle pairs in adjacent cells which are collision candidates
    */
 
-  void
-  find_PP_Contact_Pairs(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      &cellNeighborList,
-    std::vector<std::pair<typename Particles::ParticleIterator<dim>,
-                          typename Particles::ParticleIterator<dim>>>
-      &contact_pair_candidates);
+  void find_PP_Contact_Pairs(
+      dealii::Particles::ParticleHandler<dim> &particle_handler,
+      const std::vector<
+          std::vector<typename Triangulation<dim>::active_cell_iterator>>
+          *cells_local_neighbor_list,
+      const std::vector<
+          std::vector<typename Triangulation<dim>::active_cell_iterator>>
+          *cells_ghost_neighbor_list,
+      std::map<std::pair<int, int>,
+               std::pair<typename Particles::ParticleIterator<dim>,
+                         typename Particles::ParticleIterator<dim>>>
+          &local_contact_pair_candidates,
+      std::map<std::pair<int, int>,
+               std::pair<typename Particles::ParticleIterator<dim>,
+                         typename Particles::ParticleIterator<dim>>>
+          &ghost_contact_pair_candidates);
 };
 
 #endif /* PPBROADSEARCH_H_ */

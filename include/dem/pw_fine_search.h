@@ -30,7 +30,7 @@
 using namespace dealii;
 
 #ifndef PWFINESEARCH_H_
-#  define PWFINESEARCH_H_
+#define PWFINESEARCH_H_
 
 /**
  * This class is used for fine particle-wall contact search. Fine search
@@ -43,9 +43,7 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PWFineSearch
-{
+template <int dim> class PWFineSearch {
 public:
   PWFineSearch<dim>();
 
@@ -71,14 +69,13 @@ public:
    * @param time_step DEM time step
    */
 
-  void
-  pw_Fine_Search(
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                           Tensor<1, dim>,
-                           Point<dim>>> &pw_contact_pair_candidates,
-    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &    pw_pairs_in_contact,
-    double time_step);
+  void pw_Fine_Search(
+      std::map<std::pair<int, int>, std::tuple<Particles::ParticleIterator<dim>,
+                                               Tensor<1, dim>, Point<dim>>>
+          &pw_contact_pair_candidates,
+      std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+          &pw_pairs_in_contact,
+      double time_step);
 
   /** This private function is used to find the projection of vector_a on
    * vector_b

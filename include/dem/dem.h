@@ -61,16 +61,14 @@
 #include <iostream>
 
 #ifndef LETHE_DEM_H
-#  define LETHE_DEM_H
+#define LETHE_DEM_H
 
 /**
  * The DEM class which initializes all the required parameters and iterates over
  * the DEM iterator
  */
 
-template <int dim>
-class DEMSolver
-{
+template <int dim> class DEMSolver {
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
@@ -78,16 +76,14 @@ public:
    * Initialiazes all the required parameters and iterates over the DEM iterator
    * (DEM engine).
    */
-  void
-  solve();
+  void solve();
 
 private:
   /**
    * Defines or reads the mesh based on the information provided by the user.
    * Gmsh files can also be read in this function.
    */
-  void
-  read_mesh();
+  void read_mesh();
 
   /**
    * Reinitializes exerted forces and momentums on particles
@@ -95,52 +91,53 @@ private:
    * @param particle_handler Particle handler to access all the particles in the
    * system
    */
-  void
-  reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
+  void reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
 
   /**
-   * @brief Manages the call to the particle insertion. Returns true if particles were inserted
+   * @brief Manages the call to the particle insertion. Returns true if
+   * particles were inserted
    *
    */
-  bool
-  insert_particles();
+  bool insert_particles();
+
+  /**
+   * @brief Manages clearing the contact containers when particles are exchanged
+   * between processors
+   *
+   */
+  void clear_contact_containers();
 
   /**
    * @brief Manages the sorting of the particles into cell and processors
    *
    */
-  void
-  locate_particles_in_cells();
+  void locate_particles_in_cells();
 
   /**
    * @brief Carries out the broad contact detection search using the
    * background triangulation for particle-walls contact.
    *
    */
-  void
-  particle_wall_broad_search();
+  void particle_wall_broad_search();
 
   /**
    * @brief Carries out the fine particled-wall contact detection
    *
    */
-  void
-  particle_wall_fine_search();
+  void particle_wall_fine_search();
 
   /**
    * @brief Calculates particles-wall contact forces
    *
    */
-  void
-  particle_wall_contact_force();
+  void particle_wall_contact_force();
 
   /**
    * @brief finish_simulation
    * Finishes the simulation by calling all
    * the post-processing elements that are required
    */
-  void
-  finish_simulation();
+  void finish_simulation();
 
   /**
    * Updates the iterators to particles in a map of particles
@@ -152,9 +149,10 @@ private:
    * iterators to particles in pp and pw fine search outputs after calling sort
    * particles into cells function
    */
-  std::map<int, Particles::ParticleIterator<dim>>
-  update_particle_container(
-    const Particles::ParticleHandler<dim> *particle_handler);
+
+  void update_particle_container(
+      std::map<int, Particles::ParticleIterator<dim>> &particle_container,
+      Particles::ParticleHandler<dim> *particle_handler);
 
   /**
    * Updates the iterators to particles in adjacent_particles (output of pp
@@ -163,11 +161,13 @@ private:
    * @param adjacent_particles Output of particle-particle fine search
    * @param particle_container Output of update_particle_container function
    */
-  void
-  update_pp_contact_container_iterators(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &                                                    adjacent_particles,
-    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
+  void update_pp_contact_container_iterators(
+      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+          &local_adjacent_particles,
+      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+          &ghost_adjacent_particles,
+      const std::map<int, Particles::ParticleIterator<dim>>
+          &particle_container);
 
   /**
    * Updates the iterators to particles in pw_contact_container (output of pw
@@ -176,11 +176,11 @@ private:
    * @param pw_pairs_in_contact Output of particle-wall fine search
    * @param particle_container Output of update_particle_container function
    */
-  void
-  update_pw_contact_container_iterators(
-    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                                    pw_pairs_in_contact,
-    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
+  void update_pw_contact_container_iterators(
+      std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+          &pw_pairs_in_contact,
+      const std::map<int, Particles::ParticleIterator<dim>>
+          &particle_container);
 
   /**
    * Updates the iterators to particles in particle_points_in_contact and
@@ -190,13 +190,13 @@ private:
    * @param particle_lines_in_contact Output of particle-line fine search
    * @param particle_container Output of update_particle_container function
    */
-  void
-  update_particle_point_line_contact_container_iterators(
-    std::map<int, particle_point_line_contact_info_struct<dim>>
-      &particle_points_in_contact,
-    std::map<int, particle_point_line_contact_info_struct<dim>>
-      &particle_lines_in_contact,
-    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
+  void update_particle_point_line_contact_container_iterators(
+      std::map<int, particle_point_line_contact_info_struct<dim>>
+          &particle_points_in_contact,
+      std::map<int, particle_point_line_contact_info_struct<dim>>
+          &particle_lines_in_contact,
+      const std::map<int, Particles::ParticleIterator<dim>>
+          &particle_container);
 
   /**
    * Sets the chosen insertion method in the parameter handler file
@@ -240,79 +240,91 @@ private:
    * Sets the background degree of freedom used for paralle grid output
    *
    */
-  void
-  setup_background_dofs();
+  void setup_background_dofs();
 
   /**
    * @brief write_output_results
    * Post-processing as parallel VTU files
    */
-  void
-  write_output_results();
+  void write_output_results();
 
-  MPI_Comm                                  mpi_communicator;
-  const unsigned int                        n_mpi_processes;
-  const unsigned int                        this_mpi_process;
-  ConditionalOStream                        pcout;
-  DEMSolverParameters<dim>                  parameters;
+  MPI_Comm mpi_communicator;
+  const unsigned int n_mpi_processes;
+  const unsigned int this_mpi_process;
+  ConditionalOStream pcout;
+  DEMSolverParameters<dim> parameters;
   parallel::distributed::Triangulation<dim> triangulation;
-  Particles::PropertyPool                   property_pool;
-  MappingQGeneric<dim>                      mapping;
-  TimerOutput                               computing_timer;
-  Particles::ParticleHandler<dim, dim>      particle_handler;
+  Particles::PropertyPool property_pool;
+  MappingQGeneric<dim> mapping;
+  TimerOutput computing_timer;
+  Particles::ParticleHandler<dim, dim> particle_handler;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;
 
-  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-    cell_neighbor_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      cells_local_neighbor_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      cells_ghost_neighbor_list;
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-    boundary_cells_with_faces;
+      boundary_cells_with_faces;
   std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                         Point<dim>,
-                         Point<dim>>>
-    boundary_cells_with_lines;
+                         Point<dim>, Point<dim>>>
+      boundary_cells_with_lines;
   std::vector<
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                                               boundary_cells_with_points;
-  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::vector<std::pair<typename Particles::ParticleIterator<dim>,
-                        typename Particles::ParticleIterator<dim>>>
-                                                            contact_pair_candidates;
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>> adjacent_particles;
+      std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+      boundary_cells_with_points;
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
+  std::map<std::pair<int, int>,
+           std::pair<typename Particles::ParticleIterator<dim>,
+                     typename Particles::ParticleIterator<dim>>>
+      local_contact_pair_candidates;
+  std::map<std::pair<int, int>,
+           std::pair<typename Particles::ParticleIterator<dim>,
+                     typename Particles::ParticleIterator<dim>>>
+      ghost_contact_pair_candidates;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      local_adjacent_particles;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      ghost_adjacent_particles;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      cleared_local_adjacent_particles;
+  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      cleared_ghost_adjacent_particles;
   std::map<int, std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact;
-  std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                         Tensor<1, dim>,
-                         Point<dim>>>
-    pw_contact_candidates;
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+      cleared_pw_pairs_in_contact;
+  std::map<std::pair<int, int>, std::tuple<Particles::ParticleIterator<dim>,
+                                           Tensor<1, dim>, Point<dim>>>
+      pw_contact_candidates;
   std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    particle_point_contact_candidates;
+      particle_point_contact_candidates;
   std::map<int,
            std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-    particle_line_contact_candidates;
+      particle_line_contact_candidates;
   std::map<int, particle_point_line_contact_info_struct<dim>>
-    particle_points_in_contact, particle_lines_in_contact;
+      particle_points_in_contact, particle_lines_in_contact;
 
   std::map<int, Particles::ParticleIterator<dim>> particle_container;
-  DEM::DEMProperties<dim>                         properties_class;
+  DEM::DEMProperties<dim> properties_class;
 
   // Initilization of classes and building objects
-  PPBroadSearch<dim>                   pp_broad_search_object;
-  PPFineSearch<dim>                    pp_fine_search_object;
-  PWBroadSearch<dim>                   pw_broad_search_object;
-  ParticlePointLineBroadSearch<dim>    particle_point_line_broad_search_object;
-  PWFineSearch<dim>                    pw_fine_search_object;
-  ParticlePointLineFineSearch<dim>     particle_point_line_fine_search_object;
-  ParticlePointLineForce<dim>          particle_point_line_contact_force_object;
-  std::shared_ptr<Integrator<dim>>     integrator_object;
-  std::shared_ptr<Insertion<dim>>      insertion_object;
+  PPBroadSearch<dim> pp_broad_search_object;
+  PPFineSearch<dim> pp_fine_search_object;
+  PWBroadSearch<dim> pw_broad_search_object;
+  ParticlePointLineBroadSearch<dim> particle_point_line_broad_search_object;
+  PWFineSearch<dim> pw_fine_search_object;
+  ParticlePointLineFineSearch<dim> particle_point_line_fine_search_object;
+  ParticlePointLineForce<dim> particle_point_line_contact_force_object;
+  std::shared_ptr<Integrator<dim>> integrator_object;
+  std::shared_ptr<Insertion<dim>> insertion_object;
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
-  PVDHandler                           particles_pvdhandler;
+  PVDHandler particles_pvdhandler;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
-  PVDHandler      grid_pvdhandler;
+  PVDHandler grid_pvdhandler;
 };
 
 #endif

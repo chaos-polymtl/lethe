@@ -31,7 +31,7 @@
 using namespace dealii;
 
 #ifndef PPFINESEARCH_H_
-#  define PPFINESEARCH_H_
+#define PPFINESEARCH_H_
 
 /**
  * This class is used for fine particle-particle contact search. Fine search
@@ -43,9 +43,7 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PPFineSearch
-{
+template <int dim> class PPFineSearch {
 public:
   PPFineSearch<dim>();
 
@@ -69,14 +67,20 @@ public:
    * @param time_step DEM time step
    */
 
-  void
-  pp_Fine_Search(
-    const std::vector<std::pair<typename Particles::ParticleIterator<dim>,
-                                typename Particles::ParticleIterator<dim>>>
-      &contact_pair_candidates,
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &          pairs_in_contact_info,
-    const double neighborhood_threshold);
+  void pp_Fine_Search(
+      const std::map<std::pair<int, int>,
+                     std::pair<typename Particles::ParticleIterator<dim>,
+                               typename Particles::ParticleIterator<dim>>>
+          &local_contact_pair_candidates,
+      const std::map<std::pair<int, int>,
+                     std::pair<typename Particles::ParticleIterator<dim>,
+                               typename Particles::ParticleIterator<dim>>>
+          &ghost_contact_pair_candidates,
+      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+          &local_adjacent_particles,
+      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+          &ghost_adjacent_particles,
+      const double neighborhood_threshold);
 };
 
 #endif /* PPFINESEARCH_H_ */
