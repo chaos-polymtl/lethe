@@ -76,6 +76,9 @@ SolidBase<dim, spacedim>::initial_setup()
   else
     throw std::runtime_error(
       "Unsupported mesh type - solid mesh will not be created");
+  
+  // Refine the solid triangulation to its initial size
+  solid_tria->refine_global(param.solid_mesh.initialRefinement);
 }
 
 
@@ -146,7 +149,7 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::output_particles(std::string fprefix) const
 {
-  Particles::DataOut<spacedim, spacedim> particles_out;
+  Particles::DataOut<spacedim> particles_out;
   particles_out.build_patches(*solid_particle_handler);
   const std::string filename = (fprefix + ".vtu");
   particles_out.write_vtu_in_parallel(filename, mpi_communicator);

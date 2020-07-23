@@ -44,20 +44,30 @@ main(int argc, char *argv[])
             Triangulation<3>::smoothing_on_refinement |
             Triangulation<3>::smoothing_on_coarsening));
 
+      std::shared_ptr<parallel::DistributedTriangulationBase<3>> solid_tria =
+        std::make_shared<parallel::distributed::Triangulation<3>>(
+          mpi_communicator,
+          typename Triangulation<3>::MeshSmoothing(
+            Triangulation<3>::smoothing_on_refinement |
+            Triangulation<3>::smoothing_on_coarsening));
+
       // Mesh of the solid
-      param.solid_mesh.type           = Parameters::Mesh::Type::dealii;
-      param.solid_mesh.grid_type      = "hyper_ball";
-      param.solid_mesh.grid_arguments = "0 , 0 , 0 :  0.75 : false";
+      param.solid_mesh.type              = Parameters::Mesh::Type::dealii;
+      param.solid_mesh.grid_type         = "hyper_ball";
+      param.solid_mesh.grid_arguments    = "0 , 0 , 0 : 0.75 : false";
+      param.solid_mesh.initialRefinement = 1;
 
       // Mesh of the fluid
       GridGenerator::hyper_cube(*fluid_tria, -1, 1);
 
       const unsigned int degree_velocity = 1;
 
+      // SolidBase class
       SolidBase<3, 3> solid(param, fluid_tria, degree_velocity);
       solid.initial_setup();
       solid.setup_particles();
 
+      // Generate the particles
       Particles::DataOut<3, 3>                       particles_out;
       std::shared_ptr<Particles::ParticleHandler<3>> solid_particle_handler =
         solid.get_solid_particle_handler();
@@ -65,6 +75,7 @@ main(int argc, char *argv[])
       const std::string filename = ("particles.vtu");
       particles_out.write_vtu_in_parallel(filename, mpi_communicator);
 
+      // Print the properties of the particles
       for (const auto &particle : (*solid_particle_handler))
         {
           deallog << "Particle index: " << particle.get_id() << std::endl;

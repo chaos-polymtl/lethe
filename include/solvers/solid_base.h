@@ -87,11 +87,10 @@ private:
   const unsigned int n_mpi_processes;
   const unsigned int this_mpi_process;
 
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
-                                                                    solid_tria;
-  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
-  DoFHandler<dim, spacedim>                                         solid_dh;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>  solid_tria;
+  std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>       fluid_tria;
+  DoFHandler<dim, spacedim>                                               solid_dh;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>>                   solid_particle_handler;
 
   Parameters::Nitsche param;
 
