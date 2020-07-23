@@ -1,0 +1,136 @@
+# Listing of Parameters
+# ---------------------
+
+
+# --------------------------------------------------
+# Simulation Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = steady
+  set number mesh adapt       = 0
+  set output name             = slip
+  set output frequency        = 1
+  set subdivision             = 1
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order        = 1
+    set pressure order        = 1
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+    set type    = none                                  # <none|iteration|end>
+end
+
+#---------------------------------------------------
+# Force
+#---------------------------------------------------
+subsection forces
+    set verbosity             = verbose
+    set calculate forces      = true
+    set calculate torques     = false
+    set force name            = force
+    set torque name           = torque
+    set output precision      = 10
+    set display precision     = 6
+    set calculation frequency = 1
+    set output frequency      = 1
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = nodal
+    subsection uvwp
+            set Function expression = 0; 0; 0
+    end
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+    set kinematic viscosity            = 1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = gmsh
+    set file name            = ../rect.msh
+end
+
+#---------------------------------------------------
+# Nitsche
+#---------------------------------------------------
+subsection nitsche
+	subsection mesh
+		set type = gmsh
+		set file name = ../base.msh
+	end
+	
+	set beta = 1000
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+    subsection uvw
+#           set Function expression = 0 ; 0 ; 0
+            set Function expression = 1*(y-0.02)/(0.1-0.02); 0 ; 0
+    end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 4
+    subsection bc 1
+    set id = 1
+        set type              = noslip
+    end
+    subsection bc 2
+    set id = 2
+        set type              = function
+        subsection u
+            set Function expression = 1
+        end
+        subsection v
+            set Function expression = 0
+        end
+    end
+end
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set verbosity               = quiet
+  set tolerance               = 1e-4
+  set max iterations          = 10
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set verbosity               = quiet
+  set method                  = gmres
+  set max iters               = 5000
+  set relative residual       = 1e-4
+  set minimum residual        = 1e-9
+  set ilu preconditioner fill = 1
+  set ilu preconditioner absolute tolerance = 1e-5
+  set ilu preconditioner relative tolerance = 1.00
+end
