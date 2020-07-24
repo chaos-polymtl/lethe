@@ -68,7 +68,7 @@ main(int argc, char *argv[])
       solid.setup_particles();
 
       // Generate the particles
-      Particles::DataOut<2>                          particles_out;
+      Particles::DataOut<2, 2>                       particles_out;
       std::shared_ptr<Particles::ParticleHandler<2>> solid_particle_handler =
         solid.get_solid_particle_handler();
       particles_out.build_patches(*solid_particle_handler);
