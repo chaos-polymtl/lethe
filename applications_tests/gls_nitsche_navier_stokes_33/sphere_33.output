@@ -1,2 +1,26 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       32768
+   Number of degrees of freedom: 143748
+   Volume of triangulation:      64
 
+*****************************************************************
+Steady iteration :        1/1
+*****************************************************************
+Newton iteration: 0  - Residual:  4.03719
+  -Tolerance of iterative solver is : 0.0403719
+  -Iterative solver took : 22 steps 
+		alpha =      1 res = 0.1849
+Newton iteration: 1  - Residual:  0.1849
+  -Tolerance of iterative solver is : 0.00184892
+  -Iterative solver took : 29 steps 
+		alpha =      1 res = 0.001728
 
++------------------------------------------+
+|  Force  summary                          |
++------------------------------------------+
+Boundary ID    f_x        f_y        f_z     
+          0 -12.298356  -0.000009  -0.277355 
+          1  12.240209   0.001553  -0.274311 
+          2  -0.000025 -12.297576  -0.277621 
+          3   0.001350  12.238228  -0.274817 
+          4  -0.007228  -0.007494 -27.216878 

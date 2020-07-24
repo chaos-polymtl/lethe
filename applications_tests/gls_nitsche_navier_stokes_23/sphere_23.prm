@@ -23,7 +23,7 @@ end
 # Timer
 #---------------------------------------------------
 subsection timer
-    set type    = iteration                                  # <none|iteration|end>
+    set type    = none                                  # <none|iteration|end>
 end
 #---------------------------------------------------
 # Force
@@ -52,7 +52,7 @@ subsection mesh
     set type                 = dealii
     set grid type            = hyper_cube
     set grid arguments	     = -2 : 2 : true
-    set initial refinement   = 4
+    set initial refinement   = 5
 end
 
 #---------------------------------------------------
@@ -61,7 +61,7 @@ end
 subsection nitsche
     subsection mesh
 	set type                 = gmsh
-	set file name		 = sphere_23.msh
+	set file name		 = ../sphere_23.msh
     end
     set beta = 100
 end
@@ -125,7 +125,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set verbosity               = verbose
+  set verbosity               = quiet
   set tolerance               = 1e-2
   set max iterations          = 10
 end
@@ -134,7 +134,7 @@ end
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-  set verbosity               = verbose
+  set verbosity               = quiet
   set method                  = gmres
   set max iters               = 5000
   set relative residual       = 1e-2
