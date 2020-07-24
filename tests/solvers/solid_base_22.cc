@@ -81,7 +81,8 @@ main(int argc, char *argv[])
           deallog << "Particle index: " << particle.get_id() << std::endl;
           deallog << "Particle location: " << particle.get_location()
                   << std::endl;
-          deallog << "Particle JxW: " << particle.get_properties()[0] << std::endl;
+          deallog << "Particle JxW: " << particle.get_properties()[0]
+                  << std::endl;
         }
     }
   catch (std::exception &exc)

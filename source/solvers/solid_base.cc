@@ -19,7 +19,6 @@
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature_lib.h>
-#include <memory.h>
 
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_nothing.h>
@@ -31,6 +30,7 @@
 
 #include <core/grids.h>
 #include <core/parameters.h>
+#include <memory.h>
 #include <solvers/solid_base.h>
 
 
@@ -76,7 +76,7 @@ SolidBase<dim, spacedim>::initial_setup()
   else
     throw std::runtime_error(
       "Unsupported mesh type - solid mesh will not be created");
-  
+
   // Refine the solid triangulation to its initial size
   solid_tria->refine_global(param.solid_mesh.initialRefinement);
 }

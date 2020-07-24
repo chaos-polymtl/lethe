@@ -44,12 +44,12 @@ main(int argc, char *argv[])
             Triangulation<3>::smoothing_on_refinement |
             Triangulation<3>::smoothing_on_coarsening));
 
-      std::shared_ptr<parallel::DistributedTriangulationBase<2,3>> solid_tria =
-        std::make_shared<parallel::distributed::Triangulation<2,3>>(
+      std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> solid_tria =
+        std::make_shared<parallel::distributed::Triangulation<2, 3>>(
           mpi_communicator,
-          typename Triangulation<2,3>::MeshSmoothing(
-            Triangulation<2,3>::smoothing_on_refinement |
-            Triangulation<2,3>::smoothing_on_coarsening));
+          typename Triangulation<2, 3>::MeshSmoothing(
+            Triangulation<2, 3>::smoothing_on_refinement |
+            Triangulation<2, 3>::smoothing_on_coarsening));
 
       // Mesh of the solid
       param.solid_mesh.type              = Parameters::Mesh::Type::dealii;
@@ -81,7 +81,8 @@ main(int argc, char *argv[])
           deallog << "Particle index: " << particle.get_id() << std::endl;
           deallog << "Particle location: " << particle.get_location()
                   << std::endl;
-          deallog << "Particle JxW: " << particle.get_properties()[0] << std::endl;
+          deallog << "Particle JxW: " << particle.get_properties()[0]
+                  << std::endl;
         }
     }
   catch (std::exception &exc)

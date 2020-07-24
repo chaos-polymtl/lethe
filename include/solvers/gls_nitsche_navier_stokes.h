@@ -55,11 +55,10 @@ private:
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
-  
+
   virtual void
-  assemble_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override;
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override;
 };
 
 
