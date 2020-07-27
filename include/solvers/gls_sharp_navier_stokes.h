@@ -75,7 +75,7 @@ private:
   force_on_ib();
 
   void
-  sharp_edge(const bool initial_step);
+  sharp_edge();
 
 
   double
@@ -108,7 +108,6 @@ private:
   const bool                       PSPG        = true;
   const double                     GLS_u_scale = 1;
   std::vector<std::vector<double>> particles;
-  bool                             initial_step_bool;
 
   TableHandler table_f;
   TableHandler table_t;

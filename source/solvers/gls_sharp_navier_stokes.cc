@@ -55,16 +55,20 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
             GeometryInfo<dim>::vertices_per_cell;
           for (unsigned int i = 0; i < vertices_per_cell; i++)
             {
-              // Add this cell as neighbors for all it's vertex
+              // First obtain vertex index
               unsigned int v_index = cell->vertex_index(i);
+
+              // Get the vector of active cell linked to that vertex
               std::vector<typename DoFHandler<dim>::active_cell_iterator>
                 adjacent = vertices_to_cell[v_index];
 
+              // Insert the cell found within that vector using a set
+              // to prevent key duplication
               std::set<typename DoFHandler<dim>::active_cell_iterator>
                 adjacent_2(adjacent.begin(), adjacent.end());
               adjacent_2.insert(cell);
 
-              // convert back the set to a vector and add it in the
+              // Convert back the set to a vector and add it in the
               // vertices_to_cell;
               std::vector<typename DoFHandler<dim>::active_cell_iterator>
                 adjacent_3(adjacent_2.begin(), adjacent_2.end());
@@ -74,6 +78,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
     }
 }
 
+// TO REFACTOR
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
@@ -341,7 +346,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
               // when the point is found outside cell that are cut by the
-              // boundayr we define the 3 point that will be used to create
+              // boundary we define the 3 point that will be used to create
               // interpolation and  extrapolation of the solution  to evalutate
               // the force on the boundart
               const Point<dim> second_point(
@@ -368,22 +373,23 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                          fourth_point);
 
 
-              // check if the cell is locally owned before doing the evalation.
+              // Check if the cell is locally owned before doing the evalation.
               if (cell_2->is_locally_owned())
                 {
                   cell_2->get_dof_indices(local_dof_indices);
                   cell_3->get_dof_indices(local_dof_indices_2);
                   cell_4->get_dof_indices(local_dof_indices_3);
-                  // define the tensor used for the velocity evaluation.
+                  // Define the tensors used for the evaluation of the velocity
                   Tensor<1, dim, double> u_1;
                   Tensor<1, dim, double> u_2;
                   Tensor<1, dim, double> u_3;
-                  // define the pressure variables
+
+                  // Define the pressure variables
                   double P1 = 0;
                   double P2 = 0;
                   double P3 = 0;
 
-                  // define the velocity component of the particle at the
+                  // Define the velocity component of the particle at the
                   // boundary on the reference point we put the reference for
                   // the velocity at the center of the particle this simplifie
                   // the evaluation of the force if the particule is moving
@@ -446,22 +452,20 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                 this->present_solution(local_dof_indices_3[j]);
                         }
                     }
-                  // evaluate the solution in the reference frame of the
+                  // Evaluate the solution in the reference frame of the
                   // particle
                   u_2[0] = u_2[0] - particles[p][2];
                   u_2[1] = u_2[1] - particles[p][3];
                   u_3[0] = u_3[0] - particles[p][2];
                   u_3[1] = u_3[1] - particles[p][3];
 
-                  // projet the velocity along the surface
-
+                  // Project the velocity along the surface
                   double U2 = (surf_vect[0] * u_2[0] + surf_vect[1] * u_2[1]) /
                               surf_vect.norm();
                   double U3 = (surf_vect[0] * u_3[0] + surf_vect[1] * u_3[1]) /
                               surf_vect.norm();
 
-                  // projet the velocity along the normal
-
+                  // Project the velocity along the normal
                   double U1_r =
                     (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
                     surf_normal.norm();
@@ -473,8 +477,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     surf_normal.norm();
 
 
-                  // define the 2 order stencil for the derivative at the
-                  // boundary  with variable length between the points
+                  // Define the 2nd order stencil for the derivative at the
+                  // boundary with variable length between the points
                   double du_dn_1 =
                     (U2 / (particles[p][5] +
                            surf_normal.norm() * (nb_step + 1) * step_ratio) -
@@ -500,14 +504,17 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) /
                                              ((nb_step + 1) + 1);
 
-                  // define the 3 order stencil for the solution at the boundary
-                  // of the pressure  with variable length between the points
+                  // Define the 3rd order stencil for the solution at the
+                  // boundary of the pressure  with variable length between the
+                  // points
                   double P_local = P1 + (nb_step + 1) * (P1 - P2) +
                                    ((nb_step + 2) * (nb_step + 1) / 2) *
                                      ((P1 - P2) - (P2 - P3));
 
 
-                  // evaluate the local force on the boundary
+                  // Evaluate the local force on the boundary
+
+                  // First evaluate the viscous force
                   double local_fx_v =
                     ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
                      (-particles[p][5] * mu * du_dn * surf_vect[0] /
@@ -519,6 +526,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       surf_vect.norm())) *
                     da;
 
+                  // Second evaluate the pressure force
                   double local_fx_p_2 =
                     P_local * da * surf_normal[0] / surf_normal.norm();
                   double local_fy_p_2 =
@@ -536,7 +544,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                 particles[p][5];
                 }
             }
-          // add the solution for each proc in one variable
+
+          // Reduce the solution for each process
           double t_torque_ =
             Utilities::MPI::sum(t_torque, this->mpi_communicator);
           double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
@@ -545,12 +554,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           double fy_v_   = Utilities::MPI::sum(fy_v, this->mpi_communicator);
 
 
-          // present the solution of the force on the boundary of the particle p
+          // Present the solution of the force on the boundary of the particle p
           if (this->this_mpi_process == 0)
             {
               if (this->nsparam.forces_parameters.verbosity ==
-                    Parameters::Verbosity::verbose &&
-                  this->this_mpi_process == 0)
+                  Parameters::Verbosity::verbose)
                 {
                   std::cout << "+------------------------------------------+"
                             << std::endl;
@@ -589,8 +597,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       if (this->this_mpi_process == 0)
         {
           if (this->nsparam.forces_parameters.verbosity ==
-                Parameters::Verbosity::verbose &&
-              this->this_mpi_process == 0)
+              Parameters::Verbosity::verbose)
             {
               std::cout << "+------------------------------------------+"
                         << std::endl;
@@ -603,8 +610,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         }
     }
 
-  // same structure as for the 2d case but used 3 d variable  so there is 1 more
-  // vectore on the surface for the evaluation
+  // same structure as for the 2d case but used 3d variables  so there is 1 more
+  // vector on the surface for the evaluation
   if (dim == 3)
     {
       QGauss<dim>   q_formula(this->fe.degree + 1);
@@ -642,14 +649,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
               center_immersed(1) = particles[p][1];
             }
 
-
           double torque_x = 0;
           double torque_y = 0;
           double torque_z = 0;
 
-          double fx_v   = 0;
-          double fy_v   = 0;
-          double fz_v   = 0;
+          double fx_v = 0;
+          double fy_v = 0;
+          double fz_v = 0;
+
           double fx_p_2 = 0;
           double fy_p_2 = 0;
           double fz_p_2 = 0;
@@ -661,6 +668,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   Tensor<1, dim, double> surf_normal;
                   Tensor<1, dim, double> surf_vect_1;
                   Tensor<1, dim, double> surf_vect_2;
+
                   double theta  = (i + 0.5) * PI / (nb_evaluation);
                   double phi    = j * 2 * PI / (nb_evaluation);
                   double dtheta = PI / (nb_evaluation);
@@ -674,6 +682,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     particles[p][9] * sin(theta) * cos(phi) + center_x,
                     particles[p][9] * sin(theta) * sin(phi) + center_y,
                     particles[p][9] * cos(theta) + center_z);
+
                   double step_ratio = 0.5;
                   surf_normal[0]    = dr * (sin(theta) * cos(phi));
                   surf_normal[1]    = dr * (sin(theta) * sin(phi));
@@ -716,11 +725,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           for (unsigned int j = 0; j < local_dof_indices.size();
                                ++j)
                             {
-                              // count the number of dof that ar smaller or
+                              // Count the number of dof that ar smaller or
                               // larger then the radius of the particles if all
                               // the dof are on one side the cell is not cut by
                               // the boundary meaning we dont have to do
                               // anything
+
                               if ((support_points[local_dof_indices[j]] -
                                    center_immersed)
                                     .norm() <=
@@ -755,10 +765,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio,
                     eval_point[2] +
                       surf_normal[2] * (nb_step + 1) * step_ratio);
+
                   const Point<dim> third_point(
                     second_point[0] + surf_normal[0] * step_ratio,
                     second_point[1] + surf_normal[1] * step_ratio,
                     second_point[2] + surf_normal[2] * step_ratio);
+
                   const Point<dim> fourth_point(
                     third_point[0] + surf_normal[0] * step_ratio,
                     third_point[1] + surf_normal[1] * step_ratio,
@@ -774,12 +786,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     GridTools::find_active_cell_around_point(this->dof_handler,
                                                              fourth_point);
 
-
                   if (cell_2->is_locally_owned())
                     {
                       cell_2->get_dof_indices(local_dof_indices);
                       cell_3->get_dof_indices(local_dof_indices_2);
                       cell_4->get_dof_indices(local_dof_indices_3);
+
                       // Define the tensor used for the velocity evaluation.
                       Tensor<1, dim, double> u_1;
                       Tensor<1, dim, double> u_2;
@@ -803,21 +815,21 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                  surf_normal[1] / surf_normal.norm() -
                                particles[p][7] * particles[p][9] *
                                  surf_normal[0] / surf_normal.norm();
-                      ;
 
-                      // projection of the speed of the boundary on the plan of
+                      // Projection of the speed of the boundary on the plan of
                       // the surface used for evaluation
                       double U1_1 =
                         (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] +
                          surf_vect_1[2] * u_1[2]) /
                         surf_vect_1.norm();
+
                       double U1_2 =
                         (surf_vect_2[0] * u_1[0] + surf_vect_2[1] * u_1[1] +
                          surf_vect_2[2] * u_1[2]) /
                         surf_vect_2.norm();
 
 
-                      // used support function of the cell to define the
+                      // Used support function of the cell to define the
                       // interpolation of the velocity
                       Point<dim> second_point_v =
                         immersed_map.transform_real_to_unit_cell(cell_2,
@@ -860,7 +872,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             }
                         }
 
-                      // evaluate the solution in the reference frame of the
+                      // Evaluate the solution in the reference frame of the
                       // particle
                       u_2[0] = u_2[0] - particles[p][3];
                       u_2[1] = u_2[1] - particles[p][4];
@@ -902,6 +914,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             surf_normal.norm() * (nb_step + 1) * step_ratio) -
                          U1_1 / particles[p][9]) /
                         ((nb_step + 1) * surf_normal.norm() * step_ratio);
+
                       double du_dn_2_1 =
                         (U3_1 /
                            (particles[p][9] +
@@ -917,6 +930,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             surf_normal.norm() * (nb_step + 1) * step_ratio) -
                          U1_2 / particles[p][9]) /
                         ((nb_step + 1) * surf_normal.norm() * step_ratio);
+
                       double du_dn_2_2 =
                         (U3_2 /
                            (particles[p][9] +
@@ -930,19 +944,21 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       double du_dr_1 =
                         (U2_r - U1_r) /
                         ((nb_step + 1) * surf_normal.norm() * step_ratio);
+
                       double du_dr_2 =
                         (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
 
                       double du_dn_1 = du_dn_1_1 - (du_dn_2_1 - du_dn_1_1) *
                                                      (nb_step + 1) /
                                                      ((nb_step + 1) + 1);
+
                       double du_dn_2 = du_dn_1_2 - (du_dn_2_2 - du_dn_1_2) *
                                                      (nb_step + 1) /
                                                      ((nb_step + 1) + 1);
+
                       double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) *
                                                  (nb_step + 1) /
                                                  ((nb_step + 1) + 1);
-
 
                       double P_local = P1 + (nb_step + 1) * (P1 - P2) +
                                        ((nb_step + 2) * (nb_step + 1) / 2) *
@@ -956,6 +972,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                          (-particles[p][9] * mu * du_dn_2 * surf_vect_2[0] /
                           surf_vect_2.norm())) *
                         da;
+
                       double local_fy_v =
                         ((-mu * du_dr * 2 * surf_normal[1] /
                           surf_normal.norm()) +
@@ -964,6 +981,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                          (-particles[p][9] * mu * du_dn_2 * surf_vect_2[1] /
                           surf_vect_2.norm())) *
                         da;
+
                       double local_fz_v =
                         ((-mu * du_dr * 2 * surf_normal[2] /
                           surf_normal.norm()) +
@@ -1015,13 +1033,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           double fy_v_   = Utilities::MPI::sum(fy_v, this->mpi_communicator);
           double fz_v_   = Utilities::MPI::sum(fz_v, this->mpi_communicator);
 
-
-
           if (this->this_mpi_process == 0)
             {
               if (this->nsparam.forces_parameters.verbosity ==
-                    Parameters::Verbosity::verbose &&
-                  this->this_mpi_process == 0)
+                  Parameters::Verbosity::verbose)
                 {
                   std::cout << "+------------------------------------------+"
                             << std::endl;
@@ -1065,8 +1080,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       if (this->this_mpi_process == 0)
         {
           if (this->nsparam.forces_parameters.verbosity ==
-                Parameters::Verbosity::verbose &&
-              this->this_mpi_process == 0)
+              Parameters::Verbosity::verbose)
             {
               std::cout << "+------------------------------------------+"
                         << std::endl;
@@ -1169,8 +1183,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                                        this->dof_handler,
                                        support_points);
 
-  double l2errorU = 0.;
-  double div      = 0.;
+  double l2errorU                  = 0.;
+  double total_velocity_divergence = 0.;
 
   // loop over elements
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
@@ -1198,7 +1212,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 }
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // count the number of dof that ar smaller or larger then the
+                  // Count the number of dof that ar smaller or larger then the
                   // radius of the particles if all the dof are on one side the
                   // cell is not cut by the boundary meaning we dont have to do
                   // anything
@@ -1235,7 +1249,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                 {
                   double present_velocity_divergence =
                     trace(present_velocity_gradients[q]);
-                  div += present_velocity_divergence * fe_values.JxW(q);
+                  total_velocity_divergence +=
+                    present_velocity_divergence * fe_values.JxW(q);
 
 
                   // Find the values of x and u_h (the finite element solution)
@@ -1262,9 +1277,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
         }
     }
   l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
-  div      = Utilities::MPI::sum(div, this->mpi_communicator);
+  total_velocity_divergence =
+    Utilities::MPI::sum(total_velocity_divergence, this->mpi_communicator);
 
-  this->pcout << "div u : " << div << std::endl;
+  this->pcout << "div u : " << total_velocity_divergence << std::endl;
 
   return std::sqrt(l2errorU);
 }
@@ -1272,14 +1288,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
+GLSSharpNavierStokesSolver<dim>::sharp_edge()
 {
-  // This function define a immersed boundary base on the sharp edge method on a
-  // hyper_shere of dim 2 or 3
-
-  // define stuff  in a later version the center of the hyper_sphere would be
-  // defined by a particle handler and the boundary condition associeted with it
-  // also.
+  // This function defines a Immersed Boundary based on the sharp edge method on
+  // a hyper_shere of dim=2 or dim=3
 
   using numbers::PI;
   Point<dim>                                                  center_immersed;
@@ -1289,16 +1301,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
     active_neighbors_set;
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
     active_neighbors_2;
-  // Vector <int> dof_done;
-  // dof_done.reinit(this->dof_handler.n_dofs());
-  // define a map to all dof and it's support point
+
+
+  // Define a map to all dof and it's support point
   MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(immersed_map,
                                        this->dof_handler,
                                        support_points);
 
-  // initalise fe value object in order to do calculation with it later
+  // Initalize fe value object in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(this->fe,
                           q_formula,
@@ -1308,7 +1320,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
 
   unsigned int n_q_points = q_formula.size();
-  // define multiple local_dof_indices one for the cell iterator one for the
+
+  // Define multiple local_dof_indices one for the cell iterator one for the
   // cell with the second point for the sharp edge stancil and one for
   // manipulation on the neighbors cell.
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -1316,20 +1329,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
   std::vector<types::global_dof_index> local_dof_indices_3(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices_4(dofs_per_cell);
   std::set<unsigned int>               clear_line;
-  // define minimal cell length
 
-  double dr =
-    (GridTools::minimal_cell_diameter(*this->triangulation) *
-     GridTools::minimal_cell_diameter(*this->triangulation)) /
-    sqrt(2 * (GridTools::minimal_cell_diameter(*this->triangulation) *
-              GridTools::minimal_cell_diameter(*this->triangulation)));
+  // Define minimal cell length
+  double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(2);
 
-  // define cell iterator
+  // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
 
-  this->system_matrix.compress(VectorOperation::insert);
-
-  // loop on all the cell to define if the sharp edge cut them
+  // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
       if (cell->is_locally_owned())
@@ -1339,12 +1346,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
           cell->get_dof_indices(local_dof_indices);
           std::vector<int> set_pressure_cell;
           set_pressure_cell.resize(particles.size());
-          // define the order of magnetude for the stencil.
+
+          // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
-            {
-              sum_line += fe_values.JxW(qf);
-            }
-          // loop over all particle  to see if one of them is cutting this cell
+            sum_line += fe_values.JxW(qf);
+
+          // Loop over all particle  to see if one of them is cutting this cell
           for (unsigned int p = 0; p < particles.size(); ++p)
             {
               unsigned int count_small = 0;
@@ -1352,8 +1359,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                 {
                   center_immersed(0) = particles[p][0];
                   center_immersed(1) = particles[p][1];
-                  // define arbitrary point on the boundary where the pressure
-                  // will be link between the 2 domain
+                  // Define a arbitrary points on the boundary where the
+                  // pressure will be link between the 2 domain
                   pressure_bridge(0) =
                     particles[p][0] -
                     this->nsparam.particlesParameters.pressure_offset[p][0];
@@ -1366,7 +1373,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                   center_immersed(0) = particles[p][0];
                   center_immersed(1) = particles[p][1];
                   center_immersed(2) = particles[p][2];
-                  // define arbitrary point on the boundary where the pressure
+                  // Define arbitrary points on the boundary where the pressure
                   // will be link between the 2 domain
                   pressure_bridge(0) =
                     particles[p][0] -
@@ -1381,18 +1388,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
               for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                 {
-                  // count the number of dof that ar smaller or larger then the
+                  // Count the number of dof that are smaller or larger then the
                   // radius of the particles if all the dof are on one side the
                   // cell is not cut by the boundary meaning we dont have to do
                   // anything
                   if ((support_points[local_dof_indices[j]] - center_immersed)
                         .norm() <= particles[p][particles[p].size() - 1])
-                    {
-                      ++count_small;
-                    }
+                    ++count_small;
                 }
 
-              // impose the pressure inside the particle if the inside of the
+              // Impose the pressure inside the particle if the inside of the
               // particle is solved
               if (this->nsparam.particlesParameters.assemble_inside &
                   this->nsparam.particlesParameters.P_assemble ==
@@ -1401,7 +1406,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                   bool cell_found = false;
                   try
                     {
-                      // define the cell and check if the point is inside of the
+                      // Define the cell and check if the point is inside of the
                       // cell
                       const Point<dim, double> p_cell =
                         immersed_map.transform_real_to_unit_cell(
@@ -1411,7 +1416,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
                       if (dist_2 == 0)
                         {
-                          // if the point is in this cell then the dist is equal
+                          // If the point is in this cell then the dist is equal
                           // to 0 and we have found our cell
                           cell_found = true;
                         }
@@ -1468,22 +1473,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                               local_dof_indices[dim],
                                               sum_line);
 
-                      if (initial_step)
-                        this->system_rhs(inside_index) =
-                          0 -
-                          this->local_evaluation_point(inside_index) * sum_line;
-                      else
-                        this->system_rhs(inside_index) = 0;
+                      this->system_rhs(inside_index) =
+                        0 -
+                        this->local_evaluation_point(inside_index) * sum_line;
                     }
                 }
 
 
-              // if the cell is cut by the IB the count wont equal 0 or the
+              // If the cell is cut by the IB the count is not 0 or the
               // number of total dof in a cell
 
-              if (count_small != 0 and count_small != local_dof_indices.size())
+              if (count_small != 0 && count_small != local_dof_indices.size())
                 {
-                  // if we are here the cell is cut by the immersed boundary
+                  // If we are here the cell is cut by the immersed boundary
                   // loops on the dof that reprensant the velocity  component
                   // and pressure separately
                   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
@@ -1493,14 +1495,15 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
                       if (component_i < dim)
                         {
-                          // we are working on the velocity of th
+                          // We are working on the velocity of th
                           // loops on the dof that are for vx or vy separately
                           // loops on all the dof of the the cell that represent
                           // a specific component
                           // define which dof is going to be redefine
-                          unsigned int global_index_overrigth =
+                          unsigned int global_index_overwrite =
                             local_dof_indices[i];
-                          // define the distance vector between the
+
+                          // Define the distance vector between the
                           // immersed boundary and the dof support point
                           // for each dof
                           Tensor<1, dim, double> vect_dist =
@@ -1513,18 +1516,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                 center_immersed)
                                  .norm());
 
-                          // define the other points for the stencil (
-                          // IB point, original dof and the other
-                          // points) this goes up to a 5 point stencil.
-
-                          // define the length ratio that represent the
-                          // zone used for the stencil. the length is
-                          // define as the length between the dof and
+                          // Define the length ratio that represent the
+                          // zone used for the stencil. The length is
+                          // defined as the length between the dof and
                           // the IB
-                          unsigned int length_ratio = 8;
+                          unsigned int length_ratio    = 8;
+                          double       length_fraction = 1. / length_ratio;
 
-                          double length_fraction = 1. / length_ratio;
-
+                          // Define the other points for the stencil
+                          // (IB point, original dof and the other
+                          // points) this goes up to a 5 point stencil.
                           Point<dim, double> first_point(
                             support_points[local_dof_indices[i]] - vect_dist);
 
@@ -1557,10 +1558,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                           double fp1_5;
                           double sp_5;
 
-                          // define the stencil coefficient in function
-                          // of the length ratio. this will be
-                          // automaticly generated in futur version
-
+                          // Define the stencil coefficient in function
+                          // of the length ratio. This will be
+                          // automatically generated in future version
                           if (length_ratio == 4)
                             {
                               dof_2 = 5;
@@ -1608,20 +1608,21 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                             }
 
 
-                          // define the vertex associated with the dof
+                          // Define the vertex associated with the dof
                           unsigned int cell_found = 0;
                           bool         break_bool = false;
                           for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
                             {
                               unsigned int v_index = cell->vertex_index(vi);
-                              // get a cell iterator for all the cell
+
+                              // Get a cell iterator for all the cell
                               // neighbors of that vertex
                               active_neighbors_set =
                                 this->vertices_to_cell[v_index];
                               unsigned int n_active_cells =
                                 active_neighbors_set.size();
 
-                              // loops on those cell to find in which of
+                              // Loops on those cell to find in which of
                               // them the new point for or sharp edge
                               // stencil is
                               for (unsigned int cell_index = 0;
@@ -1630,7 +1631,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                 {
                                   try
                                     {
-                                      // define the cell and check if
+                                      // Define the cell and check if
                                       // the point is inside of the cell
                                       const Point<dim, double> p_cell =
                                         immersed_map
@@ -1644,7 +1645,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       // the point is inside of the cell
                                       if (dist_2 == 0)
                                         {
-                                          // if the point is in this
+                                          // If the point is in this
                                           // cell then the dist is equal
                                           // to 0 and we have found our
                                           // cell
@@ -1666,7 +1667,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                           auto &cell_2       = active_neighbors[cell_found];
                           bool  skip_stencil = false;
 
-
                           if (break_bool == false)
                             {
                               std::cout << "cell not found around point "
@@ -1680,16 +1680,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                               cell_2->get_dof_indices(local_dof_indices_2);
                               std::cout
                                 << "dof point  "
-                                << support_points[global_index_overrigth]
+                                << support_points[global_index_overwrite]
                                 << std::endl;
                             }
 
 
 
-                          // we have or next cell needed to complete the
+                          // We have or next cell needed to complete the
                           // stencil
 
-                          // define the unit cell points for the points
+                          // Define the unit cell points for the points
                           // used in the stencil for extrapolation.
                           Point<dim> first_point_v =
                             immersed_map.transform_real_to_unit_cell(
@@ -1709,11 +1709,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
                           cell_2->get_dof_indices(local_dof_indices_2);
 
-                          // clear the current line of this dof  by
+                          // Clear the current line of this dof  by
                           // looping on the neighbors cell of this dof
                           // and clear all the associated dof
-
-
                           for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
                             {
                               unsigned int v_index = cell->vertex_index(vi);
@@ -1727,7 +1725,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                   cell_3->get_dof_indices(local_dof_indices_3);
                                   if (std::find(local_dof_indices_3.begin(),
                                                 local_dof_indices_3.end(),
-                                                global_index_overrigth) !=
+                                                global_index_overwrite) !=
                                       local_dof_indices_3.end())
                                     {
                                       for (unsigned int o = 0;
@@ -1735,7 +1733,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                            ++o)
                                         {
                                           this->system_matrix.set(
-                                            global_index_overrigth,
+                                            global_index_overwrite,
                                             local_dof_indices_3[o],
                                             0);
                                         }
@@ -1743,31 +1741,29 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                 }
                             }
 
-
-
-                          // check if the DOF intersect the IB
+                          // Check if the DOF intersect the IB
                           bool do_rhs = false;
                           if (cell_2 == cell)
                             {
                               skip_stencil = true;
-                              this->system_matrix.set(global_index_overrigth,
-                                                      global_index_overrigth,
+                              this->system_matrix.set(global_index_overwrite,
+                                                      global_index_overwrite,
                                                       sum_line);
-                              this->system_rhs(global_index_overrigth) = 0;
+                              this->system_rhs(global_index_overwrite) = 0;
                               // Tolerence to define a intersection of
                               // the DOF and IB
-                              if (vect_dist.norm() <= 0.000000000001 * dr)
+                              if (vect_dist.norm() <= 1e-12 * dr)
                                 {
                                   do_rhs = true;
                                 }
                               else
                                 {
-                                  this->system_rhs(global_index_overrigth) = 0;
+                                  this->system_rhs(global_index_overwrite) = 0;
                                 }
                             }
 
 
-                          // define the variable used for the
+                          // Define the variable used for the
                           // extrapolation of the actual solution at the
                           // boundary in order to define the correction
                           double local_interp_sol   = 0;
@@ -1775,23 +1771,23 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                           double local_interp_sol_3 = 0;
                           double local_interp_sol_4 = 0;
 
-                          // define the new matrix entry for this dof
+                          // Define the new matrix entry for this dof
                           if (skip_stencil == false)
                             {
-                              // first the dof itself
+                              // First the dof itself
                               for (unsigned int j = 0;
                                    j < local_dof_indices_2.size();
                                    ++j)
                                 {
-                                  // first the dof itself
+                                  // First the dof itself
                                   const unsigned int component_j =
                                     this->fe.system_to_component_index(j).first;
                                   if (component_j == component_i)
                                     {
-                                      if (global_index_overrigth ==
+                                      if (global_index_overwrite ==
                                           local_dof_indices_2[j])
                                         {
-                                          // define the solution at each
+                                          // Define the solution at each
                                           // point used for the stencil and
                                           // applied the stencil for the
                                           // specfic dof. for stencil with
@@ -1804,7 +1800,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 .order == 2)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_2 *
                                                     this->fe.shape_value(
@@ -1824,7 +1820,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 .order == 3)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_3 *
                                                     this->fe.shape_value(
@@ -1855,7 +1851,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 .order > 5)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 this->fe.shape_value(
                                                   j, first_point_v) *
@@ -1873,7 +1869,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                   .order == 5)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 dof_5 * sum_line +
                                                   sp_5 *
@@ -1924,7 +1920,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                   local_dof_indices_2[j]);
                                             }
                                         }
-                                      // then the third point trough
+                                      // Then the third point trough
                                       // interpolation from the dof of the
                                       // cell in which the third point is
                                       else
@@ -1933,7 +1929,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 .order == 2)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_2 *
                                                   this->fe.shape_value(
@@ -1952,7 +1948,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 .order == 3)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_3 *
                                                     this->fe.shape_value(
@@ -1982,7 +1978,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                 .order > 5)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 this->fe.shape_value(
                                                   j, first_point_v) *
@@ -2000,7 +1996,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                                   .order == 5)
                                             {
                                               this->system_matrix.set(
-                                                global_index_overrigth,
+                                                global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_5 *
                                                     this->fe.shape_value(
@@ -2055,11 +2051,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
 
 
-                          // define the rhs of the stencil used for the
-                          // Ib
+                          // Define the RHS of the stencil used for the
+                          // IB
                           if (skip_stencil == false or do_rhs)
                             {
-                              // different boundary condition depending
+                              // Different boundary condition depending
                               // if the dof is vx ,vy or vz and if the
                               // problem we solve is 2d or 3d.
                               if (component_i == 0)
@@ -2106,7 +2102,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       2)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_2 -
                                                 local_interp_sol * sp_2;
                                     }
@@ -2114,7 +2110,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       3)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_3 -
                                                 local_interp_sol * sp_3 -
                                                 local_interp_sol_2 * tp_3;
@@ -2129,7 +2125,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                         5)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_5 -
                                                 local_interp_sol * sp_5 -
                                                 local_interp_sol_2 * tp_5 -
@@ -2138,13 +2134,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                     }
 
 
-                                  this->system_rhs(global_index_overrigth) =
+                                  this->system_rhs(global_index_overwrite) =
                                     vx * sum_line + rhs_add;
                                   if (do_rhs)
-                                    this->system_rhs(global_index_overrigth) =
+                                    this->system_rhs(global_index_overwrite) =
                                       vx * sum_line -
                                       this->evaluation_point(
-                                        global_index_overrigth) *
+                                        global_index_overwrite) *
                                         sum_line;
                                 }
                               else if (component_i == 1)
@@ -2191,7 +2187,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       2)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_2 -
                                                 local_interp_sol * sp_2;
                                     }
@@ -2199,7 +2195,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       3)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_3 -
                                                 local_interp_sol * sp_3 -
                                                 local_interp_sol_2 * tp_3;
@@ -2213,7 +2209,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                         5)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_5 -
                                                 local_interp_sol * sp_5 -
                                                 local_interp_sol_2 * tp_5 -
@@ -2222,13 +2218,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                     }
 
 
-                                  this->system_rhs(global_index_overrigth) =
+                                  this->system_rhs(global_index_overwrite) =
                                     vy * sum_line + rhs_add;
                                   if (do_rhs)
-                                    this->system_rhs(global_index_overrigth) =
+                                    this->system_rhs(global_index_overwrite) =
                                       vy * sum_line -
                                       this->evaluation_point(
-                                        global_index_overrigth) *
+                                        global_index_overwrite) *
                                         sum_line;
                                 }
                               else if (component_i == 2 & dim == 3)
@@ -2255,7 +2251,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       2)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_2 -
                                                 local_interp_sol * sp_2;
                                     }
@@ -2263,7 +2259,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       3)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_3 -
                                                 local_interp_sol * sp_3 -
                                                 local_interp_sol_2 * tp_3;
@@ -2272,12 +2268,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                       5)
                                     rhs_add = -local_interp_sol;
                                   if (this->nsparam.particlesParameters.order ==
-                                        4 or
+                                        4 ||
                                       this->nsparam.particlesParameters.order ==
                                         5)
                                     {
                                       rhs_add = -this->evaluation_point(
-                                                  global_index_overrigth) *
+                                                  global_index_overwrite) *
                                                   sum_line * dof_5 -
                                                 local_interp_sol * sp_5 -
                                                 local_interp_sol_2 * tp_5 -
@@ -2286,13 +2282,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                     }
 
 
-                                  this->system_rhs(global_index_overrigth) =
+                                  this->system_rhs(global_index_overwrite) =
                                     vz * sum_line + rhs_add;
                                   if (do_rhs)
-                                    this->system_rhs(global_index_overrigth) =
+                                    this->system_rhs(global_index_overwrite) =
                                       vz * sum_line -
                                       this->evaluation_point(
-                                        global_index_overrigth) *
+                                        global_index_overwrite) *
                                         sum_line;
                                 }
                             }
@@ -2300,14 +2296,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
                       if (component_i == dim)
                         {
-                          // applied equation on dof that have no equation
-                          // define for them. those DOF become Dummy dof This is
-                          // usefull for high order cell or when a dof is only
-                          // element of cell that are cuts
+                          // Applied equation on dof that have no equation
+                          // define for them. those DOF become Dummy dof. This
+                          // is usefull for high order cell or when a dof is
+                          // only element of cell that are cut.
                           unsigned int vertex_per_cell =
                             GeometryInfo<dim>::vertices_per_cell;
 
-                          unsigned int global_index_overrigth =
+                          unsigned int global_index_overwrite =
                             local_dof_indices[i];
                           bool dummy_dof = true;
                           for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
@@ -2325,21 +2321,20 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                        o < local_dof_indices_3.size();
                                        ++o)
                                     {
-                                      if (global_index_overrigth ==
+                                      if (global_index_overwrite ==
                                           local_dof_indices_3[o])
                                         {
                                           // cell_3 contain the same dof
                                           // check if this cell is cut if
                                           // it's not cut this dof must not
-                                          // be overright
-
+                                          // be overwritten
                                           unsigned int count_small_1 = 0;
                                           for (unsigned int q = 0;
                                                q < local_dof_indices_3.size();
                                                ++q)
                                             {
-                                              // count the number of dof
-                                              // that ar smaller or
+                                              // Count the number of dof
+                                              // that are smaller or
                                               // larger then the radius
                                               // of the particles if all
                                               // the dof are on one side
@@ -2370,10 +2365,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
                           if (dummy_dof)
                             {
-                              this->system_matrix.set(global_index_overrigth,
-                                                      global_index_overrigth,
+                              this->system_matrix.set(global_index_overwrite,
+                                                      global_index_overwrite,
                                                       sum_line);
-                              this->system_rhs(global_index_overrigth) = 0;
+                              this->system_rhs(global_index_overwrite) = 0;
                             }
                         }
                     }
@@ -2384,7 +2379,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
 
   this->system_matrix.compress(VectorOperation::insert);
   this->system_rhs.compress(VectorOperation::insert);
-  initial_step_bool = false;
 }
 
 template <int dim>
@@ -3103,7 +3097,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
   vertices_cell_mapping();
-  sharp_edge(initial_step_bool);
+  sharp_edge();
 }
 template <int dim>
 void
@@ -3211,7 +3205,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
   vertices_cell_mapping();
-  sharp_edge(initial_step_bool);
+  sharp_edge();
 }
 
 template <int dim>
@@ -3237,7 +3231,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
-  initial_step_bool = true;
 
   while (this->simulationControl->integrate())
     {
@@ -3257,9 +3250,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       this->finish_time_step();
 
       force_on_ib();
-      // finish_time_step_particles();
 
-      initial_step_bool = true;
       MPI_Barrier(this->mpi_communicator);
     }
 
@@ -3267,7 +3258,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 }
 
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
-// valid before we actually compile the solver This greatly helps with debugging
+// Pre-compile the 2D and 3D versopm solver to ensure that the library is
+// valid before we actually compile the final solver
 template class GLSSharpNavierStokesSolver<2>;
 template class GLSSharpNavierStokesSolver<3>;
