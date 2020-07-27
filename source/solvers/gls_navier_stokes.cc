@@ -845,7 +845,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1127,6 +1127,7 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
     }
 }
 
+
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
@@ -1154,6 +1155,12 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                      absolute_residual,
                      relative_residual,
                      renewed_matrix);
+  else if (this->nsparam.linear_solver.solver ==
+           Parameters::LinearSolver::SolverType::direct)
+    solve_system_direct(initial_step,
+                        absolute_residual,
+                        relative_residual,
+                        renewed_matrix);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
@@ -1388,6 +1395,34 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
     this->newton_update = completely_distributed_solution;
   }
+}
+
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
+                                                const double absolute_residual,
+                                                const double relative_residual,
+                                                const bool   renewed_matrix)
+{
+  const AffineConstraints<double> &constraints_used =
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
+  const double linear_solver_tolerance =
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    this->locally_owned_dofs, this->mpi_communicator);
+
+  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
+                               linear_solver_tolerance,
+                               true,
+                               true);
+  TrilinosWrappers::SolverDirect solver(solver_control);
+
+  solver.initialize(system_matrix);
+  solver.solve(completely_distributed_solution, this->system_rhs);
+  constraints_used.distribute(completely_distributed_solution);
+  this->newton_update = completely_distributed_solution;
 }
 
 template <int dim>

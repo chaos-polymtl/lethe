@@ -20,7 +20,7 @@
 #ifndef LETHE_GLSSHARPNS_H
 #define LETHE_GLSSHARPNS_H
 
-#include "navier_stokes_base.h"
+#include "gls_navier_stokes.h"
 
 using namespace dealii;
 
@@ -36,8 +36,7 @@ using namespace dealii;
  */
 
 template <int dim>
-class GLSSharpNavierStokesSolver
-  : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
+class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
 {
 public:
   GLSSharpNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
@@ -49,11 +48,6 @@ public:
   solve();
 
 protected:
-  virtual void
-  setup_dofs();
-  void
-  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
-                        bool                             restart = false);
   void
   set_solution_vector(double value);
 
@@ -111,66 +105,12 @@ private:
   void
   assemble_L2_projection();
 
-  /**
-   * Interface for the solver for the linear system of equations
-   */
-  void
-  solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true) override;
-
-  void
-  solve_system_direct(const bool   initial_step,
-                      const double absolute_residual,
-                      const double relative_residual,
-                      const bool   renewed_matrix);
-  /**
-   * GMRES solver with ILU(N) preconditioning
-   */
-  void
-  solve_system_GMRES(const bool   initial_step,
-                     const double absolute_residual,
-                     const double relative_residual,
-                     const bool   renewed_matrix);
-
-  /**
-   * BiCGStab solver with ILU(N) preconditioning
-   */
-  void
-  solve_system_BiCGStab(const bool   initial_step,
-                        const double absolute_residual,
-                        const double relative_residual,
-                        const bool   renewed_matrix);
-
-  /**
-   * AMG preconditioner with ILU smoother and coarsener and GMRES final solver
-   */
-  void
-  solve_system_AMG(const bool   initial_step,
-                   const double absolute_residual,
-                   const double relative_residual,
-                   const bool   renewed_matrix);
-
-  /**
-   * Set-up AMG preconditioner
-   */
-  void
-  setup_AMG();
-
-  /**
-   * Set-up ILU preconditioner
-   */
-  void
-  setup_ILU();
 
 
   /**
    * Members
    */
 private:
-  SparsityPattern                                    sparsity_pattern;
-  TrilinosWrappers::SparseMatrix                     system_matrix;
-  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-  std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
   std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>>
                                    vertices_to_cell;
   const bool                       SUPG        = false;

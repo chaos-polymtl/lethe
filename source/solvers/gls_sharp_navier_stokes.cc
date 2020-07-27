@@ -31,10 +31,7 @@ GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
   NavierStokesSolverParameters<dim> &p_nsparam,
   const unsigned int                 p_degreeVelocity,
   const unsigned int                 p_degreePressure)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(
-      p_nsparam,
-      p_degreeVelocity,
-      p_degreePressure)
+  : GLSNavierStokesSolver<dim>(p_nsparam, p_degreeVelocity, p_degreePressure)
 {}
 
 template <int dim>
@@ -50,193 +47,6 @@ void
 GLSSharpNavierStokesSolver<dim>::set_solution_vector(double value)
 {
   this->present_solution = value;
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::setup_dofs()
-{
-  TimerOutput::Scope t(this->computing_timer, "setup_dofs");
-
-  // Clear the preconditioner before the matrix they are associated with is
-  // cleared
-  amg_preconditioner.reset();
-  ilu_preconditioner.reset();
-
-  // Now reset system matrix
-  system_matrix.clear();
-
-  this->dof_handler.distribute_dofs(this->fe);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler);
-
-  this->locally_owned_dofs = this->dof_handler.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(this->dof_handler,
-                                          this->locally_relevant_dofs);
-
-  const MappingQ<dim>        mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
-  FEValuesExtractors::Vector velocities(0);
-
-  // Non-zero constraints
-  {
-    this->nonzero_constraints.clear();
-
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->nonzero_constraints);
-    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->nsparam.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::noslip)
-          {
-            VectorTools::interpolate_boundary_values(
-              mapping,
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              ZeroFunction<dim>(dim + 1),
-              this->nonzero_constraints,
-              this->fe.component_mask(velocities));
-          }
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::slip)
-          {
-            std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert(
-              this->nsparam.boundary_conditions.id[i_bc]);
-            VectorTools::compute_no_normal_flux_constraints(
-              this->dof_handler,
-              0,
-              no_normal_flux_boundaries,
-              this->nonzero_constraints);
-          }
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::function)
-          {
-            VectorTools::interpolate_boundary_values(
-              mapping,
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              NavierStokesFunctionDefined<dim>(
-                &this->nsparam.boundary_conditions.bcFunctions[i_bc].u,
-                &this->nsparam.boundary_conditions.bcFunctions[i_bc].v,
-                &this->nsparam.boundary_conditions.bcFunctions[i_bc].w),
-              this->nonzero_constraints,
-              this->fe.component_mask(velocities));
-          }
-
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              this->nsparam.boundary_conditions.periodic_id[i_bc],
-              this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->nonzero_constraints);
-          }
-      }
-  }
-  this->nonzero_constraints.close();
-
-  {
-    this->zero_constraints.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->zero_constraints);
-
-    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
-         ++i_bc)
-      {
-        if (this->nsparam.boundary_conditions.type[i_bc] ==
-            BoundaryConditions::BoundaryType::slip)
-          {
-            std::set<types::boundary_id> no_normal_flux_boundaries;
-            no_normal_flux_boundaries.insert(
-              this->nsparam.boundary_conditions.id[i_bc]);
-            VectorTools::compute_no_normal_flux_constraints(
-              this->dof_handler,
-              0,
-              no_normal_flux_boundaries,
-              this->zero_constraints);
-          }
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
-                 BoundaryConditions::BoundaryType::periodic)
-          {
-            DoFTools::make_periodicity_constraints<DoFHandler<dim>>(
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              this->nsparam.boundary_conditions.periodic_id[i_bc],
-              this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->zero_constraints);
-          }
-        else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
-          // || Parameters::function)
-          {
-            VectorTools::interpolate_boundary_values(
-              mapping,
-              this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              ZeroFunction<dim>(dim + 1),
-              this->zero_constraints,
-              this->fe.component_mask(velocities));
-          }
-      }
-  }
-  this->zero_constraints.close();
-
-  this->present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
-  this->solution_m1.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m2.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m3.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-
-  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
-                                      this->mpi_communicator);
-
-  DynamicSparsityPattern dsp(this->locally_relevant_dofs);
-  DoFTools::make_sparsity_pattern(this->dof_handler,
-                                  dsp,
-                                  this->nonzero_constraints,
-                                  false);
-#if !(DEAL_II_VERSION_GTE(9, 2, 0))
-  SparsityTools::distribute_sparsity_pattern(
-    dsp,
-    this->dof_handler.compute_n_locally_owned_dofs_per_processor(),
-    this->mpi_communicator,
-    this->locally_relevant_dofs);
-  system_matrix.reinit(this->locally_owned_dofs,
-                       this->locally_owned_dofs,
-                       dsp,
-                       this->mpi_communicator);
-#else
-  SparsityTools::distribute_sparsity_pattern(
-    dsp,
-    this->dof_handler.locally_owned_dofs(),
-    this->mpi_communicator,
-    this->locally_relevant_dofs);
-  system_matrix.reinit(this->locally_owned_dofs,
-                       this->locally_owned_dofs,
-                       dsp,
-                       this->mpi_communicator);
-
-#endif
-
-  double global_volume = GridTools::volume(*this->triangulation);
-
-  this->pcout << "   Number of active cells:       "
-              << this->triangulation->n_global_active_cells() << std::endl
-              << "   Number of degrees of freedom: "
-              << this->dof_handler.n_dofs() << std::endl;
-  this->pcout << "   Volume of triangulation:      " << global_volume
-              << std::endl;
 }
 
 template <int dim>
@@ -1665,9 +1475,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                       // set new equation for the first pressure dof of the
                       // cell. this is the new reference pressure inside a
                       // particle
-                      system_matrix.set(inside_index,
-                                        local_dof_indices[dim],
-                                        sum_line);
+                      this->system_matrix.set(inside_index,
+                                              local_dof_indices[dim],
+                                              sum_line);
 
                       if (initial_step)
                         this->system_rhs(inside_index) =
@@ -2597,7 +2407,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 {
   MPI_Barrier(this->mpi_communicator);
   if (assemble_matrix)
-    system_matrix = 0;
+    this->system_matrix = 0;
   this->system_rhs = 0;
   // erase_inertia();
   double         viscosity_ = this->nsparam.physical_properties.viscosity;
@@ -3126,11 +2936,12 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
               // initial_step ? nonzero_constraints : zero_constraints;
               if (assemble_matrix)
                 {
-                  constraints_used.distribute_local_to_global(local_matrix,
-                                                              local_rhs,
-                                                              local_dof_indices,
-                                                              system_matrix,
-                                                              this->system_rhs);
+                  constraints_used.distribute_local_to_global(
+                    local_matrix,
+                    local_rhs,
+                    local_dof_indices,
+                    this->system_matrix,
+                    this->system_rhs);
                 }
               else
                 {
@@ -3168,11 +2979,12 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
               // initial_step ? nonzero_constraints : zero_constraints;
               if (assemble_matrix)
                 {
-                  constraints_used.distribute_local_to_global(local_matrix,
-                                                              local_rhs,
-                                                              local_dof_indices,
-                                                              system_matrix,
-                                                              this->system_rhs);
+                  constraints_used.distribute_local_to_global(
+                    local_matrix,
+                    local_rhs,
+                    local_dof_indices,
+                    this->system_matrix,
+                    this->system_rhs);
                 }
               else
                 {
@@ -3191,66 +3003,16 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
 
   if (assemble_matrix)
-    system_matrix.compress(VectorOperation::add);
+    this->system_matrix.compress(VectorOperation::add);
   this->system_rhs.compress(VectorOperation::add);
-}
-
-/**
- * Set the initial condition using a L2 or a viscous solver
- **/
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::set_initial_condition(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
-{
-  if (restart)
-    {
-      this->pcout << "************************" << std::endl;
-      this->pcout << "---> Simulation Restart " << std::endl;
-      this->pcout << "************************" << std::endl;
-      this->read_checkpoint();
-    }
-  else if (initial_condition_type ==
-           Parameters::InitialConditionType::L2projection)
-    {
-      assemble_L2_projection();
-      solve_system_GMRES(true, 1e-15, 1e-15, true);
-      this->present_solution = this->newton_update;
-      this->finish_time_step();
-      this->postprocess(true);
-    }
-  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
-    {
-      this->set_nodal_values();
-      this->finish_time_step();
-      this->postprocess(true);
-    }
-
-  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
-    {
-      this->set_nodal_values();
-      double viscosity = this->nsparam.physical_properties.viscosity;
-      this->nsparam.physical_properties.viscosity =
-        this->nsparam.initial_condition->viscosity;
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
-      this->finish_time_step();
-      this->postprocess(true);
-      this->nsparam.physical_properties.viscosity = viscosity;
-    }
-  else
-    {
-      throw std::runtime_error("GLSNS - Initial condition could not be set");
-    }
 }
 
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_L2_projection()
 {
-  system_matrix    = 0;
-  this->system_rhs = 0;
+  this->system_matrix = 0;
+  this->system_rhs    = 0;
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
@@ -3264,7 +3026,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -3324,11 +3086,11 @@ GLSSharpNavierStokesSolver<dim>::assemble_L2_projection()
           constraints_used.distribute_local_to_global(local_matrix,
                                                       local_rhs,
                                                       local_dof_indices,
-                                                      system_matrix,
+                                                      this->system_matrix,
                                                       this->system_rhs);
         }
     }
-  system_matrix.compress(VectorOperation::add);
+  this->system_matrix.compress(VectorOperation::add);
   this->system_rhs.compress(VectorOperation::add);
 }
 
@@ -3548,306 +3310,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
     }
   vertices_cell_mapping();
   sharp_edge(initial_step_bool);
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                     const bool renewed_matrix)
-{
-  const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
-  const double relative_residual =
-    this->nsparam.linear_solver.relative_residual;
-
-  if (this->nsparam.linear_solver.solver ==
-      Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step,
-                       absolute_residual,
-                       relative_residual,
-                       renewed_matrix);
-  else if (this->nsparam.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::bicgstab)
-    solve_system_BiCGStab(initial_step,
-                          absolute_residual,
-                          relative_residual,
-                          renewed_matrix);
-  else if (this->nsparam.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::amg)
-    solve_system_AMG(initial_step,
-                     absolute_residual,
-                     relative_residual,
-                     renewed_matrix);
-  else if (this->nsparam.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(initial_step,
-                        absolute_residual,
-                        relative_residual,
-                        renewed_matrix);
-  else
-    throw(std::runtime_error("This solver is not allowed"));
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::setup_ILU()
-{
-  TimerOutput::Scope t(this->computing_timer, "setup_ILU");
-
-  const double ilu_fill = this->nsparam.linear_solver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linear_solver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linear_solver.ilu_precond_rtol;
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
-
-  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
-
-  ilu_preconditioner->initialize(system_matrix, preconditionerOptions);
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::setup_AMG()
-{
-  TimerOutput::Scope t(this->computing_timer, "setup_AMG");
-
-  std::vector<std::vector<bool>> constant_modes;
-  // Constant modes include pressure since everything is in the same matrix
-  std::vector<bool> velocity_components(dim + 1, true);
-  velocity_components[dim] = true;
-  DoFTools::extract_constant_modes(this->dof_handler,
-                                   velocity_components,
-                                   constant_modes);
-
-  TrilinosWrappers::PreconditionAMG::AdditionalData amg_data;
-  amg_data.constant_modes = constant_modes;
-
-  const bool elliptic              = false;
-  bool       higher_order_elements = false;
-  if (this->velocity_fem_degree > 1)
-    higher_order_elements = true;
-  const unsigned int n_cycles = this->nsparam.linear_solver.amg_n_cycles;
-  const bool         w_cycle  = this->nsparam.linear_solver.amg_w_cycles;
-  const double       aggregation_threshold =
-    this->nsparam.linear_solver.amg_aggregation_threshold;
-  const unsigned int smoother_sweeps =
-    this->nsparam.linear_solver.amg_smoother_sweeps;
-  const unsigned int smoother_overlap =
-    this->nsparam.linear_solver.amg_smoother_overlap;
-  const bool                                        output_details = false;
-  const char *                                      smoother_type  = "ILU";
-  const char *                                      coarse_type    = "ILU";
-  TrilinosWrappers::PreconditionAMG::AdditionalData preconditionerOptions(
-    elliptic,
-    higher_order_elements,
-    n_cycles,
-    w_cycle,
-    aggregation_threshold,
-    constant_modes,
-    smoother_sweeps,
-    smoother_overlap,
-    output_details,
-    smoother_type,
-    coarse_type);
-
-  Teuchos::ParameterList              parameter_ml;
-  std::unique_ptr<Epetra_MultiVector> distributed_constant_modes;
-  preconditionerOptions.set_parameters(parameter_ml,
-                                       distributed_constant_modes,
-                                       system_matrix);
-  const double ilu_fill = this->nsparam.linear_solver.amg_precond_ilu_fill;
-  const double ilu_atol = this->nsparam.linear_solver.amg_precond_ilu_atol;
-  const double ilu_rtol = this->nsparam.linear_solver.amg_precond_ilu_rtol;
-  parameter_ml.set("smoother: ifpack level-of-fill", ilu_fill);
-  parameter_ml.set("smoother: ifpack absolute threshold", ilu_atol);
-  parameter_ml.set("smoother: ifpack relative threshold", ilu_rtol);
-
-  parameter_ml.set("coarse: ifpack level-of-fill", ilu_fill);
-  parameter_ml.set("coarse: ifpack absolute threshold", ilu_atol);
-  parameter_ml.set("coarse: ifpack relative threshold", ilu_rtol);
-  amg_preconditioner = std::make_shared<TrilinosWrappers::PreconditionAMG>();
-  amg_preconditioner->initialize(system_matrix, parameter_ml);
-}
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::solve_system_direct(
-  const bool   initial_step,
-  const double absolute_residual,
-  const double relative_residual,
-  const bool   renewed_matrix)
-{
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverDirect solver(solver_control);
-
-  if (renewed_matrix || !ilu_preconditioner)
-    setup_ILU();
-  solver.initialize(system_matrix);
-  solver.solve(completely_distributed_solution, this->system_rhs);
-  constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::solve_system_GMRES(
-  const bool   initial_step,
-  const double absolute_residual,
-  const double relative_residual,
-  const bool   renewed_matrix)
-{
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverGMRES solver(solver_control);
-
-  if (renewed_matrix || !ilu_preconditioner)
-    setup_ILU();
-
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-    solver.solve(system_matrix,
-                 completely_distributed_solution,
-                 this->system_rhs,
-                 *ilu_preconditioner);
-
-    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-  }
-  constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::solve_system_BiCGStab(
-  const bool   initial_step,
-  const double absolute_residual,
-  const double relative_residual,
-  const bool   renewed_matrix)
-{
-  TimerOutput::Scope t(this->computing_timer, "solve");
-
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverBicgstab solver(solver_control);
-
-  if (renewed_matrix || !ilu_preconditioner)
-    setup_ILU();
-
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-    solver.solve(system_matrix,
-                 completely_distributed_solution,
-                 this->system_rhs,
-                 *ilu_preconditioner);
-
-    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-    constraints_used.distribute(completely_distributed_solution);
-    this->newton_update = completely_distributed_solution;
-  }
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::solve_system_AMG(
-  const bool   initial_step,
-  const double absolute_residual,
-  const double relative_residual,
-  const bool   renewed_matrix)
-{
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
-
-  const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
-  TrilinosWrappers::SolverGMRES solver(solver_control);
-
-  if (renewed_matrix || !amg_preconditioner)
-    setup_AMG();
-
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-    solver.solve(system_matrix,
-                 completely_distributed_solution,
-                 this->system_rhs,
-                 *amg_preconditioner);
-
-    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-
-    constraints_used.distribute(completely_distributed_solution);
-
-    this->newton_update = completely_distributed_solution;
-  }
 }
 
 template <int dim>

@@ -113,6 +113,15 @@ private:
                    const bool   renewed_matrix);
 
   /**
+   * Direct solver
+   */
+  void
+  solve_system_direct(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual,
+                      const bool   renewed_matrix);
+
+  /**
    * Set-up AMG preconditioner
    */
   void
@@ -128,9 +137,11 @@ private:
   /**
    * Members
    */
+protected:
+  TrilinosWrappers::SparseMatrix system_matrix;
+
 private:
   SparsityPattern                                    sparsity_pattern;
-  TrilinosWrappers::SparseMatrix                     system_matrix;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
 
