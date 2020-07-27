@@ -854,8 +854,9 @@ namespace Parameters
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  Particles::declare_default_entry(ParameterHandler &prm)
+  IBParticles<dim>::declare_default_entry(ParameterHandler &prm)
   {
     prm.declare_entry("X", "0", Patterns::Double(), "X cor ");
     prm.declare_entry("Y", "0", Patterns::Double(), "Y cor ");
@@ -884,8 +885,9 @@ namespace Parameters
     prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles raidus ");
   }
 
+  template <int dim>
   void
-  Particles::declare_parameters(ParameterHandler &prm)
+  IBParticles<dim>::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("particles");
     {
@@ -949,64 +951,65 @@ namespace Parameters
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 1");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
 
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 2");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 3");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 4");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 5");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 6");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 7");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 8");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 9");
       {
-        Particles::declare_default_entry(prm);
+        IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
     }
     prm.leave_subsection();
   }
 
+  template <int dim>
   void
-  Particles::parse_parameters(ParameterHandler &prm)
+  IBParticles<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("particles");
     {
@@ -1016,7 +1019,6 @@ namespace Parameters
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       assemble_inside    = prm.get_bool("assemble inside");
-      pressure_mpi       = prm.get_bool("pressure mpi");
       nb_force_eval      = prm.get_integer("nb force evaluation");
       const std::string op = prm.get("assemble type");
       if (op == "NS")
@@ -1025,31 +1027,35 @@ namespace Parameters
         P_assemble = Particle_Assemble_type ::mass;
 
       particles.resize(nb);
-      pressure_offset.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          particles[i].resize(10);
-          pressure_offset[i].resize(3);
           std::string section =
             "x y z vx vy vz omega_x omega_y omega_z radius particle " +
             std::to_string(i);
           prm.enter_subsection(section);
-          particles[i][0]       = prm.get_double("X");
-          particles[i][1]       = prm.get_double("Y");
-          particles[i][2]       = prm.get_double("Z");
-          particles[i][3]       = prm.get_double("VX");
-          particles[i][4]       = prm.get_double("VY");
-          particles[i][5]       = prm.get_double("VZ");
-          particles[i][6]       = prm.get_double("omega X");
-          particles[i][7]       = prm.get_double("omega Y");
-          particles[i][8]       = prm.get_double("omega Z");
-          particles[i][9]       = prm.get_double("radius");
-          pressure_offset[i][0] = prm.get_double("pressure X");
-          pressure_offset[i][1] = prm.get_double("pressure Y");
-          pressure_offset[i][2] = prm.get_double("pressure Z");
+          particles[i].position[0]          = prm.get_double("X");
+          particles[i].position[1]          = prm.get_double("Y");
+          particles[i].velocity[0]          = prm.get_double("VX");
+          particles[i].velocity[1]          = prm.get_double("VY");
+          particles[i].omega[0]             = prm.get_double("omega X");
+          particles[i].omega[1]             = prm.get_double("omega Y");
+          particles[i].omega[2]             = prm.get_double("omega Z");
+          particles[i].radius               = prm.get_double("radius");
+          particles[i].pressure_location[0] = prm.get_double("pressure X");
+          particles[i].pressure_location[1] = prm.get_double("pressure Y");
+
+          if (dim == 3)
+            {
+              particles[i].position[2]          = prm.get_double("Z");
+              particles[i].velocity[2]          = prm.get_double("VZ");
+              particles[i].pressure_location[2] = prm.get_double("pressure Z");
+            }
           prm.leave_subsection();
         }
       prm.leave_subsection();
     }
   }
+
+  template class IBParticles<2>;
+  template class IBParticles<3>;
 } // namespace Parameters

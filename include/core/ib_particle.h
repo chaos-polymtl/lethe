@@ -32,7 +32,7 @@ public:
   // Translational velocity
   Tensor<1, dim> velocity;
   // Angular velocity
-  Tensor<1, dim> omega;
+  Tensor<1, 3> omega;
 
   double radius;
 

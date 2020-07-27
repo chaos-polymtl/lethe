@@ -20,7 +20,8 @@
 #ifndef LETHE_GLSSHARPNS_H
 #define LETHE_GLSSHARPNS_H
 
-#include "gls_navier_stokes.h"
+#include <core/ib_particle.h>
+#include <solvers/gls_navier_stokes.h>
 
 using namespace dealii;
 
@@ -84,8 +85,6 @@ private:
   virtual void
   postprocess(bool firstIter) override;
 
-
-
   void
   refine_ib();
 
@@ -103,11 +102,12 @@ private:
    */
 private:
   std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>>
-                                   vertices_to_cell;
-  const bool                       SUPG        = false;
-  const bool                       PSPG        = true;
-  const double                     GLS_u_scale = 1;
-  std::vector<std::vector<double>> particles;
+                               vertices_to_cell;
+  const bool                   SUPG        = false;
+  const bool                   PSPG        = true;
+  const double                 GLS_u_scale = 1;
+  std::vector<IBParticle<dim>> particles;
+
 
   TableHandler table_f;
   TableHandler table_t;

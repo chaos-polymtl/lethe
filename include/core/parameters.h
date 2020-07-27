@@ -32,6 +32,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
+#include <core/ib_particle.h>
+
 #ifndef lethe_parameters_h
 #  define lethe_parameters_h
 
@@ -529,20 +531,20 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-  class Particles
+
+  template <int dim>
+  class IBParticles
   {
   public:
-    unsigned int                     nb;
-    unsigned int                     order;
-    unsigned int                     nb_force_eval;
-    unsigned int                     initial_refinement;
-    double                           inside_radius;
-    double                           outside_radius;
-    bool                             assemble_inside;
-    bool                             pressure_mpi;
-    Particle_Assemble_type           P_assemble;
-    std::vector<std::vector<double>> particles;
-    std::vector<std::vector<double>> pressure_offset;
+    unsigned int                 nb;
+    unsigned int                 order;
+    unsigned int                 nb_force_eval;
+    unsigned int                 initial_refinement;
+    double                       inside_radius;
+    double                       outside_radius;
+    bool                         assemble_inside;
+    Particle_Assemble_type       P_assemble;
+    std::vector<IBParticle<dim>> particles;
 
     static void
     declare_parameters(ParameterHandler &prm);
