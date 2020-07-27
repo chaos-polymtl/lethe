@@ -3,6 +3,8 @@
 ENABLE_TESTING()
 ADD_SUBDIRECTORY(gls_navier_stokes_2d)
 ADD_SUBDIRECTORY(gls_navier_stokes_3d)
+ADD_SUBDIRECTORY(gls_sharp_navier_stokes_2d)
+ADD_SUBDIRECTORY(gls_sharp_navier_stokes_3d)
 ADD_SUBDIRECTORY(gd_navier_stokes_2d)
 ADD_SUBDIRECTORY(gd_navier_stokes_3d)
 ADD_SUBDIRECTORY(initial_conditions)

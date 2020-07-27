@@ -1,0 +1,195 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                  = steady
+  set number mesh adapt       = 2
+  set output name             = results_couette2d
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+    set kinematic viscosity            = 0.1
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                 = dealii
+    set grid type            = hyper_cube
+    set grid arguments       = -1 : 1 : true
+    set initial refinement   = 5
+end
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order        = 1
+    set pressure order        = 1
+end
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+
+subsection boundary conditions
+set number                  = 3
+    
+    subsection bc 0
+	set id = 0
+        set type              = function
+        subsection u
+            set Function expression = 0
+        end
+        subsection v
+            set Function expression = 0
+        end
+        subsection w
+            set Function expression = 0
+        end
+    end
+    subsection bc 1
+	set id = 2
+        set type              = slip
+    end
+    subsection bc 2
+	set id = 3
+        set type              = slip
+    end
+end
+
+
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+  set verbosity 	     = verbose
+    subsection uvw
+            # A= -(eta_ * eta_) / (1. - eta_ * eta_);
+            # B= ri_ * ri_ / (1. - eta_ * eta_);
+
+            set Function constants = eta=0.50, ri=0.25
+	    set Function expression = if(sqrt(x*x+y*y)>ri, if (sqrt(x*x+y*y)<ri/eta,-sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0) , sqrt(x*x+y*y)/ri*-sin(atan2(y,x))*ri) ; if(sqrt(x*x+y*y)>ri,if (sqrt(x*x+y*y)<ri/eta,cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0), sqrt(x*x+y*y)/ri*cos(atan2(y,x))*ri) ; 0
+
+
+
+
+	end
+end
+
+# --------------------------------------------------
+# IB particles
+#---------------------------------------------------
+subsection particles
+	set number of particles = 2
+	set stencil order = 6
+	set nb force evaluation = 1000
+
+    subsection x y z vx vy vz omega_x omega_y omega_z radius particle 0 
+            set X = 0
+	    set Y = 0
+	    set Z = 0
+	    set VX = 0
+	    set VY = 0
+	    set VZ = 0
+	    set omega X = 0
+	    set omega Y = 0
+	    set omega Z = 1
+	    set pressure X =0.00001
+	    set pressure Y =0.00001
+	    set radius = 0.25
+
+    end
+    subsection x y z vx vy vz omega_x omega_y omega_z radius particle 1 
+            set X = 0
+	    set Y = 0
+	    set Z = 0
+	    set VX = 0
+	    set VY = 0
+	    set VZ = 0
+	    set omega X = 0
+	    set omega Y = 0
+	    set omega Z = 0
+	    set pressure X =0.00001
+	    set pressure Y =0.40001
+	    set radius = 0.5
+    end
+end
+
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+    # Fraction of coarsened elements
+  set fraction coarsening  = 0.00
+
+  # Fraction of refined elements
+  set fraction refinement  = 0
+
+  # How the fraction of refinement/coarsening are interepretedChoices are
+  # <number|fraction>.
+  set fraction type        = number
+
+  # Frequency of the mesh refinement
+  set frequency            = 1
+
+  # Maximum number of elements
+  set max number elements  = 100000
+
+
+  # Type of mesh adaptationChoices are <none|uniform|kelly>.
+  set type                 = uniform
+
+  # Variable for kelly estimationChoices are <velocity|pressure>.
+  set variable             = velocity
+end
+
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 10
+  set residual precision      = 15
+  set verbosity               = quiet
+
+end
+# --------------------------------------------------
+# Forces
+#---------------------------------------------------
+subsection forces
+
+  set verbosity               = quiet
+
+end
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set method                                 = gmres
+  set max iters                              = 5000
+  set relative residual                      = 1e-3
+  set minimum residual                       = 1e-9
+  set ilu preconditioner fill                = 2
+  set ilu preconditioner absolute tolerance  = 1e-11
+  set ilu preconditioner relative tolerance  = 1
+  set amg aggregation threshold                 = 1e-20
+  set amg n cycles                              = 1
+  set amg preconditioner ilu absolute tolerance = 1e-20
+  set amg preconditioner ilu fill               = 2
+  set amg preconditioner ilu relative tolerance = 1.00
+  set amg smoother overlap                      = 1
+  set amg smoother sweeps                       = 2
+  set amg w cycles                              = false
+  set verbosity               = quiet
+end

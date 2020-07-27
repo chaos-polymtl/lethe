@@ -1,0 +1,38 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       3375
+   Number of degrees of freedom: 16384
+   Volume of triangulation:      8
+
+*****************************************************************
+Steady iteration :        1/1
+*****************************************************************
++------------------------------------------+
+|  Force  summary particle : 0             |
++------------------------------------------+
+particle : 0 total_torque_x :-0.00207658
+particle : 0 total_torque_y :-0.00207658
+particle : 0 total_torque_z :-0.00206996
+fx_P: 0.000622596
+fy_P: -0.000516135
+fz_P: -0.000208327
+fx_v: -0.000103162
+fy_v: 0.000103162
+fz_v: -4.82667e-19
++------------------------------------------+
+|  Force  summary particle : 1             |
++------------------------------------------+
+particle : 1 total_torque_x :0
+particle : 1 total_torque_y :0
+particle : 1 total_torque_z :0
+fx_P: 0
+fy_P: 0
+fz_P: 0
+fx_v: 0
+fy_v: 0
+fz_v: 0
++------------------------------------------+
+|  Force  summary                          |
++------------------------------------------+
+particle ID   f_x       f_y       f_z    
+          0 0.000519 -0.000413 -0.000208 
+          1 0.000000  0.000000  0.000000 

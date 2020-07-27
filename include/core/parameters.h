@@ -32,6 +32,8 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
+#include <core/ib_particle.h>
+
 #ifndef lethe_parameters_h
 #  define lethe_parameters_h
 
@@ -44,6 +46,12 @@ namespace Parameters
     quiet,
     verbose
   };
+  enum class Particle_Assemble_type
+  {
+    NS,
+    mass
+  };
+
 
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
@@ -324,7 +332,8 @@ namespace Parameters
     {
       gmres,
       bicgstab,
-      amg
+      amg,
+      direct
     };
     SolverType solver;
 
@@ -522,6 +531,29 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
+
+  template <int dim>
+  class IBParticles
+  {
+  public:
+    unsigned int                 nb;
+    unsigned int                 order;
+    unsigned int                 nb_force_eval;
+    unsigned int                 initial_refinement;
+    double                       inside_radius;
+    double                       outside_radius;
+    bool                         assemble_inside;
+    Particle_Assemble_type       P_assemble;
+    std::vector<IBParticle<dim>> particles;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    static void
+    declare_default_entry(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
 } // namespace Parameters
 #endif

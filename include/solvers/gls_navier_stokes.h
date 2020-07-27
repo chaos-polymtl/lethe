@@ -57,7 +57,7 @@ protected:
   void
   set_solution_vector(double value);
 
-private:
+protected:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
             Parameters::VelocitySource::VelocitySourceType    velocity_source>
@@ -73,6 +73,7 @@ private:
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
 
+private:
   void
   assemble_L2_projection();
 
@@ -113,6 +114,15 @@ private:
                    const bool   renewed_matrix);
 
   /**
+   * Direct solver
+   */
+  void
+  solve_system_direct(const bool   initial_step,
+                      const double absolute_residual,
+                      const double relative_residual,
+                      const bool   renewed_matrix);
+
+  /**
    * Set-up AMG preconditioner
    */
   void
@@ -128,9 +138,11 @@ private:
   /**
    * Members
    */
+protected:
+  TrilinosWrappers::SparseMatrix system_matrix;
+
 private:
   SparsityPattern                                    sparsity_pattern;
-  TrilinosWrappers::SparseMatrix                     system_matrix;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
 

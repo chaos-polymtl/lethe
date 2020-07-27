@@ -212,7 +212,7 @@ protected:
    * @brief postprocess
    * Post-process after an iteration
    */
-  void
+  virtual void
   postprocess(bool firstIter);
 
   /**
