@@ -36,18 +36,7 @@ GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
 
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::~GLSSharpNavierStokesSolver()
-{
-  this->dof_handler.clear();
-}
-
-
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::set_solution_vector(double value)
-{
-  this->present_solution = value;
-}
+{}
 
 template <int dim>
 void
@@ -3004,93 +2993,6 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
   if (assemble_matrix)
     this->system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
-}
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::assemble_L2_projection()
-{
-  this->system_matrix = 0;
-  this->system_rhs    = 0;
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
-                          update_values | update_quadrature_points |
-                            update_JxW_values);
-  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int  n_q_points    = quadrature_formula.size();
-  FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>      local_rhs(dofs_per_cell);
-  std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const FEValuesExtractors::Vector     velocities(0);
-  const FEValuesExtractors::Scalar     pressure(dim);
-
-  Tensor<1, dim> rhs_initial_velocity_pressure;
-  double         rhs_initial_pressure;
-
-  std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
-  std::vector<double>         phi_p(dofs_per_cell);
-
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          local_matrix = 0;
-          local_rhs    = 0;
-          this->nsparam.initial_condition->uvwp.vector_value_list(
-            fe_values.get_quadrature_points(), initial_velocity);
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                  phi_p[k] = fe_values[pressure].value(k, q);
-                  phi_u[k] = fe_values[velocities].value(k, q);
-                }
-
-              // Establish the rhs tensor operator
-              for (int i = 0; i < dim; ++i)
-                {
-                  const unsigned int component_i =
-                    this->fe.system_to_component_index(i).first;
-                  rhs_initial_velocity_pressure[i] =
-                    initial_velocity[q](component_i);
-                }
-              rhs_initial_pressure = initial_velocity[q](dim);
-
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  // Matrix assembly
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                    {
-                      local_matrix(i, j) +=
-                        (phi_u[j] * phi_u[i]) * fe_values.JxW(q);
-                      local_matrix(i, j) +=
-                        (phi_p[j] * phi_p[i]) * fe_values.JxW(q);
-                    }
-                  local_rhs(i) += (phi_u[i] * rhs_initial_velocity_pressure +
-                                   phi_p[i] * rhs_initial_pressure) *
-                                  fe_values.JxW(q);
-                }
-            }
-
-          cell->get_dof_indices(local_dof_indices);
-          const AffineConstraints<double> &constraints_used =
-            this->nonzero_constraints;
-          constraints_used.distribute_local_to_global(local_matrix,
-                                                      local_rhs,
-                                                      local_dof_indices,
-                                                      this->system_matrix,
-                                                      this->system_rhs);
-        }
-    }
-  this->system_matrix.compress(VectorOperation::add);
   this->system_rhs.compress(VectorOperation::add);
 }
 

@@ -845,7 +845,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
+                                                        Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1403,7 +1403,7 @@ void
 GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
                                                 const double absolute_residual,
                                                 const double relative_residual,
-                                                const bool   renewed_matrix)
+                                                const bool /*renewed_matrix*/)
 {
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;

@@ -57,7 +57,7 @@ protected:
   void
   set_solution_vector(double value);
 
-private:
+protected:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
             Parameters::VelocitySource::VelocitySourceType    velocity_source>
@@ -73,6 +73,7 @@ private:
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
 
+private:
   void
   assemble_L2_projection();
 

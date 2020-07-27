@@ -47,10 +47,6 @@ public:
   void
   solve();
 
-protected:
-  void
-  set_solution_vector(double value);
-
 private:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
@@ -101,11 +97,6 @@ private:
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
-
-  void
-  assemble_L2_projection();
-
-
 
   /**
    * Members
