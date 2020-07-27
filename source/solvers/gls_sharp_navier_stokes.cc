@@ -73,7 +73,7 @@ GLSSharpNavierStokesSolver<dim>::setup_dofs()
   DoFTools::extract_locally_relevant_dofs(this->dof_handler,
                                           this->locally_relevant_dofs);
 
-  const MappingQ<dim>        mapping(this->degreeVelocity_,
+  const MappingQ<dim>        mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
@@ -1335,8 +1335,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
 
-  QGauss<dim>         quadrature_formula(this->degreeQuadrature_ + 1);
-  const MappingQ<dim> mapping(this->degreeVelocity_,
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points + 1);
+  const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
   FEValues<dim>       fe_values(mapping,
                           this->fe,
@@ -1500,7 +1500,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge(const bool initial_step)
                                        support_points);
 
   // initalise fe value object in order to do calculation with it later
-  QGauss<dim>        q_formula(this->degreeQuadrature_);
+  QGauss<dim>        q_formula(this->number_quadrature_points);
   FEValues<dim>      fe_values(this->fe,
                           q_formula,
                           update_quadrature_points | update_JxW_values);
@@ -2603,17 +2603,17 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   double         viscosity_ = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
-  QGauss<dim>                      quadrature_formula(this->degreeQuadrature_);
-  const MappingQ<dim>              mapping(this->degreeVelocity_,
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
-  FEValues<dim>                    fe_values(mapping,
+  FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  const unsigned int               dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int               n_q_points    = quadrature_formula.size();
+  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int  n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
@@ -2780,10 +2780,10 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
               if (dim == 2)
                 h = std::sqrt(4. * cell->measure() / M_PI) /
-                    this->degreeVelocity_;
+                    this->velocity_fem_degree;
               else if (dim == 3)
                 h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                    this->degreeVelocity_;
+                    this->velocity_fem_degree;
 
               local_matrix = 0;
               local_rhs    = 0;
@@ -3251,20 +3251,20 @@ GLSSharpNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
-  QGauss<dim>                 quadrature_formula(this->degreeQuadrature_);
-  const MappingQ<dim>         mapping(this->degreeVelocity_,
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
-  FEValues<dim>               fe_values(mapping,
+  FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values);
-  const unsigned int          dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int          n_q_points    = quadrature_formula.size();
-  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>              local_rhs(dofs_per_cell);
-  std::vector<Vector<double>> initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
+  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int  n_q_points    = quadrature_formula.size();
+  FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>      local_rhs(dofs_per_cell);
+  std::vector<Vector<double>>          initial_velocity(n_q_points,
+                                                        Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -3623,7 +3623,7 @@ GLSSharpNavierStokesSolver<dim>::setup_AMG()
 
   const bool elliptic              = false;
   bool       higher_order_elements = false;
-  if (this->degreeVelocity_ > 1)
+  if (this->velocity_fem_degree > 1)
     higher_order_elements = true;
   const unsigned int n_cycles = this->nsparam.linear_solver.amg_n_cycles;
   const bool         w_cycle  = this->nsparam.linear_solver.amg_w_cycles;

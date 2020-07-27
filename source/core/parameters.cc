@@ -518,7 +518,7 @@ namespace Parameters
       prm.declare_entry(
         "method",
         "gmres",
-        Patterns::Selection("gmres|bicgstab|amg"),
+        Patterns::Selection("gmres|bicgstab|amg|direct"),
         "The iterative solver for the linear system of equations. "
         "Choices are <gmres|bicgstab|amg|direct>. gmres is a GMRES iterative "
         "solver "

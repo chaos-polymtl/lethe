@@ -51,14 +51,11 @@ namespace Parameters
   };
 
 
-<<<<<<< HEAD
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
    * as well as the frequency of the output of the solutions.
    */
 
-=======
->>>>>>> Fixed indentation
   struct SimulationControl
   {
     // Method used for time progression of eulerian solvers (steady, unsteady)
