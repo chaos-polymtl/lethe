@@ -26,18 +26,22 @@
 using namespace dealii;
 
 #ifndef PPCONTACTFORCE_H_
-#define PPCONTACTFORCE_H_
+#  define PPCONTACTFORCE_H_
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle
  * contact force
  */
 
-template <int dim> class PPContactForce {
+template <int dim>
+class PPContactForce
+{
 public:
-  PPContactForce() {}
+  PPContactForce()
+  {}
 
-  virtual ~PPContactForce() {}
+  virtual ~PPContactForce()
+  {}
 
   /**
    * Carries out the calculation of the contact force using the contact pair
@@ -49,12 +53,14 @@ public:
    * fine search
    * @param dem_parameters DEM parameters declared in the .prm file
    */
-  virtual void calculate_pp_contact_force(
-      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-          *local_adjacent_particles,
-      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-          *ghost_adjacent_particles,
-      const DEMSolverParameters<dim> &dem_parameters, const double &dt) = 0;
+  virtual void
+  calculate_pp_contact_force(
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      *local_adjacent_particles,
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      *                             ghost_adjacent_particles,
+    const DEMSolverParameters<dim> &dem_parameters,
+    const double &                  dt) = 0;
 
 protected:
   /**
@@ -69,16 +75,19 @@ protected:
    * @param particle_two_location Location of particle two in contact
    * @param dt DEM time step
    */
-  void update_contact_information(
-      pp_contact_info_struct<dim> &adjacent_pair_information,
-      const ArrayView<const double> &particle_one_properties,
-      const ArrayView<const double> &particle_two_properties,
-      const Point<dim> &particle_one_location,
-      const Point<dim> &particle_two_location, const double &dt);
+  void
+  update_contact_information(
+    pp_contact_info_struct<dim> &  adjacent_pair_information,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    const Point<dim> &             particle_one_location,
+    const Point<dim> &             particle_two_location,
+    const double &                 dt);
 
   /**
-   * Carries out applying the calculated force and torque on the particle pair
-   * in contact, for both non-linear and linear contact force calculations
+   * Carries out applying the calculated force and torque on the local-local
+   * particle pair in contact, for both non-linear and linear contact force
+   * calculations
    *
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
@@ -86,19 +95,31 @@ protected:
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
    */
-  void apply_force_and_torque_real(
-      ArrayView<double> &particle_one_properties,
-      ArrayView<double> &particle_two_properties,
-      const std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>,
-                       Tensor<1, dim>> &forces_and_torques);
+  void
+  apply_force_and_torque_real(
+    ArrayView<double> &particle_one_properties,
+    ArrayView<double> &particle_two_properties,
+    const std::
+      tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+        &forces_and_torques);
 
   /**
-   * Add description
+   * Carries out applying the calculated force and torque on the local-ghost
+   * particle pair in contact, for both non-linear and linear contact force
+   * calculations. The contact force is only applied on the local particles
+   *
+   * @param particle_one_properties Properties of particle one (local) in
+   * contact
+   * @param forces_and_torques A tuple which contains: 1, normal force, 2,
+   * tangential force, 3, tangential torque and 4, rolling resistance torque of
+   * a contact pair
    */
-  void apply_force_and_torque_ghost(
-      ArrayView<double> &particle_one_properties,
-      const std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>,
-                       Tensor<1, dim>> &forces_and_torques);
+  void
+  apply_force_and_torque_ghost(
+    ArrayView<double> &particle_one_properties,
+    const std::
+      tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+        &forces_and_torques);
 };
 
 #endif /* PPCONTACTFORCE_H_ */

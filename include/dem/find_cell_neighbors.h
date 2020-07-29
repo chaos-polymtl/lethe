@@ -27,7 +27,7 @@
 using namespace dealii;
 
 #ifndef FINDCELLNEIGHBORS_H_
-#define FINDCELLNEIGHBORS_H_
+#  define FINDCELLNEIGHBORS_H_
 
 /**
  * Finds the neighbors lists of all the active cells in the input triangulation.
@@ -40,7 +40,9 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class FindCellNeighbors {
+template <int dim>
+class FindCellNeighbors
+{
 public:
   FindCellNeighbors<dim>();
 
@@ -48,18 +50,21 @@ public:
    * Find the neighbor list of all the active cells in the triangulation
    *
    * @param triangulation Triangulation to access the information of the cells
-   * @return A vector (with size of the cell number) of sets (adjacent cells
-   * of each cell). First element of each set shows the main cell itself
+   * @param cells_local_neighbor_list A vector (with size of the local cell
+   * number) of vectors (local adjacent cells of each local cell). First element
+   * of each set shows the main cell itself
+   * @param cells_ghost_neighbor_list A vector (with size of the local cell
+   * number) of vectors (ghost adjacent cells of each local cell). First element
+   * of each set shows the main cell itself
    */
 
-  void find_cell_neighbors(
-      const parallel::distributed::Triangulation<dim> &triangulation,
-      std::vector<
-          std::vector<typename Triangulation<dim>::active_cell_iterator>>
-          &cells_local_neighbor_list,
-      std::vector<
-          std::vector<typename Triangulation<dim>::active_cell_iterator>>
-          &cells_ghost_neighbor_list);
+  void
+  find_cell_neighbors(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_local_neighbor_list,
+    std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      &cells_ghost_neighbor_list);
 };
 
 #endif /* FINDCELLNEIGHBORS_H_ */
