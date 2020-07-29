@@ -33,43 +33,54 @@
 
 using namespace dealii;
 
-template <int dim> void test() {
+template <int dim>
+void
+test()
+{
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  int hyper_cube_length = 1;
-  GridGenerator::hyper_cube(triangulation, -1 * hyper_cube_length,
-                            hyper_cube_length, true);
+  int                                       hyper_cube_length = 1;
+  GridGenerator::hyper_cube(triangulation,
+                            -1 * hyper_cube_length,
+                            hyper_cube_length,
+                            true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
 
   // Finding the cell neighbors
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      cells_local_neighbor_list;
+    cells_local_neighbor_list;
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      cells_ghost_neighbor_list;
+    cells_ghost_neighbor_list;
 
   FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_object.find_cell_neighbors(
-      triangulation, cells_local_neighbor_list, cells_ghost_neighbor_list);
+  cell_neighbor_object.find_cell_neighbors(triangulation,
+                                           cells_local_neighbor_list,
+                                           cells_ghost_neighbor_list);
 
   // Output
   int i = 0;
   for (auto cell = triangulation.begin_active(); cell != triangulation.end();
-       ++cell) {
-    deallog << "neighbors of cell " << cell << " are: ";
-    for (auto iterator = cells_local_neighbor_list[i].begin();
-         iterator != cells_local_neighbor_list[i].end(); ++iterator) {
-      deallog << " " << *iterator;
-    }
-    deallog << std::endl;
+       ++cell)
+    {
+      deallog << "neighbors of cell " << cell << " are: ";
+      for (auto iterator = cells_local_neighbor_list[i].begin();
+           iterator != cells_local_neighbor_list[i].end();
+           ++iterator)
+        {
+          deallog << " " << *iterator;
+        }
+      deallog << std::endl;
 
-    ++i;
-  }
+      ++i;
+    }
 }
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv)
+{
   initlog();
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
-      argc, argv, numbers::invalid_unsigned_int);
+    argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }

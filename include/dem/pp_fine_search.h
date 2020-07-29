@@ -31,19 +31,22 @@
 using namespace dealii;
 
 #ifndef PPFINESEARCH_H_
-#define PPFINESEARCH_H_
+#  define PPFINESEARCH_H_
 
 /**
- * This class is used for fine particle-particle contact search. Fine search
- * is used to find all the particle pairs which are physically in contact and
- * obtain all the required information for calculation of the contact force
+ * This class is used for local-local and local-ghost fine particle-particle
+ * contact search. Fine search is used to find all the particle pairs which are
+ * physically in contact and obtain all the required information for calculation
+ * of the contact force
  *
  * @note
  *
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim> class PPFineSearch {
+template <int dim>
+class PPFineSearch
+{
 public:
   PPFineSearch<dim>();
 
@@ -60,27 +63,34 @@ public:
    * pairs_in_contact and its contact information will be stored in the
    * corresponding element of the pairs_in_contact_info
    *
-   * @param contact_pair_candidates The output of broad search which shows
-   * contact pair candidates
-   * @param pairs_in_contact_info A map of maps which stores all the required
-   * information for calculation of the contact force
-   * @param time_step DEM time step
+   * @param local_contact_pair_candidates The output of broad search which shows
+   * local-local contact pair candidates
+   * @param ghost_contact_pair_candidates The output of broad search which shows
+   * local-ghost contact pair candidates
+   * @param local_adjacent_particles A map of maps which stores all the required
+   * information for calculation of the contact force of local-local particle
+   * pairs
+   * @param ghost_adjacent_particles A map of maps which stores all the required
+   * information for calculation of the contact force of local-ghost particle
+   * pairs
+   * @param neighborhood_threshold A value which defines the neighbor particles
    */
 
-  void pp_Fine_Search(
-      const std::map<std::pair<int, int>,
-                     std::pair<typename Particles::ParticleIterator<dim>,
-                               typename Particles::ParticleIterator<dim>>>
-          &local_contact_pair_candidates,
-      const std::map<std::pair<int, int>,
-                     std::pair<typename Particles::ParticleIterator<dim>,
-                               typename Particles::ParticleIterator<dim>>>
-          &ghost_contact_pair_candidates,
-      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-          &local_adjacent_particles,
-      std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-          &ghost_adjacent_particles,
-      const double neighborhood_threshold);
+  void
+  pp_Fine_Search(
+    const std::map<std::pair<int, int>,
+                   std::pair<typename Particles::ParticleIterator<dim>,
+                             typename Particles::ParticleIterator<dim>>>
+      &local_contact_pair_candidates,
+    const std::map<std::pair<int, int>,
+                   std::pair<typename Particles::ParticleIterator<dim>,
+                             typename Particles::ParticleIterator<dim>>>
+      &ghost_contact_pair_candidates,
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      &local_adjacent_particles,
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      &          ghost_adjacent_particles,
+    const double neighborhood_threshold);
 };
 
 #endif /* PPFINESEARCH_H_ */
