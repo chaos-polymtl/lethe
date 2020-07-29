@@ -37,47 +37,39 @@
 
 using namespace dealii;
 
-template <int dim>
-void
-test()
-{
+template <int dim> void test() {
   // Creating the triangulation and refinement
   parallel::distributed::Triangulation<dim> triangulation(MPI_COMM_WORLD);
-  int                                       hyper_cube_length = 1;
-  GridGenerator::hyper_cube(triangulation,
-                            -1 * hyper_cube_length,
-                            hyper_cube_length,
-                            true);
+  int hyper_cube_length = 1;
+  GridGenerator::hyper_cube(triangulation, -1 * hyper_cube_length,
+                            hyper_cube_length, true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
 
   // Fining boundary cellds information
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                               boundary_cells_with_faces;
-  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  FindBoundaryCellsInformation<dim>            boundary_cells_object;
+      boundary_cells_with_faces;
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
+  FindBoundaryCellsInformation<dim> boundary_cells_object;
   boundary_cells_information =
-    boundary_cells_object.find_boundary_cells_information(
-      boundary_cells_with_faces, triangulation);
+      boundary_cells_object.find_boundary_cells_information(
+          boundary_cells_with_faces, triangulation);
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =
-         boundary_cells_information.begin();
+           boundary_cells_information.begin();
        boundary_cells_information_iterator != boundary_cells_information.end();
-       ++boundary_cells_information_iterator)
-    {
-      deallog << "Cell " << boundary_cells_information_iterator->cell
-              << " is on system boundaries (boundary"
-              << boundary_cells_information_iterator->boundary_face_id << ")"
-              << std::endl;
-    }
+       ++boundary_cells_information_iterator) {
+    auto boundary_information = boundary_cells_information_iterator->second;
+    deallog << "Cell " << boundary_information.cell
+            << " is on system boundaries (boundary"
+            << boundary_information.boundary_face_id << ")" << std::endl;
+  }
 }
 
-int
-main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   initlog();
   Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
+      argc, argv, numbers::invalid_unsigned_int);
   test<3>();
 }

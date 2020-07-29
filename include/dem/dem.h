@@ -19,14 +19,10 @@
 
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
-
 #include <deal.II/distributed/tria.h>
-
 #include <deal.II/fe/mapping_q.h>
-
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
-
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/property_pool.h>
 
@@ -67,7 +63,6 @@
  * The DEM class which initializes all the required parameters and iterates over
  * the DEM iterator
  */
-
 template <int dim> class DEMSolver {
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
@@ -108,10 +103,16 @@ private:
   void clear_contact_containers();
 
   /**
-   * @brief Manages the sorting of the particles into cell and processors
+   * @brief Manages the sorting of the local particles into cell and processors
    *
    */
-  void locate_particles_in_cells();
+  void locate_local_particles_in_cells();
+
+  /**
+   * @brief Manages the sorting of the ghost particles into cell and processors
+   *
+   */
+  void locate_ghost_particles_in_cells();
 
   /**
    * @brief Carries out the broad contact detection search using the
@@ -140,34 +141,62 @@ private:
   void finish_simulation();
 
   /**
-   * Updates the iterators to particles in a map of particles
-   * (particle_container) after calling sorting particles in cells function
+   * Updates the iterators to local particles in a map of particles
+   * (local_particle_container) after calling sorting particles in cells
+   * function
    *
+   * @param local_particle_container A map of particles which is used to update
+   * the iterators to particles in pp and pw fine search outputs after calling
+   * sort particles into cells function
    * @param particle_handler Particle handler to access all the particles in the
    * system
-   * @return particle_container A map of particles which is used to update the
-   * iterators to particles in pp and pw fine search outputs after calling sort
-   * particles into cells function
    */
-
-  void update_particle_container(
-      std::map<int, Particles::ParticleIterator<dim>> &particle_container,
+  void update_local_particle_container(
+      std::map<int, Particles::ParticleIterator<dim>> &local_particle_container,
       Particles::ParticleHandler<dim> *particle_handler);
 
   /**
-   * Updates the iterators to particles in adjacent_particles (output of pp
-   * fine search)
+   * Updates the iterators to ghost particles in a map of particles
+   * (particle_container) after calling sorting particles in cells function
    *
-   * @param adjacent_particles Output of particle-particle fine search
+   * @param ghost_particle_container A map of particles which is used to update
+   * the iterators to particles in pp and pw fine search outputs after calling
+   * sort particles into cells function
+   * @param particle_handler Particle handler to access all the particles in the
+   * system
+   */
+  void update_ghost_particle_container(
+      std::map<int, Particles::ParticleIterator<dim>> &ghost_particle_container,
+      Particles::ParticleHandler<dim> *particle_handler);
+
+  /**
+   * Updates the iterators to particles in local-local adjacent_particles
+   * (output of pp fine search)
+   *
+   * @param local_adjacent_particles Output of particle-particle fine search
    * @param particle_container Output of update_particle_container function
    */
-  void update_pp_contact_container_iterators(
+  void update_local_pp_contact_container_iterators(
       std::map<int, std::map<int, pp_contact_info_struct<dim>>>
           &local_adjacent_particles,
+      const std::map<int, Particles::ParticleIterator<dim>>
+          &particle_container);
+
+  /**
+   * Updates the iterators to particles in local_ghost adjacent_particles
+   * (output of pp fine search)
+   *
+   * @param ghost_adjacent_particles Output of particle-particle fine search
+   * @param local_adjacent_particles Output of particle-particle fine search
+   * @param particle_container Output of update_particle_container function
+   */
+  void update_ghost_pp_contact_container_iterators(
       std::map<int, std::map<int, pp_contact_info_struct<dim>>>
           &ghost_adjacent_particles,
       const std::map<int, Particles::ParticleIterator<dim>>
-          &particle_container);
+          &local_particle_container,
+      const std::map<int, Particles::ParticleIterator<dim>>
+          &ghost_particle_container);
 
   /**
    * Updates the iterators to particles in pw_contact_container (output of pw
@@ -305,7 +334,8 @@ private:
   std::map<int, particle_point_line_contact_info_struct<dim>>
       particle_points_in_contact, particle_lines_in_contact;
 
-  std::map<int, Particles::ParticleIterator<dim>> particle_container;
+  std::map<int, Particles::ParticleIterator<dim>> local_particle_container;
+  std::map<int, Particles::ParticleIterator<dim>> ghost_particle_container;
   DEM::DEMProperties<dim> properties_class;
 
   // Initilization of classes and building objects
