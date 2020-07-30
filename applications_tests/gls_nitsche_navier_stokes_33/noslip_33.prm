@@ -7,8 +7,8 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 0
-  set output name             = slip
+  set number mesh adapt       = 1
+  set output name             = noslip_33
   set output frequency        = 1
   set subdivision             = 1
 end
@@ -49,7 +49,7 @@ end
 subsection initial conditions
     set type = nodal
     subsection uvwp
-            set Function expression = 0; 0; 0
+            set Function expression = 0; 0; 0; 0
     end
 end
 
@@ -57,15 +57,17 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity            = 1
+    set kinematic viscosity            = 1.0
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = gmsh
-    set file name            = ../rect.msh
+		set type = dealii
+		set grid type = hyper_rectangle
+		set grid arguments = 0, 0, 0 : 1, 1, 1 : true
+		set initial refinement = 2
 end
 
 #---------------------------------------------------
@@ -73,11 +75,20 @@ end
 #---------------------------------------------------
 subsection nitsche
 	subsection mesh
-		set type = gmsh
-		set file name = ../base.msh
+		set type = dealii
+		set grid type = hyper_rectangle
+		set grid arguments = 0, 0, 0 : 1, 0.5, 1 : true
+		set initial refinement = 4
 	end
 	
-	set beta = 1000
+	set beta = 100
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                    = uniform
 end
 
 # --------------------------------------------------
@@ -86,8 +97,7 @@ end
 subsection analytical solution
   set enable                 = true
     subsection uvw
-#           set Function expression = 0 ; 0 ; 0
-            set Function expression = 1*(y-0.02)/(0.1-0.02); 0 ; 0
+            set Function expression = if(y >= 0.5, 2*y - 1, 0) ; 0 ; 0 ; 0
     end
 end
 
@@ -95,13 +105,13 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 4
-    subsection bc 1
-    set id = 1
+  set number                  = 2
+    subsection bc 0
+    set id = 2
         set type              = noslip
     end
-    subsection bc 2
-    set id = 2
+    subsection bc 1
+    set id = 3
         set type              = function
         subsection u
             set Function expression = 1
@@ -117,7 +127,7 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set verbosity               = quiet
-  set tolerance               = 1e-4
+  set tolerance               = 1e-12
   set max iterations          = 10
 end
 
@@ -129,8 +139,8 @@ subsection linear solver
   set method                  = gmres
   set max iters               = 5000
   set relative residual       = 1e-4
-  set minimum residual        = 1e-9
-  set ilu preconditioner fill = 1
-  set ilu preconditioner absolute tolerance = 1e-5
+  set minimum residual        = 1e-13
+  set ilu preconditioner fill = 2
+  set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end

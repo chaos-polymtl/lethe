@@ -7,11 +7,12 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 0
-  set output name             = sphere_23
+  set number mesh adapt       = 1
+  set output name             = noslip_23
   set output frequency        = 1
   set subdivision             = 1
 end
+
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
@@ -19,12 +20,14 @@ subsection FEM
     set velocity order        = 1
     set pressure order        = 1
 end
+
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
 subsection timer
     set type    = none                                  # <none|iteration|end>
 end
+
 #---------------------------------------------------
 # Force
 #---------------------------------------------------
@@ -39,86 +42,82 @@ subsection forces
     set calculation frequency = 1
     set output frequency      = 1
 end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = nodal
+    subsection uvwp
+            set Function expression = 0; 0; 0; 0
+    end
+end
+
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity            = 1.0000
+    set kinematic viscosity            = 1.0
 end
+
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = dealii
-    set grid type            = hyper_cube
-    set grid arguments	     = -2 : 2 : true
-    set initial refinement   = 5
+		set type = dealii
+		set grid type = hyper_rectangle
+		set grid arguments = 0, 0, 0 : 1, 1, 1 : true
+		set initial refinement = 2
 end
 
 #---------------------------------------------------
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-    subsection mesh
-	set type                 = gmsh
-	set file name		 = ../sphere_23.msh
-    end
-    set beta = 100
-end
-
-
-# --------------------------------------------------
-# Boundary Conditions
-#---------------------------------------------------
-subsection boundary conditions
-  set number                  = 5
-    subsection bc 0
-        set type              = slip
-    end
-    subsection bc 1
-        set type              = slip
-    end
-    subsection bc 2
-        set type              = slip
-    end
-    subsection bc 3
-        set type              = slip
-    end
-    subsection bc 4
-	set type              = function
-        subsection u
-            set Function expression = 0
-        end
-        subsection v
-            set Function expression = 0
-        end
-        subsection w
-            set Function expression = 1
-        end
-    end
-end
-
-# --------------------------------------------------
-# Post-Processing
-#---------------------------------------------------
-subsection post-processing
-  # Output the boundaries of the domain
-  set output boundaries        = true
+	subsection mesh
+		set type = gmsh
+		set file name = ../noslip_23.msh
+	end
+	
+	set beta = 100
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-  set type                    = kelly
-  set variable                = velocity
-  set fraction type           = number
-  set max number elements     = 70000
-  set max refinement level    = 5
-  set min refinement level    = 0
-  set frequency               = 1
-  set fraction refinement     = 0.3
-  set fraction coarsening     = 0.1
+  set type                    = uniform
+end
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+    subsection uvw
+            set Function expression = if(y >= 0.5, 2*y - 1, 0) ; 0 ; 0 ; 0
+    end
+end
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                  = 2
+    subsection bc 0
+    set id = 2
+        set type              = noslip
+    end
+    subsection bc 1
+    set id = 3
+        set type              = function
+        subsection u
+            set Function expression = 1
+        end
+        subsection v
+            set Function expression = 0
+        end
+    end
 end
 
 # --------------------------------------------------
@@ -126,7 +125,7 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set verbosity               = quiet
-  set tolerance               = 1e-2
+  set tolerance               = 1e-12
   set max iterations          = 10
 end
 
@@ -137,9 +136,9 @@ subsection linear solver
   set verbosity               = quiet
   set method                  = gmres
   set max iters               = 5000
-  set relative residual       = 1e-2
-  set minimum residual        = 1e-9
-  set ilu preconditioner fill = 0
-  set ilu preconditioner absolute tolerance = 1e-8
+  set relative residual       = 1e-4
+  set minimum residual        = 1e-13
+  set ilu preconditioner fill = 2
+  set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end
