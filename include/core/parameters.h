@@ -421,6 +421,19 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  struct Nitsche
+  {
+    Mesh solid_mesh;
+
+    // Penalization term
+    double beta;
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
   /**
    * @brief MeshAdaption - Parameters that control dynamic mesh adaptation.
    * Dynamic mesh adaptation in Lethe is very flexible and can be both local
