@@ -48,6 +48,7 @@ public:
 private:
   SolidBase<dim, spacedim> solid;
 
+  template <bool assemble_matrix>
   void
   assemble_nitsche_restriction();
 

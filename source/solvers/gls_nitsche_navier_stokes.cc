@@ -41,6 +41,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
 {}
 
 template <int dim, int spacedim>
+template <bool assemble_matrix>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
@@ -105,15 +106,18 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
               const auto comp_i = this->fe.system_to_component_index(i).first;
               if (comp_i < spacedim)
                 {
-                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                  if (assemble_matrix)
                     {
-                      const auto comp_j =
-                        this->fe.system_to_component_index(j).first;
-                      if (comp_i == comp_j)
-                        local_matrix(i, j) += penalty_parameter * beta *
-                                              this->fe.shape_value(i, ref_q) *
-                                              this->fe.shape_value(j, ref_q) *
-                                              JxW;
+                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                        {
+                          const auto comp_j =
+                            this->fe.system_to_component_index(j).first;
+                          if (comp_i == comp_j)
+                            local_matrix(i, j) +=
+                              penalty_parameter * beta *
+                              this->fe.shape_value(i, ref_q) *
+                              this->fe.shape_value(j, ref_q) * JxW;
+                        }
                     }
                   local_rhs(i) += -penalty_parameter * beta * velocity[comp_i] *
                                   this->fe.shape_value(i, ref_q) * JxW;
@@ -138,13 +142,10 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_system");
-
   this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs(
     time_stepping_method);
 
-
-  assemble_nitsche_restriction();
+  assemble_nitsche_restriction<true>();
 }
 
 template <int dim, int spacedim>
@@ -152,11 +153,9 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-
   this->GLSNavierStokesSolver<spacedim>::assemble_rhs(time_stepping_method);
 
-  assemble_nitsche_restriction();
+  assemble_nitsche_restriction<false>();
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
