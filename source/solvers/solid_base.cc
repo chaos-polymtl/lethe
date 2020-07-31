@@ -78,7 +78,7 @@ SolidBase<dim, spacedim>::initial_setup()
       "Unsupported mesh type - solid mesh will not be created");
 
   // Refine the solid triangulation to its initial size
-  solid_tria->refine_global(param.solid_mesh.initialRefinement);
+  solid_tria->refine_global(param.solid_mesh.initial_refinement);
 }
 
 
