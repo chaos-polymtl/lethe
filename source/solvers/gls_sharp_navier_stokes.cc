@@ -87,9 +87,104 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
 }
 
 template <int dim>
+typename DoFHandler<dim>::active_cell_iterator
+GLSSharpNavierStokesSolver<dim>::find_cell_around_point(Point<dim> point)
+{
+    // find cell around point using tree propries instead of looping on all cell
+
+
+    //define stuff for the search
+    MappingQ1<dim>                                map;
+    const auto &cell_iterator = this->dof_handler.cell_iterators_on_level(0);
+    unsigned int max_childs= GeometryInfo<dim>::max_children_per_cell;
+    typename DoFHandler<dim>::active_cell_iterator best_cell_iter;
+    typename DoFHandler<dim>::active_cell_iterator best_cell;
+
+    bool cell_0_found= false;
+
+    //loop on the cell on lvl 0 of the mesh
+    for (const auto &cell : cell_iterator)
+    {
+
+        try {
+
+            const Point<dim, double> p_cell =
+                    map.transform_real_to_unit_cell(
+                            cell,
+                            point);
+
+            const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+
+            if (dist == 0) {
+                // cell on lvl 0 found
+                cell_0_found=true;
+
+
+            }
+        }
+        catch (const typename MappingQGeneric<
+                dim>::ExcTransformationFailed &)
+                {}
+
+        best_cell_iter=cell;
+        if (cell_0_found){
+            // the cell on lvl 0 contain the point so now loop on the childs of this cell
+            // when we found the child of the cell that containt it we stop and loop if the cell is active
+            // if the cell is not active loop on the child of the cell. Repeat
+            unsigned int lvl= 0;
+            while(best_cell_iter->is_active()==false){
+
+                bool cell_found=false;
+                double best_dist=DBL_MAX;
+                unsigned int best_index=0;
+                for(unsigned int i =0; i<max_childs; ++i){
+                    try {
+
+                        const Point<dim, double> p_cell =
+                                map.transform_real_to_unit_cell(
+                                        best_cell_iter->child(i),
+                                        point);
+                        const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+                        bool inside = true;
+
+
+                        if (dist <= best_dist and inside) {
+                            best_dist=dist;
+                            best_index=i;
+                            cell_found=true;
+                            if (dist==0)
+                                break;
+                        }
+                    }
+                    catch (const typename MappingQGeneric<
+                            dim>::ExcTransformationFailed &)
+                    {}
+
+                }
+
+                best_cell_iter=best_cell_iter->child(best_index);
+
+                if (cell_found==false) {
+                    std::cout << "cell not found" << point<< std::endl;
+                    break;
+                }
+
+                lvl+=1;
+            }
+
+            break;
+        }
+    }
+
+    return best_cell_iter;
+}
+
+template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::refine_ib()
 {
+
+
   Point<dim>                                    center_immersed;
   MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
@@ -132,8 +227,10 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
               if (count_small > 0)
                 {
                   cell->set_refine_flag();
+                  break;
                 }
             }
+
         }
     }
 }
@@ -146,6 +243,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Calculate the torque and force on a immersed boundary
   // The boundary is a circle in 2D or a sphere in 3D
 
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+            active_neighbors_set;
+  std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
+  MappingQ1<dim>                                map;
+  std::pair<unsigned int, unsigned int> cell_vertex_map;
   const double min_cell_diameter =
     GridTools::minimal_cell_diameter(*this->triangulation);
 
@@ -188,7 +290,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           // Initialise the output variable for this particle
 
           double t_torque = 0;
-
+          unsigned int nb_eval=0;
           double fx_v   = 0;
           double fy_v   = 0;
           double fx_p_2 = 0;
@@ -196,6 +298,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
           // loop on all the evaluation point
+
           for (unsigned int i = 0; i < nb_evaluation; ++i)
             {
               // define the normal to the surface evaluated and the vector that
@@ -239,13 +342,22 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
                     eval_point[1] +
                       surf_normal[1] * (nb_step + 1) * step_ratio);
-                  const auto &cell_iter =
+                  /*const auto &cell_iter =
                     GridTools::find_active_cell_around_point(this->dof_handler,
-                                                             eval_point_iter);
-                  if (cell_iter->is_artificial() == false)
-                    {
-                      cell_iter->get_dof_indices(local_dof_indices);
+                                                             eval_point_iter);*/
+                  //std::cout << "before cell found " << i << std::endl;
+                  const auto &cell_iter=find_cell_around_point(eval_point_iter);
+                  //std::cout << "cell found " << i<< std::endl;
+                  //std::cout << "cell found v index " << cell_vertex_map.first << std::endl;
+                  //std::cout << "cell found map " << cell_vertex_map.second << std::endl;
 
+
+
+                  if (cell_iter->is_artificial()==false)
+                    {
+                      //const auto &cell_iter=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                      cell_iter->get_dof_indices(local_dof_indices);
+                      //std::cout << "got dof _indices " << std::endl;
                       unsigned int count_small = 0;
                       center_immersed          = particles[p].position;
 
@@ -303,197 +415,198 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                               surf_normal[1] * step_ratio);
 
 
-              const auto &cell_2 =
-                GridTools::find_active_cell_around_point(this->dof_handler,
-                                                         second_point);
-              const auto &cell_3 =
-                GridTools::find_active_cell_around_point(this->dof_handler,
-                                                         third_point);
-              const auto &cell_4 =
-                GridTools::find_active_cell_around_point(this->dof_handler,
-                                                         fourth_point);
+
+
+              const auto &cell_2=find_cell_around_point(second_point);
+
+
+
+
 
 
               // Check if the cell is locally owned before doing the evalation.
-              if (cell_2->is_locally_owned())
-                {
-                  cell_2->get_dof_indices(local_dof_indices);
-                  cell_3->get_dof_indices(local_dof_indices_2);
-                  cell_4->get_dof_indices(local_dof_indices_3);
-                  // Define the tensors used for the evaluation of the velocity
-                  Tensor<1, dim, double> u_1;
-                  Tensor<1, dim, double> u_2;
-                  Tensor<1, dim, double> u_3;
+              //if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
+                  //const auto &cell_2=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                  if (cell_2->is_locally_owned()) {
+                      const auto &cell_3 = find_cell_around_point(third_point);
+                      // = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                      const auto &cell_4 = find_cell_around_point(fourth_point);
+                      //const auto &cell_4 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                      cell_2->get_dof_indices(local_dof_indices);
+                      cell_3->get_dof_indices(local_dof_indices_2);
+                      cell_4->get_dof_indices(local_dof_indices_3);
+                      // Define the tensors used for the evaluation of the velocity
+                      Tensor<1, dim, double> u_1;
+                      Tensor<1, dim, double> u_2;
+                      Tensor<1, dim, double> u_3;
 
-                  // Define the pressure variables
-                  double P1 = 0;
-                  double P2 = 0;
-                  double P3 = 0;
+                      // Define the pressure variables
+                      double P1 = 0;
+                      double P2 = 0;
+                      double P3 = 0;
 
-                  // Define the velocity component of the particle at the
-                  // boundary on the reference point we put the reference for
-                  // the velocity at the center of the particle this simplifie
-                  // the evaluation of the force if the particule is moving
-                  u_1[0] = -particles[p].omega[2] * particles[p].radius *
-                           sin(i * 2 * PI / (nb_evaluation));
-                  u_1[1] = particles[p].omega[2] * particles[p].radius *
-                           cos(i * 2 * PI / (nb_evaluation));
+                      // Define the velocity component of the particle at the
+                      // boundary on the reference point we put the reference for
+                      // the velocity at the center of the particle this simplifie
+                      // the evaluation of the force if the particule is moving
+                      u_1[0] = -particles[p].omega[2] * particles[p].radius *
+                               sin(i * 2 * PI / (nb_evaluation));
+                      u_1[1] = particles[p].omega[2] * particles[p].radius *
+                               cos(i * 2 * PI / (nb_evaluation));
 
-                  // Projection of the speed of the boundary on the plan of the
-                  // surface used for evaluation
-                  double U1 = (surf_vect[0] * u_1[0] + surf_vect[1] * u_1[1]) /
-                              surf_vect.norm();
-
-
-                  // used support function of the cell to define the
-                  // interpolation of the velocity
-                  Point<dim> second_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_2,
-                                                             second_point);
-                  Point<dim> third_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_3,
-                                                             third_point);
-                  Point<dim> fourth_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_4,
-                                                             fourth_point);
-
-                  // initialise the component of the velocity
-                  u_2[0] = 0;
-                  u_2[1] = 0;
-                  u_3[0] = 0;
-                  u_3[1] = 0;
-                  cell_2->get_dof_indices(local_dof_indices);
-                  cell_3->get_dof_indices(local_dof_indices_2);
-                  cell_4->get_dof_indices(local_dof_indices_3);
+                      // Projection of the speed of the boundary on the plan of the
+                      // surface used for evaluation
+                      double U1 = (surf_vect[0] * u_1[0] + surf_vect[1] * u_1[1]) /
+                                  surf_vect.norm();
 
 
+                      // used support function of the cell to define the
+                      // interpolation of the velocity
+                      Point<dim> second_point_v =
+                              immersed_map.transform_real_to_unit_cell(cell_2,
+                                                                       second_point);
+                      Point<dim> third_point_v =
+                              immersed_map.transform_real_to_unit_cell(cell_3,
+                                                                       third_point);
+                      Point<dim> fourth_point_v =
+                              immersed_map.transform_real_to_unit_cell(cell_4,
+                                                                       fourth_point);
 
-                  // define the interpolation of the cell in order to have the
-                  // solution at the point previously define
-                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                    {
-                      const unsigned int component_i =
-                        this->fe.system_to_component_index(j).first;
-                      if (component_i < dim)
-                        {
-                          u_2[component_i] +=
-                            this->fe.shape_value(j, second_point_v) *
-                            this->present_solution(local_dof_indices[j]);
-
-                          u_3[component_i] +=
-                            this->fe.shape_value(j, third_point_v) *
-                            this->present_solution(local_dof_indices_2[j]);
-                        }
-                      if (component_i == dim)
-                        {
-                          P1 += this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
-                          P2 += this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
-                          P3 += this->fe.shape_value(j, fourth_point_v) *
-                                this->present_solution(local_dof_indices_3[j]);
-                        }
-                    }
-                  // Evaluate the solution in the reference frame of the
-                  // particle
-                  u_2[0] = u_2[0] - particles[p].velocity[0];
-                  u_2[1] = u_2[1] - particles[p].velocity[1];
-                  u_3[0] = u_3[0] - particles[p].velocity[0];
-                  u_3[1] = u_3[1] - particles[p].velocity[1];
-
-                  // Project the velocity along the surface
-                  double U2 = (surf_vect[0] * u_2[0] + surf_vect[1] * u_2[1]) /
-                              surf_vect.norm();
-                  double U3 = (surf_vect[0] * u_3[0] + surf_vect[1] * u_3[1]) /
-                              surf_vect.norm();
-
-                  // Project the velocity along the normal
-                  double U1_r =
-                    (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
-                    surf_normal.norm();
-                  double U2_r =
-                    (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
-                    surf_normal.norm();
-                  double U3_r =
-                    (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
-                    surf_normal.norm();
-
-
-                  // Define the 2nd order stencil for the derivative at the
-                  // boundary with variable length between the points
-                  double du_dn_1 =
-                    (U2 / (particles[p].radius +
-                           surf_normal.norm() * (nb_step + 1) * step_ratio) -
-                     U1 / particles[p].radius) /
-                    ((nb_step + 1) * surf_normal.norm() * step_ratio);
-                  double du_dn_2 =
-                    (U3 / (particles[p].radius +
-                           surf_normal.norm() * (nb_step + 2) * step_ratio) -
-                     U2 / (particles[p].radius +
-                           surf_normal.norm() * (nb_step + 1) * step_ratio)) /
-                    (surf_normal.norm() * step_ratio);
-
-                  double du_dr_1 =
-                    (U2_r - U1_r) /
-                    ((nb_step + 1) * surf_normal.norm() * step_ratio);
-                  double du_dr_2 =
-                    (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
+                      // initialise the component of the velocity
+                      u_2[0] = 0;
+                      u_2[1] = 0;
+                      u_3[0] = 0;
+                      u_3[1] = 0;
+                      cell_2->get_dof_indices(local_dof_indices);
+                      cell_3->get_dof_indices(local_dof_indices_2);
+                      cell_4->get_dof_indices(local_dof_indices_3);
 
 
 
-                  double du_dn = du_dn_1 - (du_dn_2 - du_dn_1) * (nb_step + 1) /
-                                             ((nb_step + 1) + 1);
-                  double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) /
-                                             ((nb_step + 1) + 1);
+                      // define the interpolation of the cell in order to have the
+                      // solution at the point previously define
+                      for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
+                          const unsigned int component_i =
+                                  this->fe.system_to_component_index(j).first;
+                          if (component_i < dim) {
+                              u_2[component_i] +=
+                                      this->fe.shape_value(j, second_point_v) *
+                                      this->present_solution(local_dof_indices[j]);
 
-                  // Define the 3rd order stencil for the solution at the
-                  // boundary of the pressure  with variable length between the
-                  // points
-                  double P_local = P1 + (nb_step + 1) * (P1 - P2) +
-                                   ((nb_step + 2) * (nb_step + 1) / 2) *
-                                     ((P1 - P2) - (P2 - P3));
+                              u_3[component_i] +=
+                                      this->fe.shape_value(j, third_point_v) *
+                                      this->present_solution(local_dof_indices_2[j]);
+                          }
+                          if (component_i == dim) {
+                              P1 += this->fe.shape_value(j, second_point_v) *
+                                    this->present_solution(local_dof_indices[j]);
+                              P2 += this->fe.shape_value(j, third_point_v) *
+                                    this->present_solution(local_dof_indices_2[j]);
+                              P3 += this->fe.shape_value(j, fourth_point_v) *
+                                    this->present_solution(local_dof_indices_3[j]);
+                          }
+                      }
+                      // Evaluate the solution in the reference frame of the
+                      // particle
+                      u_2[0] = u_2[0] - particles[p].velocity[0];
+                      u_2[1] = u_2[1] - particles[p].velocity[1];
+                      u_3[0] = u_3[0] - particles[p].velocity[0];
+                      u_3[1] = u_3[1] - particles[p].velocity[1];
+
+                      // Project the velocity along the surface
+                      double U2 = (surf_vect[0] * u_2[0] + surf_vect[1] * u_2[1]) /
+                                  surf_vect.norm();
+                      double U3 = (surf_vect[0] * u_3[0] + surf_vect[1] * u_3[1]) /
+                                  surf_vect.norm();
+
+                      // Project the velocity along the normal
+                      double U1_r =
+                              (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
+                              surf_normal.norm();
+                      double U2_r =
+                              (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
+                              surf_normal.norm();
+                      double U3_r =
+                              (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
+                              surf_normal.norm();
 
 
-                  // Evaluate the local force on the boundary
+                      // Define the 2nd order stencil for the derivative at the
+                      // boundary with variable length between the points
+                      double du_dn_1 =
+                              (U2 / (particles[p].radius +
+                                     surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                               U1 / particles[p].radius) /
+                              ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                      double du_dn_2 =
+                              (U3 / (particles[p].radius +
+                                     surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                               U2 / (particles[p].radius +
+                                     surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                              (surf_normal.norm() * step_ratio);
 
-                  // First evaluate the viscous force
-                  double local_fx_v =
-                    ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
-                     (-particles[p].radius * mu * du_dn * surf_vect[0] /
-                      surf_vect.norm())) *
-                    da;
-                  double local_fy_v =
-                    ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
-                     (-particles[p].radius * mu * du_dn * surf_vect[1] /
-                      surf_vect.norm())) *
-                    da;
-
-                  // Second evaluate the pressure force
-                  double local_fx_p_2 =
-                    P_local * da * surf_normal[0] / surf_normal.norm();
-                  double local_fy_p_2 =
-                    P_local * da * surf_normal[1] / surf_normal.norm();
+                      double du_dr_1 =
+                              (U2_r - U1_r) /
+                              ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                      double du_dr_2 =
+                              (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
 
 
-                  // add the local contribution to the global force evaluation
-                  fx_v += -local_fx_v;
-                  fy_v += -local_fy_v;
-                  fx_p_2 += -local_fx_p_2;
-                  fy_p_2 += -local_fy_p_2;
-                  t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) *
-                                particles[p].radius -
-                              local_fy_v * cos(i * 2 * PI / (nb_evaluation)) *
-                                particles[p].radius;
-                }
+                      double du_dn = du_dn_1 - (du_dn_2 - du_dn_1) * (nb_step + 1) /
+                                               ((nb_step + 1) + 1);
+                      double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) /
+                                               ((nb_step + 1) + 1);
+
+                      // Define the 3rd order stencil for the solution at the
+                      // boundary of the pressure  with variable length between the
+                      // points
+                      double P_local = P1 + (nb_step + 1) * (P1 - P2) +
+                                       ((nb_step + 2) * (nb_step + 1) / 2) *
+                                       ((P1 - P2) - (P2 - P3));
+
+
+                      // Evaluate the local force on the boundary
+
+                      // First evaluate the viscous force
+                      double local_fx_v =
+                              ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
+                               (-particles[p].radius * mu * du_dn * surf_vect[0] /
+                                surf_vect.norm())) *
+                              da;
+                      double local_fy_v =
+                              ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
+                               (-particles[p].radius * mu * du_dn * surf_vect[1] /
+                                surf_vect.norm())) *
+                              da;
+
+                      // Second evaluate the pressure force
+                      double local_fx_p_2 =
+                              P_local * da * surf_normal[0] / surf_normal.norm();
+                      double local_fy_p_2 =
+                              P_local * da * surf_normal[1] / surf_normal.norm();
+
+
+                      // add the local contribution to the global force evaluation
+                      fx_v += -local_fx_v;
+                      fy_v += -local_fy_v;
+                      fx_p_2 += -local_fx_p_2;
+                      fy_p_2 += -local_fy_p_2;
+                      t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) *
+                                  particles[p].radius -
+                                  local_fy_v * cos(i * 2 * PI / (nb_evaluation)) *
+                                  particles[p].radius;
+                      nb_eval+=1;
+                  }
+              //}
             }
 
           // Reduce the solution for each process
-          double t_torque_ =
-            Utilities::MPI::sum(t_torque, this->mpi_communicator);
+          double t_torque_ =Utilities::MPI::sum(t_torque, this->mpi_communicator);
           double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
           double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
           double fx_v_   = Utilities::MPI::sum(fx_v, this->mpi_communicator);
           double fy_v_   = Utilities::MPI::sum(fy_v, this->mpi_communicator);
+          //unsigned int nb_eval_total   = Utilities::MPI::sum(nb_eval, this->mpi_communicator);
 
 
           // Present the solution of the force on the boundary of the particle p
@@ -517,6 +630,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   std::cout << "fy_P: " << fy_p_2_ << std::endl;
                   std::cout << "fx_v: " << fx_v_ << std::endl;
                   std::cout << "fy_v: " << fy_v_ << std::endl;
+                  //std::cout << "fy_v: " << nb_eval_total << std::endl;
                   table_f.add_value("particle ID", p);
                   table_f.add_value("f_x", fx_p_2_ + fx_v_);
                   table_f.add_value("f_y", fy_p_2_ + fy_v_);
@@ -544,6 +658,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
             }
         }
     }
+
 
   // same structure as for the 2d case but used 3d variables  so there is 1 more
   // vector on the surface for the evaluation
@@ -582,6 +697,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           double torque_x = 0;
           double torque_y = 0;
           double torque_z = 0;
+
+          //unsigned int nb_eval =0;
 
           double fx_v = 0;
           double fy_v = 0;
@@ -638,11 +755,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           surf_normal[1] * (nb_step + 1) * step_ratio,
                         eval_point[2] +
                           surf_normal[2] * (nb_step + 1) * step_ratio);
-                      const auto &cell_iter =
+                      /*const auto &cell_iter =
                         GridTools::find_active_cell_around_point(
-                          this->dof_handler, eval_point_2);
-                      if (cell_iter->is_artificial() == false)
+                          this->dof_handler, eval_point_2);*/
+                        const auto &cell_iter=find_cell_around_point(eval_point_2);
+
+
+
+                      if (cell_iter->is_artificial()==false)
                         {
+                          //const auto &cell_iter = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                           cell_iter->get_dof_indices(local_dof_indices);
 
                           unsigned int count_small = 0;
@@ -705,248 +827,244 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     third_point[1] + surf_normal[1] * step_ratio,
                     third_point[2] + surf_normal[2] * step_ratio);
 
-                  const auto &cell_2 =
-                    GridTools::find_active_cell_around_point(this->dof_handler,
-                                                             second_point);
-                  const auto &cell_3 =
-                    GridTools::find_active_cell_around_point(this->dof_handler,
-                                                             third_point);
-                  const auto &cell_4 =
-                    GridTools::find_active_cell_around_point(this->dof_handler,
-                                                             fourth_point);
+                  const auto &cell_2=find_cell_around_point(second_point);
 
-                  if (cell_2->is_locally_owned())
-                    {
-                      cell_2->get_dof_indices(local_dof_indices);
-                      cell_3->get_dof_indices(local_dof_indices_2);
-                      cell_4->get_dof_indices(local_dof_indices_3);
+                  //if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
+                      //const auto &cell_2 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                      if (cell_2->is_locally_owned()) {
+                          const auto &cell_3  = find_cell_around_point(third_point);
+                          //const auto &cell_3 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                          const auto &cell_4  = find_cell_around_point(fourth_point);
+                          //const auto &cell_4 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
+                          cell_2->get_dof_indices(local_dof_indices);
+                          cell_3->get_dof_indices(local_dof_indices_2);
+                          cell_4->get_dof_indices(local_dof_indices_3);
 
-                      // Define the tensor used for the velocity evaluation.
-                      Tensor<1, dim, double> u_1;
-                      Tensor<1, dim, double> u_2;
-                      Tensor<1, dim, double> u_3;
-                      double                 P1 = 0;
-                      double                 P2 = 0;
-                      double                 P3 = 0;
+                          // Define the tensor used for the velocity evaluation.
+                          Tensor<1, dim, double> u_1;
+                          Tensor<1, dim, double> u_2;
+                          Tensor<1, dim, double> u_3;
+                          double P1 = 0;
+                          double P2 = 0;
+                          double P3 = 0;
 
-                      // Define the velocity component of the particle at the
-                      // boundary on the reference point in 3 d the only
-                      // rotation is around the z axis
-                      u_1[0] = particles[p].omega[1] * particles[p].radius *
-                                 surf_normal[2] / surf_normal.norm() -
-                               particles[p].omega[2] * particles[p].radius *
-                                 surf_normal[1] / surf_normal.norm();
-                      u_1[1] = particles[p].omega[2] * particles[p].radius *
-                                 surf_normal[0] / surf_normal.norm() -
-                               particles[p].omega[0] * particles[p].radius *
-                                 surf_normal[2] / surf_normal.norm();
-                      u_1[2] = particles[p].omega[0] * particles[p].radius *
-                                 surf_normal[1] / surf_normal.norm() -
-                               particles[p].omega[1] * particles[p].radius *
-                                 surf_normal[0] / surf_normal.norm();
+                          // Define the velocity component of the particle at the
+                          // boundary on the reference point in 3 d the only
+                          // rotation is around the z axis
+                          u_1[0] = particles[p].omega[1] * particles[p].radius *
+                                   surf_normal[2] / surf_normal.norm() -
+                                   particles[p].omega[2] * particles[p].radius *
+                                   surf_normal[1] / surf_normal.norm();
+                          u_1[1] = particles[p].omega[2] * particles[p].radius *
+                                   surf_normal[0] / surf_normal.norm() -
+                                   particles[p].omega[0] * particles[p].radius *
+                                   surf_normal[2] / surf_normal.norm();
+                          u_1[2] = particles[p].omega[0] * particles[p].radius *
+                                   surf_normal[1] / surf_normal.norm() -
+                                   particles[p].omega[1] * particles[p].radius *
+                                   surf_normal[0] / surf_normal.norm();
 
-                      // Projection of the speed of the boundary on the plan of
-                      // the surface used for evaluation
-                      double U1_1 =
-                        (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] +
-                         surf_vect_1[2] * u_1[2]) /
-                        surf_vect_1.norm();
+                          // Projection of the speed of the boundary on the plan of
+                          // the surface used for evaluation
+                          double U1_1 =
+                                  (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] +
+                                   surf_vect_1[2] * u_1[2]) /
+                                  surf_vect_1.norm();
 
-                      double U1_2 =
-                        (surf_vect_2[0] * u_1[0] + surf_vect_2[1] * u_1[1] +
-                         surf_vect_2[2] * u_1[2]) /
-                        surf_vect_2.norm();
+                          double U1_2 =
+                                  (surf_vect_2[0] * u_1[0] + surf_vect_2[1] * u_1[1] +
+                                   surf_vect_2[2] * u_1[2]) /
+                                  surf_vect_2.norm();
 
 
-                      // Used support function of the cell to define the
-                      // interpolation of the velocity
-                      Point<dim> second_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_2,
-                                                                 second_point);
-                      Point<dim> third_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_3,
-                                                                 third_point);
-                      Point<dim> fourth_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_4,
-                                                                 fourth_point);
+                          // Used support function of the cell to define the
+                          // interpolation of the velocity
+                          Point<dim> second_point_v =
+                                  immersed_map.transform_real_to_unit_cell(cell_2,
+                                                                           second_point);
+                          Point<dim> third_point_v =
+                                  immersed_map.transform_real_to_unit_cell(cell_3,
+                                                                           third_point);
+                          Point<dim> fourth_point_v =
+                                  immersed_map.transform_real_to_unit_cell(cell_4,
+                                                                           fourth_point);
 
 
-                      cell_3->get_dof_indices(local_dof_indices_2);
-                      for (unsigned int j = 0; j < local_dof_indices.size();
-                           ++j)
-                        {
-                          const unsigned int component_i =
-                            this->fe.system_to_component_index(j).first;
-                          if (component_i < dim)
-                            {
-                              u_2[component_i] +=
-                                this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
+                          cell_3->get_dof_indices(local_dof_indices_2);
+                          for (unsigned int j = 0; j < local_dof_indices.size();
+                               ++j) {
+                              const unsigned int component_i =
+                                      this->fe.system_to_component_index(j).first;
+                              if (component_i < dim) {
+                                  u_2[component_i] +=
+                                          this->fe.shape_value(j, second_point_v) *
+                                          this->present_solution(local_dof_indices[j]);
 
-                              u_3[component_i] +=
-                                this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
-                            }
-                          if (component_i == dim)
-                            {
-                              P1 +=
-                                this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
-                              P2 +=
-                                this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
-                              P3 +=
-                                this->fe.shape_value(j, fourth_point_v) *
-                                this->present_solution(local_dof_indices_3[j]);
-                            }
-                        }
+                                  u_3[component_i] +=
+                                          this->fe.shape_value(j, third_point_v) *
+                                          this->present_solution(local_dof_indices_2[j]);
+                              }
+                              if (component_i == dim) {
+                                  P1 +=
+                                          this->fe.shape_value(j, second_point_v) *
+                                          this->present_solution(local_dof_indices[j]);
+                                  P2 +=
+                                          this->fe.shape_value(j, third_point_v) *
+                                          this->present_solution(local_dof_indices_2[j]);
+                                  P3 +=
+                                          this->fe.shape_value(j, fourth_point_v) *
+                                          this->present_solution(local_dof_indices_3[j]);
+                              }
+                          }
 
-                      // Evaluate the solution in the reference frame of the
-                      // particle
-                      u_2[0] = u_2[0] - particles[p].velocity[0];
-                      u_2[1] = u_2[1] - particles[p].velocity[1];
-                      u_2[2] = u_2[2] - particles[p].velocity[2];
-                      u_3[0] = u_3[0] - particles[p].velocity[0];
-                      u_3[1] = u_3[1] - particles[p].velocity[1];
-                      u_3[2] = u_3[2] - particles[p].velocity[2];
+                          // Evaluate the solution in the reference frame of the
+                          // particle
+                          u_2[0] = u_2[0] - particles[p].velocity[0];
+                          u_2[1] = u_2[1] - particles[p].velocity[1];
+                          u_2[2] = u_2[2] - particles[p].velocity[2];
+                          u_3[0] = u_3[0] - particles[p].velocity[0];
+                          u_3[1] = u_3[1] - particles[p].velocity[1];
+                          u_3[2] = u_3[2] - particles[p].velocity[2];
 
-                      double U2_1 =
-                        (surf_vect_1[0] * u_2[0] + surf_vect_1[1] * u_2[1] +
-                         surf_vect_1[2] * u_2[2]) /
-                        surf_vect_1.norm();
-                      double U3_1 =
-                        (surf_vect_1[0] * u_3[0] + surf_vect_1[1] * u_3[1] +
-                         surf_vect_1[2] * u_3[2]) /
-                        surf_vect_1.norm();
-                      double U2_2 =
-                        (surf_vect_2[0] * u_2[0] + surf_vect_2[1] * u_2[1] +
-                         surf_vect_2[2] * u_2[2]) /
-                        surf_vect_2.norm();
-                      double U3_2 =
-                        (surf_vect_2[0] * u_3[0] + surf_vect_2[1] * u_3[1] +
-                         surf_vect_2[2] * u_3[2]) /
-                        surf_vect_2.norm();
+                          double U2_1 =
+                                  (surf_vect_1[0] * u_2[0] + surf_vect_1[1] * u_2[1] +
+                                   surf_vect_1[2] * u_2[2]) /
+                                  surf_vect_1.norm();
+                          double U3_1 =
+                                  (surf_vect_1[0] * u_3[0] + surf_vect_1[1] * u_3[1] +
+                                   surf_vect_1[2] * u_3[2]) /
+                                  surf_vect_1.norm();
+                          double U2_2 =
+                                  (surf_vect_2[0] * u_2[0] + surf_vect_2[1] * u_2[1] +
+                                   surf_vect_2[2] * u_2[2]) /
+                                  surf_vect_2.norm();
+                          double U3_2 =
+                                  (surf_vect_2[0] * u_3[0] + surf_vect_2[1] * u_3[1] +
+                                   surf_vect_2[2] * u_3[2]) /
+                                  surf_vect_2.norm();
 
-                      double U1_r =
-                        (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
-                        surf_normal.norm();
-                      double U2_r =
-                        (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
-                        surf_normal.norm();
-                      double U3_r =
-                        (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
-                        surf_normal.norm();
+                          double U1_r =
+                                  (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
+                                  surf_normal.norm();
+                          double U2_r =
+                                  (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
+                                  surf_normal.norm();
+                          double U3_r =
+                                  (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
+                                  surf_normal.norm();
 
-                      double du_dn_1_1 =
-                        (U2_1 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio) -
-                         U1_1 / particles[p].radius) /
-                        ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                          double du_dn_1_1 =
+                                  (U2_1 /
+                                   (particles[p].radius +
+                                    surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                                   U1_1 / particles[p].radius) /
+                                  ((nb_step + 1) * surf_normal.norm() * step_ratio);
 
-                      double du_dn_2_1 =
-                        (U3_1 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 2) * step_ratio) -
-                         U2_1 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio)) /
-                        (surf_normal.norm() * step_ratio);
+                          double du_dn_2_1 =
+                                  (U3_1 /
+                                   (particles[p].radius +
+                                    surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                                   U2_1 /
+                                   (particles[p].radius +
+                                    surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                                  (surf_normal.norm() * step_ratio);
 
-                      double du_dn_1_2 =
-                        (U2_2 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio) -
-                         U1_2 / particles[p].radius) /
-                        ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                          double du_dn_1_2 =
+                                  (U2_2 /
+                                   (particles[p].radius +
+                                    surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                                   U1_2 / particles[p].radius) /
+                                  ((nb_step + 1) * surf_normal.norm() * step_ratio);
 
-                      double du_dn_2_2 =
-                        (U3_2 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 2) * step_ratio) -
-                         U2_2 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio)) /
-                        (surf_normal.norm() * step_ratio);
+                          double du_dn_2_2 =
+                                  (U3_2 /
+                                   (particles[p].radius +
+                                    surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                                   U2_2 /
+                                   (particles[p].radius +
+                                    surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                                  (surf_normal.norm() * step_ratio);
 
 
-                      double du_dr_1 =
-                        (U2_r - U1_r) /
-                        ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                          double du_dr_1 =
+                                  (U2_r - U1_r) /
+                                  ((nb_step + 1) * surf_normal.norm() * step_ratio);
 
-                      double du_dr_2 =
-                        (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
+                          double du_dr_2 =
+                                  (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
 
-                      double du_dn_1 = du_dn_1_1 - (du_dn_2_1 - du_dn_1_1) *
-                                                     (nb_step + 1) /
-                                                     ((nb_step + 1) + 1);
+                          double du_dn_1 = du_dn_1_1 - (du_dn_2_1 - du_dn_1_1) *
+                                                       (nb_step + 1) /
+                                                       ((nb_step + 1) + 1);
 
-                      double du_dn_2 = du_dn_1_2 - (du_dn_2_2 - du_dn_1_2) *
-                                                     (nb_step + 1) /
-                                                     ((nb_step + 1) + 1);
+                          double du_dn_2 = du_dn_1_2 - (du_dn_2_2 - du_dn_1_2) *
+                                                       (nb_step + 1) /
+                                                       ((nb_step + 1) + 1);
 
-                      double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) *
-                                                 (nb_step + 1) /
-                                                 ((nb_step + 1) + 1);
+                          double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) *
+                                                   (nb_step + 1) /
+                                                   ((nb_step + 1) + 1);
 
-                      double P_local = P1 + (nb_step + 1) * (P1 - P2) +
-                                       ((nb_step + 2) * (nb_step + 1) / 2) *
-                                         ((P1 - P2) - (P2 - P3));
+                          double P_local = P1 + (nb_step + 1) * (P1 - P2) +
+                                           ((nb_step + 2) * (nb_step + 1) / 2) *
+                                           ((P1 - P2) - (P2 - P3));
 
-                      double local_fx_v =
-                        ((-mu * du_dr * 2 * surf_normal[0] /
-                          surf_normal.norm()) +
-                         (-particles[p].radius * mu * du_dn_1 * surf_vect_1[0] /
-                          surf_vect_1.norm()) +
-                         (-particles[p].radius * mu * du_dn_2 * surf_vect_2[0] /
-                          surf_vect_2.norm())) *
-                        da;
+                          double local_fx_v =
+                                  ((-mu * du_dr * 2 * surf_normal[0] /
+                                    surf_normal.norm()) +
+                                   (-particles[p].radius * mu * du_dn_1 * surf_vect_1[0] /
+                                    surf_vect_1.norm()) +
+                                   (-particles[p].radius * mu * du_dn_2 * surf_vect_2[0] /
+                                    surf_vect_2.norm())) *
+                                  da;
 
-                      double local_fy_v =
-                        ((-mu * du_dr * 2 * surf_normal[1] /
-                          surf_normal.norm()) +
-                         (-particles[p].radius * mu * du_dn_1 * surf_vect_1[1] /
-                          surf_vect_1.norm()) +
-                         (-particles[p].radius * mu * du_dn_2 * surf_vect_2[1] /
-                          surf_vect_2.norm())) *
-                        da;
+                          double local_fy_v =
+                                  ((-mu * du_dr * 2 * surf_normal[1] /
+                                    surf_normal.norm()) +
+                                   (-particles[p].radius * mu * du_dn_1 * surf_vect_1[1] /
+                                    surf_vect_1.norm()) +
+                                   (-particles[p].radius * mu * du_dn_2 * surf_vect_2[1] /
+                                    surf_vect_2.norm())) *
+                                  da;
 
-                      double local_fz_v =
-                        ((-mu * du_dr * 2 * surf_normal[2] /
-                          surf_normal.norm()) +
-                         (-particles[p].radius * mu * du_dn_1 * surf_vect_1[2] /
-                          surf_vect_1.norm()) +
-                         (-particles[p].radius * mu * du_dn_2 * surf_vect_2[2] /
-                          surf_vect_2.norm())) *
-                        da;
+                          double local_fz_v =
+                                  ((-mu * du_dr * 2 * surf_normal[2] /
+                                    surf_normal.norm()) +
+                                   (-particles[p].radius * mu * du_dn_1 * surf_vect_1[2] /
+                                    surf_vect_1.norm()) +
+                                   (-particles[p].radius * mu * du_dn_2 * surf_vect_2[2] /
+                                    surf_vect_2.norm())) *
+                                  da;
 
-                      double local_fx_p_2 =
-                        P_local * da * surf_normal[0] / surf_normal.norm();
-                      double local_fy_p_2 =
-                        P_local * da * surf_normal[1] / surf_normal.norm();
-                      double local_fz_p_2 =
-                        P_local * da * surf_normal[2] / surf_normal.norm();
+                          double local_fx_p_2 =
+                                  P_local * da * surf_normal[0] / surf_normal.norm();
+                          double local_fy_p_2 =
+                                  P_local * da * surf_normal[1] / surf_normal.norm();
+                          double local_fz_p_2 =
+                                  P_local * da * surf_normal[2] / surf_normal.norm();
 
-                      fx_v += -local_fx_v;
-                      fy_v += -local_fy_v;
-                      fz_v += -local_fz_v;
-                      fx_p_2 += -local_fx_p_2;
-                      fy_p_2 += -local_fy_p_2;
-                      fz_p_2 += -local_fz_p_2;
+                          fx_v += -local_fx_v;
+                          fy_v += -local_fy_v;
+                          fz_v += -local_fz_v;
+                          fx_p_2 += -local_fx_p_2;
+                          fy_p_2 += -local_fy_p_2;
+                          fz_p_2 += -local_fz_p_2;
 
-                      torque_x += local_fy_v * surf_normal[2] /
-                                    surf_normal.norm() * particles[p].radius -
-                                  local_fz_v * surf_normal[1] /
-                                    surf_normal.norm() * particles[p].radius;
-                      torque_y += local_fz_v * surf_normal[0] /
-                                    surf_normal.norm() * particles[p].radius -
-                                  local_fx_v * surf_normal[2] /
-                                    surf_normal.norm() * particles[p].radius;
-                      torque_z += local_fx_v * surf_normal[1] /
-                                    surf_normal.norm() * particles[p].radius -
-                                  local_fy_v * surf_normal[0] /
-                                    surf_normal.norm() * particles[p].radius;
-                    }
+                          torque_x += local_fy_v * surf_normal[2] /
+                                      surf_normal.norm() * particles[p].radius -
+                                      local_fz_v * surf_normal[1] /
+                                      surf_normal.norm() * particles[p].radius;
+                          torque_y += local_fz_v * surf_normal[0] /
+                                      surf_normal.norm() * particles[p].radius -
+                                      local_fx_v * surf_normal[2] /
+                                      surf_normal.norm() * particles[p].radius;
+                          torque_z += local_fx_v * surf_normal[1] /
+                                      surf_normal.norm() * particles[p].radius -
+                                      local_fy_v * surf_normal[0] /
+                                      surf_normal.norm() * particles[p].radius;
+                          //nb_eval+=1;
+                      }
+                  //}
                 }
             }
           double t_torque_x =
@@ -961,6 +1079,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           double fx_v_   = Utilities::MPI::sum(fx_v, this->mpi_communicator);
           double fy_v_   = Utilities::MPI::sum(fy_v, this->mpi_communicator);
           double fz_v_   = Utilities::MPI::sum(fz_v, this->mpi_communicator);
+          //unsigned int nb_eval_total   = Utilities::MPI::sum(nb_eval, this->mpi_communicator);
 
           if (this->this_mpi_process == 0)
             {
@@ -986,6 +1105,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   std::cout << "fx_v: " << fx_v_ << std::endl;
                   std::cout << "fy_v: " << fy_v_ << std::endl;
                   std::cout << "fz_v: " << fz_v_ << std::endl;
+                  //std::cout << "fz_v: " << nb_eval_total << std::endl;
+
 
                   table_f.add_value("particle ID", p);
                   table_f.add_value("f_x", fx_p_2_ + fx_v_);
@@ -3107,6 +3228,13 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   define_particles();
   this->setup_dofs();
+
+  // To change once refinement is split into two function
+  double temp_refine=this->nsparam.mesh_adaptation.refinement_fraction;
+  double temp_coarse= this->nsparam.mesh_adaptation.coarsening_fraction;
+  this->nsparam.mesh_adaptation.refinement_fraction=0;
+  this->nsparam.mesh_adaptation.coarsening_fraction=0;
+
   for (unsigned int i = 0;
        i < this->nsparam.particlesParameters.initial_refinement;
        ++i)
@@ -3115,6 +3243,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
     }
+
+  this->nsparam.mesh_adaptation.refinement_fraction=temp_refine;
+  this->nsparam.mesh_adaptation.coarsening_fraction=temp_coarse;
 
 
   this->set_initial_condition(this->nsparam.initial_condition->type,

@@ -78,6 +78,9 @@ private:
   void
   sharp_edge();
 
+  typename DoFHandler<dim>::active_cell_iterator
+  find_cell_around_point(Point<dim> point);
+
 
   double
   calculate_L2_error_particles();
