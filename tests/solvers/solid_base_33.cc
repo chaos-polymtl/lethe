@@ -22,7 +22,6 @@
 #include <mpi.h>
 
 #include "../tests.h"
-
 #include "solvers/solid_base.h"
 
 int
