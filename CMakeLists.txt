@@ -8,6 +8,8 @@ add_compile_options(-pedantic-errors)
 add_compile_options(-Wextra)
 add_compile_options(-Wunused-variable)
 add_compile_options(-Wdisabled-optimization)
+add_compile_options(-fext-numeric-literals)
+
 #add_compile_options(-Werror)
 #add_compile_options(-Weffc++)
 
