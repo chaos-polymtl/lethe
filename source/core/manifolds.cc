@@ -186,19 +186,20 @@ namespace Parameters
   }
 } // namespace Parameters
 
-template <int dim>
+template <int dim, int spacedim>
 void
 attach_manifolds_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  Parameters::Manifolds                                        manifolds)
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+                        triangulation,
+  Parameters::Manifolds manifolds)
 {
   for (unsigned int i = 0; i < manifolds.types.size(); ++i)
     {
       if (manifolds.types[i] == Parameters::Manifolds::ManifoldType::spherical)
         {
-          Point<dim> circleCenter;
-          circleCenter = Point<dim>(manifolds.arg1[i], manifolds.arg2[i]);
-          static const SphericalManifold<dim> manifold_description(
+          Point<spacedim> circleCenter;
+          circleCenter = Point<spacedim>(manifolds.arg1[i], manifolds.arg2[i]);
+          static const SphericalManifold<dim, spacedim> manifold_description(
             circleCenter);
           triangulation->set_manifold(manifolds.id[i], manifold_description);
           triangulation->set_all_manifold_ids_on_boundary(manifolds.id[i],
@@ -223,6 +224,14 @@ void attach_cad_to_manifold(
   unsigned int)
 {
   throw std::runtime_error("IGES manifolds are not supported in 2D");
+}
+
+void attach_cad_to_manifold(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>>,
+  std::string,
+  unsigned int)
+{
+  throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
 }
 
 void attach_cad_to_manifold(
@@ -270,3 +279,7 @@ template void attach_manifolds_to_triangulation(
 template void attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   Parameters::Manifolds                                      manifolds);
+
+template void attach_manifolds_to_triangulation(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
+  Parameters::Manifolds                                         manifolds);

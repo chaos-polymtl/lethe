@@ -9,18 +9,19 @@
 #include <fstream>
 #include <iostream>
 
-template <int dim>
+template <int dim, int spacedim>
 void
 attach_grid_to_triangulation(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  const Parameters::Mesh &                                     mesh_parameters,
-  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions)
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+                                                          triangulation,
+  const Parameters::Mesh &                                mesh_parameters,
+  const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions)
 
 {
   // GMSH input
   if (mesh_parameters.type == Parameters::Mesh::Type::gmsh)
     {
-      GridIn<dim> grid_in;
+      GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(*triangulation);
       std::ifstream input_file(mesh_parameters.file_name);
       grid_in.read_msh(input_file);
@@ -46,10 +47,10 @@ attach_grid_to_triangulation(
           BoundaryConditions::BoundaryType::periodic)
         {
           std::vector<GridTools::PeriodicFacePair<
-            typename Triangulation<dim>::cell_iterator>>
+            typename Triangulation<dim, spacedim>::cell_iterator>>
             periodicity_vector;
           GridTools::collect_periodic_faces(
-            *dynamic_cast<Triangulation<dim> *>(triangulation.get()),
+            *dynamic_cast<Triangulation<dim, spacedim> *>(triangulation.get()),
             boundary_conditions.id[i_bc],
             boundary_conditions.periodic_id[i_bc],
             boundary_conditions.periodic_direction[i_bc],
@@ -59,13 +60,14 @@ attach_grid_to_triangulation(
     }
 }
 
-template <int dim>
+template <int dim, int spacedim>
 void
 read_mesh_and_manifolds(
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation,
-  const Parameters::Mesh &                                     mesh_parameters,
-  const Parameters::Manifolds &                      manifolds_parameters,
-  const BoundaryConditions::BoundaryConditions<dim> &boundary_conditions)
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+                                                          triangulation,
+  const Parameters::Mesh &                                mesh_parameters,
+  const Parameters::Manifolds &                           manifolds_parameters,
+  const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions)
 {
   attach_grid_to_triangulation(triangulation,
                                mesh_parameters,
@@ -81,10 +83,13 @@ template void attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
   const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
-
 template void attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
+  const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
+template void attach_grid_to_triangulation(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
+  const Parameters::Mesh &                                      mesh_parameters,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
 
 template void read_mesh_and_manifolds(
@@ -95,5 +100,10 @@ template void read_mesh_and_manifolds(
 template void read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
+  const Parameters::Manifolds &                    manifolds_parameters,
+  const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
+template void read_mesh_and_manifolds(
+  std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
+  const Parameters::Mesh &                                      mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
