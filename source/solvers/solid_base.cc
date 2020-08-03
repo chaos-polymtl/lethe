@@ -146,16 +146,6 @@ SolidBase<dim, spacedim>::setup_particles()
 }
 
 template <int dim, int spacedim>
-void
-SolidBase<dim, spacedim>::output_particles(std::string fprefix) const
-{
-  Particles::DataOut<spacedim, spacedim> particles_out;
-  particles_out.build_patches(*solid_particle_handler);
-  const std::string filename = (fprefix + ".vtu");
-  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
-}
-
-template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>>
 SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
