@@ -500,31 +500,6 @@ namespace Parameters
   }
 
   void
-  Nitsche::declare_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("nitsche");
-    {
-      solid_mesh.declare_parameters(prm);
-      prm.declare_entry("beta",
-                        "1",
-                        Patterns::Double(),
-                        "Penalization term for Nitsche method");
-    }
-    prm.leave_subsection();
-  }
-
-  void
-  Nitsche::parse_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("nitsche");
-    {
-      solid_mesh.parse_parameters(prm);
-      beta = prm.get_double("beta");
-    }
-    prm.leave_subsection();
-  }
-
-  void
   LinearSolver::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("linear solver");
