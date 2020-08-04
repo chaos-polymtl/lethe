@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2019-
+ * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
  */
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
@@ -30,13 +30,15 @@
 
 #include <core/grids.h>
 #include <core/parameters.h>
+#include <solvers/navier_stokes_solver_parameters.h>
 #include <memory.h>
-#include <solvers/solid_base.h>
+#include <core/solid_base.h>
+
 
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  Parameters::Nitsche &                                             param,
+  Parameters::Nitsche<spacedim> &                                   param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
   const unsigned int degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)

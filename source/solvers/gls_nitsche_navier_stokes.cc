@@ -65,7 +65,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   // Penalization terms
   const auto penalty_parameter =
     1.0 / GridTools::minimal_cell_diameter(*this->triangulation);
-  double beta = this->nsparam.nitsche->beta;
+  double beta = this->nsparam.nitsche.beta;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();

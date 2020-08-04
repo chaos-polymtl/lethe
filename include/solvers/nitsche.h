@@ -36,6 +36,7 @@ namespace Parameters
   {
   public:
 
+    Nitsche();
     void
     declare_parameters(ParameterHandler &prm);
     void

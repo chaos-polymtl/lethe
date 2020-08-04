@@ -65,7 +65,7 @@ class SolidBase
 {
 public:
   // Member functions
-  SolidBase(Parameters::Nitsche &param,
+  SolidBase(Parameters::Nitsche<spacedim> &param,
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                fluid_tria,
             const unsigned int degree_velocity);
@@ -96,9 +96,9 @@ private:
                                                                     solid_tria;
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
   DoFHandler<dim, spacedim>                                         solid_dh;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>>             solid_particle_handler;
 
-  Parameters::Nitsche param;
+  Parameters::Nitsche<spacedim> &param;
 
   const unsigned int degree_velocity;
 

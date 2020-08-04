@@ -26,6 +26,7 @@
 
 #include "analytical_solutions.h"
 #include "initial_conditions.h"
+#include "nitsche.h"
 #include "source_terms.h"
 
 template <int dim>
@@ -37,7 +38,7 @@ public:
   Parameters::NonLinearSolver                     non_linear_solver;
   Parameters::MeshAdaptation                      mesh_adaptation;
   Parameters::Mesh                                mesh;
-  Parameters::Nitsche<dim> *                      nitsche;
+  Parameters::Nitsche<dim>                        nitsche;
   Parameters::PhysicalProperties                  physical_properties;
   Parameters::SimulationControl                   simulation_control;
   Parameters::Timer                               timer;
@@ -55,9 +56,7 @@ public:
 
   void
   declare(ParameterHandler &prm)
-  {
-    nitsche = new Parameters::Nitsche<dim>;    
-    nitsche->declare_parameters(prm);
+  { 
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::PhysicalProperties::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
@@ -96,7 +95,7 @@ public:
     non_linear_solver.parse_parameters(prm);
     mesh_adaptation.parse_parameters(prm);
     mesh.parse_parameters(prm);
-    nitsche->parse_parameters(prm);
+    nitsche.parse_parameters(prm);
     physical_properties.parse_parameters(prm);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);

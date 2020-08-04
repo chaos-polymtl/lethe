@@ -22,6 +22,11 @@
 namespace Parameters
 {
   template <int dim>
+  Nitsche<dim>::Nitsche()
+      : solid_velocity(dim)
+    {}
+
+  template <int dim>
   void
   Nitsche<dim>::declare_parameters(ParameterHandler &prm)
   {
