@@ -38,7 +38,7 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  Parameters::Nitsche<spacedim> &                                   param,
+  std::shared_ptr<Parameters::Nitsche<spacedim>> &                  param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
   const unsigned int degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -61,26 +61,26 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::initial_setup()
 {
-  if (param.solid_mesh.type == Parameters::Mesh::Type::gmsh)
+  if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
       GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(*solid_tria);
-      std::ifstream input_file(param.solid_mesh.file_name);
+      std::ifstream input_file(param->solid_mesh.file_name);
       grid_in.read_msh(input_file);
     }
-  else if (param.solid_mesh.type == Parameters::Mesh::Type::dealii)
+  else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         *solid_tria,
-        param.solid_mesh.grid_type,
-        param.solid_mesh.grid_arguments);
+        param->solid_mesh.grid_type,
+        param->solid_mesh.grid_arguments);
     }
   else
     throw std::runtime_error(
       "Unsupported mesh type - solid mesh will not be created");
 
   // Refine the solid triangulation to its initial size
-  solid_tria->refine_global(param.solid_mesh.initial_refinement);
+  solid_tria->refine_global(param->solid_mesh.initial_refinement);
 }
 
 
