@@ -23,10 +23,11 @@
 #include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+
 #include <core/parameters.h>
 
 #ifndef nitsche_h
-#define nitsche_h
+#  define nitsche_h
 
 using namespace dealii;
 
@@ -36,16 +37,15 @@ namespace Parameters
   class Nitsche
   {
   public:
-
     Nitsche()
-     // : solid_velocity(std::make_shared<Functions::ParsedFunction<dim>>(dim))
-      {}
+      : solid_velocity(dim)
+    {}
 
     void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);
-    
+
     // Solid mesh
     Parameters::Mesh solid_mesh;
 
@@ -53,9 +53,9 @@ namespace Parameters
     double beta;
 
     // Solid velocity
-    std::shared_ptr<Functions::ParsedFunction<dim>> solid_velocity;
+    Functions::ParsedFunction<dim> solid_velocity;
   };
-  
+
   template <int dim>
   void
   Nitsche<dim>::declare_parameters(ParameterHandler &prm)
@@ -68,13 +68,12 @@ namespace Parameters
                         Patterns::Double(),
                         "Penalization term for Nitsche method");
       prm.enter_subsection("solid velocity");
-      solid_velocity->declare_parameters(prm, dim);
+      solid_velocity.declare_parameters(prm, dim);
       if (dim == 2)
         prm.set("Function expression", "0; 0");
       if (dim == 3)
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
-
     }
     prm.leave_subsection();
   }
@@ -88,12 +87,12 @@ namespace Parameters
       solid_mesh.parse_parameters(prm);
       beta = prm.get_double("beta");
       prm.enter_subsection("solid velocity");
-        solid_velocity->parse_parameters(prm);
+      solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
     }
     prm.leave_subsection();
   }
-  
+
 } // namespace Parameters
 
 #endif

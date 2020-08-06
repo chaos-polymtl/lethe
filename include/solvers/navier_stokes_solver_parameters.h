@@ -56,11 +56,11 @@ public:
 
   void
   declare(ParameterHandler &prm)
-  { 
+  {
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::PhysicalProperties::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
-    auto nitsche = std::make_shared<Parameters::Nitsche<dim>>();
+    nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
     boundary_conditions.declare_parameters(prm);
