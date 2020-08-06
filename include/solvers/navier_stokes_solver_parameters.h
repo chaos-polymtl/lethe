@@ -38,7 +38,7 @@ public:
   Parameters::NonLinearSolver                     non_linear_solver;
   Parameters::MeshAdaptation                      mesh_adaptation;
   Parameters::Mesh                                mesh;
-  std::shared_ptr<Parameters::Nitsche<dim>>           nitsche;
+  std::shared_ptr<Parameters::Nitsche<dim>>       nitsche;
   Parameters::PhysicalProperties                  physical_properties;
   Parameters::SimulationControl                   simulation_control;
   Parameters::Timer                               timer;

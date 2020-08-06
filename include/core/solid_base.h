@@ -39,6 +39,9 @@
 #include <deal.II/particles/particle_accessor.h>
 #include <deal.II/particles/particle_handler.h>
 
+// Function
+#include <deal.II/base/function.h>
+
 // Lethe Includes
 #include <core/parameters.h>
 #include <solvers/navier_stokes_solver_parameters.h>
@@ -86,6 +89,14 @@ public:
   std::shared_ptr<Particles::ParticleHandler<spacedim>>
   get_solid_particle_handler();
 
+
+  /**
+ * @return Function<spacedim> of the solid velocity
+ */
+/**
+  std::shared_ptr<Function<spacedim>>
+  get_solid_velocity();**/
+
 private:
   // Member variables
   MPI_Comm           mpi_communicator;
@@ -99,6 +110,8 @@ private:
   std::shared_ptr<Particles::ParticleHandler<spacedim>>             solid_particle_handler;
 
   std::shared_ptr<Parameters::Nitsche<spacedim>> &param;
+
+  //std::shared_ptr<Function<spacedim>> velocity;
 
   const unsigned int degree_velocity;
 

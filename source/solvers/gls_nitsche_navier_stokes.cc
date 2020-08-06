@@ -62,6 +62,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
   Tensor<1, spacedim> velocity;
 
+  //auto solid_velocity = solid.get_solid_velocity();
+
   // Penalization terms
   const auto penalty_parameter =
     1.0 / GridTools::minimal_cell_diameter(*this->triangulation);
@@ -86,7 +88,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
         {
           velocity          = 0;
           const auto &ref_q = p.get_reference_location();
-          // const auto &real_q  = p.get_location();
+          //const auto &real_q  = p.get_location();
           const auto &JxW = p.get_properties()[0];
 
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -121,6 +123,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                     }
                   local_rhs(i) += -penalty_parameter * beta * velocity[comp_i] *
                                   this->fe.shape_value(i, ref_q) * JxW;
+                                  //-penalty_parameter * beta * solid_velocity->value(real_q, comp_i) *
+                                  //this->fe.shape_value(i, ref_q) * JxW;
                 }
             }
         }

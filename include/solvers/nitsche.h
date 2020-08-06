@@ -38,7 +38,7 @@ namespace Parameters
   public:
 
     Nitsche()
-      : solid_velocity(dim)
+     // : solid_velocity(std::make_shared<Functions::ParsedFunction<dim>>(dim))
       {}
 
     void
@@ -53,7 +53,7 @@ namespace Parameters
     double beta;
 
     // Solid velocity
-    Functions::ParsedFunction<dim> solid_velocity;
+    std::shared_ptr<Functions::ParsedFunction<dim>> solid_velocity;
   };
   
   template <int dim>
@@ -62,12 +62,13 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
+      solid_mesh.declare_parameters(prm);
       prm.declare_entry("beta",
                         "1",
                         Patterns::Double(),
                         "Penalization term for Nitsche method");
       prm.enter_subsection("solid velocity");
-      solid_velocity.declare_parameters(prm, dim);
+      solid_velocity->declare_parameters(prm, dim);
       if (dim == 2)
         prm.set("Function expression", "0; 0");
       if (dim == 3)
@@ -83,11 +84,13 @@ namespace Parameters
   Nitsche<dim>::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("nitsche");
+    {
       solid_mesh.parse_parameters(prm);
       beta = prm.get_double("beta");
       prm.enter_subsection("solid velocity");
-        solid_velocity.parse_parameters(prm);
+        solid_velocity->parse_parameters(prm);
       prm.leave_subsection();
+    }
     prm.leave_subsection();
   }
   
