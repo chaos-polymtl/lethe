@@ -941,6 +941,16 @@ namespace Parameters
         "2",
         Patterns::Integer(),
         "Number of step skip per integration step of the position ");
+      prm.declare_entry(
+                "calculate force",
+                "true",
+                Patterns::Bool(),
+                "Bool to define if the force is evaluated on each particle ");
+      prm.declare_entry(
+                "ib force output file",
+                "ib_force",
+                Patterns::FileName(),
+                "Bool to define if the force is evaluated on each particle ");
 
       prm.enter_subsection(
         "x y z vx vy vz omega_x omega_y omega_z radius particle 0");
@@ -1020,6 +1030,10 @@ namespace Parameters
       outside_radius     = prm.get_double("refine mesh outside radius factor");
       assemble_inside    = prm.get_bool("assemble inside");
       nb_force_eval      = prm.get_integer("nb force evaluation");
+      calculate_force_ib = prm.get_bool("calculate force");
+      ib_force_output_file = prm.get("ib force output file");
+
+
       const std::string op = prm.get("assemble type");
       if (op == "NS")
         P_assemble = Particle_Assemble_type ::NS;

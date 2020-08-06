@@ -18,10 +18,9 @@
  */
 
 #include "solvers/gls_sharp_navier_stokes.h"
-
+#include "core/utilities.h"
 #include "core/bdf.h"
 #include "core/grids.h"
-#include "core/manifolds.h"
 #include "core/sdirk.h"
 #include "core/time_integration_utilities.h"
 
@@ -84,100 +83,10 @@ void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
   particles = this->nsparam.particlesParameters.particles;
+  table_f.resize(particles.size());
+  table_t.resize(particles.size());
 }
 
-template <int dim>
-typename DoFHandler<dim>::active_cell_iterator
-GLSSharpNavierStokesSolver<dim>::find_cell_around_point(Point<dim> point)
-{
-    // find cell around point using tree propries instead of looping on all cell
-
-
-    //define stuff for the search
-    MappingQ1<dim>                                map;
-    const auto &cell_iterator = this->dof_handler.cell_iterators_on_level(0);
-    unsigned int max_childs= GeometryInfo<dim>::max_children_per_cell;
-    typename DoFHandler<dim>::active_cell_iterator best_cell_iter;
-    typename DoFHandler<dim>::active_cell_iterator best_cell;
-
-    bool cell_0_found= false;
-
-    //loop on the cell on lvl 0 of the mesh
-    for (const auto &cell : cell_iterator)
-    {
-
-        try {
-
-            const Point<dim, double> p_cell =
-                    map.transform_real_to_unit_cell(
-                            cell,
-                            point);
-
-            const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-            if (dist == 0) {
-                // cell on lvl 0 found
-                cell_0_found=true;
-
-
-            }
-        }
-        catch (const typename MappingQGeneric<
-                dim>::ExcTransformationFailed &)
-                {}
-
-        best_cell_iter=cell;
-        if (cell_0_found){
-            // the cell on lvl 0 contain the point so now loop on the childs of this cell
-            // when we found the child of the cell that containt it we stop and loop if the cell is active
-            // if the cell is not active loop on the child of the cell. Repeat
-            unsigned int lvl= 0;
-            while(best_cell_iter->is_active()==false){
-
-                bool cell_found=false;
-                double best_dist=DBL_MAX;
-                unsigned int best_index=0;
-                for(unsigned int i =0; i<max_childs; ++i){
-                    try {
-
-                        const Point<dim, double> p_cell =
-                                map.transform_real_to_unit_cell(
-                                        best_cell_iter->child(i),
-                                        point);
-                        const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-                        bool inside = true;
-
-
-                        if (dist <= best_dist and inside) {
-                            best_dist=dist;
-                            best_index=i;
-                            cell_found=true;
-                            if (dist==0)
-                                break;
-                        }
-                    }
-                    catch (const typename MappingQGeneric<
-                            dim>::ExcTransformationFailed &)
-                    {}
-
-                }
-
-                best_cell_iter=best_cell_iter->child(best_index);
-
-                if (cell_found==false) {
-                    std::cout << "cell not found" << point<< std::endl;
-                    break;
-                }
-
-                lvl+=1;
-            }
-
-            break;
-        }
-    }
-
-    return best_cell_iter;
-}
 
 template <int dim>
 void
@@ -346,7 +255,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     GridTools::find_active_cell_around_point(this->dof_handler,
                                                              eval_point_iter);*/
                   //std::cout << "before cell found " << i << std::endl;
-                  const auto &cell_iter=find_cell_around_point(eval_point_iter);
+                  const auto &cell_iter = find_cell_around_point_with_tree(this->dof_handler,eval_point_iter);
                   //std::cout << "cell found " << i<< std::endl;
                   //std::cout << "cell found v index " << cell_vertex_map.first << std::endl;
                   //std::cout << "cell found map " << cell_vertex_map.second << std::endl;
@@ -417,7 +326,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
 
-              const auto &cell_2=find_cell_around_point(second_point);
+
+              const auto &cell_2=find_cell_around_point_with_tree(this->dof_handler,second_point);
 
 
 
@@ -428,9 +338,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
               //if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
                   //const auto &cell_2=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                   if (cell_2->is_locally_owned()) {
-                      const auto &cell_3 = find_cell_around_point(third_point);
+                      const auto &cell_3 = find_cell_around_point_with_tree(this->dof_handler,third_point);
                       // = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
-                      const auto &cell_4 = find_cell_around_point(fourth_point);
+                      const auto &cell_4 = find_cell_around_point_with_tree(this->dof_handler,fourth_point);
                       //const auto &cell_4 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       cell_2->get_dof_indices(local_dof_indices);
                       cell_3->get_dof_indices(local_dof_indices_2);
@@ -630,14 +540,26 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   std::cout << "fy_P: " << fy_p_2_ << std::endl;
                   std::cout << "fx_v: " << fx_v_ << std::endl;
                   std::cout << "fy_v: " << fy_v_ << std::endl;
-                  //std::cout << "fy_v: " << nb_eval_total << std::endl;
-                  table_f.add_value("particle ID", p);
-                  table_f.add_value("f_x", fx_p_2_ + fx_v_);
-                  table_f.add_value("f_y", fy_p_2_ + fy_v_);
 
-                  table_f.set_precision(
+
+                  table_t[p].add_value("particle ID", p);
+                  if (this->nsparam.simulation_control.method!=Parameters::SimulationControl::TimeSteppingMethod::steady)
+                      table_t[p].add_value("time", this->simulationControl->get_current_time());
+                  table_t[p].add_value("T_z", t_torque_ );
+                  table_t[p].set_precision(
+                          "T_z", this->nsparam.forces_parameters.display_precision);
+
+
+
+                  table_f[p].add_value("particle ID", p);
+                  if (this->nsparam.simulation_control.method!=Parameters::SimulationControl::TimeSteppingMethod::steady)
+                      table_f[p].add_value("time", this->simulationControl->get_current_time());
+                  table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
+                  table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
+
+                  table_f[p].set_precision(
                     "f_x", this->nsparam.forces_parameters.display_precision);
-                  table_f.set_precision(
+                  table_f[p].set_precision(
                     "f_y", this->nsparam.forces_parameters.display_precision);
                 }
             }
@@ -648,13 +570,17 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           if (this->nsparam.forces_parameters.verbosity ==
               Parameters::Verbosity::verbose)
             {
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              std::cout << "|  Force  summary                          |"
-                        << std::endl;
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              table_f.write_text(std::cout);
+              for (unsigned int p=0 ; p<particles.size();++p) {
+                  std::cout << "+------------------------------------------+"
+                            << std::endl;
+                  std::cout << "|  Force  summary particle "<< p<<"               |"
+                            << std::endl;
+                  std::cout << "+------------------------------------------+"
+                            << std::endl;
+                  table_f[p].write_text(std::cout);
+                  table_t[p].write_text(std::cout);
+
+              }
             }
         }
     }
@@ -758,7 +684,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       /*const auto &cell_iter =
                         GridTools::find_active_cell_around_point(
                           this->dof_handler, eval_point_2);*/
-                        const auto &cell_iter=find_cell_around_point(eval_point_2);
+                        const auto &cell_iter=find_cell_around_point_with_tree(this->dof_handler,eval_point_2);
 
 
 
@@ -827,14 +753,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     third_point[1] + surf_normal[1] * step_ratio,
                     third_point[2] + surf_normal[2] * step_ratio);
 
-                  const auto &cell_2=find_cell_around_point(second_point);
+                  const auto &cell_2=find_cell_around_point_with_tree(this->dof_handler,second_point);
 
                   //if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
                       //const auto &cell_2 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       if (cell_2->is_locally_owned()) {
-                          const auto &cell_3  = find_cell_around_point(third_point);
+                          const auto &cell_3  = find_cell_around_point_with_tree(this->dof_handler,third_point);
                           //const auto &cell_3 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
-                          const auto &cell_4  = find_cell_around_point(fourth_point);
+                          const auto &cell_4  = find_cell_around_point_with_tree(this->dof_handler,fourth_point);
                           //const auto &cell_4 = this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                           cell_2->get_dof_indices(local_dof_indices);
                           cell_3->get_dof_indices(local_dof_indices_2);
@@ -1106,19 +1032,35 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   std::cout << "fy_v: " << fy_v_ << std::endl;
                   std::cout << "fz_v: " << fz_v_ << std::endl;
                   //std::cout << "fz_v: " << nb_eval_total << std::endl;
+                  table_t[p].add_value("particle ID", p);
+                  if (this->nsparam.simulation_control.method!=Parameters::SimulationControl::TimeSteppingMethod::steady)
+                        table_t[p].add_value("time", this->simulationControl->get_current_time());
+                  table_t[p].add_value("T_x", t_torque_x );
+                  table_t[p].set_precision(
+                          "T_x", this->nsparam.forces_parameters.display_precision);
+                  table_t[p].add_value("T_y", t_torque_x );
+                  table_t[p].set_precision(
+                          "T_y", this->nsparam.forces_parameters.display_precision);
+                  table_t[p].add_value("T_z", t_torque_x );
+                  table_t[p].set_precision(
+                          "T_z", this->nsparam.forces_parameters.display_precision);
 
 
-                  table_f.add_value("particle ID", p);
-                  table_f.add_value("f_x", fx_p_2_ + fx_v_);
-                  table_f.add_value("f_y", fy_p_2_ + fy_v_);
 
-                  table_f.set_precision(
+                  table_f[p].add_value("particle ID", p);
+                  if (this->nsparam.simulation_control.method!=Parameters::SimulationControl::TimeSteppingMethod::steady)
+                      table_f[p].add_value("time", this->simulationControl->get_current_time());
+
+                  table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
+                  table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
+
+                  table_f[p].set_precision(
                     "f_x", this->nsparam.forces_parameters.display_precision);
-                  table_f.set_precision(
+                  table_f[p].set_precision(
                     "f_y", this->nsparam.forces_parameters.display_precision);
 
-                  table_f.add_value("f_z", fz_p_2_ + fz_v_);
-                  table_f.set_precision(
+                  table_f[p].add_value("f_z", fz_p_2_ + fz_v_);
+                  table_f[p].set_precision(
                     "f_z", this->nsparam.forces_parameters.display_precision);
                 }
             }
@@ -1128,18 +1070,40 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           if (this->nsparam.forces_parameters.verbosity ==
               Parameters::Verbosity::verbose)
             {
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              std::cout << "|  Force  summary                          |"
-                        << std::endl;
-              std::cout << "+------------------------------------------+"
-                        << std::endl;
-              table_f.write_text(std::cout);
+                for (unsigned int p=0 ; p<particles.size();++p) {
+                    std::cout << "+------------------------------------------+"
+                              << std::endl;
+                    std::cout << "|  Force  summary particle "<< p<<"               |"
+                              << std::endl;
+                    std::cout << "+------------------------------------------+"
+                              << std::endl;
+                    table_f[p].write_text(std::cout);
+
+                    table_t[p].write_text(std::cout);
+                }
             }
+        }
+
+    }
+}
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::write_force_ib() {
+    TimerOutput::Scope t(this->computing_timer, "output_forces_ib");
+    for (unsigned int p = 0; p < particles.size(); ++p) {
+        {
+            if (this->this_mpi_process == 0) {
+                std::string filename = this->nsparam.particlesParameters.ib_force_output_file + "." +
+                                       Utilities::int_to_string(p, 2) + ".dat";
+                std::ofstream output(filename.c_str());
+
+                table_f[p].write_text(output);
+                table_t[p].write_text(output);
+            }
+            MPI_Barrier(this->mpi_communicator);
         }
     }
 }
-
 
 
 template <int dim>
@@ -3268,10 +3232,14 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       this->finish_time_step();
 
-      force_on_ib();
-
+      if (this->nsparam.particlesParameters.calculate_force_ib)
+        force_on_ib();
+      write_force_ib();
       MPI_Barrier(this->mpi_communicator);
     }
+
+  if (this->nsparam.particlesParameters.calculate_force_ib)
+
 
   this->finish_simulation();
 }

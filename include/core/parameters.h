@@ -543,6 +543,10 @@ namespace Parameters
     double                       inside_radius;
     double                       outside_radius;
     bool                         assemble_inside;
+    bool                         calculate_force_ib;
+    std::string                  ib_force_output_file;
+
+
     Particle_Assemble_type       P_assemble;
     std::vector<IBParticle<dim>> particles;
 

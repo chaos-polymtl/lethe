@@ -78,8 +78,9 @@ private:
   void
   sharp_edge();
 
-  typename DoFHandler<dim>::active_cell_iterator
-  find_cell_around_point(Point<dim> point);
+  void
+  write_force_ib();
+
 
 
   double
@@ -112,8 +113,8 @@ private:
   std::vector<IBParticle<dim>> particles;
 
 
-  TableHandler table_f;
-  TableHandler table_t;
+  std::vector<TableHandler> table_f;
+  std::vector<TableHandler> table_t;
 };
 
 
