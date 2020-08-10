@@ -22,7 +22,7 @@
 #include <mpi.h>
 
 #include "../tests.h"
-#include "solvers/solid_base.h"
+#include "core/solid_base.h"
 
 int
 main(int argc, char *argv[])
@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 
       initlog();
 
-      Parameters::Nitsche                                        param;
+      auto param = std::make_shared<Parameters::Nitsche<3>>();
       std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
         std::make_shared<parallel::distributed::Triangulation<3>>(
           mpi_communicator,
@@ -44,18 +44,18 @@ main(int argc, char *argv[])
             Triangulation<3>::smoothing_on_refinement |
             Triangulation<3>::smoothing_on_coarsening));
 
-      std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> solid_tria =
-        std::make_shared<parallel::distributed::Triangulation<2, 3>>(
+      std::shared_ptr<parallel::DistributedTriangulationBase<3>> solid_tria =
+        std::make_shared<parallel::distributed::Triangulation<3>>(
           mpi_communicator,
-          typename Triangulation<2, 3>::MeshSmoothing(
-            Triangulation<2, 3>::smoothing_on_refinement |
-            Triangulation<2, 3>::smoothing_on_coarsening));
+          typename Triangulation<3>::MeshSmoothing(
+            Triangulation<3>::smoothing_on_refinement |
+            Triangulation<3>::smoothing_on_coarsening));
 
       // Mesh of the solid
-      param.solid_mesh.type               = Parameters::Mesh::Type::dealii;
-      param.solid_mesh.grid_type          = "hyper_sphere";
-      param.solid_mesh.grid_arguments     = "0 , 0 , 0 : 0.75";
-      param.solid_mesh.initial_refinement = 1;
+      param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
+      param->solid_mesh.grid_type          = "hyper_ball";
+      param->solid_mesh.grid_arguments     = "0 , 0 , 0 : 0.75 : false";
+      param->solid_mesh.initial_refinement = 1;
 
       // Mesh of the fluid
       GridGenerator::hyper_cube(*fluid_tria, -1, 1);
@@ -63,7 +63,7 @@ main(int argc, char *argv[])
       const unsigned int degree_velocity = 1;
 
       // SolidBase class
-      SolidBase<2, 3> solid(param, fluid_tria, degree_velocity);
+      SolidBase<3, 3> solid(param, fluid_tria, degree_velocity);
       solid.initial_setup();
       solid.setup_particles();
 

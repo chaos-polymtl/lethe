@@ -22,7 +22,7 @@
 #include <mpi.h>
 
 #include "../tests.h"
-#include "solvers/solid_base.h"
+#include "core/solid_base.h"
 
 int
 main(int argc, char *argv[])
@@ -36,7 +36,7 @@ main(int argc, char *argv[])
 
       initlog();
 
-      Parameters::Nitsche                                        param;
+      auto param = std::make_shared<Parameters::Nitsche<2>>();
       std::shared_ptr<parallel::DistributedTriangulationBase<2>> fluid_tria =
         std::make_shared<parallel::distributed::Triangulation<2>>(
           mpi_communicator,
@@ -52,10 +52,10 @@ main(int argc, char *argv[])
             Triangulation<2>::smoothing_on_coarsening));
 
       // Mesh of the solid
-      param.solid_mesh.type               = Parameters::Mesh::Type::dealii;
-      param.solid_mesh.grid_type          = "hyper_cube";
-      param.solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
-      param.solid_mesh.initial_refinement = 4;
+      param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
+      param->solid_mesh.grid_type          = "hyper_cube";
+      param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
+      param->solid_mesh.initial_refinement = 4;
 
       // Mesh of the fluid
       GridGenerator::hyper_cube(*fluid_tria, -1, 1);

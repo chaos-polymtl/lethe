@@ -122,7 +122,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                     }
                   local_rhs(i) += -penalty_parameter * beta * velocity[comp_i] *
                                   this->fe.shape_value(i, ref_q) * JxW
-                                  -penalty_parameter * beta * solid_velocity->value(real_q, comp_i) *
+                                  +penalty_parameter * beta * solid_velocity->value(real_q, comp_i) *
                                   this->fe.shape_value(i, ref_q) * JxW;
                 }
             }
