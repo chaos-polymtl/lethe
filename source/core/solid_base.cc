@@ -54,10 +54,9 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_tria(fluid_tria)
   , solid_dh(*solid_tria)
   , param(param)
+  , velocity(&param->solid_velocity)
   , degree_velocity(degree_velocity)
-{
-  //velocity = param->solid_velocity;
-}
+{}
 
 template <int dim, int spacedim>
 void
@@ -160,13 +159,13 @@ SolidBase<dim, spacedim>::get_solid_particle_handler()
     }
   return solid_particle_handler;
 }
-/**
+
 template <int dim, int spacedim>
-std::shared_ptr<Function<spacedim>>
+Function<spacedim> *
 SolidBase<dim, spacedim>::get_solid_velocity()
 {
   return velocity;
-}**/
+}
 
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur

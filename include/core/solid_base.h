@@ -93,9 +93,8 @@ public:
   /**
  * @return Function<spacedim> of the solid velocity
  */
-/**
-  std::shared_ptr<Function<spacedim>>
-  get_solid_velocity();**/
+  Function<spacedim> *
+  get_solid_velocity();
 
 private:
   // Member variables
@@ -111,7 +110,7 @@ private:
 
   std::shared_ptr<Parameters::Nitsche<spacedim>> &param;
 
-  //std::shared_ptr<Function<spacedim>> velocity;
+  Function<spacedim> *velocity;
 
   const unsigned int degree_velocity;
 

@@ -87,7 +87,7 @@ namespace Parameters
       solid_mesh.parse_parameters(prm);
       beta = prm.get_double("beta");
       prm.enter_subsection("solid velocity");
-      solid_velocity.parse_parameters(prm);
+        solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
     }
     prm.leave_subsection();
