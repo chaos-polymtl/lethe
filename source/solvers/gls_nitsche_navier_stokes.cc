@@ -61,7 +61,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   dealii::Vector<double> local_rhs(dofs_per_cell);
 
   Tensor<1, spacedim> velocity;
-  Function<spacedim>* solid_velocity = solid.get_solid_velocity();
+  Function<spacedim> *solid_velocity = solid.get_solid_velocity();
 
   // Penalization terms
   const auto penalty_parameter =
@@ -85,10 +85,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       Assert(pic.begin() == particle, ExcInternalError());
       for (const auto &p : pic)
         {
-          velocity          = 0;
-          const auto &ref_q = p.get_reference_location();
+          velocity            = 0;
+          const auto &ref_q   = p.get_reference_location();
           const auto &real_q  = p.get_location();
-          const auto &JxW = p.get_properties()[0];
+          const auto &JxW     = p.get_properties()[0];
 
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
@@ -121,9 +121,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                         }
                     }
                   local_rhs(i) += -penalty_parameter * beta * velocity[comp_i] *
-                                  this->fe.shape_value(i, ref_q) * JxW
-                                  +penalty_parameter * beta * solid_velocity->value(real_q, comp_i) *
-                                  this->fe.shape_value(i, ref_q) * JxW;
+                                    this->fe.shape_value(i, ref_q) * JxW
+                                  +penalty_parameter * beta * 
+                                    solid_velocity->value(real_q, comp_i) *
+                                    this->fe.shape_value(i, ref_q) * JxW;
                 }
             }
         }

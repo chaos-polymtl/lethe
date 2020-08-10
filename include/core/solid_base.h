@@ -57,7 +57,7 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- * @tparam sapcedim An integer that denotes the dimension of the space occupied 
+ * @tparam spacedim An integer that denotes the dimension of the space occupied 
  * by the embeddede solid
  *
  * @author Carole-Anne Daunais, Valerie Bibeau, 2020
@@ -72,27 +72,27 @@ public:
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                fluid_tria,
             const unsigned int degree_velocity);
-/**
- * @brief Generates a solid triangulation from a dealii or gmsh mesh
- */  
+  /**
+   * @brief Generates a solid triangulation from a dealii or gmsh mesh
+   */  
   void
   initial_setup();
-/**
- * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid 
- * according to a specific quadrature
- */
+  /**
+   * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid 
+   * according to a specific quadrature
+   */
   void
   setup_particles();
-/**
- * @return std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
- */
+  /**
+   * @return std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
+   */
   std::shared_ptr<Particles::ParticleHandler<spacedim>>
   get_solid_particle_handler();
 
 
-  /**
- * @return Function<spacedim> of the solid velocity
- */
+    /**
+   * @return Function<spacedim> of the solid velocity
+   */
   Function<spacedim> *
   get_solid_velocity();
 
@@ -106,7 +106,7 @@ private:
                                                                     solid_tria;
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
   DoFHandler<dim, spacedim>                                         solid_dh;
-  std::shared_ptr<Particles::ParticleHandler<spacedim>>             solid_particle_handler;
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
 
   std::shared_ptr<Parameters::Nitsche<spacedim>> &param;
 

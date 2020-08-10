@@ -31,8 +31,8 @@
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <solvers/navier_stokes_solver_parameters.h>
-#include <memory.h>
 #include <core/solid_base.h>
+#include <memory.h>
 
 
 
