@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
-   Number of active cells:       4768
-   Number of degrees of freedom: 24132
-   Volume of triangulation:      3.11901
+   Number of active cells:       2904
+   Number of degrees of freedom: 14956
+   Volume of triangulation:      3.10798
 
 *****************************************************************
 Steady iteration :        1/1
@@ -10,9 +10,9 @@ Steady iteration :        1/1
 +------------------------------------------+
 |  Force  summary                          |
 +------------------------------------------+
-Boundary ID    f_x      f_y      f_z    
-          0  0.002214 0.074514 0.000175 
-          1 -0.008760 0.007686 0.004531 
-L2 error velocity : 0.0402537
+Boundary ID    f_x       f_y       f_z    
+          0  0.122970 -0.220136 -0.000304 
+          1 -0.002109 -0.014426 -0.019062 
+L2 error velocity : 0.0473047
 cells error_velocity error_pressure 
- 4768 4.0254e-02   - 1.1430e-01   - 
+ 2904 4.7305e-02   - 1.8795e-01   -
