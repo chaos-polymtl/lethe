@@ -57,7 +57,7 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
- * @tparam spacedim An integer that denotes the dimension of the space occupied 
+ * @tparam spacedim An integer that denotes the dimension of the space occupied
  * by the embeddede solid
  *
  * @author Carole-Anne Daunais, Valerie Bibeau, 2020
@@ -74,11 +74,11 @@ public:
             const unsigned int degree_velocity);
   /**
    * @brief Generates a solid triangulation from a dealii or gmsh mesh
-   */  
+   */
   void
   initial_setup();
   /**
-   * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid 
+   * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid
    * according to a specific quadrature
    */
   void
@@ -90,7 +90,7 @@ public:
   get_solid_particle_handler();
 
 
-    /**
+  /**
    * @return Function<spacedim> of the solid velocity
    */
   Function<spacedim> *
