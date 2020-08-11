@@ -14,7 +14,7 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2019-
+ * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
  */
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
@@ -30,13 +30,15 @@
 
 #include <core/grids.h>
 #include <core/parameters.h>
+#include <core/solid_base.h>
 #include <memory.h>
-#include <solvers/solid_base.h>
+#include <solvers/navier_stokes_solver_parameters.h>
+
 
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  Parameters::Nitsche &                                             param,
+  std::shared_ptr<Parameters::Nitsche<spacedim>> &                  param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
   const unsigned int degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -52,6 +54,7 @@ SolidBase<dim, spacedim>::SolidBase(
   , fluid_tria(fluid_tria)
   , solid_dh(*solid_tria)
   , param(param)
+  , velocity(&param->solid_velocity)
   , degree_velocity(degree_velocity)
 {}
 
@@ -59,26 +62,26 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::initial_setup()
 {
-  if (param.solid_mesh.type == Parameters::Mesh::Type::gmsh)
+  if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
       GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(*solid_tria);
-      std::ifstream input_file(param.solid_mesh.file_name);
+      std::ifstream input_file(param->solid_mesh.file_name);
       grid_in.read_msh(input_file);
     }
-  else if (param.solid_mesh.type == Parameters::Mesh::Type::dealii)
+  else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
       GridGenerator::generate_from_name_and_arguments(
         *solid_tria,
-        param.solid_mesh.grid_type,
-        param.solid_mesh.grid_arguments);
+        param->solid_mesh.grid_type,
+        param->solid_mesh.grid_arguments);
     }
   else
     throw std::runtime_error(
       "Unsupported mesh type - solid mesh will not be created");
 
   // Refine the solid triangulation to its initial size
-  solid_tria->refine_global(param.solid_mesh.initial_refinement);
+  solid_tria->refine_global(param->solid_mesh.initial_refinement);
 }
 
 
@@ -146,16 +149,6 @@ SolidBase<dim, spacedim>::setup_particles()
 }
 
 template <int dim, int spacedim>
-void
-SolidBase<dim, spacedim>::output_particles(std::string fprefix) const
-{
-  Particles::DataOut<spacedim, spacedim> particles_out;
-  particles_out.build_patches(*solid_particle_handler);
-  const std::string filename = (fprefix + ".vtu");
-  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
-}
-
-template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>>
 SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
@@ -165,6 +158,13 @@ SolidBase<dim, spacedim>::get_solid_particle_handler()
       setup_particles();
     }
   return solid_particle_handler;
+}
+
+template <int dim, int spacedim>
+Function<spacedim> *
+SolidBase<dim, spacedim>::get_solid_velocity()
+{
+  return velocity;
 }
 
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can

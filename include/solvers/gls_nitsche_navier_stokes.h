@@ -21,8 +21,9 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
+#include <core/solid_base.h>
+
 #include "gls_navier_stokes.h"
-#include "solid_base.h"
 
 using namespace dealii;
 

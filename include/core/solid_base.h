@@ -39,6 +39,9 @@
 #include <deal.II/particles/particle_accessor.h>
 #include <deal.II/particles/particle_handler.h>
 
+// Function
+#include <deal.II/base/function.h>
+
 // Lethe Includes
 #include <core/parameters.h>
 #include <solvers/navier_stokes_solver_parameters.h>
@@ -54,12 +57,9 @@ using namespace dealii;
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
+ * @tparam spacedim An integer that denotes the dimension of the space occupied
+ * by the embeddede solid
  *
- * @tparam VectorType  The Vector type used for the solvers
- *
- * @tparam DofsType the type of dof storage indices
- *
- * @ingroup solvers
  * @author Carole-Anne Daunais, Valerie Bibeau, 2020
  */
 
@@ -68,18 +68,33 @@ class SolidBase
 {
 public:
   // Member functions
-  SolidBase(Parameters::Nitsche &param,
+  SolidBase(std::shared_ptr<Parameters::Nitsche<spacedim>> &param,
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                fluid_tria,
             const unsigned int degree_velocity);
+  /**
+   * @brief Generates a solid triangulation from a dealii or gmsh mesh
+   */
   void
   initial_setup();
+  /**
+   * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid
+   * according to a specific quadrature
+   */
   void
   setup_particles();
-  void
-  output_particles(std::string fprefix) const;
+  /**
+   * @return std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
+   */
   std::shared_ptr<Particles::ParticleHandler<spacedim>>
   get_solid_particle_handler();
+
+
+  /**
+   * @return Function<spacedim> of the solid velocity
+   */
+  Function<spacedim> *
+  get_solid_velocity();
 
 private:
   // Member variables
@@ -93,7 +108,9 @@ private:
   DoFHandler<dim, spacedim>                                         solid_dh;
   std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
 
-  Parameters::Nitsche param;
+  std::shared_ptr<Parameters::Nitsche<spacedim>> &param;
+
+  Function<spacedim> *velocity;
 
   const unsigned int degree_velocity;
 
