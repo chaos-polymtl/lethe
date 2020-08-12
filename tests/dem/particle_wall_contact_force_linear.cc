@@ -133,14 +133,13 @@ test()
   PWFineSearch<dim> fine_search_object;
   std::map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
-  fine_search_object.pw_Fine_Search(pw_contact_list,
-                                    pw_contact_information,
-                                    dt);
+  fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
 
   // Calling linear force
   PWLinearForce<dim> force_object;
   force_object.calculate_pw_contact_force(&pw_contact_information,
-                                          dem_parameters);
+                                          dem_parameters,
+                                          dt);
 
   // Output
   auto particle = particle_handler.begin();

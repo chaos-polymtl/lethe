@@ -61,9 +61,26 @@ public:
    */
   virtual void
   calculate_pw_contact_force(
-    const std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
       *                             pw_pairs_in_contact,
-    const DEMSolverParameters<dim> &dem_parameters) override;
+    const DEMSolverParameters<dim> &dem_parameters,
+    const double &                  dt) override;
+
+private:
+  /**
+   * Carries out the calculation of the particle-particle non-linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param physical_properties Physical properties of the system
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param particle_properties Properties of particle one in contact
+   */
+  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  calculate_nonlinear_contact_force_and_torque(
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    pw_contact_info_struct<dim> &                     contact_info,
+    const ArrayView<const double> &                   particle_properties);
 };
 
 #endif
