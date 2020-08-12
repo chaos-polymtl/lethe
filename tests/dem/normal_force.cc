@@ -162,8 +162,7 @@ test()
         {
           // If particle and wall are in contact
           pw_fine_search_object.pw_Fine_Search(pw_contact_list,
-                                               pw_contact_information,
-                                               dt);
+                                               pw_contact_information);
           auto pw_pairs_in_contact_iterator =
             &pw_contact_information.begin()->second;
           auto pw_contact_information_iterator =
@@ -187,7 +186,8 @@ test()
             }
 
           pw_force_object.calculate_pw_contact_force(&pw_contact_information,
-                                                     dem_parameters);
+                                                     dem_parameters,
+                                                     dt);
           integrator_object.integrate(particle_handler, g, dt);
 
           deallog << " "

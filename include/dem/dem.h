@@ -111,7 +111,25 @@ private:
    *
    */
   void
-  clear_contact_containers();
+  clear_contact_containers(
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      *local_adjacent_particles,
+    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+      *ghost_adjacent_particles,
+    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+      *pw_pairs_in_contact,
+    std::map<std::pair<int, int>,
+             std::pair<typename Particles::ParticleIterator<dim>,
+                       typename Particles::ParticleIterator<dim>>>
+      &local_contact_pair_candidates,
+    std::map<std::pair<int, int>,
+             std::pair<typename Particles::ParticleIterator<dim>,
+                       typename Particles::ParticleIterator<dim>>>
+      &ghost_contact_pair_candidates,
+    std::map<
+      std::pair<int, int>,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
+      &pw_contact_candidates);
 
   /**
    * @brief Manages the sorting of the local particles into cell and processors
@@ -174,21 +192,6 @@ private:
     Particles::ParticleHandler<dim> *                particle_handler);
 
   /**
-   * Updates the iterators to ghost particles in a map of particles
-   * (particle_container) after calling sorting particles in cells function
-   *
-   * @param ghost_particle_container A map of particles which is used to update
-   * the iterators to particles in pp and pw fine search outputs after calling
-   * sort particles into cells function
-   * @param particle_handler Particle handler to access all the particles in the
-   * system
-   */
-  void
-  update_ghost_particle_container(
-    std::map<int, Particles::ParticleIterator<dim>> &ghost_particle_container,
-    Particles::ParticleHandler<dim> *                particle_handler);
-
-  /**
    * Updates the iterators to particles in local-local adjacent_particles
    * (output of pp fine search)
    *
@@ -214,9 +217,7 @@ private:
     std::map<int, std::map<int, pp_contact_info_struct<dim>>>
       &ghost_adjacent_particles,
     const std::map<int, Particles::ParticleIterator<dim>>
-      &local_particle_container,
-    const std::map<int, Particles::ParticleIterator<dim>>
-      &ghost_particle_container);
+      &local_particle_container);
 
   /**
    * Updates the iterators to particles in pw_contact_container (output of pw
@@ -228,7 +229,7 @@ private:
   void
   update_pw_contact_container_iterators(
     std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                                    pw_pairs_in_contact,
+      &cleared_pw_pairs_in_contact,
     const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
 
   /**
@@ -299,13 +300,6 @@ private:
   void
   write_output_results();
 
-  /**
-   * @brief re-initializes all the local-local, local-ghost and particle-wall
-   * contact containers at the end of each DEM iteration
-   */
-  void
-  update_contact_containers();
-
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
   const unsigned int                        this_mpi_process;
@@ -345,14 +339,8 @@ private:
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    ghost_adjacent_particles;
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    cleared_local_adjacent_particles;
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-                                                            cleared_ghost_adjacent_particles;
+                                                            ghost_adjacent_particles;
   std::map<int, std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact;
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-    cleared_pw_pairs_in_contact;
   std::map<
     std::pair<int, int>,
     std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>

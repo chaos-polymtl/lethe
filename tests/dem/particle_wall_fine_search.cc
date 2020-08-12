@@ -120,9 +120,7 @@ test()
   PWFineSearch<dim> fine_search_object;
   std::map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
-  fine_search_object.pw_Fine_Search(pw_contact_list,
-                                    pw_contact_information,
-                                    dt);
+  fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
 
   // Output
   for (auto pw_contact_information_iterator = pw_contact_information.begin();
@@ -132,26 +130,13 @@ test()
       auto info_iterator = pw_contact_information_iterator->second.begin();
       while (info_iterator != pw_contact_information_iterator->second.end())
         {
-          deallog << "The normal overlap of contacting paritlce-wall is: "
-                  << info_iterator->second.normal_overlap << std::endl;
+          deallog << "Particle " << info_iterator->second.particle->get_id()
+                  << " is in contact with face " << info_iterator->first
+                  << std::endl;
           deallog << "The normal vector of collision is: "
                   << info_iterator->second.normal_vector[0] << " "
                   << info_iterator->second.normal_vector[1] << " "
                   << info_iterator->second.normal_vector[2] << std::endl;
-          deallog << "Normal relative velocity at contact point is: "
-                  << info_iterator->second.normal_relative_velocity
-                  << std::endl;
-          deallog << "The tangential overlap of contacting paritlce-wall is: "
-                  << info_iterator->second.tangential_overlap[0] << " "
-                  << info_iterator->second.tangential_overlap[1] << " "
-                  << info_iterator->second.tangential_overlap[2] << std::endl;
-          deallog << "Tangential relative velocity at contact point is: "
-                  << info_iterator->second.tangential_relative_velocity[0]
-                  << " "
-                  << info_iterator->second.tangential_relative_velocity[1]
-                  << " "
-                  << info_iterator->second.tangential_relative_velocity[2]
-                  << std::endl;
           ++info_iterator;
         }
     }

@@ -1,6 +1,3 @@
 
-DEAL::The normal overlap of contacting paritlce-wall is: 0.000500000
+DEAL::Particle 0 is in contact with face 77
 DEAL::The normal vector of collision is: 1.00000 0.00000 0.00000
-DEAL::Normal relative velocity at contact point is: 0.00000
-DEAL::The tangential overlap of contacting paritlce-wall is: 0.00000 0.00000 0.00000
-DEAL::Tangential relative velocity at contact point is: 0.00000 0.00000 0.00000

@@ -52,6 +52,7 @@ PWBroadSearch<dim>::find_PW_Contact_Pairs(
               std::pair map_key =
                 std::make_pair(particles_in_cell_iterator->get_id(),
                                boundary_cells_content.boundary_face_id);
+
               std::tuple map_content =
                 std::make_tuple(particles_in_cell_iterator,
                                 boundary_cells_content.normal_vector,
