@@ -870,13 +870,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   surf_vect_2.norm();
 
                           double U1_r =
-                                  (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
+                                  (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]+surf_normal[2] * u_1[2]) /
                                   surf_normal.norm();
                           double U2_r =
-                                  (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
+                                  (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]+surf_normal[2] * u_2[2]) /
                                   surf_normal.norm();
                           double U3_r =
-                                  (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
+                                  (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]+surf_normal[2] * u_3[2]) /
                                   surf_normal.norm();
 
                           double du_dn_1_1 =
