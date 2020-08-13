@@ -95,7 +95,12 @@ public:
    */
   Function<spacedim> *
   get_solid_velocity();
-
+  /**
+   * @brief Updates particle positions in solid_particle_handler by integrating velocity using a Runge-Kutta method
+   */
+  void
+  integrate_velocity(double time_step);
+  
 private:
   // Member variables
   MPI_Comm           mpi_communicator;

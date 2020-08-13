@@ -54,6 +54,9 @@ namespace Parameters
 
     // Solid velocity
     Functions::ParsedFunction<dim> solid_velocity;
+
+    // Solid velocity
+    bool enable_particles_motion;
   };
 
   template <int dim>
@@ -75,6 +78,10 @@ namespace Parameters
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
     }
+    prm.declare_entry("enable particles motion",
+                        "false",
+                        Patterns::Bool(),
+                        "Condition on the motion of particles");
     prm.leave_subsection();
   }
 
@@ -89,6 +96,7 @@ namespace Parameters
       prm.enter_subsection("solid velocity");
       solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
+      enable_particles_motion = prm.get_bool("enable particles motion");
     }
     prm.leave_subsection();
   }

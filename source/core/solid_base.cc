@@ -167,6 +167,41 @@ SolidBase<dim, spacedim>::get_solid_velocity()
   return velocity;
 }
 
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::integrate_velocity(double time_step)
+{
+  for (auto particle = solid_particle_handler->begin();
+         particle != solid_particle_handler->end();
+         ++particle)
+    {
+      Point<spacedim> particle_location = particle->get_location();
+      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i){
+        double k1 = velocity->value(particle_location, comp_i);
+
+        Point<spacedim> p1 = particle_location;
+        p1[comp_i] += time_step/2*k1;
+        double k2 = velocity->value(p1, comp_i);
+
+        Point<spacedim> p2 = particle_location;
+        p2[comp_i] += time_step/2*k2;
+        double k3 = velocity->value(p2, comp_i);
+
+        Point<spacedim> p3 = particle_location;
+        p3[comp_i] += time_step*k3;
+        double k4 = velocity->value(p3, comp_i);
+
+        particle_location[comp_i] += time_step/6*(k1 + 2*k2 + 2*k3 + k4);
+      }
+      particle->set_location(particle_location);
+      ArrayView<double> properties = particle->get_properties();
+        properties[0] = Utilities::MPI::this_mpi_process(mpi_communicator);
+        for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+          properties[1 + comp_i] += velocity->value(particle_location, comp_i);
+    }
+    solid_particle_handler->sort_particles_into_subdomains_and_cells();
+}
+
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
 template class SolidBase<2>;
