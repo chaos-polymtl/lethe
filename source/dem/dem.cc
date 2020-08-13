@@ -103,165 +103,6 @@ DEMSolver<dim>::insert_particles()
 
 template <int dim>
 void
-DEMSolver<dim>::clear_contact_containers(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    *local_adjacent_particles,
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    *ghost_adjacent_particles,
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *pw_pairs_in_contact,
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    &local_contact_pair_candidates,
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    &ghost_contact_pair_candidates,
-  std::map<
-    std::pair<int, int>,
-    std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
-    &pw_contact_candidates)
-{
-  for (auto adjacent_particles_iterator = local_adjacent_particles->begin();
-       adjacent_particles_iterator != local_adjacent_particles->end();
-       ++adjacent_particles_iterator)
-    {
-      int particle_one_id = adjacent_particles_iterator->first;
-
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto pp_map_iterator = pairs_in_contant_content->begin();
-           pp_map_iterator != pairs_in_contant_content->end();)
-        {
-          int particle_two_id = pp_map_iterator->first;
-
-          auto search_iterator_one = local_contact_pair_candidates.find(
-            std::make_pair(particle_one_id, particle_two_id));
-          auto search_iterator_two = local_contact_pair_candidates.find(
-            std::make_pair(particle_two_id, particle_one_id));
-
-          if (search_iterator_one != local_contact_pair_candidates.end())
-            {
-              local_contact_pair_candidates.erase(search_iterator_one);
-              ++pp_map_iterator;
-            }
-          else if (search_iterator_two != local_contact_pair_candidates.end())
-            {
-              local_contact_pair_candidates.erase(search_iterator_two);
-              ++pp_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(pp_map_iterator++);
-            }
-        }
-    }
-
-  // The same for local-ghost particle containers
-  for (auto adjacent_particles_iterator = ghost_adjacent_particles->begin();
-       adjacent_particles_iterator != ghost_adjacent_particles->end();
-       ++adjacent_particles_iterator)
-    {
-      int particle_one_id = adjacent_particles_iterator->first;
-
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto pp_map_iterator = pairs_in_contant_content->begin();
-           pp_map_iterator != pairs_in_contant_content->end();)
-        {
-          int particle_two_id = pp_map_iterator->first;
-
-          auto search_iterator_one = ghost_contact_pair_candidates.find(
-            std::make_pair(particle_one_id, particle_two_id));
-          auto search_iterator_two = ghost_contact_pair_candidates.find(
-            std::make_pair(particle_two_id, particle_one_id));
-
-          if (search_iterator_one != ghost_contact_pair_candidates.end())
-            {
-              ghost_contact_pair_candidates.erase(search_iterator_one);
-              ++pp_map_iterator;
-            }
-          else if (search_iterator_two != ghost_contact_pair_candidates.end())
-            {
-              ghost_contact_pair_candidates.erase(search_iterator_two);
-              ++pp_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(pp_map_iterator++);
-            }
-        }
-    }
-
-  // Particle-wall contacts
-  for (auto pw_pairs_in_contact_iterator = pw_pairs_in_contact->begin();
-       pw_pairs_in_contact_iterator != pw_pairs_in_contact->end();
-       ++pw_pairs_in_contact_iterator)
-    {
-      int particle_id = pw_pairs_in_contact_iterator->first;
-
-      auto pairs_in_contant_content = &pw_pairs_in_contact_iterator->second;
-
-      for (auto pw_map_iterator = pairs_in_contant_content->begin();
-           pw_map_iterator != pairs_in_contant_content->end();)
-        {
-          int face_id = pw_map_iterator->first;
-
-          auto search_iterator =
-            pw_contact_candidates.find(std::make_pair(particle_id, face_id));
-
-          if (search_iterator != pw_contact_candidates.end())
-            {
-              pw_contact_candidates.erase(search_iterator);
-              ++pw_map_iterator;
-            }
-          else
-            {
-              pairs_in_contant_content->erase(pw_map_iterator++);
-            }
-        }
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::locate_ghost_particles_in_cells()
-{
-  // computing_timer.enter_subsection("sort_ghost_particles_in_cells");
-
-  local_particle_container.clear();
-  update_local_particle_container(local_particle_container, &particle_handler);
-
-  update_ghost_pp_contact_container_iterators(ghost_adjacent_particles,
-                                              local_particle_container);
-}
-
-template <int dim>
-void
-DEMSolver<dim>::locate_local_particles_in_cells()
-{
-  // computing_timer.enter_subsection("sort_real_particles_in_cells");
-
-  local_particle_container.clear();
-
-  update_local_particle_container(local_particle_container, &particle_handler);
-
-  update_local_pp_contact_container_iterators(local_adjacent_particles,
-                                              local_particle_container);
-
-  update_ghost_pp_contact_container_iterators(ghost_adjacent_particles,
-                                              local_particle_container);
-  update_pw_contact_container_iterators(pw_pairs_in_contact,
-                                        local_particle_container);
-  update_particle_point_line_contact_container_iterators(
-    particle_points_in_contact,
-    particle_lines_in_contact,
-    local_particle_container);
-
-  // computing_timer.leave_subsection();
-}
-
-template <int dim>
-void
 DEMSolver<dim>::particle_wall_broad_search()
 {
   // computing_timer.enter_subsection("pw_broad_search");
@@ -456,147 +297,6 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 
 template <int dim>
 void
-DEMSolver<dim>::update_local_particle_container(
-  std::map<int, Particles::ParticleIterator<dim>> &local_particle_container,
-  Particles::ParticleHandler<dim> *                particle_handler)
-{
-  for (auto particle_iterator = particle_handler->begin();
-       particle_iterator != particle_handler->end();
-       ++particle_iterator)
-    {
-      local_particle_container[particle_iterator->get_id()] = particle_iterator;
-    }
-
-  for (auto particle_iterator = particle_handler->begin_ghost();
-       particle_iterator != particle_handler->end_ghost();
-       ++particle_iterator)
-    {
-      local_particle_container[particle_iterator->get_id()] = particle_iterator;
-    }
-
-  for (auto particle_iterator = particle_handler->begin_ghost();
-       particle_iterator != particle_handler->end_ghost();
-       ++particle_iterator)
-    {
-      local_particle_container[particle_iterator->get_id()] = particle_iterator;
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::update_local_pp_contact_container_iterators(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    &local_adjacent_particles,
-  const std::map<int, Particles::ParticleIterator<dim>>
-    &local_particle_container)
-{
-  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
-       adjacent_particles_iterator != local_adjacent_particles.end();
-       ++adjacent_particles_iterator)
-    {
-      int  particle_one_id          = adjacent_particles_iterator->first;
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto pp_map_iterator = pairs_in_contant_content->begin();
-           pp_map_iterator != pairs_in_contant_content->end();
-           ++pp_map_iterator)
-        {
-          int particle_two_id = pp_map_iterator->first;
-
-          pp_map_iterator->second.particle_one =
-            local_particle_container.at(particle_one_id);
-          pp_map_iterator->second.particle_two =
-            local_particle_container.at(particle_two_id);
-        }
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::update_ghost_pp_contact_container_iterators(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    &ghost_adjacent_particles,
-  const std::map<int, Particles::ParticleIterator<dim>>
-    &local_particle_container)
-{
-  for (auto adjacent_particles_iterator = ghost_adjacent_particles.begin();
-       adjacent_particles_iterator != ghost_adjacent_particles.end();
-       ++adjacent_particles_iterator)
-    {
-      int  particle_one_id          = adjacent_particles_iterator->first;
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto pp_map_iterator = pairs_in_contant_content->begin();
-           pp_map_iterator != pairs_in_contant_content->end();
-           ++pp_map_iterator)
-        {
-          int particle_two_id = pp_map_iterator->first;
-          pp_map_iterator->second.particle_one =
-            local_particle_container.at(particle_one_id);
-          pp_map_iterator->second.particle_two =
-            local_particle_container.at(particle_two_id);
-        }
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::update_pw_contact_container_iterators(
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-    &                                                    pw_pairs_in_contact,
-  const std::map<int, Particles::ParticleIterator<dim>> &particle_container)
-{
-  for (auto pw_pairs_in_contact_iterator = pw_pairs_in_contact.begin();
-       pw_pairs_in_contact_iterator != pw_pairs_in_contact.end();
-       ++pw_pairs_in_contact_iterator)
-    {
-      int particle_id = pw_pairs_in_contact_iterator->first;
-
-      auto pairs_in_contant_content = &pw_pairs_in_contact_iterator->second;
-
-      for (auto pw_map_iterator = pairs_in_contant_content->begin();
-           pw_map_iterator != pairs_in_contant_content->end();
-           ++pw_map_iterator)
-        {
-          pw_map_iterator->second.particle = particle_container.at(particle_id);
-        }
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::update_particle_point_line_contact_container_iterators(
-  std::map<int, particle_point_line_contact_info_struct<dim>>
-    &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<dim>>
-    &particle_lines_in_contact,
-  const std::map<int, Particles::ParticleIterator<dim>> &particle_container)
-{
-  for (auto particle_point_pairs_in_contact_iterator =
-         particle_points_in_contact.begin();
-       particle_point_pairs_in_contact_iterator !=
-       particle_points_in_contact.end();
-       ++particle_point_pairs_in_contact_iterator)
-    {
-      int  particle_id = particle_point_pairs_in_contact_iterator->first;
-      auto pairs_in_contact_content =
-        &particle_point_pairs_in_contact_iterator->second;
-      pairs_in_contact_content->particle = particle_container.at(particle_id);
-    }
-
-  for (auto particle_line_pairs_in_contact_iterator =
-         particle_lines_in_contact.begin();
-       particle_line_pairs_in_contact_iterator !=
-       particle_lines_in_contact.end();
-       ++particle_line_pairs_in_contact_iterator)
-    {
-      int  particle_id = particle_line_pairs_in_contact_iterator->first;
-      auto pairs_in_contant_content =
-        &particle_line_pairs_in_contact_iterator->second;
-      pairs_in_contant_content->particle = particle_container.at(particle_id);
-    }
-}
-
-template <int dim>
-void
 DEMSolver<dim>::write_output_results()
 {
   const std::string folder = parameters.simulation_control.output_folder;
@@ -747,23 +447,35 @@ DEMSolver<dim>::solve()
           step_number % pp_broad_search_frequency == 0 ||
           step_number % pw_broad_search_frequency == 0)
         {
-          clear_contact_containers(&local_adjacent_particles,
-                                   &ghost_adjacent_particles,
-                                   &pw_pairs_in_contact,
-                                   local_contact_pair_candidates,
-                                   ghost_contact_pair_candidates,
-                                   pw_contact_candidates);
+          localize_contacts<dim>(&local_adjacent_particles,
+                                 &ghost_adjacent_particles,
+                                 &pw_pairs_in_contact,
+                                 local_contact_pair_candidates,
+                                 ghost_contact_pair_candidates,
+                                 pw_contact_candidates);
         }
 
       if (particles_were_inserted ||
           step_number % pp_broad_search_frequency == 0 ||
           step_number % pw_broad_search_frequency == 0)
         {
-          locate_local_particles_in_cells();
+          // computing_timer.enter_subsection("sort_real_particles_in_cells");
+          locate_local_particles_in_cells<dim>(particle_handler,
+                                               particle_container,
+                                               ghost_adjacent_particles,
+                                               local_adjacent_particles,
+                                               pw_pairs_in_contact,
+                                               particle_points_in_contact,
+                                               particle_lines_in_contact);
+          // computing_timer.leave_subsection();
         }
       else
         {
-          locate_ghost_particles_in_cells();
+          // computing_timer.enter_subsection("sort_ghost_particles_in_cells");
+          locate_ghost_particles_in_cells<dim>(particle_handler,
+                                               particle_container,
+                                               ghost_adjacent_particles);
+          // computing_timer.leave_subsection();
         }
 
       // Particle-particle fine search
