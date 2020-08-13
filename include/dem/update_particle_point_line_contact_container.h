@@ -17,12 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 using namespace dealii;
 
 #ifndef UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
-#  define UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
+#define UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in particle_points_in_contact and

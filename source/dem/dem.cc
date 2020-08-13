@@ -387,12 +387,8 @@ DEMSolver<dim>::solve()
   pp_contact_force_object = set_pp_contact_force(parameters);
   pw_contact_force_object = set_pw_contact_force(parameters);
 
-  const unsigned int pp_broad_search_frequency =
-    parameters.model_parameters.pp_broad_search_frequency;
-  const unsigned int pw_broad_search_frequency =
-    parameters.model_parameters.pw_broad_search_frequency;
-  const unsigned int pp_fine_search_frequency =
-    parameters.model_parameters.pp_fine_search_frequency;
+  const unsigned int contact_detection_frequency =
+    parameters.model_parameters.contact_detection_frequency;
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -410,21 +406,16 @@ DEMSolver<dim>::solve()
 
       // Sort particles in cells
       if (particles_were_inserted ||
-          step_number % pp_broad_search_frequency == 0 ||
-          step_number % pw_broad_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
         }
 
-      // if (particles_were_inserted ||
-      //   step_number % pp_broad_search_frequency == 0 ||
-      //    step_number % pw_broad_search_frequency == 0) {
       particle_handler.exchange_ghost_particles();
-      //}
 
       // Broad particle-particle contact search
       if (particles_were_inserted ||
-          step_number % pp_broad_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           //    computing_timer.enter_subsection("pp_broad_search");
           pp_broad_search_object.find_PP_Contact_Pairs(
@@ -438,14 +429,13 @@ DEMSolver<dim>::solve()
 
       // Particle-wall broad contact search
       if (particles_were_inserted ||
-          step_number % pw_broad_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           particle_wall_broad_search();
         }
 
       if (particles_were_inserted ||
-          step_number % pp_broad_search_frequency == 0 ||
-          step_number % pw_broad_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           localize_contacts<dim>(&local_adjacent_particles,
                                  &ghost_adjacent_particles,
@@ -456,8 +446,7 @@ DEMSolver<dim>::solve()
         }
 
       if (particles_were_inserted ||
-          step_number % pp_broad_search_frequency == 0 ||
-          step_number % pw_broad_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           // computing_timer.enter_subsection("sort_real_particles_in_cells");
           locate_local_particles_in_cells<dim>(particle_handler,
@@ -480,7 +469,7 @@ DEMSolver<dim>::solve()
 
       // Particle-particle fine search
       if (particles_were_inserted ||
-          step_number % pp_fine_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           //    computing_timer.enter_subsection("pp_fine_search");
           const double neighborhood_threshold =
@@ -505,7 +494,7 @@ DEMSolver<dim>::solve()
 
       // Particles-wall fine search
       if (particles_were_inserted ||
-          step_number % pw_broad_search_frequency == 0)
+          step_number % contact_detection_frequency == 0)
         {
           particle_wall_fine_search();
         }

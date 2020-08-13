@@ -28,9 +28,7 @@ end
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
-  set pp_broad_search_frequency                 	 = 10
-  set pp_fine_search_frequency                 		 = 10
-  set pw_broad_search_frequency      			 = 10
+  set contact_detection_frequency                 	 = 10
   set neighborhood_threshold				 = 2
   set pp_contact_force_method                   	 = pp_nonlinear
   set pw_contact_force_method                   	 = pw_nonlinear

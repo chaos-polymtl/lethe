@@ -17,12 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 using namespace dealii;
 
 #ifndef UPDATEPWCONTACTCONTAINER_H_
-#  define UPDATEPWCONTACTCONTAINER_H_
+#define UPDATEPWCONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in pw_contact_container (output of pw
