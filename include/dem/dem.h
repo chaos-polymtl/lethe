@@ -37,6 +37,9 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/integrator.h>
+#include <dem/localize_contacts.h>
+#include <dem/locate_ghost_particles.h>
+#include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
@@ -106,46 +109,6 @@ private:
   insert_particles();
 
   /**
-   * @brief Manages clearing the contact containers when particles are exchanged
-   * between processors
-   *
-   */
-  void
-  clear_contact_containers(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *local_adjacent_particles,
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *ghost_adjacent_particles,
-    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      *pw_pairs_in_contact,
-    std::map<std::pair<int, int>,
-             std::pair<typename Particles::ParticleIterator<dim>,
-                       typename Particles::ParticleIterator<dim>>>
-      &local_contact_pair_candidates,
-    std::map<std::pair<int, int>,
-             std::pair<typename Particles::ParticleIterator<dim>,
-                       typename Particles::ParticleIterator<dim>>>
-      &ghost_contact_pair_candidates,
-    std::map<
-      std::pair<int, int>,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
-      &pw_contact_candidates);
-
-  /**
-   * @brief Manages the sorting of the local particles into cell and processors
-   *
-   */
-  void
-  locate_local_particles_in_cells();
-
-  /**
-   * @brief Manages the sorting of the ghost particles into cell and processors
-   *
-   */
-  void
-  locate_ghost_particles_in_cells();
-
-  /**
    * @brief Carries out the broad contact detection search using the
    * background triangulation for particle-walls contact.
    *
@@ -174,79 +137,6 @@ private:
    */
   void
   finish_simulation();
-
-  /**
-   * Updates the iterators to local particles in a map of particles
-   * (local_particle_container) after calling sorting particles in cells
-   * function
-   *
-   * @param local_particle_container A map of particles which is used to update
-   * the iterators to particles in pp and pw fine search outputs after calling
-   * sort particles into cells function
-   * @param particle_handler Particle handler to access all the particles in the
-   * system
-   */
-  void
-  update_local_particle_container(
-    std::map<int, Particles::ParticleIterator<dim>> &local_particle_container,
-    Particles::ParticleHandler<dim> *                particle_handler);
-
-  /**
-   * Updates the iterators to particles in local-local adjacent_particles
-   * (output of pp fine search)
-   *
-   * @param local_adjacent_particles Output of particle-particle fine search
-   * @param particle_container Output of update_particle_container function
-   */
-  void
-  update_local_pp_contact_container_iterators(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &local_adjacent_particles,
-    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
-
-  /**
-   * Updates the iterators to particles in local_ghost adjacent_particles
-   * (output of pp fine search)
-   *
-   * @param ghost_adjacent_particles Output of particle-particle fine search
-   * @param local_adjacent_particles Output of particle-particle fine search
-   * @param particle_container Output of update_particle_container function
-   */
-  void
-  update_ghost_pp_contact_container_iterators(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &ghost_adjacent_particles,
-    const std::map<int, Particles::ParticleIterator<dim>>
-      &local_particle_container);
-
-  /**
-   * Updates the iterators to particles in pw_contact_container (output of pw
-   * fine search)
-   *
-   * @param pw_pairs_in_contact Output of particle-wall fine search
-   * @param particle_container Output of update_particle_container function
-   */
-  void
-  update_pw_contact_container_iterators(
-    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &cleared_pw_pairs_in_contact,
-    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
-
-  /**
-   * Updates the iterators to particles in particle_points_in_contact and
-   * particle_lines_in_contact (output of particle point line fine search)
-   *
-   * @param particle_points_in_contact Output of particle-point fine search
-   * @param particle_lines_in_contact Output of particle-line fine search
-   * @param particle_container Output of update_particle_container function
-   */
-  void
-  update_particle_point_line_contact_container_iterators(
-    std::map<int, particle_point_line_contact_info_struct<dim>>
-      &particle_points_in_contact,
-    std::map<int, particle_point_line_contact_info_struct<dim>>
-      &particle_lines_in_contact,
-    const std::map<int, Particles::ParticleIterator<dim>> &particle_container);
 
   /**
    * Sets the chosen insertion method in the parameter handler file
@@ -353,8 +243,7 @@ private:
   std::map<int, particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
 
-  std::map<int, Particles::ParticleIterator<dim>> local_particle_container;
-  std::map<int, Particles::ParticleIterator<dim>> ghost_particle_container;
+  std::map<int, Particles::ParticleIterator<dim>> particle_container;
   DEM::DEMProperties<dim>                         properties_class;
 
   // Initilization of classes and building objects
