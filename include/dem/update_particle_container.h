@@ -17,12 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 using namespace dealii;
 
 #ifndef UPDATEPARTICLECONTAINER_H_
-#  define UPDATEPARTICLECONTAINER_H_
+#define UPDATEPARTICLECONTAINER_H_
 
 /**
  * Updates the iterators to local particles in a map of particles

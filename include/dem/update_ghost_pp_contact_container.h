@@ -17,12 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 using namespace dealii;
 
 #ifndef UPDATEGHOSTPPCONTACTCONTAINER_H_
-#  define UPDATEGHOSTPPCONTACTCONTAINER_H_
+#define UPDATEGHOSTPPCONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in local_ghost adjacent_particles

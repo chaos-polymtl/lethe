@@ -17,8 +17,6 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 #include <dem/update_ghost_pp_contact_container.h>
 #include <dem/update_particle_container.h>
 
