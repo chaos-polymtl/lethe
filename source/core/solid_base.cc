@@ -194,10 +194,6 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
         particle_location[comp_i] += time_step/6*(k1 + 2*k2 + 2*k3 + k4);
       }
       particle->set_location(particle_location);
-      ArrayView<double> properties = particle->get_properties();
-        properties[0] = Utilities::MPI::this_mpi_process(mpi_communicator);
-        for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-          properties[1 + comp_i] += velocity->value(particle_location, comp_i);
     }
     solid_particle_handler->sort_particles_into_subdomains_and_cells();
 }
