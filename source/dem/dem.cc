@@ -174,6 +174,7 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
+      MPI_Barrier(MPI_COMM_WORLD);
       auto               properties = properties_class.get_properties_name();
       Visualization<dim> visualization_object;
       visualization_object.print_xyz(particle_handler, properties);
