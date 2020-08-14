@@ -174,10 +174,16 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      MPI_Barrier(MPI_COMM_WORLD);
-      auto               properties = properties_class.get_properties_name();
-      Visualization<dim> visualization_object;
-      visualization_object.print_xyz(particle_handler, properties);
+      for (unsigned int processor_number = 0;
+           processor_number < n_mpi_processes;
+           ++processor_number)
+        {
+          if (this_mpi_process == processor_number)
+            {
+              auto properties = properties_class.get_properties_name();
+              visualization_object.print_xyz(particle_handler, properties);
+            }
+        }
     }
 }
 

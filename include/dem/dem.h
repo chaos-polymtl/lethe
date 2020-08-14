@@ -258,6 +258,7 @@ private:
   std::shared_ptr<Insertion<dim>>      insertion_object;
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
+  Visualization<dim>                   visualization_object;
   PVDHandler                           particles_pvdhandler;
 
   // Information for parallel grid processing
