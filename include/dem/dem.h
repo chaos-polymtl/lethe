@@ -245,6 +245,8 @@ private:
 
   std::map<int, Particles::ParticleIterator<dim>> particle_container;
   DEM::DEMProperties<dim>                         properties_class;
+  std::vector<std::pair<std::string, int>>        properties =
+    properties_class.get_properties_name();
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;

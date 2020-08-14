@@ -167,6 +167,8 @@ template <int dim>
 void
 DEMSolver<dim>::finish_simulation()
 {
+  MPI_Barrier(MPI_COMM_WORLD);
+
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
     this->computing_timer.print_summary();
@@ -180,7 +182,6 @@ DEMSolver<dim>::finish_simulation()
         {
           if (this_mpi_process == processor_number)
             {
-              auto properties = properties_class.get_properties_name();
               visualization_object.print_xyz(particle_handler, properties);
             }
         }
