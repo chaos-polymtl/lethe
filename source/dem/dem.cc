@@ -167,8 +167,6 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      MPI_Barrier(MPI_COMM_WORLD);
-
       for (unsigned int processor_number = 0;
            processor_number < n_mpi_processes;
            ++processor_number)
@@ -177,6 +175,7 @@ DEMSolver<dim>::finish_simulation()
             {
               visualization_object.print_xyz(particle_handler, properties);
             }
+          MPI_Barrier(MPI_COMM_WORLD);
         }
     }
 }
