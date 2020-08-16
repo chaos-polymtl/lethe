@@ -120,7 +120,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                   if (((support_points[local_dof_indices[j]] - center_immersed)
                          .norm()) <=
                         particles[p].radius *
-                          this->nsparam.particlesParameters.outside_radius &
+                          this->nsparam.particlesParameters.outside_radius &&
                       ((support_points[local_dof_indices[j]] - center_immersed)
                          .norm()) >=
                         particles[p].radius *
