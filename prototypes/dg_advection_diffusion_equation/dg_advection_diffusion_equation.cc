@@ -655,7 +655,7 @@ DGAdvectionDiffusion<dim>::assemble_system()
 
         const double velocity_dot_n = velocity_q * normals[qpoint];
 
-        const double gamma = velocity_dot_n > 0 ? 0.5 : -0.5;
+        //        const double gamma = velocity_dot_n > 0 ? 0.5 : -0.5;
 
         for (unsigned int i = 0; i < n_dofs; ++i)
           {

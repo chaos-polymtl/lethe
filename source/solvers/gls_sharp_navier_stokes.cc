@@ -1292,7 +1292,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
               // Impose the pressure inside the particle if the inside of the
               // particle is solved
-              if (this->nsparam.particlesParameters.assemble_inside &
+              if (this->nsparam.particlesParameters.assemble_inside &&
                   this->nsparam.particlesParameters.P_assemble ==
                     Parameters::Particle_Assemble_type::NS)
                 {
@@ -1376,7 +1376,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
               // If the cell is cut by the IB the count is not 0 or the
               // number of total dof in a cell
 
-              if (count_small != 0 && count_small != local_dof_indices.size())
+              if ((count_small != 0) &&
+                  (count_small != local_dof_indices.size()))
                 {
                   // If we are here the cell is cut by the immersed boundary
                   // loops on the dof that reprensant the velocity  component
@@ -2122,7 +2123,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                         global_index_overwrite) *
                                         sum_line;
                                 }
-                              else if (component_i == 2 & dim == 3)
+                              else if ((component_i == 2) && (dim == 3))
                                 {
                                   double vz =
                                     particles[p].omega[0] *

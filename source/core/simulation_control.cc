@@ -126,7 +126,7 @@ SimulationControlTransient::integrate()
 bool
 SimulationControlTransient::is_at_end()
 {
-  return current_time >= (end_time - 1e-12 * time_step);
+  return current_time >= (end_time - 1e-6 * time_step);
 }
 
 double

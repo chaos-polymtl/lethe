@@ -351,7 +351,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -437,18 +437,10 @@ GDNavierStokesSolver<dim>::setup_dofs()
   DoFRenumbering::component_wise(this->dof_handler, block_component);
 
 
-#if !(DEAL_II_VERSION_GTE(9, 2, 0))
-  dofs_per_block.resize(2);
-  DoFTools::count_dofs_per_block(this->dof_handler,
-                                 dofs_per_block,
-                                 block_component);
-
-#else
   // To be used to replace the above part once 9.2 release is out and TRAVIS-CI
   // version is updated
   dofs_per_block =
     DoFTools::count_dofs_per_fe_block(this->dof_handler, block_component);
-#endif
 
   unsigned int dof_u = dofs_per_block[0];
   unsigned int dof_p = dofs_per_block[1];
