@@ -32,7 +32,7 @@ matrix:
 
 before_script:
   - if [ "$STEP" = "compile_and_test" ]; then
-        docker pull dealii/dealii:v9.2.0-focal
+        docker pull dealii/dealii:v9.2.0-focal;
     #      docker pull blaisb/dealii_docker:dealii_full_9.2;
     fi
 
