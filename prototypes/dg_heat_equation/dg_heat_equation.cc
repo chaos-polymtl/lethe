@@ -584,8 +584,6 @@ DGHeat<dim>::calculateL2Error()
         {
           const double x = fe_values.quadrature_point(q)[0];
           const double y = fe_values.quadrature_point(q)[1];
-          if (dim > 2)
-            const double z = fe_values.quadrature_point(q)[2];
 
           const double r       = std::sqrt(x * x + y * y);
           const double lnratio = std::log(1. / 0.25);
@@ -604,9 +602,6 @@ DGHeat<dim>::calculateL2Error()
                 fe_values.shape_value(i, q) * solution[local_dof_indices[i]];
             }
           l2error += (u_sim - u_exact) * (u_sim - u_exact) * fe_values.JxW(q);
-          //       std::cout << " x = " << x << " y = " << y <<  " r = " << r <<
-          //       "   u_exact = " << u_exact << "   u_sim=" << u_sim <<
-          //       std::endl;
         }
     }
 
