@@ -43,7 +43,7 @@ script:
     fi
   - if [ "$STEP" = "compile_and_test" ]; then
 
-         docker run -i -t dealii/dealii:v9.2.0-focal /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest -j";
+         docker run -i -t dealii/dealii:v9.2.0-focal /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest";
 
     fi
  

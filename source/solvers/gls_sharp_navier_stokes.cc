@@ -117,12 +117,12 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                   // radius of the particles if all the dof are on one side the
                   // cell is not cut by the boundary meaning we dont have to do
                   // anything
-                  if ((support_points[local_dof_indices[j]] - center_immersed)
-                          .norm() <=
+                  if (((support_points[local_dof_indices[j]] - center_immersed)
+                         .norm()) <=
                         particles[p].radius *
                           this->nsparam.particlesParameters.outside_radius &
-                      (support_points[local_dof_indices[j]] - center_immersed)
-                          .norm() >=
+                      ((support_points[local_dof_indices[j]] - center_immersed)
+                         .norm()) >=
                         particles[p].radius *
                           this->nsparam.particlesParameters.inside_radius)
                     {
