@@ -15,15 +15,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
     *cells_local_neighbor_list,
   const std::vector<
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    *cells_ghost_neighbor_list,
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    &local_contact_pair_candidates,
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    &ghost_contact_pair_candidates)
+    *                              cells_ghost_neighbor_list,
+  std::map<int, std::vector<int>> &local_contact_pair_candidates,
+  std::map<int, std::vector<int>> &ghost_contact_pair_candidates)
 {
   // First we will handle the local-lcoal candidate pairs
 
@@ -57,6 +51,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                particles_in_main_cell.end();
                ++particles_in_main_cell_iterator_one)
             {
+              unsigned int particle_one_id =
+                particles_in_main_cell_iterator_one->get_id();
+
               // Advancing the second iterator to capture all the particle pairs
               // in the main cell
               auto particles_in_main_cell_iterator_two =
@@ -66,16 +63,13 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                      particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator_two)
                 {
+                  unsigned int particle_two_id =
+                    particles_in_main_cell_iterator_two->get_id();
+
                   // Capturing all the local-local particle pairs in the main
                   // cell
-                  auto contact_pair =
-                    std::make_pair(particles_in_main_cell_iterator_one,
-                                   particles_in_main_cell_iterator_two);
-                  local_contact_pair_candidates.insert(
-                    {std::make_pair(
-                       particles_in_main_cell_iterator_one->get_id(),
-                       particles_in_main_cell_iterator_two->get_id()),
-                     contact_pair});
+                  local_contact_pair_candidates[particle_one_id].push_back(
+                    particle_two_id);
                 }
             }
 
@@ -100,6 +94,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
+                  unsigned int particle_one_id =
+                    particles_in_main_cell_iterator->get_id();
+
                   for (typename Particles::ParticleHandler<
                          dim>::particle_iterator_range::iterator
                          particles_in_neighbor_cell_iterator =
@@ -108,14 +105,11 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                        particles_in_neighbor_cell.end();
                        ++particles_in_neighbor_cell_iterator)
                     {
-                      auto contact_pair =
-                        std::make_pair(particles_in_main_cell_iterator,
-                                       particles_in_neighbor_cell_iterator);
-                      local_contact_pair_candidates.insert(
-                        {std::make_pair(
-                           particles_in_main_cell_iterator->get_id(),
-                           particles_in_neighbor_cell_iterator->get_id()),
-                         contact_pair});
+                      unsigned int particle_two_id =
+                        particles_in_neighbor_cell_iterator->get_id();
+
+                      local_contact_pair_candidates[particle_one_id].push_back(
+                        particle_two_id);
                     }
                 }
             }
@@ -125,7 +119,7 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
   // Now we go through the local-ghost pairs (the first iterator shows a local
   // particles, and the second a ghost particle)
 
-  // Clearing local_contact_pair_candidates
+  // Clearing ghost_contact_pair_candidates
   ghost_contact_pair_candidates.clear();
 
   // Looping over cells_ghost_neighbor_list
@@ -165,6 +159,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
+                  unsigned int particle_one_id =
+                    particles_in_main_cell_iterator->get_id();
+
                   for (typename Particles::ParticleHandler<
                          dim>::particle_iterator_range::iterator
                          particles_in_neighbor_cell_iterator =
@@ -173,14 +170,11 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                        particles_in_neighbor_cell.end();
                        ++particles_in_neighbor_cell_iterator)
                     {
-                      auto contact_pair =
-                        std::make_pair(particles_in_main_cell_iterator,
-                                       particles_in_neighbor_cell_iterator);
-                      ghost_contact_pair_candidates.insert(
-                        {std::make_pair(
-                           particles_in_main_cell_iterator->get_id(),
-                           particles_in_neighbor_cell_iterator->get_id()),
-                         contact_pair});
+                      unsigned int particle_two_id =
+                        particles_in_neighbor_cell_iterator->get_id();
+
+                      ghost_contact_pair_candidates[particle_one_id].push_back(
+                        particle_two_id);
                     }
                 }
             }

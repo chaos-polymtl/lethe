@@ -9,19 +9,14 @@ PPFineSearch<dim>::PPFineSearch()
 template <int dim>
 void
 PPFineSearch<dim>::pp_Fine_Search(
-  const std::map<std::pair<int, int>,
-                 std::pair<typename Particles::ParticleIterator<dim>,
-                           typename Particles::ParticleIterator<dim>>>
-    &local_contact_pair_candidates,
-  const std::map<std::pair<int, int>,
-                 std::pair<typename Particles::ParticleIterator<dim>,
-                           typename Particles::ParticleIterator<dim>>>
-    &ghost_contact_pair_candidates,
+  const std::map<int, std::vector<int>> &local_contact_pair_candidates,
+  const std::map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    &          ghost_adjacent_particles,
-  const double neighborhood_threshold)
+    &                                              ghost_adjacent_particles,
+  std::map<int, Particles::ParticleIterator<dim>> &particle_container,
+  const double                                     neighborhood_threshold)
 {
   // First iterating over local adjacent_particles
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
@@ -72,46 +67,50 @@ PPFineSearch<dim>::pp_Fine_Search(
        candidate_iterator != local_contact_pair_candidates.end();
        ++candidate_iterator)
     {
-      auto particle_contact_pair = candidate_iterator->second;
+      unsigned int particle_one_id           = candidate_iterator->first;
+      auto         second_particle_container = &candidate_iterator->second;
+      auto         particle_one = particle_container[particle_one_id];
 
-      // Get particles one and two from the map and the total array view to
-      // the particle properties once to improve efficiency
-      auto particle_one = particle_contact_pair.first;
-      auto particle_two = particle_contact_pair.second;
-
-      // Obtaining locations of particles one and two:
-      Point<dim, double> particle_one_location = particle_one->get_location();
-      Point<dim, double> particle_two_location = particle_two->get_location();
-
-      // Finding distance
-      double distance = particle_one_location.distance(particle_two_location);
-
-      // If the particles distance is less than the threshold
-      if (distance < neighborhood_threshold)
+      for (auto second_particle_iterator = second_particle_container->begin();
+           second_particle_iterator != second_particle_container->end();
+           ++second_particle_iterator)
         {
-          auto particle_one_properties = particle_one->get_properties();
-          auto particle_two_properties = particle_two->get_properties();
+          unsigned int particle_two_id = *second_particle_iterator;
 
-          // Getting the particle one contact list and particle two id
-          auto particle_one_contact_list =
-            &local_adjacent_particles
-              [particle_one_properties[DEM::PropertiesIndex::id]];
-          unsigned int particle_two_id =
-            particle_two_properties[DEM::PropertiesIndex::id];
+          auto particle_two = particle_container[particle_two_id];
 
-          Tensor<1, dim> tangential_overlap;
-          for (int d = 0; d < dim; ++d)
+          // Obtaining locations of particles one and two:
+          Point<dim, double> particle_one_location =
+            particle_one->get_location();
+          Point<dim, double> particle_two_location =
+            particle_two->get_location();
+
+          // Finding distance
+          double distance =
+            particle_one_location.distance(particle_two_location);
+
+          // If the particles distance is less than the threshold
+          if (distance < neighborhood_threshold)
             {
-              tangential_overlap[d] = 0;
+              // Getting the particle one contact list and particle two id
+              auto particle_one_contact_list =
+                &local_adjacent_particles[particle_one_id];
+
+              Tensor<1, dim> tangential_overlap;
+              for (int d = 0; d < dim; ++d)
+                {
+                  tangential_overlap[d] = 0;
+                }
+
+              // Initilizing the contact info and adding
+              pp_contact_info_struct<dim> contact_info;
+              contact_info.tangential_overlap = tangential_overlap;
+              contact_info.particle_one       = particle_one;
+              contact_info.particle_two       = particle_two;
+
+              particle_one_contact_list->insert(
+                {particle_two_id, contact_info});
             }
-
-          // Initilizing the contact info and adding
-          pp_contact_info_struct<dim> contact_info;
-          contact_info.tangential_overlap = tangential_overlap;
-          contact_info.particle_one       = particle_one;
-          contact_info.particle_two       = particle_two;
-
-          particle_one_contact_list->insert({particle_two_id, contact_info});
         }
     }
 
@@ -164,46 +163,57 @@ PPFineSearch<dim>::pp_Fine_Search(
        candidate_iterator != ghost_contact_pair_candidates.end();
        ++candidate_iterator)
     {
-      auto particle_contact_pair = candidate_iterator->second;
+      unsigned int particle_one_id           = candidate_iterator->first;
+      auto         second_particle_container = &candidate_iterator->second;
 
-      // Get particles one and two from the map and the total array view to
-      // the particle properties once to improve efficiency
-      auto particle_one = particle_contact_pair.first;
-      auto particle_two = particle_contact_pair.second;
+      auto particle_one = particle_container[particle_one_id];
 
-      // Obtaining locations of particles one and two:
-      Point<dim, double> particle_one_location = particle_one->get_location();
-      Point<dim, double> particle_two_location = particle_two->get_location();
-
-      // Finding distance
-      double distance = particle_one_location.distance(particle_two_location);
-
-      // If the particles distance is less than the threshold
-      if (distance < neighborhood_threshold)
+      for (auto second_particle_iterator = second_particle_container->begin();
+           second_particle_iterator != second_particle_container->end();
+           ++second_particle_iterator)
         {
-          auto particle_one_properties = particle_one->get_properties();
-          auto particle_two_properties = particle_two->get_properties();
+          unsigned int particle_two_id = *second_particle_iterator;
 
-          // Getting the particle one contact list and particle two id
-          auto particle_one_contact_list =
-            &ghost_adjacent_particles
-              [particle_one_properties[DEM::PropertiesIndex::id]];
-          unsigned int particle_two_id =
-            particle_two_properties[DEM::PropertiesIndex::id];
+          auto particle_two = particle_container[particle_two_id];
 
-          Tensor<1, dim> tangential_overlap;
-          for (int d = 0; d < dim; ++d)
+          // Obtaining locations of particles one and two:
+          Point<dim, double> particle_one_location =
+            particle_one->get_location();
+          Point<dim, double> particle_two_location =
+            particle_two->get_location();
+
+          // Finding distance
+          double distance =
+            particle_one_location.distance(particle_two_location);
+
+          // If the particles distance is less than the threshold
+          if (distance < neighborhood_threshold)
             {
-              tangential_overlap[d] = 0;
+              auto particle_one_properties = particle_one->get_properties();
+              auto particle_two_properties = particle_two->get_properties();
+
+              // Getting the particle one contact list and particle two id
+              auto particle_one_contact_list =
+                &ghost_adjacent_particles
+                  [particle_one_properties[DEM::PropertiesIndex::id]];
+              unsigned int particle_two_id =
+                particle_two_properties[DEM::PropertiesIndex::id];
+
+              Tensor<1, dim> tangential_overlap;
+              for (int d = 0; d < dim; ++d)
+                {
+                  tangential_overlap[d] = 0;
+                }
+
+              // Initilizing the contact info and adding
+              pp_contact_info_struct<dim> contact_info;
+              contact_info.tangential_overlap = tangential_overlap;
+              contact_info.particle_one       = particle_one;
+              contact_info.particle_two       = particle_two;
+
+              particle_one_contact_list->insert(
+                {particle_two_id, contact_info});
             }
-
-          // Initilizing the contact info and adding
-          pp_contact_info_struct<dim> contact_info;
-          contact_info.tangential_overlap = tangential_overlap;
-          contact_info.particle_one       = particle_one;
-          contact_info.particle_two       = particle_two;
-
-          particle_one_contact_list->insert({particle_two_id, contact_info});
         }
     }
 }

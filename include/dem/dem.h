@@ -218,14 +218,8 @@ private:
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
                                                  boundary_cells_with_points;
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    local_contact_pair_candidates;
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    ghost_contact_pair_candidates;
+  std::map<int, std::vector<int>>                local_contact_pair_candidates;
+  std::map<int, std::vector<int>>                ghost_contact_pair_candidates;
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
@@ -247,6 +241,9 @@ private:
   DEM::DEMProperties<dim>                         properties_class;
   std::vector<std::pair<std::string, int>>        properties =
     properties_class.get_properties_name();
+  const double neighborhood_threshold =
+    parameters.model_parameters.neighborhood_threshold *
+    parameters.physical_properties.diameter;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;

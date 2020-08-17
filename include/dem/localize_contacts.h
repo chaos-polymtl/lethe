@@ -53,15 +53,9 @@ localize_contacts(
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     *ghost_adjacent_particles,
   std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *pw_pairs_in_contact,
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    &local_contact_pair_candidates,
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    &ghost_contact_pair_candidates,
+    *                              pw_pairs_in_contact,
+  std::map<int, std::vector<int>> &local_contact_pair_candidates,
+  std::map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::map<
     std::pair<int, int>,
     std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
@@ -72,27 +66,36 @@ localize_contacts(
        adjacent_particles_iterator != local_adjacent_particles->end();
        ++adjacent_particles_iterator)
     {
-      int particle_one_id = adjacent_particles_iterator->first;
+      int  particle_one_id = adjacent_particles_iterator->first;
+      auto particle_one_contact_candidates =
+        &local_contact_pair_candidates[particle_one_id];
 
       auto pairs_in_contant_content = &adjacent_particles_iterator->second;
       for (auto pp_map_iterator = pairs_in_contant_content->begin();
            pp_map_iterator != pairs_in_contant_content->end();)
         {
-          int particle_two_id = pp_map_iterator->first;
+          int  particle_two_id = pp_map_iterator->first;
+          auto particle_two_contact_candidates =
+            &local_contact_pair_candidates[particle_two_id];
 
-          auto search_iterator_one = local_contact_pair_candidates.find(
-            std::make_pair(particle_one_id, particle_two_id));
-          auto search_iterator_two = local_contact_pair_candidates.find(
-            std::make_pair(particle_two_id, particle_one_id));
+          auto search_iterator_one =
+            std::find(particle_one_contact_candidates->begin(),
+                      particle_one_contact_candidates->end(),
+                      particle_two_id);
+          auto search_iterator_two =
+            std::find(particle_two_contact_candidates->begin(),
+                      particle_two_contact_candidates->end(),
+                      particle_one_id);
 
-          if (search_iterator_one != local_contact_pair_candidates.end())
+          if (search_iterator_one != particle_one_contact_candidates->end())
             {
-              local_contact_pair_candidates.erase(search_iterator_one);
+              particle_one_contact_candidates->erase(search_iterator_one);
               ++pp_map_iterator;
             }
-          else if (search_iterator_two != local_contact_pair_candidates.end())
+          else if (search_iterator_two !=
+                   particle_two_contact_candidates->end())
             {
-              local_contact_pair_candidates.erase(search_iterator_two);
+              particle_two_contact_candidates->erase(search_iterator_two);
               ++pp_map_iterator;
             }
           else
@@ -107,27 +110,36 @@ localize_contacts(
        adjacent_particles_iterator != ghost_adjacent_particles->end();
        ++adjacent_particles_iterator)
     {
-      int particle_one_id = adjacent_particles_iterator->first;
+      int  particle_one_id = adjacent_particles_iterator->first;
+      auto particle_one_contact_candidates =
+        &ghost_contact_pair_candidates[particle_one_id];
 
       auto pairs_in_contant_content = &adjacent_particles_iterator->second;
       for (auto pp_map_iterator = pairs_in_contant_content->begin();
            pp_map_iterator != pairs_in_contant_content->end();)
         {
-          int particle_two_id = pp_map_iterator->first;
+          int  particle_two_id = pp_map_iterator->first;
+          auto particle_two_contact_candidates =
+            &ghost_contact_pair_candidates[particle_two_id];
 
-          auto search_iterator_one = ghost_contact_pair_candidates.find(
-            std::make_pair(particle_one_id, particle_two_id));
-          auto search_iterator_two = ghost_contact_pair_candidates.find(
-            std::make_pair(particle_two_id, particle_one_id));
+          auto search_iterator_one =
+            std::find(particle_one_contact_candidates->begin(),
+                      particle_one_contact_candidates->end(),
+                      particle_two_id);
+          auto search_iterator_two =
+            std::find(particle_two_contact_candidates->begin(),
+                      particle_two_contact_candidates->end(),
+                      particle_one_id);
 
-          if (search_iterator_one != ghost_contact_pair_candidates.end())
+          if (search_iterator_one != particle_one_contact_candidates->end())
             {
-              ghost_contact_pair_candidates.erase(search_iterator_one);
+              particle_one_contact_candidates->erase(search_iterator_one);
               ++pp_map_iterator;
             }
-          else if (search_iterator_two != ghost_contact_pair_candidates.end())
+          else if (search_iterator_two !=
+                   particle_two_contact_candidates->end())
             {
-              ghost_contact_pair_candidates.erase(search_iterator_two);
+              particle_two_contact_candidates->erase(search_iterator_two);
               ++pp_map_iterator;
             }
           else

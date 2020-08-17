@@ -463,17 +463,16 @@ DEMSolver<dim>::solve()
       if (particles_were_inserted ||
           step_number % contact_detection_frequency == 0)
         {
-          const double neighborhood_threshold =
-            parameters.model_parameters.neighborhood_threshold *
-            parameters.physical_properties.diameter;
           pp_fine_search_object.pp_Fine_Search(local_contact_pair_candidates,
                                                ghost_contact_pair_candidates,
                                                local_adjacent_particles,
                                                ghost_adjacent_particles,
+                                               particle_container,
                                                neighborhood_threshold);
         }
 
       // Particle-particle contact force
+
       pp_contact_force_object->calculate_pp_contact_force(
         &local_adjacent_particles,
         &ghost_adjacent_particles,

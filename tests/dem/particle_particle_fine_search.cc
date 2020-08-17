@@ -142,14 +142,16 @@ test()
   pit2->get_properties()[17] = 1;
 
   // Calling broad search
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    local_contact_pair_candidates;
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    ghost_contact_pair_candidates;
+  std::map<int, std::vector<int>>                 local_contact_pair_candidates;
+  std::map<int, std::vector<int>>                 ghost_contact_pair_candidates;
+  std::map<int, Particles::ParticleIterator<dim>> particle_container;
+
+  for (auto particle_iterator = particle_handler.begin();
+       particle_iterator != particle_handler.end();
+       ++particle_iterator)
+    {
+      particle_container[particle_iterator->get_id()] = particle_iterator;
+    }
 
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
                                             &local_neighbor_list,
@@ -167,6 +169,7 @@ test()
                                     ghost_contact_pair_candidates,
                                     local_adjacent_particles,
                                     ghost_adjacent_particles,
+                                    particle_container,
                                     neighborhood_threshold);
 
   // Output

@@ -73,24 +73,21 @@ public:
    * @param ghost_adjacent_particles A map of maps which stores all the required
    * information for calculation of the contact force of local-ghost particle
    * pairs
+   * @param particle_container A container that is used to obtain iterators to
+   * particles using their ids
    * @param neighborhood_threshold A value which defines the neighbor particles
    */
 
   void
   pp_Fine_Search(
-    const std::map<std::pair<int, int>,
-                   std::pair<typename Particles::ParticleIterator<dim>,
-                             typename Particles::ParticleIterator<dim>>>
-      &local_contact_pair_candidates,
-    const std::map<std::pair<int, int>,
-                   std::pair<typename Particles::ParticleIterator<dim>,
-                             typename Particles::ParticleIterator<dim>>>
-      &ghost_contact_pair_candidates,
+    const std::map<int, std::vector<int>> &local_contact_pair_candidates,
+    const std::map<int, std::vector<int>> &ghost_contact_pair_candidates,
     std::map<int, std::map<int, pp_contact_info_struct<dim>>>
       &local_adjacent_particles,
     std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &          ghost_adjacent_particles,
-    const double neighborhood_threshold);
+      &                                              ghost_adjacent_particles,
+    std::map<int, Particles::ParticleIterator<dim>> &particle_container,
+    const double                                     neighborhood_threshold);
 };
 
 #endif /* PPFINESEARCH_H_ */

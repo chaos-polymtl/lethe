@@ -62,10 +62,12 @@ public:
    * @param cells_ghost_neighbor_list This vector is the output of
    * find_cell_neighbors class and shows the ghost neighbor cells of all local
    * celsl in the triangulation
-   * @param local_contact_pair_candidates A map of pairs which contains all the
-   * local-local particle pairs in adjacent cells which are collision candidates
-   * @param ghost_contact_pair_candidates A map of pairs which contains all the
-   * local-ghost particle pairs in adjacent cells which are collision candidates
+   * @param local_contact_pair_candidates A map of vectors which contains all
+   * the local-local particle pairs in adjacent cells which are collision
+   * candidates
+   * @param ghost_contact_pair_candidates A map of vectors which contains all
+   * the local-ghost particle pairs in adjacent cells which are collision
+   * candidates
    */
 
   void
@@ -76,15 +78,9 @@ public:
       *cells_local_neighbor_list,
     const std::vector<
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      *cells_ghost_neighbor_list,
-    std::map<std::pair<int, int>,
-             std::pair<typename Particles::ParticleIterator<dim>,
-                       typename Particles::ParticleIterator<dim>>>
-      &local_contact_pair_candidates,
-    std::map<std::pair<int, int>,
-             std::pair<typename Particles::ParticleIterator<dim>,
-                       typename Particles::ParticleIterator<dim>>>
-      &ghost_contact_pair_candidates);
+      *                              cells_ghost_neighbor_list,
+    std::map<int, std::vector<int>> &local_contact_pair_candidates,
+    std::map<int, std::vector<int>> &ghost_contact_pair_candidates);
 };
 
 #endif /* PPBROADSEARCH_H_ */

@@ -319,14 +319,8 @@ test()
   pit2->get_properties()[17] = 1;
 
   // Defining variables
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    local_contact_pair_candidates;
-  std::map<std::pair<int, int>,
-           std::pair<typename Particles::ParticleIterator<dim>,
-                     typename Particles::ParticleIterator<dim>>>
-    ghost_contact_pair_candidates;
+  std::map<int, std::vector<int>> local_contact_pair_candidates;
+  std::map<int, std::vector<int>> ghost_contact_pair_candidates;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
@@ -353,6 +347,7 @@ test()
                                         ghost_contact_pair_candidates,
                                         cleared_local_adjacent_particles,
                                         cleared_ghost_adjacent_particles,
+                                        local_particle_container,
                                         neighborhood_threshold);
 
       // Calling non-linear force
