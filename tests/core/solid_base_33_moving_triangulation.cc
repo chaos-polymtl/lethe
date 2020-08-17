@@ -103,7 +103,22 @@ main(int argc, char *argv[])
                           mpi_communicator);
         }
       }
-      deallog << "Solid triangulation moved successfully." << std::endl;
+      // Printing the final position for all the vertices
+
+      const unsigned int n_dofs = solid_dh.n_dofs();
+      std::vector <bool> position_printed(n_dofs, false);
+
+      for (const auto &cell : solid_dh.active_cell_iterators())
+        {
+          for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i)
+            {
+              if (position_printed[cell->vertex_index(i)] == false)
+                {
+                  deallog << "Final position of vertex " << cell->vertex_index(i) << " : " << cell->vertex(i) << std::endl;
+                  position_printed[cell->vertex_index(i)] = true;
+                }
+            }
+        }
     }
   catch (std::exception &exc)
     {
