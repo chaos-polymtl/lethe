@@ -183,25 +183,28 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
        ++particle)
     {
       Point<spacedim> particle_location = particle->get_location();
+      
+      Tensor<1, spacedim> k1;
       for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-        {
-          double k1 = velocity->value(particle_location, comp_i);
+        k1[comp_i] = velocity->value(particle_location, comp_i);
 
-          Point<spacedim> p1 = particle_location;
-          p1[comp_i] += time_step / 2 * k1;
-          double k2 = velocity->value(p1, comp_i);
+      Point<spacedim> p1 = particle_location + time_step / 2 * k1;
+      Tensor<1, spacedim> k2;
+      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+        k2[comp_i] = velocity->value(p1, comp_i);
 
-          Point<spacedim> p2 = particle_location;
-          p2[comp_i] += time_step / 2 * k2;
-          double k3 = velocity->value(p2, comp_i);
+      Point<spacedim> p2 = particle_location + time_step / 2 * k2;
+      Tensor<1, spacedim> k3;
+      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+        k3[comp_i] = velocity->value(p2, comp_i);
 
-          Point<spacedim> p3 = particle_location;
-          p3[comp_i] += time_step * k3;
-          double k4 = velocity->value(p3, comp_i);
+      Point<spacedim> p3 = particle_location + time_step * k3;
+      Tensor<1, spacedim> k4;
+      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+        k4[comp_i] = velocity->value(p3, comp_i);
 
-          particle_location[comp_i] +=
-            time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
-        }
+      particle_location += 
+        time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
       particle->set_location(particle_location);
     }
   solid_particle_handler->sort_particles_into_subdomains_and_cells();
@@ -222,25 +225,29 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
           if (displacement[cell->vertex_index(i)] == false)
             {
               Point<spacedim> &vertex_position = cell->vertex(i);
+            
+              Tensor<1, spacedim> k1;
               for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                {
-                  double k1 = velocity->value(vertex_position, comp_i);
+                k1[comp_i] = velocity->value(vertex_position, comp_i);
 
-                  Point<spacedim> p1 = vertex_position;
-                  p1[comp_i] += time_step / 2 * k1;
-                  double k2 = velocity->value(p1, comp_i);
+              Point<spacedim> p1 = vertex_position + time_step / 2 * k1;
+              Tensor<1, spacedim> k2;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k2[comp_i] = velocity->value(p1, comp_i);
 
-                  Point<spacedim> p2 = vertex_position;
-                  p2[comp_i] += time_step / 2 * k2;
-                  double k3 = velocity->value(p2, comp_i);
+              Point<spacedim> p2 = vertex_position + time_step / 2 * k2;
+              Tensor<1, spacedim> k3;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k3[comp_i] = velocity->value(p2, comp_i);
 
-                  Point<spacedim> p3 = vertex_position;
-                  p3[comp_i] += time_step * k3;
-                  double k4 = velocity->value(p3, comp_i);
+              Point<spacedim> p3 = vertex_position + time_step * k3;
+              Tensor<1, spacedim> k4;
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                k4[comp_i] = velocity->value(p3, comp_i);
 
-                  vertex_position[comp_i] +=
-                    time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
-                }
+              vertex_position +=
+                time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+                
               displacement[cell->vertex_index(i)] = true;
             }
         }
