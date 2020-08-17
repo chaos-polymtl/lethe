@@ -149,6 +149,13 @@ SolidBase<dim, spacedim>::setup_particles()
 }
 
 template <int dim, int spacedim>
+DoFHandler<dim, spacedim>&
+SolidBase<dim, spacedim>::get_solid_dof_handler()
+{
+  return solid_dh;
+}
+
+template <int dim, int spacedim>
 std::shared_ptr<Particles::ParticleHandler<spacedim>>
 SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
@@ -196,6 +203,44 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
       particle->set_location(particle_location);
     }
     solid_particle_handler->sort_particles_into_subdomains_and_cells();
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
+{
+  const unsigned int n_dofs = solid_dh.n_dofs();
+  std::vector <bool> displacement(n_dofs, false);
+
+  for (const auto &cell : solid_dh.active_cell_iterators())
+    {
+      for (unsigned int i = 0; i < GeometryInfo<spacedim>::vertices_per_cell; ++i)
+        {
+          if (displacement[cell->vertex_index(i)] == false)
+            {
+              Point<spacedim> &vertex_position = cell->vertex(i);
+              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                {
+                  double k1 = velocity->value(vertex_position, comp_i);
+
+                  Point<spacedim> p1 = vertex_position;
+                  p1[comp_i] += time_step/2*k1;
+                  double k2 = velocity->value(p1, comp_i);
+
+                  Point<spacedim> p2 = vertex_position;
+                  p2[comp_i] += time_step/2*k2;
+                  double k3 = velocity->value(p2, comp_i);
+
+                  Point<spacedim> p3 = vertex_position;
+                  p3[comp_i] += time_step*k3;
+                  double k4 = velocity->value(p3, comp_i);
+
+                  vertex_position[comp_i] += time_step/6*(k1 + 2*k2 + 2*k3 + k4);
+                }
+              displacement[cell->vertex_index(i)] = true;
+            }
+        }
+    }
 }
 
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can

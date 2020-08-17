@@ -77,29 +77,44 @@ public:
    */
   void
   initial_setup();
+
   /**
    * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid
    * according to a specific quadrature
    */
   void
   setup_particles();
+
   /**
    * @return std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
    */
   std::shared_ptr<Particles::ParticleHandler<spacedim>>
   get_solid_particle_handler();
 
+  /**
+   * @return the solid dof handler
+   */
+  DoFHandler<dim, spacedim>&
+  get_solid_dof_handler();
 
   /**
    * @return Function<spacedim> of the solid velocity
    */
   Function<spacedim> *
   get_solid_velocity();
+
   /**
    * @brief Updates particle positions in solid_particle_handler by integrating velocity using a Runge-Kutta method
    */
   void
   integrate_velocity(double time_step);
+
+  /**
+   * @brief Moves the dofs of the solid_triangulation
+   */
+  void
+  move_solid_triangulation(double time_step);
+  
   
 private:
   // Member variables
