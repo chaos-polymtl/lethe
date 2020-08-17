@@ -79,9 +79,9 @@ namespace Parameters
       prm.leave_subsection();
     }
     prm.declare_entry("enable particles motion",
-                        "false",
-                        Patterns::Bool(),
-                        "Condition on the motion of particles");
+                      "false",
+                      Patterns::Bool(),
+                      "Condition on the motion of particles");
     prm.leave_subsection();
   }
 

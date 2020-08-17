@@ -17,10 +17,13 @@
 * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020-
 */
 
-#include "deal.II/grid/grid_generator.h"
-#include <deal.II/numerics/data_out.h>
-#include <deal.II/fe/mapping_q.h>
 #include <deal.II/base/geometry_info.h>
+
+#include <deal.II/fe/mapping_q.h>
+
+#include "deal.II/grid/grid_generator.h"
+
+#include <deal.II/numerics/data_out.h>
 
 #include <mpi.h>
 
@@ -41,8 +44,8 @@ main(int argc, char *argv[])
       initlog();
 
       NavierStokesSolverParameters<3> NSparam;
-      auto param = std::make_shared<Parameters::Nitsche<3>>();
-      ParameterHandler                prm;
+      auto             param = std::make_shared<Parameters::Nitsche<3>>();
+      ParameterHandler prm;
       std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
         std::make_shared<parallel::distributed::Triangulation<3>>(
           mpi_communicator,
@@ -78,35 +81,37 @@ main(int argc, char *argv[])
       solid.initial_setup();
       solid.setup_particles();
       DoFHandler<3, 3> &solid_dh = solid.get_solid_dof_handler();
-      
+
       DataOut<3> data_out;
       data_out.attach_dof_handler(solid_dh);
 
-      const bool mapping_all = true;
+      const bool        mapping_all = true;
       const MappingQ<3> mapping(degree_velocity, mapping_all);
       data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
-                
+
       PVDHandler pvdhandler;
 
-      for (unsigned int i = 0; i < 100; ++i){
-        solid.move_solid_triangulation(time_step);
-        data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
-        double time = (i+1) * time_step;
-        if (i % 10 == 0) {
-          write_vtu_and_pvd<3>(pvdhandler,
-                          data_out,
-                          "./",
-                          "output_solid_triangulation",
-                          time,
-                          i,
-                          1,
-                          mpi_communicator);
+      for (unsigned int i = 0; i < 100; ++i)
+        {
+          solid.move_solid_triangulation(time_step);
+          data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
+          double time = (i + 1) * time_step;
+          if (i % 10 == 0)
+            {
+              write_vtu_and_pvd<3>(pvdhandler,
+                                   data_out,
+                                   "./",
+                                   "output_solid_triangulation",
+                                   time,
+                                   i,
+                                   1,
+                                   mpi_communicator);
+            }
         }
-      }
       // Printing the final position for all the vertices
 
       const unsigned int n_dofs = solid_dh.n_dofs();
-      std::vector <bool> position_printed(n_dofs, false);
+      std::vector<bool>  position_printed(n_dofs, false);
 
       for (const auto &cell : solid_dh.active_cell_iterators())
         {
@@ -114,7 +119,9 @@ main(int argc, char *argv[])
             {
               if (position_printed[cell->vertex_index(i)] == false)
                 {
-                  deallog << "Final position of vertex " << cell->vertex_index(i) << " : " << cell->vertex(i) << std::endl;
+                  deallog << "Final position of vertex "
+                          << cell->vertex_index(i) << " : " << cell->vertex(i)
+                          << std::endl;
                   position_printed[cell->vertex_index(i)] = true;
                 }
             }

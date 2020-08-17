@@ -37,8 +37,8 @@ main(int argc, char *argv[])
       initlog();
 
       NavierStokesSolverParameters<3> NSparam;
-      auto param = std::make_shared<Parameters::Nitsche<3>>();
-      ParameterHandler                prm;
+      auto             param = std::make_shared<Parameters::Nitsche<3>>();
+      ParameterHandler prm;
       std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
         std::make_shared<parallel::distributed::Triangulation<3>>(
           mpi_communicator,
@@ -76,15 +76,18 @@ main(int argc, char *argv[])
       std::shared_ptr<Particles::ParticleHandler<3>> solid_particle_handler =
         solid.get_solid_particle_handler();
 
-      for (unsigned int i = 0; i < 91; ++i){
-        solid.integrate_velocity(time_step);
-        if (i % 10 == 0) {
-          Particles::DataOut<3, 3>                       particles_out;
-        particles_out.build_patches(*solid_particle_handler);
-        const std::string filename = ("particles" + std::to_string(i) + ".vtu");
-        particles_out.write_vtu_in_parallel(filename, mpi_communicator);
+      for (unsigned int i = 0; i < 91; ++i)
+        {
+          solid.integrate_velocity(time_step);
+          if (i % 10 == 0)
+            {
+              Particles::DataOut<3, 3> particles_out;
+              particles_out.build_patches(*solid_particle_handler);
+              const std::string filename =
+                ("particles" + std::to_string(i) + ".vtu");
+              particles_out.write_vtu_in_parallel(filename, mpi_communicator);
+            }
         }
-      }
 
       // Print the properties of the particles
       for (const auto &particle : (*solid_particle_handler))

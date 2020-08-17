@@ -94,7 +94,7 @@ public:
   /**
    * @return the solid dof handler
    */
-  DoFHandler<dim, spacedim>&
+  DoFHandler<dim, spacedim> &
   get_solid_dof_handler();
 
   /**
@@ -114,8 +114,8 @@ public:
    */
   void
   move_solid_triangulation(double time_step);
-  
-  
+
+
 private:
   // Member variables
   MPI_Comm           mpi_communicator;
