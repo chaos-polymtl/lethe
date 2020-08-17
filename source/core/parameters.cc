@@ -400,7 +400,7 @@ namespace Parameters
       prm.declare_entry("relative tolerance",
                         "0.9",
                         Patterns::Double(),
-                        "Newton solver tolerance");
+                        "Newton solver relative tolerance between steps");
       prm.declare_entry("max iterations",
                         "10",
                         Patterns::Integer(),

@@ -306,7 +306,7 @@ namespace Parameters
     // Tolerance
     double tolerance;
 
-    // Tolerance
+    // Relative tolerance between non-linear steps
     double relative_tolerance;
 
     // Maximal number of iterations for the Newton solver
