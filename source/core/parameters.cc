@@ -397,6 +397,10 @@ namespace Parameters
                         "1e-6",
                         Patterns::Double(),
                         "Newton solver tolerance");
+      prm.declare_entry("relative tolerance",
+                        "0.9",
+                        Patterns::Double(),
+                        "Newton solver tolerance");
       prm.declare_entry("max iterations",
                         "10",
                         Patterns::Integer(),
@@ -439,6 +443,7 @@ namespace Parameters
         throw(std::runtime_error("Invalid non-linear solver "));
 
       tolerance         = prm.get_double("tolerance");
+      relative_tolerance= prm.get_double("relative tolerance");
       max_iterations    = prm.get_integer("max iterations");
       skip_iterations   = prm.get_integer("skip iterations");
       display_precision = prm.get_integer("residual precision");
