@@ -9,6 +9,12 @@ Lethe is named after the river of forgetfulness, which is one of the five rivers
 
 Lethe originally started that as a week-end project, but ended up slowly growing into a real research CFD code. It is still an immature project, but is under active development.
 
+Lethe is described in the following articles:
+- https://doi.org/10.1016/j.softx.2020.100579
+
+Lethe is featured in the following articles:
+
+
 Note: Lethe would not exist without the thorough dedicated work of the deal.II authors. The authors of Lethe would like to emphasize that without deal.II, dedicated solvers like Lethe could not exist.
 
 Authors:
@@ -20,6 +26,7 @@ Contributors (in alphabetical order):
 - Antoine Avrit
 - Lucka Barbeau
 - Valérie Bibeau
+- Carole-Anne Daunais
 - Toni El Geitani
 - Simon Gauvin
 - Shahab Golshan
