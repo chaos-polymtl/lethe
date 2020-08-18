@@ -162,6 +162,39 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
   assemble_nitsche_restriction<false>();
 }
 
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
+{
+  read_mesh_and_manifolds(this->triangulation,
+                          this->nsparam.mesh,
+                          this->nsparam.manifolds_parameters,
+                          this->nsparam.boundary_conditions);
+
+  this->setup_dofs();
+  this->set_initial_condition(this->nsparam.initial_condition->type,
+                              this->nsparam.restart_parameters.restart);
+
+  while (this->simulationControl->integrate())
+    {
+      this->simulationControl->print_progression(this->pcout);
+      if (this->nsparam.nitsche->enable_particles_motion)
+        solid.integrate_velocity(this->simulationControl->get_time_step());
+      if (this->simulationControl->is_at_start())
+        this->first_iteration();
+      else
+        {
+          this->refine_mesh();
+          this->iterate();
+        }
+      this->postprocess(false);
+      this->finish_time_step();
+    }
+
+
+  this->finish_simulation();
+}
+
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging
 template class GLSNitscheNavierStokesSolver<2>;

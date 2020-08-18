@@ -46,6 +46,9 @@ public:
                                const unsigned int degreeVelocity,
                                const unsigned int degreePressure);
 
+  virtual void
+  solve() override;
+
 private:
   SolidBase<dim, spacedim> solid;
 

@@ -44,7 +44,7 @@ public:
                         const unsigned int                 degreePressure);
   ~GLSNavierStokesSolver();
 
-  void
+  virtual void
   solve();
 
 protected:
