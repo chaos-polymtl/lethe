@@ -139,8 +139,7 @@ localize_contacts(
           else if (search_iterator_two !=
                    particle_two_contact_candidates->end())
             {
-              particle_two_contact_candidates->erase(search_iterator_two);
-              ++pp_map_iterator;
+              pairs_in_contant_content->erase(pp_map_iterator++);
             }
           else
             {

@@ -17,8 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/update_ghost_pp_contact_container.h>
-#include <dem/update_particle_container.h>
+#include <dem/update_ghost_iterator_pp_contact_container.h>
+#include <dem/update_ghost_particle_container.h>
 
 using namespace dealii;
 
@@ -44,15 +44,17 @@ using namespace dealii;
 template <int dim>
 void
 locate_ghost_particles_in_cells(
-  const Particles::ParticleHandler<dim> &                    particle_handler,
-  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container,
+  const Particles::ParticleHandler<dim> &particle_handler,
+  std::unordered_map<int, Particles::ParticleIterator<dim>>
+    &ghost_particle_container,
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &ghost_adjacent_particles)
 {
-  update_particle_container<dim>(particle_container, &particle_handler);
+  update_ghost_particle_container<dim>(ghost_particle_container,
+                                       &particle_handler);
 
-  update_ghost_pp_contact_container_iterators<dim>(ghost_adjacent_particles,
-                                                   particle_container);
+  update_ghost_iterator_pp_contact_container<dim>(ghost_adjacent_particles,
+                                                  ghost_particle_container);
 }
 
 #endif /* LOCATEGHOSTPARTICLES_H_ */

@@ -62,6 +62,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <unordered_set>
 
 #ifndef LETHE_DEM_H
 #  define LETHE_DEM_H
@@ -238,8 +239,10 @@ private:
     particle_points_in_contact, particle_lines_in_contact;
 
   std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
-  DEM::DEMProperties<dim>                                   properties_class;
-  std::vector<std::pair<std::string, int>>                  properties =
+  std::unordered_map<int, Particles::ParticleIterator<dim>>
+                                           ghost_particle_container;
+  DEM::DEMProperties<dim>                  properties_class;
+  std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
   const double neighborhood_threshold =
     parameters.model_parameters.neighborhood_threshold *
