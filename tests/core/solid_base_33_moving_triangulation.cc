@@ -28,6 +28,7 @@
 #include <mpi.h>
 
 #include "../tests.h"
+
 #include "core/solid_base.h"
 #include "core/solutions_output.h"
 
@@ -68,7 +69,7 @@ main(int argc, char *argv[])
 
       double time_step = 0.01;
       param->solid_velocity.declare_parameters(prm, 3);
-      prm.set("Function expression", "-y; x; 0");
+      prm.set("Function expression", "-pi*y; pi*x; 0");
       param->solid_velocity.parse_parameters(prm);
 
       // Mesh of the fluid
@@ -91,19 +92,29 @@ main(int argc, char *argv[])
 
       PVDHandler pvdhandler;
 
+      data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
+      write_vtu_and_pvd<3>(pvdhandler,
+                           data_out,
+                           "./",
+                           "output_solid_triangulation",
+                           0,
+                           0,
+                           1,
+                           mpi_communicator);
+
       for (unsigned int i = 0; i < 100; ++i)
         {
           solid.move_solid_triangulation(time_step);
           data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
           double time = (i + 1) * time_step;
-          if (i % 10 == 0)
+          if ((i + 1) % 10 == 0)
             {
               write_vtu_and_pvd<3>(pvdhandler,
                                    data_out,
                                    "./",
                                    "output_solid_triangulation",
                                    time,
-                                   i,
+                                   i + 1,
                                    1,
                                    mpi_communicator);
             }

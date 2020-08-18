@@ -22,7 +22,19 @@
 #include <mpi.h>
 
 #include "../tests.h"
+
 #include "core/solid_base.h"
+
+void
+output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,
+       MPI_Comm                                       mpi_communicator,
+       int                                            iter)
+{
+  Particles::DataOut<3, 3> particles_out;
+  particles_out.build_patches(*particle_handler);
+  const std::string filename = ("particles" + std::to_string(iter) + ".vtu");
+  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
+}
 
 int
 main(int argc, char *argv[])
@@ -61,7 +73,7 @@ main(int argc, char *argv[])
 
       double time_step = 0.01;
       param->solid_velocity.declare_parameters(prm, 3);
-      prm.set("Function expression", "-y; x; 0");
+      prm.set("Function expression", "-pi*y; pi*x; 0");
       param->solid_velocity.parse_parameters(prm);
 
       // Mesh of the fluid
@@ -76,16 +88,14 @@ main(int argc, char *argv[])
       std::shared_ptr<Particles::ParticleHandler<3>> solid_particle_handler =
         solid.get_solid_particle_handler();
 
-      for (unsigned int i = 0; i < 91; ++i)
+      output(solid_particle_handler, mpi_communicator, 0);
+
+      for (unsigned int i = 0; i < 100; ++i)
         {
           solid.integrate_velocity(time_step);
-          if (i % 10 == 0)
+          if ((i + 1) % 10 == 0)
             {
-              Particles::DataOut<3, 3> particles_out;
-              particles_out.build_patches(*solid_particle_handler);
-              const std::string filename =
-                ("particles" + std::to_string(i) + ".vtu");
-              particles_out.write_vtu_in_parallel(filename, mpi_communicator);
+              output(solid_particle_handler, mpi_communicator, i + 1);
             }
         }
 
