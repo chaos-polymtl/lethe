@@ -142,6 +142,85 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 }
 
 template <int dim, int spacedim>
+Tensor<1, spacedim>
+GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
+{
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+    solid.get_solid_particle_handler();
+
+  TimerOutput::Scope t(this->computing_timer, "Calculate forces on solid");
+
+  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+
+  Tensor<2, spacedim> velocity_gradient;
+  double pressure;
+  Tensor<1, spacedim>   normal_vector;
+  Tensor<2, spacedim>   fluid_stress;
+  Tensor<2, spacedim>   fluid_pressure;
+  Tensor<1, spacedim>   force;
+  const double viscosity = this->nsparam.physical_properties.viscosity;
+
+  // Loop over all local particles
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
+    {
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
+      const auto &dh_cell =
+        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+      dh_cell->get_dof_indices(fluid_dof_indices);
+
+      const auto pic = solid_ph->particles_in_cell(cell);
+      Assert(pic.begin() == particle, ExcInternalError());
+      for (const auto &p : pic)
+        {
+          velocity_gradient            = 0;
+          pressure                     = 0;
+          force                        = 0;
+          const auto &ref_q            = p.get_reference_location();
+          const auto &JxW              = p.get_properties()[0];
+          normal_vector[0] = -p.get_properties()[1];
+          normal_vector[1] = -p.get_properties()[2];
+          if (spacedim == 3)
+          {
+            normal_vector[2] = -p.get_properties()[3];
+          }
+
+          for (unsigned int k = 0; k < dofs_per_cell; ++k)
+            {
+              const auto comp_k = this->fe.system_to_component_index(k).first;
+              if (comp_k < spacedim)
+                {
+                  // Get the velocity at non-quadrature point (particle in
+                  // fluid)
+                  velocity_gradient[comp_k] +=
+                    double(this->evaluation_point[fluid_dof_indices[k]]) *
+                    this->fe.shape_grad(k, ref_q);
+                }
+              else
+                {
+                  // Get the pressure at non-quadrature point
+                  pressure += 
+                    this->evaluation_point[fluid_dof_indices[k]] *
+                    this->fe.shape_value(k, ref_q);
+                }
+            }
+
+          for (int d = 0; d < dim; ++d)
+            {
+              fluid_pressure[d][d] = pressure;
+            }
+          fluid_stress = viscosity * velocity_gradient + transpose(velocity_gradient) - fluid_pressure;
+          force += fluid_stress * normal_vector * JxW;
+        }
+      
+      particle = pic.end();
+    }
+    return force;
+}
+
+template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)

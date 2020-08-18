@@ -93,7 +93,7 @@ SolidBase<dim, spacedim>::setup_particles()
   solid_dh.distribute_dofs(fe);
 
   QGauss<dim>        quadrature(degree_velocity + 1);
-  const unsigned int n_properties = 1;
+  const unsigned int n_properties = spacedim + 1;
   solid_particle_handler =
     std::make_shared<Particles::ParticleHandler<spacedim>>();
 
@@ -110,17 +110,25 @@ SolidBase<dim, spacedim>::setup_particles()
 
   FEValues<dim, spacedim> fe_v(fe,
                                quadrature,
-                               update_JxW_values | update_quadrature_points);
+                               update_JxW_values | update_quadrature_points 
+                               | update_normal_vectors);
   for (const auto &cell : solid_dh.active_cell_iterators())
     if (cell->is_locally_owned())
       {
         fe_v.reinit(cell);
-        const auto &points = fe_v.get_quadrature_points();
-        const auto &JxW    = fe_v.get_JxW_values();
+        const auto &points         = fe_v.get_quadrature_points();
+        const auto &JxW            = fe_v.get_JxW_values();
+        const auto &normal_vectors = fe_v.get_normal_vectors();
         for (unsigned int q = 0; q < points.size(); ++q)
           {
             quadrature_points_vec.emplace_back(points[q]);
-            properties.emplace_back(std::vector<double>(n_properties, JxW[q]));
+            properties.emplace_back(std::vector<double>(1, JxW[q]));
+            properties.emplace_back(std::vector<double>(1, normal_vectors[q][0]));
+            properties.emplace_back(std::vector<double>(1, normal_vectors[q][1]));
+            if (spacedim == 3)
+            {
+              properties.emplace_back(std::vector<double>(1, normal_vectors[q][2]));
+            }
           }
       }
 

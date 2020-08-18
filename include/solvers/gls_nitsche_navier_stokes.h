@@ -56,6 +56,9 @@ private:
   void
   assemble_nitsche_restriction();
 
+  Tensor<1, spacedim>
+  calculate_forces_on_solid();
+
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
