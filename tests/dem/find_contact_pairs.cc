@@ -106,8 +106,8 @@ test()
     particle_handler.insert_particle(particle3, pt3_info.first);
 
   // Calling broad search function
-  std::map<int, std::vector<int>> local_contact_pair_candidates;
-  std::map<int, std::vector<int>> ghost_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
 
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
                                             &local_neighbor_list,

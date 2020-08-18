@@ -78,9 +78,9 @@ public:
       *cells_local_neighbor_list,
     const std::vector<
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
-      *                              cells_ghost_neighbor_list,
-    std::map<int, std::vector<int>> &local_contact_pair_candidates,
-    std::map<int, std::vector<int>> &ghost_contact_pair_candidates);
+      *                                        cells_ghost_neighbor_list,
+    std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
+    std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates);
 };
 
 #endif /* PPBROADSEARCH_H_ */

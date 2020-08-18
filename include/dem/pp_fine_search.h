@@ -79,15 +79,17 @@ public:
    */
 
   void
-  pp_Fine_Search(
-    const std::map<int, std::vector<int>> &local_contact_pair_candidates,
-    const std::map<int, std::vector<int>> &ghost_contact_pair_candidates,
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &local_adjacent_particles,
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      &                                              ghost_adjacent_particles,
-    std::map<int, Particles::ParticleIterator<dim>> &particle_container,
-    const double                                     neighborhood_threshold);
+  pp_Fine_Search(const std::unordered_map<int, std::vector<int>>
+                   &local_contact_pair_candidates,
+                 const std::unordered_map<int, std::vector<int>>
+                   &ghost_contact_pair_candidates,
+                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+                   &local_adjacent_particles,
+                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+                   &ghost_adjacent_particles,
+                 std::unordered_map<int, Particles::ParticleIterator<dim>>
+                   &          particle_container,
+                 const double neighborhood_threshold);
 };
 
 #endif /* PPFINESEARCH_H_ */

@@ -9,14 +9,16 @@ PPFineSearch<dim>::PPFineSearch()
 template <int dim>
 void
 PPFineSearch<dim>::pp_Fine_Search(
-  const std::map<int, std::vector<int>> &local_contact_pair_candidates,
-  const std::map<int, std::vector<int>> &ghost_contact_pair_candidates,
+  const std::unordered_map<int, std::vector<int>>
+    &local_contact_pair_candidates,
+  const std::unordered_map<int, std::vector<int>>
+    &ghost_contact_pair_candidates,
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    &                                              ghost_adjacent_particles,
-  std::map<int, Particles::ParticleIterator<dim>> &particle_container,
-  const double                                     neighborhood_threshold)
+    &ghost_adjacent_particles,
+  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container,
+  const double neighborhood_threshold)
 {
   // First iterating over local adjacent_particles
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();

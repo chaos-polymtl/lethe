@@ -38,7 +38,8 @@ update_particle_point_line_contact_container_iterators(
     &particle_points_in_contact,
   std::map<int, particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact,
-  const std::map<int, Particles::ParticleIterator<dim>> &particle_container)
+  const std::unordered_map<int, Particles::ParticleIterator<dim>>
+    &particle_container)
 {
   for (auto particle_point_pairs_in_contact_iterator =
          particle_points_in_contact.begin();

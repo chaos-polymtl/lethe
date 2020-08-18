@@ -70,7 +70,7 @@ void
 update_ghost_pp_contact_container_iterators(
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &cleared_ghost_adjacent_particles,
-  const std::map<int, Particles::ParticleIterator<dim>>
+  const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &local_particle_container)
 {
   for (auto adjacent_particles_iterator =
@@ -98,7 +98,7 @@ void
 update_local_pp_contact_container_iterators(
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &cleared_local_adjacent_particles,
-  const std::map<int, Particles::ParticleIterator<dim>>
+  const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &local_particle_container)
 {
   for (auto adjacent_particles_iterator =
@@ -125,8 +125,9 @@ update_local_pp_contact_container_iterators(
 template <int dim>
 void
 update_local_particle_container(
-  std::map<int, Particles::ParticleIterator<dim>> &local_particle_container,
-  Particles::ParticleHandler<dim> *                particle_handler)
+  std::unordered_map<int, Particles::ParticleIterator<dim>>
+    &                              local_particle_container,
+  Particles::ParticleHandler<dim> *particle_handler)
 {
   for (auto particle_iterator = particle_handler->begin();
        particle_iterator != particle_handler->end();
@@ -153,9 +154,11 @@ update_local_particle_container(
 template <int dim>
 void
 locate_local_particles_in_cells(
-  Particles::ParticleHandler<dim> &              particle_handler,
-  std::map<int, Particles::ParticleIterator<2>> &local_particle_container,
-  std::map<int, Particles::ParticleIterator<2>> &ghost_particle_container,
+  Particles::ParticleHandler<dim> &particle_handler,
+  std::unordered_map<int, Particles::ParticleIterator<2>>
+    &local_particle_container,
+  std::unordered_map<int, Particles::ParticleIterator<2>>
+    &ghost_particle_container,
   std::map<int, std::map<int, pp_contact_info_struct<2>>>
     &cleared_local_adjacent_particles,
   std::map<int, std::map<int, pp_contact_info_struct<2>>>
@@ -242,9 +245,11 @@ test()
   std::map<int, std::map<int, pp_contact_info_struct<2>>>
     cleared_local_adjacent_particles;
   std::map<int, std::map<int, pp_contact_info_struct<2>>>
-                                                cleared_ghost_adjacent_particles;
-  std::map<int, Particles::ParticleIterator<2>> local_particle_container;
-  std::map<int, Particles::ParticleIterator<2>> ghost_particle_container;
+    cleared_ghost_adjacent_particles;
+  std::unordered_map<int, Particles::ParticleIterator<2>>
+    local_particle_container;
+  std::unordered_map<int, Particles::ParticleIterator<2>>
+    ghost_particle_container;
 
   // Finding cell neighbors
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
@@ -319,8 +324,8 @@ test()
   pit2->get_properties()[17] = 1;
 
   // Defining variables
-  std::map<int, std::vector<int>> local_contact_pair_candidates;
-  std::map<int, std::vector<int>> ghost_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {

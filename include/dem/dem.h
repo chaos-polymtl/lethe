@@ -218,8 +218,8 @@ private:
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
                                                  boundary_cells_with_points;
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::map<int, std::vector<int>>                local_contact_pair_candidates;
-  std::map<int, std::vector<int>>                ghost_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>>      local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>>      ghost_contact_pair_candidates;
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
@@ -237,9 +237,9 @@ private:
   std::map<int, particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
 
-  std::map<int, Particles::ParticleIterator<dim>> particle_container;
-  DEM::DEMProperties<dim>                         properties_class;
-  std::vector<std::pair<std::string, int>>        properties =
+  std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
+  DEM::DEMProperties<dim>                                   properties_class;
+  std::vector<std::pair<std::string, int>>                  properties =
     properties_class.get_properties_name();
   const double neighborhood_threshold =
     parameters.model_parameters.neighborhood_threshold *

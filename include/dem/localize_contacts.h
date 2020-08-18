@@ -53,9 +53,9 @@ localize_contacts(
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     *ghost_adjacent_particles,
   std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *                              pw_pairs_in_contact,
-  std::map<int, std::vector<int>> &local_contact_pair_candidates,
-  std::map<int, std::vector<int>> &ghost_contact_pair_candidates,
+    *                                        pw_pairs_in_contact,
+  std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
+  std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::map<
     std::pair<int, int>,
     std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>

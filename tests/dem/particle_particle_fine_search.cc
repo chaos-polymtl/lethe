@@ -142,9 +142,9 @@ test()
   pit2->get_properties()[17] = 1;
 
   // Calling broad search
-  std::map<int, std::vector<int>>                 local_contact_pair_candidates;
-  std::map<int, std::vector<int>>                 ghost_contact_pair_candidates;
-  std::map<int, Particles::ParticleIterator<dim>> particle_container;
+  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
+  std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
