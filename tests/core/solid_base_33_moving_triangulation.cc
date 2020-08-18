@@ -28,7 +28,6 @@
 #include <mpi.h>
 
 #include "../tests.h"
-
 #include "core/solid_base.h"
 #include "core/solutions_output.h"
 

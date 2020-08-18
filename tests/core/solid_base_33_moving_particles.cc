@@ -22,13 +22,11 @@
 #include <mpi.h>
 
 #include "../tests.h"
-
 #include "core/solid_base.h"
 
-void
-output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,
-       MPI_Comm                                       mpi_communicator,
-       int                                            iter)
+void output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,
+            MPI_Comm                                       mpi_communicator,
+            int                                            iter)
 {
   Particles::DataOut<3, 3> particles_out;
   particles_out.build_patches(*particle_handler);
