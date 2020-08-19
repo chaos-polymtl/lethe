@@ -122,13 +122,10 @@ SolidBase<dim, spacedim>::setup_particles()
         for (unsigned int q = 0; q < points.size(); ++q)
           {
             quadrature_points_vec.emplace_back(points[q]);
-            properties.emplace_back(std::vector<double>(1, JxW[q]));
-            properties.emplace_back(std::vector<double>(1, normal_vectors[q][0]));
-            properties.emplace_back(std::vector<double>(1, normal_vectors[q][1]));
+            std::vector<double> prop_i = {JxW[q], normal_vectors[q][0], normal_vectors[q][1]};
             if (spacedim == 3)
-            {
-              properties.emplace_back(std::vector<double>(1, normal_vectors[q][2]));
-            }
+              prop_i.push_back(normal_vectors[q][2]);
+            properties.emplace_back(prop_i);
           }
       }
 

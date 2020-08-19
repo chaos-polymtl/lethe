@@ -27,6 +27,7 @@
 #include "core/manifolds.h"
 #include "core/sdirk.h"
 #include "core/time_integration_utilities.h"
+#include <core/utilities.h>
 
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
@@ -148,8 +149,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
   std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
     solid.get_solid_particle_handler();
 
-  TimerOutput::Scope t(this->computing_timer, "Calculate forces on solid");
-
   const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
 
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
@@ -159,7 +158,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
   Tensor<1, spacedim>   normal_vector;
   Tensor<2, spacedim>   fluid_stress;
   Tensor<2, spacedim>   fluid_pressure;
-  Tensor<1, spacedim>   force;
+  Tensor<1, spacedim>   force; // to be changed for a vector of tensors when allowing multiple solids
   const double viscosity = this->nsparam.physical_properties.viscosity;
 
   // Loop over all local particles
@@ -177,7 +176,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
         {
           velocity_gradient            = 0;
           pressure                     = 0;
-          force                        = 0;
           const auto &ref_q            = p.get_reference_location();
           const auto &JxW              = p.get_properties()[0];
           normal_vector[0] = -p.get_properties()[1];
@@ -218,6 +216,43 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
       particle = pic.end();
     }
     return force;
+}
+
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
+{
+  TimerOutput::Scope t(this->computing_timer, "Calculate forces on solid");
+
+  std::vector<Tensor<1, spacedim>>   force(1,  this->calculate_forces_on_solid()); // hard coded, has to be changed for when allowing more than 1 solid
+
+
+  if (this->nsparam.nitsche->verbosity == Parameters::Verbosity::verbose &&
+      this->this_mpi_process == 0)
+      {
+        std::cout << std::endl;
+        const std::vector<unsigned int> solid_indices(1,1); // hard coded, has to be changed for when allowing more than 1 solid
+
+        std::string independent_column_names = "Solid ID";
+
+        std::vector<std::string> dependent_column_names;
+        dependent_column_names.push_back("f_x");
+        dependent_column_names.push_back("f_y");
+        if (spacedim == 3)
+          dependent_column_names.push_back("f_z");
+
+        TableHandler table =
+          make_table_scalars_tensors(solid_indices,
+                                    independent_column_names,
+                                    force,
+                                    dependent_column_names,
+                                    this->nsparam.forces_parameters.display_precision);
+
+        std::cout << "+------------------------------------------+" << std::endl;
+        std::cout << "|  Force on solid summary                  |" << std::endl;
+        std::cout << "+------------------------------------------+" << std::endl;
+        table.write_text(std::cout);
+      }
 }
 
 template <int dim, int spacedim>
@@ -267,6 +302,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           this->iterate();
         }
       this->postprocess(false);
+      if (this->nsparam.nitsche->calculate_force_on_solid)
+      {
+        postprocess_solid_forces();
+      }
       this->finish_time_step();
     }
 

@@ -59,6 +59,9 @@ private:
   Tensor<1, spacedim>
   calculate_forces_on_solid();
 
+  void
+  postprocess_solid_forces();
+
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod

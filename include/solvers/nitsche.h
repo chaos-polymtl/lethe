@@ -54,9 +54,13 @@ namespace Parameters
 
     // Solid velocity
     Functions::ParsedFunction<dim> solid_velocity;
-
-    // Solid velocity
     bool enable_particles_motion;
+
+    // Calculate forces
+    Verbosity verbosity;
+    bool calculate_force_on_solid;
+    std::string force_output_name;
+
   };
 
   template <int dim>
@@ -77,11 +81,25 @@ namespace Parameters
       if (dim == 3)
         prm.set("Function expression", "0; 0; 0");
       prm.leave_subsection();
-    }
-    prm.declare_entry("enable particles motion",
+      prm.declare_entry("enable particles motion",
                       "false",
                       Patterns::Bool(),
                       "Condition on the motion of particles");
+      prm.declare_entry(
+          "verbosity",
+          "quiet",
+          Patterns::Selection("quiet|verbose"),
+          "State whether the force on the solid should be printed "
+          "Choices are <quiet|verbose>.");
+      prm.declare_entry("calculate forces on solid",
+                      "false",
+                      Patterns::Bool(),
+                      "Enable calculation of forces on solid");
+      prm.declare_entry("solid force name",
+                    "force_solid",
+                    Patterns::FileName(),
+                    "File output solid force prefix");
+    }
     prm.leave_subsection();
   }
 
@@ -97,6 +115,13 @@ namespace Parameters
       solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
       enable_particles_motion = prm.get_bool("enable particles motion");
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Verbosity::verbose;
+      if (op == "quiet")
+        verbosity = Verbosity::quiet;
+      calculate_force_on_solid = prm.get_bool("calculate forces on solid");
+      force_output_name        = prm.get("solid force name");
     }
     prm.leave_subsection();
   }
