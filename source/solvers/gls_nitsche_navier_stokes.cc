@@ -250,6 +250,31 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
         std::cout << "+------------------------------------------+" << std::endl;
         table.write_text(std::cout);
       }
+
+      std::string filename = this->nsparam.nitsche->force_output_name + ".dat";
+      std::ofstream output(filename.c_str());
+
+      TableHandler   solid_forces_table;
+
+      solid_forces_table.add_value("time", this->simulationControl->get_current_time());
+      solid_forces_table.add_value("f_x", force[0][0]);
+      solid_forces_table.add_value("f_y", force[0][1]);
+      if (dim == 3)
+        solid_forces_table.add_value("f_z", force[0][2]);
+      else
+        solid_forces_table.add_value("f_z", 0.);
+
+      // Precision
+      solid_forces_table.set_precision(
+        "f_x", this->nsparam.forces_parameters.output_precision);
+      solid_forces_table.set_precision(
+        "f_y", this->nsparam.forces_parameters.output_precision);
+      solid_forces_table.set_precision(
+        "f_z", this->nsparam.forces_parameters.output_precision);
+      solid_forces_table.set_precision(
+        "time", this->nsparam.forces_parameters.output_precision);
+
+      solid_forces_table.write_text(output);
 }
 
 template <int dim, int spacedim>
