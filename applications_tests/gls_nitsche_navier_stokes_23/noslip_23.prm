@@ -79,7 +79,10 @@ subsection nitsche
 		set file name = ../noslip_23.msh
 	end
 	
-	set beta = 100
+	set beta 			= 100
+	set verbosity 			= quiet
+	set calculate forces on solid 	= true
+	set solid force name 		= solid_force
 end
 
 # --------------------------------------------------
