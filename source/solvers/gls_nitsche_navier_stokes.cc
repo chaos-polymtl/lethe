@@ -51,9 +51,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
   TimerOutput::Scope t(this->computing_timer, "Assemble Nitsche terms");
 
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(spacedim);
-
   const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
 
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
