@@ -118,6 +118,8 @@ UniformInsertion<dim>::insert(
 
       // Updating remaining particles
       remained_particles -= inserted_this_step;
+
+      this->print_insertion_info(inserted_this_step, remained_particles);
     }
 }
 

@@ -86,6 +86,12 @@ public:
 
 private:
   /**
+   * Prints the simulation starting information including number of processors.
+   */
+  void
+  print_initial_info();
+
+  /**
    * Defines or reads the mesh based on the information provided by the user.
    * Gmsh files can also be read in this function.
    */

@@ -94,7 +94,6 @@ NonUniformInsertion<dim>::insert(
 
       MPI_Comm communicator = triangulation.get_communicator();
 
-
       // Obtaining global bounding boxes
       const auto my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
@@ -102,10 +101,8 @@ NonUniformInsertion<dim>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-
       unsigned int this_mpi_process =
         Utilities::MPI::this_mpi_process(communicator);
-
 
       // Finding insertion points using assign_insertion_points function
       std::vector<Point<dim>> insertion_points;
@@ -130,6 +127,8 @@ NonUniformInsertion<dim>::insert(
 
       // Updating remaining particles
       remained_particles -= inserted_this_step;
+
+      this->print_insertion_info(inserted_this_step, remained_particles);
     }
 }
 

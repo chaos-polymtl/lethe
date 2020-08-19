@@ -19,6 +19,27 @@
 
 #include <dem/insertion.h>
 
+// Prints the insertion information
+template <int dim>
+void
+Insertion<dim>::print_insertion_info(const unsigned int inserted_this_step,
+                                     const unsigned int remained_particles)
+{
+  MPI_Barrier(MPI_COMM_WORLD);
+  if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+    {
+      std::cout
+        << "***************************************************************** "
+           "\n";
+      std::cout << inserted_this_step << " particles were inserted from total "
+                << inserted_this_step + remained_particles << " particles"
+                << std::endl;
+      std::cout
+        << "***************************************************************** "
+           "\n";
+    }
+}
+
 // Carries out assigning the properties of inserted particles. The output vector
 // is used in insert_global_particles as input argument
 template <int dim>

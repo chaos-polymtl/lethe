@@ -46,6 +46,9 @@ using namespace dealii;
 template <int dim>
 class PPBroadSearch
 {
+private:
+  // std::vector<int> particle_candidate_container;
+
 public:
   PPBroadSearch<dim>();
 
