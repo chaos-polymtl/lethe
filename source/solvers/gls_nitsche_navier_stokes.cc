@@ -25,6 +25,7 @@
 #include <deal.II/particles/data_out.h>
 
 #include <core/utilities.h>
+#include <core/solutions_output.h>
 
 #include "core/bdf.h"
 #include "core/grids.h"
@@ -324,7 +325,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
     {
       this->simulationControl->print_progression(this->pcout);
       if (this->nsparam.nitsche->enable_particles_motion)
-        solid.integrate_velocity(this->simulationControl->get_time_step());
+        {
+          if (this->simulationControl->is_at_start())
+            {
+              solid.initial_setup();
+              solid.setup_particles();
+            }
+          solid.integrate_velocity(this->simulationControl->get_time_step());
+        }
       if (this->simulationControl->is_at_start())
         this->first_iteration();
       else
@@ -332,16 +340,39 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           this->refine_mesh();
           this->iterate();
         }
+
       this->postprocess(false);
       if (this->nsparam.nitsche->calculate_force_on_solid)
         {
           postprocess_solid_forces();
         }
+
+      if (this->simulationControl->is_output_iteration())
+        {
+          std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+            solid.get_solid_particle_handler();
+          output_solid_particles(solid_ph, this->mpi_communicator, 
+            this->simulationControl->get_step_number());
+        }
+
       this->finish_time_step();
     }
 
 
   this->finish_simulation();
+}
+
+template <int dim, int spacedim>
+void 
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
+  MPI_Comm                                              mpi_communicator,
+  const unsigned int                                    iter)
+{
+  Particles::DataOut<spacedim, spacedim> particles_out;
+  particles_out.build_patches(*particle_handler);
+  const std::string filename = ("particles" + std::to_string(iter) + ".vtu");
+  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is

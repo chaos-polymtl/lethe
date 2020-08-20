@@ -73,6 +73,10 @@ private:
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
+
+  void output_solid_particles(std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
+                              MPI_Comm                                              mpi_communicator,
+                              const unsigned int                                    iter);
 };
 
 
