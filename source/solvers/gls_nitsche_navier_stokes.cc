@@ -320,7 +320,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
   this->setup_dofs();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
-
   while (this->simulationControl->integrate())
     {
       this->simulationControl->print_progression(this->pcout);
@@ -330,8 +329,13 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             {
               solid.initial_setup();
               solid.setup_particles();
+              std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+                solid.get_solid_particle_handler();
+              output_solid_particles(solid_ph, this->mpi_communicator, 0);
+              output_solid_triangulation(this->mpi_communicator,0);
             }
           solid.integrate_velocity(this->simulationControl->get_time_step());
+          solid.move_solid_triangulation(this->simulationControl->get_time_step());
         }
       if (this->simulationControl->is_at_start())
         this->first_iteration();
@@ -350,8 +354,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
       if (this->simulationControl->is_output_iteration())
         {
           std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
-            solid.get_solid_particle_handler();
+                solid.get_solid_particle_handler();
           output_solid_particles(solid_ph, this->mpi_communicator, 
+            this->simulationControl->get_step_number());
+          output_solid_triangulation(this->mpi_communicator, 
             this->simulationControl->get_step_number());
         }
 
@@ -373,6 +379,23 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
   particles_out.build_patches(*particle_handler);
   const std::string filename = ("particles" + std::to_string(iter) + ".vtu");
   particles_out.write_vtu_in_parallel(filename, mpi_communicator);
+}
+
+template <int dim, int spacedim>
+void 
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
+  MPI_Comm                                              mpi_communicator,
+  const unsigned int                                    iter)
+{
+  DataOut<dim, DoFHandler<dim, spacedim>> data_out;
+  DoFHandler<dim, spacedim> &solid_dh = solid.get_solid_dof_handler();
+  data_out.attach_dof_handler(solid_dh);
+
+  const MappingQ<dim, spacedim> mapping(this->velocity_fem_degree, true);
+  data_out.build_patches(mapping, 1, DataOut<dim, DoFHandler<dim, spacedim>>::curved_inner_cells);
+  const std::string filename =
+    "output_solid_triangulation." + Utilities::int_to_string(iter) + ".vtu";
+  data_out.write_vtu_in_parallel("./" + filename, mpi_communicator);
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is

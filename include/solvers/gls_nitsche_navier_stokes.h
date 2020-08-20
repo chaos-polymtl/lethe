@@ -77,6 +77,9 @@ private:
   void output_solid_particles(std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
                               MPI_Comm                                              mpi_communicator,
                               const unsigned int                                    iter);
+                              
+  void output_solid_triangulation(MPI_Comm             mpi_communicator,
+                                  const unsigned int   iter);
 };
 
 
