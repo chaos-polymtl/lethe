@@ -110,8 +110,8 @@ SolidBase<dim, spacedim>::setup_particles()
 
   FEValues<dim, spacedim> fe_v(fe,
                                quadrature,
-                               update_JxW_values | update_quadrature_points 
-                               | update_normal_vectors);
+                               update_JxW_values | update_quadrature_points |
+                                 update_normal_vectors);
   for (const auto &cell : solid_dh.active_cell_iterators())
     if (cell->is_locally_owned())
       {
@@ -122,7 +122,9 @@ SolidBase<dim, spacedim>::setup_particles()
         for (unsigned int q = 0; q < points.size(); ++q)
           {
             quadrature_points_vec.emplace_back(points[q]);
-            std::vector<double> prop_i = {JxW[q], normal_vectors[q][0], normal_vectors[q][1]};
+            std::vector<double> prop_i = {JxW[q],
+                                          normal_vectors[q][0],
+                                          normal_vectors[q][1]};
             if (spacedim == 3)
               prop_i.push_back(normal_vectors[q][2]);
             properties.emplace_back(prop_i);

@@ -66,7 +66,7 @@ end
 subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle
-		set grid arguments = 0, 0, 0 : 1, 1, 1 : true
+		set grid arguments = 0, 0, -0.5 : 1.0, 1.0, 0.499 : true
 		set initial refinement = 2
 end
 
@@ -75,12 +75,17 @@ end
 #---------------------------------------------------
 subsection nitsche
 	subsection mesh
-		set type = gmsh
-		set file name = ../noslip_23.msh
+		#set type = gmsh
+		#set file name = ../noslip_23.msh
+		set type = dealii
+		set grid type = hyper_rectangle
+		set grid arguments = 0., 0. : 1, 1 : true
+		set initial refinement = 5
+
 	end
 	
-	set beta 			= 100
-	set verbosity 			= quiet
+	set beta 			= 10
+	set verbosity 			= verbose
 	set calculate forces on solid 	= true
 	set solid force name 		= solid_force
 end
@@ -98,7 +103,7 @@ end
 subsection analytical solution
   set enable                 = true
     subsection uvw
-            set Function expression = if(y >= 0.5, 2*y - 1, 0) ; 0 ; 0 ; 0
+            set Function expression = if(z >= 0, 1/0.499 * z, 0) ; 0 ; 0 ; 0
     end
 end
 
@@ -108,11 +113,11 @@ end
 subsection boundary conditions
   set number                  = 2
     subsection bc 0
-    set id = 2
+    set id = 4
         set type              = noslip
     end
     subsection bc 1
-    set id = 3
+    set id = 5
         set type              = function
         subsection u
             set Function expression = 1

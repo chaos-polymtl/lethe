@@ -20,14 +20,17 @@
 
 #include "solvers/gls_nitsche_navier_stokes.h"
 
+#include <deal.II/numerics/fe_field_function.h>
+
 #include <deal.II/particles/data_out.h>
+
+#include <core/utilities.h>
 
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
 #include "core/sdirk.h"
 #include "core/time_integration_utilities.h"
-#include <core/utilities.h>
 
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
@@ -151,11 +154,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
   Tensor<2, spacedim> velocity_gradient;
-  double pressure;
-  Tensor<1, spacedim>   normal_vector;
-  Tensor<2, spacedim>   fluid_stress;
-  Tensor<2, spacedim>   fluid_pressure;
-  Tensor<1, spacedim>   force; // to be changed for a vector of tensors when allowing multiple solids
+  double              pressure;
+  Tensor<1, spacedim> normal_vector;
+  Tensor<2, spacedim> fluid_stress;
+  Tensor<2, spacedim> fluid_pressure;
+  Tensor<1, spacedim> force; // to be changed for a vector of tensors when
+                             // allowing multiple solids
   const double viscosity = this->nsparam.physical_properties.viscosity;
 
   // Loop over all local particles
@@ -169,50 +173,51 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
 
       const auto pic = solid_ph->particles_in_cell(cell);
       Assert(pic.begin() == particle, ExcInternalError());
+
+      // Generate FEField functoin to evaluate values and gradients
+      // at the particle location
+      Functions::FEFieldFunction<spacedim,
+                                 DoFHandler<spacedim>,
+                                 TrilinosWrappers::MPI::Vector>
+        fe_field(this->dof_handler, this->evaluation_point);
+
+      fe_field.set_active_cell(dh_cell);
+
       for (const auto &p : pic)
         {
-          velocity_gradient            = 0;
-          pressure                     = 0;
-          const auto &ref_q            = p.get_reference_location();
-          const auto &JxW              = p.get_properties()[0];
-          normal_vector[0] = -p.get_properties()[1];
-          normal_vector[1] = -p.get_properties()[2];
+          velocity_gradient = 0;
+          pressure          = 0;
+          const auto &q     = p.get_location();
+          const auto &JxW   = p.get_properties()[0];
+          normal_vector[0]  = -p.get_properties()[1];
+          normal_vector[1]  = -p.get_properties()[2];
           if (spacedim == 3)
-          {
-            normal_vector[2] = -p.get_properties()[3];
-          }
-
-          for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
-              const auto comp_k = this->fe.system_to_component_index(k).first;
-              if (comp_k < spacedim)
-                {
-                  // Get the velocity at non-quadrature point (particle in
-                  // fluid)
-                  velocity_gradient[comp_k] +=
-                    double(this->evaluation_point[fluid_dof_indices[k]]) *
-                    this->fe.shape_grad(k, ref_q);
-                }
-              else
-                {
-                  // Get the pressure at non-quadrature point
-                  pressure += 
-                    this->evaluation_point[fluid_dof_indices[k]] *
-                    this->fe.shape_value(k, ref_q);
-                }
+              normal_vector[2] = -p.get_properties()[3];
             }
+
+          for (int k = 0; k < spacedim; ++k)
+            {
+              velocity_gradient[k] = fe_field.gradient(q, k);
+            }
+
+          pressure = fe_field.value(q, 3);
 
           for (int d = 0; d < dim; ++d)
             {
               fluid_pressure[d][d] = pressure;
             }
-          fluid_stress = viscosity * velocity_gradient + transpose(velocity_gradient) - fluid_pressure;
+
+          fluid_stress =
+            viscosity * (velocity_gradient + transpose(velocity_gradient)) -
+            fluid_pressure;
           force += fluid_stress * normal_vector * JxW;
         }
-      
+
       particle = pic.end();
     }
-    return force;
+  force = Utilities::MPI::sum(force, this->mpi_communicator);
+  return force;
 }
 
 template <int dim, int spacedim>
@@ -221,60 +226,64 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "Calculate forces on solid");
 
-  std::vector<Tensor<1, spacedim>>   force(1,  this->calculate_forces_on_solid()); // hard coded, has to be changed for when allowing more than 1 solid
+  std::vector<Tensor<1, spacedim>> force(
+    1, this->calculate_forces_on_solid()); // hard coded, has to be changed for
+                                           // when allowing more than 1 solid
 
 
   if (this->nsparam.nitsche->verbosity == Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
-      {
-        std::cout << std::endl;
-        const std::vector<unsigned int> solid_indices(1,1); // hard coded, has to be changed for when allowing more than 1 solid
+    {
+      std::cout << std::endl;
+      const std::vector<unsigned int> solid_indices(
+        1,
+        1); // hard coded, has to be changed for when allowing more than 1 solid
 
-        std::string independent_column_names = "Solid ID";
+      std::string independent_column_names = "Solid ID";
 
-        std::vector<std::string> dependent_column_names;
-        dependent_column_names.push_back("f_x");
-        dependent_column_names.push_back("f_y");
-        if (spacedim == 3)
-          dependent_column_names.push_back("f_z");
+      std::vector<std::string> dependent_column_names;
+      dependent_column_names.push_back("f_x");
+      dependent_column_names.push_back("f_y");
+      if (spacedim == 3)
+        dependent_column_names.push_back("f_z");
 
-        TableHandler table =
-          make_table_scalars_tensors(solid_indices,
-                                    independent_column_names,
-                                    force,
-                                    dependent_column_names,
-                                    this->nsparam.forces_parameters.display_precision);
+      TableHandler table = make_table_scalars_tensors(
+        solid_indices,
+        independent_column_names,
+        force,
+        dependent_column_names,
+        this->nsparam.forces_parameters.display_precision);
 
-        std::cout << "+------------------------------------------+" << std::endl;
-        std::cout << "|  Force on solid summary                  |" << std::endl;
-        std::cout << "+------------------------------------------+" << std::endl;
-        table.write_text(std::cout);
-      }
+      std::cout << "+------------------------------------------+" << std::endl;
+      std::cout << "|  Force on solid summary                  |" << std::endl;
+      std::cout << "+------------------------------------------+" << std::endl;
+      table.write_text(std::cout);
+    }
 
-      std::string filename = this->nsparam.nitsche->force_output_name + ".dat";
-      std::ofstream output(filename.c_str());
+  std::string   filename = this->nsparam.nitsche->force_output_name + ".dat";
+  std::ofstream output(filename.c_str());
 
-      TableHandler   solid_forces_table;
 
-      solid_forces_table.add_value("time", this->simulationControl->get_current_time());
-      solid_forces_table.add_value("f_x", force[0][0]);
-      solid_forces_table.add_value("f_y", force[0][1]);
-      if (dim == 3)
-        solid_forces_table.add_value("f_z", force[0][2]);
-      else
-        solid_forces_table.add_value("f_z", 0.);
+  solid_forces_table.add_value("time",
+                               this->simulationControl->get_current_time());
+  solid_forces_table.add_value("f_x", force[0][0]);
+  solid_forces_table.add_value("f_y", force[0][1]);
+  if (dim == 3)
+    solid_forces_table.add_value("f_z", force[0][2]);
+  else
+    solid_forces_table.add_value("f_z", 0.);
 
-      // Precision
-      solid_forces_table.set_precision(
-        "f_x", this->nsparam.forces_parameters.output_precision);
-      solid_forces_table.set_precision(
-        "f_y", this->nsparam.forces_parameters.output_precision);
-      solid_forces_table.set_precision(
-        "f_z", this->nsparam.forces_parameters.output_precision);
-      solid_forces_table.set_precision(
-        "time", this->nsparam.forces_parameters.output_precision);
+  // Precision
+  solid_forces_table.set_precision(
+    "f_x", this->nsparam.forces_parameters.output_precision);
+  solid_forces_table.set_precision(
+    "f_y", this->nsparam.forces_parameters.output_precision);
+  solid_forces_table.set_precision(
+    "f_z", this->nsparam.forces_parameters.output_precision);
+  solid_forces_table.set_precision(
+    "time", this->nsparam.forces_parameters.output_precision);
 
-      solid_forces_table.write_text(output);
+  solid_forces_table.write_text(output);
 }
 
 template <int dim, int spacedim>
@@ -325,9 +334,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
       this->postprocess(false);
       if (this->nsparam.nitsche->calculate_force_on_solid)
-      {
-        postprocess_solid_forces();
-      }
+        {
+          postprocess_solid_forces();
+        }
       this->finish_time_step();
     }
 

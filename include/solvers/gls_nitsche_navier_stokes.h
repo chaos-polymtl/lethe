@@ -52,6 +52,9 @@ public:
 private:
   SolidBase<dim, spacedim> solid;
 
+  TableHandler solid_forces_table;
+
+
   template <bool assemble_matrix>
   void
   assemble_nitsche_restriction();
