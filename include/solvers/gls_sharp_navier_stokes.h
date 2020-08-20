@@ -107,7 +107,7 @@ private:
 private:
   std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>>
                                vertices_to_cell;
-  const bool                   SUPG        = false;
+  const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;

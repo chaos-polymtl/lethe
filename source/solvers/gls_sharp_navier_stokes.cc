@@ -1377,11 +1377,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
               // Impose the pressure inside the particle if the inside of the
               // particle is solved
-              if (this->nsparam.particlesParameters.assemble_inside &
-                  this->nsparam.particlesParameters.P_assemble ==
-                    Parameters::Particle_Assemble_type::NS)
-                {
-                  bool cell_found = false;
+
+              bool cell_found = false;
                   try
                     {
                       // Define the cell and check if the point is inside of the
@@ -1455,7 +1452,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         0 -
                         this->local_evaluation_point(inside_index) * sum_line;
                     }
-                }
+
 
 
               // If the cell is cut by the IB the count is not 0 or the
@@ -2518,25 +2515,14 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                       ++count_small;
                     }
                 }
-              if (this->nsparam.particlesParameters.assemble_inside and
-                  this->nsparam.particlesParameters.P_assemble ==
-                    Parameters::Particle_Assemble_type::NS)
-                {
+
                   if (count_small != 0 and
                       count_small != local_dof_indices.size())
                     {
                       assemble_bool = false;
                       break;
                     }
-                }
-              else
-                {
-                  if (count_small != 0)
-                    {
-                      assemble_bool = false;
-                      break;
-                    }
-                }
+
             }
 
 
@@ -2879,49 +2865,6 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                             (strong_residual *
                              (grad_phi_u[i] * present_velocity_values[q])) *
                             fe_values.JxW(q);
-                        }
-                    }
-                }
-
-              cell->get_dof_indices(local_dof_indices);
-
-              // The non-linear solver assumes that the nonzero constraints have
-              // already been applied to the solution
-              const AffineConstraints<double> &constraints_used =
-                this->zero_constraints;
-              // initial_step ? nonzero_constraints : zero_constraints;
-              if (assemble_matrix)
-                {
-                  constraints_used.distribute_local_to_global(
-                    local_matrix,
-                    local_rhs,
-                    local_dof_indices,
-                    this->system_matrix,
-                    this->system_rhs);
-                }
-              else
-                {
-                  constraints_used.distribute_local_to_global(local_rhs,
-                                                              local_dof_indices,
-                                                              this->system_rhs);
-                }
-            }
-          else if (this->nsparam.particlesParameters.P_assemble ==
-                   Parameters::Particle_Assemble_type::mass)
-            {
-              for (unsigned int q = 0; q < n_q_points; ++q)
-                {
-                  if (assemble_matrix)
-                    {
-                      for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                        {
-                          for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                            {
-                              local_matrix(i, j) +=
-                                (phi_u[i] * phi_u[j] + phi_p[j] * phi_p[i]) *
-                                fe_values.JxW(q);
-                            }
-                          local_rhs(i) = 0;
                         }
                     }
                 }
