@@ -378,7 +378,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
   Particles::DataOut<spacedim, spacedim> particles_out;
   particles_out.build_patches(*particle_handler);
   const std::string filename = ("particles" + std::to_string(iter) + ".vtu");
-  particles_out.write_vtu_in_parallel(filename, mpi_communicator);
+  particles_out.write_vtu_in_parallel(this->simulationControl->get_output_path() 
+    + filename, mpi_communicator);
 }
 
 template <int dim, int spacedim>
@@ -395,7 +396,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   data_out.build_patches(mapping, 1, DataOut<dim, DoFHandler<dim, spacedim>>::curved_inner_cells);
   const std::string filename =
     "output_solid_triangulation." + Utilities::int_to_string(iter) + ".vtu";
-  data_out.write_vtu_in_parallel("./" + filename, mpi_communicator);
+  data_out.write_vtu_in_parallel(this->simulationControl->get_output_path() 
+    + filename, mpi_communicator);
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
