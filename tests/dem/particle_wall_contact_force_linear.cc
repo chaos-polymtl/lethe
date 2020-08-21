@@ -120,10 +120,11 @@ test()
 
   // Calling broad search
   PWBroadSearch<dim> broad_search_object;
-  std::map<std::pair<int, int>,
-           std::tuple<typename Particles::ParticleIterator<dim>,
-                      Tensor<1, dim>,
-                      Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
   broad_search_object.find_PW_Contact_Pairs(boundary_cell_information,
                                             particle_handler,

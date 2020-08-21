@@ -70,10 +70,12 @@ public:
   find_PW_Contact_Pairs(
     std::map<int, boundary_cells_info_struct<dim>> &boundary_cells_information,
     Particles::ParticleHandler<dim> &               particle_handler,
-    std::map<
-      std::pair<int, int>,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
-      &pw_contact_candidates);
+    std::unordered_map<
+      int,
+      std::unordered_map<int,
+                         std::tuple<Particles::ParticleIterator<dim>,
+                                    Tensor<1, dim>,
+                                    Point<dim>>>> &pw_contact_candidates);
 };
 
 #endif /* PWBROADSEARCH_H_ */

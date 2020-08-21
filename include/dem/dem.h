@@ -232,9 +232,11 @@ private:
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
                                                             ghost_adjacent_particles;
   std::map<int, std::map<int, pw_contact_info_struct<dim>>> pw_pairs_in_contact;
-  std::map<
-    std::pair<int, int>,
-    std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_candidates;
   std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;

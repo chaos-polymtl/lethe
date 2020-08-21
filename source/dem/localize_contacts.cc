@@ -13,9 +13,11 @@ localize_contacts(
     *                                        pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
-  std::map<
-    std::pair<int, int>,
-    std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &pw_contact_candidates)
 
 {
@@ -117,14 +119,15 @@ localize_contacts(
       for (auto pw_map_iterator = pairs_in_contant_content->begin();
            pw_map_iterator != pairs_in_contant_content->end();)
         {
-          int face_id = pw_map_iterator->first;
+          int  face_id = pw_map_iterator->first;
+          auto pw_contact_candidate_element =
+            &pw_contact_candidates[particle_id];
 
-          auto search_iterator =
-            pw_contact_candidates.find(std::make_pair(particle_id, face_id));
+          auto search_iterator = pw_contact_candidate_element->find(face_id);
 
-          if (search_iterator != pw_contact_candidates.end())
+          if (search_iterator != pw_contact_candidate_element->end())
             {
-              pw_contact_candidates.erase(search_iterator);
+              pw_contact_candidate_element->erase(search_iterator);
               ++pw_map_iterator;
             }
           else
@@ -144,8 +147,11 @@ localize_contacts(
   std::map<int, std::map<int, pw_contact_info_struct<2>>> *pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
-  std::map<std::pair<int, int>,
-           std::tuple<Particles::ParticleIterator<2>, Tensor<1, 2>, Point<2>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<2>, Tensor<1, 2>, Point<2>>>>
     &pw_contact_candidates);
 
 template void
@@ -157,6 +163,9 @@ localize_contacts(
   std::map<int, std::map<int, pw_contact_info_struct<3>>> *pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
-  std::map<std::pair<int, int>,
-           std::tuple<Particles::ParticleIterator<3>, Tensor<1, 3>, Point<3>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<3>, Tensor<1, 3>, Point<3>>>>
     &pw_contact_candidates);

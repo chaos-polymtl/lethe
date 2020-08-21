@@ -57,9 +57,11 @@ localize_contacts(
     *                                        pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
-  std::map<
-    std::pair<int, int>,
-    std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &pw_contact_candidates);
 
 #endif /* LOCALIZECONTACTS_H_ */

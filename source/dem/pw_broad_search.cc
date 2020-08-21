@@ -11,9 +11,11 @@ void
 PWBroadSearch<dim>::find_PW_Contact_Pairs(
   std::map<int, boundary_cells_info_struct<dim>> &boundary_cells_information,
   Particles::ParticleHandler<dim> &               particle_handler,
-  std::map<
-    std::pair<int, int>,
-    std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &pw_contact_candidates)
 {
   // Since the pw_contact_candidates (which is the real output of the
@@ -49,16 +51,14 @@ PWBroadSearch<dim>::find_PW_Contact_Pairs(
             {
               // Making the tuple and adding it to the pw_contact_candidates
               // vector. This vector is the output of this function
-              std::pair map_key =
-                std::make_pair(particles_in_cell_iterator->get_id(),
-                               boundary_cells_content.boundary_face_id);
 
               std::tuple map_content =
                 std::make_tuple(particles_in_cell_iterator,
                                 boundary_cells_content.normal_vector,
                                 boundary_cells_content.point_on_face);
 
-              pw_contact_candidates.insert({map_key, map_content});
+              pw_contact_candidates[particles_in_cell_iterator->get_id()]
+                .insert({boundary_cells_content.boundary_face_id, map_content});
             }
         }
     }
