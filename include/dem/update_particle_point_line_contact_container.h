@@ -16,11 +16,12 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <dem/particle_point_line_contact_info_struct.h>
 
 using namespace dealii;
 
 #ifndef UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
-#define UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
+#  define UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in particle_points_in_contact and
@@ -39,31 +40,6 @@ update_particle_point_line_contact_container_iterators(
   std::map<int, particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact,
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
-    &particle_container)
-{
-  for (auto particle_point_pairs_in_contact_iterator =
-         particle_points_in_contact.begin();
-       particle_point_pairs_in_contact_iterator !=
-       particle_points_in_contact.end();
-       ++particle_point_pairs_in_contact_iterator)
-    {
-      int  particle_id = particle_point_pairs_in_contact_iterator->first;
-      auto pairs_in_contact_content =
-        &particle_point_pairs_in_contact_iterator->second;
-      pairs_in_contact_content->particle = particle_container.at(particle_id);
-    }
-
-  for (auto particle_line_pairs_in_contact_iterator =
-         particle_lines_in_contact.begin();
-       particle_line_pairs_in_contact_iterator !=
-       particle_lines_in_contact.end();
-       ++particle_line_pairs_in_contact_iterator)
-    {
-      int  particle_id = particle_line_pairs_in_contact_iterator->first;
-      auto pairs_in_contant_content =
-        &particle_line_pairs_in_contact_iterator->second;
-      pairs_in_contant_content->particle = particle_container.at(particle_id);
-    }
-}
+    &particle_container);
 
 #endif /* UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_ */

@@ -48,13 +48,6 @@ locate_ghost_particles_in_cells(
   std::unordered_map<int, Particles::ParticleIterator<dim>>
     &ghost_particle_container,
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    &ghost_adjacent_particles)
-{
-  update_ghost_particle_container<dim>(ghost_particle_container,
-                                       &particle_handler);
-
-  update_ghost_iterator_pp_contact_container<dim>(ghost_adjacent_particles,
-                                                  ghost_particle_container);
-}
+    &ghost_adjacent_particles);
 
 #endif /* LOCATEGHOSTPARTICLES_H_ */

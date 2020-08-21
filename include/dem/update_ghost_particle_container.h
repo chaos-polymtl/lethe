@@ -16,11 +16,12 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 
 #ifndef UPDATEGHOSTPARTICLECONTAINER_H_
-#define UPDATEGHOSTPARTICLECONTAINER_H_
+#  define UPDATEGHOSTPARTICLECONTAINER_H_
 
 /**
  * Updates the iterators to local particles in a map of particles
@@ -38,16 +39,6 @@ void
 update_ghost_particle_container(
   std::unordered_map<int, Particles::ParticleIterator<dim>>
     &                                    ghost_particle_container,
-  const Particles::ParticleHandler<dim> *particle_handler)
-{
-  ghost_particle_container.clear();
-
-  for (auto particle_iterator = particle_handler->begin_ghost();
-       particle_iterator != particle_handler->end_ghost();
-       ++particle_iterator)
-    {
-      ghost_particle_container[particle_iterator->get_id()] = particle_iterator;
-    }
-}
+  const Particles::ParticleHandler<dim> *particle_handler);
 
 #endif /* UPDATEGHOSTPARTICLECONTAINER_H_ */

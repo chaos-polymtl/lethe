@@ -16,11 +16,12 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <dem/pp_contact_info_struct.h>
 
 using namespace dealii;
 
 #ifndef UPDATELOCALPPCONTACTCONTAINER_H_
-#define UPDATELOCALPPCONTACTCONTAINER_H_
+#  define UPDATELOCALPPCONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in local-local adjacent_particles
@@ -36,26 +37,6 @@ update_local_pp_contact_container_iterators(
   std::map<int, std::map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
-    &particle_container)
-{
-  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
-       adjacent_particles_iterator != local_adjacent_particles.end();
-       ++adjacent_particles_iterator)
-    {
-      int  particle_one_id          = adjacent_particles_iterator->first;
-      auto pairs_in_contant_content = &adjacent_particles_iterator->second;
-      for (auto pp_map_iterator = pairs_in_contant_content->begin();
-           pp_map_iterator != pairs_in_contant_content->end();
-           ++pp_map_iterator)
-        {
-          int particle_two_id = pp_map_iterator->first;
-
-          pp_map_iterator->second.particle_one =
-            particle_container.at(particle_one_id);
-          pp_map_iterator->second.particle_two =
-            particle_container.at(particle_two_id);
-        }
-    }
-}
+    &particle_container);
 
 #endif /* UPDATELOCALPPCONTACTCONTAINER_H_ */
