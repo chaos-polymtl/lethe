@@ -115,6 +115,12 @@ public:
   void
   move_solid_triangulation(double time_step);
 
+  /**
+   * @brief prints the positions of the particles
+   */
+  void
+  print_particle_positions();
+
 
 private:
   // Member variables

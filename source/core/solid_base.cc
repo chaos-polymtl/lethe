@@ -259,6 +259,18 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
     }
 }
 
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::print_particle_positions()
+{
+  for (auto particle = solid_particle_handler->begin();
+       particle != solid_particle_handler->end();
+       ++particle)
+    {
+      std::cout<<"Particle "<< particle->get_id() << " : "<< particle->get_location() <<std::endl;
+    }
+}
+
 // Pre-compile the 2D, 3D and the 2D in 3D versions with the types that can
 // occur
 template class SolidBase<2>;

@@ -363,8 +363,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
       this->finish_time_step();
     }
-
-
+  if (this->nsparam.test.enabled)
+    solid.print_particle_positions();
   this->finish_simulation();
 }
 
