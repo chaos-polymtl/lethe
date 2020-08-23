@@ -48,9 +48,9 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          const double distance =
+          const double square_distance =
             particle_one_location.distance_square(particle_two_location);
-          if (distance > neighborhood_threshold)
+          if (square_distance > neighborhood_threshold)
             {
               adjacent_particles_list->erase(
                 adjacent_particles_list_iterator++);
@@ -88,11 +88,11 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          const double distance =
+          const double square_distance =
             particle_one_location.distance_square(particle_two_location);
 
           // If the particles distance is less than the threshold
-          if (distance < neighborhood_threshold)
+          if (square_distance < neighborhood_threshold)
             {
               // Getting the particle one contact list and particle two id
               auto particle_one_contact_list =
@@ -144,9 +144,9 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          const double distance =
+          const double square_distance =
             particle_one_location.distance_square(particle_two_location);
-          if (distance > neighborhood_threshold)
+          if (square_distance > neighborhood_threshold)
             {
               adjacent_particles_list->erase(
                 adjacent_particles_list_iterator++);
@@ -185,11 +185,11 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          const double distance =
+          const double square_distance =
             particle_one_location.distance_square(particle_two_location);
 
           // If the particles distance is less than the threshold
-          if (distance < neighborhood_threshold)
+          if (square_distance < neighborhood_threshold)
             {
               auto particle_one_properties = particle_one->get_properties();
               auto particle_two_properties = particle_two->get_properties();
