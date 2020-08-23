@@ -52,7 +52,7 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                particles_in_main_cell.end();
                ++particles_in_main_cell_iterator_one)
             {
-              unsigned int particle_one_id =
+              const unsigned int particle_one_id =
                 particles_in_main_cell_iterator_one->get_id();
 
               std::vector<int> &particle_candidate_container =
@@ -72,12 +72,10 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                      particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator_two)
                 {
-                  unsigned int particle_two_id =
-                    particles_in_main_cell_iterator_two->get_id();
-
                   // Capturing all the local-local particle pairs in the main
                   // cell
-                  particle_candidate_container.push_back(particle_two_id);
+                  particle_candidate_container.emplace_back(
+                    particles_in_main_cell_iterator_two->get_id());
                 }
             }
 
@@ -102,7 +100,7 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
-                  unsigned int particle_one_id =
+                  const unsigned int particle_one_id =
                     particles_in_main_cell_iterator->get_id();
 
                   std::vector<int> &particle_candidate_container =
@@ -118,10 +116,8 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                        particles_in_neighbor_cell.end();
                        ++particles_in_neighbor_cell_iterator)
                     {
-                      unsigned int particle_two_id =
-                        particles_in_neighbor_cell_iterator->get_id();
-
-                      particle_candidate_container.push_back(particle_two_id);
+                      particle_candidate_container.emplace_back(
+                        particles_in_neighbor_cell_iterator->get_id());
                     }
                 }
             }
