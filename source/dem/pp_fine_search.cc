@@ -48,8 +48,8 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          double distance =
-            particle_one_location.distance(particle_two_location);
+          const double distance =
+            particle_one_location.distance_square(particle_two_location);
           if (distance > neighborhood_threshold)
             {
               adjacent_particles_list->erase(
@@ -88,8 +88,8 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          double distance =
-            particle_one_location.distance(particle_two_location);
+          const double distance =
+            particle_one_location.distance_square(particle_two_location);
 
           // If the particles distance is less than the threshold
           if (distance < neighborhood_threshold)
@@ -144,8 +144,8 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          double distance =
-            particle_one_location.distance(particle_two_location);
+          const double distance =
+            particle_one_location.distance_square(particle_two_location);
           if (distance > neighborhood_threshold)
             {
               adjacent_particles_list->erase(
@@ -185,8 +185,8 @@ PPFineSearch<dim>::pp_Fine_Search(
             particle_two->get_location();
 
           // Finding distance
-          double distance =
-            particle_one_location.distance(particle_two_location);
+          const double distance =
+            particle_one_location.distance_square(particle_two_location);
 
           // If the particles distance is less than the threshold
           if (distance < neighborhood_threshold)

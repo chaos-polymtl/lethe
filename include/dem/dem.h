@@ -253,8 +253,9 @@ private:
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
   const double neighborhood_threshold =
-    parameters.model_parameters.neighborhood_threshold *
-    parameters.physical_properties.diameter;
+    std::pow(parameters.model_parameters.neighborhood_threshold *
+               parameters.physical_properties.diameter,
+             2);
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;

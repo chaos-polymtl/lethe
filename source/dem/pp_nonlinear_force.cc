@@ -39,12 +39,12 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
           // Getting information (location and propertis) of particle one and
           // two in contact
-          auto       particle_one            = contact_info->particle_one;
-          auto       particle_two            = contact_info->particle_two;
-          Point<dim> particle_one_location   = particle_one->get_location();
-          Point<dim> particle_two_location   = particle_two->get_location();
-          auto       particle_one_properties = particle_one->get_properties();
-          auto       particle_two_properties = particle_two->get_properties();
+          auto             particle_one          = contact_info->particle_one;
+          auto             particle_two          = contact_info->particle_two;
+          const Point<dim> particle_one_location = particle_one->get_location();
+          const Point<dim> particle_two_location = particle_two->get_location();
+          auto particle_one_properties = particle_one->get_properties();
+          auto particle_two_properties = particle_two->get_properties();
 
           // Calculation of normal overlap
           double normal_overlap =
@@ -127,12 +127,12 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
           // Getting information (location and propertis) of particle one and
           // two in contact
-          auto       particle_one            = contact_info->particle_one;
-          auto       particle_two            = contact_info->particle_two;
-          Point<dim> particle_one_location   = particle_one->get_location();
-          Point<dim> particle_two_location   = particle_two->get_location();
-          auto       particle_one_properties = particle_one->get_properties();
-          auto       particle_two_properties = particle_two->get_properties();
+          auto             particle_one          = contact_info->particle_one;
+          auto             particle_two          = contact_info->particle_two;
+          const Point<dim> particle_one_location = particle_one->get_location();
+          const Point<dim> particle_two_location = particle_two->get_location();
+          auto particle_one_properties = particle_one->get_properties();
+          auto particle_two_properties = particle_two->get_properties();
 
           // Calculation of normal overlap
           double normal_overlap =
@@ -214,7 +214,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
             particle_two_properties[DEM::PropertiesIndex::dp]));
   double effective_youngs_modulus =
     physical_properties.Youngs_modulus_particle /
-    (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_particle, 2.0)));
+    (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_particle, 2)));
   double effective_shear_modulus =
     physical_properties.Youngs_modulus_particle /
     (4.0 * (2.0 - physical_properties.Poisson_ratio_particle) *
@@ -223,7 +223,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation of model parameters (betha, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
-  double model_parameter_betha =
+  double model_parameter_beta =
     log(physical_properties.Poisson_ratio_particle) /
     sqrt(pow(log(physical_properties.Poisson_ratio_particle), 2.0) + 9.8696);
   double model_parameter_sn =
@@ -239,13 +239,13 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     1.3333 * effective_youngs_modulus *
     sqrt(effective_radius * contact_info.normal_overlap);
   double normal_damping_constant =
-    -1.8257 * model_parameter_betha * sqrt(model_parameter_sn * effective_mass);
+    -1.8257 * model_parameter_beta * sqrt(model_parameter_sn * effective_mass);
   double tangential_spring_constant =
     8.0 * effective_shear_modulus *
       sqrt(effective_radius * contact_info.normal_overlap) +
     DBL_MIN;
   double tangential_damping_constant =
-    -1.8257 * model_parameter_betha * sqrt(model_parameter_st * effective_mass);
+    -1.8257 * model_parameter_beta * sqrt(model_parameter_st * effective_mass);
 
   // Calculation of normal force using spring and dashpot normal forces
   Tensor<1, dim> spring_normal_force =
