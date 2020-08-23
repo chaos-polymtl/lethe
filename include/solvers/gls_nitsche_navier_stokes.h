@@ -50,10 +50,6 @@ public:
   solve() override;
 
 private:
-  SolidBase<dim, spacedim> solid;
-
-  TableHandler solid_forces_table;
-
   /**
    * @brief Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid
    */
@@ -94,15 +90,20 @@ private:
    */
   void
   output_solid_particles(
-    std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
-    MPI_Comm                                              mpi_communicator,
-    const unsigned int                                    iter);
+    std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler);
   /**
    * @brief Outputs a vtu file for each output frequency of the solid triangulation
    */
   void
-  output_solid_triangulation(MPI_Comm           mpi_communicator,
-                             const unsigned int iter);
+  output_solid_triangulation();
+
+
+  SolidBase<dim, spacedim> solid;
+  PVDHandler               pvdhandler_solid_triangulation;
+  PVDHandler               pvdhandler_solid_particles;
+
+
+  TableHandler solid_forces_table;
 };
 
 

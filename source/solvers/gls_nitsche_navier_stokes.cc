@@ -331,8 +331,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
               solid.setup_particles();
               std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
                 solid.get_solid_particle_handler();
-              output_solid_particles(solid_ph, this->mpi_communicator, 0);
-              output_solid_triangulation(this->mpi_communicator, 0);
+              output_solid_particles(solid_ph);
+              output_solid_triangulation();
             }
           solid.integrate_velocity(this->simulationControl->get_time_step());
           solid.move_solid_triangulation(
@@ -356,11 +356,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         {
           std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
             solid.get_solid_particle_handler();
-          output_solid_particles(solid_ph,
-                                 this->mpi_communicator,
-                                 this->simulationControl->get_step_number());
-          output_solid_triangulation(
-            this->mpi_communicator, this->simulationControl->get_step_number());
+          output_solid_particles(solid_ph);
+          output_solid_triangulation();
         }
 
       this->finish_time_step();
@@ -373,35 +370,53 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
-  std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
-  MPI_Comm                                              mpi_communicator,
-  const unsigned int                                    iter)
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler)
 {
   Particles::DataOut<spacedim, spacedim> particles_out;
   particles_out.build_patches(*particle_handler);
-  const std::string filename = ("particles" + std::to_string(iter) + ".vtu");
-  particles_out.write_vtu_in_parallel(
-    this->simulationControl->get_output_path() + filename, mpi_communicator);
+
+  const std::string folder = this->simulationControl->get_output_path();
+  const std::string solution_name =
+    this->simulationControl->get_output_name() + "_solid_particles";
+  const unsigned int iter        = this->simulationControl->get_step_number();
+  const double       time        = this->simulationControl->get_current_time();
+  const unsigned int group_files = this->simulationControl->get_group_files();
+
+  write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles,
+                                 *(&particles_out),
+                                 folder,
+                                 solution_name,
+                                 time,
+                                 iter,
+                                 group_files,
+                                 this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
-  MPI_Comm           mpi_communicator,
-  const unsigned int iter)
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
 {
   DataOut<dim, DoFHandler<dim, spacedim>> data_out;
   DoFHandler<dim, spacedim> &solid_dh = solid.get_solid_dof_handler();
   data_out.attach_dof_handler(solid_dh);
 
-  const MappingQ<dim, spacedim> mapping(this->velocity_fem_degree, true);
-  data_out.build_patches(
-    mapping, 1, DataOut<dim, DoFHandler<dim, spacedim>>::curved_inner_cells);
-  const std::string filename =
-    "output_solid_triangulation." + Utilities::int_to_string(iter) + ".vtu";
-  data_out.write_vtu_in_parallel(this->simulationControl->get_output_path() +
-                                   filename,
-                                 mpi_communicator);
+  data_out.build_patches();
+
+  const std::string folder = this->simulationControl->get_output_path();
+  const std::string solution_name =
+    this->simulationControl->get_output_name() + "_solid_triangulation";
+  const unsigned int iter        = this->simulationControl->get_step_number();
+  const double       time        = this->simulationControl->get_current_time();
+  const unsigned int group_files = this->simulationControl->get_group_files();
+
+  write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation,
+                         data_out,
+                         folder,
+                         solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         this->mpi_communicator);
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
