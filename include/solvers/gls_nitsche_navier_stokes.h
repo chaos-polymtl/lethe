@@ -50,20 +50,60 @@ public:
   solve() override;
 
 private:
-  SolidBase<dim, spacedim> solid;
-
+  /**
+   * @brief Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid
+   */
   template <bool assemble_matrix>
   void
   assemble_nitsche_restriction();
 
+  /**
+   * @brief Calculates the force due to the fluid motion on the solid
+   * @return Tensor of forces on the solid
+   */
+  Tensor<1, spacedim>
+  calculate_forces_on_solid();
+
+  /**
+   * @brief Post-process for forces on solid after an iteration
+   */
+  void
+  postprocess_solid_forces();
+
+  /**
+   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
+   */
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 
+  /**
+   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
+   */
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
+
+  /**
+   * @brief Outputs a vtu file for each output frequency of the particles
+   */
+  void
+  output_solid_particles(
+    std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler);
+  /**
+   * @brief Outputs a vtu file for each output frequency of the solid triangulation
+   */
+  void
+  output_solid_triangulation();
+
+
+  SolidBase<dim, spacedim> solid;
+  PVDHandler               pvdhandler_solid_triangulation;
+  PVDHandler               pvdhandler_solid_particles;
+
+
+  TableHandler solid_forces_table;
 };
 
 

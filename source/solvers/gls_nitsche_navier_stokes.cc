@@ -20,7 +20,12 @@
 
 #include "solvers/gls_nitsche_navier_stokes.h"
 
+#include <deal.II/numerics/fe_field_function.h>
+
 #include <deal.II/particles/data_out.h>
+
+#include <core/solutions_output.h>
+#include <core/utilities.h>
 
 #include "core/bdf.h"
 #include "core/grids.h"
@@ -49,9 +54,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
     solid.get_solid_particle_handler();
 
   TimerOutput::Scope t(this->computing_timer, "Assemble Nitsche terms");
-
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(spacedim);
 
   const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
 
@@ -142,6 +144,150 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 }
 
 template <int dim, int spacedim>
+Tensor<1, spacedim>
+GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
+{
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+    solid.get_solid_particle_handler();
+
+  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+
+  Tensor<2, spacedim> velocity_gradient;
+  double              pressure;
+  Tensor<1, spacedim> normal_vector;
+  Tensor<2, spacedim> fluid_stress;
+  Tensor<2, spacedim> fluid_pressure;
+  Tensor<1, spacedim> force; // to be changed for a vector of tensors when
+                             // allowing multiple solids
+  const double viscosity = this->nsparam.physical_properties.viscosity;
+
+  // Loop over all local particles
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
+    {
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
+      const auto &dh_cell =
+        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+      dh_cell->get_dof_indices(fluid_dof_indices);
+
+      const auto pic = solid_ph->particles_in_cell(cell);
+      Assert(pic.begin() == particle, ExcInternalError());
+
+      // Generate FEField functoin to evaluate values and gradients
+      // at the particle location
+      Functions::FEFieldFunction<spacedim,
+                                 DoFHandler<spacedim>,
+                                 TrilinosWrappers::MPI::Vector>
+        fe_field(this->dof_handler, this->evaluation_point);
+
+      fe_field.set_active_cell(dh_cell);
+
+      for (const auto &p : pic)
+        {
+          velocity_gradient = 0;
+          pressure          = 0;
+          const auto &q     = p.get_location();
+          const auto &JxW   = p.get_properties()[0];
+          normal_vector[0]  = -p.get_properties()[1];
+          normal_vector[1]  = -p.get_properties()[2];
+          if (spacedim == 3)
+            {
+              normal_vector[2] = -p.get_properties()[3];
+            }
+
+          for (int k = 0; k < spacedim; ++k)
+            {
+              velocity_gradient[k] = fe_field.gradient(q, k);
+            }
+
+          pressure = fe_field.value(q, 3);
+
+          for (int d = 0; d < dim; ++d)
+            {
+              fluid_pressure[d][d] = pressure;
+            }
+
+          fluid_stress =
+            viscosity * (velocity_gradient + transpose(velocity_gradient)) -
+            fluid_pressure;
+          force += fluid_stress * normal_vector * JxW;
+        }
+
+      particle = pic.end();
+    }
+  force = Utilities::MPI::sum(force, this->mpi_communicator);
+  return force;
+}
+
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
+{
+  TimerOutput::Scope t(this->computing_timer, "Calculate forces on solid");
+
+  std::vector<Tensor<1, spacedim>> force(
+    1, this->calculate_forces_on_solid()); // hard coded, has to be changed for
+                                           // when allowing more than 1 solid
+
+
+  if (this->nsparam.nitsche->verbosity == Parameters::Verbosity::verbose &&
+      this->this_mpi_process == 0)
+    {
+      std::cout << std::endl;
+      const std::vector<unsigned int> solid_indices(
+        1,
+        1); // hard coded, has to be changed for when allowing more than 1 solid
+
+      std::string independent_column_names = "Solid ID";
+
+      std::vector<std::string> dependent_column_names;
+      dependent_column_names.push_back("f_x");
+      dependent_column_names.push_back("f_y");
+      if (spacedim == 3)
+        dependent_column_names.push_back("f_z");
+
+      TableHandler table = make_table_scalars_tensors(
+        solid_indices,
+        independent_column_names,
+        force,
+        dependent_column_names,
+        this->nsparam.forces_parameters.display_precision);
+
+      std::cout << "+------------------------------------------+" << std::endl;
+      std::cout << "|  Force on solid summary                  |" << std::endl;
+      std::cout << "+------------------------------------------+" << std::endl;
+      table.write_text(std::cout);
+    }
+
+  std::string   filename = this->nsparam.nitsche->force_output_name + ".dat";
+  std::ofstream output(filename.c_str());
+
+
+  solid_forces_table.add_value("time",
+                               this->simulationControl->get_current_time());
+  solid_forces_table.add_value("f_x", force[0][0]);
+  solid_forces_table.add_value("f_y", force[0][1]);
+  if (dim == 3)
+    solid_forces_table.add_value("f_z", force[0][2]);
+  else
+    solid_forces_table.add_value("f_z", 0.);
+
+  // Precision
+  solid_forces_table.set_precision(
+    "f_x", this->nsparam.forces_parameters.output_precision);
+  solid_forces_table.set_precision(
+    "f_y", this->nsparam.forces_parameters.output_precision);
+  solid_forces_table.set_precision(
+    "f_z", this->nsparam.forces_parameters.output_precision);
+  solid_forces_table.set_precision(
+    "time", this->nsparam.forces_parameters.output_precision);
+
+  solid_forces_table.write_text(output);
+}
+
+template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
@@ -174,12 +320,24 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
   this->setup_dofs();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
-
   while (this->simulationControl->integrate())
     {
       this->simulationControl->print_progression(this->pcout);
       if (this->nsparam.nitsche->enable_particles_motion)
-        solid.integrate_velocity(this->simulationControl->get_time_step());
+        {
+          if (this->simulationControl->is_at_start())
+            {
+              solid.initial_setup();
+              solid.setup_particles();
+              std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+                solid.get_solid_particle_handler();
+              output_solid_particles(solid_ph);
+              output_solid_triangulation();
+            }
+          solid.integrate_velocity(this->simulationControl->get_time_step());
+          solid.move_solid_triangulation(
+            this->simulationControl->get_time_step());
+        }
       if (this->simulationControl->is_at_start())
         this->first_iteration();
       else
@@ -187,12 +345,78 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           this->refine_mesh();
           this->iterate();
         }
+
       this->postprocess(false);
+      if (this->nsparam.nitsche->calculate_force_on_solid)
+        {
+          postprocess_solid_forces();
+        }
+
+      if (this->simulationControl->is_output_iteration())
+        {
+          std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+            solid.get_solid_particle_handler();
+          output_solid_particles(solid_ph);
+          output_solid_triangulation();
+        }
+
       this->finish_time_step();
     }
-
-
+  if (this->nsparam.test.enabled)
+    solid.print_particle_positions();
   this->finish_simulation();
+}
+
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler)
+{
+  Particles::DataOut<spacedim, spacedim> particles_out;
+  particles_out.build_patches(*particle_handler);
+
+  const std::string folder = this->simulationControl->get_output_path();
+  const std::string solution_name =
+    this->simulationControl->get_output_name() + "_solid_particles";
+  const unsigned int iter        = this->simulationControl->get_step_number();
+  const double       time        = this->simulationControl->get_current_time();
+  const unsigned int group_files = this->simulationControl->get_group_files();
+
+  write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles,
+                                 *(&particles_out),
+                                 folder,
+                                 solution_name,
+                                 time,
+                                 iter,
+                                 group_files,
+                                 this->mpi_communicator);
+}
+
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
+{
+  DataOut<dim, DoFHandler<dim, spacedim>> data_out;
+  DoFHandler<dim, spacedim> &solid_dh = solid.get_solid_dof_handler();
+  data_out.attach_dof_handler(solid_dh);
+
+  data_out.build_patches();
+
+  const std::string folder = this->simulationControl->get_output_path();
+  const std::string solution_name =
+    this->simulationControl->get_output_name() + "_solid_triangulation";
+  const unsigned int iter        = this->simulationControl->get_step_number();
+  const double       time        = this->simulationControl->get_current_time();
+  const unsigned int group_files = this->simulationControl->get_group_files();
+
+  write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation,
+                         data_out,
+                         folder,
+                         solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         this->mpi_communicator);
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is

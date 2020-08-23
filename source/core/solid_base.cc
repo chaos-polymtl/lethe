@@ -93,7 +93,7 @@ SolidBase<dim, spacedim>::setup_particles()
   solid_dh.distribute_dofs(fe);
 
   QGauss<dim>        quadrature(degree_velocity + 1);
-  const unsigned int n_properties = 1;
+  const unsigned int n_properties = spacedim + 1;
   solid_particle_handler =
     std::make_shared<Particles::ParticleHandler<spacedim>>();
 
@@ -110,17 +110,24 @@ SolidBase<dim, spacedim>::setup_particles()
 
   FEValues<dim, spacedim> fe_v(fe,
                                quadrature,
-                               update_JxW_values | update_quadrature_points);
+                               update_JxW_values | update_quadrature_points |
+                                 update_normal_vectors);
   for (const auto &cell : solid_dh.active_cell_iterators())
     if (cell->is_locally_owned())
       {
         fe_v.reinit(cell);
-        const auto &points = fe_v.get_quadrature_points();
-        const auto &JxW    = fe_v.get_JxW_values();
+        const auto &points         = fe_v.get_quadrature_points();
+        const auto &JxW            = fe_v.get_JxW_values();
+        const auto &normal_vectors = fe_v.get_normal_vectors();
         for (unsigned int q = 0; q < points.size(); ++q)
           {
             quadrature_points_vec.emplace_back(points[q]);
-            properties.emplace_back(std::vector<double>(n_properties, JxW[q]));
+            std::vector<double> prop_i = {JxW[q],
+                                          normal_vectors[q][0],
+                                          normal_vectors[q][1]};
+            if (spacedim == 3)
+              prop_i.push_back(normal_vectors[q][2]);
+            properties.emplace_back(prop_i);
           }
       }
 
@@ -249,6 +256,19 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
               displacement[cell->vertex_index(i)] = true;
             }
         }
+    }
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::print_particle_positions()
+{
+  for (auto particle = solid_particle_handler->begin();
+       particle != solid_particle_handler->end();
+       ++particle)
+    {
+      std::cout << "Particle " << particle->get_id() << " : "
+                << particle->get_location() << std::endl;
     }
 }
 

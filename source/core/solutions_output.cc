@@ -108,6 +108,17 @@ write_vtu_and_pvd(PVDHandler &                  pvd_handler,
 
 template void
 write_vtu_and_pvd(PVDHandler &                  pvd_handler,
+                  const DataOutInterface<2, 3> &data_out,
+                  const std::string             folder,
+                  const std::string             file_prefix,
+                  const double                  time,
+                  const unsigned int            iter,
+                  const unsigned int            group_files,
+                  const MPI_Comm &              mpi_communicator,
+                  const unsigned int            digits);
+
+template void
+write_vtu_and_pvd(PVDHandler &                  pvd_handler,
                   const DataOutInterface<3, 3> &data_out,
                   const std::string             folder,
                   const std::string             file_prefix,
