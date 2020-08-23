@@ -75,7 +75,7 @@ private:
   postprocess_solid_forces();
 
   /**
-   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled 
+   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
    */
   virtual void
   assemble_matrix_and_rhs(
@@ -83,23 +83,26 @@ private:
       time_stepping_method) override;
 
   /**
-   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled 
+   * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
    */
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
 
   /**
-   * @brief Outputs a vtu file for each output frequency of the particles 
+   * @brief Outputs a vtu file for each output frequency of the particles
    */
-  void output_solid_particles(std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
-                              MPI_Comm                                              mpi_communicator,
-                              const unsigned int                                    iter);
+  void
+  output_solid_particles(
+    std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler,
+    MPI_Comm                                              mpi_communicator,
+    const unsigned int                                    iter);
   /**
-   * @brief Outputs a vtu file for each output frequency of the solid triangulation 
-   */                         
-  void output_solid_triangulation(MPI_Comm             mpi_communicator,
-                                  const unsigned int   iter);
+   * @brief Outputs a vtu file for each output frequency of the solid triangulation
+   */
+  void
+  output_solid_triangulation(MPI_Comm           mpi_communicator,
+                             const unsigned int iter);
 };
 
 

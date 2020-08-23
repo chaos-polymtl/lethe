@@ -267,7 +267,8 @@ SolidBase<dim, spacedim>::print_particle_positions()
        particle != solid_particle_handler->end();
        ++particle)
     {
-      std::cout<<"Particle "<< particle->get_id() << " : "<< particle->get_location() <<std::endl;
+      std::cout << "Particle " << particle->get_id() << " : "
+                << particle->get_location() << std::endl;
     }
 }
 
