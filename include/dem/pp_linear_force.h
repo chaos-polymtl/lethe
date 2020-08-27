@@ -31,7 +31,7 @@
 using namespace dealii;
 
 #ifndef PPLINEARFORCE_H_
-#  define PPLINEARFORCE_H_
+#define PPLINEARFORCE_H_
 
 /**
  * Calculation of the linear particle-particle contact force using the
@@ -43,12 +43,9 @@ using namespace dealii;
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PPLinearForce : public PPContactForce<dim>
-{
+template <int dim> class PPLinearForce : public PPContactForce<dim> {
 public:
-  PPLinearForce()
-  {}
+  PPLinearForce() {}
 
   /**
    * Carries out the calculation of the particle-particle contact force using
@@ -63,14 +60,15 @@ public:
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param dt DEM time-step
    */
-  virtual void
-  calculate_pp_contact_force(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *local_adjacent_particles,
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *                             ghost_adjacent_particles,
-    const DEMSolverParameters<dim> &dem_parameters,
-    const double &                  dt) override;
+  virtual void calculate_pp_contact_force(
+      std::unordered_map<int,
+                         std::unordered_map<int, pp_contact_info_struct<dim>>>
+          *local_adjacent_particles,
+      std::unordered_map<int,
+                         std::unordered_map<int, pp_contact_info_struct<dim>>>
+          *ghost_adjacent_particles,
+      const DEMSolverParameters<dim> &dem_parameters,
+      const double &dt) override;
 
 private:
   /**
@@ -85,10 +83,10 @@ private:
    */
   std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
   calculate_linear_contact_force_and_torque(
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    pp_contact_info_struct<dim> &                     contact_info,
-    const ArrayView<const double> &                   particle_one_properties,
-    const ArrayView<const double> &                   particle_two_propertie);
+      const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+      pp_contact_info_struct<dim> &contact_info,
+      const ArrayView<const double> &particle_one_properties,
+      const ArrayView<const double> &particle_two_propertie);
 };
 
 #endif

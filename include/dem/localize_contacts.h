@@ -23,7 +23,7 @@
 using namespace std;
 
 #ifndef LOCALIZECONTACTS_H_
-#  define LOCALIZECONTACTS_H_
+#define LOCALIZECONTACTS_H_
 
 /**
  * Manages clearing the contact containers when particles are exchanged
@@ -47,21 +47,21 @@ using namespace std;
  */
 
 template <int dim>
-void
-localize_contacts(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    *local_adjacent_particles,
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    *ghost_adjacent_particles,
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *                                        pw_pairs_in_contact,
-  std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
-  std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
-  std::unordered_map<
-    int,
+void localize_contacts(
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+        *local_adjacent_particles,
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+        *ghost_adjacent_particles,
+    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+        *pw_pairs_in_contact,
+    std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
+    std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
     std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
-    &pw_contact_candidates);
+        int,
+        std::unordered_map<int, std::tuple<Particles::ParticleIterator<dim>,
+                                           Tensor<1, dim>, Point<dim>>>>
+        &pw_contact_candidates);
 
 #endif /* LOCALIZECONTACTS_H_ */

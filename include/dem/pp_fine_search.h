@@ -31,7 +31,7 @@
 using namespace dealii;
 
 #ifndef PPFINESEARCH_H_
-#  define PPFINESEARCH_H_
+#define PPFINESEARCH_H_
 
 /**
  * This class is used for local-local and local-ghost fine particle-particle
@@ -44,9 +44,7 @@ using namespace dealii;
  * @author Shahab Golshan, Polytechnique Montreal 2019-
  */
 
-template <int dim>
-class PPFineSearch
-{
+template <int dim> class PPFineSearch {
 public:
   PPFineSearch<dim>();
 
@@ -78,18 +76,20 @@ public:
    * @param neighborhood_threshold A value which defines the neighbor particles
    */
 
-  void
-  pp_Fine_Search(const std::unordered_map<int, std::vector<int>>
-                   &local_contact_pair_candidates,
-                 const std::unordered_map<int, std::vector<int>>
-                   &ghost_contact_pair_candidates,
-                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-                   &local_adjacent_particles,
-                 std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-                   &ghost_adjacent_particles,
-                 std::unordered_map<int, Particles::ParticleIterator<dim>>
-                   &          particle_container,
-                 const double neighborhood_threshold);
+  void pp_Fine_Search(
+      const std::unordered_map<int, std::vector<int>>
+          &local_contact_pair_candidates,
+      const std::unordered_map<int, std::vector<int>>
+          &ghost_contact_pair_candidates,
+      std::unordered_map<int,
+                         std::unordered_map<int, pp_contact_info_struct<dim>>>
+          &local_adjacent_particles,
+      std::unordered_map<int,
+                         std::unordered_map<int, pp_contact_info_struct<dim>>>
+          &ghost_adjacent_particles,
+      std::unordered_map<int, Particles::ParticleIterator<dim>>
+          &particle_container,
+      const double neighborhood_threshold);
 };
 
 #endif /* PPFINESEARCH_H_ */

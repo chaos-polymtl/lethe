@@ -21,7 +21,7 @@
 using namespace dealii;
 
 #ifndef UPDATEGHOSTPPCONTACTCONTAINER_H_
-#  define UPDATEGHOSTPPCONTACTCONTAINER_H_
+#define UPDATEGHOSTPPCONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in local_ghost adjacent_particles
@@ -32,11 +32,11 @@ using namespace dealii;
  */
 
 template <int dim>
-void
-update_ghost_pp_contact_container_iterators(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-    &ghost_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
-    &particle_container);
+void update_ghost_pp_contact_container_iterators(
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+        &ghost_adjacent_particles,
+    const std::unordered_map<int, Particles::ParticleIterator<dim>>
+        &particle_container);
 
 #endif /* UPDATEGHOSTPPCONTACTCONTAINER_H_ */
