@@ -27,7 +27,7 @@
 using namespace dealii;
 
 #ifndef LOCATELOCALPARTICLES_H_
-#define LOCATELOCALPARTICLES_H_
+#  define LOCATELOCALPARTICLES_H_
 
 /**
  * Updates the iterators to particles in local-local contact containers. This is
@@ -52,21 +52,19 @@ using namespace dealii;
  */
 
 template <int dim>
-void locate_local_particles_in_cells(
-    const Particles::ParticleHandler<dim> &particle_handler,
-    std::unordered_map<int, Particles::ParticleIterator<dim>>
-        &particle_container,
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
-        &ghost_adjacent_particles,
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
-        &local_adjacent_particles,
-    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-        &pw_pairs_in_contact,
-    std::map<int, particle_point_line_contact_info_struct<dim>>
-        &particle_points_in_contact,
-    std::map<int, particle_point_line_contact_info_struct<dim>>
-        &particle_lines_in_contact);
+void
+locate_local_particles_in_cells(
+  const Particles::ParticleHandler<dim> &                    particle_handler,
+  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container,
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+    &ghost_adjacent_particles,
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+    &local_adjacent_particles,
+  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+    &pw_pairs_in_contact,
+  std::map<int, particle_point_line_contact_info_struct<dim>>
+    &particle_points_in_contact,
+  std::map<int, particle_point_line_contact_info_struct<dim>>
+    &particle_lines_in_contact);
 
 #endif /* LOCATELOCALPARTICLES_H_ */

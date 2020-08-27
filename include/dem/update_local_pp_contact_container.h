@@ -21,7 +21,7 @@
 using namespace dealii;
 
 #ifndef UPDATELOCALPPCONTACTCONTAINER_H_
-#define UPDATELOCALPPCONTACTCONTAINER_H_
+#  define UPDATELOCALPPCONTACTCONTAINER_H_
 
 /**
  * Updates the iterators to particles in local-local adjacent_particles
@@ -32,11 +32,11 @@ using namespace dealii;
  */
 
 template <int dim>
-void update_local_pp_contact_container_iterators(
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
-        &local_adjacent_particles,
-    const std::unordered_map<int, Particles::ParticleIterator<dim>>
-        &particle_container);
+void
+update_local_pp_contact_container_iterators(
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+    &local_adjacent_particles,
+  const std::unordered_map<int, Particles::ParticleIterator<dim>>
+    &particle_container);
 
 #endif /* UPDATELOCALPPCONTACTCONTAINER_H_ */
