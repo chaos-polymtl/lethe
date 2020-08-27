@@ -60,7 +60,7 @@ locate_local_particles_in_cells(
     &ghost_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact,
   std::map<int, particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,

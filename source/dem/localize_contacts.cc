@@ -9,7 +9,7 @@ localize_contacts(
     *local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     *ghost_adjacent_particles,
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     *                                        pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
@@ -144,7 +144,8 @@ localize_contacts(
     *local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     *ghost_adjacent_particles,
-  std::map<int, std::map<int, pw_contact_info_struct<2>>> *pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<2>>>
+    *                                        pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
@@ -160,7 +161,8 @@ localize_contacts(
     *local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<3>>>
     *ghost_adjacent_particles,
-  std::map<int, std::map<int, pw_contact_info_struct<3>>> *pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<3>>>
+    *                                        pw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<

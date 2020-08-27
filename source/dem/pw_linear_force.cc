@@ -5,7 +5,7 @@ using namespace dealii;
 template <int dim>
 void
 PWLinearForce<dim>::calculate_pw_contact_force(
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     *                             pw_pairs_in_contact,
   const DEMSolverParameters<dim> &dem_parameters,
   const double &                  dt)

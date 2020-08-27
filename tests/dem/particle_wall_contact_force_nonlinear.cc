@@ -133,7 +133,7 @@ test()
 
   // Calling fine search
   PWFineSearch<dim> fine_search_object;
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
   fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
 

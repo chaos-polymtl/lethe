@@ -49,13 +49,13 @@ using namespace dealii;
 
 void
 update_contact_containers(
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &local_adjacent_particles,
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &ghost_adjacent_particles,
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &cleared_local_adjacent_particles,
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &cleared_ghost_adjacent_particles)
 {
   local_adjacent_particles.clear();
@@ -68,7 +68,7 @@ update_contact_containers(
 template <int dim>
 void
 update_ghost_pp_contact_container_iterators(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &cleared_ghost_adjacent_particles,
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &local_particle_container)
@@ -96,7 +96,7 @@ update_ghost_pp_contact_container_iterators(
 template <int dim>
 void
 update_local_pp_contact_container_iterators(
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &cleared_local_adjacent_particles,
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &local_particle_container)
@@ -159,9 +159,9 @@ locate_local_particles_in_cells(
     &local_particle_container,
   std::unordered_map<int, Particles::ParticleIterator<2>>
     &ghost_particle_container,
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &cleared_local_adjacent_particles,
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &cleared_ghost_adjacent_particles)
 {
   local_particle_container.clear();
@@ -238,13 +238,13 @@ test()
                                                    mapping,
                                                    n_properties);
 
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     local_adjacent_particles;
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     ghost_adjacent_particles;
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     cleared_local_adjacent_particles;
-  std::map<int, std::map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     cleared_ghost_adjacent_particles;
   std::unordered_map<int, Particles::ParticleIterator<2>>
     local_particle_container;

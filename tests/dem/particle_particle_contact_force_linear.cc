@@ -169,9 +169,9 @@ test()
                                             ghost_contact_pair_candidates);
 
   // Calling fine search
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     ghost_adjacent_particles;
 
   fine_search_object.pp_Fine_Search(local_contact_pair_candidates,

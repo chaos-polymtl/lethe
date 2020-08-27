@@ -34,7 +34,7 @@ using namespace dealii;
 template <int dim>
 void
 update_pw_contact_container_iterators(
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact,
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &particle_container);

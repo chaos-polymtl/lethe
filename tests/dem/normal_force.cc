@@ -135,7 +135,7 @@ test()
 
   // P-W fine search
   PWFineSearch<dim> pw_fine_search_object;
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
                                 pw_contact_information;
   PWNonLinearForce<dim>         pw_force_object;
   VelocityVerletIntegrator<dim> integrator_object;
