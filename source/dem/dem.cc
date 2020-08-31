@@ -40,6 +40,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
+  , neighborhood_threshold(
+      std::pow(parameters.model_parameters.neighborhood_threshold *
+                 parameters.physical_properties.diameter,
+               2))
   , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs

@@ -53,6 +53,8 @@ PPLinearForce<dim>::calculate_pp_contact_force(
 
           if (normal_overlap > 0)
             {
+              double         normal_relative_velocity_value;
+              Tensor<1, dim> normal_unit_vector;
               // This means that the adjacent particles are in contact
 
               // Defining physical properties as local variable
@@ -62,32 +64,36 @@ PPLinearForce<dim>::calculate_pp_contact_force(
               // Since the normal overlap is already calculated we update this
               // element of the container here. The rest of information are
               // updated using the following function
-              contact_info->normal_overlap = normal_overlap;
               this->update_contact_information(*contact_info,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
                                                particle_one_properties,
                                                particle_two_properties,
                                                particle_one_location,
                                                particle_two_location,
                                                dt);
 
-              // This tuple (forces and torques) contains four elements which
-              // are: 1, normal force, 2, tangential force, 3, tangential torque
-              // and 4, rolling resistance torque, respectively
-              std::tuple<Tensor<1, dim>,
-                         Tensor<1, dim>,
-                         Tensor<1, dim>,
-                         Tensor<1, dim>>
-                forces_and_torques =
-                  this->calculate_linear_contact_force_and_torque(
-                    physical_properties,
-                    *contact_info,
-                    particle_one_properties,
-                    particle_two_properties);
+              this->calculate_linear_contact_force_and_torque(
+                physical_properties,
+                *contact_info,
+                normal_relative_velocity_value,
+                normal_unit_vector,
+                normal_overlap,
+                particle_one_properties,
+                particle_two_properties,
+                this->normal_force,
+                this->tangential_force,
+                this->tangential_torque,
+                this->rolling_resistance_torque);
 
               // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque_real(particle_one_properties,
-                                                particle_two_properties,
-                                                forces_and_torques);
+              this->apply_force_and_torque_real(
+                particle_one_properties,
+                particle_two_properties,
+                this->normal_force,
+                this->tangential_force,
+                this->tangential_torque,
+                this->rolling_resistance_torque);
             }
 
           else
@@ -141,6 +147,8 @@ PPLinearForce<dim>::calculate_pp_contact_force(
 
           if (normal_overlap > 0)
             {
+              double         normal_relative_velocity_value;
+              Tensor<1, dim> normal_unit_vector;
               // This means that the adjacent particles are in contact
 
               // Defining physical properties as local variable
@@ -150,31 +158,35 @@ PPLinearForce<dim>::calculate_pp_contact_force(
               // Since the normal overlap is already calculated we update this
               // element of the container here. The rest of information are
               // updated using the following function
-              contact_info->normal_overlap = normal_overlap;
               this->update_contact_information(*contact_info,
+                                               normal_relative_velocity_value,
+                                               normal_unit_vector,
                                                particle_one_properties,
                                                particle_two_properties,
                                                particle_one_location,
                                                particle_two_location,
                                                dt);
 
-              // This tuple (forces and torques) contains four elements which
-              // are: 1, normal force, 2, tangential force, 3, tangential torque
-              // and 4, rolling resistance torque, respectively
-              std::tuple<Tensor<1, dim>,
-                         Tensor<1, dim>,
-                         Tensor<1, dim>,
-                         Tensor<1, dim>>
-                forces_and_torques =
-                  this->calculate_linear_contact_force_and_torque(
-                    physical_properties,
-                    *contact_info,
-                    particle_one_properties,
-                    particle_two_properties);
+              this->calculate_linear_contact_force_and_torque(
+                physical_properties,
+                *contact_info,
+                normal_relative_velocity_value,
+                normal_unit_vector,
+                normal_overlap,
+                particle_one_properties,
+                particle_two_properties,
+                this->normal_force,
+                this->tangential_force,
+                this->tangential_torque,
+                this->rolling_resistance_torque);
 
               // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque_ghost(particle_one_properties,
-                                                 forces_and_torques);
+              this->apply_force_and_torque_ghost(
+                particle_one_properties,
+                this->normal_force,
+                this->tangential_force,
+                this->tangential_torque,
+                this->rolling_resistance_torque);
             }
 
           else
@@ -192,12 +204,19 @@ PPLinearForce<dim>::calculate_pp_contact_force(
 
 // Calculates nonlinear contact force and torques
 template <int dim>
-std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+void
 PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   const Parameters::Lagrangian::PhysicalProperties &physical_properties,
   pp_contact_info_struct<dim> &                     contact_info,
-  const ArrayView<const double> &                   particle_one_properties,
-  const ArrayView<const double> &                   particle_two_properties)
+  const double &                 normal_relative_velocity_value,
+  const Tensor<1, dim> &         normal_unit_vector,
+  const double &                 normal_overlap,
+  const ArrayView<const double> &particle_one_properties,
+  const ArrayView<const double> &particle_two_properties,
+  Tensor<1, dim> &               normal_force,
+  Tensor<1, dim> &               tangential_force,
+  Tensor<1, dim> &               tangential_torque,
+  Tensor<1, dim> &               rolling_resistance_torque)
 {
   // Calculation of effective mass, radius and Young's modulus of the
   // contact
@@ -219,8 +238,8 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // using particle properties
   double normal_spring_constant =
     1.0667 * sqrt(effective_radius) * effective_youngs_modulus *
-    pow((1.0667 * effective_mass * contact_info.normal_relative_velocity *
-         contact_info.normal_relative_velocity /
+    pow((1.0667 * effective_mass * normal_relative_velocity_value *
+         normal_relative_velocity_value /
          (sqrt(effective_radius) * effective_youngs_modulus)),
         0.2);
   double tangential_spring_constant =
@@ -245,12 +264,11 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calculation of normal force using spring and dashpot normal forces
   Tensor<1, dim> spring_normal_force =
-    (normal_spring_constant * contact_info.normal_overlap) *
-    contact_info.normal_unit_vector;
+    (normal_spring_constant * normal_overlap) * normal_unit_vector;
   Tensor<1, dim> dashpot_normal_force =
-    (normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_unit_vector;
-  Tensor<1, dim> normal_force = spring_normal_force + dashpot_normal_force;
+    (normal_damping_constant * normal_relative_velocity_value) *
+    normal_unit_vector;
+  normal_force = spring_normal_force + dashpot_normal_force;
 
   double maximum_tangential_overlap =
     physical_properties.friction_coefficient_particle * normal_force.norm() /
@@ -271,19 +289,16 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     tangential_spring_constant * contact_info.tangential_overlap;
   Tensor<1, dim> dashpot_tangential_force =
     tangential_damping_constant * contact_info.tangential_relative_velocity;
-  Tensor<1, dim> tangential_force =
-    -1.0 * spring_tangential_force + dashpot_tangential_force;
+  tangential_force = -1.0 * spring_tangential_force + dashpot_tangential_force;
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
-  Tensor<1, dim> tangential_torque;
-
   if (dim == 3)
     {
       tangential_torque =
         cross_product_3d((0.5 *
                           particle_one_properties[DEM::PropertiesIndex::dp] *
-                          contact_info.normal_unit_vector),
+                          normal_unit_vector),
                          tangential_force);
     }
 
@@ -305,14 +320,9 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   omega_ij_direction    = omega_ij / omega_ij_value;
 
   // Calculation of rolling resistance torque
-  Tensor<1, dim> rolling_resistance_torque =
+  rolling_resistance_torque =
     -1.0 * physical_properties.rolling_friction_particle * effective_radius *
     normal_force.norm() * omega_ij_direction;
-
-  return std::make_tuple(normal_force,
-                         tangential_force,
-                         tangential_torque,
-                         rolling_resistance_torque);
 }
 
 template class PPLinearForce<2>;

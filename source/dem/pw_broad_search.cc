@@ -35,14 +35,17 @@ PWBroadSearch<dim>::find_PW_Contact_Pairs(
       auto boundary_cells_content = boundary_cells_information_iterator->second;
       auto cell                   = boundary_cells_content.cell;
 
-      // If the main cell is not empty
-      if (particle_handler.n_particles_in_cell(cell) > 0)
-        {
-          // Finding particles located in the corresponding cell
-          // (boundary_cells_content.cell)
-          typename Particles::ParticleHandler<dim>::particle_iterator_range
-            particles_in_cell = particle_handler.particles_in_cell(cell);
+      // Finding particles located in the corresponding cell
+      // (boundary_cells_content.cell)
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_cell = particle_handler.particles_in_cell(cell);
 
+      const unsigned int n_particles_in_cell =
+        std::distance(particles_in_cell.begin(), particles_in_cell.end());
+
+      // If the main cell is not empty
+      if (n_particles_in_cell > 0)
+        {
           for (typename Particles::ParticleHandler<dim>::
                  particle_iterator_range::iterator particles_in_cell_iterator =
                    particles_in_cell.begin();

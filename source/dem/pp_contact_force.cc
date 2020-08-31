@@ -25,6 +25,8 @@ template <int dim>
 void
 PPContactForce<dim>::update_contact_information(
   pp_contact_info_struct<dim> &  contact_info,
+  double &                       normal_relative_velocity_value,
+  Tensor<1, dim> &               normal_unit_vector,
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties,
   const Point<dim> &             particle_one_location,
@@ -35,7 +37,7 @@ PPContactForce<dim>::update_contact_information(
   auto contact_vector = particle_two_location - particle_one_location;
 
   // Using contact_vector, the contact normal vector is obtained
-  auto normal_unit_vector = contact_vector / contact_vector.norm();
+  normal_unit_vector = contact_vector / contact_vector.norm();
 
   // Defining velocities and angular velocities of particles one and
   // two as vectors
@@ -93,7 +95,7 @@ PPContactForce<dim>::update_contact_information(
   // following line the product acts as inner product since both
   // sides are vectors, while in the second line the product is
   // scalar and vector product
-  double normal_relative_velocity_value =
+  normal_relative_velocity_value =
     contact_relative_velocity * normal_unit_vector;
   Tensor<1, dim> normal_relative_velocity =
     normal_relative_velocity_value * normal_unit_vector;
@@ -126,8 +128,6 @@ PPContactForce<dim>::update_contact_information(
 
   // std::cout << contact_info.tangential_relative_velocity << std::endl;
   // Updating the contact_info container based on the new calculated values
-  contact_info.normal_relative_velocity     = normal_relative_velocity_value;
-  contact_info.normal_unit_vector           = normal_unit_vector;
   contact_info.tangential_overlap           = modified_tangential_overlap;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
@@ -137,20 +137,13 @@ PPContactForce<dim>::update_contact_information(
 template <int dim>
 void
 PPContactForce<dim>::apply_force_and_torque_real(
-  ArrayView<double> &particle_one_properties,
-  ArrayView<double> &particle_two_properties,
-  const std::
-    tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
-      &forces_and_torques)
+  ArrayView<double> &   particle_one_properties,
+  ArrayView<double> &   particle_two_properties,
+  const Tensor<1, dim> &normal_force,
+  const Tensor<1, dim> &tangential_force,
+  const Tensor<1, dim> &tangential_torque,
+  const Tensor<1, dim> &rolling_resistance_torque)
 {
-  // Getting the values from the forces_and_torques tuple, which are: 1, normal
-  // force, 2, tangential force, 3, tangential torque and 4, rolling resistance
-  // torque
-  Tensor<1, dim> normal_force              = std::get<0>(forces_and_torques);
-  Tensor<1, dim> tangential_force          = std::get<1>(forces_and_torques);
-  Tensor<1, dim> tangential_torque         = std::get<2>(forces_and_torques);
-  Tensor<1, dim> rolling_resistance_torque = std::get<3>(forces_and_torques);
-
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
 
@@ -182,19 +175,12 @@ PPContactForce<dim>::apply_force_and_torque_real(
 template <int dim>
 void
 PPContactForce<dim>::apply_force_and_torque_ghost(
-  ArrayView<double> &particle_one_properties,
-  const std::
-    tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
-      &forces_and_torques)
+  ArrayView<double> &   particle_one_properties,
+  const Tensor<1, dim> &normal_force,
+  const Tensor<1, dim> &tangential_force,
+  const Tensor<1, dim> &tangential_torque,
+  const Tensor<1, dim> &rolling_resistance_torque)
 {
-  // Getting the values from the forces_and_torques tuple, which are: 1, normal
-  // force, 2, tangential force, 3, tangential torque and 4, rolling resistance
-  // torque
-  Tensor<1, dim> normal_force              = std::get<0>(forces_and_torques);
-  Tensor<1, dim> tangential_force          = std::get<1>(forces_and_torques);
-  Tensor<1, dim> tangential_torque         = std::get<2>(forces_and_torques);
-  Tensor<1, dim> rolling_resistance_torque = std::get<3>(forces_and_torques);
-
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
 

@@ -78,8 +78,8 @@ Insertion<dim>::assign_particle_properties(
       double w_y      = 0.0;
       double w_z      = 0.0;
       double mass     = physical_properties.density *
-                    ((4.0 / 3.0) * 3.1415 * pow((diameter / 2.0), 3.0));
-      double MOI = (2.0 / 5.0) * (mass)*pow((diameter / 2.0), 2.0);
+                    ((4.0 / 3.0) * 3.1415 * pow((diameter / 2.0), 3));
+      double MOI = (2.0 / 5.0) * (mass)*pow((diameter / 2.0), 2);
       double T_x = 0;
       double T_y = 0;
       double T_z = 0;

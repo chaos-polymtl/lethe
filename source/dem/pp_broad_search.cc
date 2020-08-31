@@ -33,14 +33,18 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
       // The main cell
       auto cell_neighbor_iterator = cell_neighbor_list_iterator->begin();
 
-      // Check to see if the main cell has any particles
-      if (particle_handler.n_particles_in_cell(*cell_neighbor_iterator) > 0)
-        {
-          // Particles in the main cell
-          typename Particles::ParticleHandler<dim>::particle_iterator_range
-            particles_in_main_cell =
-              particle_handler.particles_in_cell(*cell_neighbor_iterator);
+      // Particles in the main cell
+      typename Particles::ParticleHandler<dim>::particle_iterator_range
+        particles_in_main_cell =
+          particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
+      const unsigned int n_particles_in_cell =
+        std::distance(particles_in_main_cell.begin(),
+                      particles_in_main_cell.end());
+
+      // Check to see if the main cell has any particles
+      if (n_particles_in_cell > 0)
+        {
           // finding local-local collision pairs in the main cell, particle
           // counter starts from 1, becasue each particle will not be considered
           // as collision partner with itself
@@ -100,11 +104,9 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
-                  const unsigned int particle_one_id =
-                    particles_in_main_cell_iterator->get_id();
-
                   std::vector<int> &particle_candidate_container =
-                    local_contact_pair_candidates[particle_one_id];
+                    local_contact_pair_candidates
+                      [particles_in_main_cell_iterator->get_id()];
                   if (particle_candidate_container.empty())
                     particle_candidate_container.reserve(40);
 
@@ -143,20 +145,24 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
         particles_in_main_cell =
           particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
-      // If the main cell is not empty
-      if (particle_handler.n_particles_in_cell(*cell_neighbor_iterator) > 0)
+      // Going through ghost neighbor cells of the main cell
+      ++cell_neighbor_iterator;
+
+      for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
+           ++cell_neighbor_iterator)
         {
-          // Going through ghost neighbor cells of the main cell
-          ++cell_neighbor_iterator;
+          // Defining iterator on ghost particles in the neighbor cells
+          typename Particles::ParticleHandler<dim>::particle_iterator_range
+            particles_in_neighbor_cell =
+              particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
-          for (; cell_neighbor_iterator != cell_neighbor_list_iterator->end();
-               ++cell_neighbor_iterator)
+          const unsigned int n_particles_in_cell =
+            std::distance(particles_in_neighbor_cell.begin(),
+                          particles_in_neighbor_cell.end());
+
+          // If the main cell is not empty
+          if (n_particles_in_cell > 0)
             {
-              // Defining iterator on ghost particles in the neighbor cells
-              typename Particles::ParticleHandler<dim>::particle_iterator_range
-                particles_in_neighbor_cell =
-                  particle_handler.particles_in_cell(*cell_neighbor_iterator);
-
               // Capturing particle pairs, the first particle (local) in the
               // main cell and the second particle (ghost) in the neighbor cells
               for (typename Particles::ParticleHandler<
@@ -182,10 +188,8 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
                        particles_in_neighbor_cell.end();
                        ++particles_in_neighbor_cell_iterator)
                     {
-                      unsigned int particle_two_id =
-                        particles_in_neighbor_cell_iterator->get_id();
-
-                      particle_candidate_container.push_back(particle_two_id);
+                      particle_candidate_container.emplace_back(
+                        particles_in_neighbor_cell_iterator->get_id());
                     }
                 }
             }

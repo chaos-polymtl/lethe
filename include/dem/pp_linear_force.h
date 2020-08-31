@@ -85,12 +85,19 @@ private:
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
    */
-  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  void
   calculate_linear_contact_force_and_torque(
     const Parameters::Lagrangian::PhysicalProperties &physical_properties,
     pp_contact_info_struct<dim> &                     contact_info,
-    const ArrayView<const double> &                   particle_one_properties,
-    const ArrayView<const double> &                   particle_two_propertie);
+    const double &                 normal_relative_velocity_value,
+    const Tensor<1, dim> &         normal_unit_vector,
+    const double &                 normal_overlap,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    Tensor<1, dim> &               normal_force,
+    Tensor<1, dim> &               tangential_force,
+    Tensor<1, dim> &               tangential_torque,
+    Tensor<1, dim> &               rolling_resistance_torque);
 };
 
 #endif

@@ -80,6 +80,8 @@ protected:
   void
   update_contact_information(
     pp_contact_info_struct<dim> &  adjacent_pair_information,
+    double &                       normal_relative_velocity_value,
+    Tensor<1, dim> &               normal_unit_vector,
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties,
     const Point<dim> &             particle_one_location,
@@ -98,12 +100,12 @@ protected:
    * a contact pair
    */
   void
-  apply_force_and_torque_real(
-    ArrayView<double> &particle_one_properties,
-    ArrayView<double> &particle_two_properties,
-    const std::
-      tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
-        &forces_and_torques);
+  apply_force_and_torque_real(ArrayView<double> &   particle_one_properties,
+                              ArrayView<double> &   particle_two_properties,
+                              const Tensor<1, dim> &normal_force,
+                              const Tensor<1, dim> &tangential_force,
+                              const Tensor<1, dim> &tangential_torque,
+                              const Tensor<1, dim> &rolling_resistance_torque);
 
   /**
    * Carries out applying the calculated force and torque on the local-ghost
@@ -117,11 +119,16 @@ protected:
    * a contact pair
    */
   void
-  apply_force_and_torque_ghost(
-    ArrayView<double> &particle_one_properties,
-    const std::
-      tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
-        &forces_and_torques);
+  apply_force_and_torque_ghost(ArrayView<double> &   particle_one_properties,
+                               const Tensor<1, dim> &normal_force,
+                               const Tensor<1, dim> &tangential_force,
+                               const Tensor<1, dim> &tangential_torque,
+                               const Tensor<1, dim> &rolling_resistance_torque);
+
+  Tensor<1, dim> normal_force;
+  Tensor<1, dim> tangential_force;
+  Tensor<1, dim> tangential_torque;
+  Tensor<1, dim> rolling_resistance_torque;
 };
 
 #endif /* PPCONTACTFORCE_H_ */

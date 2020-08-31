@@ -253,10 +253,7 @@ private:
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
-  const double neighborhood_threshold =
-    std::pow(parameters.model_parameters.neighborhood_threshold *
-               parameters.physical_properties.diameter,
-             2);
+  const double       neighborhood_threshold;
   const unsigned int contact_detection_frequency =
     parameters.model_parameters.contact_detection_frequency;
   const unsigned int insertion_frequency =

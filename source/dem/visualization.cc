@@ -81,15 +81,23 @@ Visualization<dim>::print_xyz(
   const dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::pair<std::string, int>>       properties)
 {
+  std::vector<int> percision = {
+    0, 0, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
+  };
+
   this->build_patches(particle_handler, properties);
+  unsigned int counter;
 
   // loop over all patches
   for (const auto &patch : patches)
     {
+      counter                  = 0;
       unsigned int n_data_sets = properties.size();
-      for (unsigned int data_set = 0; data_set < n_data_sets; ++data_set)
+      for (unsigned int data_set = 0; data_set < n_data_sets;
+           ++data_set, ++counter)
         {
-          std::cout << patch.data(data_set, 0) << ' ';
+          std::cout.precision(percision[counter]);
+          std::cout << std::fixed << patch.data(data_set, 0) << " ";
         }
       std::cout << '\n';
     }
