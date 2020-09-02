@@ -53,8 +53,6 @@ PPLinearForce<dim>::calculate_pp_contact_force(
 
           if (normal_overlap > 0)
             {
-              double         normal_relative_velocity_value;
-              Tensor<1, dim> normal_unit_vector;
               // This means that the adjacent particles are in contact
 
               // Defining physical properties as local variable
@@ -81,19 +79,18 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                 normal_overlap,
                 particle_one_properties,
                 particle_two_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
+                normal_force,
+                tangential_force,
+                tangential_torque,
+                rolling_resistance_torque);
 
               // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque_real(
-                particle_one_properties,
-                particle_two_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
+              this->apply_force_and_torque_real(particle_one_properties,
+                                                particle_two_properties,
+                                                normal_force,
+                                                tangential_force,
+                                                tangential_torque,
+                                                rolling_resistance_torque);
             }
 
           else
@@ -147,8 +144,6 @@ PPLinearForce<dim>::calculate_pp_contact_force(
 
           if (normal_overlap > 0)
             {
-              double         normal_relative_velocity_value;
-              Tensor<1, dim> normal_unit_vector;
               // This means that the adjacent particles are in contact
 
               // Defining physical properties as local variable
@@ -175,18 +170,17 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                 normal_overlap,
                 particle_one_properties,
                 particle_two_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
+                normal_force,
+                tangential_force,
+                tangential_torque,
+                rolling_resistance_torque);
 
               // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque_ghost(
-                particle_one_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
+              this->apply_force_and_torque_ghost(particle_one_properties,
+                                                 normal_force,
+                                                 tangential_force,
+                                                 tangential_torque,
+                                                 rolling_resistance_torque);
             }
 
           else
@@ -228,11 +222,11 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   double effective_radius =
     (particle_one_properties[DEM::PropertiesIndex::dp] *
      particle_two_properties[DEM::PropertiesIndex::dp]) /
-    (2.0 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-            particle_two_properties[DEM::PropertiesIndex::dp]));
+    (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
+          particle_two_properties[DEM::PropertiesIndex::dp]));
   double effective_youngs_modulus =
     physical_properties.Youngs_modulus_particle /
-    (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_particle, 2.0)));
+    (2 * (1 - pow(physical_properties.Poisson_ratio_particle, 2.0)));
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
@@ -321,7 +315,7 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calculation of rolling resistance torque
   rolling_resistance_torque =
-    -1.0 * physical_properties.rolling_friction_particle * effective_radius *
+    -1 * physical_properties.rolling_friction_particle * effective_radius *
     normal_force.norm() * omega_ij_direction;
 }
 

@@ -124,11 +124,6 @@ protected:
                                const Tensor<1, dim> &tangential_force,
                                const Tensor<1, dim> &tangential_torque,
                                const Tensor<1, dim> &rolling_resistance_torque);
-
-  Tensor<1, dim> normal_force;
-  Tensor<1, dim> tangential_force;
-  Tensor<1, dim> tangential_torque;
-  Tensor<1, dim> rolling_resistance_torque;
 };
 
 #endif /* PPCONTACTFORCE_H_ */

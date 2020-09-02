@@ -443,6 +443,7 @@ DEMSolver<dim>::solve()
         {
           particle_wall_broad_search();
         }
+
       if (particles_were_inserted || fmod(simulation_control->get_step_number(),
                                           contact_detection_frequency) == 0)
         {

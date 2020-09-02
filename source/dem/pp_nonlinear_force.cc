@@ -28,83 +28,86 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
       // calculation of the contact force
       auto adjacent_particles_list = &adjacent_particles_iterator->second;
 
-      for (auto adjacent_particles_list_iterator =
-             adjacent_particles_list->begin();
-           adjacent_particles_list_iterator != adjacent_particles_list->end();
-           ++adjacent_particles_list_iterator)
+      if (!adjacent_particles_list->empty())
         {
-          // Defining the iterator's second value (map value) as a local
-          // parameter
-          auto contact_info = &adjacent_particles_list_iterator->second;
-
-          // Getting information (location and propertis) of particle one and
-          // two in contact
-          auto             particle_one          = contact_info->particle_one;
-          auto             particle_two          = contact_info->particle_two;
-          const Point<dim> particle_one_location = particle_one->get_location();
-          const Point<dim> particle_two_location = particle_two->get_location();
-          auto particle_one_properties = particle_one->get_properties();
-          auto particle_two_properties = particle_two->get_properties();
-
-          // Calculation of normal overlap
-          double normal_overlap =
-            0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-                   particle_two_properties[DEM::PropertiesIndex::dp]) -
-            particle_one_location.distance(particle_two_location);
-
-          if (normal_overlap > 0)
+          for (auto adjacent_particles_list_iterator =
+                 adjacent_particles_list->begin();
+               adjacent_particles_list_iterator !=
+               adjacent_particles_list->end();
+               ++adjacent_particles_list_iterator)
             {
-              double         normal_relative_velocity_value;
-              Tensor<1, dim> normal_unit_vector;
+              // Defining the iterator's second value (map value) as a local
+              // parameter
+              auto contact_info = &adjacent_particles_list_iterator->second;
 
-              // This means that the adjacent particles are in contact
+              // Getting information (location and propertis) of particle one
+              // and two in contact
+              auto             particle_one = contact_info->particle_one;
+              auto             particle_two = contact_info->particle_two;
+              const Point<dim> particle_one_location =
+                particle_one->get_location();
+              const Point<dim> particle_two_location =
+                particle_two->get_location();
+              auto particle_one_properties = particle_one->get_properties();
+              auto particle_two_properties = particle_two->get_properties();
 
-              // Defining physical properties as local variable
-              const auto physical_properties =
-                dem_parameters.physical_properties;
+              // Calculation of normal overlap
+              double normal_overlap =
+                0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
+                       particle_two_properties[DEM::PropertiesIndex::dp]) -
+                particle_one_location.distance(particle_two_location);
 
-              // Since the normal overlap is already calculated we update this
-              // element of the container here. The rest of information are
-              // updated using the following function
-              this->update_contact_information(*contact_info,
-                                               normal_relative_velocity_value,
-                                               normal_unit_vector,
-                                               particle_one_properties,
-                                               particle_two_properties,
-                                               particle_one_location,
-                                               particle_two_location,
-                                               dt);
-
-              this->calculate_nonlinear_contact_force_and_torque(
-                physical_properties,
-                *contact_info,
-                normal_relative_velocity_value,
-                normal_unit_vector,
-                normal_overlap,
-                particle_one_properties,
-                particle_two_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
-
-              // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque_real(
-                particle_one_properties,
-                particle_two_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
-            }
-
-          else
-            {
-              // if the adjacent pair is not in contact anymore, only the
-              // tangential overlap is set to zero
-              for (int d = 0; d < dim; ++d)
+              if (normal_overlap > 0)
+                // This means that the adjacent particles are in contact
                 {
-                  contact_info->tangential_overlap[d] = 0;
+                  // Defining physical properties as local variable
+                  const auto physical_properties =
+                    dem_parameters.physical_properties;
+
+                  // Since the normal overlap is already calculated we update
+                  // this element of the container here. The rest of information
+                  // are updated using the following function
+                  this->update_contact_information(
+                    *contact_info,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
+                    particle_one_properties,
+                    particle_two_properties,
+                    particle_one_location,
+                    particle_two_location,
+                    dt);
+
+                  this->calculate_nonlinear_contact_force_and_torque(
+                    physical_properties,
+                    *contact_info,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
+                    normal_overlap,
+                    particle_one_properties,
+                    particle_two_properties,
+                    normal_force,
+                    tangential_force,
+                    tangential_torque,
+                    rolling_resistance_torque);
+
+                  // Apply the calculated forces and torques on the particle
+                  // pair
+                  this->apply_force_and_torque_real(particle_one_properties,
+                                                    particle_two_properties,
+                                                    normal_force,
+                                                    tangential_force,
+                                                    tangential_torque,
+                                                    rolling_resistance_torque);
+                }
+
+              else
+                {
+                  // if the adjacent pair is not in contact anymore, only the
+                  // tangential overlap is set to zero
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      contact_info->tangential_overlap[d] = 0;
+                    }
                 }
             }
         }
@@ -123,82 +126,87 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
       // over another map which contains the required information for
       // calculation of the contact force
       auto adjacent_particles_list = &adjacent_particles_iterator->second;
-      for (auto adjacent_particles_list_iterator =
-             adjacent_particles_list->begin();
-           adjacent_particles_list_iterator != adjacent_particles_list->end();
-           ++adjacent_particles_list_iterator)
+
+      if (!adjacent_particles_list->empty())
         {
-          // Defining the iterator's second value (map value) as a local
-          // parameter
-          auto contact_info = &adjacent_particles_list_iterator->second;
-
-          // Getting information (location and propertis) of particle one and
-          // two in contact
-          auto             particle_one          = contact_info->particle_one;
-          auto             particle_two          = contact_info->particle_two;
-          const Point<dim> particle_one_location = particle_one->get_location();
-          const Point<dim> particle_two_location = particle_two->get_location();
-          auto particle_one_properties = particle_one->get_properties();
-          auto particle_two_properties = particle_two->get_properties();
-
-          // Calculation of normal overlap
-          double normal_overlap =
-            0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-                   particle_two_properties[DEM::PropertiesIndex::dp]) -
-            particle_one_location.distance(particle_two_location);
-
-          if (normal_overlap > 0)
+          for (auto adjacent_particles_list_iterator =
+                 adjacent_particles_list->begin();
+               adjacent_particles_list_iterator !=
+               adjacent_particles_list->end();
+               ++adjacent_particles_list_iterator)
             {
-              double         normal_relative_velocity_value;
-              Tensor<1, dim> normal_unit_vector;
+              // Defining the iterator's second value (map value) as a local
+              // parameter
+              auto contact_info = &adjacent_particles_list_iterator->second;
 
-              // This means that the adjacent particles are in contact
+              // Getting information (location and propertis) of particle one
+              // and two in contact
+              auto             particle_one = contact_info->particle_one;
+              auto             particle_two = contact_info->particle_two;
+              const Point<dim> particle_one_location =
+                particle_one->get_location();
+              const Point<dim> particle_two_location =
+                particle_two->get_location();
+              auto particle_one_properties = particle_one->get_properties();
+              auto particle_two_properties = particle_two->get_properties();
 
-              // Defining physical properties as local variable
-              const auto physical_properties =
-                dem_parameters.physical_properties;
+              // Calculation of normal overlap
+              double normal_overlap =
+                0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
+                       particle_two_properties[DEM::PropertiesIndex::dp]) -
+                particle_one_location.distance(particle_two_location);
 
-              // Since the normal overlap is already calculated we update this
-              // element of the container here. The rest of information are
-              // updated using the following function
-              this->update_contact_information(*contact_info,
-                                               normal_relative_velocity_value,
-                                               normal_unit_vector,
-                                               particle_one_properties,
-                                               particle_two_properties,
-                                               particle_one_location,
-                                               particle_two_location,
-                                               dt);
-
-              this->calculate_nonlinear_contact_force_and_torque(
-                physical_properties,
-                *contact_info,
-                normal_relative_velocity_value,
-                normal_unit_vector,
-                normal_overlap,
-                particle_one_properties,
-                particle_two_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
-
-              // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque_ghost(
-                particle_one_properties,
-                this->normal_force,
-                this->tangential_force,
-                this->tangential_torque,
-                this->rolling_resistance_torque);
-            }
-
-          else
-            {
-              // if the adjacent pair is not in contact anymore, only the
-              // tangential overlap is set to zero
-              for (int d = 0; d < dim; ++d)
+              if (normal_overlap > 0)
                 {
-                  contact_info->tangential_overlap[d] = 0;
+                  // This means that the adjacent particles are in contact
+
+                  // Defining physical properties as local variable
+                  const auto physical_properties =
+                    dem_parameters.physical_properties;
+
+                  // Since the normal overlap is already calculated we update
+                  // this element of the container here. The rest of information
+                  // are updated using the following function
+                  this->update_contact_information(
+                    *contact_info,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
+                    particle_one_properties,
+                    particle_two_properties,
+                    particle_one_location,
+                    particle_two_location,
+                    dt);
+
+                  this->calculate_nonlinear_contact_force_and_torque(
+                    physical_properties,
+                    *contact_info,
+                    normal_relative_velocity_value,
+                    normal_unit_vector,
+                    normal_overlap,
+                    particle_one_properties,
+                    particle_two_properties,
+                    normal_force,
+                    tangential_force,
+                    tangential_torque,
+                    rolling_resistance_torque);
+
+                  // Apply the calculated forces and torques on the particle
+                  // pair
+                  this->apply_force_and_torque_ghost(particle_one_properties,
+                                                     normal_force,
+                                                     tangential_force,
+                                                     tangential_torque,
+                                                     rolling_resistance_torque);
+                }
+
+              else
+                {
+                  // if the adjacent pair is not in contact anymore, only the
+                  // tangential overlap is set to zero
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      contact_info->tangential_overlap[d] = 0;
+                    }
                 }
             }
         }
@@ -235,7 +243,8 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
             particle_two_properties[DEM::PropertiesIndex::dp]));
   double effective_youngs_modulus =
     physical_properties.Youngs_modulus_particle /
-    (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_particle, 2)));
+    (2.0 * (1.0 - (physical_properties.Poisson_ratio_particle *
+                   physical_properties.Poisson_ratio_particle)));
   double effective_shear_modulus =
     physical_properties.Youngs_modulus_particle /
     (4.0 * (2.0 - physical_properties.Poisson_ratio_particle) *
@@ -244,33 +253,33 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation of model parameters (betha, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
+  const double Poisson_ratio_particle_log =
+    std::log(physical_properties.Poisson_ratio_particle);
   double model_parameter_beta =
-    log(physical_properties.Poisson_ratio_particle) /
-    sqrt(pow(log(physical_properties.Poisson_ratio_particle), 2) + 9.8696);
+    Poisson_ratio_particle_log /
+    sqrt(Poisson_ratio_particle_log * Poisson_ratio_particle_log + 9.8696);
+  double radius_times_overlap_sqrt = sqrt(effective_radius * normal_overlap);
   double model_parameter_sn =
-    2.0 * effective_youngs_modulus * sqrt(effective_radius * normal_overlap);
+    2.0 * effective_youngs_modulus * radius_times_overlap_sqrt;
   double model_parameter_st =
-    8.0 * effective_shear_modulus * sqrt(effective_radius * normal_overlap);
+    8.0 * effective_shear_modulus * radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
   double normal_spring_constant =
-    1.3333 * effective_youngs_modulus * sqrt(effective_radius * normal_overlap);
+    1.3333 * effective_youngs_modulus * radius_times_overlap_sqrt;
   double normal_damping_constant =
     -1.8257 * model_parameter_beta * sqrt(model_parameter_sn * effective_mass);
   double tangential_spring_constant =
-    8.0 * effective_shear_modulus * sqrt(effective_radius * normal_overlap) +
-    DBL_MIN;
+    8.0 * effective_shear_modulus * radius_times_overlap_sqrt + DBL_MIN;
   double tangential_damping_constant =
     -1.8257 * model_parameter_beta * sqrt(model_parameter_st * effective_mass);
 
   // Calculation of normal force using spring and dashpot normal forces
-  Tensor<1, dim> spring_normal_force =
-    (normal_spring_constant * normal_overlap) * normal_unit_vector;
-  Tensor<1, dim> dashpot_normal_force =
-    (normal_damping_constant * normal_relative_velocity_value) *
-    normal_unit_vector;
-  normal_force = spring_normal_force + dashpot_normal_force;
+  normal_force =
+    ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+    ((normal_damping_constant * normal_relative_velocity_value) *
+     normal_unit_vector);
 
   double maximum_tangential_overlap =
     physical_properties.friction_coefficient_particle * normal_force.norm() /
@@ -287,11 +296,9 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     }
   // Calculation of tangential force using spring and dashpot tangential
   // forces
-  Tensor<1, dim> spring_tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, dim> dashpot_tangential_force =
-    tangential_damping_constant * contact_info.tangential_relative_velocity;
-  tangential_force = -1.0 * spring_tangential_force + dashpot_tangential_force;
+  tangential_force =
+    -1.0 * (tangential_spring_constant * contact_info.tangential_overlap) +
+    (tangential_damping_constant * contact_info.tangential_relative_velocity);
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
@@ -318,8 +325,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     }
 
   omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
-  double omega_ij_value = omega_ij.norm() + DBL_MIN;
-  omega_ij_direction    = omega_ij / omega_ij_value;
+  omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
   // Calculation of rolling resistance torque
   rolling_resistance_torque =
