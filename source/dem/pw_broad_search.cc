@@ -40,11 +40,10 @@ PWBroadSearch<dim>::find_PW_Contact_Pairs(
       typename Particles::ParticleHandler<dim>::particle_iterator_range
         particles_in_cell = particle_handler.particles_in_cell(cell);
 
-      const unsigned int n_particles_in_cell =
-        std::distance(particles_in_cell.begin(), particles_in_cell.end());
+      const bool particles_exist_in_main_cell = !particles_in_cell.empty();
 
       // If the main cell is not empty
-      if (n_particles_in_cell > 0)
+      if (particles_exist_in_main_cell)
         {
           for (typename Particles::ParticleHandler<dim>::
                  particle_iterator_range::iterator particles_in_cell_iterator =

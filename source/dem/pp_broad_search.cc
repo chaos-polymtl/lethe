@@ -38,12 +38,11 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
             particles_in_main_cell =
               particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
-          const unsigned int n_particles_in_main_cell =
-            std::distance(particles_in_main_cell.begin(),
-                          particles_in_main_cell.end());
+          const bool particles_exist_in_main_cell =
+            !particles_in_main_cell.empty();
 
           // Check to see if the main cell has any particles
-          if (n_particles_in_main_cell > 0)
+          if (particles_exist_in_main_cell)
             {
               // finding local-local collision pairs in the main cell, particle
               // counter starts from 1, becasue each particle will not be
@@ -149,11 +148,10 @@ PPBroadSearch<dim>::find_PP_Contact_Pairs(
             particles_in_main_cell =
               particle_handler.particles_in_cell(*cell_neighbor_iterator);
 
-          const unsigned int n_particles_in_main_cell =
-            std::distance(particles_in_main_cell.begin(),
-                          particles_in_main_cell.end());
+          const bool particles_exist_in_main_cell =
+            !particles_in_main_cell.empty();
 
-          if (n_particles_in_main_cell > 0)
+          if (particles_exist_in_main_cell)
             {
               // Going through ghost neighbor cells of the main cell
               ++cell_neighbor_iterator;
