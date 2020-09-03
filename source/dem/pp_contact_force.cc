@@ -19,6 +19,8 @@
 
 #include <dem/pp_contact_force.h>
 
+using namespace DEM;
+
 // Updates the contact information (contact_info) based on the new
 // information of particles pair in the current time step
 template <int dim>
@@ -48,41 +50,32 @@ PPContactForce<dim>::update_contact_information(
   Tensor<1, dim> contact_relative_velocity;
 
   // Finding velocities and angular velocities of particles
-  particle_one_velocity[0] = particle_one_properties[DEM::PropertiesIndex::v_x];
-  particle_one_velocity[1] = particle_one_properties[DEM::PropertiesIndex::v_y];
+  particle_one_velocity[0] = particle_one_properties[PropertiesIndex::v_x];
+  particle_one_velocity[1] = particle_one_properties[PropertiesIndex::v_y];
 
-  particle_two_velocity[0] = particle_two_properties[DEM::PropertiesIndex::v_x];
-  particle_two_velocity[1] = particle_two_properties[DEM::PropertiesIndex::v_y];
+  particle_two_velocity[0] = particle_two_properties[PropertiesIndex::v_x];
+  particle_two_velocity[1] = particle_two_properties[PropertiesIndex::v_y];
 
-  particle_one_omega[0] =
-    particle_one_properties[DEM::PropertiesIndex::omega_x];
-  particle_one_omega[1] =
-    particle_one_properties[DEM::PropertiesIndex::omega_y];
+  particle_one_omega[0] = particle_one_properties[PropertiesIndex::omega_x];
+  particle_one_omega[1] = particle_one_properties[PropertiesIndex::omega_y];
 
-  particle_two_omega[0] =
-    particle_two_properties[DEM::PropertiesIndex::omega_x];
-  particle_two_omega[1] =
-    particle_two_properties[DEM::PropertiesIndex::omega_y];
+  particle_two_omega[0] = particle_two_properties[PropertiesIndex::omega_x];
+  particle_two_omega[1] = particle_two_properties[PropertiesIndex::omega_y];
 
   if (dim == 3)
     {
-      particle_one_velocity[2] =
-        particle_one_properties[DEM::PropertiesIndex::v_z];
-      particle_two_velocity[2] =
-        particle_two_properties[DEM::PropertiesIndex::v_z];
-      particle_one_omega[2] =
-        particle_one_properties[DEM::PropertiesIndex::omega_z];
-      particle_two_omega[2] =
-        particle_two_properties[DEM::PropertiesIndex::omega_z];
+      particle_one_velocity[2] = particle_one_properties[PropertiesIndex::v_z];
+      particle_two_velocity[2] = particle_two_properties[PropertiesIndex::v_z];
+      particle_one_omega[2] = particle_one_properties[PropertiesIndex::omega_z];
+      particle_two_omega[2] = particle_two_properties[PropertiesIndex::omega_z];
 
       // Calculation of contact relative velocity
       contact_relative_velocity =
         (particle_one_velocity - particle_two_velocity) +
-        (cross_product_3d(0.5 *
-                            (particle_one_properties[DEM::PropertiesIndex::dp] *
-                               particle_one_omega +
-                             particle_two_properties[DEM::PropertiesIndex::dp] *
-                               particle_two_omega),
+        (cross_product_3d(0.5 * (particle_one_properties[PropertiesIndex::dp] *
+                                   particle_one_omega +
+                                 particle_two_properties[PropertiesIndex::dp] *
+                                   particle_two_omega),
                           normal_unit_vector));
     }
   else
@@ -147,25 +140,19 @@ PPContactForce<dim>::apply_force_and_torque_real(
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
 
-  // Updating the force of particles in the particle handler
+  // Updating the force and torque of particles in the particle handler
   for (int d = 0; d < dim; ++d)
     {
-      particle_one_properties[DEM::PropertiesIndex::force_x + d] =
-        particle_one_properties[DEM::PropertiesIndex::force_x + d] -
-        total_force[d];
-      particle_two_properties[DEM::PropertiesIndex::force_x + d] =
-        particle_two_properties[DEM::PropertiesIndex::force_x + d] +
-        total_force[d];
-    }
+      particle_one_properties[PropertiesIndex::force_x + d] =
+        particle_one_properties[PropertiesIndex::force_x + d] - total_force[d];
+      particle_two_properties[PropertiesIndex::force_x + d] =
+        particle_two_properties[PropertiesIndex::force_x + d] + total_force[d];
 
-  // Updating the torque acting on particles
-  for (int d = 0; d < dim; ++d)
-    {
-      particle_one_properties[DEM::PropertiesIndex::M_x + d] =
-        particle_one_properties[DEM::PropertiesIndex::M_x + d] -
+      particle_one_properties[PropertiesIndex::M_x + d] =
+        particle_one_properties[PropertiesIndex::M_x + d] -
         tangential_torque[d] + rolling_resistance_torque[d];
-      particle_two_properties[DEM::PropertiesIndex::M_x + d] =
-        particle_two_properties[DEM::PropertiesIndex::M_x + d] -
+      particle_two_properties[PropertiesIndex::M_x + d] =
+        particle_two_properties[PropertiesIndex::M_x + d] -
         tangential_torque[d] - rolling_resistance_torque[d];
     }
 }
@@ -184,19 +171,14 @@ PPContactForce<dim>::apply_force_and_torque_ghost(
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
 
-  // Updating the force of particles in the particle handler
+  // Updating the force and torque acting on particles in the particle handler
   for (int d = 0; d < dim; ++d)
     {
-      particle_one_properties[DEM::PropertiesIndex::force_x + d] =
-        particle_one_properties[DEM::PropertiesIndex::force_x + d] -
-        total_force[d];
-    }
+      particle_one_properties[PropertiesIndex::force_x + d] =
+        particle_one_properties[PropertiesIndex::force_x + d] - total_force[d];
 
-  // Updating the torque acting on particles
-  for (int d = 0; d < dim; ++d)
-    {
-      particle_one_properties[DEM::PropertiesIndex::M_x + d] =
-        particle_one_properties[DEM::PropertiesIndex::M_x + d] -
+      particle_one_properties[PropertiesIndex::M_x + d] =
+        particle_one_properties[PropertiesIndex::M_x + d] -
         tangential_torque[d] + rolling_resistance_torque[d];
     }
 }
