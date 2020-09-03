@@ -54,13 +54,14 @@ public:
    * @param particle_point_line_pairs_in_contact Required information for
    * calculation of the particle-point and particle-line contact forces, these
    * information were obtained in the fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param physical_properties DEM physical_properties declared in the .prm
+   * file
    */
   void
   calculate_particle_point_line_contact_force(
     const std::map<int, particle_point_line_contact_info_struct<dim>>
-      *                             particle_point_line_pairs_in_contact,
-    const DEMSolverParameters<dim> &dem_parameters);
+      *particle_point_line_pairs_in_contact,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties);
 };
 
 #endif

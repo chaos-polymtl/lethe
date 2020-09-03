@@ -41,6 +41,7 @@ localize_contacts(
             std::find(particle_one_contact_candidates->begin(),
                       particle_one_contact_candidates->end(),
                       particle_two_id);
+
           auto search_iterator_two =
             std::find(particle_two_contact_candidates->begin(),
                       particle_two_contact_candidates->end(),

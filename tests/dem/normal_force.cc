@@ -186,9 +186,8 @@ test()
                 .tangential_relative_velocity[2] = 0.0;
             }
 
-          pw_force_object.calculate_pw_contact_force(&pw_contact_information,
-                                                     dem_parameters,
-                                                     dt);
+          pw_force_object.calculate_pw_contact_force(
+            &pw_contact_information, dem_parameters.physical_properties, dt);
           integrator_object.integrate(particle_handler, g, dt);
 
           deallog << " "

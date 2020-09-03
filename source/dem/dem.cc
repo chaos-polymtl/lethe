@@ -47,6 +47,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
+  , physical_properties(parameters.physical_properties)
   , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs
@@ -161,16 +162,18 @@ void
 DEMSolver<dim>::particle_wall_contact_force()
 {
   pw_contact_force_object->calculate_pw_contact_force(
-    &pw_pairs_in_contact, parameters, simulation_control->get_time_step());
+    &pw_pairs_in_contact,
+    physical_properties,
+    simulation_control->get_time_step());
   particle_point_line_contact_force_object
     .calculate_particle_point_line_contact_force(&particle_points_in_contact,
-                                                 parameters);
+                                                 physical_properties);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_point_line_contact_force(&particle_lines_in_contact,
-                                                     parameters);
+                                                     physical_properties);
     }
 }
 
@@ -377,11 +380,11 @@ DEMSolver<dim>::solve()
   // Initialize DEM body force
   Tensor<1, dim> g;
 
-  g[0] = parameters.physical_properties.gx;
-  g[1] = parameters.physical_properties.gy;
+  g[0] = physical_properties.gx;
+  g[1] = physical_properties.gy;
   if (dim == 3)
     {
-      g[2] = parameters.physical_properties.gz;
+      g[2] = physical_properties.gz;
     }
 
   // Finding cell neighbors
@@ -492,7 +495,7 @@ DEMSolver<dim>::solve()
       pp_contact_force_object->calculate_pp_contact_force(
         &local_adjacent_particles,
         &ghost_adjacent_particles,
-        parameters,
+        physical_properties,
         simulation_control->get_time_step());
 
       // Particles-wall fine search

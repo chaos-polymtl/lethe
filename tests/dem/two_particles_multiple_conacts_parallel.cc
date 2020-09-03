@@ -359,7 +359,7 @@ test()
       nonlinear_force_object.calculate_pp_contact_force(
         &cleared_local_adjacent_particles,
         &cleared_ghost_adjacent_particles,
-        dem_parameters,
+        dem_parameters.physical_properties,
         dt);
 
       // Integration

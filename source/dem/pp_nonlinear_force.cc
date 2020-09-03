@@ -8,9 +8,9 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     *local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    *                             ghost_adjacent_particles,
-  const DEMSolverParameters<dim> &dem_parameters,
-  const double &                  dt)
+    *                                               ghost_adjacent_particles,
+  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+  const double &                                    dt)
 {
   // Updating contact force of particles in local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -60,10 +60,6 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
               if (normal_overlap > 0)
                 // This means that the adjacent particles are in contact
                 {
-                  // Defining physical properties as local variable
-                  const auto physical_properties =
-                    dem_parameters.physical_properties;
-
                   // Since the normal overlap is already calculated we update
                   // this element of the container here. The rest of information
                   // are updated using the following function
@@ -159,10 +155,6 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
               if (normal_overlap > 0)
                 {
                   // This means that the adjacent particles are in contact
-
-                  // Defining physical properties as local variable
-                  const auto physical_properties =
-                    dem_parameters.physical_properties;
 
                   // Since the normal overlap is already calculated we update
                   // this element of the container here. The rest of information

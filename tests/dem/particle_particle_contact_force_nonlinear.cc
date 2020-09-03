@@ -182,10 +182,11 @@ test()
 
   // Calling linear force
   PPNonLinearForce<dim> nonlinear_force_object;
-  nonlinear_force_object.calculate_pp_contact_force(&local_adjacent_particles,
-                                                    &ghost_adjacent_particles,
-                                                    dem_parameters,
-                                                    dt);
+  nonlinear_force_object.calculate_pp_contact_force(
+    &local_adjacent_particles,
+    &ghost_adjacent_particles,
+    dem_parameters.physical_properties,
+    dt);
 
   // Output
   auto particle = particle_handler.begin();

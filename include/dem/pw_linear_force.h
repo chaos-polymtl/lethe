@@ -57,14 +57,16 @@ public:
    * @param pw_pairs_in_contact Required information for calculation of the
    * particle-wall contact force, these information were obtained in the
    * fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param physical_properties DEM physical properties declared in the .prm
+   * file
+   * @param dt DEM time step
    */
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      *                             pw_pairs_in_contact,
-    const DEMSolverParameters<dim> &dem_parameters,
-    const double &                  dt) override;
+      *                                               pw_pairs_in_contact,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    const double &                                    dt) override;
 
 private:
   /**

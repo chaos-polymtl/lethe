@@ -64,4 +64,10 @@ localize_contacts(
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     &pw_contact_candidates);
 
+template <int dim>
+std::vector<int>::iterator
+find_two_elements(std::vector<int> &candidates,
+                  int &             search_element_one,
+                  int &             search_element_two);
+
 #endif /* LOCALIZECONTACTS_H_ */

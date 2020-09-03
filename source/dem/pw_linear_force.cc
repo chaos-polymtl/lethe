@@ -6,9 +6,9 @@ template <int dim>
 void
 PWLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *                             pw_pairs_in_contact,
-  const DEMSolverParameters<dim> &dem_parameters,
-  const double &                  dt)
+    *                                               pw_pairs_in_contact,
+  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+  const double &                                    dt)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -57,10 +57,6 @@ PWLinearForce<dim>::calculate_pw_contact_force(
 
           if (normal_overlap > 0.0)
             {
-              // Defining physical properties as local variable
-              const auto physical_properties =
-                dem_parameters.physical_properties;
-
               contact_information->normal_overlap = normal_overlap;
 
               this->update_contact_information(*contact_information,

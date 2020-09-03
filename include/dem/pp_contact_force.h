@@ -60,9 +60,9 @@ public:
       *local_adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      *                             ghost_adjacent_particles,
-    const DEMSolverParameters<dim> &dem_parameters,
-    const double &                  dt) = 0;
+      *                                               ghost_adjacent_particles,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    const double &                                    dt) = 0;
 
 protected:
   /**

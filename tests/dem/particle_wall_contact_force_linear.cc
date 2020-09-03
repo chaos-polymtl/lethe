@@ -139,7 +139,7 @@ test()
   // Calling linear force
   PWLinearForce<dim> force_object;
   force_object.calculate_pw_contact_force(&pw_contact_information,
-                                          dem_parameters,
+                                          dem_parameters.physical_properties,
                                           dt);
 
   // Output

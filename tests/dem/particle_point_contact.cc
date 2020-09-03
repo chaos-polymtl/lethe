@@ -162,7 +162,7 @@ test()
         fine_search_object.Particle_Point_Fine_Search(contact_candidates);
 
       force_object.calculate_particle_point_line_contact_force(
-        &contact_information, dem_parameters);
+        &contact_information, dem_parameters.physical_properties);
       integrator_object.integrate(particle_handler, g, dt);
 
       if (step % writing_frequency == 0)

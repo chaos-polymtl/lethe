@@ -253,9 +253,10 @@ private:
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
-  const double       neighborhood_threshold;
-  const unsigned int contact_detection_frequency;
-  const unsigned int insertion_frequency;
+  const double                                     neighborhood_threshold;
+  const unsigned int                               contact_detection_frequency;
+  const unsigned int                               insertion_frequency;
+  const Parameters::Lagrangian::PhysicalProperties physical_properties;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;

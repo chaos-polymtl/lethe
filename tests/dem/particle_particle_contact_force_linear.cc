@@ -183,10 +183,11 @@ test()
 
   // Calling linear force
   PPLinearForce<dim> linear_force_object;
-  linear_force_object.calculate_pp_contact_force(&local_adjacent_particles,
-                                                 &ghost_adjacent_particles,
-                                                 dem_parameters,
-                                                 dt);
+  linear_force_object.calculate_pp_contact_force(
+    &local_adjacent_particles,
+    &ghost_adjacent_particles,
+    dem_parameters.physical_properties,
+    dt);
 
   // Output
   auto particle = particle_handler.begin();

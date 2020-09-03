@@ -13,13 +13,10 @@ template <int dim>
 void
 ParticlePointLineForce<dim>::calculate_particle_point_line_contact_force(
   const std::map<int, particle_point_line_contact_info_struct<dim>>
-    *                             particle_point_line_pairs_in_contact,
-  const DEMSolverParameters<dim> &dem_parameters)
+    *particle_point_line_pairs_in_contact,
+  const Parameters::Lagrangian::PhysicalProperties &physical_properties)
 
 {
-  // Defining physical properties as local variable
-  const auto physical_properties = dem_parameters.physical_properties;
-
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator =
          particle_point_line_pairs_in_contact->begin();
