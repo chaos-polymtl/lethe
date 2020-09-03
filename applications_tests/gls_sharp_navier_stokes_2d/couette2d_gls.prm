@@ -91,33 +91,33 @@ subsection particles
 	set stencil order = 6
 	set nb force evaluation = 1000
 
-    subsection x y z vx vy vz omega_x omega_y omega_z radius particle 0 
-            set X = 0
-	    set Y = 0
-	    set Z = 0
-	    set VX = 0
-	    set VY = 0
-	    set VZ = 0
-	    set omega X = 0
-	    set omega Y = 0
-	    set omega Z = 1
-	    set pressure X =0.00001
-	    set pressure Y =0.00001
+    subsection particle info 0 
+            set x = 0
+	    set y = 0
+	    set z = 0
+	    set u = 0
+	    set v = 0
+	    set w = 0
+	    set omega x = 0
+	    set omega y = 0
+	    set omega z = 1
+	    set pressure x =0.00001
+	    set pressure y =0.00001
 	    set radius = 0.25
 
     end
-    subsection x y z vx vy vz omega_x omega_y omega_z radius particle 1 
-            set X = 0
-	    set Y = 0
-	    set Z = 0
-	    set VX = 0
-	    set VY = 0
-	    set VZ = 0
-	    set omega X = 0
-	    set omega Y = 0
-	    set omega Z = 0
-	    set pressure X =0.00001
-	    set pressure Y =0.40001
+    subsection particle info 1 
+            set x = 0
+	    set y = 0
+	    set z = 0
+	    set u = 0
+	    set v = 0
+	    set w = 0
+	    set omega x = 0
+	    set omega y = 0
+	    set omega z = 0
+	    set pressure x =0.40001
+	    set pressure y =0.00001
 	    set radius = 0.5
     end
 end

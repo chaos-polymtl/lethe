@@ -19,14 +19,22 @@
 
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
+#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/fe/mapping_manifold.h>
+#include <deal.II/fe/mapping_q1.h>
 
 #ifndef lethe_utilities_h
-#  define lethe_utilities_h
+#define lethe_utilities_h
 
 using namespace dealii;
 
+
+template <int dim>
+typename DoFHandler<dim>::active_cell_iterator
+find_cell_around_point_with_tree(const DoFHandler<dim> &  dof_handler,Point<dim> point);
 // Utility function to create tables from vectors of scalars/tensors as
 // dependent or independent variables.
+
 
 
 /**
@@ -101,6 +109,7 @@ make_table_tensors_scalars(
   const std::vector<double> &        dependent_values,
   const std::string &                dependent_column_name,
   const unsigned int                 display_precision);
+
 
 
 

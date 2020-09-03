@@ -407,6 +407,10 @@ namespace Parameters
                         "10",
                         Patterns::Integer(),
                         "Maximum number of Newton Iterations");
+      prm.declare_entry("relative tolerance",
+                          "0.9",
+                          Patterns::Double(),
+                          "Newton solver relative tolerance between steps");
 
       prm.declare_entry(
         "skip iterations",
@@ -445,9 +449,11 @@ namespace Parameters
         throw(std::runtime_error("Invalid non-linear solver "));
 
       tolerance         = prm.get_double("tolerance");
+      relative_tolerance= prm.get_double("relative tolerance");
       max_iterations    = prm.get_integer("max iterations");
       skip_iterations   = prm.get_integer("skip iterations");
       display_precision = prm.get_integer("residual precision");
+
     }
     prm.leave_subsection();
   }
@@ -873,31 +879,31 @@ namespace Parameters
   void
   IBParticles<dim>::declare_default_entry(ParameterHandler &prm)
   {
-    prm.declare_entry("X", "0", Patterns::Double(), "X cor ");
-    prm.declare_entry("Y", "0", Patterns::Double(), "Y cor ");
-    prm.declare_entry("Z", "0", Patterns::Double(), "Z cor ");
-    prm.declare_entry("VX", "0", Patterns::Double(), "speed X ");
-    prm.declare_entry("VY", "0", Patterns::Double(), "speed y ");
-    prm.declare_entry("VZ", "0", Patterns::Double(), "speed z ");
-    prm.declare_entry("omega X", "0", Patterns::Double(), "rotation speed x ");
-    prm.declare_entry("omega Y", "0", Patterns::Double(), "rotation speed y ");
-    prm.declare_entry("omega Z", "0", Patterns::Double(), "rotation speed z ");
+    prm.declare_entry("x", "0", Patterns::Double(), "x cor ");
+    prm.declare_entry("y", "0", Patterns::Double(), "y cor ");
+    prm.declare_entry("z", "0", Patterns::Double(), "z cor ");
+    prm.declare_entry("u", "0", Patterns::Double(), "speed in x ");
+    prm.declare_entry("v", "0", Patterns::Double(), "speed in y ");
+    prm.declare_entry("w", "0", Patterns::Double(), "speed  in z ");
+    prm.declare_entry("omega x", "0", Patterns::Double(), "rotation speed x ");
+    prm.declare_entry("omega y", "0", Patterns::Double(), "rotation speed y ");
+    prm.declare_entry("omega z", "0", Patterns::Double(), "rotation speed z ");
     prm.declare_entry(
-      "pressure X",
+      "pressure x",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in X ");
+      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in x ");
     prm.declare_entry(
-      "pressure Y",
+      "pressure y",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in Y ");
+      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in y ");
     prm.declare_entry(
-      "pressure Z",
+      "pressure z",
       "0",
       Patterns::Double(),
-      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in Z ");
-    prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles raidus ");
+      "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in z ");
+    prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles radius ");
   }
 
   template <int dim>
@@ -923,16 +929,6 @@ namespace Parameters
         Patterns::Integer(),
         "Number of particles reprensented by IB max number of particles = 10 ");
       prm.declare_entry(
-        "assemble inside",
-        "true",
-        Patterns::Bool(),
-        "Bool to know if the solver assemble the equation inside the particle");
-      prm.declare_entry(
-        "assemble type",
-        "NS",
-        Patterns::Selection("NS|mass"),
-        "if assemble inside is true define what type of equation is assemble NS or mass");
-      prm.declare_entry(
         "refine mesh inside radius factor",
         "0.5",
         Patterns::Double(),
@@ -947,73 +943,74 @@ namespace Parameters
         "100",
         Patterns::Integer(),
         "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
-      prm.declare_entry("pressure mpi",
-                        "true",
-                        Patterns::Bool(),
-                        "Bool if using the mpi pressure inside the particle");
       prm.declare_entry(
-        "nb skip",
-        "2",
-        Patterns::Integer(),
-        "Number of step skip per integration step of the position ");
+                "calculate force",
+                "true",
+                Patterns::Bool(),
+                "Bool to define if the force is evaluated on each particle ");
+      prm.declare_entry(
+                "ib force output file",
+                "ib_force",
+                Patterns::FileName(),
+                "Bool to define if the force is evaluated on each particle ");
 
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 0");
+        "particle info 0");
       {
         declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 1");
+        "particle info 1");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
 
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 2");
+        "particle info 2");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 3");
+        "particle info 3");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 4");
+        "particle info 4");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 5");
+        "particle info 5");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 6");
+        "particle info 6");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 7");
+        "particle info 7");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 8");
+        "particle info 8");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
       prm.enter_subsection(
-        "x y z vx vy vz omega_x omega_y omega_z radius particle 9");
+        "particle info 9");
       {
         IBParticles::declare_default_entry(prm);
       }
@@ -1033,37 +1030,34 @@ namespace Parameters
       initial_refinement = prm.get_integer("initial refinement");
       inside_radius      = prm.get_double("refine mesh inside radius factor");
       outside_radius     = prm.get_double("refine mesh outside radius factor");
-      assemble_inside    = prm.get_bool("assemble inside");
       nb_force_eval      = prm.get_integer("nb force evaluation");
-      const std::string op = prm.get("assemble type");
-      if (op == "NS")
-        P_assemble = Particle_Assemble_type ::NS;
-      if (op == "mass")
-        P_assemble = Particle_Assemble_type ::mass;
+      calculate_force_ib = prm.get_bool("calculate force");
+      ib_force_output_file = prm.get("ib force output file");
+
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
           std::string section =
-            "x y z vx vy vz omega_x omega_y omega_z radius particle " +
+            "particle info " +
             std::to_string(i);
           prm.enter_subsection(section);
-          particles[i].position[0]          = prm.get_double("X");
-          particles[i].position[1]          = prm.get_double("Y");
-          particles[i].velocity[0]          = prm.get_double("VX");
-          particles[i].velocity[1]          = prm.get_double("VY");
-          particles[i].omega[0]             = prm.get_double("omega X");
-          particles[i].omega[1]             = prm.get_double("omega Y");
-          particles[i].omega[2]             = prm.get_double("omega Z");
+          particles[i].position[0]          = prm.get_double("x");
+          particles[i].position[1]          = prm.get_double("y");
+          particles[i].velocity[0]          = prm.get_double("u");
+          particles[i].velocity[1]          = prm.get_double("v");
+          particles[i].omega[0]             = prm.get_double("omega x");
+          particles[i].omega[1]             = prm.get_double("omega y");
+          particles[i].omega[2]             = prm.get_double("omega z");
           particles[i].radius               = prm.get_double("radius");
-          particles[i].pressure_location[0] = prm.get_double("pressure X");
-          particles[i].pressure_location[1] = prm.get_double("pressure Y");
+          particles[i].pressure_location[0] = prm.get_double("pressure x");
+          particles[i].pressure_location[1] = prm.get_double("pressure y");
 
           if (dim == 3)
             {
-              particles[i].position[2]          = prm.get_double("Z");
-              particles[i].velocity[2]          = prm.get_double("VZ");
-              particles[i].pressure_location[2] = prm.get_double("pressure Z");
+              particles[i].position[2]          = prm.get_double("z");
+              particles[i].velocity[2]          = prm.get_double("w");
+              particles[i].pressure_location[2] = prm.get_double("pressure z");
             }
           prm.leave_subsection();
         }

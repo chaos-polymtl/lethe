@@ -78,6 +78,10 @@ private:
   void
   sharp_edge();
 
+  void
+  write_force_ib();
+
+
 
   double
   calculate_L2_error_particles();
@@ -109,8 +113,8 @@ private:
   std::vector<IBParticle<dim>> particles;
 
 
-  TableHandler table_f;
-  TableHandler table_t;
+  std::vector<TableHandler> table_f;
+  std::vector<TableHandler> table_t;
 };
 
 
