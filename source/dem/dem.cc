@@ -44,6 +44,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       std::pow(parameters.model_parameters.neighborhood_threshold *
                  parameters.physical_properties.diameter,
                2))
+  , contact_detection_frequency(
+      parameters.model_parameters.contact_detection_frequency)
+  , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs

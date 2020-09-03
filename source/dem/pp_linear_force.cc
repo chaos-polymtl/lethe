@@ -226,7 +226,8 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
           particle_two_properties[DEM::PropertiesIndex::dp]));
   double effective_youngs_modulus =
     physical_properties.Youngs_modulus_particle /
-    (2 * (1 - pow(physical_properties.Poisson_ratio_particle, 2.0)));
+    (2.0 * (1.0 - physical_properties.Poisson_ratio_particle *
+                    physical_properties.Poisson_ratio_particle));
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
@@ -244,25 +245,21 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
           0.2) +
     DBL_MIN;
   double normal_damping_constant = sqrt(
-    (4 * effective_mass * normal_spring_constant) /
-    (1 +
-     pow((3.1415 / (log(physical_properties.restitution_coefficient_particle) +
-                    DBL_MIN)),
-         2)));
-  double tangential_damping_constant = sqrt(
-    (4 * effective_mass * tangential_spring_constant) /
-    (1 +
-     pow((3.1415 / (log(physical_properties.restitution_coefficient_particle) +
-                    DBL_MIN)),
-         2)));
+    (4.0 * effective_mass * normal_spring_constant) /
+    (1.0 +
+     (3.1415 /
+      (log(physical_properties.restitution_coefficient_particle) + DBL_MIN)) *
+       (3.1415 / (log(physical_properties.restitution_coefficient_particle) +
+                  DBL_MIN))));
+  double tangential_damping_constant =
+    normal_damping_constant *
+    sqrt(tangential_spring_constant / normal_spring_constant);
 
   // Calculation of normal force using spring and dashpot normal forces
-  Tensor<1, dim> spring_normal_force =
-    (normal_spring_constant * normal_overlap) * normal_unit_vector;
-  Tensor<1, dim> dashpot_normal_force =
-    (normal_damping_constant * normal_relative_velocity_value) *
-    normal_unit_vector;
-  normal_force = spring_normal_force + dashpot_normal_force;
+  normal_force =
+    ((normal_spring_constant * normal_overlap) * normal_unit_vector) +
+    ((normal_damping_constant * normal_relative_velocity_value) *
+     normal_unit_vector);
 
   double maximum_tangential_overlap =
     physical_properties.friction_coefficient_particle * normal_force.norm() /
@@ -279,11 +276,9 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     }
   // Calculation of tangential force using spring and dashpot tangential
   // forces
-  Tensor<1, dim> spring_tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, dim> dashpot_tangential_force =
-    tangential_damping_constant * contact_info.tangential_relative_velocity;
-  tangential_force = -1.0 * spring_tangential_force + dashpot_tangential_force;
+  tangential_force =
+    (-1.0 * tangential_spring_constant * contact_info.tangential_overlap) +
+    (tangential_damping_constant * contact_info.tangential_relative_velocity);
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
@@ -315,7 +310,7 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calculation of rolling resistance torque
   rolling_resistance_torque =
-    -1 * physical_properties.rolling_friction_particle * effective_radius *
+    -1.0 * physical_properties.rolling_friction_particle * effective_radius *
     normal_force.norm() * omega_ij_direction;
 }
 

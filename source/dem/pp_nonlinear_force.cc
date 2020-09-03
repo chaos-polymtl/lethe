@@ -1,6 +1,6 @@
 #include <dem/pp_nonlinear_force.h>
 
-using namespace dealii;
+using namespace DEM;
 
 template <int dim>
 void
@@ -53,8 +53,8 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
               // Calculation of normal overlap
               double normal_overlap =
-                0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-                       particle_two_properties[DEM::PropertiesIndex::dp]) -
+                0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                       particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
               if (normal_overlap > 0)
@@ -152,8 +152,8 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
               // Calculation of normal overlap
               double normal_overlap =
-                0.5 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-                       particle_two_properties[DEM::PropertiesIndex::dp]) -
+                0.5 * (particle_one_properties[PropertiesIndex::dp] +
+                       particle_two_properties[PropertiesIndex::dp]) -
                 particle_one_location.distance(particle_two_location);
 
               if (normal_overlap > 0)
@@ -231,21 +231,21 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
 {
   // Calculation of effective mass, radius, Young's modulus and shear
   // modulus of the contact
-  double effective_mass =
-    (particle_one_properties[DEM::PropertiesIndex::mass] *
-     particle_two_properties[DEM::PropertiesIndex::mass]) /
-    (particle_one_properties[DEM::PropertiesIndex::mass] +
-     particle_two_properties[DEM::PropertiesIndex::mass]);
-  double effective_radius =
-    (particle_one_properties[DEM::PropertiesIndex::dp] *
-     particle_two_properties[DEM::PropertiesIndex::dp]) /
-    (2.0 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-            particle_two_properties[DEM::PropertiesIndex::dp]));
-  double effective_youngs_modulus =
+  const double effective_mass =
+    (particle_one_properties[PropertiesIndex::mass] *
+     particle_two_properties[PropertiesIndex::mass]) /
+    (particle_one_properties[PropertiesIndex::mass] +
+     particle_two_properties[PropertiesIndex::mass]);
+  const double effective_radius =
+    (particle_one_properties[PropertiesIndex::dp] *
+     particle_two_properties[PropertiesIndex::dp]) /
+    (2.0 * (particle_one_properties[PropertiesIndex::dp] +
+            particle_two_properties[PropertiesIndex::dp]));
+  const double effective_youngs_modulus =
     physical_properties.Youngs_modulus_particle /
     (2.0 * (1.0 - (physical_properties.Poisson_ratio_particle *
                    physical_properties.Poisson_ratio_particle)));
-  double effective_shear_modulus =
+  const double effective_shear_modulus =
     physical_properties.Youngs_modulus_particle /
     (4.0 * (2.0 - physical_properties.Poisson_ratio_particle) *
      (1.0 + physical_properties.Poisson_ratio_particle));
@@ -255,11 +255,12 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // the normal overlap
   const double Poisson_ratio_particle_log =
     std::log(physical_properties.Poisson_ratio_particle);
-  double model_parameter_beta =
+  const double model_parameter_beta =
     Poisson_ratio_particle_log /
     sqrt(Poisson_ratio_particle_log * Poisson_ratio_particle_log + 9.8696);
-  double radius_times_overlap_sqrt = sqrt(effective_radius * normal_overlap);
-  double model_parameter_sn =
+  const double radius_times_overlap_sqrt =
+    sqrt(effective_radius * normal_overlap);
+  const double model_parameter_sn =
     2.0 * effective_youngs_modulus * radius_times_overlap_sqrt;
   double model_parameter_st =
     8.0 * effective_shear_modulus * radius_times_overlap_sqrt;
@@ -305,8 +306,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   if (dim == 3)
     {
       tangential_torque =
-        cross_product_3d((0.5 *
-                          particle_one_properties[DEM::PropertiesIndex::dp] *
+        cross_product_3d((0.5 * particle_one_properties[PropertiesIndex::dp] *
                           normal_unit_vector),
                          tangential_force);
     }
@@ -319,9 +319,9 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   for (int d = 0; d < dim; ++d)
     {
       particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_one_properties[PropertiesIndex::omega_x + d];
       particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
+        particle_two_properties[PropertiesIndex::omega_x + d];
     }
 
   omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;

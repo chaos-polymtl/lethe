@@ -254,10 +254,8 @@ private:
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
   const double       neighborhood_threshold;
-  const unsigned int contact_detection_frequency =
-    parameters.model_parameters.contact_detection_frequency;
-  const unsigned int insertion_frequency =
-    parameters.insertion_info.insertion_frequency;
+  const unsigned int contact_detection_frequency;
+  const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;
