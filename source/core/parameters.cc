@@ -546,7 +546,7 @@ namespace Parameters
       prm.declare_entry("max krylov vectors",
                         "30",
                         Patterns::Integer(),
-                        "Maximum solver iterations");
+                        "Maximum number of krylov vectors for GMRES");
 
       prm.declare_entry("ilu preconditioner fill",
                         "0",
