@@ -1272,7 +1272,12 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                linear_solver_tolerance,
                                true,
                                true);
-  TrilinosWrappers::SolverGMRES solver(solver_control);
+
+  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+    false, this->nsparam.linear_solver.max_krylov_vectors);
+
+
+  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
   if (renewed_matrix || !ilu_preconditioner)
     setup_ILU();
@@ -1372,7 +1377,11 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                linear_solver_tolerance,
                                true,
                                true);
-  TrilinosWrappers::SolverGMRES solver(solver_control);
+
+  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+    false, this->nsparam.linear_solver.max_krylov_vectors);
+
+  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
   if (renewed_matrix || !amg_preconditioner)
     setup_AMG();
