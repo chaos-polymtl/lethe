@@ -351,6 +351,9 @@ namespace Parameters
     // Maximum number of iterations
     int max_iterations;
 
+    // Maximum number of krylov vectors
+    int max_krylov_vectors;
+
     // ILU or ILUT fill
     double ilu_precond_fill;
 

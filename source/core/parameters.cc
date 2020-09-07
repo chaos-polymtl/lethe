@@ -543,6 +543,11 @@ namespace Parameters
                         Patterns::Integer(),
                         "Maximum solver iterations");
 
+      prm.declare_entry("max krylov vectors",
+                        "30",
+                        Patterns::Integer(),
+                        "Maximum number of krylov vectors for GMRES");
+
       prm.declare_entry("ilu preconditioner fill",
                         "0",
                         Patterns::Double(),
@@ -630,7 +635,9 @@ namespace Parameters
       relative_residual  = prm.get_double("relative residual");
       minimum_residual   = prm.get_double("minimum residual");
       max_iterations     = prm.get_integer("max iters");
-      ilu_precond_fill   = prm.get_double("ilu preconditioner fill");
+      max_krylov_vectors = prm.get_integer("max krylov vectors");
+
+      ilu_precond_fill = prm.get_double("ilu preconditioner fill");
       ilu_precond_atol =
         prm.get_double("ilu preconditioner absolute tolerance");
       ilu_precond_rtol =
