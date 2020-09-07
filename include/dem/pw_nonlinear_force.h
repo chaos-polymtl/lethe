@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PWNONLINEARFORCE_H_
-#  define PWNONLINEARFORCE_H_
+#ifndef particle_wall_nonlinear_force_h
+#  define particle_wall_nonlinear_force_h
 
 /**
  * Calculation of the non-linear particle-wall contact force using the

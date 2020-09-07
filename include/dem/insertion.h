@@ -43,8 +43,8 @@
 
 using namespace dealii;
 
-#ifndef INSERTION_H_
-#  define INSERTION_H_
+#ifndef insertion_h
+#  define insertion_h
 
 /**
  * Base interface for classes that carry out the insertion of particles in the
@@ -75,7 +75,7 @@ protected:
    * Carries out assigning the properties of inserted particles.
    *
    * @param inserted_this_step Number of particles that are inserted
-   * at each insetion step.
+   * at each insertion step.
    * @param remained_particles Number of remained particles going to be inserted
    * in future insertions
    */
@@ -88,7 +88,7 @@ protected:
    *
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param inserted_this_step Number of particles that are inserted
-   * at each insetion step. This value can change in the last insertion step to
+   * at each insertion step. This value can change in the last insertion step to
    * reach the desired number of particles
    * @param inserted_so_far Number of particles are already inserted
    */
@@ -106,4 +106,4 @@ protected:
   assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters) = 0;
 };
 
-#endif /* INSERTION_H_ */
+#endif /* insertion_h */

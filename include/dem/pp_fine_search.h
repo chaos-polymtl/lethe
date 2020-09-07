@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PPFINESEARCH_H_
-#  define PPFINESEARCH_H_
+#ifndef particle_particle_fine_search_h
+#  define particle_particle_fine_search_h
 
 /**
  * This class is used for local-local and local-ghost fine particle-particle
@@ -95,4 +95,4 @@ public:
     const double neighborhood_threshold);
 };
 
-#endif /* PPFINESEARCH_H_ */
+#endif /* particle_particle_fine_search_h */

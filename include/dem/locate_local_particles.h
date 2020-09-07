@@ -26,8 +26,8 @@
 
 using namespace dealii;
 
-#ifndef LOCATELOCALPARTICLES_H_
-#  define LOCATELOCALPARTICLES_H_
+#ifndef locate_local_particles_h
+#  define locate_local_particles_h
 
 /**
  * Updates the iterators to particles in local-local contact containers. This is
@@ -67,4 +67,4 @@ locate_local_particles_in_cells(
   std::map<int, particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact);
 
-#endif /* LOCATELOCALPARTICLES_H_ */
+#endif /* locate_local_particles_h */

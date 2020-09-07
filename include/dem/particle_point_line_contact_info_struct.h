@@ -21,8 +21,8 @@
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
-#  define PARTICLEPOINTLINECONTACTINFOSTRUCT_H_
+#ifndef particle_point_line_contact_info_struct_h
+#  define particle_point_line_contact_info_struct_h
 
 /**
  * This struct handles the information related to the calculation of the
@@ -40,4 +40,4 @@ struct particle_point_line_contact_info_struct
   double                           normal_relative_velocity;
 };
 
-#endif /* PARTICLEPOINTLINECONTACTINFOSTRUCT_H_ */
+#endif /* particle_point_line_contact_info_struct_h */

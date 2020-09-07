@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PWBROADSEARCH_H_
-#  define PWBROADSEARCH_H_
+#ifndef particle_wall_broad_search_h
+#  define particle_wall_broad_search_h
 
 /**
  * This class is used for broad particle-wall contact search. Broad search
@@ -78,4 +78,4 @@ public:
                                     Point<dim>>>> &pw_contact_candidates);
 };
 
-#endif /* PWBROADSEARCH_H_ */
+#endif /* particle_wall_broad_search_h */

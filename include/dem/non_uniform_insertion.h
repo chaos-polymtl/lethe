@@ -24,8 +24,8 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
 
-#ifndef NONUNIFORMINSERTION_H_
-#  define NONUNIFORMINSERTION_H_
+#ifndef nonuniform_insertion_h
+#  define nonuniform_insertion_h
 
 /**
  * Non-uniform insertion of particles in a rectangular box
@@ -104,4 +104,4 @@ private:
     number_of_particles_z_direction;
 };
 
-#endif /* NONUNIFORMINSERTION_H_ */
+#endif /* nonuniform_insertion_h */

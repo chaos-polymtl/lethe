@@ -20,8 +20,8 @@
 
 using namespace dealii;
 
-#ifndef UPDATEGHOSTPARTICLECONTAINER_H_
-#  define UPDATEGHOSTPARTICLECONTAINER_H_
+#ifndef update_ghost_particle_container_h
+#  define update_ghost_particle_container_h
 
 /**
  * Updates the iterators to local particles in a map of particles
@@ -41,4 +41,4 @@ update_ghost_particle_container(
     &                                    ghost_particle_container,
   const Particles::ParticleHandler<dim> *particle_handler);
 
-#endif /* UPDATEGHOSTPARTICLECONTAINER_H_ */
+#endif /* update_ghost_particle_container_h */

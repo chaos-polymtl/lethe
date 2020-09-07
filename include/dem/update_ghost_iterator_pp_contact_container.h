@@ -20,8 +20,8 @@
 
 using namespace dealii;
 
-#ifndef UPDATEGHOSTITERATORPPCONTACTCONTAINER_H_
-#  define UPDATEGHOSTITERATORPPCONTACTCONTAINER_H_
+#ifndef update_ghost_iterator_particle_particle_contact_container_h
+#  define update_ghost_iterator_particle_particle_contact_container_h
 
 /**
  * Updates the iterators to particles in local_ghost adjacent_particles
@@ -39,4 +39,4 @@ update_ghost_iterator_pp_contact_container(
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &ghost_particle_container);
 
-#endif /* UPDATEGHOSTITERATORPPCONTACTCONTAINER_H_ */
+#endif /* update_ghost_iterator_particle_particle_contact_container_h */

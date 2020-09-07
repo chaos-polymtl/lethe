@@ -22,8 +22,8 @@
 
 using namespace std;
 
-#ifndef LOCALIZECONTACTS_H_
-#  define LOCALIZECONTACTS_H_
+#ifndef localize_contacts_h
+#  define localize_contacts_h
 
 /**
  * Manages clearing the contact containers when particles are exchanged
@@ -70,4 +70,4 @@ find_two_elements(std::vector<int> &candidates,
                   int &             search_element_one,
                   int &             search_element_two);
 
-#endif /* LOCALIZECONTACTS_H_ */
+#endif /* localize_contacts_h */

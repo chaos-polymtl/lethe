@@ -24,8 +24,8 @@
 
 using namespace dealii;
 
-#ifndef EXPLICITEULERINTEGRATOR_H_
-#  define EXPLICITEULERINTEGRATOR_H_
+#ifndef explicit_Euler_integrator_h
+#  define explicit_Euler_integrator_h
 
 /**
  * Implementation of a classical explicit euler scheme for the integration

@@ -64,8 +64,8 @@
 #include <iostream>
 #include <unordered_set>
 
-#ifndef LETHE_DEM_H
-#  define LETHE_DEM_H
+#ifndef Lethe_DEM_h
+#  define Lethe_DEM_h
 
 /**
  * The DEM class which initializes all the required parameters and iterates over

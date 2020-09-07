@@ -24,8 +24,8 @@
 
 using namespace dealii;
 
-#ifndef VELOCITYVERLETINTEGRATOR_H_
-#  define VELOCITYVERLETINTEGRATOR_H_
+#ifndef velocity_verlet_integrator_h
+#  define velocity_verlet_integrator_h
 
 /**
  * Implementation of a classical velocity verlet scheme for the integration

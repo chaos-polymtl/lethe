@@ -31,8 +31,8 @@
 
 using namespace dealii;
 
-#ifndef PPBROADSEARCH_H_
-#  define PPBROADSEARCH_H_
+#ifndef particle_particle_broad_search_h
+#  define particle_particle_broad_search_h
 
 /**
  * This class is used for broad particle-particle contact search. Broad search
@@ -86,4 +86,4 @@ public:
     std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates);
 };
 
-#endif /* PPBROADSEARCH_H_ */
+#endif /* particle_particle_broad_search_h */

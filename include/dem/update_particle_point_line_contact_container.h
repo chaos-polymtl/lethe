@@ -20,8 +20,8 @@
 
 using namespace dealii;
 
-#ifndef UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
-#  define UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_
+#ifndef update_particle_point_line_contact_container_h
+#  define update_particle_point_line_contact_container_h
 
 /**
  * Updates the iterators to particles in particle_points_in_contact and
@@ -42,4 +42,4 @@ update_particle_point_line_contact_container_iterators(
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &particle_container);
 
-#endif /* UPDATEPARTICLEPOINTLINECONTACTCONTAINER_H_ */
+#endif /* update_particle_point_line_contact_container_h */

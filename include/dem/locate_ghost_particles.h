@@ -22,8 +22,8 @@
 
 using namespace dealii;
 
-#ifndef LOCATEGHOSTPARTICLES_H_
-#  define LOCATEGHOSTPARTICLES_H_
+#ifndef locate_ghost_particles_h
+#  define locate_ghost_particles_h
 
 /**
  * Updates the iterators to particles in local-ghost contact containers. This is
@@ -50,4 +50,4 @@ locate_ghost_particles_in_cells(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &ghost_adjacent_particles);
 
-#endif /* LOCATEGHOSTPARTICLES_H_ */
+#endif /* locate_ghost_particles_h */

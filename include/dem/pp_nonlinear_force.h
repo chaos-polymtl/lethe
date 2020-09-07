@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PPNONLINEARFORCE_H_
-#  define PPNONLINEARFORCE_H_
+#ifndef particle_particle_nonlinear_force_h
+#  define particle_particle_nonlinear_force_h
 
 /**
  * Calculation of the non-linear particle-particle contact force using the

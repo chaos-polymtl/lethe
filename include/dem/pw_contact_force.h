@@ -23,8 +23,8 @@
 
 using namespace dealii;
 
-#ifndef PWCONTACTFORCE_H_
-#  define PWCONTACTFORCE_H_
+#ifndef particle_wall_contact_force_h
+#  define particle_wall_contact_force_h
 
 /**
  * Base interface for classes that carry out the calculation of particle-wall
@@ -99,8 +99,9 @@ protected:
    * @param vector_b The projection vector of vector_a
    * @return The projection of vector_a on vector_b
    */
-  Tensor<1, dim> find_projection(Tensor<1, dim> vector_a,
-                                 Tensor<1, dim> vector_b);
+  Tensor<1, dim>
+  find_projection(const Tensor<1, dim> &vector_a,
+                  const Tensor<1, dim> &vector_b);
 };
 
-#endif /* PWCONTACTFORCE_H_ */
+#endif /* particle_wall_contact_force_h */

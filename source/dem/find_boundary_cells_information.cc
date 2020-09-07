@@ -56,7 +56,7 @@ FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
                     {
                       // Finding the normal vector of the boundary face
                       Tensor<1, dim> normal_vector =
-                        -1 * fe_face_values.normal_vector(f_q_point);
+                        -fe_face_values.normal_vector(f_q_point);
 
                       // Finding a point on the boundary face
                       Point<dim> quad_point =

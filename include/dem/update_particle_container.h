@@ -20,8 +20,8 @@
 
 using namespace dealii;
 
-#ifndef UPDATEPARTICLECONTAINER_H_
-#  define UPDATEPARTICLECONTAINER_H_
+#ifndef update_particle_container_h
+#  define update_particle_container_h
 
 /**
  * Updates the iterators to local particles in a map of particles
@@ -40,4 +40,4 @@ update_particle_container(
   std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container,
   const Particles::ParticleHandler<dim> *                    particle_handler);
 
-#endif /* UPDATEPARTICLECONTAINER_H_ */
+#endif /* update_particle_container_h */

@@ -25,8 +25,8 @@
 
 using namespace dealii;
 
-#ifndef PPCONTACTFORCE_H_
-#  define PPCONTACTFORCE_H_
+#ifndef particle_particle_contact_force_h
+#  define particle_particle_contact_force_h
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle
@@ -126,4 +126,4 @@ protected:
                                const Tensor<1, dim> &rolling_resistance_torque);
 };
 
-#endif /* PPCONTACTFORCE_H_ */
+#endif /* particle_particle_contact_force_h */

@@ -20,8 +20,8 @@
 
 using namespace dealii;
 
-#ifndef UPDATEPWCONTACTCONTAINER_H_
-#  define UPDATEPWCONTACTCONTAINER_H_
+#ifndef update_particle_wall_contact_container_h
+#  define update_particle_wall_contact_container_h
 
 /**
  * Updates the iterators to particles in pw_contact_container (output of pw
@@ -39,4 +39,4 @@ update_pw_contact_container_iterators(
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &particle_container);
 
-#endif /* UPDATEPWCONTACTCONTAINER_H_ */
+#endif /* update_particle_wall_contact_container_h */

@@ -27,8 +27,8 @@
 
 using namespace dealii;
 
-#ifndef PARTICLEPOINTLINEFINESEARCH_H_
-#  define PARTICLEPOINTLINEFINESEARCH_H_
+#ifndef particle_point_line_fine_search_h
+#  define particle_point_line_fine_search_h
 
 /**
  * This class is used for fine particle-point and particle-line contact search.
@@ -101,4 +101,4 @@ private:
                         Point<dim> point_b);
 };
 
-#endif /* PARTICLEPOINTLINEFINESEARCH_H_ */
+#endif /* particle_point_line_fine_search_h */

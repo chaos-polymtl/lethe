@@ -26,8 +26,8 @@
 
 using namespace dealii;
 
-#ifndef FINDCELLNEIGHBORS_H_
-#  define FINDCELLNEIGHBORS_H_
+#ifndef find_cell_neighbors_h
+#  define find_cell_neighbors_h
 
 /**
  * Finds the neighbors lists of all the active cells in the input triangulation.
@@ -67,4 +67,4 @@ public:
       &cells_ghost_neighbor_list);
 };
 
-#endif /* FINDCELLNEIGHBORS_H_ */
+#endif /* find_cell_neighbors_h */

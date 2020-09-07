@@ -33,8 +33,8 @@
 
 using namespace dealii;
 
-#ifndef FINDBOUNDARYCELLSINFORMATION_H_
-#  define FINDBOUNDARYCELLSINFORMATION_H_
+#ifndef find_boundary_cells_information_h
+#  define find_boundary_cells_information_h
 
 /**
  * Finds all the boundary cells and faces in the triangulation, for each cell
@@ -118,4 +118,4 @@ private:
   std::map<int, Point<dim>> boundary_vertices;
 };
 
-#endif /* FINDBOUNDARYCELLSINFORMATION_H_ */
+#endif /* find_boundary_cells_information_h */

@@ -20,8 +20,8 @@
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef PPCONTACTINFOSTRUCT_H_
-#  define PPCONTACTINFOSTRUCT_H_
+#ifndef particle_particle_contact_info_struct_h
+#  define particle_particle_contact_info_struct_h
 
 /**
  * This struct handles the information related to the calculation of the
@@ -39,4 +39,4 @@ struct pp_contact_info_struct
   Particles::ParticleIterator<dim> particle_two;
 };
 
-#endif /* PPCONTACTINFOSTRUCT_H_ */
+#endif /* particle_particle_contact_info_struct_h */

@@ -27,8 +27,8 @@
 
 using namespace dealii;
 
-#ifndef PARTICLEPOINTLINEBROADSEARCH_H_
-#  define PARTICLEPOINTLINEBROADSEARCH_H_
+#ifndef particle_point_line_broad_search_h
+#  define particle_point_line_broad_search_h
 
 /**
  * This class is used for broad particle-line and particle-point contact
@@ -91,4 +91,4 @@ public:
                  Point<dim>>> &boundary_cells_with_lines);
 };
 
-#endif /* PARTICLEPOINTLINEBROADSEARCH_H_ */
+#endif /* particle_point_line_broad_search_h */

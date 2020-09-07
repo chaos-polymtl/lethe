@@ -26,8 +26,8 @@
 
 using namespace dealii;
 
-#ifndef PARTICLEPOINTLINEFORCE_H_
-#  define PARTICLEPOINTLINEFORCE_H_
+#ifndef particle_point_line_force_h
+#  define particle_point_line_force_h
 
 /**
  * Calculation of the non-linear particle-point and particle-line contact force

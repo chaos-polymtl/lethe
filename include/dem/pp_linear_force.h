@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PPLINEARFORCE_H_
-#  define PPLINEARFORCE_H_
+#ifndef particle_particle_linear_force_h
+#  define particle_particle_linear_force_h
 
 /**
  * Calculation of the linear particle-particle contact force using the

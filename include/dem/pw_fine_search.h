@@ -29,8 +29,8 @@
 
 using namespace dealii;
 
-#ifndef PWFINESEARCH_H_
-#  define PWFINESEARCH_H_
+#ifndef particle_wall_fine_search_h
+#  define particle_wall_fine_search_h
 
 /**
  * This class is used for fine particle-wall contact search. Fine search
@@ -82,4 +82,4 @@ public:
       &pw_pairs_in_contact);
 };
 
-#endif /* PWFINESEARCH_H_ */
+#endif /* particle_wall_fine_search_h */
