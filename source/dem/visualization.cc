@@ -82,7 +82,7 @@ Visualization<dim>::print_xyz(
   std::vector<std::pair<std::string, int>>       properties)
 {
   std::vector<int> precision = {
-    0, 0, 5, 5, 5, 5, 5, 1, 1, 1, 5, 5, 5, 1, 1, 1, 5, 5, 5, 5, 5,
+    0, 0, 5, 5, 5, 5, 5, 1, 1, 1, 4, 4, 4, 1, 1, 1, 5, 5, 5, 5, 5,
   };
   if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
     std::cout
