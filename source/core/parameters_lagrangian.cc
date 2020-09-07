@@ -198,20 +198,10 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        prm.declare_entry("pp_broad_search_frequency",
+        prm.declare_entry("contact_detection_frequency",
                           "1",
                           Patterns::Integer(),
                           "Particle-particle broad search frequency");
-
-        prm.declare_entry("pp_fine_search_frequency",
-                          "1",
-                          Patterns::Integer(),
-                          "Particle-particle fine search frequency");
-
-        prm.declare_entry("pw_broad_search_frequency",
-                          "1",
-                          Patterns::Integer(),
-                          "Particle-wall broad search frequency");
 
         prm.declare_entry(
           "neighborhood_threshold",
@@ -245,11 +235,8 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        pp_broad_search_frequency =
-          prm.get_integer("pp_broad_search_frequency");
-        pp_fine_search_frequency = prm.get_integer("pp_fine_search_frequency");
-        pw_broad_search_frequency =
-          prm.get_integer("pw_broad_search_frequency");
+        contact_detection_frequency =
+          prm.get_integer("contact_detection_frequency");
         neighborhood_threshold = prm.get_double("neighborhood_threshold");
 
         const std::string ppcf = prm.get("pp_contact_force_method");

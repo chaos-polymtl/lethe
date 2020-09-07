@@ -21,8 +21,8 @@
 
 #include <deal.II/distributed/tria.h>
 
-#ifndef BOUNDARYCELLSINFOSTRUCT_H_
-#  define BOUNDARYCELLSINFOSTRUCT_H_
+#ifndef boundary_cells_info_struct_h
+#  define boundary_cells_info_struct_h
 
 /**
  * This struct handles the information related to the boundary cells which will
@@ -47,4 +47,4 @@ struct boundary_cells_info_struct
   Point<dim> point_on_face;
 };
 
-#endif /* BOUNDARYCELLSINFOSTRUCT_H_ */
+#endif /* boundary_cells_info_struct_h */

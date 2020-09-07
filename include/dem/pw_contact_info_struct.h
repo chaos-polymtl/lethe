@@ -21,8 +21,8 @@
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef PWCONTACTINFOSTRUCT_H_
-#  define PWCONTACTINFOSTRUCT_H_
+#ifndef particle_wall_contact_info_struct_h
+#  define particle_wall_contact_info_struct_h
 
 /**
  * This struct handles the information related to the calculation of the
@@ -44,4 +44,4 @@ struct pw_contact_info_struct
   int                              face_id;
 };
 
-#endif /* PWCONTACTINFOSTRUCT_H_ */
+#endif /* particle_wall_contact_info_struct_h */

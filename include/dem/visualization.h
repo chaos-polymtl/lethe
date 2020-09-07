@@ -27,8 +27,8 @@
 
 using namespace dealii;
 
-#ifndef VISUALIZATION_H_
-#  define VISUALIZATION_H_
+#ifndef visualization_h
+#  define visualization_h
 
 /**
  * Building patches of particle properties for visualization

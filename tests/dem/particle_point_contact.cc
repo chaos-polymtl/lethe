@@ -114,8 +114,8 @@ test()
 
   // Getting boundary cells information
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                               boundary_cells_with_faces;
-  std::vector<boundary_cells_info_struct<dim>> boundary_cell_information;
+                                                 boundary_cells_with_faces;
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cell_information;
   std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
                          Point<dim>,
                          Point<dim>>>
@@ -162,7 +162,7 @@ test()
         fine_search_object.Particle_Point_Fine_Search(contact_candidates);
 
       force_object.calculate_particle_point_line_contact_force(
-        &contact_information, dem_parameters);
+        &contact_information, dem_parameters.physical_properties);
       integrator_object.integrate(particle_handler, g, dt);
 
       if (step % writing_frequency == 0)

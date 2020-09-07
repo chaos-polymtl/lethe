@@ -22,8 +22,8 @@
 #include <tuple>
 #include <vector>
 
-#ifndef LETHE_dem_properties_H
-#  define LETHE_dem_properties_H
+#ifndef Lethe_DEM_properties_h
+#  define Lethe_DEM_properties_h
 
 namespace DEM
 {

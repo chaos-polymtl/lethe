@@ -23,8 +23,8 @@
 
 using namespace dealii;
 
-#ifndef INTEGRATION_H_
-#  define INTEGRATION_H_
+#ifndef integration_h
+#  define integration_h
 
 /**
  * Base interface for classes that carry out the integration of the velocity and
@@ -64,4 +64,4 @@ public:
             double                           time_step) = 0;
 };
 
-#endif /* INTEGRATION_H_ */
+#endif /* integration_h */

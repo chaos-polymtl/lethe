@@ -20,8 +20,8 @@
 
 #include <deal.II/particles/particle_iterator.h>
 
-#ifndef PPCONTACTINFOSTRUCT_H_
-#  define PPCONTACTINFOSTRUCT_H_
+#ifndef particle_particle_contact_info_struct_h
+#  define particle_particle_contact_info_struct_h
 
 /**
  * This struct handles the information related to the calculation of the
@@ -33,13 +33,10 @@ using namespace dealii;
 template <int dim>
 struct pp_contact_info_struct
 {
-  double                           normal_overlap;
-  Tensor<1, dim>                   normal_unit_vector;
-  double                           normal_relative_velocity;
   Tensor<1, dim>                   tangential_relative_velocity;
   Tensor<1, dim>                   tangential_overlap;
   Particles::ParticleIterator<dim> particle_one;
   Particles::ParticleIterator<dim> particle_two;
 };
 
-#endif /* PPCONTACTINFOSTRUCT_H_ */
+#endif /* particle_particle_contact_info_struct_h */

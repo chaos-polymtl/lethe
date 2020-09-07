@@ -33,8 +33,8 @@
 
 using namespace dealii;
 
-#ifndef FINDBOUNDARYCELLSINFORMATION_H_
-#  define FINDBOUNDARYCELLSINFORMATION_H_
+#ifndef find_boundary_cells_information_h
+#  define find_boundary_cells_information_h
 
 /**
  * Finds all the boundary cells and faces in the triangulation, for each cell
@@ -57,17 +57,17 @@ public:
    * boundary cells and for the boundary faces the normal vector and a point
    * locating on the face are obtained
    *
-   * @param triangulation Triangulation to access the information of the cells
    * @param boundary_cells_with_faces A vector which contains all the boundary
    * cells which has atleast one boundary face
-   * @return A vector of structs (boundary_cells_info_struct), this struct
+   * @param triangulation Triangulation to access the information of the cells
+   * @return A map of structs (boundary_cells_info_struct), this struct
    * contains 1, an integer which shows the number of boundary face 2, the
    * corresponding boundary cell 3, the face number of the cell 4, normal vector
    * of the face 5, a point on the face which will be used to obtain the
    * distance between center of particles and the face
    */
 
-  std::vector<boundary_cells_info_struct<dim>>
+  std::map<int, boundary_cells_info_struct<dim>>
   find_boundary_cells_information(
     std::vector<typename Triangulation<dim>::active_cell_iterator>
       &                                              boundary_cells_with_faces,
@@ -118,4 +118,4 @@ private:
   std::map<int, Point<dim>> boundary_vertices;
 };
 
-#endif /* FINDBOUNDARYCELLSINFORMATION_H_ */
+#endif /* find_boundary_cells_information_h */

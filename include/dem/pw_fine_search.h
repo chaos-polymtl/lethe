@@ -29,8 +29,8 @@
 
 using namespace dealii;
 
-#ifndef PWFINESEARCH_H_
-#  define PWFINESEARCH_H_
+#ifndef particle_wall_fine_search_h
+#  define particle_wall_fine_search_h
 
 /**
  * This class is used for fine particle-wall contact search. Fine search
@@ -68,27 +68,18 @@ public:
    * information in a struct. Note that the size of this vector is equal to the
    * number of particles while the key of map (each element of the vector) is
    * the boundary id
-   * @param time_step DEM time step
    */
 
   void
   pw_Fine_Search(
-    std::vector<std::tuple<std::pair<Particles::ParticleIterator<dim>, int>,
-                           Tensor<1, dim>,
-                           Point<dim>>> &pw_contact_pair_candidates,
-    std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &    pw_pairs_in_contact,
-    double time_step);
-
-  /** This private function is used to find the projection of vector_a on
-   * vector_b
-   * @param vector_a A vector which is going to be projected on vector_b
-   * @param vector_b The projection vector of vector_a
-   * @return The projection of vector_a on vector_b
-   */
-private:
-  Tensor<1, dim> find_projection(Tensor<1, dim> vector_a,
-                                 Tensor<1, dim> vector_b);
+    std::unordered_map<
+      int,
+      std::unordered_map<int,
+                         std::tuple<Particles::ParticleIterator<dim>,
+                                    Tensor<1, dim>,
+                                    Point<dim>>>> &pw_contact_pair_candidates,
+    std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+      &pw_pairs_in_contact);
 };
 
-#endif /* PWFINESEARCH_H_ */
+#endif /* particle_wall_fine_search_h */

@@ -59,13 +59,17 @@ test()
   MappingQ1<dim>     mapping;
   PPBroadSearch<dim> broad_search_object;
 
-  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-    cell_neighbor_list;
-
   // Finding cell neighbors list, it is required for finding the broad search
   // pairs
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    local_neighbor_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    ghost_neighbor_list;
+
   FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbor_list = cell_neighbor_object.find_cell_neighbors(triangulation);
+  cell_neighbor_object.find_cell_neighbors(triangulation,
+                                           local_neighbor_list,
+                                           ghost_neighbor_list);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means they are inserted in three adjacent cells in x direction
@@ -102,21 +106,42 @@ test()
     particle_handler.insert_particle(particle3, pt3_info.first);
 
   // Calling broad search function
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
-    broad_search_pairs;
+  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
+
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
-                                            cell_neighbor_list,
-                                            broad_search_pairs);
+                                            &local_neighbor_list,
+                                            &local_neighbor_list,
+                                            local_contact_pair_candidates,
+                                            ghost_contact_pair_candidates);
 
   // Output
-  for (auto pairs_iterator = broad_search_pairs.begin();
-       pairs_iterator != broad_search_pairs.end();
+  for (auto pairs_iterator = local_contact_pair_candidates.begin();
+       pairs_iterator != local_contact_pair_candidates.end();
        ++pairs_iterator)
     {
-      deallog << "A pair is detected: particle "
-              << pairs_iterator->first->get_id() << " and particle "
-              << pairs_iterator->second->get_id() << std::endl;
+      unsigned int first_particle_id = pairs_iterator->first;
+      auto         candidates        = &pairs_iterator->second;
+      for (auto candidate_iterator = candidates->begin();
+           candidate_iterator != candidates->end();
+           ++candidate_iterator)
+        if (first_particle_id == 0)
+          deallog << "A pair is detected: particle " << first_particle_id
+                  << " and particle " << *candidate_iterator << std::endl;
+    }
+
+  for (auto pairs_iterator = local_contact_pair_candidates.begin();
+       pairs_iterator != local_contact_pair_candidates.end();
+       ++pairs_iterator)
+    {
+      unsigned int first_particle_id = pairs_iterator->first;
+      auto         candidates        = &pairs_iterator->second;
+      for (auto candidate_iterator = candidates->begin();
+           candidate_iterator != candidates->end();
+           ++candidate_iterator)
+        if (first_particle_id == 1)
+          deallog << "A pair is detected: particle " << first_particle_id
+                  << " and particle " << *candidate_iterator << std::endl;
     }
 }
 

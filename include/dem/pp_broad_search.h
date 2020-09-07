@@ -31,8 +31,8 @@
 
 using namespace dealii;
 
-#ifndef PPBROADSEARCH_H_
-#  define PPBROADSEARCH_H_
+#ifndef particle_particle_broad_search_h
+#  define particle_particle_broad_search_h
 
 /**
  * This class is used for broad particle-particle contact search. Broad search
@@ -46,6 +46,9 @@ using namespace dealii;
 template <int dim>
 class PPBroadSearch
 {
+private:
+  // std::vector<int> particle_candidate_container;
+
 public:
   PPBroadSearch<dim>();
 
@@ -56,20 +59,31 @@ public:
    *
    * @param particle_handler The particle handler of particles in the broad
    * search
-   * @param cellNeighborList This vector is the output of FindCellNeighbors
-   * class and shows the neighbor cells of each cell in the triangulation
-   * @param contact_pair_candidates A map of pairs which contains all the
-   * particle pairs in adjacent cells which are collision candidates
+   * @param cells_local_neighbor_list This vector is the output of
+   * find_cell_neighbors class and shows the local neighbor cells of all local
+   * celsl in the triangulation
+   * @param cells_ghost_neighbor_list This vector is the output of
+   * find_cell_neighbors class and shows the ghost neighbor cells of all local
+   * celsl in the triangulation
+   * @param local_contact_pair_candidates A map of vectors which contains all
+   * the local-local particle pairs in adjacent cells which are collision
+   * candidates
+   * @param ghost_contact_pair_candidates A map of vectors which contains all
+   * the local-ghost particle pairs in adjacent cells which are collision
+   * candidates
    */
 
   void
   find_PP_Contact_Pairs(
     dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-      &cellNeighborList,
-    std::vector<std::pair<typename Particles::ParticleIterator<dim>,
-                          typename Particles::ParticleIterator<dim>>>
-      &contact_pair_candidates);
+    const std::vector<
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      *cells_local_neighbor_list,
+    const std::vector<
+      std::vector<typename Triangulation<dim>::active_cell_iterator>>
+      *                                        cells_ghost_neighbor_list,
+    std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
+    std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates);
 };
 
-#endif /* PPBROADSEARCH_H_ */
+#endif /* particle_particle_broad_search_h */

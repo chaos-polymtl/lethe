@@ -48,10 +48,15 @@ test()
   triangulation.refine_global(refinement_number);
 
   // Finding the cell neighbors
-  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-                         cell_neighbors;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    cells_local_neighbor_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    cells_ghost_neighbor_list;
+
   FindCellNeighbors<dim> cell_neighbor_object;
-  cell_neighbors = cell_neighbor_object.find_cell_neighbors(triangulation);
+  cell_neighbor_object.find_cell_neighbors(triangulation,
+                                           cells_local_neighbor_list,
+                                           cells_ghost_neighbor_list);
 
   // Output
   int i = 0;
@@ -59,8 +64,8 @@ test()
        ++cell)
     {
       deallog << "neighbors of cell " << cell << " are: ";
-      for (auto iterator = cell_neighbors[i].begin();
-           iterator != cell_neighbors[i].end();
+      for (auto iterator = cells_local_neighbor_list[i].begin();
+           iterator != cells_local_neighbor_list[i].end();
            ++iterator)
         {
           deallog << " " << *iterator;

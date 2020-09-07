@@ -81,15 +81,29 @@ Visualization<dim>::print_xyz(
   const dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::pair<std::string, int>>       properties)
 {
+  std::vector<int> precision = {
+    0, 0, 5, 5, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1, 5, 3, 3, 3, 3,
+  };
+  if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
+    std::cout
+      << "id , type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
+         "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
+         " mass , mom_inertia, M_x  , M_y  , M_z  "
+      << std::endl;
+
   this->build_patches(particle_handler, properties);
+  unsigned int counter;
 
   // loop over all patches
   for (const auto &patch : patches)
     {
+      counter                  = 0;
       unsigned int n_data_sets = properties.size();
-      for (unsigned int data_set = 0; data_set < n_data_sets; ++data_set)
+      for (unsigned int data_set = 0; data_set < n_data_sets;
+           ++data_set, ++counter)
         {
-          std::cout << patch.data(data_set, 0) << ' ';
+          std::cout.precision(precision[counter]);
+          std::cout << std::fixed << patch.data(data_set, 0) << " ";
         }
       std::cout << '\n';
     }

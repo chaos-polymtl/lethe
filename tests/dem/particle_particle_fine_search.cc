@@ -68,11 +68,15 @@ test()
                                                    n_properties);
 
   // Finding cell neighbors
-  std::vector<std::set<typename Triangulation<dim>::active_cell_iterator>>
-    cell_neighbors_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    local_neighbor_list;
+  std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
+    ghost_neighbor_list;
 
-  FindCellNeighbors<dim> cn1;
-  cell_neighbors_list = cn1.find_cell_neighbors(triangulation);
+  FindCellNeighbors<dim> cell_neighbor_object;
+  cell_neighbor_object.find_cell_neighbors(triangulation,
+                                           local_neighbor_list,
+                                           ghost_neighbor_list);
 
   // Creating broad and fine particle-particle search objects
   PPBroadSearch<dim> broad_search_object;
@@ -138,23 +142,39 @@ test()
   pit2->get_properties()[17] = 1;
 
   // Calling broad search
-  std::vector<std::pair<Particles::ParticleIterator<dim>,
-                        Particles::ParticleIterator<dim>>>
-    pairs;
+  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
+  std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
+
+  for (auto particle_iterator = particle_handler.begin();
+       particle_iterator != particle_handler.end();
+       ++particle_iterator)
+    {
+      particle_container[particle_iterator->get_id()] = particle_iterator;
+    }
+
   broad_search_object.find_PP_Contact_Pairs(particle_handler,
-                                            cell_neighbors_list,
-                                            pairs);
+                                            &local_neighbor_list,
+                                            &local_neighbor_list,
+                                            local_contact_pair_candidates,
+                                            ghost_contact_pair_candidates);
 
   // Calling fine search
-  std::map<int, std::map<int, pp_contact_info_struct<dim>>> adjacent_particles;
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+    local_adjacent_particles;
+  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+    ghost_adjacent_particles;
 
-  fine_search_obejct.pp_Fine_Search(pairs,
-                                    adjacent_particles,
+  fine_search_obejct.pp_Fine_Search(local_contact_pair_candidates,
+                                    ghost_contact_pair_candidates,
+                                    local_adjacent_particles,
+                                    ghost_adjacent_particles,
+                                    particle_container,
                                     neighborhood_threshold);
 
   // Output
-  for (auto adjacent_particles_iterator = adjacent_particles.begin();
-       adjacent_particles_iterator != adjacent_particles.end();
+  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
+       adjacent_particles_iterator != local_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
       auto information_iterator =

@@ -25,8 +25,8 @@
 
 using namespace dealii;
 
-#ifndef PPCONTACTFORCE_H_
-#  define PPCONTACTFORCE_H_
+#ifndef particle_particle_contact_force_h
+#  define particle_particle_contact_force_h
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle
@@ -55,10 +55,14 @@ public:
    */
   virtual void
   calculate_pp_contact_force(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *                             adjacent_particles,
-    const DEMSolverParameters<dim> &dem_parameters,
-    const double &                  dt) = 0;
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+      *local_adjacent_particles,
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+      *                                               ghost_adjacent_particles,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    const double &                                    dt) = 0;
 
 protected:
   /**
@@ -76,6 +80,8 @@ protected:
   void
   update_contact_information(
     pp_contact_info_struct<dim> &  adjacent_pair_information,
+    double &                       normal_relative_velocity_value,
+    Tensor<1, dim> &               normal_unit_vector,
     const ArrayView<const double> &particle_one_properties,
     const ArrayView<const double> &particle_two_properties,
     const Point<dim> &             particle_one_location,
@@ -83,8 +89,9 @@ protected:
     const double &                 dt);
 
   /**
-   * Carries out applying the calculated force and torque on the particle pair
-   * in contact, for both non-linear and linear contact force calculations
+   * Carries out applying the calculated force and torque on the local-local
+   * particle pair in contact, for both non-linear and linear contact force
+   * calculations
    *
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
@@ -93,12 +100,30 @@ protected:
    * a contact pair
    */
   void
-  apply_force_and_torque(ArrayView<double> &particle_one_properties,
-                         ArrayView<double> &particle_two_properties,
-                         const std::tuple<Tensor<1, dim>,
-                                          Tensor<1, dim>,
-                                          Tensor<1, dim>,
-                                          Tensor<1, dim>> &forces_and_torques);
+  apply_force_and_torque_real(ArrayView<double> &   particle_one_properties,
+                              ArrayView<double> &   particle_two_properties,
+                              const Tensor<1, dim> &normal_force,
+                              const Tensor<1, dim> &tangential_force,
+                              const Tensor<1, dim> &tangential_torque,
+                              const Tensor<1, dim> &rolling_resistance_torque);
+
+  /**
+   * Carries out applying the calculated force and torque on the local-ghost
+   * particle pair in contact, for both non-linear and linear contact force
+   * calculations. The contact force is only applied on the local particles
+   *
+   * @param particle_one_properties Properties of particle one (local) in
+   * contact
+   * @param forces_and_torques A tuple which contains: 1, normal force, 2,
+   * tangential force, 3, tangential torque and 4, rolling resistance torque of
+   * a contact pair
+   */
+  void
+  apply_force_and_torque_ghost(ArrayView<double> &   particle_one_properties,
+                               const Tensor<1, dim> &normal_force,
+                               const Tensor<1, dim> &tangential_force,
+                               const Tensor<1, dim> &tangential_torque,
+                               const Tensor<1, dim> &rolling_resistance_torque);
 };
 
-#endif /* PPCONTACTFORCE_H_ */
+#endif /* particle_particle_contact_force_h */

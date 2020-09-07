@@ -98,19 +98,20 @@ test()
   // Calling find_boundary_cells_information function to find the information of
   // boundary cells
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                               boundary_cells_with_faces;
-  std::vector<boundary_cells_info_struct<dim>> boundary_cells_information;
-  FindBoundaryCellsInformation<dim>            boundary_cells_object;
+                                                 boundary_cells_with_faces;
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
+  FindBoundaryCellsInformation<dim>              boundary_cells_object;
   boundary_cells_information =
     boundary_cells_object.find_boundary_cells_information(
       boundary_cells_with_faces, tr);
 
   // Calling particle-wall broad search
   PWBroadSearch<dim> broad_search_object;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-               Tensor<1, dim>,
-               Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
   broad_search_object.find_PW_Contact_Pairs(boundary_cells_information,
                                             particle_handler,
@@ -118,11 +119,9 @@ test()
 
   // Calling particle-wall fine search
   PWFineSearch<dim> fine_search_object;
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
-  fine_search_object.pw_Fine_Search(pw_contact_list,
-                                    pw_contact_information,
-                                    dt);
+  fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
 
   // Output
   for (auto pw_contact_information_iterator = pw_contact_information.begin();
@@ -132,26 +131,13 @@ test()
       auto info_iterator = pw_contact_information_iterator->second.begin();
       while (info_iterator != pw_contact_information_iterator->second.end())
         {
-          deallog << "The normal overlap of contacting paritlce-wall is: "
-                  << info_iterator->second.normal_overlap << std::endl;
+          deallog << "Particle " << info_iterator->second.particle->get_id()
+                  << " is in contact with face " << info_iterator->first
+                  << std::endl;
           deallog << "The normal vector of collision is: "
                   << info_iterator->second.normal_vector[0] << " "
                   << info_iterator->second.normal_vector[1] << " "
                   << info_iterator->second.normal_vector[2] << std::endl;
-          deallog << "Normal relative velocity at contact point is: "
-                  << info_iterator->second.normal_relative_velocity
-                  << std::endl;
-          deallog << "The tangential overlap of contacting paritlce-wall is: "
-                  << info_iterator->second.tangential_overlap[0] << " "
-                  << info_iterator->second.tangential_overlap[1] << " "
-                  << info_iterator->second.tangential_overlap[2] << std::endl;
-          deallog << "Tangential relative velocity at contact point is: "
-                  << info_iterator->second.tangential_relative_velocity[0]
-                  << " "
-                  << info_iterator->second.tangential_relative_velocity[1]
-                  << " "
-                  << info_iterator->second.tangential_relative_velocity[2]
-                  << std::endl;
           ++info_iterator;
         }
     }

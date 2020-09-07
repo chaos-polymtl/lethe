@@ -20,8 +20,8 @@
 #include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
 
-#ifndef PARAMETERS_DEM_H_
-#  define PARAMETERS_DEM_H_
+#ifndef parameters_DEM_h
+#  define parameters_DEM_h
 
 /**
  * Handles all the parameters declared in the parameter handler file
@@ -38,7 +38,6 @@ public:
   Parameters::Lagrangian::PhysicalProperties physical_properties;
   Parameters::Lagrangian::InsertionInfo      insertion_info;
   Parameters::Lagrangian::ModelParameters    model_parameters;
-
 
   void
   declare(ParameterHandler &prm)
@@ -65,4 +64,4 @@ public:
   }
 };
 
-#endif /* DEMPARAMTERS_H_ */
+#endif /* parameters_DEM_h */

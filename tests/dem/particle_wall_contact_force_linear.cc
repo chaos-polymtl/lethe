@@ -111,19 +111,20 @@ test()
 
   // Finding boundary cells
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                               boundary_cells_with_faces;
-  std::vector<boundary_cells_info_struct<dim>> boundary_cell_information;
-  FindBoundaryCellsInformation<dim>            boundary_cells_object;
+                                                 boundary_cells_with_faces;
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cell_information;
+  FindBoundaryCellsInformation<dim>              boundary_cells_object;
   boundary_cell_information =
     boundary_cells_object.find_boundary_cells_information(
       boundary_cells_with_faces, tr);
 
   // Calling broad search
   PWBroadSearch<dim> broad_search_object;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-               Tensor<1, dim>,
-               Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
   broad_search_object.find_PW_Contact_Pairs(boundary_cell_information,
                                             particle_handler,
@@ -131,16 +132,15 @@ test()
 
   // Calling fine search
   PWFineSearch<dim> fine_search_object;
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
-  fine_search_object.pw_Fine_Search(pw_contact_list,
-                                    pw_contact_information,
-                                    dt);
+  fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
 
   // Calling linear force
   PWLinearForce<dim> force_object;
   force_object.calculate_pw_contact_force(&pw_contact_information,
-                                          dem_parameters);
+                                          dem_parameters.physical_properties,
+                                          dt);
 
   // Output
   auto particle = particle_handler.begin();

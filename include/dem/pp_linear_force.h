@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PPLINEARFORCE_H_
-#  define PPLINEARFORCE_H_
+#ifndef particle_particle_linear_force_h
+#  define particle_particle_linear_force_h
 
 /**
  * Calculation of the linear particle-particle contact force using the
@@ -54,17 +54,25 @@ public:
    * Carries out the calculation of the particle-particle contact force using
    * linear (Hookean) model
    *
-   * @param pairs_in_contact_info Required information for calculation of the
-   * particle-particle contact force, these information were obtained in the
-   * fine search
+   * @param local_adjacent_particles Required information for calculation of the
+   * local-local particle-particle contact force, these information were
+   * obtained in the fine search
+   * @param ghost_adjacent_particles Required information for calculation of the
+   * local-ghost particle-particle contact force, these information were
+   * obtained in the fine search
    * @param dem_parameters DEM parameters declared in the .prm file
+   * @param dt DEM time-step
    */
   virtual void
   calculate_pp_contact_force(
-    std::map<int, std::map<int, pp_contact_info_struct<dim>>>
-      *                             adjacent_particles,
-    const DEMSolverParameters<dim> &dem_parameters,
-    const double &                  dt) override;
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+      *local_adjacent_particles,
+    std::unordered_map<int,
+                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+      *                                               ghost_adjacent_particles,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    const double &                                    dt) override;
 
 private:
   /**
@@ -77,12 +85,26 @@ private:
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
    */
-  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  void
   calculate_linear_contact_force_and_torque(
     const Parameters::Lagrangian::PhysicalProperties &physical_properties,
     pp_contact_info_struct<dim> &                     contact_info,
-    const ArrayView<const double> &                   particle_one_properties,
-    const ArrayView<const double> &                   particle_two_propertie);
+    const double &                 normal_relative_velocity_value,
+    const Tensor<1, dim> &         normal_unit_vector,
+    const double &                 normal_overlap,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    Tensor<1, dim> &               normal_force,
+    Tensor<1, dim> &               tangential_force,
+    Tensor<1, dim> &               tangential_torque,
+    Tensor<1, dim> &               rolling_resistance_torque);
+
+  double         normal_relative_velocity_value;
+  Tensor<1, dim> normal_unit_vector;
+  Tensor<1, dim> normal_force;
+  Tensor<1, dim> tangential_force;
+  Tensor<1, dim> tangential_torque;
+  Tensor<1, dim> rolling_resistance_torque;
 };
 
 #endif

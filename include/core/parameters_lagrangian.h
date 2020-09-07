@@ -93,14 +93,8 @@ namespace Parameters
 
     struct ModelParameters
     {
-      // Particle-particle broad search frequency
-      int pp_broad_search_frequency;
-
-      // Particle-particle fine search frequency
-      int pp_fine_search_frequency;
-
-      // Particle-wall broad search frequency
-      int pw_broad_search_frequency;
+      // Particle-particle, particle-wall broad and fine search frequency
+      int contact_detection_frequency;
 
       // Contact search neighborhood threshold (neighborhood diameter to
       // particle diameter)

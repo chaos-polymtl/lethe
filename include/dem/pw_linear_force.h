@@ -30,8 +30,8 @@
 
 using namespace dealii;
 
-#ifndef PWLINEARFORCE_H_
-#  define PWLINEARFORCE_H_
+#ifndef particle_wall_linear_force_h
+#  define particle_wall_linear_force_h
 
 /**
  * Calculation of the linear particle-wall contact force using the
@@ -57,13 +57,32 @@ public:
    * @param pw_pairs_in_contact Required information for calculation of the
    * particle-wall contact force, these information were obtained in the
    * fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param physical_properties DEM physical properties declared in the .prm
+   * file
+   * @param dt DEM time step
    */
   virtual void
   calculate_pw_contact_force(
-    const std::map<int, std::map<int, pw_contact_info_struct<dim>>>
-      *                             pw_pairs_in_contact,
-    const DEMSolverParameters<dim> &dem_parameters) override;
+    std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+      *                                               pw_pairs_in_contact,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    const double &                                    dt) override;
+
+private:
+  /**
+   * Carries out the calculation of the particle-particle linear contact
+   * force and torques based on the updated values in contact_info
+   *
+   * @param physical_properties Physical properties of the system
+   * @param contact_info A container that contains the required information for
+   * calculation of the contact force for a particle pair in contact
+   * @param particle_properties Properties of particle one in contact
+   */
+  std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
+  calculate_linear_contact_force_and_torque(
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
+    pw_contact_info_struct<dim> &                     contact_info,
+    const ArrayView<const double> &                   particle_properties);
 };
 
 #endif

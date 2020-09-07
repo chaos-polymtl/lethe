@@ -25,8 +25,8 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
 
-#ifndef UNIFORMINSERTION_H_
-#  define UNIFORMINSERTION_H_
+#ifndef uniform_insertion_h
+#  define uniform_insertion_h
 
 /**
  * Uniform insertion of particles in a rectangular box
@@ -81,4 +81,4 @@ private:
     number_of_particles_z_direction;
 };
 
-#endif /* UNIFORMINSERTION_H_ */
+#endif /* uniform_insertion_h */

@@ -114,26 +114,28 @@ test()
 
   // Finding boundary cells
   std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                               boundary_cells_with_faces;
-  std::vector<boundary_cells_info_struct<dim>> boundary_cell_information;
-  FindBoundaryCellsInformation<dim>            boundary_cells_object;
+                                                 boundary_cells_with_faces;
+  std::map<int, boundary_cells_info_struct<dim>> boundary_cell_information;
+  FindBoundaryCellsInformation<dim>              boundary_cells_object;
   boundary_cell_information =
     boundary_cells_object.find_boundary_cells_information(
       boundary_cells_with_faces, tr);
 
   // P-W broad search
   PWBroadSearch<dim> pw_broad_search_object;
-  std::vector<
-    std::tuple<std::pair<typename Particles::ParticleIterator<dim>, int>,
-               Tensor<1, dim>,
-               Point<dim>>>
+  std::unordered_map<
+    int,
+    std::unordered_map<
+      int,
+      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
   pw_broad_search_object.find_PW_Contact_Pairs(boundary_cell_information,
                                                particle_handler,
                                                pw_contact_list);
+
   // P-W fine search
   PWFineSearch<dim> pw_fine_search_object;
-  std::map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
                                 pw_contact_information;
   PWNonLinearForce<dim>         pw_force_object;
   VelocityVerletIntegrator<dim> integrator_object;
@@ -161,8 +163,7 @@ test()
         {
           // If particle and wall are in contact
           pw_fine_search_object.pw_Fine_Search(pw_contact_list,
-                                               pw_contact_information,
-                                               dt);
+                                               pw_contact_information);
           auto pw_pairs_in_contact_iterator =
             &pw_contact_information.begin()->second;
           auto pw_contact_information_iterator =
@@ -185,8 +186,8 @@ test()
                 .tangential_relative_velocity[2] = 0.0;
             }
 
-          pw_force_object.calculate_pw_contact_force(&pw_contact_information,
-                                                     dem_parameters);
+          pw_force_object.calculate_pw_contact_force(
+            &pw_contact_information, dem_parameters.physical_properties, dt);
           integrator_object.integrate(particle_handler, g, dt);
 
           deallog << " "

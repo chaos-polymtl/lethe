@@ -1,63 +1,63 @@
 
 DEAL::neighbors of cell 2.0 are:  2.0 2.1 2.2 2.3 2.4 2.5 2.6 2.7
-DEAL::neighbors of cell 2.1 are:  2.1 2.2 2.3 2.4 2.5 2.6 2.7 2.8 2.10 2.12 2.14
-DEAL::neighbors of cell 2.2 are:  2.2 2.3 2.4 2.5 2.6 2.7 2.16 2.17 2.20 2.21
-DEAL::neighbors of cell 2.3 are:  2.3 2.4 2.5 2.6 2.7 2.8 2.10 2.12 2.14 2.16 2.17 2.20 2.21 2.24 2.28
+DEAL::neighbors of cell 2.1 are:  2.1 2.8 2.2 2.3 2.10 2.4 2.5 2.12 2.6 2.7 2.14
+DEAL::neighbors of cell 2.2 are:  2.2 2.3 2.16 2.17 2.4 2.6 2.5 2.7 2.20 2.21
+DEAL::neighbors of cell 2.3 are:  2.3 2.8 2.10 2.16 2.17 2.24 2.4 2.5 2.6 2.7 2.12 2.14 2.20 2.21 2.28
 DEAL::neighbors of cell 2.4 are:  2.4 2.5 2.6 2.7 2.32 2.33 2.34 2.35
-DEAL::neighbors of cell 2.5 are:  2.5 2.6 2.7 2.8 2.10 2.12 2.14 2.32 2.33 2.34 2.35 2.40 2.42
-DEAL::neighbors of cell 2.6 are:  2.6 2.7 2.16 2.17 2.20 2.21 2.32 2.33 2.34 2.35 2.48 2.49
+DEAL::neighbors of cell 2.5 are:  2.5 2.8 2.12 2.6 2.7 2.10 2.14 2.32 2.33 2.40 2.34 2.35 2.42
+DEAL::neighbors of cell 2.6 are:  2.6 2.7 2.16 2.20 2.17 2.21 2.32 2.34 2.33 2.35 2.48 2.49
 DEAL::neighbors of cell 2.7 are:  2.7 2.8 2.10 2.12 2.14 2.16 2.17 2.20 2.21 2.24 2.28 2.32 2.33 2.34 2.35 2.40 2.42 2.48 2.49 2.56
 DEAL::neighbors of cell 2.8 are:  2.8 2.9 2.10 2.11 2.12 2.13 2.14 2.15
 DEAL::neighbors of cell 2.9 are:  2.9 2.10 2.11 2.12 2.13 2.14 2.15
-DEAL::neighbors of cell 2.10 are:  2.10 2.11 2.12 2.13 2.14 2.15 2.17 2.21 2.24 2.25 2.28 2.29
-DEAL::neighbors of cell 2.11 are:  2.11 2.12 2.13 2.14 2.15 2.24 2.25 2.28 2.29
-DEAL::neighbors of cell 2.12 are:  2.12 2.13 2.14 2.15 2.33 2.35 2.40 2.41 2.42 2.43
+DEAL::neighbors of cell 2.10 are:  2.10 2.11 2.17 2.24 2.25 2.12 2.14 2.13 2.15 2.21 2.28 2.29
+DEAL::neighbors of cell 2.11 are:  2.11 2.24 2.25 2.12 2.13 2.14 2.15 2.28 2.29
+DEAL::neighbors of cell 2.12 are:  2.12 2.13 2.14 2.15 2.33 2.40 2.41 2.35 2.42 2.43
 DEAL::neighbors of cell 2.13 are:  2.13 2.14 2.15 2.40 2.41 2.42 2.43
-DEAL::neighbors of cell 2.14 are:  2.14 2.15 2.17 2.21 2.24 2.25 2.28 2.29 2.33 2.35 2.40 2.41 2.42 2.43 2.49 2.56 2.57
+DEAL::neighbors of cell 2.14 are:  2.14 2.15 2.17 2.21 2.24 2.28 2.25 2.29 2.33 2.35 2.40 2.42 2.41 2.43 2.49 2.56 2.57
 DEAL::neighbors of cell 2.15 are:  2.15 2.24 2.25 2.28 2.29 2.40 2.41 2.42 2.43 2.56 2.57
 DEAL::neighbors of cell 2.16 are:  2.16 2.17 2.18 2.19 2.20 2.21 2.22 2.23
-DEAL::neighbors of cell 2.17 are:  2.17 2.18 2.19 2.20 2.21 2.22 2.23 2.24 2.26 2.28 2.30
-DEAL::neighbors of cell 2.18 are:  2.18 2.19 2.20 2.21 2.22 2.23
-DEAL::neighbors of cell 2.19 are:  2.19 2.20 2.21 2.22 2.23 2.24 2.26 2.28 2.30
-DEAL::neighbors of cell 2.20 are:  2.20 2.21 2.22 2.23 2.34 2.35 2.48 2.49 2.50 2.51
-DEAL::neighbors of cell 2.21 are:  2.21 2.22 2.23 2.24 2.26 2.28 2.30 2.34 2.35 2.42 2.48 2.49 2.50 2.51 2.56 2.58
-DEAL::neighbors of cell 2.22 are:  2.22 2.23 2.48 2.49 2.50 2.51
+DEAL::neighbors of cell 2.17 are:  2.17 2.24 2.18 2.19 2.26 2.20 2.21 2.28 2.22 2.23 2.30
+DEAL::neighbors of cell 2.18 are:  2.18 2.19 2.20 2.22 2.21 2.23
+DEAL::neighbors of cell 2.19 are:  2.19 2.24 2.26 2.20 2.21 2.22 2.23 2.28 2.30
+DEAL::neighbors of cell 2.20 are:  2.20 2.21 2.22 2.23 2.34 2.48 2.35 2.49 2.50 2.51
+DEAL::neighbors of cell 2.21 are:  2.21 2.24 2.28 2.22 2.23 2.26 2.30 2.34 2.35 2.48 2.49 2.42 2.56 2.50 2.51 2.58
+DEAL::neighbors of cell 2.22 are:  2.22 2.23 2.48 2.50 2.49 2.51
 DEAL::neighbors of cell 2.23 are:  2.23 2.24 2.26 2.28 2.30 2.48 2.49 2.50 2.51 2.56 2.58
 DEAL::neighbors of cell 2.24 are:  2.24 2.25 2.26 2.27 2.28 2.29 2.30 2.31
 DEAL::neighbors of cell 2.25 are:  2.25 2.26 2.27 2.28 2.29 2.30 2.31
-DEAL::neighbors of cell 2.26 are:  2.26 2.27 2.28 2.29 2.30 2.31
+DEAL::neighbors of cell 2.26 are:  2.26 2.27 2.28 2.30 2.29 2.31
 DEAL::neighbors of cell 2.27 are:  2.27 2.28 2.29 2.30 2.31
-DEAL::neighbors of cell 2.28 are:  2.28 2.29 2.30 2.31 2.35 2.42 2.43 2.49 2.51 2.56 2.57 2.58 2.59
+DEAL::neighbors of cell 2.28 are:  2.28 2.29 2.30 2.31 2.35 2.42 2.49 2.56 2.43 2.57 2.51 2.58 2.59
 DEAL::neighbors of cell 2.29 are:  2.29 2.30 2.31 2.42 2.43 2.56 2.57 2.58 2.59
-DEAL::neighbors of cell 2.30 are:  2.30 2.31 2.49 2.51 2.56 2.57 2.58 2.59
+DEAL::neighbors of cell 2.30 are:  2.30 2.31 2.49 2.51 2.56 2.58 2.57 2.59
 DEAL::neighbors of cell 2.31 are:  2.31 2.56 2.57 2.58 2.59
 DEAL::neighbors of cell 2.32 are:  2.32 2.33 2.34 2.35 2.36 2.37 2.38 2.39
-DEAL::neighbors of cell 2.33 are:  2.33 2.34 2.35 2.36 2.37 2.38 2.39 2.40 2.42 2.44 2.46
-DEAL::neighbors of cell 2.34 are:  2.34 2.35 2.36 2.37 2.38 2.39 2.48 2.49 2.52 2.53
-DEAL::neighbors of cell 2.35 are:  2.35 2.36 2.37 2.38 2.39 2.40 2.42 2.44 2.46 2.48 2.49 2.52 2.53 2.56 2.60
+DEAL::neighbors of cell 2.33 are:  2.33 2.40 2.34 2.35 2.42 2.36 2.37 2.44 2.38 2.39 2.46
+DEAL::neighbors of cell 2.34 are:  2.34 2.35 2.48 2.49 2.36 2.38 2.37 2.39 2.52 2.53
+DEAL::neighbors of cell 2.35 are:  2.35 2.40 2.42 2.48 2.49 2.56 2.36 2.37 2.38 2.39 2.44 2.46 2.52 2.53 2.60
 DEAL::neighbors of cell 2.36 are:  2.36 2.37 2.38 2.39
-DEAL::neighbors of cell 2.37 are:  2.37 2.38 2.39 2.40 2.42 2.44 2.46
-DEAL::neighbors of cell 2.38 are:  2.38 2.39 2.48 2.49 2.52 2.53
+DEAL::neighbors of cell 2.37 are:  2.37 2.40 2.44 2.38 2.39 2.42 2.46
+DEAL::neighbors of cell 2.38 are:  2.38 2.39 2.48 2.52 2.49 2.53
 DEAL::neighbors of cell 2.39 are:  2.39 2.40 2.42 2.44 2.46 2.48 2.49 2.52 2.53 2.56 2.60
 DEAL::neighbors of cell 2.40 are:  2.40 2.41 2.42 2.43 2.44 2.45 2.46 2.47
 DEAL::neighbors of cell 2.41 are:  2.41 2.42 2.43 2.44 2.45 2.46 2.47
-DEAL::neighbors of cell 2.42 are:  2.42 2.43 2.44 2.45 2.46 2.47 2.49 2.53 2.56 2.57 2.60 2.61
-DEAL::neighbors of cell 2.43 are:  2.43 2.44 2.45 2.46 2.47 2.56 2.57 2.60 2.61
+DEAL::neighbors of cell 2.42 are:  2.42 2.43 2.49 2.56 2.57 2.44 2.46 2.45 2.47 2.53 2.60 2.61
+DEAL::neighbors of cell 2.43 are:  2.43 2.56 2.57 2.44 2.45 2.46 2.47 2.60 2.61
 DEAL::neighbors of cell 2.44 are:  2.44 2.45 2.46 2.47
 DEAL::neighbors of cell 2.45 are:  2.45 2.46 2.47
-DEAL::neighbors of cell 2.46 are:  2.46 2.47 2.49 2.53 2.56 2.57 2.60 2.61
+DEAL::neighbors of cell 2.46 are:  2.46 2.47 2.49 2.53 2.56 2.60 2.57 2.61
 DEAL::neighbors of cell 2.47 are:  2.47 2.56 2.57 2.60 2.61
 DEAL::neighbors of cell 2.48 are:  2.48 2.49 2.50 2.51 2.52 2.53 2.54 2.55
-DEAL::neighbors of cell 2.49 are:  2.49 2.50 2.51 2.52 2.53 2.54 2.55 2.56 2.58 2.60 2.62
-DEAL::neighbors of cell 2.50 are:  2.50 2.51 2.52 2.53 2.54 2.55
-DEAL::neighbors of cell 2.51 are:  2.51 2.52 2.53 2.54 2.55 2.56 2.58 2.60 2.62
+DEAL::neighbors of cell 2.49 are:  2.49 2.56 2.50 2.51 2.58 2.52 2.53 2.60 2.54 2.55 2.62
+DEAL::neighbors of cell 2.50 are:  2.50 2.51 2.52 2.54 2.53 2.55
+DEAL::neighbors of cell 2.51 are:  2.51 2.56 2.58 2.52 2.53 2.54 2.55 2.60 2.62
 DEAL::neighbors of cell 2.52 are:  2.52 2.53 2.54 2.55
-DEAL::neighbors of cell 2.53 are:  2.53 2.54 2.55 2.56 2.58 2.60 2.62
+DEAL::neighbors of cell 2.53 are:  2.53 2.56 2.60 2.54 2.55 2.58 2.62
 DEAL::neighbors of cell 2.54 are:  2.54 2.55
 DEAL::neighbors of cell 2.55 are:  2.55 2.56 2.58 2.60 2.62
 DEAL::neighbors of cell 2.56 are:  2.56 2.57 2.58 2.59 2.60 2.61 2.62 2.63
 DEAL::neighbors of cell 2.57 are:  2.57 2.58 2.59 2.60 2.61 2.62 2.63
-DEAL::neighbors of cell 2.58 are:  2.58 2.59 2.60 2.61 2.62 2.63
+DEAL::neighbors of cell 2.58 are:  2.58 2.59 2.60 2.62 2.61 2.63
 DEAL::neighbors of cell 2.59 are:  2.59 2.60 2.61 2.62 2.63
 DEAL::neighbors of cell 2.60 are:  2.60 2.61 2.62 2.63
 DEAL::neighbors of cell 2.61 are:  2.61 2.62 2.63
