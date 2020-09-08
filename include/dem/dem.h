@@ -86,6 +86,31 @@ public:
 
 private:
   /**
+   * The cell_weight() function indicates to the triangulation how much
+   * computational work is expected to happen on this cell, and consequently
+   * how the domain needs to be partitioned so that every MPI rank receives a
+   * roughly equal amount of work (potentially not an equal number of cells).
+   * While the function is called from the outside, it is connected to the
+   * corresponding signal from inside this class, therefore it can be private.
+   * This function is the key component that allow us to dynamically balance the
+   * computational load. The function attributes a weight to
+   * every cell that represents the computational work on this cell. Here the
+   * majority of work is expected to happen on the particles, therefore the
+   * return value of this function (representing "work for this cell") is
+   * calculated based on the number of particles in the current cell.
+   * The function is connected to the cell_weight() signal inside the
+   * triangulation, and will be called once per cell, whenever the triangulation
+   * repartitions the domain between ranks (the connection is created inside the
+   * particles_generation() function of this class).
+   */
+  unsigned int
+  cell_weight(
+    const typename parallel::distributed::Triangulation<dim>::cell_iterator
+      &                                                                  cell,
+    const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+    const;
+
+  /**
    * Prints the simulation starting information including number of processors.
    */
   void
@@ -255,6 +280,7 @@ private:
     properties_class.get_properties_name();
   const double                                     neighborhood_threshold;
   const unsigned int                               contact_detection_frequency;
+  const unsigned int                               repartition_frequency;
   const unsigned int                               insertion_frequency;
   const Parameters::Lagrangian::PhysicalProperties physical_properties;
 

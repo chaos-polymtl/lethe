@@ -201,7 +201,13 @@ namespace Parameters
         prm.declare_entry("contact_detection_frequency",
                           "1",
                           Patterns::Integer(),
-                          "Particle-particle broad search frequency");
+                          "Particle-particle contact list");
+
+        prm.declare_entry(
+          "repartition frequency",
+          "1000000000",
+          Patterns::Integer(),
+          "Frequency at which the triangulation is repartitioned and load is balanced");
 
         prm.declare_entry(
           "neighborhood_threshold",
@@ -237,6 +243,7 @@ namespace Parameters
       {
         contact_detection_frequency =
           prm.get_integer("contact_detection_frequency");
+        repartition_frequency  = prm.get_integer("repartition frequency");
         neighborhood_threshold = prm.get_double("neighborhood_threshold");
 
         const std::string ppcf = prm.get("pp_contact_force_method");
