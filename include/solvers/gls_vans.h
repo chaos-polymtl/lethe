@@ -39,12 +39,8 @@ class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
 public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
-                               const unsigned int degree_velocity,
-                               const unsigned int degree_pressure);
-
-
+                const unsigned int                 degree_velocity,
+                const unsigned int                 degree_pressure);
 };
 
 #endif
-
-
