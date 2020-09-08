@@ -1,4 +1,9 @@
 SET(TEST_LIBRARIES lethe)
 SET(TEST_TARGET dem_3d)
 DEAL_II_PICKUP_TESTS()
-
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" )
+       	set_tests_properties(dem_3d/packing_in_box.debug PROPERTIES TIMEOUT 3000) 
+       	set_tests_properties(dem_3d/packing_in_ball.debug PROPERTIES TIMEOUT 3000) 
+       	set_tests_properties(dem_3d/packing_in_cylinder.debug PROPERTIES TIMEOUT 3000) 
+       	set_tests_properties(dem_3d/parallel_packing_in_ball.mpirun=2.debug PROPERTIES TIMEOUT 3000) 
+ENDIF()
