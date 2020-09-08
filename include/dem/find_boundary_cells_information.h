@@ -100,22 +100,6 @@ public:
                           Point<dim>>> &boundary_cells_with_points);
 
 private:
-  // This vector stores the location of vertices on boundaries for each cell.
-  // The size of this vector can be 1 or 2, since cells with points have one
-  // boundary vertex and cells with lines have two boundary vertices
-  std::vector<Point<dim>> boundary_points;
-
-  // This integer is used to count the number of vertices on boundaries for each
-  // cell
-  unsigned int number_of_boundary_vertices = 0;
-
-  // This vector stores both the cells with boundary lines and cells with
-  // boundary points
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    boundary_cells_with_lines_or_points;
-
-  // This map stores the vertex index and position of boundary vertices
-  std::map<int, Point<dim>> boundary_vertices;
 };
 
 #endif /* find_boundary_cells_information_h */
