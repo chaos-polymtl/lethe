@@ -516,18 +516,21 @@ DEMSolver<dim>::solve()
           boundary_cells_with_faces.clear();
           boundary_cells_with_lines.clear();
           boundary_cells_with_points.clear();
+          boundary_cells_information.clear();
 
           cell_neighbors_object.find_cell_neighbors(triangulation,
                                                     cells_local_neighbor_list,
                                                     cells_ghost_neighbor_list);
-          boundary_cell_object.find_boundary_cells_information(
-            boundary_cells_with_faces, triangulation);
+          boundary_cells_information =
+            boundary_cell_object.find_boundary_cells_information(
+              boundary_cells_with_faces, triangulation);
           boundary_cell_object.find_particle_point_and_line_contact_cells(
             boundary_cells_with_faces,
             triangulation,
             boundary_cells_with_lines,
             boundary_cells_with_points);
         }
+
 
       // Force reinitilization
       reinitialize_force(particle_handler);
