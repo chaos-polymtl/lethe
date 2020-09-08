@@ -510,6 +510,13 @@ DEMSolver<dim>::solve()
         {
           pcout << "-->Repartitionning triangulation" << std::endl;
           triangulation.repartition();
+
+          cells_local_neighbor_list.clear();
+          cells_ghost_neighbor_list.clear();
+          boundary_cells_with_faces.clear();
+          boundary_cells_with_lines.clear();
+          boundary_cells_with_points.clear();
+
           cell_neighbors_object.find_cell_neighbors(triangulation,
                                                     cells_local_neighbor_list,
                                                     cells_ghost_neighbor_list);
