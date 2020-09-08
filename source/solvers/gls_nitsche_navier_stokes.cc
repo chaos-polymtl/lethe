@@ -347,7 +347,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->postprocess(false);
-      if (this->nsparam.nitsche->calculate_force_on_solid)
+      if (this->nsparam.nitsche->calculate_force_on_solid && dim == 2 &&
+          spacedim == 3)
         {
           postprocess_solid_forces();
         }

@@ -92,8 +92,9 @@ SolidBase<dim, spacedim>::setup_particles()
   FE_Q<dim, spacedim> fe(1);
   solid_dh.distribute_dofs(fe);
 
-  QGauss<dim>        quadrature(degree_velocity + 1);
-  const unsigned int n_properties = spacedim + 1;
+  QGauss<dim>  quadrature(degree_velocity + 1);
+  unsigned int n_properties = (dim == 2 && spacedim == 3) ? 1 + spacedim : 1;
+
   solid_particle_handler =
     std::make_shared<Particles::ParticleHandler<spacedim>>();
 
@@ -107,27 +108,40 @@ SolidBase<dim, spacedim>::setup_particles()
   properties.reserve(quadrature.size() *
                      solid_tria->n_locally_owned_active_cells());
 
+  UpdateFlags update_flags = update_JxW_values | update_quadrature_points;
+  if (dim == 2 && spacedim == 3)
+    update_flags = update_flags | update_normal_vectors;
 
-  FEValues<dim, spacedim> fe_v(fe,
-                               quadrature,
-                               update_JxW_values | update_quadrature_points |
-                                 update_normal_vectors);
+  FEValues<dim, spacedim> fe_v(fe, quadrature, update_flags);
+
   for (const auto &cell : solid_dh.active_cell_iterators())
     if (cell->is_locally_owned())
       {
         fe_v.reinit(cell);
-        const auto &points         = fe_v.get_quadrature_points();
-        const auto &JxW            = fe_v.get_JxW_values();
-        const auto &normal_vectors = fe_v.get_normal_vectors();
-        for (unsigned int q = 0; q < points.size(); ++q)
+        const auto &points = fe_v.get_quadrature_points();
+        const auto &JxW    = fe_v.get_JxW_values();
+        if (dim == 2 && spacedim == 3)
           {
-            quadrature_points_vec.emplace_back(points[q]);
-            std::vector<double> prop_i = {JxW[q],
-                                          normal_vectors[q][0],
-                                          normal_vectors[q][1]};
-            if (spacedim == 3)
-              prop_i.push_back(normal_vectors[q][2]);
-            properties.emplace_back(prop_i);
+            const auto &normal_vectors = fe_v.get_normal_vectors();
+            for (unsigned int q = 0; q < points.size(); ++q)
+              {
+                quadrature_points_vec.emplace_back(points[q]);
+                std::vector<double> prop_i = {JxW[q],
+                                              normal_vectors[q][0],
+                                              normal_vectors[q][1]};
+                if (spacedim == 3)
+                  prop_i.push_back(normal_vectors[q][2]);
+                properties.emplace_back(prop_i);
+              }
+          }
+        else
+          {
+            for (unsigned int q = 0; q < points.size(); ++q)
+              {
+                quadrature_points_vec.emplace_back(points[q]);
+                std::vector<double> prop_i = {JxW[q]};
+                properties.emplace_back(prop_i);
+              }
           }
       }
 
