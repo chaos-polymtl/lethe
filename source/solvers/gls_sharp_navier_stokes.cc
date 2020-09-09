@@ -1293,6 +1293,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // This function defines a Immersed Boundary based on the sharp edge method on
   // a hyper_shere of dim=2 or dim=3
 
+  TimerOutput::Scope t(this->computing_timer, "assemble_sharp");
   using numbers::PI;
   Point<dim>                                                  center_immersed;
   Point<dim>                                                  pressure_bridge;
@@ -2493,6 +2494,7 @@ template <bool                                              assemble_matrix,
 void
 GLSSharpNavierStokesSolver<dim>::assembleGLS()
 {
+
   MPI_Barrier(this->mpi_communicator);
   if (assemble_matrix)
     this->system_matrix = 0;
