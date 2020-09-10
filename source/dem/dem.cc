@@ -46,6 +46,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                2))
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
+  , repartition_frequency(parameters.model_parameters.repartition_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , physical_properties(parameters.physical_properties)
   , background_dh(triangulation)
@@ -56,6 +57,43 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
+
+  if (fmod(repartition_frequency, contact_detection_frequency) != 0)
+    {
+      throw std::runtime_error(
+        "The repartition frequency must be a multiple of the contact detection frequency");
+    }
+
+
+
+  // In order to consider the particles when repartitioning the triangulation
+  // the algorithm needs to know three things:
+  //
+  // 1. How much weight to assign to each cell (how many particles are in
+  // there)
+  // 2. How to pack the particles before shipping data around
+  // 3. How to unpack the particles after repartitioning
+  //
+  // Attach the correct functions to the signals inside
+  // parallel::distributed::Triangulation, which will be called every time the
+  // repartition() function is called.
+  // These connections only need to be created once, so we might as well
+  // have set them up in the constructor of this class, but for the purpose
+  // of this example we want to group the particle related instructions.
+  triangulation.signals.cell_weight.connect(
+    [&](const typename parallel::distributed::Triangulation<dim>::cell_iterator
+          &cell,
+        const typename parallel::distributed::Triangulation<dim>::CellStatus
+          status) -> unsigned int { return this->cell_weight(cell, status); });
+
+  triangulation.signals.pre_distributed_repartition.connect(std::bind(
+    &Particles::ParticleHandler<dim>::register_store_callback_function,
+    &particle_handler));
+
+  triangulation.signals.post_distributed_repartition.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &particle_handler,
+              false));
 }
 
 template <int dim>
@@ -68,6 +106,57 @@ DEMSolver<dim>::print_initial_info()
         << " processors" << std::endl;
   pcout << "***************************************************************** "
            "\n\n";
+}
+
+
+template <int dim>
+unsigned int
+DEMSolver<dim>::cell_weight(
+  const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
+  const typename parallel::distributed::Triangulation<dim>::CellStatus status)
+  const
+{
+  // Assign no weight to cells we do not own.
+  if (!cell->is_locally_owned())
+    return 0;
+
+  // This determines how important particle work is compared to cell
+  // work (by default every cell has a weight of 1000).
+  // We set the weight per particle much higher to indicate that
+  // the particle load is the only one that is important to distribute
+  // in this example. The optimal value of this number depends on the
+  // application and can range from 0 (cheap particle operations,
+  // expensive cell operations) to much larger than 1000 (expensive
+  // particle operations, cheap cell operations, like in this case).
+  // This parameter will need to be tuned for the case of DEM.
+  const unsigned int particle_weight = 10000;
+
+  // This does not use adaptive refinement, therefore every cell
+  // should have the status CELL_PERSIST. However this function can also
+  // be used to distribute load during refinement, therefore we consider
+  // refined or coarsened cells as well.
+  if (status == parallel::distributed::Triangulation<dim>::CELL_PERSIST ||
+      status == parallel::distributed::Triangulation<dim>::CELL_REFINE)
+    {
+      const unsigned int n_particles_in_cell =
+        particle_handler.n_particles_in_cell(cell);
+      return n_particles_in_cell * particle_weight;
+    }
+  else if (status == parallel::distributed::Triangulation<dim>::CELL_COARSEN)
+    {
+      unsigned int n_particles_in_cell = 0;
+
+      for (unsigned int child_index = 0;
+           child_index < GeometryInfo<dim>::max_children_per_cell;
+           ++child_index)
+        n_particles_in_cell +=
+          particle_handler.n_particles_in_cell(cell->child(child_index));
+
+      return n_particles_in_cell * particle_weight;
+    }
+
+  Assert(false, ExcInternalError());
+  return 0;
 }
 
 template <int dim>
@@ -415,6 +504,33 @@ DEMSolver<dim>::solve()
   while (simulation_control->integrate())
     {
       simulation_control->print_progression(pcout);
+
+      if (fmod(simulation_control->get_step_number(), repartition_frequency) ==
+          0)
+        {
+          pcout << "-->Repartitionning triangulation" << std::endl;
+          triangulation.repartition();
+
+          cells_local_neighbor_list.clear();
+          cells_ghost_neighbor_list.clear();
+          boundary_cells_with_faces.clear();
+          boundary_cells_with_lines.clear();
+          boundary_cells_with_points.clear();
+          boundary_cells_information.clear();
+
+          cell_neighbors_object.find_cell_neighbors(triangulation,
+                                                    cells_local_neighbor_list,
+                                                    cells_ghost_neighbor_list);
+          boundary_cells_information =
+            boundary_cell_object.find_boundary_cells_information(
+              boundary_cells_with_faces, triangulation);
+          boundary_cell_object.find_particle_point_and_line_contact_cells(
+            boundary_cells_with_faces,
+            triangulation,
+            boundary_cells_with_lines,
+            boundary_cells_with_points);
+        }
+
 
       // Force reinitilization
       reinitialize_force(particle_handler);

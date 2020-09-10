@@ -5,6 +5,8 @@ Starting simulation with Lethe/DEM on 1 processors
 ***************************************************************** 
 200 particles were inserted from total 200 particles
 ***************************************************************** 
+-->Repartitionning triangulation
+-->Repartitionning triangulation
 id , type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z,  mass , mom_inertia, M_x  , M_y  , M_z  
 7 1 0.00500 2000.00000 0.145 0.124 -0.146 2.0 2.1 -2.4 0.00 0.00 0.00 79.6 -54.8 32.3 0.00013 0.000 0.000 0.000 0.000 
 17 1 0.00500 2000.00000 0.229 0.009 -0.130 1.9 2.4 -2.3 0.00 0.00 0.00 21.0 -98.1 31.1 0.00013 0.000 0.000 0.000 0.000 

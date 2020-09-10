@@ -29,6 +29,7 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact_detection_frequency                 	 = 10
+  set repartition frequency 				 = 10000
   set neighborhood_threshold				 = 1.3
   set pp_contact_force_method                   	 = pp_nonlinear
   set pw_contact_force_method                   	 = pw_nonlinear
