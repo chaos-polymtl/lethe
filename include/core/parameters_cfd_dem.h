@@ -44,7 +44,10 @@ namespace Parameters
   };
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> added the cfd-dem parameter files
   template <int dim>
   class VoidFraction
   {
