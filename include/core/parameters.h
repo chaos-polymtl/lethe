@@ -64,6 +64,7 @@ namespace Parameters
     enum class TimeSteppingMethod
     {
       steady,
+      steady_bdf,
       bdf1,
       bdf2,
       bdf3,
@@ -94,6 +95,9 @@ namespace Parameters
 
     // Max CFL
     double maxCFL;
+
+    // Aimed tolerance at which simulation is stopped
+    double stop_tolerance;
 
     // Max CFL
     double adaptative_time_step_scaling;

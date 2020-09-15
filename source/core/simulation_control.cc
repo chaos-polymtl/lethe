@@ -13,6 +13,8 @@ SimulationControl::SimulationControl(Parameters::SimulationControl param)
   , number_mesh_adapt(param.number_mesh_adaptation)
   , CFL(0)
   , max_CFL(param.maxCFL)
+  , residual(DBL_MAX)
+  , stop_tolerance(param.stop_tolerance)
   , output_frequency(param.output_frequency)
   , output_time_frequency(param.output_time)
   , log_frequency(param.log_frequency)
@@ -111,6 +113,7 @@ SimulationControlTransient::integrate()
 {
   if (!is_at_end())
     {
+      first_assembly = true;
       iteration_number++;
       add_time_step(calculate_time_step());
       current_time += time_step;
@@ -126,7 +129,8 @@ SimulationControlTransient::integrate()
 bool
 SimulationControlTransient::is_at_end()
 {
-  return current_time >= (end_time - 1e-6 * time_step);
+  double floating_point_margin = std::max(1e-6 * time_step, 1e-12 * end_time);
+  return current_time >= (end_time - floating_point_margin);
 }
 
 double
@@ -258,4 +262,49 @@ bool
 SimulationControlSteady::is_at_end()
 {
   return iteration_number >= (number_mesh_adapt + 1);
+}
+
+void
+SimulationControlAdjointSteady::print_progression(
+  const ConditionalOStream &pcout)
+{
+  if (!is_verbose_iteration())
+    return;
+
+  pcout << std::endl;
+  pcout << "*****************************************************************"
+        << std::endl;
+  pcout << "Pseudo steady-state iteration : " << std::setw(8) << std::left
+        << iteration_number << " Time : " << std::setw(8) << std::left
+        << current_time << " Time step : " << std::setw(8) << std::left
+        << time_step << " CFL : " << std::setw(8) << std::left
+        << SimulationControl::get_CFL() << std::endl;
+  pcout << "*****************************************************************"
+        << std::endl;
+}
+
+bool
+SimulationControlAdjointSteady::is_at_end()
+{
+  return residual <= stop_tolerance;
+}
+
+SimulationControlAdjointSteady::SimulationControlAdjointSteady(
+  Parameters::SimulationControl param)
+  : SimulationControlTransient(param)
+{}
+
+double
+SimulationControlAdjointSteady::calculate_time_step()
+{
+  double new_time_step = time_step;
+
+  if (adapt && iteration_number > 1)
+    {
+      new_time_step = time_step * adaptative_time_step_scaling;
+      if (CFL > 0 && max_CFL / CFL < adaptative_time_step_scaling)
+        new_time_step = time_step * max_CFL / CFL;
+    }
+
+  return new_time_step;
 }

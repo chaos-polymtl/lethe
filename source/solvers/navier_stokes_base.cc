@@ -76,6 +76,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       Parameters::SimulationControl::TimeSteppingMethod::steady)
     simulationControl =
       std::make_shared<SimulationControlSteady>(nsparam.simulation_control);
+  else if (nsparam.simulation_control.method ==
+           Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+    {
+      simulationControl = std::make_shared<SimulationControlAdjointSteady>(
+        nsparam.simulation_control);
+    }
   else
     {
       if (nsparam.simulation_control.output_control ==
@@ -514,9 +520,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
   // First step if the method is not a multi-step method
-  if (!is_bdf(nsparam.simulation_control.method) ||
-      nsparam.simulation_control.method ==
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+  if (!is_bdf_high_order(nsparam.simulation_control.method))
     {
       iterate();
     }
