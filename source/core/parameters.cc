@@ -7,12 +7,12 @@ namespace Parameters
   {
     prm.enter_subsection("simulation control");
     {
-      prm.declare_entry("method",
-                        "steady",
-                        Patterns::Selection(
-                          "steady|bdf1|bdf2|bdf3|sdirk2|sdirk3"),
-                        "The kind of solver for the linear system. "
-                        "Choices are <steady|bdf1|bdf2|bdf3|sdirk2|sdirk3>.");
+      prm.declare_entry(
+        "method",
+        "steady",
+        Patterns::Selection("steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3"),
+        "The kind of solver for the linear system. "
+        "Choices are <steady|steady_bdf|bdf1|bdf2|bdf3|sdirk2|sdirk3>.");
       prm.declare_entry("time step",
                         "1.",
                         Patterns::Double(),
@@ -23,7 +23,6 @@ namespace Parameters
                         Patterns::Double(),
                         "Scaling factor used in the iterations necessary to "
                         "start-up the BDF schemes.");
-
       prm.declare_entry("adapt",
                         "false",
                         Patterns::Bool(),
@@ -36,6 +35,10 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Maximum CFL value");
+      prm.declare_entry("stop tolerance",
+                        "1e-10",
+                        Patterns::Double(),
+                        "Tolerance at which the simulation is stopped");
 
       prm.declare_entry("adaptative time step scaling",
                         "1.1",
@@ -91,6 +94,8 @@ namespace Parameters
       const std::string sv = prm.get("method");
       if (sv == "steady")
         method = TimeSteppingMethod::steady;
+      else if (sv == "steady_bdf")
+        method = TimeSteppingMethod::steady_bdf;
       else if (sv == "bdf1")
         method = TimeSteppingMethod::bdf1;
       else if (sv == "bdf2")
@@ -115,10 +120,11 @@ namespace Parameters
         {
           std::runtime_error("Invalid output control scheme");
         }
-      dt      = prm.get_double("time step");
-      timeEnd = prm.get_double("time end");
-      adapt   = prm.get_bool("adapt");
-      maxCFL  = prm.get_double("max cfl");
+      dt             = prm.get_double("time step");
+      timeEnd        = prm.get_double("time end");
+      adapt          = prm.get_bool("adapt");
+      maxCFL         = prm.get_double("max cfl");
+      stop_tolerance = prm.get_double("stop tolerance");
       adaptative_time_step_scaling =
         prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");

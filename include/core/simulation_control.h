@@ -62,6 +62,12 @@ protected:
   // parameter remains unused.
   double max_CFL;
 
+  // Current value of the norm of the rhs
+  double residual;
+
+  // Residual at which the simulation stops when adjoint time-stepping is used
+  double stop_tolerance;
+
   // Number of time steps stored
   // BDF methods require a number of previous time steps. This number is known a
   // priori and depends on the method used. We do not keep all the time steps to
@@ -94,6 +100,9 @@ protected:
 
   // Output path
   std::string output_path;
+
+  // Indicator to tell if this is the first assembly of a step
+  bool first_assembly;
 
 
 
@@ -172,6 +181,17 @@ public:
   virtual bool
   is_verbose_iteration();
 
+  /**
+   * @brief Check if this is the first assembly of the present iteration
+   */
+  virtual bool
+  is_first_assembly()
+  {
+    bool return_value = first_assembly;
+    first_assembly    = false;
+    return return_value;
+  };
+
   void
   set_CFL(const double p_CFL)
   {
@@ -202,6 +222,20 @@ public:
   set_suggested_time_step(const double new_time_step)
   {
     time_step = new_time_step;
+  }
+
+
+  /**
+   * @brief Provide the value of the residual at the beggining
+   * of the iteration to the simulation controller
+   *
+   * @param new_residual Value of the residual at the beggining
+   * of an adjoint time-stepping time step
+   */
+  void
+  provide_residual(const double new_residual)
+  {
+    residual = new_residual;
   }
 
   // Relatively trivial getters.
@@ -372,6 +406,30 @@ public:
 
   /**
    * @brief Ends the simulation when the number of mesh adaptation is reached
+   */
+  virtual bool
+  is_at_end() override;
+};
+
+class SimulationControlAdjointSteady : public SimulationControlTransient
+{
+public:
+  SimulationControlAdjointSteady(Parameters::SimulationControl param);
+
+  virtual void
+  print_progression(const ConditionalOStream &pcout) override;
+
+  /**
+   * @brief Calculates the next value of the time step. The time step is calculated in order to ensure
+   * that the CFL condition is bound by the maximal CFL value.
+   * The new time step is equal to adaptative_time_step_scaling * the previous
+   * time step.
+   */
+  virtual double
+  calculate_time_step() override;
+
+  /**
+   * @brief Ends the simulation when the desired residual is reached
    */
   virtual bool
   is_at_end() override;

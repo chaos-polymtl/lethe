@@ -307,7 +307,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   // 3 - n-2
   Vector<double> bdf_coefs;
 
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+      scheme == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -399,8 +400,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               // steady or unsteady. In the unsteady case it includes the value
               // of the time-step
               const double tau =
-                scheme ==
-                    Parameters::SimulationControl::TimeSteppingMethod::steady ?
+                is_steady(scheme) ?
                   1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
                                  9 * std::pow(4 * viscosity / (h * h), 2)) :
                   1. /
@@ -475,7 +475,9 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                */
 
               if (scheme ==
-                  Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+                  scheme == Parameters::SimulationControl::TimeSteppingMethod::
+                              steady_bdf)
                 strong_residual += bdf_coefs[0] * present_velocity_values[q] +
                                    bdf_coefs[1] * p1_velocity_values[q];
 
@@ -642,8 +644,10 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                     JxW;
 
                   // Residual associated with BDF schemes
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+                  if (scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::bdf1 ||
+                      scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::steady_bdf)
                     local_rhs(i) -=
                       bdf_coefs[0] *
                       (present_velocity_values[q] - p1_velocity_values[q]) *
@@ -968,6 +972,15 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
         assembleGLS<true,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::none>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          true,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::none>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
 
   else if (this->nsparam.velocitySource.type ==
@@ -1018,6 +1031,21 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
         assembleGLS<true,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          true,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::srf>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
+    }
+
+
+  if (this->simulationControl->is_first_assembly())
+    {
+      this->simulationControl->provide_residual(this->system_rhs.l2_norm());
     }
 }
 template <int dim>
@@ -1075,6 +1103,15 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
         assembleGLS<false,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::none>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          false,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::none>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
   if (this->nsparam.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
@@ -1124,6 +1161,15 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
         assembleGLS<false,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          false,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::srf>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
 }
 
