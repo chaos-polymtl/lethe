@@ -21,6 +21,8 @@
 #define lethe_gls_vans_h
 
 #include "gls_navier_stokes.h"
+#include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
 
 using namespace dealii;
 
@@ -41,6 +43,24 @@ public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
                 const unsigned int                 degree_velocity,
                 const unsigned int                 degree_pressure);
+  ~GLSVANSSolver();
+
+private:
+
+  void
+  calculate_void_fraction();
+
+/**
+ *Member Variables
+ */
+
+private:
+
+  IndexSet                            locally_owned_dofs;
+  Vector<double>                      v_fraction;
+  Vector<double>                      solution;
+  Point<dim> vertex;
+
 };
 
 #endif
