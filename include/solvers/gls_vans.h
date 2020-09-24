@@ -31,6 +31,7 @@
 >>>>>>> Void Fraction calculation from a function
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
+#include <core/simulation_control.h>
 
 #include "gls_navier_stokes.h"
 
