@@ -21,13 +21,18 @@
 #define lethe_gls_vans_h
 
 #include <core/grids.h>
+<<<<<<< HEAD
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/simulation_control.h>
 
 #include "gls_navier_stokes.h"
+=======
+>>>>>>> Void Fraction calculation from a function
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
+
+#include "gls_navier_stokes.h"
 
 using namespace dealii;
 
@@ -40,6 +45,19 @@ using namespace dealii;
  * @ingroup solvers
  * @author Toni EL Geitani, 2020
  */
+
+// template <int dim>
+// class voidfraction : public Function<dim>
+//{
+// public:
+//  voidfraction()
+//    : Function<dim>(dim)
+//  {}
+
+//  virtual double
+//  value(const Point<dim> &point, const unsigned int) const override;
+//};
+
 
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
