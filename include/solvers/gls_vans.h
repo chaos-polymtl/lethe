@@ -38,19 +38,6 @@ using namespace dealii;
  * @author Toni EL Geitani, 2020
  */
 
-// template <int dim>
-// class voidfraction : public Function<dim>
-//{
-// public:
-//  voidfraction()
-//    : Function<dim>(dim)
-//  {}
-
-//  virtual double
-//  value(const Point<dim> &point, const unsigned int) const override;
-//};
-
-
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
@@ -66,9 +53,17 @@ private:
   void
   calculate_void_fraction();
 
+  /**
+   * @brief asocciate the degrees of freedom to each vertex of the finite elements
+   * and initialize the void fraction
+   */
   virtual void
   setup_dofs() override;
 
+  /**
+   * @brief a function for adding data vectors to the data_out object for
+   * post_processing additional results
+   */
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 

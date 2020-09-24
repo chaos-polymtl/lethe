@@ -1,18 +1,4 @@
 #include "solvers/gls_vans.h"
-
-//// Void fraction calculation
-// template <int dim>
-// double
-// voidfraction<dim>::value(const Point<dim> &point, const unsigned int) const
-//{
-//  const double px = numbers::PI * point(0);
-//  const double py = numbers::PI * point(1);
-//  double       value;
-
-//  value = 0.3 * exp(-sin(px) * sin(py));
-
-//  return value;
-//}
 // Constructor for class GLS_VANS
 template <int dim>
 GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam,
@@ -56,27 +42,6 @@ GLSVANSSolver<dim>::calculate_void_fraction()
                            nodal_void_fraction_owned);
 
   nodal_void_fraction_relevant = nodal_void_fraction_owned;
-
-  //  for (const auto &cell : this->dof_handler.active_cell_iterators())
-  //    {
-  //      cell_void_fraction = 0;
-
-  //      for (const unsigned int i : GeometryInfo<dim>::vertex_indices())
-  //        {
-  //          vertex = cell->vertex(i);
-  //          // if (this->nsparam.void_fraction->mode == "function")
-  //          {
-  //            cell_void_fraction(i) = 0;
-  //          }
-  //        }
-  //      cell->get_dof_indices(local_dof_indices);
-
-  //      for (const unsigned int i : fe_values.dof_indices())
-  //        {
-  //          // nodal_void_fraction(local_dof_indices[i]) =
-  //          cell_void_fraction(i);
-  //        }
-  //    }
 }
 
 template <int dim>
