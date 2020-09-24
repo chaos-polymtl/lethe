@@ -20,9 +20,11 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include "gls_navier_stokes.h"
+#include <core/grids.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
+
+#include "gls_navier_stokes.h"
 
 using namespace dealii;
 
@@ -36,6 +38,19 @@ using namespace dealii;
  * @author Toni EL Geitani, 2020
  */
 
+// template <int dim>
+// class voidfraction : public Function<dim>
+//{
+// public:
+//  voidfraction()
+//    : Function<dim>(dim)
+//  {}
+
+//  virtual double
+//  value(const Point<dim> &point, const unsigned int) const override;
+//};
+
+
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
@@ -43,24 +58,34 @@ public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
                 const unsigned int                 degree_velocity,
                 const unsigned int                 degree_pressure);
-  ~GLSVANSSolver();
+
+  virtual void
+  solve();
 
 private:
-
   void
   calculate_void_fraction();
 
-/**
- *Member Variables
- */
+  virtual void
+  setup_dofs() override;
+
+  virtual void
+  output_field_hook(DataOut<dim> &data_out) override;
+
+
+
+  /**
+   *Member Variables
+   */
 
 private:
+  DoFHandler<dim> void_fraction_dof_handler;
+  FE_Q<dim>       fe_void_fraction;
 
-  IndexSet                            locally_owned_dofs;
-  Vector<double>                      v_fraction;
-  Vector<double>                      solution;
-  Point<dim> vertex;
-
+  Vector<double>                cell_void_fraction;
+  TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
+  TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+  Point<dim>                    vertex;
 };
 
 #endif

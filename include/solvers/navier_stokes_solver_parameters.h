@@ -116,6 +116,7 @@ public:
     simulation_control.parse_parameters(prm);
     velocitySource.parse_parameters(prm);
     particlesParameters.parse_parameters(prm);
+    void_fraction->parse_parameters(prm);
   }
 };
 
