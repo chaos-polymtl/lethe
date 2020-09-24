@@ -46,19 +46,6 @@ using namespace dealii;
  * @author Toni EL Geitani, 2020
  */
 
-// template <int dim>
-// class voidfraction : public Function<dim>
-//{
-// public:
-//  voidfraction()
-//    : Function<dim>(dim)
-//  {}
-
-//  virtual double
-//  value(const Point<dim> &point, const unsigned int) const override;
-//};
-
-
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
