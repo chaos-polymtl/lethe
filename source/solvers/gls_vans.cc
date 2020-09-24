@@ -1,4 +1,5 @@
 #include "solvers/gls_vans.h"
+
 // Constructor for class GLS_VANS
 template <int dim>
 GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam,
@@ -36,6 +37,10 @@ void
 GLSVANSSolver<dim>::calculate_void_fraction()
 {
   const MappingQ<dim> mapping(this->velocity_fem_degree);
+
+  const double t = this->simulationControl->get_current_time();
+  this->nsparam.void_fraction->void_fraction.set_time(t);
+
   VectorTools::interpolate(mapping,
                            void_fraction_dof_handler,
                            this->nsparam.void_fraction->void_fraction,
@@ -43,6 +48,7 @@ GLSVANSSolver<dim>::calculate_void_fraction()
 
   nodal_void_fraction_relevant = nodal_void_fraction_owned;
 }
+
 
 template <int dim>
 void

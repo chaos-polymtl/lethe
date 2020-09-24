@@ -23,6 +23,7 @@
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
+#include <core/simulation_control.h>
 
 #include "gls_navier_stokes.h"
 
@@ -80,7 +81,6 @@ private:
   Vector<double>                cell_void_fraction;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
-  Point<dim>                    vertex;
 };
 
 #endif
