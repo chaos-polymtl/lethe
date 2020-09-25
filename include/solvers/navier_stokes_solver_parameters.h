@@ -23,6 +23,7 @@
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
 #include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
 
 #include "analytical_solutions.h"
 #include "initial_conditions.h"
@@ -53,6 +54,7 @@ public:
   SourceTerms::NSSourceTerm<dim> *                sourceTerm;
   Parameters::VelocitySource                      velocitySource;
   Parameters::IBParticles<dim>                    particlesParameters;
+  std::shared_ptr<Parameters::VoidFraction<dim>>  void_fraction;
 
   void
   declare(ParameterHandler &prm)
@@ -86,6 +88,9 @@ public:
     Parameters::Testing::declare_parameters(prm);
 
     Parameters::VelocitySource::declare_parameters(prm);
+
+    void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
+    void_fraction->declare_parameters(prm);
   }
 
   void
@@ -111,6 +116,7 @@ public:
     simulation_control.parse_parameters(prm);
     velocitySource.parse_parameters(prm);
     particlesParameters.parse_parameters(prm);
+    void_fraction->parse_parameters(prm);
   }
 };
 

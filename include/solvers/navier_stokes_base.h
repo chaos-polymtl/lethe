@@ -253,6 +253,9 @@ protected:
    * @brief write_output_forces
    * Writes the forces per boundary condition to a text file output
    */
+  virtual void
+  output_field_hook(DataOut<dim> &);
+
   void
   write_output_forces();
 

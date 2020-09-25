@@ -1002,6 +1002,12 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::output_field_hook(
+  DataOut<dim> & /*data_out*/)
+{}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const VectorType &solution)
 {
@@ -1061,6 +1067,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   if (nsparam.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     data_out.add_data_vector(solution, srf);
+
+  output_field_hook(data_out);
 
   // Build the patches and write the output
 

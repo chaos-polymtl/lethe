@@ -20,6 +20,11 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
+#include <core/grids.h>
+#include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
+#include <core/simulation_control.h>
+
 #include "gls_navier_stokes.h"
 
 using namespace dealii;
@@ -41,6 +46,41 @@ public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
                 const unsigned int                 degree_velocity,
                 const unsigned int                 degree_pressure);
+
+  virtual void
+  solve();
+
+private:
+  void
+  calculate_void_fraction();
+
+  /**
+   * @brief asocciate the degrees of freedom to each vertex of the finite elements
+   * and initialize the void fraction
+   */
+  virtual void
+  setup_dofs() override;
+
+  /**
+   * @brief a function for adding data vectors to the data_out object for
+   * post_processing additional results
+   */
+  virtual void
+  output_field_hook(DataOut<dim> &data_out) override;
+
+
+
+  /**
+   *Member Variables
+   */
+
+private:
+  DoFHandler<dim> void_fraction_dof_handler;
+  FE_Q<dim>       fe_void_fraction;
+
+  Vector<double>                cell_void_fraction;
+  TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
+  TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
 };
 
 #endif
