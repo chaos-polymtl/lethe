@@ -406,7 +406,8 @@ namespace Parameters
     enum class Type
     {
       gmsh,
-      dealii
+      dealii,
+      per_hills
     };
     Type type;
 

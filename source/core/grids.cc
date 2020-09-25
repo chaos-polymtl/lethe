@@ -5,6 +5,9 @@
 #include "core/boundary_conditions.h"
 #include "core/grids.h"
 
+// Per_Hills needed includes
+#include "core/per_hills_grid.h"
+
 // Std
 #include <fstream>
 #include <iostream>
@@ -34,6 +37,13 @@ attach_grid_to_triangulation(
         *triangulation,
         mesh_parameters.grid_type,
         mesh_parameters.grid_arguments);
+    }
+
+  // Periodic Hills grid
+  else if (mesh_parameters.type == Parameters::Mesh::Type::per_hills)
+    {
+     per_hills_grid<dim, spacedim> grid;
+     grid.run(*triangulation);
     }
   else
     throw std::runtime_error(

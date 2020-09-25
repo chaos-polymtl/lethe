@@ -459,9 +459,15 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "dealii",
-                        Patterns::Selection("gmsh|dealii"),
+                        Patterns::Selection("gmsh|dealii|per_hills"),
                         "Type of mesh "
-                        "Choices are <gmsh|dealii>.");
+                        "Choices are <gmsh|dealii|per_hills>.");
+
+      prm.declare_entry("type",
+                        "per_hills",
+                         Patterns::Selection("gmsh|dealii|per_hills"),
+                         "Type of mesh "
+                         "Choices are <gmsh|dealii|per_hills>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -490,6 +496,8 @@ namespace Parameters
           type = Type::gmsh;
         else if (op == "dealii")
           type = Type::dealii;
+        else if (op == "per_hills")
+          type = Type::per_hills;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");
