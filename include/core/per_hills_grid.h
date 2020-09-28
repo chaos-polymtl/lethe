@@ -210,12 +210,12 @@ template <int dim, int spacedim>
 void per_hills_grid<dim, spacedim>::make_grid(Triangulation<dim, spacedim>
                                               &triangulation)
 {
-
-  if (dim == 2) {
+  if (dim == 2)
     GridGenerator::hyper_rectangle(triangulation,
                                    Point<dim>(0, 0),
                                    Point<dim>(9, 3.035),
-                                   true); }
+                                   true);
+
   else if (dim == 3)
     GridGenerator::hyper_rectangle(triangulation,
                                    Point<dim>(0, 0, 0),
@@ -224,25 +224,19 @@ void per_hills_grid<dim, spacedim>::make_grid(Triangulation<dim, spacedim>
 
   // Transformation of the geometry with the 6 polynomials
   // and gradual shifting of horizontal lines :
-  per_hills_grid<spacedim, spacedim> geometry;
-  GridTools::transform([&geometry](const Point<spacedim> &p)
-                       { return geometry.hill_geometry(p); },
+  GridTools::transform([this](const Point<spacedim> &p)
+                       { return this->hill_geometry(p); },
                        triangulation);
 
   // Manifold construction
-  push_forward<spacedim, spacedim> push_forward_func;
-  pull_back<spacedim, spacedim>    pull_back_func;
-  static const FunctionManifold<dim, spacedim, spacedim>
-               manifold_func(push_forward_func, pull_back_func);
-  triangulation.set_manifold(1, manifold_func);
-
-  triangulation.set_all_manifold_ids_on_boundary(1,1);
-
-  //for (const auto &cell : triangulation.active_cell_iterators())
-  //  cell->set_all_manifold_ids(1);
-
-
+  static const FunctionManifold<dim, spacedim, spacedim> manifold_func
+    (std::make_unique<push_forward<dim, spacedim>>(),
+     std::make_unique<pull_back<dim, spacedim>>());
+  triangulation.set_manifold(1,manifold_func);
+  triangulation.set_all_manifold_ids(1);
 }
+
+
 template <int dim, int spacedim>
 void per_hills_grid<dim, spacedim>::run(Triangulation<dim, spacedim>
                                         &triangulation)

@@ -463,12 +463,6 @@ namespace Parameters
                         "Type of mesh "
                         "Choices are <gmsh|dealii|per_hills>.");
 
-      prm.declare_entry("type",
-                        "per_hills",
-                         Patterns::Selection("gmsh|dealii|per_hills"),
-                         "Type of mesh "
-                         "Choices are <gmsh|dealii|per_hills>.");
-
       prm.declare_entry("file name",
                         "none",
                         Patterns::FileName(),
