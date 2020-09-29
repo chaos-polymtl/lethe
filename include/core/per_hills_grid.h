@@ -42,21 +42,29 @@ private :
 // push_forward & pull_back needed for FunctionManifold
 
 template <int dim, int spacedim>
-class push_forward : public Function<spacedim>, per_hills_grid<dim, spacedim>
+class push_forward : public AutoDerivativeFunction<spacedim>,
+                            per_hills_grid<dim, spacedim>
 {
 public:
-  push_forward() : Function<spacedim>(spacedim) {}
-  void vector_value(const Point<spacedim> &p, Vector<double> &values)
-  const override;
+  // AutoDerivativeFunction is the base class for its gradient function
+  // (formula is currently Euler and can be changed)
+  push_forward() : AutoDerivativeFunction<spacedim>(1e-6,spacedim) {}
+  virtual void vector_value(const Point<spacedim> &p, Vector<double> &values)
+    const override;
+  virtual double value(const Point<spacedim> &op, const unsigned int component)
+    const override;
 };
 
 
 template <int dim, int spacedim>
-class pull_back : public Function<spacedim>, per_hills_grid<dim, spacedim>
+class pull_back : public AutoDerivativeFunction<spacedim>,
+                  per_hills_grid<dim, spacedim>
 {
 public:
-  pull_back() : Function<spacedim>(spacedim) {}
-  void vector_value(const Point<spacedim> &p, Vector<double> &values)
+  pull_back() : AutoDerivativeFunction<spacedim>(1e-6,spacedim) {}
+  virtual void vector_value(const Point<spacedim> &np, Vector<double> &values)
+    const override;
+  virtual double value(const Point<spacedim> &np, const unsigned int component)
   const override;
 };
 
@@ -71,6 +79,14 @@ void push_forward<dim, spacedim>::vector_value(const Point<spacedim> &op,
 
   if (spacedim == 3)
     values(2) = np[2];
+}
+
+template <int dim, int spacedim>
+double push_forward<dim, spacedim>::value(const Point<spacedim> &op,
+                                          const unsigned int component) const
+{
+  const Point<spacedim> np = per_hills_grid<dim, spacedim>::hill_geometry(op);
+  return np[component];
 }
 
 
@@ -100,6 +116,24 @@ void pull_back<dim, spacedim>::vector_value(const Point<spacedim> &np,
 
   values(0) = np[0];
   values(1) = y;
+}
+
+
+template <int dim, int spacedim>
+double pull_back<dim, spacedim>::value(const Point<spacedim> &np,
+                                       const unsigned int component) const
+{
+  const double max_y = 3.035;
+  double min_y = per_hills_grid<dim, spacedim>::
+                 hill_geometry(Point<spacedim>(np[0], 0))[1];
+
+  double y = (np[1] - min_y) / (1 - min_y/max_y);
+  if (y < max_y)
+    y = (-max_y + std::sqrt(std::pow(max_y,2) + (4/0.5)*max_y*y)) / 2;
+
+  Point<spacedim> op = {np[0], y, np[2]};
+
+  return op[component];
 }
 
 
