@@ -8,7 +8,7 @@ PPFineSearch<dim>::PPFineSearch()
 
 template <int dim>
 void
-PPFineSearch<dim>::pp_Fine_Search(
+PPFineSearch<dim>::particle_particle_fine_search(
   const std::unordered_map<int, std::vector<int>>
     &local_contact_pair_candidates,
   const std::unordered_map<int, std::vector<int>>

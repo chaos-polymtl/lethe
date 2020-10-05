@@ -153,11 +153,12 @@ test()
       particle_container[particle_iterator->get_id()] = particle_iterator;
     }
 
-  broad_search_object.find_PP_Contact_Pairs(particle_handler,
-                                            &local_neighbor_list,
-                                            &local_neighbor_list,
-                                            local_contact_pair_candidates,
-                                            ghost_contact_pair_candidates);
+  broad_search_object.find_particle_particle_contact_pairs(
+    particle_handler,
+    &local_neighbor_list,
+    &local_neighbor_list,
+    local_contact_pair_candidates,
+    ghost_contact_pair_candidates);
 
   // Calling fine search
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
@@ -165,12 +166,13 @@ test()
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     ghost_adjacent_particles;
 
-  fine_search_obejct.pp_Fine_Search(local_contact_pair_candidates,
-                                    ghost_contact_pair_candidates,
-                                    local_adjacent_particles,
-                                    ghost_adjacent_particles,
-                                    particle_container,
-                                    neighborhood_threshold);
+  fine_search_obejct.particle_particle_fine_search(
+    local_contact_pair_candidates,
+    ghost_contact_pair_candidates,
+    local_adjacent_particles,
+    ghost_adjacent_particles,
+    particle_container,
+    neighborhood_threshold);
 
   // Output
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();

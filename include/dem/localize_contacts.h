@@ -38,11 +38,13 @@ using namespace std;
  * @param local_adjacent_particles Local-local adjacent particle pairs
  * @param ghost_adjacent_particles Local-ghost adjacent particle pairs
  * @param pw_pairs_in_contact Particle-wall contact pairs
+ * @param pfw_pairs_in_contact Particle-floating wall contact pairs
  * @param local_contact_pair_candidates Outputs of local-local particle-particle
  * broad search
  * @param ghost_contact_pair_candidates Outputs of local-ghost particle-particle
  * broad search
  * @param pw_contact_candidates Outputs of particle-wall broad search
+ * @param pfw_contact_candidates Outputs of particle-floating wall broad search
  *
  */
 
@@ -54,7 +56,9 @@ localize_contacts(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     *ghost_adjacent_particles,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *                                        pw_pairs_in_contact,
+    *pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+    *                                        pfw_pairs_in_contact,
   std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
@@ -62,12 +66,9 @@ localize_contacts(
     std::unordered_map<
       int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
-    &pw_contact_candidates);
-
-template <int dim>
-std::vector<int>::iterator
-find_two_elements(std::vector<int> &candidates,
-                  int &             search_element_one,
-                  int &             search_element_two);
+    &pw_contact_candidates,
+  std::unordered_map<int,
+                     std::unordered_map<int, Particles::ParticleIterator<dim>>>
+    pfw_contact_candidates);
 
 #endif /* localize_contacts_h */

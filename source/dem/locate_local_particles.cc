@@ -13,6 +13,8 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+    &pfw_pairs_in_contact,
   std::map<int, particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
   std::map<int, particle_point_line_contact_info_struct<dim>>
@@ -29,6 +31,10 @@ locate_local_particles_in_cells(
   update_pw_contact_container_iterators<dim>(pw_pairs_in_contact,
                                              particle_container);
 
+  // Calling the same function for floating walls
+  update_pw_contact_container_iterators<dim>(pfw_pairs_in_contact,
+                                             particle_container);
+
   update_particle_point_line_contact_container_iterators<dim>(
     particle_points_in_contact, particle_lines_in_contact, particle_container);
 }
@@ -43,6 +49,8 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<2>>>
     &pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<2>>>
+    &pfw_pairs_in_contact,
   std::map<int, particle_point_line_contact_info_struct<2>>
     &particle_points_in_contact,
   std::map<int, particle_point_line_contact_info_struct<2>>
@@ -58,6 +66,8 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<3>>>
     &pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<3>>>
+    &pfw_pairs_in_contact,
   std::map<int, particle_point_line_contact_info_struct<3>>
     &particle_points_in_contact,
   std::map<int, particle_point_line_contact_info_struct<3>>

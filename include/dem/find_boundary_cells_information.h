@@ -26,10 +26,12 @@
 
 #include <deal.II/grid/grid_tools.h>
 
-#include <iostream>
-#include <vector>
+#include <dem/boundary_cells_info_struct.h>
+#include <dem/dem_solver_parameters.h>
 
-#include "dem/boundary_cells_info_struct.h"
+#include <iostream>
+#include <unordered_set>
+#include <vector>
 
 using namespace dealii;
 
@@ -66,7 +68,6 @@ public:
    * of the face 5, a point on the face which will be used to obtain the
    * distance between center of particles and the face
    */
-
   std::map<int, boundary_cells_info_struct<dim>>
   find_boundary_cells_information(
     std::vector<typename Triangulation<dim>::active_cell_iterator>
@@ -87,7 +88,6 @@ public:
    * @param boundary_cells_with_points A vector of pairs which contains the
    * cells with boundary points, and the location of the point
    */
-
   void
   find_particle_point_and_line_contact_cells(
     const std::vector<typename Triangulation<dim>::active_cell_iterator>
@@ -99,7 +99,26 @@ public:
     std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
                           Point<dim>>> &boundary_cells_with_points);
 
-private:
+  /**
+   * Loops over all the cells to find cells which should be searched for
+   * particle-floating wall contact, normal vector of each cell is also obtained
+   *
+   * @param triangulation Triangulation to access the information of the cells
+   * @param floating_wall_properties Properties of floating walls specified in
+   * the parameter handler file
+   * @param boundary_cells_for_floating_walls An unordered_set which contains
+   * all the boundary cells of floating walls
+   * @param maximum_cell_diameter Maximum cell length in the triangulation
+   */
+  void
+  find_boundary_cells_for_floating_walls(
+    const parallel::distributed::Triangulation<dim> & triangulation,
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
+    std::unordered_map<
+      int,
+      std::set<typename Triangulation<dim>::active_cell_iterator>>
+      &           boundary_cells_for_floating_walls,
+    const double &maximum_cell_diameter);
 };
 
 #endif /* find_boundary_cells_information_h */

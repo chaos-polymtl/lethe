@@ -127,15 +127,15 @@ test()
       int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
-  broad_search_object.find_PW_Contact_Pairs(boundary_cell_information,
-                                            particle_handler,
-                                            pw_contact_list);
+  broad_search_object.find_particle_wall_contact_pairs(
+    boundary_cell_information, particle_handler, pw_contact_list);
 
   // Calling fine search
   PWFineSearch<dim> fine_search_object;
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
-  fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
+  fine_search_object.particle_wall_fine_search(pw_contact_list,
+                                               pw_contact_information);
 
   // Calling non-linear force
   PWNonLinearForce<dim> force_object;

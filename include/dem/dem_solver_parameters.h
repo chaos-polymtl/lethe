@@ -38,6 +38,7 @@ public:
   Parameters::Lagrangian::PhysicalProperties physical_properties;
   Parameters::Lagrangian::InsertionInfo      insertion_info;
   Parameters::Lagrangian::ModelParameters    model_parameters;
+  Parameters::Lagrangian::FloatingWalls<dim> floating_walls;
 
   void
   declare(ParameterHandler &prm)
@@ -49,6 +50,8 @@ public:
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
+    // Parameters::Lagrangian::FloatingWalls::declare_parameters(prm);
+    floating_walls.declare_parameters(prm);
   }
 
   void
@@ -61,6 +64,7 @@ public:
     insertion_info.parse_parameters(prm);
     model_parameters.parse_parameters(prm);
     simulation_control.parse_parameters(prm);
+    floating_walls.parse_parameters(prm);
   }
 };
 

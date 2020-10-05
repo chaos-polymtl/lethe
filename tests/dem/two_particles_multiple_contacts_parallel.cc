@@ -341,19 +341,21 @@ test()
                                       cleared_ghost_adjacent_particles);
 
       // Calling broad search
-      broad_search_object.find_PP_Contact_Pairs(particle_handler,
-                                                &local_neighbor_list,
-                                                &ghost_neighbor_list,
-                                                local_contact_pair_candidates,
-                                                ghost_contact_pair_candidates);
+      broad_search_object.find_particle_particle_contact_pairs(
+        particle_handler,
+        &local_neighbor_list,
+        &ghost_neighbor_list,
+        local_contact_pair_candidates,
+        ghost_contact_pair_candidates);
 
       // Calling fine search
-      fine_search_object.pp_Fine_Search(local_contact_pair_candidates,
-                                        ghost_contact_pair_candidates,
-                                        cleared_local_adjacent_particles,
-                                        cleared_ghost_adjacent_particles,
-                                        local_particle_container,
-                                        neighborhood_threshold);
+      fine_search_object.particle_particle_fine_search(
+        local_contact_pair_candidates,
+        ghost_contact_pair_candidates,
+        cleared_local_adjacent_particles,
+        cleared_ghost_adjacent_particles,
+        local_particle_container,
+        neighborhood_threshold);
 
       // Calling non-linear force
       nonlinear_force_object.calculate_pp_contact_force(

@@ -8,7 +8,7 @@ PPBroadSearch<dim>::PPBroadSearch()
 
 template <int dim>
 void
-PPBroadSearch<dim>::find_PP_Contact_Pairs(
+PPBroadSearch<dim>::find_particle_particle_contact_pairs(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
   const std::vector<
     std::vector<typename Triangulation<dim>::active_cell_iterator>>

@@ -207,7 +207,8 @@ namespace Parameters
           "repartition frequency",
           "1000000000",
           Patterns::Integer(),
-          "Frequency at which the triangulation is repartitioned and load is balanced");
+          "Frequency at which the triangulation is repartitioned "
+          "and load is balanced");
 
         prm.declare_entry(
           "neighborhood_threshold",
@@ -280,6 +281,224 @@ namespace Parameters
       }
       prm.leave_subsection();
     }
+
+    template <int dim>
+    void
+    FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
+    {
+      prm.enter_subsection("point on wall");
+      prm.declare_entry("x", "0.", Patterns::Double(), "X Point on wall");
+      prm.declare_entry("y", "0.", Patterns::Double(), "Y Point on wall");
+      prm.declare_entry("z", "0.", Patterns::Double(), "Z Point on wall");
+      prm.leave_subsection();
+
+      prm.enter_subsection("normal vector");
+      prm.declare_entry("nx", "0.", Patterns::Double(), "X Normal vector wall");
+      prm.declare_entry("ny", "0.", Patterns::Double(), "Y Normal vector wall");
+      prm.declare_entry("nz", "0.", Patterns::Double(), "Z Normal vector wall");
+      prm.leave_subsection();
+
+      prm.declare_entry("start time", "0.", Patterns::Double(), "Start time");
+
+      prm.declare_entry("end time", "0.", Patterns::Double(), "End time");
+    }
+
+    template <int dim>
+    void
+    FloatingWalls<dim>::parse_floating_wall(ParameterHandler &prm)
+    {
+      prm.enter_subsection("point on wall");
+      Point<dim> wall_point;
+      wall_point[0] = prm.get_double("x");
+      wall_point[1] = prm.get_double("y");
+      if (dim == 3)
+        wall_point[2] = prm.get_double("z");
+      this->points_on_walls.push_back(wall_point);
+      prm.leave_subsection();
+
+      prm.enter_subsection("normal vector");
+      Tensor<1, dim> wall_normal;
+      wall_normal[0] = prm.get_double("nx");
+      wall_normal[1] = prm.get_double("ny");
+      if (dim == 3)
+        wall_normal[2] = prm.get_double("nz");
+      this->floating_walls_normal_vectors.push_back(wall_normal);
+      prm.leave_subsection();
+
+      time_start.push_back(prm.get_double("start time"));
+      time_end.push_back(prm.get_double("end time"));
+    }
+
+    template <int dim>
+    void
+    FloatingWalls<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      this->max_size = 10;
+
+      prm.enter_subsection("floating walls");
+      {
+        prm.declare_entry("number of floating walls",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of floating walls");
+
+        prm.enter_subsection("wall 0");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 1");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 2");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 3");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 4");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 5");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 6");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 7");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 8");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("wall 9");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+      }
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    FloatingWalls<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("floating walls");
+      {
+        floating_walls_number = prm.get_integer("number of floating walls");
+
+        if (floating_walls_number >= 1)
+          {
+            prm.enter_subsection("wall 0");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 2)
+          {
+            prm.enter_subsection("wall 1");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 3)
+          {
+            prm.enter_subsection("wall 2");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 4)
+          {
+            prm.enter_subsection("wall 3");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 5)
+          {
+            prm.enter_subsection("wall 4");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 6)
+          {
+            prm.enter_subsection("wall 5");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 7)
+          {
+            prm.enter_subsection("wall 6");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 8)
+          {
+            prm.enter_subsection("wall 7");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 9)
+          {
+            prm.enter_subsection("wall 8");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+        if (floating_walls_number >= 10)
+          {
+            prm.enter_subsection("wall 9");
+            {
+              parse_floating_wall(prm);
+            }
+            prm.leave_subsection();
+          }
+      }
+      prm.leave_subsection();
+    }
+
+    template class FloatingWalls<2>;
+    template class FloatingWalls<3>;
 
   } // namespace Lagrangian
 

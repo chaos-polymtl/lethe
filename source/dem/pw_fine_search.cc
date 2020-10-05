@@ -8,7 +8,7 @@ PWFineSearch<dim>::PWFineSearch()
 
 template <int dim>
 void
-PWFineSearch<dim>::pw_Fine_Search(
+PWFineSearch<dim>::particle_wall_fine_search(
   std::unordered_map<
     int,
     std::unordered_map<
@@ -18,9 +18,8 @@ PWFineSearch<dim>::pw_Fine_Search(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact)
 {
-  // Now iterating over contact candidates from broad search. If a particle-wall
-  // pair is in contact (distance > 0) and does not exist in the
-  // pw_pairs_in_contact, it is added to the pw_pairs_in_contact
+  // Iterating over contact candidates from broad search and add the pairs to
+  // the pw_pairs_in_contact
   for (auto map_iterator = pw_contact_pair_candidates.begin();
        map_iterator != pw_contact_pair_candidates.end();
        ++map_iterator)
@@ -33,8 +32,7 @@ PWFineSearch<dim>::pw_Fine_Search(
            particle_pair_candidate_iterator != particle_pair_candidates->end();
            ++particle_pair_candidate_iterator)
         {
-          // Get the particle and face id from the vector and the total array
-          // view to the particle properties once to improve efficiency
+          // Get the particle and face id once to improve efficiency
           int  face_id = particle_pair_candidate_iterator->first;
           auto particle_pair_candidate_content =
             particle_pair_candidate_iterator->second;
@@ -66,6 +64,95 @@ PWFineSearch<dim>::pw_Fine_Search(
           contact_info.tangential_overlap = tangential_overlap;
 
           pw_pairs_in_contact[particle_id].insert({face_id, contact_info});
+        }
+    }
+}
+
+template <int dim>
+void
+PWFineSearch<dim>::particle_floating_wall_fine_search(
+  std::unordered_map<int,
+                     std::unordered_map<int, Particles::ParticleIterator<dim>>>
+    &                                               pfw_contact_candidates,
+  const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
+  const double &                                    simulation_time,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+    &pfw_pairs_in_contact)
+{
+  // Reading floating wall properties
+  std::vector<Point<dim>> point_on_wall =
+    floating_wall_properties.points_on_walls;
+  std::vector<Tensor<1, dim>> wall_normal_vector =
+    floating_wall_properties.floating_walls_normal_vectors;
+
+  // Iterating over contact candidates from broad search and add the pairs to
+  // the pfw_pairs_in_contact
+  for (auto map_iterator = pfw_contact_candidates.begin();
+       map_iterator != pfw_contact_candidates.end();
+       ++map_iterator)
+    {
+      auto particle_id              = map_iterator->first;
+      auto particle_pair_candidates = &map_iterator->second;
+
+      for (auto particle_pair_candidate_iterator =
+             particle_pair_candidates->begin();
+           particle_pair_candidate_iterator != particle_pair_candidates->end();
+           ++particle_pair_candidate_iterator)
+        {
+          // Getting the floating wall id once to improve efficiency
+          int floating_wall_id = particle_pair_candidate_iterator->first;
+
+          // Checking simulation time for temporary floating walls
+          if (simulation_time >=
+                floating_wall_properties.time_start[floating_wall_id] &&
+              simulation_time <=
+                floating_wall_properties.time_end[floating_wall_id])
+            {
+              // Reading particle, normal vector and point on wall once to
+              // improve efficiency
+              auto particle = particle_pair_candidate_iterator->second;
+              Tensor<1, dim> normal_vector =
+                wall_normal_vector[floating_wall_id];
+              Point<dim> point_on_floating_wall =
+                point_on_wall[floating_wall_id];
+
+              // Check to see on which side of the wall the particle is located:
+
+              // Finding connecting vector from defined point on the boundary
+              // wall to the particle location
+              Tensor<1, dim> connecting_vector =
+                particle->get_location() - point_on_floating_wall;
+              int inner_product_sign =
+                boost::math::sign(connecting_vector * normal_vector);
+
+              // If the cell is located on the opposite side of the defined
+              // normal vector, the normal vector of the cell should be reversed
+              if (inner_product_sign < 0)
+                {
+                  normal_vector = -1 * normal_vector;
+                }
+
+              // Setting tangential overlap of the new particle-floating wall
+              // contact pair equal to zero
+              Tensor<1, dim> tangential_overlap;
+              tangential_overlap[0] = 0.0;
+              tangential_overlap[1] = 0.0;
+              if (dim == 3)
+                {
+                  tangential_overlap[2] = 0.0;
+                }
+
+              // Creating a sample from the pw_contact_info_struct and adding
+              // contact info to the sample
+              pw_contact_info_struct<dim> contact_info;
+              contact_info.particle           = particle;
+              contact_info.normal_vector      = normal_vector;
+              contact_info.point_on_boundary  = point_on_floating_wall;
+              contact_info.tangential_overlap = tangential_overlap;
+
+              pfw_pairs_in_contact[particle_id].insert(
+                {floating_wall_id, contact_info});
+            }
         }
     }
 }

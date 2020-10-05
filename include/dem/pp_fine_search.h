@@ -79,7 +79,7 @@ public:
    */
 
   void
-  pp_Fine_Search(
+  particle_particle_fine_search(
     const std::unordered_map<int, std::vector<int>>
       &local_contact_pair_candidates,
     const std::unordered_map<int, std::vector<int>>

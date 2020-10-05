@@ -100,9 +100,8 @@ test()
       int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
-  broad_search_object.find_PW_Contact_Pairs(boundary_cells_information,
-                                            particle_handler,
-                                            pw_contact_list);
+  broad_search_object.find_particle_wall_contact_pairs(
+    boundary_cells_information, particle_handler, pw_contact_list);
 
   // Output
   for (auto pw_contact_list_iterator = pw_contact_list.begin();
