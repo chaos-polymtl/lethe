@@ -1,0 +1,5 @@
+Periodic hills 
+This example can be solved using the gls_navier_stokes_3d solver
+This example is a benchmark case for computing separated flow.
+This example is run using Q2-Q2 elements to demonstrate the underlying high-order mesh for the periodic hill.
+More details : https://kbwiki.ercoftac.org/w/index.php?title=UFR_3-30_Description
