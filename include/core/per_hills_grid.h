@@ -28,66 +28,147 @@
 
 using namespace dealii;
 
-// The per_hills_grid class creates an hyper_rectangle and transforms it to
-// obtain the hill geometry with the hill_geometry function.
-// It also attaches a manifold to the geometry.
+/**
+ * @brief PeriodicHillsGrid.The PeriodicHillsGrid class creates an hyper_rectangle and transforms it to
+ * obtain the hill geometry with the hill_geometry function.
+ * It also attaches a manifold to the geometry.
+ */
+
 template <int dim, int spacedim>
-class per_hills_grid
+class PeriodicHillsGrid
 {
 public:
-  per_hills_grid() = default;
+  /**
+   * @brief Constructor for the PeriodicHillsGrid. At the present moment, the periodic hill
+   * cannot be controlled from the parameter file. The Grid is generated as-is.
+   */
+
+  PeriodicHillsGrid() = default;
+
+  /**
+   * @brief The hill_geometry function calculates all the domain of the geometry with 6
+   * polynomials depending the x position. (See Hill Geometry Definition file :
+   * https://turbmodels.larc.nasa.gov/Other_LES_Data/2dhill_periodic.html)
+   * This code has nondimensionalized geometry, but the coefficients provided
+   * need a hill height of 28.
+   * This function also does a gradual shifting of the horizontal lines
+   * prior to have smaller element on the bottom of the geometry where results
+   * are more important.
+   *
+   * @param p A point in space which will be adapted to the periodic hill geometry
+   *
+   * @param param Non-linear solver parameters
+   *
+   */
   Point<spacedim>
   hill_geometry(const Point<spacedim> &p) const;
+
+  /**
+   * @brief make_grid. The make_grid function generates a hyper rectangle of the size of the domain
+   * and then transforms it to the hill geometry. It also constructs the
+   * geometry manifold with FunctionManifold and finally sets the manifold.
+   *
+   * @param triangulation. The triangulation object on which the grid is generated
+   */
   void
   make_grid(Triangulation<dim, spacedim> &triangulation);
 };
 
-// The push_forward & the pull_back classes create the vector_value functions
-// needed to generate the hill manifold with FunctionManifold.
-// AutoDerivativeFunction is the base class for these classes to use its
-// gradient function and because it inherits from Function<spacedim>. (formula
-// is currently Euler and can be changed. See AutoDerivativeFunction
-// documentation)
+/**
+ * @brief The push_forward & the pull_back classes create the vector_value functions
+ * needed to generate the hill manifold with FunctionManifold.
+ * AutoDerivativeFunction is the base class for these classes to use its
+ * gradient function and because it inherits from Function<spacedim>. (formula
+ * is currently Euler and can be changed. See AutoDerivativeFunction
+ * documentation)
+ */
 template <int dim, int spacedim>
-class push_forward : public AutoDerivativeFunction<spacedim>,
-                     per_hills_grid<dim, spacedim>
+class periodic_hill_push_forward : public AutoDerivativeFunction<spacedim>,
+                                   PeriodicHillsGrid<dim, spacedim>
 {
 public:
-  push_forward()
+  periodic_hill_push_forward()
     : AutoDerivativeFunction<spacedim>(1e-6, spacedim)
   {}
+
+  /**
+   * @brief vector_value. This function is used to construct the geometry manifold.
+   * It changes the original point (op) of the transformed hyper_rectangle
+   * with hill_geometry to a new point (np) of the hill grid with per_hills_grid
+   * function.
+   *
+   * @param p. A point in space
+   *
+   * @param values. The vector of values which will be calculated at the position p.
+   */
+
   virtual void
   vector_value(const Point<spacedim> &p, Vector<double> &values) const override;
+
+  /**
+   * @brief value. The value function does the same thing than vector_value for one component.
+   * This implementation is needed to use the gradient function inherited by
+   * AutoDerivativeFunction.
+   *
+   * @param p. An original point in space
+   *
+   * @param component. The component of the point (x=0, y=1, z=2)
+   *
+   */
   virtual double
-  value(const Point<spacedim> &op, const unsigned int component) const override;
+  value(const Point<spacedim> &p, const unsigned int component) const override;
 };
 
 
 template <int dim, int spacedim>
-class pull_back : public AutoDerivativeFunction<spacedim>,
-                  per_hills_grid<dim, spacedim>
+class periodic_hill_pull_back : public AutoDerivativeFunction<spacedim>,
+                                PeriodicHillsGrid<dim, spacedim>
 {
 public:
-  pull_back()
+  periodic_hill_pull_back()
     : AutoDerivativeFunction<spacedim>(1e-6, spacedim)
   {}
+
+  /**
+   * \brief vector_value. This vector_value function is used to construct the
+   * geometry manifold. It changes the new point (np) of the hill grid to the
+   * original point (op) of the transformed hyper_rectangle grid. This function
+   * is mandatory to use FunctionManifold. First, it finds the minimum value of
+   * y depending the x position and then calculates the op with the inverse of
+   * the transformation done by hill_geometry function.
+   *
+   * \param p. A point in space.
+   *
+   * @param values. The vector of values which will be calculated at the position p.
+   */
+
   virtual void
   vector_value(const Point<spacedim> &np,
                Vector<double> &       values) const override;
+
+  /**
+   * @brief value. The value function does the same thing than vector_value for one component.
+   * This implementation is needed to use the gradient function inherited by
+   * AutoDerivativeFunction.
+   *
+   * @param p. An original point in space
+   *
+   * @param component. The component of the point (x=0, y=1, z=2)
+   *
+   */
   virtual double
   value(const Point<spacedim> &np, const unsigned int component) const override;
 };
 
-// This vector_value function is used to construct the geometry manifold.
-// It changes the original point (op) of the transformed hyper_rectangle
-// with hill_geometry to a new point (np) of the hill grid with per_hills_grid
-// function.
+
 template <int dim, int spacedim>
 void
-push_forward<dim, spacedim>::vector_value(const Point<spacedim> &op,
-                                          Vector<double> &       values) const
+periodic_hill_push_forward<dim, spacedim>::vector_value(
+  const Point<spacedim> &op,
+  Vector<double> &       values) const
 {
-  const Point<spacedim> np = per_hills_grid<dim, spacedim>::hill_geometry(op);
+  const Point<spacedim> np =
+    PeriodicHillsGrid<dim, spacedim>::hill_geometry(op);
 
   values(0) = np[0];
   values(1) = np[1];
@@ -96,41 +177,36 @@ push_forward<dim, spacedim>::vector_value(const Point<spacedim> &op,
     values(2) = np[2];
 }
 
-// This value function does the same thing than vector_value for one component.
-// This implementation is needed to use the gradient function inherited by
-// AutoDerivativeFunction.
+
 template <int dim, int spacedim>
 double
-push_forward<dim, spacedim>::value(const Point<spacedim> &op,
-                                   const unsigned int     component) const
+periodic_hill_push_forward<dim, spacedim>::value(
+  const Point<spacedim> &op,
+  const unsigned int     component) const
 {
-  const Point<spacedim> np = per_hills_grid<dim, spacedim>::hill_geometry(op);
+  const Point<spacedim> np =
+    PeriodicHillsGrid<dim, spacedim>::hill_geometry(op);
   return np[component];
 }
 
-// This vector_value function is used to construct the geometry manifold.
-// It changes the new point (np) of the hill grid to the original point (op)
-// of the transformed hyper_rectangle grid. This function is mandatory to use
-// FunctionManifold.
-// First, it finds the minimum value of y depending the x position and then
-// calculates the op with the inverse of the transformation done by
-// hill_geometry function.
+
 template <int dim, int spacedim>
 void
-pull_back<dim, spacedim>::vector_value(const Point<spacedim> &np,
-                                       Vector<double> &       values) const
+periodic_hill_pull_back<dim, spacedim>::vector_value(
+  const Point<spacedim> &np,
+  Vector<double> &       values) const
 {
   const double max_y = 3.035;
   double       min_y;
 
   if (spacedim == 2)
     {
-      min_y = per_hills_grid<dim, spacedim>::hill_geometry(
+      min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
         Point<spacedim>(np[0], 0))[1];
     }
   else if (spacedim == 3)
     {
-      min_y = per_hills_grid<dim, spacedim>::hill_geometry(
+      min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
         Point<spacedim>(np[0], 0., np[2]))[1];
       values(2) = np[2];
     }
@@ -145,17 +221,15 @@ pull_back<dim, spacedim>::vector_value(const Point<spacedim> &np,
   values(1) = y;
 }
 
-// This value function does the same thing than vector_value for one component.
-// This implementation is needed to use the gradient function inherited by
-// AutoDerivativeFunction.
 template <int dim, int spacedim>
 double
-pull_back<dim, spacedim>::value(const Point<spacedim> &np,
-                                const unsigned int     component) const
+periodic_hill_pull_back<dim, spacedim>::value(
+  const Point<spacedim> &np,
+  const unsigned int     component) const
 {
   const double max_y = 3.035;
-  double       min_y =
-    per_hills_grid<dim, spacedim>::hill_geometry(Point<spacedim>(np[0], 0))[1];
+  double       min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
+    Point<spacedim>(np[0], 0))[1];
 
   double y = (np[1] - min_y) / (1 - min_y / max_y);
   if (y < max_y)
@@ -166,17 +240,10 @@ pull_back<dim, spacedim>::value(const Point<spacedim> &np,
   return op[component];
 }
 
-// hill_geometry function calculates all the domain of the geometry with 6
-// polynomials depending the x position. (See Hill Geometry Definition file :
-// https://turbmodels.larc.nasa.gov/Other_LES_Data/2dhill_periodic.html)
-// This code has nondimensionalized geometry, but the coefficients provided
-// need a hill height of 28.
-// This function also does a gradual shifting of the horizontal lines
-// prior to have smaller element on the bottom of the geometry where results
-// are more important.
+
 template <int dim, int spacedim>
 Point<spacedim>
-per_hills_grid<dim, spacedim>::hill_geometry(const Point<spacedim> &p) const
+PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p) const
 {
   const double H = 28; // Height dimension to use with polynomials
   double       x = p[0] * H, y = p[1] * H;
@@ -211,7 +278,7 @@ per_hills_grid<dim, spacedim>::hill_geometry(const Point<spacedim> &p) const
   if (x >= 0 && x < 9)
     {
       y += pos_y * (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
-      if (y > 28 && pos_y == 1)
+      if (y > 28 && pos_y >= 1)
         y = 28;
     }
 
@@ -238,7 +305,7 @@ per_hills_grid<dim, spacedim>::hill_geometry(const Point<spacedim> &p) const
     {
       y += pos_y * (a1 + b1 * new_x + c1 * std::pow(new_x, 2) +
                     d1 * std::pow(new_x, 3));
-      if (y > 28 && pos_y == 1)
+      if (y > 28 && pos_y >= 1)
         y = 28;
     }
 
@@ -280,14 +347,13 @@ per_hills_grid<dim, spacedim>::hill_geometry(const Point<spacedim> &p) const
   return q;
 }
 
-// The make_grid function generates a hyper rectangle of the size of the domain
-// and then transforms it to the hill geometry. It also constructs the
-// geometry manifold with FunctionManifold and finally sets the manifold.
 template <int dim, int spacedim>
 void
-per_hills_grid<dim, spacedim>::make_grid(
+PeriodicHillsGrid<dim, spacedim>::make_grid(
   Triangulation<dim, spacedim> &triangulation)
 {
+  // Generate hyper_rectangle which serves as the baseline
+  // for the periodic hills
   if (dim == 2)
     GridGenerator::hyper_rectangle(triangulation,
                                    Point<dim>(0, 0),
@@ -300,7 +366,7 @@ per_hills_grid<dim, spacedim>::make_grid(
                                    Point<dim>(9, 3.035, 4.5),
                                    true);
 
-  // Transformation of the geometry with the 6 polynomials
+  // Transformation of the geometry with the hill geometry
   // and gradual shifting of horizontal lines :
   GridTools::transform(
     [this](const Point<spacedim> &p) { return this->hill_geometry(p); },
@@ -308,8 +374,8 @@ per_hills_grid<dim, spacedim>::make_grid(
 
   // Manifold construction
   static const FunctionManifold<dim, spacedim, spacedim> manifold_func(
-    std::make_unique<push_forward<dim, spacedim>>(),
-    std::make_unique<pull_back<dim, spacedim>>());
+    std::make_unique<periodic_hill_push_forward<dim, spacedim>>(),
+    std::make_unique<periodic_hill_pull_back<dim, spacedim>>());
   triangulation.set_manifold(1, manifold_func);
   triangulation.set_all_manifold_ids(1);
 }

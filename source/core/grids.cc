@@ -42,7 +42,7 @@ attach_grid_to_triangulation(
   // Periodic Hills grid
   else if (mesh_parameters.type == Parameters::Mesh::Type::per_hills)
     {
-      per_hills_grid<dim, spacedim> grid;
+      PeriodicHillsGrid<dim, spacedim> grid;
       grid.make_grid(*triangulation);
     }
   else

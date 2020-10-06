@@ -7,6 +7,7 @@ subsection simulation control
   set method                       = steady
   set number mesh adapt            = 0
   set output name                  = per_hills-output
+  set subdivision                  = 2
 end
 
 #---------------------------------------------------
@@ -22,6 +23,13 @@ end
 subsection mesh
     set type                       = per_hills
     set initial refinement         = 4
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection timer
+    set type                       = iteration
 end
 
 # --------------------------------------------------
@@ -66,8 +74,9 @@ end
 # FEM
 #---------------------------------------------------
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
+    set velocity order            = 2
+    set pressure order            = 2
+    set qmapping all              = true
 end
 
 
@@ -97,7 +106,8 @@ subsection linear solver
   set max iters                              = 5000
   set relative residual                      = 1e-9
   set minimum residual                       = 1e-9
-  set ilu preconditioner fill                = 1
+  set max krylov vectors                     = 200
+  set ilu preconditioner fill                = 0
   set ilu preconditioner absolute tolerance  = 1e-12
   set ilu preconditioner relative tolerance  = 1.00
   set verbosity               = verbose
