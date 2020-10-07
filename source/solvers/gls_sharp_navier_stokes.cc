@@ -123,7 +123,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                   if ((support_points[local_dof_indices[j]] - center_immersed)
                           .norm() <=
                         particles[p].radius *
-                          this->nsparam.particlesParameters.outside_radius &
+                          this->nsparam.particlesParameters.outside_radius &&
                       (support_points[local_dof_indices[j]] - center_immersed)
                           .norm() >=
                         particles[p].radius *
@@ -2365,7 +2365,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                         global_index_overwrite) *
                                         sum_line;
                                 }
-                              else if (component_i == 2 & dim == 3)
+                              else if (component_i == 2 && dim == 3)
                                 {
                                   double vz =
                                     particles[p].omega[0] *
