@@ -126,7 +126,8 @@ NewtonNonLinearSolver<VectorType>::solve(
                             << current_res << std::endl;
             }
 
-          if (current_res < this->params.relative_tolerance * last_res || last_res < this->params.tolerance)
+          if (current_res < this->params.relative_tolerance * last_res ||
+              last_res < this->params.tolerance)
             {
               break;
             }

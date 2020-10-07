@@ -208,7 +208,7 @@ namespace Parameters
       prm.declare_entry("quadrature points",
                         "0",
                         Patterns::Integer(),
-                        "interpolation order pressure");
+                        "Number of quadrature points");
       prm.declare_entry("qmapping all",
                         "false",
                         Patterns::Bool(),
@@ -407,10 +407,14 @@ namespace Parameters
                         "10",
                         Patterns::Integer(),
                         "Maximum number of Newton Iterations");
-      prm.declare_entry("relative tolerance",
-                          "0.9",
-                          Patterns::Double(),
-                          "Newton solver relative tolerance between steps");
+      prm.declare_entry(
+        "relative tolerance",
+        "0.9",
+        Patterns::Double(),
+        "Newton solver relative tolerance between steps."
+        " If a newton iteration leads to a residual > relative tolerance"
+        " * previous residual then the theta relaxation"
+        " is applied until this criteria is satisfied");
 
       prm.declare_entry(
         "skip iterations",
@@ -448,12 +452,11 @@ namespace Parameters
       else
         throw(std::runtime_error("Invalid non-linear solver "));
 
-      tolerance         = prm.get_double("tolerance");
-      relative_tolerance= prm.get_double("relative tolerance");
-      max_iterations    = prm.get_integer("max iterations");
-      skip_iterations   = prm.get_integer("skip iterations");
-      display_precision = prm.get_integer("residual precision");
-
+      tolerance          = prm.get_double("tolerance");
+      relative_tolerance = prm.get_double("relative tolerance");
+      max_iterations     = prm.get_integer("max iterations");
+      skip_iterations    = prm.get_integer("skip iterations");
+      display_precision  = prm.get_integer("residual precision");
     }
     prm.leave_subsection();
   }
@@ -944,73 +947,63 @@ namespace Parameters
         Patterns::Integer(),
         "Number of evaluation of the pressure and viscosity force at the boundary per particle  ");
       prm.declare_entry(
-                "calculate force",
-                "true",
-                Patterns::Bool(),
-                "Bool to define if the force is evaluated on each particle ");
+        "calculate force",
+        "true",
+        Patterns::Bool(),
+        "Bool to define if the force is evaluated on each particle ");
       prm.declare_entry(
-                "ib force output file",
-                "ib_force",
-                Patterns::FileName(),
-                "Bool to define if the force is evaluated on each particle ");
+        "ib force output file",
+        "ib_force",
+        Patterns::FileName(),
+        "Bool to define if the force is evaluated on each particle ");
 
-      prm.enter_subsection(
-        "particle info 0");
+      prm.enter_subsection("particle info 0");
       {
         declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 1");
+      prm.enter_subsection("particle info 1");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
 
-      prm.enter_subsection(
-        "particle info 2");
+      prm.enter_subsection("particle info 2");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 3");
+      prm.enter_subsection("particle info 3");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 4");
+      prm.enter_subsection("particle info 4");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 5");
+      prm.enter_subsection("particle info 5");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 6");
+      prm.enter_subsection("particle info 6");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 7");
+      prm.enter_subsection("particle info 7");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 8");
+      prm.enter_subsection("particle info 8");
       {
         IBParticles::declare_default_entry(prm);
       }
       prm.leave_subsection();
-      prm.enter_subsection(
-        "particle info 9");
+      prm.enter_subsection("particle info 9");
       {
         IBParticles::declare_default_entry(prm);
       }
@@ -1038,9 +1031,7 @@ namespace Parameters
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
-          std::string section =
-            "particle info " +
-            std::to_string(i);
+          std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
           particles[i].position[0]          = prm.get_double("x");
           particles[i].position[1]          = prm.get_double("y");

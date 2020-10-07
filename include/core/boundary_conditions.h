@@ -291,49 +291,49 @@ namespace BoundaryConditions
         declareDefaultEntry(prm, 6);
       }
       prm.leave_subsection();
-        prm.enter_subsection("bc 7");
-        {
-            declareDefaultEntry(prm, 7);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("bc 8");
-        {
-            declareDefaultEntry(prm, 8);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("bc 9");
-        {
-            declareDefaultEntry(prm, 9);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("bc 10");
-        {
-            declareDefaultEntry(prm, 10);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("bc 11");
-        {
-            declareDefaultEntry(prm, 11);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("bc 12");
-        {
-            declareDefaultEntry(prm, 12);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("bc 13");
-        {
-            declareDefaultEntry(prm, 13);
-        }
-        prm.leave_subsection();
-    }
+      prm.enter_subsection("bc 7");
+      {
+        declareDefaultEntry(prm, 7);
+      }
       prm.leave_subsection();
+
+      prm.enter_subsection("bc 8");
+      {
+        declareDefaultEntry(prm, 8);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 9");
+      {
+        declareDefaultEntry(prm, 9);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 10");
+      {
+        declareDefaultEntry(prm, 10);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 11");
+      {
+        declareDefaultEntry(prm, 11);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 12");
+      {
+        declareDefaultEntry(prm, 12);
+      }
+      prm.leave_subsection();
+
+      prm.enter_subsection("bc 13");
+      {
+        declareDefaultEntry(prm, 13);
+      }
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
   }
 
 
@@ -404,69 +404,69 @@ namespace BoundaryConditions
           }
           prm.leave_subsection();
         }
-        if (this->size >= 7)
+      if (this->size >= 7)
         {
-            prm.enter_subsection("bc 6");
-            {
-                parse_boundary(prm, 6);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 6");
+          {
+            parse_boundary(prm, 6);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 8)
+      if (this->size >= 8)
         {
-            prm.enter_subsection("bc 7");
-            {
-                parse_boundary(prm, 7);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 7");
+          {
+            parse_boundary(prm, 7);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 9)
+      if (this->size >= 9)
         {
-            prm.enter_subsection("bc 8");
-            {
-                parse_boundary(prm, 8);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 8");
+          {
+            parse_boundary(prm, 8);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 10)
+      if (this->size >= 10)
         {
-            prm.enter_subsection("bc 9");
-            {
-                parse_boundary(prm, 9);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 9");
+          {
+            parse_boundary(prm, 9);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 11)
+      if (this->size >= 11)
         {
-            prm.enter_subsection("bc 10");
-            {
-                parse_boundary(prm, 10);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 10");
+          {
+            parse_boundary(prm, 10);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 12)
+      if (this->size >= 12)
         {
-            prm.enter_subsection("bc 11");
-            {
-                parse_boundary(prm, 11);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 11");
+          {
+            parse_boundary(prm, 11);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 13)
+      if (this->size >= 13)
         {
-            prm.enter_subsection("bc 12");
-            {
-                parse_boundary(prm, 12);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 12");
+          {
+            parse_boundary(prm, 12);
+          }
+          prm.leave_subsection();
         }
-        if (this->size >= 14)
+      if (this->size >= 14)
         {
-            prm.enter_subsection("bc 13");
-            {
-                parse_boundary(prm, 13);
-            }
-            prm.leave_subsection();
+          prm.enter_subsection("bc 13");
+          {
+            parse_boundary(prm, 13);
+          }
+          prm.leave_subsection();
         }
     }
     prm.leave_subsection();
