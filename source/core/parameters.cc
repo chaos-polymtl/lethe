@@ -408,11 +408,11 @@ namespace Parameters
                         Patterns::Integer(),
                         "Maximum number of Newton Iterations");
       prm.declare_entry(
-        "relative tolerance",
+        "step tolerance",
         "0.9",
         Patterns::Double(),
         "Newton solver relative tolerance between steps."
-        " If a newton iteration leads to a residual > relative tolerance"
+        " If a newton iteration leads to a residual > step tolerance"
         " * previous residual then the theta relaxation"
         " is applied until this criteria is satisfied");
 
@@ -452,11 +452,11 @@ namespace Parameters
       else
         throw(std::runtime_error("Invalid non-linear solver "));
 
-      tolerance          = prm.get_double("tolerance");
-      relative_tolerance = prm.get_double("relative tolerance");
-      max_iterations     = prm.get_integer("max iterations");
-      skip_iterations    = prm.get_integer("skip iterations");
-      display_precision  = prm.get_integer("residual precision");
+      tolerance         = prm.get_double("tolerance");
+      step_tolerance    = prm.get_double("step tolerance");
+      max_iterations    = prm.get_integer("max iterations");
+      skip_iterations   = prm.get_integer("skip iterations");
+      display_precision = prm.get_integer("residual precision");
     }
     prm.leave_subsection();
   }
