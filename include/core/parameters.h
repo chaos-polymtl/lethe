@@ -46,12 +46,6 @@ namespace Parameters
     quiet,
     verbose
   };
-  enum class Particle_Assemble_type
-  {
-    NS,
-    mass
-  };
-
 
   /**
    * @brief SimulationControl - Defines the parameter that control the flow of the simulation
@@ -310,6 +304,9 @@ namespace Parameters
     // Tolerance
     double tolerance;
 
+    // Relative Tolerance
+    double relative_tolerance;
+
     // Maximal number of iterations for the Newton solver
     unsigned int max_iterations;
 
@@ -550,9 +547,10 @@ namespace Parameters
     unsigned int                 initial_refinement;
     double                       inside_radius;
     double                       outside_radius;
-    bool                         assemble_inside;
-    Particle_Assemble_type       P_assemble;
     std::vector<IBParticle<dim>> particles;
+    bool                         calculate_force_ib;
+    std::string                  ib_force_output_file;
+
 
     static void
     declare_parameters(ParameterHandler &prm);

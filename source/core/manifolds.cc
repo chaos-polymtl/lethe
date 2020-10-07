@@ -81,7 +81,7 @@ namespace Parameters
   void
   Manifolds::declare_parameters(ParameterHandler &prm)
   {
-    max_size = 7;
+    max_size = 14;
     arg1.resize(max_size);
     arg2.resize(max_size);
     arg3.resize(max_size);
@@ -125,6 +125,34 @@ namespace Parameters
 
       prm.enter_subsection("manifold 6");
       declareDefaultEntry(prm, 6);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 7");
+      declareDefaultEntry(prm, 7);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 8");
+      declareDefaultEntry(prm, 8);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 9");
+      declareDefaultEntry(prm, 9);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 10");
+      declareDefaultEntry(prm, 10);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 11");
+      declareDefaultEntry(prm, 11);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 12");
+      declareDefaultEntry(prm, 12);
+      prm.leave_subsection();
+
+      prm.enter_subsection("manifold 13");
+      declareDefaultEntry(prm, 13);
       prm.leave_subsection();
     }
     prm.leave_subsection();
@@ -179,6 +207,48 @@ namespace Parameters
         {
           prm.enter_subsection("manifold 6");
           parse_boundary(prm, 6);
+          prm.leave_subsection();
+        }
+      if (size >= 8)
+        {
+          prm.enter_subsection("manifold 7");
+          parse_boundary(prm, 7);
+          prm.leave_subsection();
+        }
+      if (size >= 9)
+        {
+          prm.enter_subsection("manifold 8");
+          parse_boundary(prm, 8);
+          prm.leave_subsection();
+        }
+      if (size >= 10)
+        {
+          prm.enter_subsection("manifold 9");
+          parse_boundary(prm, 9);
+          prm.leave_subsection();
+        }
+      if (size >= 11)
+        {
+          prm.enter_subsection("manifold 10");
+          parse_boundary(prm, 10);
+          prm.leave_subsection();
+        }
+      if (size >= 12)
+        {
+          prm.enter_subsection("manifold 11");
+          parse_boundary(prm, 11);
+          prm.leave_subsection();
+        }
+      if (size >= 13)
+        {
+          prm.enter_subsection("manifold 12");
+          parse_boundary(prm, 12);
+          prm.leave_subsection();
+        }
+      if (size >= 14)
+        {
+          prm.enter_subsection("manifold 13");
+          parse_boundary(prm, 13);
           prm.leave_subsection();
         }
     }
