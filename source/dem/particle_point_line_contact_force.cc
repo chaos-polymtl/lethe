@@ -33,15 +33,15 @@ ParticlePointLineForce<dim>::calculate_particle_point_line_contact_force(
 
       // Calculation of effective Young's modulus of the contact
       double effective_youngs_modulus =
-        physical_properties.Youngs_modulus_wall /
-        (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_wall, 2.0)));
+        physical_properties.youngs_modulus_wall /
+        (2.0 * (1.0 - pow(physical_properties.poisson_ratio_wall, 2.0)));
 
       // Calculation of model parameters (betha and sn). These values
       // are used to consider non-linear relation of the contact force to
       // the normal overlap
       double model_parameter_betha =
-        log(physical_properties.Poisson_ratio_wall) /
-        sqrt(pow(log(physical_properties.Poisson_ratio_wall), 2.0) + 9.8696);
+        log(physical_properties.poisson_ratio_wall) /
+        sqrt(pow(log(physical_properties.poisson_ratio_wall), 2.0) + 9.8696);
       double model_parameter_sn =
         2.0 * effective_youngs_modulus *
         sqrt(particle_properties[DEM::PropertiesIndex::dp] *

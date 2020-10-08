@@ -217,9 +217,9 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
           particle_two_properties[DEM::PropertiesIndex::dp]));
   double effective_youngs_modulus =
-    physical_properties.Youngs_modulus_particle /
-    (2.0 * (1.0 - physical_properties.Poisson_ratio_particle *
-                    physical_properties.Poisson_ratio_particle));
+    physical_properties.youngs_modulus_particle /
+    (2.0 * (1.0 - physical_properties.poisson_ratio_particle *
+                    physical_properties.poisson_ratio_particle));
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties

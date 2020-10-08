@@ -50,7 +50,6 @@ public:
     Parameters::Lagrangian::PhysicalProperties::declare_parameters(prm);
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
-    // Parameters::Lagrangian::FloatingWalls::declare_parameters(prm);
     floating_walls.declare_parameters(prm);
   }
 

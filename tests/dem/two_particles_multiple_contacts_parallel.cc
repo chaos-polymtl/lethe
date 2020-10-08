@@ -227,8 +227,8 @@ test()
   unsigned int       step_end          = 1000;
   unsigned int       output_frequency  = 10;
 
-  dem_parameters.physical_properties.Youngs_modulus_particle = 50000000;
-  dem_parameters.physical_properties.Poisson_ratio_particle  = 0.9;
+  dem_parameters.physical_properties.youngs_modulus_particle = 50000000;
+  dem_parameters.physical_properties.poisson_ratio_particle  = 0.9;
   dem_parameters.physical_properties.restitution_coefficient_particle = 0.9;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;

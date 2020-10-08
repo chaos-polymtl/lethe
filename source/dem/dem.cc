@@ -532,7 +532,7 @@ DEMSolver<dim>::solve()
     triangulation,
     parameters.floating_walls,
     boundary_cells_for_floating_walls,
-    GridTools::minimal_cell_diameter(triangulation));
+    GridTools::maximal_cell_diameter(triangulation));
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object        = set_insertion_type(parameters);

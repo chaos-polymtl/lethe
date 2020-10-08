@@ -102,19 +102,19 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation of effective Young's modulus and shear
   // modulus of the contact
   double effective_youngs_modulus =
-    physical_properties.Youngs_modulus_wall /
-    (2.0 * (1.0 - pow(physical_properties.Poisson_ratio_wall, 2.0)));
+    physical_properties.youngs_modulus_wall /
+    (2.0 * (1.0 - pow(physical_properties.poisson_ratio_wall, 2.0)));
   double effective_shear_modulus =
-    physical_properties.Youngs_modulus_wall /
-    (4.0 * (2.0 - physical_properties.Poisson_ratio_wall) *
-     (1.0 + physical_properties.Poisson_ratio_wall));
+    physical_properties.youngs_modulus_wall /
+    (4.0 * (2.0 - physical_properties.poisson_ratio_wall) *
+     (1.0 + physical_properties.poisson_ratio_wall));
 
   // Calculation of model parameters (betha, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
   double model_parameter_betha =
-    log(physical_properties.Poisson_ratio_wall) /
-    sqrt(pow(log(physical_properties.Poisson_ratio_wall), 2.0) + 9.8696);
+    log(physical_properties.poisson_ratio_wall) /
+    sqrt(pow(log(physical_properties.poisson_ratio_wall), 2.0) + 9.8696);
   double model_parameter_sn =
     2.0 * effective_youngs_modulus *
     sqrt(particle_properties[DEM::PropertiesIndex::dp] *

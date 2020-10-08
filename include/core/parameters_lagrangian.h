@@ -30,12 +30,12 @@ namespace Parameters
       double density;
 
       // Young's modulus of particle and wall
-      double Youngs_modulus_particle;
-      double Youngs_modulus_wall;
+      double youngs_modulus_particle;
+      double youngs_modulus_wall;
 
       // Poisson's ratios of particle and wall
-      double Poisson_ratio_particle;
-      double Poisson_ratio_wall;
+      double poisson_ratio_particle;
+      double poisson_ratio_wall;
 
       // Coefficients of restituion of particle and wall
       double restitution_coefficient_particle;

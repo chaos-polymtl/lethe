@@ -69,10 +69,10 @@ test()
   double             dt                                      = 0.00001;
   double             particle_diameter                       = 0.005;
   int                particle_density                        = 2500;
-  dem_parameters.physical_properties.Youngs_modulus_particle = 50000000;
-  dem_parameters.physical_properties.Youngs_modulus_wall     = 50000000;
-  dem_parameters.physical_properties.Poisson_ratio_particle  = 0.3;
-  dem_parameters.physical_properties.Poisson_ratio_wall      = 0.3;
+  dem_parameters.physical_properties.youngs_modulus_particle = 50000000;
+  dem_parameters.physical_properties.youngs_modulus_wall     = 50000000;
+  dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
+  dem_parameters.physical_properties.poisson_ratio_wall      = 0.3;
   dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
   dem_parameters.physical_properties.restitution_coefficient_wall     = 0.5;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
