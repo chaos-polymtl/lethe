@@ -71,10 +71,10 @@ test()
   double             dt                                      = 0.000001;
   double             particle_diameter                       = 0.001;
   int                particle_density                        = 7850;
-  dem_parameters.physical_properties.Youngs_modulus_particle = 200000000000;
-  dem_parameters.physical_properties.Youngs_modulus_wall     = 200000000000;
-  dem_parameters.physical_properties.Poisson_ratio_particle  = 0.3;
-  dem_parameters.physical_properties.Poisson_ratio_wall      = 0.3;
+  dem_parameters.physical_properties.youngs_modulus_particle = 200000000000;
+  dem_parameters.physical_properties.youngs_modulus_wall     = 200000000000;
+  dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
+  dem_parameters.physical_properties.poisson_ratio_wall      = 0.3;
   dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
   dem_parameters.physical_properties.restitution_coefficient_wall     = 0.5;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.3;
@@ -129,9 +129,8 @@ test()
       int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
-  pw_broad_search_object.find_PW_Contact_Pairs(boundary_cell_information,
-                                               particle_handler,
-                                               pw_contact_list);
+  pw_broad_search_object.find_particle_wall_contact_pairs(
+    boundary_cell_information, particle_handler, pw_contact_list);
 
   // P-W fine search
   PWFineSearch<dim> pw_fine_search_object;
@@ -162,8 +161,8 @@ test()
       else
         {
           // If particle and wall are in contact
-          pw_fine_search_object.pw_Fine_Search(pw_contact_list,
-                                               pw_contact_information);
+          pw_fine_search_object.particle_wall_fine_search(
+            pw_contact_list, pw_contact_information);
           auto pw_pairs_in_contact_iterator =
             &pw_contact_information.begin()->second;
           auto pw_contact_information_iterator =

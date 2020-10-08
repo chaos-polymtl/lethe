@@ -22,6 +22,7 @@
 #include <deal.II/particles/particle_iterator.h>
 
 #include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
 #include <dem/pw_contact_info_struct.h>
 
 #include <iostream>
@@ -50,28 +51,20 @@ public:
   PWFineSearch<dim>();
 
   /**
-   * Iterates over a vector of maps (pw_pairs_in_contact) to see if the
-   * particle-wall pairs which were in contact in the last time step, are still
-   * in contact or not. If they are still in contact it will update the
-   * collision info, including tangential overlap, based on new properties of
-   * the particle and wall, if they are not in contact anymore it will delete
-   * the pair from the pw_pairs_in_contact. Then it iterates over the contact
-   * candidates from particle-wall broad search to see if they already exist in
-   * the pw_pairs_in_contact or not, if they are not in the pw_pairs_in_contact
-   * and they have overlap, the pair will be added to the pw_pairs_in_contact
-   * and its contact information will be stored
+   * Iterates over the contact candidates from particle-wall broad search
+   * (pw_contact_pair_candidates) to add new contact pairs to the
+   * pw_pairs_in_contact container
    *
    * @param pw_contact_pair_candidates The output of particle-wall broad search
    * which shows contact pair candidates
-   * @param pw_pairs_in_contact A vector of maps which stores all the
-   * particle-wall pairs which are physically in contact, and the contact
-   * information in a struct. Note that the size of this vector is equal to the
-   * number of particles while the key of map (each element of the vector) is
-   * the boundary id
+   * @param pw_pairs_in_contact An unordered_map of maps which stores
+   * all the particle-wall pairs which are physically in contact, and the
+   * contact information in a struct. Note that the size of this unordered map
+   * is equal to the number of particles
    */
 
   void
-  pw_Fine_Search(
+  particle_wall_fine_search(
     std::unordered_map<
       int,
       std::unordered_map<int,
@@ -80,6 +73,32 @@ public:
                                     Point<dim>>>> &pw_contact_pair_candidates,
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
       &pw_pairs_in_contact);
+
+  /**
+   * Iterates over the contact candidates from particle-floating wall broad
+   * search (pfw_contact_candidates) to add new contact pairs to the
+   * pfw_pairs_in_contact container
+   *
+   * @param pfw_contact_pair_candidates The output of particle-floating wall
+   * broad search which shows contact pair candidates
+   * @param floating_wall_properties Properties of floating walls defined in the
+   * parameter handler
+   * @param simulation_time Simulation time
+   * @param pfw_pairs_in_contact An unordered_map of maps which stores
+   * all the particle-floating wall pairs which are physically in contact, and
+   * the contact information in a struct. Note that the size of this unordered
+   * map is equal to the number of particles
+   */
+  void
+  particle_floating_wall_fine_search(
+    std::unordered_map<
+      int,
+      std::unordered_map<int, Particles::ParticleIterator<dim>>>
+      &                                               pfw_contact_candidates,
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
+    const double &                                    simulation_time,
+    std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+      &pfw_pairs_in_contact);
 };
 
 #endif /* particle_wall_fine_search_h */

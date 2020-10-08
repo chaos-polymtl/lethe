@@ -29,6 +29,7 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact detection frequency                 	 = 10
+  set repartition frequency 				 = 10000
   set neighborhood threshold				 = 1.5
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
@@ -39,7 +40,7 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set gx            		 			= 9.81
+    set gx            		 			= 0.0
     set gy            		 			= -9.81
     set diameter            	 			= 0.005
     set density            	 			= 2000
@@ -60,16 +61,47 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 10
-    set inserted number of particles at each time step  = 10
+    set n total              				= 50
+    set inserted number of particles at each time step  = 50
     set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= -0.03
-    set insertion box minimum y            	        = -0.03
+    set insertion box minimum x            	 	= -0.05
+    set insertion box minimum y            	        = -0.05
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
-    set insertion distance threshold			= 4
+    set insertion distance threshold			= 2
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
+end
+
+#---------------------------------------------------
+# Floating Walls
+#---------------------------------------------------
+subsection floating walls
+    set number of floating walls	                = 2
+    	subsection wall 0
+		subsection point on wall
+			set x				= 0
+			set y				= -0.04
+		end
+		subsection normal vector
+			set nx				= 0	
+			set ny				= 1
+		end
+		set start time				= 0
+		set end time				= 0.5
+    	end
+    	subsection wall 1
+		subsection point on wall
+			set x				= 0
+			set y				= 0.01
+		end
+		subsection normal vector
+			set nx				= 0	
+			set ny				= 1
+		end
+		set start time				= 0
+		set end time				= 0.2
+    	end
 end
 
 #---------------------------------------------------

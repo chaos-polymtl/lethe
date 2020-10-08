@@ -69,10 +69,10 @@ test()
   double             dt                                      = 0.00001;
   double             particle_diameter                       = 0.005;
   int                particle_density                        = 2500;
-  dem_parameters.physical_properties.Youngs_modulus_particle = 50000000;
-  dem_parameters.physical_properties.Youngs_modulus_wall     = 50000000;
-  dem_parameters.physical_properties.Poisson_ratio_particle  = 0.3;
-  dem_parameters.physical_properties.Poisson_ratio_wall      = 0.3;
+  dem_parameters.physical_properties.youngs_modulus_particle = 50000000;
+  dem_parameters.physical_properties.youngs_modulus_wall     = 50000000;
+  dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
+  dem_parameters.physical_properties.poisson_ratio_wall      = 0.3;
   dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
   dem_parameters.physical_properties.restitution_coefficient_wall     = 0.5;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
@@ -126,15 +126,15 @@ test()
       int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_list;
-  broad_search_object.find_PW_Contact_Pairs(boundary_cell_information,
-                                            particle_handler,
-                                            pw_contact_list);
+  broad_search_object.find_particle_wall_contact_pairs(
+    boundary_cell_information, particle_handler, pw_contact_list);
 
   // Calling fine search
   PWFineSearch<dim> fine_search_object;
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_contact_information;
-  fine_search_object.pw_Fine_Search(pw_contact_list, pw_contact_information);
+  fine_search_object.particle_wall_fine_search(pw_contact_list,
+                                               pw_contact_information);
 
   // Calling linear force
   PWLinearForce<dim> force_object;

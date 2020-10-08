@@ -102,10 +102,10 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // Calculation of effective Young's modulus of the
   // contact
   double effective_youngs_modulus =
-    pow((((1.0 - pow(physical_properties.Poisson_ratio_particle, 2.0)) /
-          physical_properties.Youngs_modulus_particle) +
-         ((1.0 - pow(physical_properties.Poisson_ratio_wall, 2.0)) /
-          physical_properties.Youngs_modulus_wall)),
+    pow((((1.0 - pow(physical_properties.poisson_ratio_particle, 2.0)) /
+          physical_properties.youngs_modulus_particle) +
+         ((1.0 - pow(physical_properties.poisson_ratio_wall, 2.0)) /
+          physical_properties.youngs_modulus_wall)),
         -1.0);
 
   // Calculation of normal and tangential spring and dashpot constants

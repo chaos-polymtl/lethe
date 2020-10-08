@@ -14,26 +14,26 @@ end
 # Timer
 #---------------------------------------------------
 subsection timer
-    set type    = none
+    set type    					 = none
 end
 
 #---------------------------------------------------
 # Test
 #---------------------------------------------------
 subsection test
-    set enable = true
+    set enable 						 = true
 end
 
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
-  set contact_detection_frequency                 	 = 10
+  set contact detection frequency                 	 = 10
   set repartition frequency 				 = 10000
-  set neighborhood_threshold				 = 1.5
-  set pp_contact_force_method                   	 = pp_nonlinear
-  set pw_contact_force_method                   	 = pw_nonlinear
-  set integration_method				 = velocity_verlet
+  set neighborhood threshold				 = 1.5
+  set particle particle contact force method             = pp_nonlinear
+  set particle wall contact force method                 = pw_nonlinear
+  set integration method				 = velocity_verlet
 end
 
 #---------------------------------------------------
@@ -44,41 +44,41 @@ subsection physical properties
     set gy            		 			= -9.81
     set diameter            	 			= 0.005
     set density            	 			= 2000
-    set Youngs_modulus_particle         		= 1000000
-    set Youngs_modulus_wall            			= 1000000
-    set Poisson_ratio_particle          		= 0.3
-    set Poisson_ratio_wall            			= 0.3
-    set restitution_coefficient_particle		= 0.95
-    set restitution_coefficient_wall           		= 0.95
-    set friction_coefficient_particle         		= 0.05
-    set friction_coefficient_wall         		= 0.05
-    set rolling_friction_particle         		= 0.1
-    set rolling_friction_wall         	      	  	= 0.1
+    set young modulus particle         			= 1000000
+    set young modulus wall            			= 1000000
+    set poisson ratio particle          		= 0.3
+    set poisson ratio wall            			= 0.3
+    set restitution coefficient particle		= 0.95
+    set restitution coefficient wall           		= 0.95
+    set friction coefficient particle         		= 0.05
+    set friction coefficient wall         		= 0.05
+    set rolling friction particle         		= 0.1
+    set rolling friction wall         	      	  	= 0.1
 end
 
 #---------------------------------------------------
 # Insertion Info
 #---------------------------------------------------
 subsection insertion info
-    set insertion_method				= non_uniform
+    set insertion method				= non_uniform
     set n total              				= 50
-    set Inserted number of particles at each time step  = 50
-    set Insertion frequency            		 	= 20000
-    set Insertion box minimum x            	 	= -0.05
-    set Insertion box minimum y            	        = -0.05
-    set Insertion box maximum x            	        = 0.05
-    set Insertion box maximum y           	 	= 0.05
-    set Insertion distance threshold			= 2
-    set Insertion random number range			= 0.75
-    set Insertion random number seed			= 19
+    set inserted number of particles at each time step  = 50
+    set insertion frequency            		 	= 20000
+    set insertion box minimum x            	 	= -0.05
+    set insertion box minimum y            	        = -0.05
+    set insertion box maximum x            	        = 0.05
+    set insertion box maximum y           	 	= 0.05
+    set insertion distance threshold			= 2
+    set insertion random number range			= 0.75
+    set insertion random number seed			= 19
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
-    set type                 = dealii
-    set grid type      	     = hyper_ball
-    set grid arguments       = 0.0, 0.0 : 0.1 : false
-    set initial refinement   = 3
+    set type                 				= dealii
+    set grid type      	     				= hyper_ball
+    set grid arguments      			 	= 0.0, 0.0 : 0.1 : false
+    set initial refinement   				= 3
 end

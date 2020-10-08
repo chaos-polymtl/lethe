@@ -24,6 +24,7 @@
 #include <deal.II/particles/particle_iterator.h>
 
 #include <dem/boundary_cells_info_struct.h>
+#include <dem/dem_solver_parameters.h>
 
 #include <iostream>
 #include <vector>
@@ -49,33 +50,64 @@ public:
   PWBroadSearch<dim>();
 
   /**
-   * Finds a vector of tuples (tuple of contact pairs (particles located in
-   * boundary cells, boundary id), normal vector of the boundary face and a
+   * Finds unordered map of tuples (tuple of particle located in
+   * boundary cells, normal vector of the boundary face and a
    * point on the face) which shows the candidate particle-wall collision pairs.
-   * These collision pairs will be investigated in the fine search to check if
-   * they are in contact or not
+   * These collision candidates will be investigated in the fine search to check
+   * if they are in contact or not
    *
    * @param boundary_cells_information Information of the boundary cells and
    * faces. This is the output of the FindBoundaryCellsInformation class
    * @param particle_handler Particle handler of particles located in boundary
    * cells
-   * @param pw_contact_candidates A vector of tuples. Each element of vector
-   * (tuple) contains a contact pair (particle located near boundaries, boundary
-   * id), the normal vector of the corresponding face boundary and a point on
-   * the boundary. The contact pair is used in the fine search to look for
-   * replications and this is the reason it is defined as a separate pair
+   * @param pw_contact_candidates A two-layered unordered map of tuples. Each
+   * tuple contains a particle located near boundaries, the normal vector of
+   * the corresponding face boundary and a point on the boundary. The contact
+   * pair is used in the fine search
    */
 
   void
-  find_PW_Contact_Pairs(
-    std::map<int, boundary_cells_info_struct<dim>> &boundary_cells_information,
-    Particles::ParticleHandler<dim> &               particle_handler,
+  find_particle_wall_contact_pairs(
+    const std::map<int, boundary_cells_info_struct<dim>>
+      &                                    boundary_cells_information,
+    const Particles::ParticleHandler<dim> &particle_handler,
     std::unordered_map<
       int,
       std::unordered_map<int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>>>> &pw_contact_candidates);
+
+  /**
+   * Finds a two-layered unordered map of particle iterators which shows the
+   * candidate particle-floating wall collision candidates. These collision
+   * pairs will be investigated in the fine search to check if they are in
+   * contact or not
+   *
+   * @param boundary_cells_for_floating_walls Boundary cells located adjacent to
+   * floating walls
+   * @param particle_handler Particle handler of particles located in boundary
+   * cells
+   * @param floating_wall_properties Properties of the floating walls specified
+   * in the parameter handler file
+   * @param simulation_time Simulation time
+   * @param pfw_contact_candidates Output of particle-floating wall broad search
+   * which contains all the particle-floating wall collision candidates
+   */
+
+  void
+  find_particle_floating_wall_contact_pairs(
+    const std::unordered_map<
+      int,
+      std::set<typename Triangulation<dim>::active_cell_iterator>>
+      &                                    boundary_cells_for_floating_walls,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
+    const double &                                    simulation_time,
+    std::unordered_map<
+      int,
+      std::unordered_map<int, Particles::ParticleIterator<dim>>>
+      &pfw_contact_candidates);
 };
 
 #endif /* particle_wall_broad_search_h */

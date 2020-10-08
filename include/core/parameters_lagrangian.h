@@ -30,12 +30,12 @@ namespace Parameters
       double density;
 
       // Young's modulus of particle and wall
-      double Youngs_modulus_particle;
-      double Youngs_modulus_wall;
+      double youngs_modulus_particle;
+      double youngs_modulus_wall;
 
       // Poisson's ratios of particle and wall
-      double Poisson_ratio_particle;
-      double Poisson_ratio_wall;
+      double poisson_ratio_particle;
+      double poisson_ratio_wall;
 
       // Coefficients of restituion of particle and wall
       double restitution_coefficient_particle;
@@ -128,6 +128,38 @@ namespace Parameters
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
+    };
+
+    template <int dim>
+    class FloatingWalls
+    {
+    public:
+      // Maximum number of floating walls
+      unsigned int max_size;
+
+      // Number of floating walls
+      unsigned int floating_walls_number;
+
+      // A point on each floating wall
+      std::vector<Point<dim>> points_on_walls;
+
+      // Normal vectors of the floating walls
+      std::vector<Tensor<1, dim>> floating_walls_normal_vectors;
+
+      // Beginning time
+      std::vector<double> time_start;
+
+      // Ending time
+      std::vector<double> time_end;
+
+      void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+      void
+      declareDefaultEntry(ParameterHandler &prm);
+      void
+      parse_floating_wall(ParameterHandler &prm);
     };
 
   } // namespace Lagrangian

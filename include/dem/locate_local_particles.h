@@ -44,6 +44,8 @@ using namespace dealii;
  * information of adjacent local-local particles
  * @param pw_pairs_in_contact Container that contains all the contact
  * information of particle-wall contacts
+ * @param pfw_pairs_in_contact Container that contains all the contact
+ * information of particle-floating wall contacts
  * @param particle_points_in_contact Container that contains all the contact
  * information of particle-point contacts
  * @param particle_lines_in_contact Container that contains all the contact
@@ -62,6 +64,8 @@ locate_local_particles_in_cells(
     &local_adjacent_particles,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact,
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+    &pfw_pairs_in_contact,
   std::map<int, particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
   std::map<int, particle_point_line_contact_info_struct<dim>>

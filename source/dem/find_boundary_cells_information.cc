@@ -198,5 +198,60 @@ FindBoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
     }
 }
 
+// This function finds the triangulation cells adjacent to the floating walls
+template <int dim>
+void
+FindBoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
+  const parallel::distributed::Triangulation<dim> & triangulation,
+  const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
+  std::unordered_map<
+    int,
+    std::set<typename Triangulation<dim>::active_cell_iterator>>
+    &           boundary_cells_for_floating_walls,
+  const double &maximum_cell_diameter)
+{
+  // Reading floating wall properties
+  std::vector<Point<dim>> point_on_wall =
+    floating_wall_properties.points_on_walls;
+  std::vector<Tensor<1, dim>> wall_normal_vector =
+    floating_wall_properties.floating_walls_normal_vectors;
+  unsigned int floating_wall_number =
+    floating_wall_properties.floating_walls_number;
+
+  // Looping through floating walls
+  for (unsigned int floating_wall_id = 0;
+       floating_wall_id < floating_wall_number;
+       ++floating_wall_id)
+    {
+      // Looping through cells
+      for (const auto &cell : triangulation.active_cell_iterators())
+        {
+          // If the cell is owned by the processor
+          if (cell->is_locally_owned())
+            {
+              // Looping over vertices of each cell
+              for (unsigned int vertex = 0;
+                   vertex < GeometryInfo<dim>::vertices_per_cell;
+                   ++vertex)
+                {
+                  // Finding vertex-floating wall distance
+                  Tensor<1, dim> connecting_vector =
+                    cell->vertex(vertex) - point_on_wall[floating_wall_id];
+                  double vertex_wall_distance =
+                    connecting_vector * wall_normal_vector[floating_wall_id];
+
+                  // If the distance is less than the largest cell size, it
+                  // should be added to the boundary_cells_for_floating_walls
+                  if (abs(vertex_wall_distance) < maximum_cell_diameter)
+                    {
+                      boundary_cells_for_floating_walls[floating_wall_id]
+                        .insert(cell);
+                    }
+                }
+            }
+        }
+    }
+}
+
 template class FindBoundaryCellsInformation<2>;
 template class FindBoundaryCellsInformation<3>;

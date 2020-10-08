@@ -250,14 +250,23 @@ private:
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
                                                  boundary_cells_with_points;
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::unordered_map<int, std::vector<int>>      local_contact_pair_candidates;
-  std::unordered_map<int, std::vector<int>>      ghost_contact_pair_candidates;
+  std::unordered_map<
+    int,
+    std::set<typename Triangulation<dim>::active_cell_iterator>>
+                                            boundary_cells_for_floating_walls;
+  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
+  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
+  std::unordered_map<int,
+                     std::unordered_map<int, Particles::ParticleIterator<dim>>>
+    pfw_contact_candidates;
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     ghost_adjacent_particles;
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     pw_pairs_in_contact;
+  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+    pfw_pairs_in_contact;
   std::unordered_map<
     int,
     std::unordered_map<
