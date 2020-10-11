@@ -122,5 +122,15 @@ private:
   std::vector<std::tuple<unsigned int, unsigned int, std::string>>
     vector_datasets;
 #  endif
+
+  /**
+   * Number of properties that are written in output files
+   */
+  const unsigned int number_of_properties_to_write = 16;
+
+  /**
+   * Particle properties that are written in output files
+   */
+  std::vector<std::pair<std::string, int>> properties_to_write;
 };
 #endif

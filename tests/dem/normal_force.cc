@@ -34,6 +34,7 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/pw_broad_search.h>
@@ -93,24 +94,23 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[0]  = id;
-  pit1->get_properties()[1]  = 1;
-  pit1->get_properties()[2]  = particle_diameter;
-  pit1->get_properties()[3]  = particle_density;
-  pit1->get_properties()[4]  = -1.0;
-  pit1->get_properties()[5]  = 0;
-  pit1->get_properties()[6]  = 0;
-  pit1->get_properties()[7]  = 0;
-  pit1->get_properties()[8]  = 0;
-  pit1->get_properties()[9]  = 0;
-  pit1->get_properties()[10] = 0;
-  pit1->get_properties()[11] = 0;
-  pit1->get_properties()[12] = 0;
-  pit1->get_properties()[13] = 0;
-  pit1->get_properties()[14] = 0;
-  pit1->get_properties()[15] = 0;
-  pit1->get_properties()[16] = 1;
-  pit1->get_properties()[17] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]        = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = -1.0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
 
   // Finding boundary cells
   std::vector<typename Triangulation<dim>::active_cell_iterator>

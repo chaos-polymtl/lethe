@@ -107,9 +107,7 @@ UniformInsertion<dim>::insert(
       // assign_particle_properties function
       std::vector<std::vector<double>> particle_properties;
       particle_properties =
-        this->assign_particle_properties(dem_parameters,
-                                         inserted_this_step,
-                                         particle_handler.n_global_particles());
+        this->assign_particle_properties(dem_parameters, inserted_this_step);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points,

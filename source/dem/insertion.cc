@@ -46,8 +46,7 @@ template <int dim>
 std::vector<std::vector<double>>
 Insertion<dim>::assign_particle_properties(
   const DEMSolverParameters<dim> &dem_parameters,
-  const unsigned int &            inserted_this_step,
-  const unsigned int &            inserted_so_far)
+  const unsigned int &            inserted_this_step)
 {
   // Defining output vector
   std::vector<std::vector<double>> properties;
@@ -61,7 +60,6 @@ Insertion<dim>::assign_particle_properties(
   for (unsigned int particle_counter = 0; particle_counter < inserted_this_step;
        ++particle_counter)
     {
-      double id       = (inserted_so_far + particle_counter);
       double type     = 1.0;
       double diameter = physical_properties.diameter;
       double density  = physical_properties.density;
@@ -85,9 +83,8 @@ Insertion<dim>::assign_particle_properties(
       double T_z = 0;
 
       std::vector<double> properties_of_one_particle{
-        id,    type,  diameter, density, vel_x, vel_y, vel_z,
-        acc_x, acc_y, acc_z,    f_x,     f_y,   f_z,   w_x,
-        w_y,   w_z,   mass,     MOI,     T_x,   T_y,   T_z};
+        type, diameter, density, vel_x, vel_y, vel_z, acc_x, acc_y, acc_z, f_x,
+        f_y,  f_z,      w_x,     w_y,   w_z,   mass,  MOI,   T_x,   T_y,   T_z};
 
       properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
