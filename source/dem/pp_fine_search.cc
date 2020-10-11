@@ -191,15 +191,11 @@ PPFineSearch<dim>::particle_particle_fine_search(
           // If the particles distance is less than the threshold
           if (square_distance < neighborhood_threshold)
             {
-              auto particle_one_properties = particle_one->get_properties();
-              auto particle_two_properties = particle_two->get_properties();
-
               // Getting the particle one contact list and particle two id
               auto particle_one_contact_list =
-                &ghost_adjacent_particles
-                  [particle_one_properties[DEM::PropertiesIndex::id]];
-              unsigned int particle_two_id =
-                particle_two_properties[DEM::PropertiesIndex::id];
+                &ghost_adjacent_particles[particle_one->get_id()];
+              unsigned int particle_two_id = particle_two->get_id();
+              ;
 
               Tensor<1, dim> tangential_overlap;
               for (int d = 0; d < dim; ++d)

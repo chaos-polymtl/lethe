@@ -1,10 +1,3 @@
-/*
- * Visualization.cpp
- *
- *  Created on: Oct 1, 2019
- *      Author: shahab
- */
-
 #include <dem/visualization.h>
 
 using namespace dealii;
@@ -19,15 +12,19 @@ Visualization<dim>::build_patches(
   const dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::pair<std::string, int>>       properties)
 {
-  // Get the number of properties as a local parameter
-  const int properties_number = particle_handler.n_properties_per_particle();
+  // Adding ID to properties vector for visualization
+  properties.insert(properties.begin(), std::make_pair("ID", 1));
+
+  // Defining properties for writing
+  this->properties_to_write.assign(properties.begin(),
+                                   properties.begin() +
+                                     this->number_of_properties_to_write);
 
   // Defining property field position
   int field_position = 0;
-
   // Iterating over properties
-  for (auto properties_iterator = properties.begin();
-       properties_iterator != properties.end();
+  for (auto properties_iterator = properties_to_write.begin();
+       properties_iterator != properties_to_write.end();
        ++properties_iterator, ++field_position)
     {
       // Get the property field name
@@ -61,16 +58,20 @@ Visualization<dim>::build_patches(
       patches[i].vertices[0]    = particle->get_location();
       patches[i].patch_index    = i;
       patches[i].n_subdivisions = 1;
-      patches[i].data.reinit(properties_number, 1);
+      patches[i].data.reinit(this->number_of_properties_to_write, 1);
 
-      // Other properties
+      // ID and other properties
       if (particle->has_properties())
         {
           const ArrayView<const double> props = particle->get_properties();
 
-          for (unsigned int property_index = 0; property_index < props.size();
+          // Adding ID to patches
+          patches[i].data(0, 0) = particle->get_id();
+
+          for (unsigned int property_index = 1;
+               property_index < this->number_of_properties_to_write;
                ++property_index)
-            patches[i].data(property_index, 0) = props[property_index];
+            patches[i].data(property_index, 0) = props[property_index - 1];
         }
     }
 }
@@ -81,25 +82,27 @@ Visualization<dim>::print_xyz(
   const dealii::Particles::ParticleHandler<dim> &particle_handler,
   std::vector<std::pair<std::string, int>>       properties)
 {
+  this->properties_to_write.assign(properties.begin(),
+                                   properties.begin() +
+                                     this->number_of_properties_to_write);
+
   std::vector<int> precision = {
-    0, 0, 5, 5, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1, 5, 3, 3, 3, 3,
-  };
+    0, 0, 5, 3, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1, 5};
   if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
     std::cout
-      << "id , type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
+      << "id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
          "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
-         " mass , mom_inertia, M_x  , M_y  , M_z  "
       << std::endl;
 
-  this->build_patches(particle_handler, properties);
+  this->build_patches(particle_handler, properties_to_write);
   unsigned int counter;
 
   // loop over all patches
   for (const auto &patch : patches)
     {
-      counter                  = 0;
-      unsigned int n_data_sets = properties.size();
-      for (unsigned int data_set = 0; data_set < n_data_sets;
+      counter = 0;
+      for (unsigned int data_set = 0;
+           data_set < this->number_of_properties_to_write;
            ++data_set, ++counter)
         {
           std::cout.precision(precision[counter]);

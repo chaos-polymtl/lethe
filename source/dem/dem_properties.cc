@@ -27,7 +27,6 @@ namespace DEM
   {
     std::vector<std::pair<std::string, int>> properties(
       PropertiesIndex::n_properties);
-    properties[PropertiesIndex::id]      = std::make_pair("id", 1);
     properties[PropertiesIndex::type]    = std::make_pair("Type", 1);
     properties[PropertiesIndex::dp]      = std::make_pair("Diameter", 1);
     properties[PropertiesIndex::rho]     = std::make_pair("Density", 1);
@@ -43,14 +42,18 @@ namespace DEM
     properties[PropertiesIndex::mom_inertia] = std::make_pair("MOI", 1);
     properties[PropertiesIndex::M_x]         = std::make_pair("M", dim);
     properties[PropertiesIndex::M_y]         = std::make_pair("M", 1);
+    properties[PropertiesIndex::displacement_x] =
+      std::make_pair("Displacement", dim);
+    properties[PropertiesIndex::displacement_y] =
+      std::make_pair("Displacement", 1);
 
-    // if (dim == 3) {
     properties[PropertiesIndex::v_z]     = std::make_pair("Velocity", 1);
     properties[PropertiesIndex::acc_z]   = std::make_pair("Acceleration", 1);
     properties[PropertiesIndex::force_z] = std::make_pair("Force", 1);
     properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
     properties[PropertiesIndex::M_z]     = std::make_pair("M", 1);
-    //}
+    properties[PropertiesIndex::displacement_z] =
+      std::make_pair("Displacement", 1);
 
     return properties;
   }
