@@ -33,6 +33,13 @@
 #include <core/parameters_cfd_dem.h>
 #include <core/simulation_control.h>
 
+#include "core/sdirk.h"
+#include "core/bdf.h"
+#include "core/time_integration_utilities.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+
+
 #include "gls_navier_stokes.h"
 
 using namespace dealii;
@@ -69,6 +76,14 @@ private:
   virtual void
   setup_dofs() override;
 
+protected:
+  template <bool                                              assemble_matrix,
+            Parameters::SimulationControl::TimeSteppingMethod scheme,
+            Parameters::VelocitySource::VelocitySourceType    velocity_source>
+
+  void
+  assembleGLS();
+
   /**
    * @brief a function for adding data vectors to the data_out object for
    * post_processing additional results
@@ -82,6 +97,9 @@ private:
    *Member Variables
    */
 
+protected:
+  TrilinosWrappers::SparseMatrix system_matrix;
+
 private:
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
@@ -89,6 +107,9 @@ private:
   Vector<double>                cell_void_fraction;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+
+  const bool   SUPG        = true;
+  const double GLS_u_scale = 1;
 };
 
 #endif
