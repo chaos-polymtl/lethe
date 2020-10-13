@@ -88,9 +88,8 @@ test()
                                                  boundary_cells_with_faces;
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
   FindBoundaryCellsInformation<dim>              boundary_cells_object;
-  boundary_cells_information =
-    boundary_cells_object.find_boundary_cells_information(
-      boundary_cells_with_faces, tr);
+  boundary_cells_object.find_boundary_cells_information(
+    boundary_cells_with_faces, tr, boundary_cells_information);
 
   // Calling particle-wall broad search
   PWBroadSearch<dim> broad_search_object;

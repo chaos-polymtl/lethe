@@ -125,9 +125,8 @@ test()
                                     boundary_cells_with_points;
   FindBoundaryCellsInformation<dim> boundary_cells_object;
 
-  boundary_cell_information =
-    boundary_cells_object.find_boundary_cells_information(
-      boundary_cells_with_faces, tr);
+  boundary_cells_object.find_boundary_cells_information(
+    boundary_cells_with_faces, tr, boundary_cell_information);
 
   boundary_cells_object.find_particle_point_and_line_contact_cells(
     boundary_cells_with_faces,

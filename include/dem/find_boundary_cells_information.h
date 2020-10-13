@@ -68,11 +68,12 @@ public:
    * of the face 5, a point on the face which will be used to obtain the
    * distance between center of particles and the face
    */
-  std::map<int, boundary_cells_info_struct<dim>>
+  void
   find_boundary_cells_information(
     std::vector<typename Triangulation<dim>::active_cell_iterator>
       &                                              boundary_cells_with_faces,
-    const parallel::distributed::Triangulation<dim> &triangulation);
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    std::map<int, boundary_cells_info_struct<dim>> & output_vector);
 
   /**
    * Loops over all the cells to find cells which should be searched for

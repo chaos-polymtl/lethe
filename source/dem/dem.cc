@@ -516,9 +516,8 @@ DEMSolver<dim>::solve()
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
   FindBoundaryCellsInformation<dim> boundary_cell_object;
-  boundary_cells_information =
-    boundary_cell_object.find_boundary_cells_information(
-      boundary_cells_with_faces, triangulation);
+  boundary_cell_object.find_boundary_cells_information(
+    boundary_cells_with_faces, triangulation, boundary_cells_information);
 
   // Finding boundary cells with lines and points
   boundary_cell_object.find_particle_point_and_line_contact_cells(
@@ -561,9 +560,11 @@ DEMSolver<dim>::solve()
           cell_neighbors_object.find_cell_neighbors(triangulation,
                                                     cells_local_neighbor_list,
                                                     cells_ghost_neighbor_list);
-          boundary_cells_information =
-            boundary_cell_object.find_boundary_cells_information(
-              boundary_cells_with_faces, triangulation);
+
+          boundary_cell_object.find_boundary_cells_information(
+            boundary_cells_with_faces,
+            triangulation,
+            boundary_cells_information);
           boundary_cell_object.find_particle_point_and_line_contact_cells(
             boundary_cells_with_faces,
             triangulation,

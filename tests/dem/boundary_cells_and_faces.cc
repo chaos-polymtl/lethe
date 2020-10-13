@@ -56,9 +56,8 @@ test()
                                                  boundary_cells_with_faces;
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
   FindBoundaryCellsInformation<dim>              boundary_cells_object;
-  boundary_cells_information =
-    boundary_cells_object.find_boundary_cells_information(
-      boundary_cells_with_faces, triangulation);
+  boundary_cells_object.find_boundary_cells_information(
+    boundary_cells_with_faces, triangulation, boundary_cells_information);
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =

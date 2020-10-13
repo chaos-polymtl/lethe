@@ -11,18 +11,19 @@ FindBoundaryCellsInformation<dim>::FindBoundaryCellsInformation()
 // for each cell the boundary faces are specified and the normal vector as well
 // as a point on the boundary faces are obtained
 template <int dim>
-std::map<int, boundary_cells_info_struct<dim>>
+void
 FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     &                                              boundary_cells_with_faces,
-  const parallel::distributed::Triangulation<dim> &triangulation)
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  std::map<int, boundary_cells_info_struct<dim>> & output_vector)
 {
   // Initializing output_vector and a search_vector (containing boundary_id and
   // cell) to avoid replication of a boundary face. All the found boundary faces
   // will be searched in this vector before being added to the output_vector. If
   // they are not found in this search_vector they will be added to the
   // output_vector as well as the search_vector
-  std::map<int, boundary_cells_info_struct<dim>> output_vector;
+  // std::map<int, boundary_cells_info_struct<dim>> output_vector;
   std::vector<std::pair<int, typename Triangulation<dim>::active_cell_iterator>>
     search_vector;
 
@@ -93,7 +94,6 @@ FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
             }
         }
     }
-  return output_vector;
 }
 
 // This function returns all the cells at which particle-line and particle-point
