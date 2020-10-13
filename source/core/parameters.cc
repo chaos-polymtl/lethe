@@ -487,8 +487,15 @@ namespace Parameters
                         Patterns::Integer(),
                         "Initial refinement of the mesh");
 
-      prm.declare_entry("grid type", "hyper_cube");
-      prm.declare_entry("grid arguments", "-1 : 1 : false");
+      if (prm.get("type") == "per_hills")
+        {
+          prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
+        }
+      else
+        {
+          prm.declare_entry("grid type", "hyper_cube");
+          prm.declare_entry("grid arguments", "-1 : 1 : false");
+        }
     }
     prm.leave_subsection();
   }
