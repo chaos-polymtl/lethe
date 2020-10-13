@@ -212,13 +212,15 @@ DEMSolver<dim>::particle_wall_broad_search()
 {
   // Particle - wall contact candidates
   pw_broad_search_object.find_particle_wall_contact_pairs(
-    boundary_cells_information, particle_handler, pw_contact_candidates);
+    boundary_cell_object.get_boundary_cells_information(),
+    particle_handler,
+    pw_contact_candidates);
 
   // Particle - floating wall contact pairs
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_broad_search_object.find_particle_floating_wall_contact_pairs(
-        boundary_cells_for_floating_walls,
+        boundary_cell_object.get_boundary_cells_with_floating_walls(),
         particle_handler,
         parameters.floating_walls,
         simulation_control->get_current_time(),
@@ -227,14 +229,15 @@ DEMSolver<dim>::particle_wall_broad_search()
 
   particle_point_contact_candidates =
     particle_point_line_broad_search_object.find_Particle_Point_Contact_Pairs(
-      particle_handler, boundary_cells_with_points);
+      particle_handler, boundary_cell_object.get_boundary_cells_with_points());
 
   if (dim == 3)
     {
       particle_line_contact_candidates =
         particle_point_line_broad_search_object
-          .find_Particle_Line_Contact_Pairs(particle_handler,
-                                            boundary_cells_with_lines);
+          .find_Particle_Line_Contact_Pairs(
+            particle_handler,
+            boundary_cell_object.get_boundary_cells_with_lines());
     }
 }
 
@@ -515,23 +518,7 @@ DEMSolver<dim>::solve()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
-  FindBoundaryCellsInformation<dim> boundary_cell_object;
-  boundary_cell_object.find_boundary_cells_information(
-    boundary_cells_with_faces, triangulation, boundary_cells_information);
-
-  // Finding boundary cells with lines and points
-  boundary_cell_object.find_particle_point_and_line_contact_cells(
-    boundary_cells_with_faces,
-    triangulation,
-    boundary_cells_with_lines,
-    boundary_cells_with_points);
-
-  // Finding cells adjacent to floating walls
-  boundary_cell_object.find_boundary_cells_for_floating_walls(
-    triangulation,
-    parameters.floating_walls,
-    boundary_cells_for_floating_walls,
-    GridTools::maximal_cell_diameter(triangulation));
+  boundary_cell_object.build(triangulation, parameters.floating_walls);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object        = set_insertion_type(parameters);
@@ -551,30 +538,12 @@ DEMSolver<dim>::solve()
 
           cells_local_neighbor_list.clear();
           cells_ghost_neighbor_list.clear();
-          boundary_cells_with_faces.clear();
-          boundary_cells_with_lines.clear();
-          boundary_cells_with_points.clear();
-          boundary_cells_information.clear();
-          boundary_cells_for_floating_walls.clear();
 
           cell_neighbors_object.find_cell_neighbors(triangulation,
                                                     cells_local_neighbor_list,
                                                     cells_ghost_neighbor_list);
 
-          boundary_cell_object.find_boundary_cells_information(
-            boundary_cells_with_faces,
-            triangulation,
-            boundary_cells_information);
-          boundary_cell_object.find_particle_point_and_line_contact_cells(
-            boundary_cells_with_faces,
-            triangulation,
-            boundary_cells_with_lines,
-            boundary_cells_with_points);
-          boundary_cell_object.find_boundary_cells_for_floating_walls(
-            triangulation,
-            parameters.floating_walls,
-            boundary_cells_for_floating_walls,
-            GridTools::minimal_cell_diameter(triangulation));
+          boundary_cell_object.build(triangulation, parameters.floating_walls);
         }
 
       // Force reinitilization

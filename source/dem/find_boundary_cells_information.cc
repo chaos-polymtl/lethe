@@ -7,6 +7,40 @@ template <int dim>
 FindBoundaryCellsInformation<dim>::FindBoundaryCellsInformation()
 {}
 
+
+template <int dim>
+void
+FindBoundaryCellsInformation<dim>::build(
+  const parallel::distributed::Triangulation<dim> & triangulation,
+  const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties)
+{
+  boundary_cells_with_faces.clear();
+  boundary_cells_with_lines.clear();
+  boundary_cells_information.clear();
+  boundary_cells_with_points.clear();
+  boundary_cells_for_floating_walls.clear();
+
+  const double maximal_cell_diameter =
+    GridTools::maximal_cell_diameter(triangulation);
+
+  find_boundary_cells_information(boundary_cells_with_faces,
+                                  triangulation,
+                                  boundary_cells_information);
+
+  // Finding boundary cells with lines and points
+  find_particle_point_and_line_contact_cells(boundary_cells_with_faces,
+                                             triangulation,
+                                             boundary_cells_with_lines,
+                                             boundary_cells_with_points);
+
+  // Finding cells adjacent to floating walls
+  find_boundary_cells_for_floating_walls(triangulation,
+                                         floating_wall_properties,
+                                         boundary_cells_for_floating_walls,
+                                         maximal_cell_diameter);
+}
+
+
 // This function finds all the boundary cells and faces in the triangulation,
 // for each cell the boundary faces are specified and the normal vector as well
 // as a point on the boundary faces are obtained

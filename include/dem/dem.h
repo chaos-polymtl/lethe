@@ -240,20 +240,9 @@ private:
     cells_local_neighbor_list;
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    boundary_cells_with_faces;
-  std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                         Point<dim>,
-                         Point<dim>>>
-    boundary_cells_with_lines;
-  std::vector<
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                                                 boundary_cells_with_points;
-  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
-  std::unordered_map<
-    int,
-    std::set<typename Triangulation<dim>::active_cell_iterator>>
-                                            boundary_cells_for_floating_walls;
+
+  FindBoundaryCellsInformation<dim> boundary_cell_object;
+
   std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
   std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
   std::unordered_map<int,
