@@ -241,7 +241,7 @@ private:
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>
     cells_ghost_neighbor_list;
 
-  FindBoundaryCellsInformation<dim> boundary_cell_object;
+  BoundaryCellsInformation<dim> boundary_cell_object;
 
   std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
   std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;

@@ -53,7 +53,7 @@ test()
   triangulation.refine_global(refinement_number);
 
   // Fining boundary cellds information
-  FindBoundaryCellsInformation<dim> boundary_cells_object;
+  BoundaryCellsInformation<dim> boundary_cells_object;
   boundary_cells_object.build(triangulation);
 
   // Reporting the information of boundary cells

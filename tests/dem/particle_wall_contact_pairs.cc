@@ -84,7 +84,7 @@ test()
 
   // Calling find_boundary_cells_information function to find the information of
   // boundary cells
-  FindBoundaryCellsInformation<dim> boundary_cells_object;
+  BoundaryCellsInformation<dim> boundary_cells_object;
   boundary_cells_object.build(tr);
 
   // Calling particle-wall broad search

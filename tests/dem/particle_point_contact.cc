@@ -113,7 +113,7 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
 
   // Construct boundary cells object and build it
-  FindBoundaryCellsInformation<dim> boundary_cells_object;
+  BoundaryCellsInformation<dim> boundary_cells_object;
   boundary_cells_object.build(tr);
 
   // Particle-point broad search

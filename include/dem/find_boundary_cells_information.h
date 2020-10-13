@@ -49,10 +49,10 @@ using namespace dealii;
  */
 
 template <int dim>
-class FindBoundaryCellsInformation
+class BoundaryCellsInformation
 {
 public:
-  FindBoundaryCellsInformation<dim>();
+  BoundaryCellsInformation<dim>();
 
   /**
    * @brief The build fonction builds all the boundary cell information structure

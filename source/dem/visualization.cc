@@ -108,7 +108,9 @@ Visualization<dim>::print_xyz(
           std::cout.precision(precision[counter]);
           std::cout << std::fixed << patch.data(data_set, 0) << " ";
         }
-      std::cout << '\n';
+      // Force flush of the buffer. This function should never be used in
+      // performance critical application anyway
+      std::cout << std::endl;
     }
 }
 
