@@ -58,7 +58,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
-  if (fmod(repartition_frequency, contact_detection_frequency) != 0)
+  if (repartition_frequency % contact_detection_frequency != 0)
     {
       throw std::runtime_error(
         "The repartition frequency must be a multiple of "
@@ -198,7 +198,7 @@ template <int dim>
 bool
 DEMSolver<dim>::insert_particles()
 {
-  if (fmod(simulation_control->get_step_number(), insertion_frequency) == 1)
+  if ((simulation_control->get_step_number() % insertion_frequency) == 1)
     {
       insertion_object->insert(particle_handler, triangulation, parameters);
       return true;
@@ -545,8 +545,7 @@ DEMSolver<dim>::solve()
     {
       simulation_control->print_progression(pcout);
 
-      if (fmod(simulation_control->get_step_number(), repartition_frequency) ==
-          0)
+      if (simulation_control->get_step_number() % repartition_frequency == 0)
         {
           pcout << "-->Repartitionning triangulation" << std::endl;
           triangulation.repartition();
@@ -584,8 +583,8 @@ DEMSolver<dim>::solve()
       bool particles_were_inserted = insert_particles();
 
       // Sort particles in cells
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
         }
@@ -593,8 +592,8 @@ DEMSolver<dim>::solve()
       particle_handler.exchange_ghost_particles();
 
       // Broad particle-particle contact search
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
@@ -605,14 +604,14 @@ DEMSolver<dim>::solve()
         }
 
       // Particle-wall broad contact search
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           particle_wall_broad_search();
         }
 
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           localize_contacts<dim>(&local_adjacent_particles,
                                  &ghost_adjacent_particles,
@@ -624,8 +623,8 @@ DEMSolver<dim>::solve()
                                  pfw_contact_candidates);
         }
 
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           locate_local_particles_in_cells<dim>(particle_handler,
                                                particle_container,
@@ -644,8 +643,8 @@ DEMSolver<dim>::solve()
         }
 
       // Particle-particle fine search
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           pp_fine_search_object.particle_particle_fine_search(
             local_contact_pair_candidates,
@@ -664,8 +663,8 @@ DEMSolver<dim>::solve()
         simulation_control->get_time_step());
 
       // Particles-wall fine search
-      if (particles_were_inserted || fmod(simulation_control->get_step_number(),
-                                          contact_detection_frequency) == 0)
+      if (particles_were_inserted || (simulation_control->get_step_number() %
+                                      contact_detection_frequency) == 0)
         {
           particle_wall_fine_search();
         }
