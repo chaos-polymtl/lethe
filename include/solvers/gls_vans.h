@@ -33,13 +33,11 @@
 #include <core/parameters_cfd_dem.h>
 #include <core/simulation_control.h>
 
-#include "core/sdirk.h"
 #include "core/bdf.h"
-#include "core/time_integration_utilities.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
-
-
+#include "core/sdirk.h"
+#include "core/time_integration_utilities.h"
 #include "gls_navier_stokes.h"
 
 using namespace dealii;
@@ -90,7 +88,6 @@ protected:
    */
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
-
 
 
   /**
