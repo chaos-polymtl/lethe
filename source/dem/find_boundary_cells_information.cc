@@ -23,21 +23,35 @@ FindBoundaryCellsInformation<dim>::build(
   const double maximal_cell_diameter =
     GridTools::maximal_cell_diameter(triangulation);
 
-  find_boundary_cells_information(boundary_cells_with_faces,
-                                  triangulation,
-                                  boundary_cells_information);
+  find_boundary_cells_information(triangulation);
 
   // Finding boundary cells with lines and points
-  find_particle_point_and_line_contact_cells(boundary_cells_with_faces,
-                                             triangulation,
-                                             boundary_cells_with_lines,
-                                             boundary_cells_with_points);
+  find_particle_point_and_line_contact_cells(triangulation);
 
   // Finding cells adjacent to floating walls
   find_boundary_cells_for_floating_walls(triangulation,
                                          floating_wall_properties,
-                                         boundary_cells_for_floating_walls,
                                          maximal_cell_diameter);
+}
+
+template <int dim>
+void
+FindBoundaryCellsInformation<dim>::build(
+  const parallel::distributed::Triangulation<dim> &triangulation)
+{
+  boundary_cells_with_faces.clear();
+  boundary_cells_with_lines.clear();
+  boundary_cells_information.clear();
+  boundary_cells_with_points.clear();
+  boundary_cells_for_floating_walls.clear();
+
+  const double maximal_cell_diameter =
+    GridTools::maximal_cell_diameter(triangulation);
+
+  find_boundary_cells_information(triangulation);
+
+  // Finding boundary cells with lines and points
+  find_particle_point_and_line_contact_cells(triangulation);
 }
 
 
@@ -47,10 +61,7 @@ FindBoundaryCellsInformation<dim>::build(
 template <int dim>
 void
 FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    &                                              boundary_cells_with_faces,
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  std::map<int, boundary_cells_info_struct<dim>> & output_vector)
+  const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // Initializing output_vector and a search_vector (containing boundary_id and
   // cell) to avoid replication of a boundary face. All the found boundary faces
@@ -118,7 +129,7 @@ FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
                                   information_search_element);
                       if (search_iterator == search_vector.end())
                         {
-                          output_vector.insert(
+                          boundary_cells_information.insert(
                             {cell->face_index(face_id), boundary_information});
                           boundary_cells_with_faces.push_back(cell);
                           search_vector.push_back(information_search_element);
@@ -135,14 +146,7 @@ FindBoundaryCellsInformation<dim>::find_boundary_cells_information(
 template <int dim>
 void
 FindBoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
-  const std::vector<typename Triangulation<dim>::active_cell_iterator>
-    &                                              boundary_cells_with_faces,
-  const parallel::distributed::Triangulation<dim> &triangulation,
-  std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                         Point<dim>,
-                         Point<dim>>> &            boundary_cells_with_lines,
-  std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
-                        Point<dim>>> &             boundary_cells_with_points)
+  const parallel::distributed::Triangulation<dim> &triangulation)
 {
   // This vector stores both the cells with boundary lines and cells with
   // boundary points
@@ -238,11 +242,7 @@ void
 FindBoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
   const parallel::distributed::Triangulation<dim> & triangulation,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-  std::unordered_map<
-    int,
-    std::set<typename Triangulation<dim>::active_cell_iterator>>
-    &           boundary_cells_for_floating_walls,
-  const double &maximum_cell_diameter)
+  const double &                                    maximum_cell_diameter)
 {
   // Reading floating wall properties
   std::vector<Point<dim>> point_on_wall =

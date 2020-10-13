@@ -112,27 +112,9 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
   pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
 
-  // Getting boundary cells information
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                                 boundary_cells_with_faces;
-  std::map<int, boundary_cells_info_struct<dim>> boundary_cell_information;
-  std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                         Point<dim>,
-                         Point<dim>>>
-    boundary_cells_with_lines;
-  std::vector<
-    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
-                                    boundary_cells_with_points;
+  // Construct boundary cells object and build it
   FindBoundaryCellsInformation<dim> boundary_cells_object;
-
-  boundary_cells_object.find_boundary_cells_information(
-    boundary_cells_with_faces, tr, boundary_cell_information);
-
-  boundary_cells_object.find_particle_point_and_line_contact_cells(
-    boundary_cells_with_faces,
-    tr,
-    boundary_cells_with_lines,
-    boundary_cells_with_points);
+  boundary_cells_object.build(tr);
 
   // Particle-point broad search
   std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
@@ -155,7 +137,8 @@ test()
 
       contact_candidates =
         broad_search_object.find_Particle_Point_Contact_Pairs(
-          particle_handler, boundary_cells_with_points);
+          particle_handler,
+          boundary_cells_object.get_boundary_cells_with_points());
 
       contact_information =
         fine_search_object.Particle_Point_Fine_Search(contact_candidates);

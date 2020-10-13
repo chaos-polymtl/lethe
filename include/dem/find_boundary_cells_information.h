@@ -69,6 +69,9 @@ public:
     const parallel::distributed::Triangulation<dim> & triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties);
 
+  void
+  build(const parallel::distributed::Triangulation<dim> &triangulation);
+
   std::map<int, boundary_cells_info_struct<dim>> &
   get_boundary_cells_information()
   {
@@ -99,7 +102,7 @@ public:
   }
 
 
-
+private:
   /**
    * Loops over all the cells to find boundary cells, find the boundary faces of
    * boundary cells and for the boundary faces the normal vector and a point
@@ -116,10 +119,7 @@ public:
    */
   void
   find_boundary_cells_information(
-    std::vector<typename Triangulation<dim>::active_cell_iterator>
-      &                                              boundary_cells_with_faces,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    std::map<int, boundary_cells_info_struct<dim>> & output_vector);
+    const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -137,14 +137,7 @@ public:
    */
   void
   find_particle_point_and_line_contact_cells(
-    const std::vector<typename Triangulation<dim>::active_cell_iterator>
-      &                                              boundary_cells_with_faces,
-    const parallel::distributed::Triangulation<dim> &triangulation,
-    std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                           Point<dim>,
-                           Point<dim>>> &            boundary_cells_with_lines,
-    std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
-                          Point<dim>>> &boundary_cells_with_points);
+    const parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
    * Loops over all the cells to find cells which should be searched for
@@ -161,13 +154,8 @@ public:
   find_boundary_cells_for_floating_walls(
     const parallel::distributed::Triangulation<dim> & triangulation,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
-    std::unordered_map<
-      int,
-      std::set<typename Triangulation<dim>::active_cell_iterator>>
-      &           boundary_cells_for_floating_walls,
-    const double &maximum_cell_diameter);
+    const double &                                    maximum_cell_diameter);
 
-private:
   // Structure that contains the necessary information for boundaries
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
 
