@@ -2,7 +2,6 @@
 
 
 
-
 // Constructor for class GLS_VANS
 template <int dim>
 GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam,
@@ -13,7 +12,6 @@ GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam,
   , fe_void_fraction(p_degree_velocity)
 
 {}
-
 
 template <int dim>
 void
