@@ -89,7 +89,6 @@ protected:
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 
-
   /**
    *Member Variables
    */
