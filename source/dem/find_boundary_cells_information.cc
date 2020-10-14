@@ -7,7 +7,6 @@ template <int dim>
 BoundaryCellsInformation<dim>::BoundaryCellsInformation()
 {}
 
-
 template <int dim>
 void
 BoundaryCellsInformation<dim>::build(
@@ -50,7 +49,6 @@ BoundaryCellsInformation<dim>::build(
   // Finding boundary cells with lines and points
   find_particle_point_and_line_contact_cells(triangulation);
 }
-
 
 // This function finds all the boundary cells and faces in the triangulation,
 // for each cell the boundary faces are specified and the normal vector as well
@@ -150,8 +148,9 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_cells_with_lines_or_points;
 
-  // This map stores the vertex index and position of boundary vertices
-  std::map<int, Point<dim>> boundary_vertices;
+  // This unordered map stores the vertex index and position of boundary
+  // vertices
+  std::unordered_map<int, Point<dim>> boundary_vertices;
 
   // Looing over all the faces to find boundary faces and then looping over
   // the vertices of these boundary faces to find all the vertices located on
@@ -222,11 +221,13 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
         }
       if (number_of_boundary_vertices == 1)
         {
+          // It means the cells has a boundary point
           boundary_cells_with_points.push_back(
             std::make_pair(cell, *boundary_points.begin()));
         }
       else if (number_of_boundary_vertices == 2)
         {
+          // It means the cells has a boundary line
           boundary_cells_with_lines.push_back(std::make_tuple(
             cell, *boundary_points.begin(), *boundary_points.end()));
         }

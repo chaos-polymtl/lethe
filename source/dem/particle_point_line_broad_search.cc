@@ -9,13 +9,14 @@ ParticlePointLineBroadSearch<dim>::ParticlePointLineBroadSearch()
 
 // This function finds all the particle-point contact candidates
 template <int dim>
-std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+std::unordered_map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
 ParticlePointLineBroadSearch<dim>::find_Particle_Point_Contact_Pairs(
   const Particles::ParticleHandler<dim> &   particle_handler,
   const std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
                               Point<dim>>> &boundary_cells_with_points)
 {
-  std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+  std::unordered_map<int,
+                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
 
   // Defining and reseting a local particle-point candidate counter. This is
@@ -63,8 +64,9 @@ ParticlePointLineBroadSearch<dim>::find_Particle_Point_Contact_Pairs(
 
 // This function finds all the particle-line contact candidates
 template <int dim>
-std::map<int,
-         std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+std::unordered_map<
+  int,
+  std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
 ParticlePointLineBroadSearch<dim>::find_Particle_Line_Contact_Pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::vector<
@@ -72,8 +74,9 @@ ParticlePointLineBroadSearch<dim>::find_Particle_Line_Contact_Pairs(
                Point<dim>,
                Point<dim>>> &boundary_cells_with_lines)
 {
-  std::map<int,
-           std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+  std::unordered_map<
+    int,
+    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
 
   // Defining and reseting a local particle-line candidate counter. This is

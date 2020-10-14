@@ -60,9 +60,11 @@ public:
    * particle-point contact force
    */
 
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
   Particle_Point_Fine_Search(
-    const std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+    const std::unordered_map<
+      int,
+      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
       &particle_point_contact_candidates);
 
   /**
@@ -78,9 +80,9 @@ public:
    * particle-line contact force
    */
 
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
   Particle_Line_Fine_Search(
-    const std::map<
+    const std::unordered_map<
       int,
       std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
       &particle_line_contact_candidates);

@@ -262,12 +262,14 @@ private:
       int,
       std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
     pw_contact_candidates;
-  std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+  std::unordered_map<int,
+                     std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
-  std::map<int,
-           std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
+  std::unordered_map<
+    int,
+    std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
 
   std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
