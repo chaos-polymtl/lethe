@@ -28,6 +28,7 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
+#include <core/parameters_lagrangian.h>
 #include <dem/find_boundary_cells_information.h>
 
 #include <iostream>
@@ -52,18 +53,14 @@ test()
   triangulation.refine_global(refinement_number);
 
   // Fining boundary cellds information
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-                                                 boundary_cells_with_faces;
-  std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
-  FindBoundaryCellsInformation<dim>              boundary_cells_object;
-  boundary_cells_information =
-    boundary_cells_object.find_boundary_cells_information(
-      boundary_cells_with_faces, triangulation);
+  BoundaryCellsInformation<dim> boundary_cells_object;
+  boundary_cells_object.build(triangulation);
 
   // Reporting the information of boundary cells
   for (auto boundary_cells_information_iterator =
-         boundary_cells_information.begin();
-       boundary_cells_information_iterator != boundary_cells_information.end();
+         boundary_cells_object.get_boundary_cells_information().begin();
+       boundary_cells_information_iterator !=
+       boundary_cells_object.get_boundary_cells_information().end();
        ++boundary_cells_information_iterator)
     {
       auto boundary_information = boundary_cells_information_iterator->second;
