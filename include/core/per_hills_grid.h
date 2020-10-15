@@ -213,6 +213,7 @@ periodic_hills_push_forward<dim, spacedim>::vector_value(
 
   if (spacedim == 3)
     values(2) = np[2];
+  std::cout << "Push forward y original and new (x,y,z) : " << op << " to " << np << std::endl;
 }
 
 
@@ -246,18 +247,17 @@ periodic_hills_pull_back<dim, spacedim>::vector_value(
   else if (spacedim == 3)
     {
       min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
-        Point<spacedim>(ox, 0., np[2]), alpha, spacing_y)[1];
+        Point<spacedim>(ox, 0, np[2]), alpha, spacing_y)[1];
       values(2) = np[2];
     }
 
   double y = (np[1] - min_y) / (1 - min_y / max_y);
-  if (y < max_y)
-    {
-      y = (-max_y + std::sqrt(std::pow(max_y, 2) + (4 / 0.5) * max_y * y)) / 2;
-    }
+  y = (-(1 - spacing_y) + std::sqrt(std::pow((1 - spacing_y), 2) -
+                                      (4 * (spacing_y / max_y) * -y)) )/ (2 * spacing_y / max_y);
 
   values(0) = ox;
   values(1) = y;
+  //std::cout << "Pull back np to op (x,y,z): " << np << " to " << values << std::endl;
 }
 
 template <int dim, int spacedim>
@@ -271,8 +271,8 @@ periodic_hills_pull_back<dim, spacedim>::value(
     Point<spacedim>(np[0], 0), alpha, spacing_y)[1];
 
   double y = (np[1] - min_y) / (1 - min_y / max_y);
-  if (y < max_y)
-    y = (-max_y + std::sqrt(std::pow(max_y, 2) + (4 / 0.5) * max_y * y)) / 2;
+  y = (-(1 - spacing_y) + std::sqrt(std::pow((1 - spacing_y), 2) -
+                                    (4 * (2 * spacing_y / max_y) * -y)) )/ (2 * 2 * spacing_y / max_y);
 
   Point<spacedim> op = {np[0], y, np[2]};
 
@@ -305,21 +305,16 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
 
   const double max_y = 3.035 * H;
   double       new_x = (9 * H - x);      // x for the left side of the geometry
-  double       pos_y = y / (-max_y) + 1; // Gradual transformation depending
-  // on y position [0,1]
+  double pos_y = y / (-max_y) + 1; // Gradual transformation depending on y position
 
-  if (y < max_y * H)
-    {
-      y -= spacing_y * pos_y * y; // Gradual spacing and shifting of horizontal lines
-    }
-
+  y -= spacing_y * pos_y * y; // Gradual spacing and shifting of horizontal lines
   pos_y = y / (-max_y) + 1; // pos_y with new y with gradual spacing and shifting
 
   // Polynomial equations :
   if (x >= 0 && x < 9)
     {
       y += pos_y * (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
-      if (y > 28 && pos_y >= 1)
+      if (y > 28 && pos_y == 1)
         y = 28;
     }
 
