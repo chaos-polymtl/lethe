@@ -55,7 +55,6 @@ template <int dim>
 template <bool                                              assemble_matrix,
           Parameters::SimulationControl::TimeSteppingMethod scheme,
           Parameters::VelocitySource::VelocitySourceType    velocity_source>
-
 void
 GLSVANSSolver<dim>::assembleGLS()
 {
@@ -75,8 +74,16 @@ GLSVANSSolver<dim>::assembleGLS()
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int  n_q_points    = quadrature_formula.size();
+
+  FEValues<dim> fe_values_void_fraction(mapping,
+                                        this->fe_void_fraction,
+                                        quadrature_formula,
+                                        update_values |
+                                          update_quadrature_points |
+                                          update_JxW_values | update_gradients);
+
+  const unsigned int               dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int               n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
@@ -89,6 +96,10 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>>          present_pressure_gradients(n_q_points);
   std::vector<Tensor<1, dim>>          present_velocity_laplacians(n_q_points);
   std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
+
+  // Data storage vector for the void fraction values/gradients
+  std::vector<double>         present_void_fraction_values(n_q_points);
+  std::vector<Tensor<1, dim>> present_void_fraction_gradients(n_q_points);
 
   Tensor<1, dim> force;
 
@@ -161,6 +172,7 @@ GLSVANSSolver<dim>::assembleGLS()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
+          fe_values_void_fraction.reinit(cell);
 
           if (dim == 2)
             h = std::sqrt(4. * cell->measure() / M_PI) /
@@ -185,6 +197,12 @@ GLSVANSSolver<dim>::assembleGLS()
                                                   present_pressure_values);
           fe_values[pressure].get_function_gradients(
             this->evaluation_point, present_pressure_gradients);
+
+          // Gather void fraction (values, gradient)
+          fe_values_void_fraction.get_function_values(
+            nodal_void_fraction_relevant, present_void_fraction_values);
+          fe_values_void_fraction.get_function_gradients(
+            nodal_void_fraction_relevant, present_void_fraction_gradients);
 
           std::vector<Point<dim>> quadrature_points =
             fe_values.get_quadrature_points();
