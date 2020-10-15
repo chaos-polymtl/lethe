@@ -118,6 +118,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   else
     forcing_function = new NoForce<dim>;
 
+  beta.clear();
+
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;

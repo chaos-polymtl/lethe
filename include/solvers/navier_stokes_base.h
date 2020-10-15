@@ -283,9 +283,10 @@ protected:
   NavierStokesSolverParameters<dim> nsparam;
   PVDHandler                        pvdhandler;
 
-
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
+  // Forcing term for dynamic flow control
+  Tensor<1, dim> beta;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
@@ -307,6 +308,7 @@ protected:
   // Post-processing variables
   TableHandler enstrophy_table;
   TableHandler kinetic_energy_table;
+
   // Convergence Analysis
   ConvergenceTable error_table;
 
