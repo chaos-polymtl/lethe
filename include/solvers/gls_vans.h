@@ -23,10 +23,10 @@
 #include <core/grids.h>
 <<<<<<< HEAD
 #include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
-#include <core/simulation_control.h>
+#  include <core/parameters_cfd_dem.h>
+#  include <core/simulation_control.h>
 
-#include "gls_navier_stokes.h"
+#  include "gls_navier_stokes.h"
 =======
 >>>>>>> Void Fraction calculation from a function
 #include <core/parameters.h>
