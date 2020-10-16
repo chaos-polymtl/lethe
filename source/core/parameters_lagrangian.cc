@@ -198,17 +198,28 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        prm.declare_entry("contact detection frequency",
-                          "1",
-                          Patterns::Integer(),
-                          "Particle-particle contact list");
-
         prm.declare_entry(
           "repartition frequency",
           "1000000000",
           Patterns::Integer(),
           "Frequency at which the triangulation is repartitioned "
           "and load is balanced");
+
+        prm.declare_entry("contact detection method",
+                          "dynamic",
+                          Patterns::Selection("constant|dynamic"),
+                          "Choosing contact detection method"
+                          "Choices are <constant|dynamic>.");
+
+        prm.declare_entry("contact detection frequency",
+                          "1",
+                          Patterns::Integer(),
+                          "Particle-particle contact list");
+
+        prm.declare_entry("dynamic contact search size coefficient",
+                          "0.8",
+                          Patterns::Double(),
+                          "Security coefficient for dynamic contact detection");
 
         prm.declare_entry(
           "neighborhood threshold",
@@ -219,19 +230,19 @@ namespace Parameters
         prm.declare_entry("particle particle contact force method",
                           "pp_nonlinear",
                           Patterns::Selection("pp_linear|pp_nonlinear"),
-                          "Choosing particle-particle contact force model. "
+                          "Choosing particle-particle contact force model"
                           "Choices are <pp_linear|pp_nonlinear>.");
 
         prm.declare_entry("particle wall contact force method",
                           "pw_nonlinear",
                           Patterns::Selection("pw_linear|pw_nonlinear"),
-                          "Choosing particle-wall contact force model. "
+                          "Choosing particle-wall contact force model"
                           "Choices are <pw_linear|pw_nonlinear>.");
 
         prm.declare_entry("integration method",
                           "velocity_verlet",
                           Patterns::Selection("velocity_verlet|explicit_euler"),
-                          "Choosing integration method. "
+                          "Choosing integration method"
                           "Choices are <velocity_verlet|explicit_euler>.");
       }
       prm.leave_subsection();
@@ -242,9 +253,25 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        contact_detection_frequency =
-          prm.get_integer("contact detection frequency");
-        repartition_frequency  = prm.get_integer("repartition frequency");
+        repartition_frequency = prm.get_integer("repartition frequency");
+
+        const std::string contact_search = prm.get("contact detection method");
+        if (contact_search == "constant")
+          {
+            contact_detection_method = ContactDetectionMethod::constant;
+            contact_detection_frequency =
+              prm.get_integer("contact detection frequency");
+          }
+        else if (contact_search == "dynamic")
+          {
+            contact_detection_method = ContactDetectionMethod::dynamic;
+            dynamic_contact_search_factor =
+              prm.get_double("dynamic contact search size coefficient");
+          }
+        else
+          {
+            std::runtime_error("Invalid insertion method");
+          }
         neighborhood_threshold = prm.get_double("neighborhood threshold");
 
         const std::string ppcf =
@@ -253,7 +280,6 @@ namespace Parameters
           pp_contact_force_method = PPContactForceModel::pp_linear;
         else if (ppcf == "pp_nonlinear")
           pp_contact_force_method = PPContactForceModel::pp_nonlinear;
-
         else
           {
             std::runtime_error("Invalid particle-particle contact force model");
@@ -264,7 +290,6 @@ namespace Parameters
           pw_contact_force_method = PWContactForceModel::pw_linear;
         else if (pwcf == "pw_nonlinear")
           pw_contact_force_method = PWContactForceModel::pw_nonlinear;
-
         else
           {
             std::runtime_error("Invalid particle-wall contact force model");

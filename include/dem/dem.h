@@ -36,6 +36,7 @@
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
+#include <dem/find_contact_detection_frequency.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
@@ -74,6 +75,9 @@
 template <int dim>
 class DEMSolver
 {
+  using FuncPtrType = bool (DEMSolver<dim>::*)();
+  FuncPtrType check_contact_search_step;
+
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
 
@@ -124,6 +128,15 @@ private:
   read_mesh();
 
   /**
+   * Finds contact search steps for constant contact search method
+   */
+
+  inline bool
+  check_contact_search_step_constant();
+  inline bool
+  check_contact_search_step_dynamic();
+
+  /**
    * Reinitializes exerted forces and momentums on particles
    *
    * @param particle_handler Particle handler to access all the particles in the
@@ -131,6 +144,14 @@ private:
    */
   void
   reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
+
+  /**
+   * @brief Manages the call to the load balancing. Returns true if
+   * load balancing is performed
+   *
+   */
+  bool
+  load_balance();
 
   /**
    * @brief Manages the call to the particle insertion. Returns true if
@@ -278,10 +299,10 @@ private:
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
-  const double                                     neighborhood_threshold;
-  const unsigned int                               contact_detection_frequency;
-  const unsigned int                               repartition_frequency;
-  const unsigned int                               insertion_frequency;
+  const double       neighborhood_threshold_squared;
+  const unsigned int contact_detection_frequency;
+  const unsigned int repartition_frequency;
+  const unsigned int insertion_frequency;
   const Parameters::Lagrangian::PhysicalProperties physical_properties;
 
   // Initilization of classes and building objects
@@ -297,6 +318,7 @@ private:
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
   Visualization<dim>                   visualization_object;
+  FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
 
   // Information for parallel grid processing
