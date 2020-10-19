@@ -1,14 +1,13 @@
-#include <dem/find_contact_detection_frequency.h>
+#include <dem/find_contact_detection_step.h>
 
 using namespace dealii;
 
 template <int dim>
 bool
-find_contact_detection_frequency(
-  Particles::ParticleHandler<dim> &particle_handler,
-  const double &                   dt,
-  const double &                   smallest_contact_search_frequency_criterion,
-  MPI_Comm &                       mpi_communicator)
+find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
+                            const double &                   dt,
+                            const double &smallest_contact_search_criterion,
+                            MPI_Comm &    mpi_communicator)
 {
   int    update_step      = 0;
   double max_displacement = 0;
@@ -33,7 +32,7 @@ find_contact_detection_frequency(
                  particle_properties[DEM::PropertiesIndex::displacement]);
     }
 
-  if (max_displacement > smallest_contact_search_frequency_criterion)
+  if (max_displacement > smallest_contact_search_criterion)
     {
       // If the maximum displacement of particles exceeds criterion, the
       // function returns true and the displcament of all particles are reset to
@@ -54,21 +53,17 @@ find_contact_detection_frequency(
         }
     }
 
-
-
   return update_step;
 }
 
 template bool
-find_contact_detection_frequency(
-  Particles::ParticleHandler<2> &particle_handler,
-  const double &                 dt,
-  const double &                 smallest_contact_search_frequency_criterion,
-  MPI_Comm &                     mpi_communicator);
+  find_contact_detection_step(Particles::ParticleHandler<2> &particle_handler,
+                              const double &                 dt,
+                              const double &smallest_contact_search_criterion,
+                              MPI_Comm &    mpi_communicator);
 
 template bool
-find_contact_detection_frequency(
-  Particles::ParticleHandler<3> &particle_handler,
-  const double &                 dt,
-  const double &                 smallest_contact_search_frequency_criterion,
-  MPI_Comm &                     mpi_communicator);
+  find_contact_detection_step(Particles::ParticleHandler<3> &particle_handler,
+                              const double &                 dt,
+                              const double &smallest_contact_search_criterion,
+                              MPI_Comm &    mpi_communicator);

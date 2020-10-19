@@ -152,22 +152,6 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // vertices
   std::unordered_map<int, Point<dim>> boundary_vertices;
 
-  // Looing over all the faces to find boundary faces and then looping over
-  // the vertices of these boundary faces to find all the vertices located on
-  // boundaries
-  //  for (const auto &face : triangulation.active_face_iterators())
-  //    {
-  //      if (face->at_boundary())
-  //        {
-  //          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_face;
-  //               ++v)
-  //            {
-  //              boundary_vertices.insert(
-  //                {face->vertex_index(v), face->vertex(v)});
-  //            }
-  //        }
-  //    }
-
   // Iterating over the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
     {
@@ -201,7 +185,6 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
 
   auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
 
-
   for (auto iterator = boundary_vertices.begin();
        iterator != boundary_vertices.end();
        ++iterator)
@@ -216,20 +199,6 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
             }
         }
     }
-  //      auto candidate_cells =
-  //        GridTools::find_cells_adjacent_to_vertex(triangulation,
-  //        vertex_index);
-  //      for (unsigned int counter = 0; counter !=
-  //      candidate_cells.size();
-  //           ++counter)
-  //        {
-  //          if (!candidate_cells[counter]->at_boundary())
-  //            {
-  //              boundary_cells_with_lines_or_points.push_back(
-  //                candidate_cells[counter]);
-  //            }
-  //        }
-  //    }
 
   // Looping over boundary_cells_with_lines_or_points and counting the
   // number of boundary vertices for each cell. If the cell have one

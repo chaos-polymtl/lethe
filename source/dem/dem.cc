@@ -59,12 +59,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
-  // if (repartition_frequency % contact_detection_frequency != 0) {
-  //   throw std::runtime_error("The repartition frequency must be a multiple of
-  //   "
-  //                           "the contact detection frequency");
-  // }
-
   // In order to consider the particles when repartitioning the triangulation
   // the algorithm needs to know three things:
   //
@@ -239,11 +233,10 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_step_dynamic()
 {
-  return (find_contact_detection_frequency<dim>(
-    particle_handler,
-    simulation_control->get_time_step(),
-    smallest_contact_search_frequency_criterion,
-    mpi_communicator));
+  return (find_contact_detection_step<dim>(particle_handler,
+                                           simulation_control->get_time_step(),
+                                           smallest_contact_search_criterion,
+                                           mpi_communicator));
 }
 
 template <int dim>
@@ -580,7 +573,7 @@ DEMSolver<dim>::solve()
   // cell size - largest particle radius) and (security factor * (blab diamater
   // - 1) *  largest particle radius). This value is used in
   // find_contact_detection_frequency function
-  smallest_contact_search_frequency_criterion =
+  smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -
               parameters.physical_properties.diameter * 0.5),
              (parameters.model_parameters.dynamic_contact_search_factor *

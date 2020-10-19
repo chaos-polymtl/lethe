@@ -36,7 +36,7 @@
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/find_contact_detection_frequency.h>
+#include <dem/find_contact_detection_step.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
@@ -253,8 +253,8 @@ private:
   MappingQGeneric<dim>                      mapping;
   unsigned int                              contact_build_number;
   TimerOutput                               computing_timer;
-  double smallest_contact_search_frequency_criterion;
-  Particles::ParticleHandler<dim, dim> particle_handler;
+  double                                    smallest_contact_search_criterion;
+  Particles::ParticleHandler<dim, dim>      particle_handler;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;

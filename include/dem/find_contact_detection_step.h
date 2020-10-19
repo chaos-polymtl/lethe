@@ -25,15 +25,15 @@
 
 using namespace dealii;
 
-#ifndef find_contact_detection_frequency_h
-#  define find_contact_detection_frequency_h
+#ifndef find_contact_detection_step_h
+#  define find_contact_detection_step_h
 
 /**
  * Carries out finding steps for dynamic contact search
  *
  * @param particle_handler
  * @param dt DEM time step
- * @param smallest_contact_search_frequency_criterion A criterion for finding
+ * @param smallest_contact_search_criterion A criterion for finding
  * dynamic contact search steps. This value is defined as the minimum of
  * particle-particle and particle-wall displacement threshold values
  * @param mpi_communicator
@@ -44,10 +44,9 @@ using namespace dealii;
 
 template <int dim>
 bool
-find_contact_detection_frequency(
-  Particles::ParticleHandler<dim> &particle_handler,
-  const double &                   dt,
-  const double &                   smallest_contact_search_frequency_criterion,
-  MPI_Comm &                       mpi_communicator);
+find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
+                            const double &                   dt,
+                            const double &smallest_contact_search_criterion,
+                            MPI_Comm &    mpi_communicator);
 
 #endif
