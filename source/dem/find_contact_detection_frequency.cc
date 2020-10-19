@@ -39,7 +39,13 @@ find_contact_detection_frequency(
       // function returns true and the displcament of all particles are reset to
       // zero
       update_step = 1;
+    }
 
+  // Broadcasting updating_step value to other processors
+  update_step = Utilities::MPI::max(update_step, mpi_communicator);
+
+  if (update_step == 1)
+    {
       for (auto &particle : particle_handler)
         {
           auto &particle_properties = particle.get_properties();
@@ -48,19 +54,20 @@ find_contact_detection_frequency(
         }
     }
 
-  // Broadcasting updating_step value to other processors
-  update_step = Utilities::MPI::max(update_step, mpi_communicator);
+
 
   return update_step;
 }
 
-template bool find_contact_detection_frequency(
+template bool
+find_contact_detection_frequency(
   Particles::ParticleHandler<2> &particle_handler,
   const double &                 dt,
   const double &                 smallest_contact_search_frequency_criterion,
   MPI_Comm &                     mpi_communicator);
 
-template bool find_contact_detection_frequency(
+template bool
+find_contact_detection_frequency(
   Particles::ParticleHandler<3> &particle_handler,
   const double &                 dt,
   const double &                 smallest_contact_search_frequency_criterion,
