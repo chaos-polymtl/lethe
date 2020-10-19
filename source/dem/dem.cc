@@ -35,6 +35,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , triangulation(this->mpi_communicator)
   , property_pool(DEM::get_number_properties())
   , mapping(1)
+  , contact_build_number(0)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
@@ -238,13 +239,11 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_step_dynamic()
 {
-  return find_contact_detection_frequency<dim>(
+  return (find_contact_detection_frequency<dim>(
     particle_handler,
-    parameters.model_parameters.neighborhood_threshold,
-    GridTools::minimal_cell_diameter(triangulation),
     simulation_control->get_time_step(),
-    parameters.physical_properties.diameter,
-    parameters.model_parameters.dynamic_contact_search_factor);
+    smallest_contact_search_frequency_criterion,
+    mpi_communicator));
 }
 
 template <int dim>
@@ -369,7 +368,11 @@ DEMSolver<dim>::finish_simulation()
 {
   // Timer output
   if (parameters.timer.type == Parameters::Timer::Type::end)
-    this->computing_timer.print_summary();
+    {
+      this->computing_timer.print_summary();
+      pcout << "Total number of contact builds is: " << contact_build_number
+            << std::endl;
+    }
 
   // Testing
   if (parameters.test.enabled)
@@ -573,6 +576,17 @@ DEMSolver<dim>::solve()
       g[2] = physical_properties.gz;
     }
 
+  // Finding the smallest contact search frequency criterion between (smallest
+  // cell size - largest particle radius) and (security factor * (blab diamater
+  // - 1) *  largest particle radius). This value is used in
+  // find_contact_detection_frequency function
+  smallest_contact_search_frequency_criterion =
+    std::min((GridTools::minimal_cell_diameter(triangulation) -
+              parameters.physical_properties.diameter * 0.5),
+             (parameters.model_parameters.dynamic_contact_search_factor *
+              (parameters.model_parameters.neighborhood_threshold - 1) *
+              parameters.physical_properties.diameter * 0.5));
+
   // Finding cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
                                             cells_local_neighbor_list,
@@ -594,11 +608,11 @@ DEMSolver<dim>::solve()
       // Load balancing
       bool load_balancing_step = load_balance();
 
-      // Check to see if it is contact search step
-      bool contact_search_step = (this->*check_contact_search_step)();
-
       // Force reinitilization
       reinitialize_force(particle_handler);
+
+      // Check to see if it is contact search step
+      bool contact_search_step = (this->*check_contact_search_step)();
 
       // Keep track if particles were inserted this step
       bool particles_insertion_step = insert_particles();
@@ -622,6 +636,9 @@ DEMSolver<dim>::solve()
             &cells_ghost_neighbor_list,
             local_contact_pair_candidates,
             ghost_contact_pair_candidates);
+
+          // Updating number of contact builds
+          contact_build_number++;
         }
 
       // Particle-wall broad contact search

@@ -251,8 +251,10 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
   Particles::PropertyPool                   property_pool;
   MappingQGeneric<dim>                      mapping;
+  unsigned int                              contact_build_number;
   TimerOutput                               computing_timer;
-  Particles::ParticleHandler<dim, dim>      particle_handler;
+  double smallest_contact_search_frequency_criterion;
+  Particles::ParticleHandler<dim, dim> particle_handler;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;

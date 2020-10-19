@@ -6,13 +6,11 @@ template <int dim>
 bool
 find_contact_detection_frequency(
   Particles::ParticleHandler<dim> &particle_handler,
-  const double &                   neighborhood_threshold,
-  const double &                   minimum_cell_size,
   const double &                   dt,
-  const double &                   maximum_particle_diameter,
-  const double &                   dynamic_contact_search_factor)
+  const double &                   smallest_contact_search_frequency_criterion,
+  MPI_Comm &                       mpi_communicator)
 {
-  bool   update_step      = false;
+  int    update_step      = 0;
   double max_displacement = 0;
 
   // Looping through all the particles:
@@ -20,50 +18,50 @@ find_contact_detection_frequency(
     {
       auto &particle_properties = particle.get_properties();
 
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::displacement_x + d] +=
-            particle_properties[DEM::PropertiesIndex::v_x + d] * dt;
+      // Finding displacement of each particle during last step
+      particle_properties[DEM::PropertiesIndex::displacement] +=
+        dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
+                    particle_properties[DEM::PropertiesIndex::v_x] +
+                  particle_properties[DEM::PropertiesIndex::v_y] *
+                    particle_properties[DEM::PropertiesIndex::v_y] +
+                  particle_properties[DEM::PropertiesIndex::v_z] *
+                    particle_properties[DEM::PropertiesIndex::v_z]);
 
-          max_displacement = std::max(
-            max_displacement,
-            std::abs(
-              particle_properties[DEM::PropertiesIndex::displacement_x + d]));
-        }
+      // Updating maximum displacement of particles
+      max_displacement =
+        std::max(max_displacement,
+                 particle_properties[DEM::PropertiesIndex::displacement]);
     }
 
-  if (max_displacement >= (minimum_cell_size - maximum_particle_diameter / 2) ||
-      max_displacement >= dynamic_contact_search_factor *
-                            (neighborhood_threshold - 1) *
-                            maximum_particle_diameter / 2)
+  if (max_displacement > smallest_contact_search_frequency_criterion)
     {
-      update_step = true;
+      // If the maximum displacement of particles exceeds criterion, the
+      // function returns true and the displcament of all particles are reset to
+      // zero
+      update_step = 1;
 
       for (auto &particle : particle_handler)
         {
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              particle
-                .get_properties()[DEM::PropertiesIndex::displacement_x + d] = 0;
-            }
+          auto &particle_properties = particle.get_properties();
+
+          particle_properties[DEM::PropertiesIndex::displacement] = 0;
         }
     }
+
+  // Broadcasting updating_step value to other processors
+  update_step = Utilities::MPI::max(update_step, mpi_communicator);
 
   return update_step;
 }
 
 template bool find_contact_detection_frequency(
   Particles::ParticleHandler<2> &particle_handler,
-  const double &                 neighborhood_threshold,
-  const double &                 minimum_cell_size,
   const double &                 dt,
-  const double &                 maximum_particle_diameter,
-  const double &                 dynamic_contact_search_factor);
+  const double &                 smallest_contact_search_frequency_criterion,
+  MPI_Comm &                     mpi_communicator);
 
 template bool find_contact_detection_frequency(
   Particles::ParticleHandler<3> &particle_handler,
-  const double &                 neighborhood_threshold,
-  const double &                 minimum_cell_size,
   const double &                 dt,
-  const double &                 maximum_particle_diameter,
-  const double &                 dynamic_contact_search_factor);
+  const double &                 smallest_contact_search_frequency_criterion,
+  MPI_Comm &                     mpi_communicator);
