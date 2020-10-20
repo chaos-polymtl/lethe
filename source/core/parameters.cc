@@ -1053,6 +1053,53 @@ namespace Parameters
     }
   }
 
+  void
+  FlowControl::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("flow control");
+    {
+      prm.declare_entry("enable",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable flow rate control");
+      prm.declare_entry("volumetric flow rate",
+                        "0",
+                        Patterns::Double(),
+                        "Volumetric flow rate");
+      prm.declare_entry("boundary id",
+                        "0",
+                        Patterns::Integer(),
+                        "Boundary id of the inlet flow");
+      prm.declare_entry("flow direction",
+                        "u",
+                        Patterns::Selection("u|v|w"),
+                        "Flow direction where the flow comes from");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  FlowControl::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("flow control");
+    {
+      enable_flow_control = prm.get_bool("enable");
+      flow_rate = prm.get_double("volumetric flow rate");
+      id_flow_control = prm.get_integer("boundary id");
+
+      const std::string fd = prm.get("flow direction");
+      if (fd == "u")
+        flow_direction = FlowDirection::u;
+      if (fd == "v")
+        flow_direction = FlowDirection::v;
+      if (fd == "w")
+        flow_direction = FlowDirection::w;
+
+
+    }
+    prm.leave_subsection();
+  }
+
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters

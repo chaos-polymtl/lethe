@@ -557,6 +557,36 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+  * @brief FlowControl - Set volumetric flow rate on a boundary id
+  * toward the normal direction of this wall.
+  */
+  struct FlowControl
+  {
+    // Enable flow control
+    bool enable_flow_control;
+
+    // Volumetric flow rate (L^3/t)
+    double flow_rate;
+
+    // Id of the boundary where the flow come from
+    unsigned int id_flow_control;
+
+    // Flow direction (Selection : u,v,w)
+
+    enum class FlowDirection
+    {
+      u,
+      v,
+      w
+    } flow_direction;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
 
 } // namespace Parameters
 #endif

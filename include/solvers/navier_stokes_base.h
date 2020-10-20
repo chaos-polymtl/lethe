@@ -160,6 +160,13 @@ protected:
   postprocessing_torques(const VectorType &evaluation_point);
 
   /**
+ * @brief dynamic_flow_control
+ * Calculate a dynamic force to control inlet flow
+ */
+  void
+  dynamic_flow_control();
+
+  /**
    * @brief finish_time_step
    * Finishes the time step
    * Post-processing and time stepping
@@ -285,8 +292,15 @@ protected:
 
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
+
   // Forcing term for dynamic flow control
-  Tensor<1, dim> beta;
+  Tensor<1, dim>      beta;
+  double              beta_n;
+  double              beta_n1 = 1;
+  double              flow_rate_n;
+  double              flow_rate_n1 = 0;
+  double              area = 0;
+  double              last_time_step = -1;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;

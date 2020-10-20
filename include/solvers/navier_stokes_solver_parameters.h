@@ -55,6 +55,7 @@ public:
   Parameters::VelocitySource                      velocitySource;
   Parameters::IBParticles<dim>                    particlesParameters;
   std::shared_ptr<Parameters::VoidFraction<dim>>  void_fraction;
+  Parameters::FlowControl                         flow_control;
 
   void
   declare(ParameterHandler &prm)
@@ -77,6 +78,7 @@ public:
     Parameters::NonLinearSolver::declare_parameters(prm);
     Parameters::LinearSolver::declare_parameters(prm);
     Parameters::PostProcessing::declare_parameters(prm);
+    Parameters::FlowControl ::declare_parameters(prm);
     particlesParameters.declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
 
@@ -107,6 +109,7 @@ public:
     fem_parameters.parse_parameters(prm);
     forces_parameters.parse_parameters(prm);
     post_processing.parse_parameters(prm);
+    flow_control.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);

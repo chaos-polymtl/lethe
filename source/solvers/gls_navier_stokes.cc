@@ -266,6 +266,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
 
   Tensor<1, dim> force;
+  this->dynamic_flow_control();
   Tensor<1, dim> beta_force = this->beta;
 
   // Velocity dependent source term

@@ -95,7 +95,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     }
 
 
-  // Overide default value of quadrature point if they are specified
+  // Override default value of quadrature point if they are specified
   if (nsparam.fem_parameters.number_quadrature_points > 0)
     number_quadrature_points = nsparam.fem_parameters.number_quadrature_points;
 
@@ -118,14 +118,120 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   else
     forcing_function = new NoForce<dim>;
 
-  beta.clear();
-
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
 
   this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
 }
+
+
+/**
+ * @brief dynamic_flow_control
+ * If set to enable, dynamic_flow_control allows to control the flow by calculate
+ * a beta coefficient at each time step added to the force of the source term
+ * for gls_navier_stokes solver.
+ */
+
+template <int dim, typename VectorType, typename DofsType>
+void
+  NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
+{
+   // Verification if simulation is transient
+   if (nsparam.flow_control.enable_flow_control &&
+        nsparam.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady)
+   {
+
+     // Setting beta coefficient only to new time step (calculated last time step)
+     if (last_time_step != simulationControl->get_current_time())
+       {
+         beta_n = beta_n1;
+         flow_rate_n = flow_rate_n1;
+         last_time_step = simulationControl->get_current_time();
+       }
+
+     if (nsparam.flow_control.flow_direction ==
+         Parameters::FlowControl::FlowDirection::u)
+       beta[0] = beta_n; // beta = f_x
+     else if (nsparam.flow_control.flow_direction ==
+              Parameters::FlowControl::FlowDirection::v)
+       beta[1] = beta_n; // beta = f_y
+     else if (nsparam.flow_control.flow_direction ==
+              Parameters::FlowControl::FlowDirection::w)
+       beta[2] = beta_n; // beta = f_z
+
+     const MappingQ<dim>              mapping(fe.degree,
+                                              nsparam.fem_parameters.qmapping_all);
+     QGauss<dim - 1>                  face_quadrature_formula(fe.degree + 1);
+     const unsigned int               n_q_points = face_quadrature_formula.size();
+     const FEValuesExtractors::Vector velocities(0);
+     std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
+     Tensor<1, dim>                   normal_vector;
+
+     FEFaceValues<dim> fe_face_values(mapping,
+                                      fe,
+                                      face_quadrature_formula,
+                                      update_values |
+                                      update_quadrature_points|
+                                      update_JxW_values |
+                                      update_normal_vectors);
+
+     unsigned int boundary_id = nsparam.flow_control.id_flow_control;
+
+     // Resetting next flow rate and area at inlet prior new calculation
+     flow_rate_n1 = 0;
+     area = 0;
+
+     // Calculating area and volumetric flow rate at the inlet flow
+     for (const auto &cell : dof_handler.active_cell_iterators())
+     {
+       if (cell->is_locally_owned())
+       {
+         for (unsigned int face = 0;
+              face < GeometryInfo<dim>::faces_per_cell;
+              face++)
+         {
+           if (cell->face(face)->at_boundary())
+           {
+             fe_face_values.reinit(cell, face);
+             if (cell->face(face)->boundary_id() == boundary_id)
+             {
+               for (unsigned int q = 0; q < n_q_points; q++)
+               {
+                 area += fe_face_values.JxW(q);
+                 normal_vector = fe_face_values.normal_vector(q);
+                 fe_face_values[velocities].get_function_values(
+                   this->present_solution, velocity_values);
+                 flow_rate_n1 += velocity_values[q] * normal_vector *
+                                 fe_face_values.JxW(q);
+               }
+             }
+           }
+         }
+       }
+     }
+
+     area = Utilities::MPI::sum(area, this->mpi_communicator);
+     flow_rate_n1 = Utilities::MPI::sum(flow_rate_n1, this->mpi_communicator);
+
+     // Calculating the next beta coefficient
+     const double dt = nsparam.simulation_control.dt;
+     const double flow_rate_0 = nsparam.flow_control.flow_rate;
+
+     beta_n1 = beta_n - 1 / (area * dt) *
+                          (flow_rate_0 - 2 * flow_rate_n + flow_rate_n1);
+
+     // Showing area and flow rate of this time step for each iteration
+     if (this->this_mpi_process == 0)
+     {
+       std::cout << "Inlet area : "   << area << std::endl;
+       std::cout << "Flow rate : "    << flow_rate_n1 << std::endl;
+       std::cout << "Beta applied : " << beta_n << std::endl;
+     }
+   }
+}
+
 
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes
