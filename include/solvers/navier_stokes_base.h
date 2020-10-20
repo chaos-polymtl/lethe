@@ -294,11 +294,16 @@ protected:
   Function<dim> *forcing_function;
 
   // Forcing term for dynamic flow control
+  // The coefficients are stored in the following fashion :
+  // 0 - Flow control intented
+  // n - n
+  // 1n - n
+  // n1 - n+1
   Tensor<1, dim>      beta;
   double              beta_n;
-  double              beta_n1 = 1;
-  double              flow_rate_n;
-  double              flow_rate_n1 = 0;
+  double              beta_n1 = 0.25 * nsparam.flow_control.flow_rate;
+  double              flow_rate_n = 0;
+  double              flow_rate_1n;
   double              area = 0;
   double              last_time_step = -1;
 

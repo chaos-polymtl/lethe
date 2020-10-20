@@ -131,6 +131,11 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
  * If set to enable, dynamic_flow_control allows to control the flow by calculate
  * a beta coefficient at each time step added to the force of the source term
  * for gls_navier_stokes solver.
+ * The coefficients are stored in the following fashion :
+ * 0 - Flow control intented
+ * n - n
+ * 1n - n-1
+ * n1 - n+1
  */
 
 template <int dim, typename VectorType, typename DofsType>
@@ -143,23 +148,13 @@ void
         Parameters::SimulationControl::TimeSteppingMethod::steady)
    {
 
-     // Setting beta coefficient only to new time step (calculated last time step)
+     // At each iteration, new beta is calculate with the beta of the last
      if (last_time_step != simulationControl->get_current_time())
        {
          beta_n = beta_n1;
-         flow_rate_n = flow_rate_n1;
+         flow_rate_1n = flow_rate_n;
          last_time_step = simulationControl->get_current_time();
        }
-
-     if (nsparam.flow_control.flow_direction ==
-         Parameters::FlowControl::FlowDirection::u)
-       beta[0] = beta_n; // beta = f_x
-     else if (nsparam.flow_control.flow_direction ==
-              Parameters::FlowControl::FlowDirection::v)
-       beta[1] = beta_n; // beta = f_y
-     else if (nsparam.flow_control.flow_direction ==
-              Parameters::FlowControl::FlowDirection::w)
-       beta[2] = beta_n; // beta = f_z
 
      const MappingQ<dim>              mapping(fe.degree,
                                               nsparam.fem_parameters.qmapping_all);
@@ -180,7 +175,7 @@ void
      unsigned int boundary_id = nsparam.flow_control.id_flow_control;
 
      // Resetting next flow rate and area at inlet prior new calculation
-     flow_rate_n1 = 0;
+     flow_rate_n = 0;
      area = 0;
 
      // Calculating area and volumetric flow rate at the inlet flow
@@ -203,7 +198,7 @@ void
                  normal_vector = fe_face_values.normal_vector(q);
                  fe_face_values[velocities].get_function_values(
                    this->present_solution, velocity_values);
-                 flow_rate_n1 += velocity_values[q] * normal_vector *
+                 flow_rate_n += velocity_values[q] * normal_vector *
                                  fe_face_values.JxW(q);
                }
              }
@@ -213,22 +208,33 @@ void
      }
 
      area = Utilities::MPI::sum(area, this->mpi_communicator);
-     flow_rate_n1 = Utilities::MPI::sum(flow_rate_n1, this->mpi_communicator);
-
-     // Calculating the next beta coefficient
-     const double dt = nsparam.simulation_control.dt;
-     const double flow_rate_0 = nsparam.flow_control.flow_rate;
-
-     beta_n1 = beta_n - 1 / (area * dt) *
-                          (flow_rate_0 - 2 * flow_rate_n + flow_rate_n1);
+     flow_rate_n = Utilities::MPI::sum(flow_rate_n, this->mpi_communicator);
 
      // Showing area and flow rate of this time step for each iteration
      if (this->this_mpi_process == 0)
      {
        std::cout << "Inlet area : "   << area << std::endl;
-       std::cout << "Flow rate : "    << flow_rate_n1 << std::endl;
+       std::cout << "Flow rate : "    << flow_rate_n << std::endl;
        std::cout << "Beta applied : " << beta_n << std::endl;
      }
+
+     // Calculating the next beta coefficient
+     const double dt = nsparam.simulation_control.dt;
+     const double flow_rate_0 = nsparam.flow_control.flow_rate;
+
+     beta_n1 = beta_n - (flow_rate_0 - 2 * flow_rate_n + flow_rate_1n)
+                          / (area * dt);
+
+     // Setting beta coefficient only to new time step
+     if (nsparam.flow_control.flow_direction ==
+         Parameters::FlowControl::FlowDirection::u)
+       beta[0] = beta_n1; // beta = f_x
+     else if (nsparam.flow_control.flow_direction ==
+              Parameters::FlowControl::FlowDirection::v)
+       beta[1] = beta_n1; // beta = f_y
+     else if (nsparam.flow_control.flow_direction ==
+              Parameters::FlowControl::FlowDirection::w)
+       beta[2] = beta_n1; // beta = f_z
    }
 }
 
