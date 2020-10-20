@@ -15,9 +15,9 @@ locate_local_particles_in_cells(
     &pw_pairs_in_contact,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact)
 {
   update_particle_container<dim>(particle_container, &particle_handler);
@@ -51,9 +51,9 @@ locate_local_particles_in_cells(
     &pw_pairs_in_contact,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<2>>>
     &pfw_pairs_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<2>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<2>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<2>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<2>>
     &particle_lines_in_contact);
 
 template void
@@ -68,7 +68,7 @@ locate_local_particles_in_cells(
     &pw_pairs_in_contact,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<3>>>
     &pfw_pairs_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<3>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<3>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<3>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<3>>
     &particle_lines_in_contact);

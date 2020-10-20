@@ -94,10 +94,20 @@ namespace Parameters
     struct ModelParameters
     {
       // Particle-particle, particle-wall broad and fine search frequency
-      unsigned int contact_detection_frequency;
+      unsigned int repartition_frequency;
 
       // Particle-particle, particle-wall broad and fine search frequency
-      unsigned int repartition_frequency;
+      unsigned int contact_detection_frequency;
+
+      // Security factor for dynamic contact search
+      double dynamic_contact_search_factor;
+
+      // Contact detection method
+      enum class ContactDetectionMethod
+      {
+        constant,
+        dynamic
+      } contact_detection_method;
 
       // Contact search neighborhood threshold (neighborhood diameter to
       // particle diameter)

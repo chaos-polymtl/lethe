@@ -59,7 +59,7 @@ public:
    */
   void
   calculate_particle_point_line_contact_force(
-    const std::map<int, particle_point_line_contact_info_struct<dim>>
+    const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
       *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::PhysicalProperties &physical_properties);
 };

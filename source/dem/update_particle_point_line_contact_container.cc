@@ -5,9 +5,9 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_point_line_contact_container_iterators(
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact,
   const std::unordered_map<int, Particles::ParticleIterator<dim>>
     &particle_container)
@@ -39,18 +39,18 @@ update_particle_point_line_contact_container_iterators(
 
 template void
 update_particle_point_line_contact_container_iterators(
-  std::map<int, particle_point_line_contact_info_struct<2>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<2>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<2>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<2>>
     &particle_lines_in_contact,
   const std::unordered_map<int, Particles::ParticleIterator<2>>
     &particle_container);
 
 template void
 update_particle_point_line_contact_container_iterators(
-  std::map<int, particle_point_line_contact_info_struct<3>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<3>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<3>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<3>>
     &particle_lines_in_contact,
   const std::unordered_map<int, Particles::ParticleIterator<3>>
     &particle_container);

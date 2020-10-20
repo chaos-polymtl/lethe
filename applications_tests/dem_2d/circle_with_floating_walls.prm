@@ -28,6 +28,7 @@ end
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
+  set contact detection method 		   		 = constant
   set contact detection frequency                 	 = 10
   set repartition frequency 				 = 10000
   set neighborhood threshold				 = 1.5

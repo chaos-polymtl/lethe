@@ -12,12 +12,13 @@ ParticlePointLineFineSearch<dim>::ParticlePointLineFineSearch()
 // calculated. The output of this function is used for calculation of the
 // contact force
 template <int dim>
-std::map<int, particle_point_line_contact_info_struct<dim>>
+std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
 ParticlePointLineFineSearch<dim>::Particle_Point_Fine_Search(
-  const std::map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-    &particle_point_contact_candidates)
+  const std::
+    unordered_map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+      &particle_point_contact_candidates)
 {
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     particle_point_pairs_in_contact;
 
   // Iterating over contact candidates from broad search. If a particle-point
@@ -117,14 +118,14 @@ ParticlePointLineFineSearch<dim>::Particle_Point_Fine_Search(
 // calculated. The output of this function is used for calculation of the
 // contact force
 template <int dim>
-std::map<int, particle_point_line_contact_info_struct<dim>>
+std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
 ParticlePointLineFineSearch<dim>::Particle_Line_Fine_Search(
-  const std::map<
+  const std::unordered_map<
     int,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     &particle_line_contact_candidates)
 {
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     particle_line_pairs_in_contact;
 
   // Iterating over contact candidates from broad search. If a particle-line

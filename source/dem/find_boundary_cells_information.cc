@@ -7,7 +7,6 @@ template <int dim>
 BoundaryCellsInformation<dim>::BoundaryCellsInformation()
 {}
 
-
 template <int dim>
 void
 BoundaryCellsInformation<dim>::build(
@@ -50,7 +49,6 @@ BoundaryCellsInformation<dim>::build(
   // Finding boundary cells with lines and points
   find_particle_point_and_line_contact_cells(triangulation);
 }
-
 
 // This function finds all the boundary cells and faces in the triangulation,
 // for each cell the boundary faces are specified and the normal vector as well
@@ -150,21 +148,32 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_cells_with_lines_or_points;
 
-  // This map stores the vertex index and position of boundary vertices
-  std::map<int, Point<dim>> boundary_vertices;
+  // This unordered map stores the vertex index and position of boundary
+  // vertices
+  std::unordered_map<int, Point<dim>> boundary_vertices;
 
-  // Looing over all the faces to find boundary faces and then looping over
-  // the vertices of these boundary faces to find all the vertices located on
-  // boundaries
-  for (const auto &face : triangulation.active_face_iterators())
+  // Iterating over the active cells in the trangulation
+  for (const auto &cell : triangulation.active_cell_iterators())
     {
-      if (face->at_boundary())
+      if (cell->is_locally_owned() && cell->at_boundary())
         {
-          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_face;
-               ++v)
+          // Iterating over the faces of each cell
+          for (int face_id = 0;
+               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               ++face_id)
             {
-              boundary_vertices.insert(
-                {face->vertex_index(v), face->vertex(v)});
+              // Check to see if the face is located at boundary
+              if (cell->face(face_id)->at_boundary())
+                {
+                  for (unsigned int v = 0;
+                       v < GeometryInfo<dim>::vertices_per_face;
+                       ++v)
+                    {
+                      boundary_vertices.insert(
+                        {cell->face(face_id)->vertex_index(v),
+                         cell->face(face_id)->vertex(v)});
+                    }
+                }
             }
         }
     }
@@ -173,43 +182,40 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   // vertices and if these cells (which atleast own one boundary vertex) do not
   // exist in the boundary_cells_with_faces, they will be stored in
   // boundary_cells_with_lines_or_points
+
+  auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
+
   for (auto iterator = boundary_vertices.begin();
        iterator != boundary_vertices.end();
        ++iterator)
     {
       auto vertex_index = iterator->first;
-      auto candidate_cells =
-        GridTools::find_cells_adjacent_to_vertex(triangulation, vertex_index);
-      for (unsigned int counter = 0; counter != candidate_cells.size();
-           ++counter)
+
+      for (const auto &neighbor : v_to_c[vertex_index])
         {
-          auto search_iterator = std::find(boundary_cells_with_faces.begin(),
-                                           boundary_cells_with_faces.end(),
-                                           candidate_cells[counter]);
-          if (search_iterator == boundary_cells_with_faces.end())
+          if (neighbor->is_locally_owned() && !neighbor->at_boundary())
             {
-              boundary_cells_with_lines_or_points.push_back(
-                candidate_cells[counter]);
+              boundary_cells_with_lines_or_points.push_back(neighbor);
             }
         }
     }
 
-  // Looping over boundary_cells_with_lines_or_points and counting the number of
-  // boundary vertices for each cell. If the cell have one boundary vertex it
-  // will be stored in boundary_cells_with_points, and if it has two boundary
-  // vertices in boundary_cells_with_lines
-  // The location of these boundary vertices are also stored to be used for
-  // contact detection (fine search)
+  // Looping over boundary_cells_with_lines_or_points and counting the
+  // number of boundary vertices for each cell. If the cell have one
+  // boundary vertex it will be stored in boundary_cells_with_points,
+  // and if it has two boundary vertices in boundary_cells_with_lines
+  // The location of these boundary vertices are also stored to be used
+  // for contact detection (fine search)
   for (unsigned int counter = 0;
        counter != boundary_cells_with_lines_or_points.size();
        ++counter)
     {
       unsigned int number_of_boundary_vertices = 0;
 
-      // This vector stores the location of vertices on boundaries for each
-      // cell. The size of this vector can be 1 or 2, since cells with points
-      // have one boundary vertex and cells with lines have two boundary
-      // vertices
+      // This vector stores the location of vertices on boundaries for
+      // each cell. The size of this vector can be 1 or 2, since cells
+      // with points have one boundary vertex and cells with lines have
+      // two boundary vertices
       std::vector<Point<dim>> boundary_points;
       auto cell = boundary_cells_with_lines_or_points[counter];
       for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell; ++v)
@@ -222,18 +228,21 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
         }
       if (number_of_boundary_vertices == 1)
         {
+          // It means the cells has a boundary point
           boundary_cells_with_points.push_back(
             std::make_pair(cell, *boundary_points.begin()));
         }
       else if (number_of_boundary_vertices == 2)
         {
+          // It means the cells has a boundary line
           boundary_cells_with_lines.push_back(std::make_tuple(
             cell, *boundary_points.begin(), *boundary_points.end()));
         }
     }
 }
 
-// This function finds the triangulation cells adjacent to the floating walls
+// This function finds the triangulation cells adjacent to the floating
+// walls
 template <int dim>
 void
 BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
@@ -271,8 +280,9 @@ BoundaryCellsInformation<dim>::find_boundary_cells_for_floating_walls(
                   double vertex_wall_distance =
                     connecting_vector * wall_normal_vector[floating_wall_id];
 
-                  // If the distance is less than the largest cell size, it
-                  // should be added to the boundary_cells_for_floating_walls
+                  // If the distance is less than the largest cell size,
+                  // it should be added to the
+                  // boundary_cells_for_floating_walls
                   if (abs(vertex_wall_distance) < maximum_cell_diameter)
                     {
                       boundary_cells_for_floating_walls[floating_wall_id]

@@ -66,9 +66,9 @@ locate_local_particles_in_cells(
     &pw_pairs_in_contact,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
-  std::map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact);
 
 #endif /* locate_local_particles_h */
