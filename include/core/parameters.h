@@ -203,9 +203,6 @@ namespace Parameters
     // Output precision
     unsigned int output_precision;
 
-    // Display precision
-    unsigned int display_precision;
-
     // Prefix for simulation output
     std::string force_output_name;
 

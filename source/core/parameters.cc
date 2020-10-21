@@ -269,10 +269,6 @@ namespace Parameters
                         "10",
                         Patterns::Integer(),
                         "Calculation frequency");
-      prm.declare_entry("display precision",
-                        "6",
-                        Patterns::Integer(),
-                        "Output frequency");
       prm.declare_entry("calculation frequency",
                         "1",
                         Patterns::Integer(),
@@ -299,7 +295,6 @@ namespace Parameters
       calculate_torque      = prm.get_bool("calculate torques");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
-      display_precision     = prm.get_integer("display precision");
       output_precision      = prm.get_integer("output precision");
       calculation_frequency = prm.get_integer("calculation frequency");
       output_frequency      = prm.get_integer("output frequency");

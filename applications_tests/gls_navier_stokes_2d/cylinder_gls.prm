@@ -41,7 +41,6 @@ subsection forces
     set force name            = force
     set torque name           = torque
     set output precision      = 10
-    set display precision     = 6
     set calculation frequency = 1
     set output frequency      = 1
 end
