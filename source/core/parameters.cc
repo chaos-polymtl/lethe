@@ -1054,7 +1054,7 @@ namespace Parameters
   }
 
   void
-  FlowControl::declare_parameters(ParameterHandler &prm)
+  DynamicFlowControl::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("flow control");
     {
@@ -1071,29 +1071,27 @@ namespace Parameters
                         Patterns::Integer(),
                         "Boundary id of the inlet flow");
       prm.declare_entry("flow direction",
-                        "u",
-                        Patterns::Selection("u|v|w"),
+                        "0",
+                        Patterns::Integer(),
                         "Flow direction where the flow comes from");
+      prm.declare_entry("initial beta",
+                        "0",
+                        Patterns::Double(),
+                        "Beta coefficient value for the first step time");
     }
     prm.leave_subsection();
   }
 
   void
-  FlowControl::parse_parameters(ParameterHandler &prm)
+  DynamicFlowControl::parse_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("flow control");
     {
       enable_flow_control = prm.get_bool("enable");
       flow_rate           = prm.get_double("volumetric flow rate");
       id_flow_control     = prm.get_integer("boundary id");
-
-      const std::string fd = prm.get("flow direction");
-      if (fd == "u")
-        flow_direction = FlowDirection::u;
-      if (fd == "v")
-        flow_direction = FlowDirection::v;
-      if (fd == "w")
-        flow_direction = FlowDirection::w;
+      flow_direction      = prm.get_integer("flow direction");
+      beta_0              = prm.get_double("initial beta");
     }
     prm.leave_subsection();
   }

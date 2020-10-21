@@ -1493,8 +1493,8 @@ GLSNavierStokesSolver<dim>::solve()
 
   while (this->simulationControl->integrate())
     {
+      this->dynamic_flow_control(this->present_solution);
       this->simulationControl->print_progression(this->pcout);
-      this->dynamic_flow_control();
 
       if (this->simulationControl->is_at_start())
         this->first_iteration();

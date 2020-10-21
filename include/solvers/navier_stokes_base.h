@@ -97,6 +97,7 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
+#include <solvers/flow_control.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
@@ -164,7 +165,7 @@ protected:
    * Calculate a dynamic force to control inlet flow
    */
   void
-  dynamic_flow_control();
+  dynamic_flow_control(const VectorType &evaluation_point);
 
   /**
    * @brief finish_time_step
@@ -293,19 +294,9 @@ protected:
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
 
-  // Forcing term for dynamic flow control
-  // The coefficients are stored in the following fashion :
-  // 0 - Flow control intented
-  // n - n
-  // 1n - n
-  // n1 - n+1
+  // Dynamic flow control
+  FlowControl<dim, VectorType> flow;
   Tensor<1, dim> beta;
-  double         beta_n;
-  double         beta_n1     = 0.25 * nsparam.flow_control.flow_rate;
-  double         flow_rate_n = 0;
-  double         flow_rate_1n;
-  double         area           = 0;
-  double         last_time_step = -1;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;

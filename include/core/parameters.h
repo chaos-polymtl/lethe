@@ -561,7 +561,7 @@ namespace Parameters
    * @brief FlowControl - Set volumetric flow rate on a boundary id
    * toward the normal direction of this wall.
    */
-  struct FlowControl
+  struct DynamicFlowControl
   {
     // Enable flow control
     bool enable_flow_control;
@@ -572,14 +572,11 @@ namespace Parameters
     // Id of the boundary where the flow come from
     unsigned int id_flow_control;
 
-    // Flow direction (Selection : u,v,w)
+    // Flow direction (x=0, y=1 ,z=2)
+    unsigned int flow_direction;
 
-    enum class FlowDirection
-    {
-      u,
-      v,
-      w
-    } flow_direction;
+    // Initial beta
+    double beta_0;
 
     static void
     declare_parameters(ParameterHandler &prm);
