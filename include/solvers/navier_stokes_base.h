@@ -160,9 +160,9 @@ protected:
   postprocessing_torques(const VectorType &evaluation_point);
 
   /**
- * @brief dynamic_flow_control
- * Calculate a dynamic force to control inlet flow
- */
+   * @brief dynamic_flow_control
+   * Calculate a dynamic force to control inlet flow
+   */
   void
   dynamic_flow_control();
 
@@ -299,13 +299,13 @@ protected:
   // n - n
   // 1n - n
   // n1 - n+1
-  Tensor<1, dim>      beta;
-  double              beta_n;
-  double              beta_n1 = 0.25 * nsparam.flow_control.flow_rate;
-  double              flow_rate_n = 0;
-  double              flow_rate_1n;
-  double              area = 0;
-  double              last_time_step = -1;
+  Tensor<1, dim> beta;
+  double         beta_n;
+  double         beta_n1     = 0.25 * nsparam.flow_control.flow_rate;
+  double         flow_rate_n = 0;
+  double         flow_rate_1n;
+  double         area           = 0;
+  double         last_time_step = -1;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;

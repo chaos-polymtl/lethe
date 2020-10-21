@@ -558,9 +558,9 @@ namespace Parameters
   };
 
   /**
-  * @brief FlowControl - Set volumetric flow rate on a boundary id
-  * toward the normal direction of this wall.
-  */
+   * @brief FlowControl - Set volumetric flow rate on a boundary id
+   * toward the normal direction of this wall.
+   */
   struct FlowControl
   {
     // Enable flow control

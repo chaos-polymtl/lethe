@@ -266,7 +266,6 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
 
   Tensor<1, dim> force;
-  this->dynamic_flow_control();
   Tensor<1, dim> beta_force = this->beta;
 
   // Velocity dependent source term
@@ -854,7 +853,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
+                                                        Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1495,6 +1494,8 @@ GLSNavierStokesSolver<dim>::solve()
   while (this->simulationControl->integrate())
     {
       this->simulationControl->print_progression(this->pcout);
+      this->dynamic_flow_control();
+
       if (this->simulationControl->is_at_start())
         this->first_iteration();
       else

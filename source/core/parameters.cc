@@ -1084,8 +1084,8 @@ namespace Parameters
     prm.enter_subsection("flow control");
     {
       enable_flow_control = prm.get_bool("enable");
-      flow_rate = prm.get_double("volumetric flow rate");
-      id_flow_control = prm.get_integer("boundary id");
+      flow_rate           = prm.get_double("volumetric flow rate");
+      id_flow_control     = prm.get_integer("boundary id");
 
       const std::string fd = prm.get("flow direction");
       if (fd == "u")
@@ -1094,8 +1094,6 @@ namespace Parameters
         flow_direction = FlowDirection::v;
       if (fd == "w")
         flow_direction = FlowDirection::w;
-
-
     }
     prm.leave_subsection();
   }
