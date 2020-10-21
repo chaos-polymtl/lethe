@@ -849,7 +849,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1307,8 +1307,6 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
@@ -1363,8 +1361,6 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
@@ -1412,8 +1408,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::Vector completely_distributed_solution(

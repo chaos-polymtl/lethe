@@ -121,6 +121,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
+
+  this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
 }
 
 // This is a primitive first implementation that could be greatly improved by
