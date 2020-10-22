@@ -97,6 +97,7 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
+#include <solvers/flow_control.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
@@ -158,6 +159,13 @@ protected:
    */
   void
   postprocessing_torques(const VectorType &evaluation_point);
+
+  /**
+   * @brief dynamic_flow_control
+   * Calculate a dynamic force to control inlet flow
+   */
+  void
+  dynamic_flow_control(const VectorType &evaluation_point);
 
   /**
    * @brief finish_time_step
@@ -283,9 +291,12 @@ protected:
   NavierStokesSolverParameters<dim> nsparam;
   PVDHandler                        pvdhandler;
 
-
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
+
+  // Dynamic flow control
+  FlowControl<dim, VectorType> flow;
+  Tensor<1, dim>               beta;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
@@ -307,6 +318,7 @@ protected:
   // Post-processing variables
   TableHandler enstrophy_table;
   TableHandler kinetic_energy_table;
+
   // Convergence Analysis
   ConvergenceTable error_table;
 

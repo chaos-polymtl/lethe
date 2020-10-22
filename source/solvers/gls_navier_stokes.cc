@@ -266,6 +266,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
 
   Tensor<1, dim> force;
+  Tensor<1, dim> beta_force = this->beta;
 
   // Velocity dependent source term
   //----------------------------------
@@ -429,6 +430,9 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                     this->fe.system_to_component_index(i).first;
                   force[i] = rhs_force[q](component_i);
                 }
+              // Correct force to include the dynamic forcing term for flow
+              // control
+              force = force + beta_force;
 
               // Calculate the divergence of the velocity
               const double present_velocity_divergence =
@@ -1489,7 +1493,9 @@ GLSNavierStokesSolver<dim>::solve()
 
   while (this->simulationControl->integrate())
     {
+      this->dynamic_flow_control(this->present_solution);
       this->simulationControl->print_progression(this->pcout);
+
       if (this->simulationControl->is_at_start())
         this->first_iteration();
       else

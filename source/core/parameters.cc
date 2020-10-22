@@ -1053,6 +1053,49 @@ namespace Parameters
     }
   }
 
+  void
+  DynamicFlowControl::declare_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("flow control");
+    {
+      prm.declare_entry("enable",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable flow rate control");
+      prm.declare_entry("volumetric flow rate",
+                        "0",
+                        Patterns::Double(),
+                        "Volumetric flow rate");
+      prm.declare_entry("boundary id",
+                        "0",
+                        Patterns::Integer(),
+                        "Boundary id of the inlet flow");
+      prm.declare_entry("flow direction",
+                        "0",
+                        Patterns::Integer(),
+                        "Flow direction where the flow comes from");
+      prm.declare_entry("initial beta",
+                        "0",
+                        Patterns::Double(),
+                        "Beta coefficient value for the first step time");
+    }
+    prm.leave_subsection();
+  }
+
+  void
+  DynamicFlowControl::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("flow control");
+    {
+      enable_flow_control = prm.get_bool("enable");
+      flow_rate           = prm.get_double("volumetric flow rate");
+      id_flow_control     = prm.get_integer("boundary id");
+      flow_direction      = prm.get_integer("flow direction");
+      beta_0              = prm.get_double("initial beta");
+    }
+    prm.leave_subsection();
+  }
+
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters

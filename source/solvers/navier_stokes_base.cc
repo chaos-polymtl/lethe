@@ -27,6 +27,7 @@
 #include <core/grids.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
+#include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfl.h>
@@ -95,7 +96,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     }
 
 
-  // Overide default value of quadrature point if they are specified
+  // Override default value of quadrature point if they are specified
   if (nsparam.fem_parameters.number_quadrature_points > 0)
     number_quadrature_points = nsparam.fem_parameters.number_quadrature_points;
 
@@ -124,6 +125,46 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
 
   this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
 }
+
+
+/**
+ * @brief dynamic_flow_control
+ * If set to enable, dynamic_flow_control allows to control the flow by
+ * calculate a beta coefficient at each time step added to the force of the
+ * source term for gls_navier_stokes solver.
+ */
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
+  const VectorType &present_solution)
+{
+  // Verification if simulation is transient
+  if (nsparam.flow_control.enable_flow_control &&
+      nsparam.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady)
+    {
+      this->beta =
+        flow.calculate_beta(this->dof_handler,
+                            present_solution,
+                            nsparam.flow_control,
+                            nsparam.simulation_control,
+                            nsparam.fem_parameters,
+                            this->simulationControl->get_step_number(),
+                            mpi_communicator);
+
+      // Showing results (area and flow rate)
+      if (simulationControl->get_step_number() - 1 != 0)
+        {
+          std::vector<double> summary = flow.flow_summary();
+          this->pcout << "\n"
+                      << "Inlet area : " << summary[0] << std::endl;
+          this->pcout << "Flow rate : " << summary[1] << std::endl;
+          this->pcout << "Beta applied : " << summary[2] << std::endl;
+        }
+    }
+}
+
 
 // This is a primitive first implementation that could be greatly improved by
 // doing a single pass instead of N boundary passes
