@@ -187,6 +187,15 @@ test()
             &pw_contact_information, dem_parameters.physical_properties, dt);
           integrator_object.integrate(particle_handler, g, dt);
 
+          // Recalculating force
+          auto particle_properties = particle->get_properties();
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              particle_properties[DEM::PropertiesIndex::force_x + d] =
+                particle_properties[DEM::PropertiesIndex::mass] *
+                (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
+            }
+
           deallog << " "
                   << pw_contact_information_iterator->second.normal_overlap
                   << " "
