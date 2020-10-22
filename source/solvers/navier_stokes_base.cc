@@ -27,6 +27,7 @@
 #include <core/grids.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
+#include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfl.h>
@@ -34,7 +35,6 @@
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
-#include <solvers/flow_control.h>
 
 #include "core/time_integration_utilities.h"
 
@@ -141,26 +141,28 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
 {
   // Verification if simulation is transient
   if (nsparam.flow_control.enable_flow_control &&
-    nsparam.simulation_control.method !=
-    Parameters::SimulationControl::TimeSteppingMethod::steady)
-  {
-    this->beta = flow.calculate_beta(this->dof_handler,present_solution,
-                                     nsparam.flow_control,
-                                     nsparam.simulation_control,
-                                     nsparam.fem_parameters,
-                                     this->simulationControl->get_step_number(),
-                                     mpi_communicator);
-
-    // Showing results (area and flow rate)
-    if (simulationControl->get_step_number()-1 != 0)
+      nsparam.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      std::vector<double> summary = flow.flow_summary();
-      this->pcout << "\n"
-                  << "Inlet area : " << summary[0] << std::endl;
-      this->pcout << "Flow rate : " << summary[1] << std::endl;
-      this->pcout << "Beta applied : " << summary[2] << std::endl;
+      this->beta =
+        flow.calculate_beta(this->dof_handler,
+                            present_solution,
+                            nsparam.flow_control,
+                            nsparam.simulation_control,
+                            nsparam.fem_parameters,
+                            this->simulationControl->get_step_number(),
+                            mpi_communicator);
+
+      // Showing results (area and flow rate)
+      if (simulationControl->get_step_number() - 1 != 0)
+        {
+          std::vector<double> summary = flow.flow_summary();
+          this->pcout << "\n"
+                      << "Inlet area : " << summary[0] << std::endl;
+          this->pcout << "Flow rate : " << summary[1] << std::endl;
+          this->pcout << "Beta applied : " << summary[2] << std::endl;
+        }
     }
-  }
 }
 
 

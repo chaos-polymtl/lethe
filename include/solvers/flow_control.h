@@ -30,7 +30,7 @@
 #include <core/parameters.h>
 
 #ifndef lethe_flow_control_h
-#define lethe_flow_control_h
+#  define lethe_flow_control_h
 
 using namespace dealii;
 
@@ -38,36 +38,38 @@ template <int dim, typename VectorType>
 class FlowControl
 {
 public:
-  Tensor<1, dim> calculate_beta(
-    const DoFHandler<dim> &                           dof_handler,
-    const VectorType &                                present_solution,
-    const Parameters::DynamicFlowControl &            flow_control,
-    const Parameters::SimulationControl  &            simulation_control,
-    const Parameters::FEM &                           fem_parameters,
-    const double &                                    step_number,
-    const MPI_Comm &                                  mpi_communicator);
-  std::vector<double> flow_summary();
+  Tensor<1, dim>
+  calculate_beta(const DoFHandler<dim> &               dof_handler,
+                 const VectorType &                    present_solution,
+                 const Parameters::DynamicFlowControl &flow_control,
+                 const Parameters::SimulationControl & simulation_control,
+                 const Parameters::FEM &               fem_parameters,
+                 const double &                        step_number,
+                 const MPI_Comm &                      mpi_communicator);
+  std::vector<double>
+  flow_summary();
 
 private:
-  //The coefficients are stored in the following fashion :
+  // The coefficients are stored in the following fashion :
   // 0 - Flow control intended, n - n, 1n - n-1, n1 - n+1
   Tensor<1, dim> beta;
   double         beta_n;
-  double         beta_n1       = 0;
-  double         flow_rate_n   = 0;
+  double         beta_n1     = 0;
+  double         flow_rate_n = 0;
   double         flow_rate_1n;
-  double         area          = 0;
+  double         area = 0;
 };
 
 template <int dim, typename VectorType>
-Tensor<1, dim> FlowControl<dim, VectorType>::calculate_beta(
-  const DoFHandler<dim> &                           dof_handler,
-  const VectorType &                                present_solution,
-  const Parameters::DynamicFlowControl &            flow_control,
-  const Parameters::SimulationControl  &            simulation_control,
-  const Parameters::FEM &                           fem_parameters,
-  const double &                                    step_number,
-  const MPI_Comm &                                  mpi_communicator)
+Tensor<1, dim>
+FlowControl<dim, VectorType>::calculate_beta(
+  const DoFHandler<dim> &               dof_handler,
+  const VectorType &                    present_solution,
+  const Parameters::DynamicFlowControl &flow_control,
+  const Parameters::SimulationControl & simulation_control,
+  const Parameters::FEM &               fem_parameters,
+  const double &                        step_number,
+  const MPI_Comm &                      mpi_communicator)
 {
   beta_n       = beta_n1;
   flow_rate_1n = flow_rate_n;
@@ -85,7 +87,7 @@ Tensor<1, dim> FlowControl<dim, VectorType>::calculate_beta(
                                    fe,
                                    face_quadrature_formula,
                                    update_values | update_quadrature_points |
-                                   update_JxW_values | update_normal_vectors);
+                                     update_JxW_values | update_normal_vectors);
 
   unsigned int boundary_id = flow_control.id_flow_control;
 
@@ -95,32 +97,31 @@ Tensor<1, dim> FlowControl<dim, VectorType>::calculate_beta(
 
   // Calculating area and volumetric flow rate at the inlet flow
   for (const auto &cell : dof_handler.active_cell_iterators())
-  {
-    if (cell->is_locally_owned() && cell->at_boundary())
     {
-      for (unsigned int face = 0;
-           face < GeometryInfo<dim>::faces_per_cell; face++)
-      {
-        if (cell->face(face)->at_boundary())
+      if (cell->is_locally_owned() && cell->at_boundary())
         {
-          fe_face_values.reinit(cell, face);
-          if (cell->face(face)->boundary_id() == boundary_id)
-          {
-            for (unsigned int q = 0; q < n_q_points; q++)
+          for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
+               face++)
             {
-              area += fe_face_values.JxW(q);
-              normal_vector = fe_face_values.normal_vector(q);
-              fe_face_values[velocities].get_function_values(
-                present_solution, velocity_values);
-              flow_rate_n += velocity_values[q] *
-                             normal_vector *
-                             fe_face_values.JxW(q);
+              if (cell->face(face)->at_boundary())
+                {
+                  fe_face_values.reinit(cell, face);
+                  if (cell->face(face)->boundary_id() == boundary_id)
+                    {
+                      for (unsigned int q = 0; q < n_q_points; q++)
+                        {
+                          area += fe_face_values.JxW(q);
+                          normal_vector = fe_face_values.normal_vector(q);
+                          fe_face_values[velocities].get_function_values(
+                            present_solution, velocity_values);
+                          flow_rate_n += velocity_values[q] * normal_vector *
+                                         fe_face_values.JxW(q);
+                        }
+                    }
+                }
             }
-          }
         }
-      }
     }
-  }
 
   area        = Utilities::MPI::sum(area, mpi_communicator);
   flow_rate_n = Utilities::MPI::sum(flow_rate_n, mpi_communicator);
@@ -149,11 +150,11 @@ Tensor<1, dim> FlowControl<dim, VectorType>::calculate_beta(
 }
 
 template <int dim, typename VectorType>
-std::vector<double> FlowControl<dim, VectorType>::flow_summary()
+std::vector<double>
+FlowControl<dim, VectorType>::flow_summary()
 {
   std::vector<double> summary{area, flow_rate_n, beta_n};
   return summary;
 }
 
 #endif
-
