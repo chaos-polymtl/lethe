@@ -11,6 +11,7 @@ subsection simulation control
   set output name             = noslip_22
   set output frequency        = 1
   set subdivision             = 1
+  set log precision     = 6
 end
 
 #---------------------------------------------------
@@ -38,7 +39,6 @@ subsection forces
     set force name            = force
     set torque name           = torque
     set output precision      = 10
-    set display precision     = 6
     set calculation frequency = 1
     set output frequency      = 1
 end

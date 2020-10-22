@@ -561,7 +561,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       "time", this->simulationControl->get_current_time());
                   table_t[p].add_value("T_z", t_torque_);
                   table_t[p].set_precision(
-                    "T_z", this->nsparam.forces_parameters.display_precision);
+                    "T_z", this->nsparam.simulation_control.log_precision);
 
 
 
@@ -574,9 +574,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
 
                   table_f[p].set_precision(
-                    "f_x", this->nsparam.forces_parameters.display_precision);
+                    "f_x", this->nsparam.simulation_control.log_precision);
                   table_f[p].set_precision(
-                    "f_y", this->nsparam.forces_parameters.display_precision);
+                    "f_y", this->nsparam.simulation_control.log_precision);
                 }
             }
         }
@@ -1069,13 +1069,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       "time", this->simulationControl->get_current_time());
                   table_t[p].add_value("T_x", t_torque_x);
                   table_t[p].set_precision(
-                    "T_x", this->nsparam.forces_parameters.display_precision);
+                    "T_x", this->nsparam.simulation_control.log_precision);
                   table_t[p].add_value("T_y", t_torque_x);
                   table_t[p].set_precision(
-                    "T_y", this->nsparam.forces_parameters.display_precision);
+                    "T_y", this->nsparam.simulation_control.log_precision);
                   table_t[p].add_value("T_z", t_torque_x);
                   table_t[p].set_precision(
-                    "T_z", this->nsparam.forces_parameters.display_precision);
+                    "T_z", this->nsparam.simulation_control.log_precision);
 
 
 
@@ -1089,13 +1089,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
 
                   table_f[p].set_precision(
-                    "f_x", this->nsparam.forces_parameters.display_precision);
+                    "f_x", this->nsparam.simulation_control.log_precision);
                   table_f[p].set_precision(
-                    "f_y", this->nsparam.forces_parameters.display_precision);
+                    "f_y", this->nsparam.simulation_control.log_precision);
 
                   table_f[p].add_value("f_z", fz_p_2_ + fz_v_);
                   table_f[p].set_precision(
-                    "f_z", this->nsparam.forces_parameters.display_precision);
+                    "f_z", this->nsparam.simulation_control.log_precision);
                 }
             }
         }

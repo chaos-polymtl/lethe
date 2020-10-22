@@ -881,8 +881,6 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -934,8 +932,6 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -983,8 +979,6 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
-                  << std::setprecision(
-                       this->nsparam.linear_solver.residual_precision)
                   << linear_solver_tolerance << std::endl;
     }
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(

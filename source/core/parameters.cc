@@ -64,6 +64,13 @@ namespace Parameters
                         Patterns::Integer(),
                         "log frequency");
 
+      prm.declare_entry("log precision",
+                        "6",
+                        Patterns::Integer(),
+                        "Display precision when writing to log",
+                        "This setting percolates to all output to the log");
+
+
       prm.declare_entry("output time", "1", Patterns::Double(), "Output time");
 
       prm.declare_entry(
@@ -135,6 +142,7 @@ namespace Parameters
       subdivision              = prm.get_integer("subdivision");
       group_files              = prm.get_integer("group files");
       log_frequency            = prm.get_integer("log frequency");
+      log_precision            = prm.get_integer("log precision");
     }
     prm.leave_subsection();
   }
@@ -261,10 +269,6 @@ namespace Parameters
                         "10",
                         Patterns::Integer(),
                         "Calculation frequency");
-      prm.declare_entry("display precision",
-                        "6",
-                        Patterns::Integer(),
-                        "Output frequency");
       prm.declare_entry("calculation frequency",
                         "1",
                         Patterns::Integer(),
@@ -291,7 +295,6 @@ namespace Parameters
       calculate_torque      = prm.get_bool("calculate torques");
       force_output_name     = prm.get("force name");
       torque_output_name    = prm.get("torque name");
-      display_precision     = prm.get_integer("display precision");
       output_precision      = prm.get_integer("output precision");
       calculation_frequency = prm.get_integer("calculation frequency");
       output_frequency      = prm.get_integer("output frequency");
@@ -528,11 +531,6 @@ namespace Parameters
         "State whether output from solver runs should be printed. "
         "Choices are <quiet|verbose>.");
       prm.declare_entry(
-        "residual precision",
-        "6",
-        Patterns::Integer(),
-        "Number of digits used when outputing the residual in the terminal");
-      prm.declare_entry(
         "method",
         "gmres",
         Patterns::Selection("gmres|bicgstab|amg|direct"),
@@ -648,7 +646,6 @@ namespace Parameters
         throw std::logic_error(
           "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
 
-      residual_precision = prm.get_integer("residual precision");
       relative_residual  = prm.get_double("relative residual");
       minimum_residual   = prm.get_double("minimum residual");
       max_iterations     = prm.get_integer("max iters");

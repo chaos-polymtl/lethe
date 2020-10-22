@@ -7,7 +7,7 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 3
+  set number mesh adapt       = 4
   set output name             = cylinder-output
   set output frequency        = 1
   set subdivision             = 1
@@ -35,7 +35,6 @@ subsection forces
     set force name            = force
     set torque name           = torque
     set output precision      = 10
-    set display precision     = 6
     set calculation frequency = 1
     set output frequency      = 1
 end
@@ -86,7 +85,18 @@ subsection boundary conditions
         set type              = slip
     end
 end
-
+# --------------------------------------------------
+# Manifolds
+#---------------------------------------------------
+subsection manifolds
+  set number                  = 1
+    subsection manifold 0
+        set id                = 0
+        set type              = spherical
+        set arg1              = 8
+        set arg2              = 8
+    end
+end
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
@@ -95,7 +105,7 @@ subsection mesh adaptation
   set variable                = velocity
   set fraction type           = number
   set max number elements     = 70000
-  set max refinement level    = 5
+  set max refinement level    = 6
   set min refinement level    = 0
   set frequency               = 1
   set fraction refinement     = 0.3

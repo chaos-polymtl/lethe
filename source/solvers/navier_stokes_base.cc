@@ -121,6 +121,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
+
+  this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
 }
 
 // This is a primitive first implementation that could be greatly improved by
@@ -151,12 +153,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
       if (dim == 3)
         dependent_column_names.push_back("f_z");
 
-      TableHandler table =
-        make_table_scalars_tensors(nsparam.boundary_conditions.id,
-                                   independent_column_names,
-                                   this->forces_on_boundaries,
-                                   dependent_column_names,
-                                   nsparam.forces_parameters.display_precision);
+      TableHandler table = make_table_scalars_tensors(
+        nsparam.boundary_conditions.id,
+        independent_column_names,
+        this->forces_on_boundaries,
+        dependent_column_names,
+        this->nsparam.simulation_control.log_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force  summary                          |" << std::endl;
@@ -218,12 +220,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       dependent_column_names.push_back("T_y");
       dependent_column_names.push_back("T_z");
 
-      TableHandler table =
-        make_table_scalars_tensors(nsparam.boundary_conditions.id,
-                                   independent_column_names,
-                                   this->torques_on_boundaries,
-                                   dependent_column_names,
-                                   nsparam.forces_parameters.display_precision);
+      TableHandler table = make_table_scalars_tensors(
+        nsparam.boundary_conditions.id,
+        independent_column_names,
+        this->torques_on_boundaries,
+        dependent_column_names,
+        this->nsparam.simulation_control.log_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;

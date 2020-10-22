@@ -123,6 +123,9 @@ namespace Parameters
     // Frequency of the log output to the terminal
     unsigned int log_frequency;
 
+    // Display precision of the log output to the terminal
+    unsigned int log_precision;
+
     // Subdivisions of the results in the output
     unsigned int subdivision;
 
@@ -199,9 +202,6 @@ namespace Parameters
 
     // Output precision
     unsigned int output_precision;
-
-    // Display precision
-    unsigned int display_precision;
 
     // Prefix for simulation output
     std::string force_output_name;
@@ -339,9 +339,6 @@ namespace Parameters
     SolverType solver;
 
     Verbosity verbosity;
-
-    // Residual precision
-    unsigned int residual_precision;
 
     // Relative residual of the iterative solver
     double relative_residual;

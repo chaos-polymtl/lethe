@@ -26,6 +26,13 @@ subsection mesh
     set initial refinement   = 6
 end
 
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+   set type = iteration
+end
+
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
@@ -92,5 +99,6 @@ subsection linear solver
   set ilu preconditioner fill                = 1
   set ilu preconditioner absolute tolerance  = 1e-12
   set ilu preconditioner relative tolerance  = 1.00
+  set max krylov vectors                     = 200
   set verbosity               = verbose
 end

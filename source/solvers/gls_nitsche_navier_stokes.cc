@@ -253,7 +253,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
         independent_column_names,
         force,
         dependent_column_names,
-        this->nsparam.forces_parameters.display_precision);
+        this->nsparam.simulation_control.log_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force on solid summary                  |" << std::endl;
