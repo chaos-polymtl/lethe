@@ -115,9 +115,6 @@ Tensor<1, dim> FlowControl<dim, VectorType>::calculate_beta(
               flow_rate_n += velocity_values[q] *
                              normal_vector *
                              fe_face_values.JxW(q);
-              //std::cout << "Normal vector : " << normal_vector
-              //          << "Velocity : " << velocity_values[q]
-              //          << "JxW : " << fe_face_values.JxW(q) << std::endl;
             }
           }
         }
