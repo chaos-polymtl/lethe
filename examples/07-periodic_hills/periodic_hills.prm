@@ -46,7 +46,7 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                      = 6
+  set number                      = 4
     subsection bc 0
         set type                  = periodic
         set id                    = 0
@@ -104,7 +104,7 @@ end
 subsection linear solver
   set method                                 = gmres
   set max iters                              = 5000
-  set relative residual                      = 1e-9
+  set relative residual                      = 1e-3
   set minimum residual                       = 1e-9
   set max krylov vectors                     = 200
   set ilu preconditioner fill                = 0

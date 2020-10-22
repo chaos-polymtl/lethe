@@ -11,6 +11,7 @@ subsection simulation control
   set output frequency        = 1
   set subdivision             = 1
   set number mesh adapt       = 2      # If steady, nb mesh adaptation
+  set log precision           = 3         # Log precision
 end
 
 #---------------------------------------------------
@@ -52,7 +53,6 @@ subsection forces
     set force name            = force     # Name prefix of force files
     set torque name           = torque    # Name prefix of torque files
     set output precision      = 10        # Output precision
-    set display precision     = 3         # Log precision
     set calculation frequency = 1         # Frequency of the force calculation
     set output frequency      = 1         # Frequency of file update
 end
