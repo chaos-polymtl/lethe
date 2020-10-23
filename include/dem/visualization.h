@@ -22,6 +22,8 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 
+#include <dem/dem_properties.h>
+
 #include <tuple>
 #include <vector>
 
@@ -55,20 +57,24 @@ public:
    * element and the size of the property as the second element. For vectors
    * only the size of the first element of the vector is defined equal to the
    * dimension
+   * @param g Body force for calculation of the exerted force on particles
    */
   void
-  build_patches(const Particles::ParticleHandler<dim> &  particle_handler,
-                std::vector<std::pair<std::string, int>> properties);
+  build_patches(Particles::ParticleHandler<dim> &        particle_handler,
+                std::vector<std::pair<std::string, int>> properties,
+                const Tensor<1, dim> &                   g);
 
   /**
    * Prints the data of particles in the xyz format
    *
    * @param particle_handler The particle handler of active particles
    * @param properties Properties of particles
+   * @param g Body force for calculation of the exerted force on particles
    */
   void
-  print_xyz(const dealii::Particles::ParticleHandler<dim> &particle_handler,
-            std::vector<std::pair<std::string, int>>       properties);
+  print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
+            std::vector<std::pair<std::string, int>> properties,
+            const Tensor<1, dim> &                   g);
 
   ~Visualization();
 

@@ -24,6 +24,9 @@ ExplicitEulerIntegrator<dim>::integrate(
           particle_properties[PropertiesIndex::acc_x + d] =
             g[d] + particle_properties[PropertiesIndex::force_x + d] /
                      particle_properties[PropertiesIndex::mass];
+
+          // Reinitializing force
+          particle_properties[PropertiesIndex::force_x + d] = 0;
         }
 
       // Velocity integration:
@@ -38,20 +41,21 @@ ExplicitEulerIntegrator<dim>::integrate(
           particle_properties[PropertiesIndex::v_x + d] = particle_velocity[d];
         }
 
-      // Position integration:
+      // Position integration
       auto particle_position = particle->get_location();
       particle_position      = particle_position + (particle_velocity * dt);
       particle->set_location(particle_position);
 
-      // Angular velocity:
-      /*
-      particle->get_properties()[16] = particle->get_properties()[16] +
-        (particle->get_properties()[21]) / (particle->get_properties()[20]);
-      particle->get_properties()[17] =particle->get_properties()[17] +
-        (particle->get_properties()[22]) / (particle->get_properties()[20]);
-      particle->get_properties()[18] = particle->get_properties()[18] +
-        (particle->get_properties()[23]) / (particle->get_properties()[20]);
-        */
+      // Angular velocity
+      for (int d = 0; d < dim; ++d)
+        {
+          particle_properties[PropertiesIndex::omega_x + d] +=
+            dt * (particle_properties[PropertiesIndex::M_x + d] /
+                  particle_properties[PropertiesIndex::mom_inertia]);
+
+          // Reinitializing torque
+          particle_properties[PropertiesIndex::M_x + d] = 0;
+        }
     }
 }
 

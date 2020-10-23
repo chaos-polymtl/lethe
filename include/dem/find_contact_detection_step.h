@@ -37,16 +37,17 @@ using namespace dealii;
  * dynamic contact search steps. This value is defined as the minimum of
  * particle-particle and particle-wall displacement threshold values
  * @param mpi_communicator
- * @return Returns true if the maximum cumulative displacement of particles
- * exceeds the threshold
+ * @param contact_detection_step Returns 1 if the maximum cumulative
+ * displacement of particles exceeds the threshold and 0 otherwise
  *
  */
 
 template <int dim>
-bool
+void
 find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
                             const double &                   dt,
                             const double &smallest_contact_search_criterion,
-                            MPI_Comm &    mpi_communicator);
+                            MPI_Comm &    mpi_communicator,
+                            unsigned int &contact_detection_step);
 
 #endif

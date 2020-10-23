@@ -24,6 +24,9 @@ VelocityVerletIntegrator<dim>::integrate(
           particle_properties[PropertiesIndex::acc_x + d] =
             g[d] + particle_properties[PropertiesIndex::force_x + d] /
                      particle_properties[PropertiesIndex::mass];
+
+          // Reinitializing force
+          particle_properties[PropertiesIndex::force_x + d] = 0;
         }
 
       // Store particle velocity and acceleration in Tensors
@@ -62,9 +65,12 @@ VelocityVerletIntegrator<dim>::integrate(
           particle_angular_velocity[d] =
             particle_properties[PropertiesIndex::omega_x + d];
           particle_torque[d] = particle_properties[PropertiesIndex::M_x + d];
+
+          // Reinitializing torque
+          particle_properties[PropertiesIndex::M_x + d] = 0;
         }
 
-      // Updating angular velocity:
+      // Updating angular velocity
       particle_angular_velocity =
         particle_angular_velocity +
         dt *

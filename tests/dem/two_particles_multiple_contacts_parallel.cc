@@ -382,6 +382,18 @@ test()
                 {
                   if (particle->get_id() == 0)
                     {
+                      // Recalculating force
+                      auto particle_properties = particle->get_properties();
+                      for (unsigned int d = 0; d < dim; ++d)
+                        {
+                          particle_properties[DEM::PropertiesIndex::force_x +
+                                              d] =
+                            particle_properties[DEM::PropertiesIndex::mass] *
+                            (particle_properties[DEM::PropertiesIndex::acc_x +
+                                                 d] -
+                             g[d]);
+                        }
+
                       deallog
                         << "The exerted force on particle "
                         << particle->get_id() << " at step " << iteration

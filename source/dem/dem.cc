@@ -41,6 +41,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
+  , contact_detection_step(0)
   , neighborhood_threshold_squared(
       std::pow(parameters.model_parameters.neighborhood_threshold *
                  parameters.physical_properties.diameter,
@@ -201,6 +202,18 @@ DEMSolver<dim>::read_mesh()
 
 template <int dim>
 void
+DEMSolver<dim>::set_body_force()
+{
+  g[0] = physical_properties.gx;
+  g[1] = physical_properties.gy;
+  if (dim == 3)
+    {
+      g[2] = physical_properties.gz;
+    }
+}
+
+template <int dim>
+void
 DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
@@ -233,10 +246,13 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_step_dynamic()
 {
-  return (find_contact_detection_step<dim>(particle_handler,
-                                           simulation_control->get_time_step(),
-                                           smallest_contact_search_criterion,
-                                           mpi_communicator));
+  find_contact_detection_step<dim>(particle_handler,
+                                   simulation_control->get_time_step(),
+                                   smallest_contact_search_criterion,
+                                   mpi_communicator,
+                                   contact_detection_step);
+
+  return contact_detection_step;
 }
 
 template <int dim>
@@ -376,36 +392,9 @@ DEMSolver<dim>::finish_simulation()
         {
           if (this_mpi_process == processor_number)
             {
-              visualization_object.print_xyz(particle_handler, properties);
+              visualization_object.print_xyz(particle_handler, properties, g);
             }
           MPI_Barrier(MPI_COMM_WORLD);
-        }
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::reinitialize_force(
-  Particles::ParticleHandler<dim> &particle_handler)
-{
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
-    {
-      // Getting properties of particle as local variable
-      auto particle_properties = particle->get_properties();
-
-      // Reinitializing forces and momentums of particles in the system
-      particle_properties[DEM::PropertiesIndex::force_x] = 0;
-      particle_properties[DEM::PropertiesIndex::force_y] = 0;
-
-      particle_properties[DEM::PropertiesIndex::M_x] = 0;
-      particle_properties[DEM::PropertiesIndex::M_y] = 0;
-
-      if (dim == 3)
-        {
-          particle_properties[DEM::PropertiesIndex::force_z] = 0;
-          particle_properties[DEM::PropertiesIndex::M_z]     = 0;
         }
     }
 }
@@ -512,7 +501,8 @@ DEMSolver<dim>::write_output_results()
   // Write particles
   Visualization<dim> particle_data_out;
   particle_data_out.build_patches(particle_handler,
-                                  properties_class.get_properties_name());
+                                  properties_class.get_properties_name(),
+                                  g);
 
   write_vtu_and_pvd<0, dim>(particles_pvdhandler,
                             particle_data_out,
@@ -560,14 +550,7 @@ DEMSolver<dim>::solve()
   read_mesh();
 
   // Initialize DEM body force
-  Tensor<1, dim> g;
-
-  g[0] = physical_properties.gx;
-  g[1] = physical_properties.gy;
-  if (dim == 3)
-    {
-      g[2] = physical_properties.gz;
-    }
+  set_body_force();
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab diamater
@@ -600,9 +583,6 @@ DEMSolver<dim>::solve()
 
       // Load balancing
       bool load_balancing_step = load_balance();
-
-      // Force reinitilization
-      reinitialize_force(particle_handler);
 
       // Check to see if it is contact search step
       bool contact_search_step = (this->*check_contact_search_step)();

@@ -115,17 +115,23 @@ private:
     const;
 
   /**
-   * Prints the simulation starting information including number of processors.
+   * Prints the simulation starting information including number of processors
    */
   void
   print_initial_info();
 
   /**
-   * Defines or reads the mesh based on the information provided by the user.
-   * Gmsh files can also be read in this function.
+   * Defines or reads the mesh based on the information provided by the user
+   * Gmsh files can also be read in this function
    */
   void
   read_mesh();
+
+  /**
+   * Sets the body force from the values defined in the parameter handler file
+   */
+  void
+  set_body_force();
 
   /**
    * Finds contact search steps for constant contact search method
@@ -135,15 +141,6 @@ private:
   check_contact_search_step_constant();
   inline bool
   check_contact_search_step_dynamic();
-
-  /**
-   * Reinitializes exerted forces and momentums on particles
-   *
-   * @param particle_handler Particle handler to access all the particles in the
-   * system
-   */
-  void
-  reinitialize_force(Particles::ParticleHandler<dim> &particle_handler);
 
   /**
    * @brief Manages the call to the load balancing. Returns true if
@@ -163,7 +160,7 @@ private:
 
   /**
    * @brief Carries out the broad contact detection search using the
-   * background triangulation for particle-walls contact.
+   * background triangulation for particle-walls contact
    *
    */
   void
@@ -255,6 +252,8 @@ private:
   TimerOutput                               computing_timer;
   double                                    smallest_contact_search_criterion;
   Particles::ParticleHandler<dim, dim>      particle_handler;
+  unsigned int                              contact_detection_step;
+  Tensor<1, dim>                            g;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;

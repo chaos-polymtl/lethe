@@ -9,8 +9,9 @@ Visualization<dim>::Visualization()
 template <int dim>
 void
 Visualization<dim>::build_patches(
-  const dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<std::pair<std::string, int>>       properties)
+  dealii::Particles::ParticleHandler<dim> &particle_handler,
+  std::vector<std::pair<std::string, int>> properties,
+  const Tensor<1, dim> &                   g)
 {
   // Adding ID to properties vector for visualization
   properties.insert(properties.begin(), std::make_pair("ID", 1));
@@ -63,7 +64,14 @@ Visualization<dim>::build_patches(
       // ID and other properties
       if (particle->has_properties())
         {
-          const ArrayView<const double> props = particle->get_properties();
+          // Calculating force for visualization
+          auto particle_properties = particle->get_properties();
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              particle_properties[DEM::PropertiesIndex::force_x + d] =
+                particle_properties[DEM::PropertiesIndex::mass] *
+                (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
+            }
 
           // Adding ID to patches
           patches[i].data(0, 0) = particle->get_id();
@@ -71,7 +79,8 @@ Visualization<dim>::build_patches(
           for (unsigned int property_index = 1;
                property_index < this->number_of_properties_to_write;
                ++property_index)
-            patches[i].data(property_index, 0) = props[property_index - 1];
+            patches[i].data(property_index, 0) =
+              particle_properties[property_index - 1];
         }
     }
 }
@@ -79,8 +88,9 @@ Visualization<dim>::build_patches(
 template <int dim>
 void
 Visualization<dim>::print_xyz(
-  const dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<std::pair<std::string, int>>       properties)
+  dealii::Particles::ParticleHandler<dim> &particle_handler,
+  std::vector<std::pair<std::string, int>> properties,
+  const Tensor<1, dim> &                   g)
 {
   this->properties_to_write.assign(properties.begin(),
                                    properties.begin() +
@@ -94,7 +104,7 @@ Visualization<dim>::print_xyz(
          "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
       << std::endl;
 
-  this->build_patches(particle_handler, properties_to_write);
+  this->build_patches(particle_handler, properties_to_write, g);
   unsigned int counter;
 
   // loop over all patches

@@ -29,7 +29,8 @@ using namespace dealii;
 
 /**
  * Implementation of a classical explicit euler scheme for the integration
- * of the particle motion
+ * of the particle motion. Note that reinitilization of force and torque is also
+ * integrated into integration class
  *
  * @note
  *
