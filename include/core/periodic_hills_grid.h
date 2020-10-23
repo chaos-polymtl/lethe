@@ -51,9 +51,9 @@ public:
 private:
   std::string grid_arguments;
   double spacing_y;
-  int repetitions_x;
-  int repetitions_y;
-  int repetitions_z;
+  int    repetitions_x;
+  int    repetitions_y;
+  int    repetitions_z;
   double alpha;
 };
 
@@ -132,8 +132,8 @@ PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(const std::string &grid_argu
   }
 
   std::vector<double> arguments_double = dealii::Utilities::string_to_double(arguments);
-  spacing_y = arguments_double[0];
-  alpha = arguments_double[1];
+  spacing_y =     arguments_double[0];
+  alpha =         arguments_double[1];
   repetitions_x = arguments_double[2];
   repetitions_y = arguments_double[3];
   if (dim == 3)
@@ -158,8 +158,6 @@ PeriodicHillsPushForward<dim, spacedim>::vector_value(
 {
   const Point<spacedim> np =
     PeriodicHillsGrid<dim, spacedim>::hill_geometry(op, spacing_y, alpha);
-
-  std::cout << "Push foward x : " << op[0] << " to " << np[0] << std::endl;
 
   values(0) = np[0];
   values(1) = np[1];
@@ -224,11 +222,11 @@ PeriodicHillsPullBack<dim, spacedim>::vector_value(
 
   if (alpha > 1)
     {
-      if (x <= max_x / 2)
+      if (x < max_x / 2)
         x = (-(1 - 0.5) +
              std::sqrt(std::pow((1 - 0.5), 2) - (4 * (1 / max_x) * -x))) /
             (2 / max_x);
-      else if (x > max_x / 2 && x <= max_x)
+      else if (x > max_x / 2 && x < max_x)
         x = (-(1 + 1.5) + std::sqrt(std::pow((1 + 1.5), 2) -
                                     (4 * (-1 / max_x) * (-0.5 * max_x - x)))) /
             (2 * -1 / max_x);
@@ -256,7 +254,6 @@ PeriodicHillsPullBack<dim, spacedim>::vector_value(
     y = (-(1 + 1.5 * spacing_y) + std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
         (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y))) )/ (2 * -spacing_y / max_y);
 
-  std::cout << "Pull back x : " << np[0] << " to " << x << std::endl;
   values(0) = x;
   values(1) = y;
 }
@@ -363,12 +360,12 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
   // is elongated
   if (alpha > 1)
     {
-      if (x <= max_x / 2)
+      if (x < max_x / 2)
         {
           pos_x_left = x / -max_x + 0.5;
           x -= pos_x_left * x;
         }
-      else if (x > max_x / 2 && x <= max_x)
+      else if (x > max_x / 2 && x < max_x)
         {
           pos_x_right = x / max_x - 0.5;
           x += pos_x_right * (max_x - x);
@@ -493,6 +490,10 @@ PeriodicHillsGrid<dim, spacedim>::make_grid(
 
   if (dim == 2)
   {
+    if (alpha != 1 && (repetitions_x > 1 || repetitions_y > 1))
+     throw std::logic_error(
+      "When parameter alpha is not 1, repetition parameters should be all set to 1");
+
     GridGenerator::subdivided_hyper_rectangle(triangulation,
                                               repetitions,
                                               Point<dim>(0.0, 0.0),
@@ -501,6 +502,9 @@ PeriodicHillsGrid<dim, spacedim>::make_grid(
   }
   else if (dim == 3)
   {
+    if (alpha != 1 && (repetitions_x > 1 || repetitions_y > 1 || repetitions_z > 1))
+      throw std::logic_error(
+        "When parameter alpha is not 1, repetition parameters should be all set to 1");
     repetitions.push_back(repetitions_z);
     GridGenerator::subdivided_hyper_rectangle(triangulation,
                                               repetitions,
