@@ -208,6 +208,8 @@ periodic_hills_push_forward<dim, spacedim>::vector_value(
   const Point<spacedim> np =
     PeriodicHillsGrid<dim, spacedim>::hill_geometry(op, alpha, spacing_y);
 
+  std::cout << "Push foward x : " << op[0] << " to " << np[0] << std::endl;
+
   values(0) = np[0];
   values(1) = np[1];
 
@@ -234,19 +236,33 @@ periodic_hills_pull_back<dim, spacedim>::vector_value(
   const Point<spacedim> &np,
   Vector<double> &       values) const
 {
+  double       x = np[0];
+
   const double max_y = 3.035;
   double       min_y;
-  double       ox = np[0]/alpha;
+  double flat_region_length = 5.142;
+  double left_hill = 1.929;
+  double right_hill = 7.071;
+
+
+  if (x < left_hill * alpha)
+    x = (x / alpha);
+  else if (x > alpha * left_hill + flat_region_length)
+    x = (x - flat_region_length - alpha * left_hill) / alpha + right_hill;
+  else
+    x = x - (alpha * left_hill) + left_hill;
+
+  std::cout << "Pull back x : " << np[0] << " to " << x << std::endl;
 
   if (spacedim == 2)
   {
     min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
-      Point<spacedim>(ox, 0), alpha, spacing_y)[1];
+      Point<spacedim>(x, 0), alpha, spacing_y)[1];
   }
   else if (spacedim == 3)
   {
     min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
-      Point<spacedim>(ox, 0, np[2]), alpha, spacing_y)[1];
+      Point<spacedim>(x, 0, np[2]), alpha, spacing_y)[1];
     values(2) = np[2];
   }
 
@@ -259,7 +275,8 @@ periodic_hills_pull_back<dim, spacedim>::vector_value(
     y = (-(1 + 1.5 * spacing_y) + std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
         (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y))) )/ (2 * -spacing_y / max_y);
 
-  values(0) = ox;
+
+  values(0) = x;
   values(1) = y;
 }
 
@@ -281,6 +298,8 @@ periodic_hills_pull_back<dim, spacedim>::value(
   else if (y > (max_y/2) && y < max_y)
     y = (-(1 + 1.5 * spacing_y) + std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
                                             (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y))) )/ (2 * -spacing_y / max_y);
+
+
 
   Point<spacedim> op = {np[0], y, np[2]};
 
@@ -394,9 +413,22 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
   else
     y += 0;
 
+  // Elongation of the geometry with the alpha factor
+  // Note : The length of the flat region is always the same length
+  double flat_region_length = 5.142 * H;
+  double left_hill = 1.929 * H;
+  double right_hill = 7.071 * H;
+
+  if (x < left_hill)
+    x = alpha * x;
+  else if (x > right_hill)
+    x = alpha * (x - right_hill) + flat_region_length + alpha  * left_hill;
+  else
+    x = (x - left_hill) + (alpha * left_hill);
+
   Point<spacedim> q;
-  q[0] = (x / H) * alpha;
-  q[1] = (y / H) ;
+  q[0] = (x / H);
+  q[1] = (y / H);
 
   if (spacedim == 3)
     q[2] = p[2];
