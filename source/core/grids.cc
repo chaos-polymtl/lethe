@@ -4,9 +4,7 @@
 // Lethe includes
 #include "core/boundary_conditions.h"
 #include "core/grids.h"
-
-// Per_Hills needed includes
-#include "core/per_hills_grid.h"
+#include "core/periodic_hills_grid.h"
 
 // Std
 #include <fstream>
@@ -40,7 +38,7 @@ attach_grid_to_triangulation(
     }
 
   // Periodic Hills grid
-  else if (mesh_parameters.type == Parameters::Mesh::Type::per_hills)
+  else if (mesh_parameters.type == Parameters::Mesh::Type::periodic_hills)
     {
       PeriodicHillsGrid<dim, spacedim> grid(mesh_parameters.grid_arguments);
       grid.make_grid(*triangulation);

@@ -473,9 +473,9 @@ namespace Parameters
     {
       prm.declare_entry("type",
                         "dealii",
-                        Patterns::Selection("gmsh|dealii|per_hills"),
+                        Patterns::Selection("gmsh|dealii|periodic_hills"),
                         "Type of mesh "
-                        "Choices are <gmsh|dealii|per_hills>.");
+                        "Choices are <gmsh|dealii|periodic_hills>.");
 
       prm.declare_entry("file name",
                         "none",
@@ -487,7 +487,7 @@ namespace Parameters
                         Patterns::Integer(),
                         "Initial refinement of the mesh");
 
-      if (prm.get("type") == "per_hills")
+      if (prm.get("type") == "periodic_hills")
         {
           prm.declare_entry("grid arguments", "1 ; 1 ; 1 ; 1 ; 1");
         }
@@ -511,8 +511,8 @@ namespace Parameters
           type = Type::gmsh;
         else if (op == "dealii")
           type = Type::dealii;
-        else if (op == "per_hills")
-          type = Type::per_hills;
+        else if (op == "periodic_hills")
+          type = Type::periodic_hills;
         else
           throw std::logic_error(
             "Error, invalid mesh type. Choices are gmsh and dealii");

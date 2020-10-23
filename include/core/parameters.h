@@ -401,7 +401,7 @@ namespace Parameters
     {
       gmsh,
       dealii,
-      per_hills
+      periodic_hills
     };
     Type type;
 
