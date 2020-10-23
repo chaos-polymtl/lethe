@@ -20,12 +20,14 @@
 #ifndef lethe_per_hills_grid_h
 #define lethe_per_hills_grid_h
 
+#include <deal.II/base/utilities.h>
+
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/tria.h>
-#include <deal.II/base/utilities.h>
+
 #include <sstream>
 
 using namespace dealii;
@@ -41,20 +43,19 @@ class PeriodicHillsGrid
 {
 public:
   PeriodicHillsGrid(const std::string &grid_arguments);
-  Point<spacedim>
-  static hill_geometry(const Point<spacedim> &p,
-                       double spacing_y,
-                       double alpha);
+  Point<spacedim> static hill_geometry(const Point<spacedim> &p,
+                                       double                 spacing_y,
+                                       double                 alpha);
   void
   make_grid(Triangulation<dim, spacedim> &triangulation);
 
 private:
   std::string grid_arguments;
-  double spacing_y;
-  int    repetitions_x;
-  int    repetitions_y;
-  int    repetitions_z;
-  double alpha;
+  double      spacing_y;
+  int         repetitions_x;
+  int         repetitions_y;
+  int         repetitions_z;
+  double      alpha;
 };
 
 /**
@@ -68,9 +69,9 @@ class PeriodicHillsPushForward : public AutoDerivativeFunction<spacedim>
 {
 public:
   PeriodicHillsPushForward(double spacing_y, double alpha)
-    : AutoDerivativeFunction<spacedim>(1e-6, spacedim),
-    spacing_y(spacing_y),
-    alpha(alpha)
+    : AutoDerivativeFunction<spacedim>(1e-6, spacedim)
+    , spacing_y(spacing_y)
+    , alpha(alpha)
   {}
   virtual void
   vector_value(const Point<spacedim> &p, Vector<double> &values) const override;
@@ -88,9 +89,9 @@ class PeriodicHillsPullBack : public AutoDerivativeFunction<spacedim>
 {
 public:
   PeriodicHillsPullBack(double spacing_y, double alpha)
-    : AutoDerivativeFunction<spacedim>(1e-6, spacedim),
-    spacing_y(spacing_y),
-    alpha(alpha)
+    : AutoDerivativeFunction<spacedim>(1e-6, spacedim)
+    , spacing_y(spacing_y)
+    , alpha(alpha)
   {}
 
   virtual void
@@ -110,30 +111,32 @@ private:
  *
  * @param grid_arguments. A string with 5 parameters
  *  spacing_y : allows to control the shifting of horizontal line [0 - 1]
- *  alpha : allows to elongate the geometry while keeping the same flat region [0.5 - 3]
+ *  alpha : allows to elongate while keeping the same flat region [0.5 - 3]
  *  repetitions_x : number of separation of cells in x before refinement
  *  repetitions_y : number of separation of cells in y before refinement
  *  repetitions_z : number of separation of cells in z before refinement
  */
 
 template <int dim, int spacedim>
-PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(const std::string &grid_arguments)
+PeriodicHillsGrid<dim, spacedim>::PeriodicHillsGrid(
+  const std::string &grid_arguments)
 {
   this->grid_arguments = grid_arguments;
 
   // Separate arguments of the string
   std::vector<std::string> arguments;
-  std::stringstream s_stream(grid_arguments);
-  while(s_stream.good())
-  {
-    std::string substr;
-    getline(s_stream, substr, ';');
-    arguments.push_back(substr);
-  }
+  std::stringstream        s_stream(grid_arguments);
+  while (s_stream.good())
+    {
+      std::string substr;
+      getline(s_stream, substr, ';');
+      arguments.push_back(substr);
+    }
 
-  std::vector<double> arguments_double = dealii::Utilities::string_to_double(arguments);
-  spacing_y =     arguments_double[0];
-  alpha =         arguments_double[1];
+  std::vector<double> arguments_double =
+    dealii::Utilities::string_to_double(arguments);
+  spacing_y     = arguments_double[0];
+  alpha         = arguments_double[1];
   repetitions_x = arguments_double[2];
   repetitions_y = arguments_double[3];
   if (dim == 3)
@@ -200,16 +203,15 @@ PeriodicHillsPushForward<dim, spacedim>::value(
  */
 template <int dim, int spacedim>
 void
-PeriodicHillsPullBack<dim, spacedim>::vector_value(
-  const Point<spacedim> &np,
-  Vector<double> &       values) const
+PeriodicHillsPullBack<dim, spacedim>::vector_value(const Point<spacedim> &np,
+                                                   Vector<double> &values) const
 {
-  double x = np[0];
-  double max_y = 3.035;
-  double max_x = 9.0;
+  double x                  = np[0];
+  double max_y              = 3.035;
+  double max_x              = 9.0;
   double flat_region_length = 5.142;
-  double left_hill = 1.929;
-  double right_hill = 7.071;
+  double left_hill          = 1.929;
+  double right_hill         = 7.071;
   double min_y;
 
   // Reversing elongation and shifting of x lines
@@ -234,25 +236,31 @@ PeriodicHillsPullBack<dim, spacedim>::vector_value(
 
   // Reversing polynomial transformation and shifting of y lines
   if (spacedim == 2)
-  {
-    min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
-      Point<spacedim>(x, 0), spacing_y, alpha)[1];
-  }
+    {
+      min_y =
+        PeriodicHillsGrid<dim, spacedim>::hill_geometry(Point<spacedim>(x, 0),
+                                                        spacing_y,
+                                                        alpha)[1];
+    }
   else if (spacedim == 3)
-  {
-    min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
-      Point<spacedim>(x, 0, np[2]), spacing_y, alpha)[1];
-    values(2) = np[2];
-  }
+    {
+      min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
+        Point<spacedim>(x, 0, np[2]), spacing_y, alpha)[1];
+      values(2) = np[2];
+    }
 
   double y = (np[1] - min_y) / (1 - min_y / max_y);
 
-  if (y <= max_y/2 && spacing_y != 0)
+  if (y <= max_y / 2 && spacing_y != 0)
     y = (-(1 - 0.5 * spacing_y) + std::sqrt(std::pow((1 - 0.5 * spacing_y), 2) -
-        (4 * (spacing_y / max_y) * -y)) ) / (2 * spacing_y / max_y);
-  else if (y > max_y/2 && y < max_y && spacing_y != 0)
-    y = (-(1 + 1.5 * spacing_y) + std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
-        (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y))) )/ (2 * -spacing_y / max_y);
+                                            (4 * (spacing_y / max_y) * -y))) /
+        (2 * spacing_y / max_y);
+  else if (y > max_y / 2 && y < max_y && spacing_y != 0)
+    y =
+      (-(1 + 1.5 * spacing_y) +
+       std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
+                 (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y)))) /
+      (2 * -spacing_y / max_y);
 
   values(0) = x;
   values(1) = y;
@@ -270,16 +278,15 @@ PeriodicHillsPullBack<dim, spacedim>::vector_value(
  */
 template <int dim, int spacedim>
 double
-PeriodicHillsPullBack<dim, spacedim>::value(
-  const Point<spacedim> &np,
-  const unsigned int     component) const
+PeriodicHillsPullBack<dim, spacedim>::value(const Point<spacedim> &np,
+                                            const unsigned int component) const
 {
-  double x = np[0];
-  double max_y = 3.035;
-  double max_x = 9.0;
+  double x                  = np[0];
+  double max_y              = 3.035;
+  double max_x              = 9.0;
   double flat_region_length = 5.142;
-  double left_hill = 1.929;
-  double right_hill = 7.071;
+  double left_hill          = 1.929;
+  double right_hill         = 7.071;
   double min_y;
 
   if (x < left_hill * alpha)
@@ -289,16 +296,20 @@ PeriodicHillsPullBack<dim, spacedim>::value(
   else
     x = x - (alpha * left_hill) + left_hill;
 
-  if (x <= max_x/2)
-    x = (-(1 - 0.5) + std::sqrt(std::pow((1 - 0.5), 2) -
-                                (4 * (1 / max_x) * -x)) ) / (2 / max_x);
-  else if (x > max_x/2 && x <= max_x)
+  if (x <= max_x / 2)
+    x = (-(1 - 0.5) +
+         std::sqrt(std::pow((1 - 0.5), 2) - (4 * (1 / max_x) * -x))) /
+        (2 / max_x);
+  else if (x > max_x / 2 && x <= max_x)
     x = (-(1 + 1.5) + std::sqrt(std::pow((1 + 1.5), 2) -
-                                (4 * (-1 / max_x) * (-0.5 * max_x - x))) )/ (2 * -1 / max_x);
+                                (4 * (-1 / max_x) * (-0.5 * max_x - x)))) /
+        (2 * -1 / max_x);
 
   if (spacedim == 2)
-    min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
-      Point<spacedim>(x, 0), spacing_y, alpha)[1];
+    min_y =
+      PeriodicHillsGrid<dim, spacedim>::hill_geometry(Point<spacedim>(x, 0),
+                                                      spacing_y,
+                                                      alpha)[1];
   else if (spacedim == 3)
     min_y = PeriodicHillsGrid<dim, spacedim>::hill_geometry(
       Point<spacedim>(x, 0, np[2]), spacing_y, alpha)[1];
@@ -306,12 +317,16 @@ PeriodicHillsPullBack<dim, spacedim>::value(
 
   double y = (np[1] - min_y) / (1 - min_y / max_y);
 
-  if (y <= max_y/2 && spacing_y != 0)
+  if (y <= max_y / 2 && spacing_y != 0)
     y = (-(1 - 0.5 * spacing_y) + std::sqrt(std::pow((1 - 0.5 * spacing_y), 2) -
-                                            (4 * (spacing_y / max_y) * -y)) ) / (2 * spacing_y / max_y);
-  else if (y > max_y/2 && y < max_y && spacing_y != 0)
-    y = (-(1 + 1.5 * spacing_y) + std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
-                                            (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y))) )/ (2 * -spacing_y / max_y);
+                                            (4 * (spacing_y / max_y) * -y))) /
+        (2 * spacing_y / max_y);
+  else if (y > max_y / 2 && y < max_y && spacing_y != 0)
+    y =
+      (-(1 + 1.5 * spacing_y) +
+       std::sqrt(std::pow((1 + 1.5 * spacing_y), 2) -
+                 (4 * (-spacing_y / max_y) * (-0.5 * spacing_y * max_y - y)))) /
+      (2 * -spacing_y / max_y);
 
   Point<spacedim> op;
   if (spacedim == 2)
@@ -353,8 +368,8 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
   double pos_y_top;
   double pos_y;
   double flat_region_length = 5.142 * H;
-  double left_hill = 1.929 * H;
-  double right_hill = 7.071 * H;
+  double left_hill          = 1.929 * H;
+  double right_hill         = 7.071 * H;
 
   // Gradual spacing and swifting depending on x position if the geometry
   // is elongated
@@ -373,42 +388,42 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
     }
 
   // Polynomial coefficients :
-  const double a1 = 2.800000000000E+01,  b1 = 0.000000000000E+00,
-               c1 = 6.775070969851E-03,  d1 = -2.124527775800E-03;
-  const double a2 = 2.507355893131E+01,  b2 = 9.754803562315E-01,
+  const double a1 = 2.800000000000E+01, b1 = 0.000000000000E+00,
+               c1 = 6.775070969851E-03, d1 = -2.124527775800E-03;
+  const double a2 = 2.507355893131E+01, b2 = 9.754803562315E-01,
                c2 = -1.016116352781E-01, d2 = 1.889794677828E-03;
-  const double a3 = 2.579601052357E+01,  b3 = +8.206693007457E-01,
+  const double a3 = 2.579601052357E+01, b3 = +8.206693007457E-01,
                c3 = -9.055370274339E-02, d3 = 1.626510569859E-03;
-  const double a4 = 4.046435022819E+01,  b4 = -1.379581654948E+00,
-               c4 = 1.945884504128E-02,  d4 = -2.070318932190E-04;
-  const double a5 = 1.792461334664E+01,  b5 = +8.743920332081E-01,
+  const double a4 = 4.046435022819E+01, b4 = -1.379581654948E+00,
+               c4 = 1.945884504128E-02, d4 = -2.070318932190E-04;
+  const double a5 = 1.792461334664E+01, b5 = +8.743920332081E-01,
                c5 = -5.567361123058E-02, d5 = 6.277731764683E-04;
-  const double a6 = 5.639011190988E+01,  b6 = -2.010520359035E+00,
-               c6 = 1.644919857549E-02,  d6 = 2.674976141766E-05;
+  const double a6 = 5.639011190988E+01, b6 = -2.010520359035E+00,
+               c6 = 1.644919857549E-02, d6 = 2.674976141766E-05;
 
-  double       new_x = (9 * H - x); // x for the left side of the geometry
+  double new_x = (9 * H - x); // x for the left side of the geometry
 
   // Gradual spacing and swifting depending on y position
-  if (y <= max_y/2 && spacing_y != 0)
-  {
-    pos_y_bottom = y / -max_y + 0.5;
-    y -= spacing_y * pos_y_bottom * y;
-  }
-  else if (y > max_y/2 && y < max_y && spacing_y != 0)
-  {
-    pos_y_top = y / max_y - 0.5;
-    y += spacing_y * pos_y_top * (max_y - y);
-  }
+  if (y <= max_y / 2 && spacing_y != 0)
+    {
+      pos_y_bottom = y / -max_y + 0.5;
+      y -= spacing_y * pos_y_bottom * y;
+    }
+  else if (y > max_y / 2 && y < max_y && spacing_y != 0)
+    {
+      pos_y_top = y / max_y - 0.5;
+      y += spacing_y * pos_y_top * (max_y - y);
+    }
 
   pos_y = y / -max_y + 1;
 
   // Polynomial equations :
   if (x >= 0 && x < 9)
-  {
-    y += pos_y * (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
-    if (y > 28 && pos_y_bottom == 0.5)
-      y = 28;
-  }
+    {
+      y += pos_y * (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
+      if (y > 28 && pos_y_bottom == 0.5)
+        y = 28;
+    }
   else if (x >= 9 && x < 14)
     y += pos_y * (a2 + b2 * x + c2 * std::pow(x, 2) + d2 * std::pow(x, 3));
   else if (x >= 14 && x < 20)
@@ -418,18 +433,18 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
   else if (x >= 30 && x < 40)
     y += pos_y * (a5 + b5 * x + c5 * std::pow(x, 2) + d5 * std::pow(x, 3));
   else if (x >= 40 && x < 54)
-  {
-    y += pos_y * (a6 + b6 * x + c6 * std::pow(x, 2) + d6 * std::pow(x, 3));
-    if (y < 0)
-      y = 0;
-  }
+    {
+      y += pos_y * (a6 + b6 * x + c6 * std::pow(x, 2) + d6 * std::pow(x, 3));
+      if (y < 0)
+        y = 0;
+    }
   else if (x <= 252 && x >= 243)
-  {
-    y += pos_y * (a1 + b1 * new_x + c1 * std::pow(new_x, 2) +
-                  d1 * std::pow(new_x, 3));
-    if (y > 28 && pos_y >= 1)
-      y = 28;
-  }
+    {
+      y += pos_y * (a1 + b1 * new_x + c1 * std::pow(new_x, 2) +
+                    d1 * std::pow(new_x, 3));
+      if (y > 28 && pos_y >= 1)
+        y = 28;
+    }
   else if (x <= 243 && x > 238)
     y += pos_y *
          (a2 + b2 * new_x + c2 * std::pow(new_x, 2) + d2 * std::pow(new_x, 3));
@@ -444,12 +459,12 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
     y += pos_y *
          (a5 + b5 * new_x + c5 * std::pow(new_x, 2) + d5 * std::pow(new_x, 3));
   else if (x <= 212 && x > 198)
-  {
-    y += pos_y * (a6 + b6 * new_x + c6 * std::pow(new_x, 2) +
-                  d6 * std::pow(new_x, 3));
-    if (y < 0)
-      y = 0;
-  }
+    {
+      y += pos_y * (a6 + b6 * new_x + c6 * std::pow(new_x, 2) +
+                    d6 * std::pow(new_x, 3));
+      if (y < 0)
+        y = 0;
+    }
   else
     y += 0;
 
@@ -489,34 +504,37 @@ PeriodicHillsGrid<dim, spacedim>::make_grid(
   repetitions[1] = repetitions_y;
 
   if (dim == 2)
-  {
-    if (alpha != 1 && (repetitions_x > 1 || repetitions_y > 1))
-     throw std::logic_error(
-      "When parameter alpha is not 1, repetition parameters should be all set to 1");
+    {
+      if (alpha != 1 && (repetitions_x > 1 || repetitions_y > 1))
+        throw std::logic_error(
+          "When parameter alpha is not 1, repetition parameters should be all set to 1");
 
-    GridGenerator::subdivided_hyper_rectangle(triangulation,
-                                              repetitions,
-                                              Point<dim>(0.0, 0.0),
-                                              Point<dim>(9.0, 3.035),
-                                              true);
-  }
+      GridGenerator::subdivided_hyper_rectangle(triangulation,
+                                                repetitions,
+                                                Point<dim>(0.0, 0.0),
+                                                Point<dim>(9.0, 3.035),
+                                                true);
+    }
   else if (dim == 3)
-  {
-    if (alpha != 1 && (repetitions_x > 1 || repetitions_y > 1 || repetitions_z > 1))
-      throw std::logic_error(
-        "When parameter alpha is not 1, repetition parameters should be all set to 1");
-    repetitions.push_back(repetitions_z);
-    GridGenerator::subdivided_hyper_rectangle(triangulation,
-                                              repetitions,
-                                              Point<dim>(0.0, 0.0, 0.0),
-                                              Point<dim>(9.0, 3.035, 4.5),
-                                              true);
-  }
+    {
+      if (alpha != 1 &&
+          (repetitions_x > 1 || repetitions_y > 1 || repetitions_z > 1))
+        throw std::logic_error(
+          "When parameter alpha is not 1, repetition parameters should be all set to 1");
+      repetitions.push_back(repetitions_z);
+      GridGenerator::subdivided_hyper_rectangle(triangulation,
+                                                repetitions,
+                                                Point<dim>(0.0, 0.0, 0.0),
+                                                Point<dim>(9.0, 3.035, 4.5),
+                                                true);
+    }
 
   // Transformation of the geometry with the hill geometry
   // and gradual shifting of horizontal lines :
   GridTools::transform(
-    [this](const Point<spacedim> &p) { return this->hill_geometry(p ,spacing_y, alpha); },
+    [this](const Point<spacedim> &p) {
+      return this->hill_geometry(p, spacing_y, alpha);
+    },
     triangulation);
 
   // Manifold construction
