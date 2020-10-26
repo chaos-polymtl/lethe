@@ -171,8 +171,8 @@ PeriodicHillsPushForward<dim, spacedim>::vector_value(
   if (spacedim == 3)
     values(2) = np[2];
 
-  std::cout << "Push forward (x,y) : (" << op[0] << "," << op(1) << ") to ("
-            << np[0] << "," << np(1) << ")" << std::endl;
+  //std::cout << "Push forward (x,y) : (" << op[0] << "," << op(1) << ") to ("
+            //<< np[0] << "," << np(1) << ")" << std::endl;
 }
 
 /**
@@ -274,8 +274,8 @@ PeriodicHillsPullBack<dim, spacedim>::vector_value(const Point<spacedim> &np,
   values(0) = x;
   values(1) = y;
 
-  std::cout << "Pull back (x,y) : (" << np[0] << "," << np(1) << ") to ("
-            << x << "," << y << ")" << std::endl;
+  //std::cout << "Pull back (x,y) : (" << np[0] << "," << np(1) << ") to ("
+           // << x << "," << y << ")" << std::endl;
 }
 
 /**
@@ -379,16 +379,18 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
 {
   double H = 28; // Height dimension to use with polynomials
   double x = p[0] * H, y = p[1] * H;
-  double max_y = 3.035 * H;
-  double max_x = 9.0 * H;
-  double pos_x_left;
-  double pos_x_right;
-  double pos_y_bottom = 0;
-  double pos_y_top;
-  double pos_y;
+  double max_y              = 3.035 * H;
+  double max_x              = 9.0 * H;
   double flat_region_length = 5.142 * H;
   double left_hill          = 1.929 * H;
   double right_hill         = 7.071 * H;
+  double pos_x_left;
+  double pos_x_right;
+  double pos_y_bottom;
+  double pos_y_top;
+  double pos_y;
+  double y_0;
+  double diff;
 
   // Gradual spacing and swifting depending on x position if the geometry
   // is elongated
@@ -440,8 +442,12 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
   if (x >= 0 && x < 9)
     {
       y += pos_y * (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
-      if (y > 28 && pos_y_bottom == 0.5)
-        y = 28;
+
+      // Checking if y is under 28 and correction
+      y_0 = (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
+      diff = y_0 - 28.0;
+      if (diff > 0)
+        y -= pos_y * diff;
     }
   else if (x >= 9 && x < 14)
     y += pos_y * (a2 + b2 * x + c2 * std::pow(x, 2) + d2 * std::pow(x, 3));
@@ -457,12 +463,14 @@ PeriodicHillsGrid<dim, spacedim>::hill_geometry(const Point<spacedim> &p,
       if (y < 0)
         y = 0;
     }
-  else if (x <= 252 && x >= 243)
+  else if (x <= 252 && x > 243)
     {
       y += pos_y * (a1 + b1 * new_x + c1 * std::pow(new_x, 2) +
                     d1 * std::pow(new_x, 3));
-      if (y > 28 && pos_y_bottom == 0.5)
-        y = 28;
+      y_0 = (a1 + b1 * x + c1 * std::pow(x, 2) + d1 * std::pow(x, 3));
+      diff = y_0 - 28.0;
+      if (diff > 0)
+        y -= pos_y * diff;
     }
   else if (x <= 243 && x > 238)
     y += pos_y *
