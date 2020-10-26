@@ -537,6 +537,16 @@ DEMSolver<dim>::write_output_results()
                          iter,
                          group_files,
                          mpi_communicator);
+
+  if (simulation_control->get_output_boundaries())
+    {
+      DataOutFaces<dim> data_out_faces;
+      data_out_faces.attach_dof_handler(background_dh);
+      data_out_faces.build_patches();
+
+      write_boundaries_vtu<dim>(
+        data_out_faces, folder, time, iter, this->mpi_communicator);
+    }
 }
 
 template <int dim>

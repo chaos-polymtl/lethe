@@ -88,7 +88,7 @@ RestartNavierStokes<dim>::run()
   this->forcing_function                      = new MMSSineForcingFunction<dim>;
   this->nsparam.physical_properties.viscosity = 1.;
 
-  this->simulationControl->print_progression(this->pcout);
+  this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
   this->postprocess(false);
   auto   errors_p1 = this->calculate_L2_error(this->present_solution);
@@ -103,7 +103,7 @@ RestartNavierStokes<dim>::run()
 
   deallog << "Error after zeroing the solution: " << error2 << std::endl;
 
-  this->simulationControl->print_progression(this->pcout);
+  this->simulation_control->print_progression(this->pcout);
   this->triangulation->clear();
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(0);

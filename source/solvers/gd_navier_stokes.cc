@@ -149,7 +149,7 @@ GDNavierStokesSolver<dim>::assembleGD()
   Vector<double> alpha_bdf;
 
   std::vector<double> time_steps =
-    this->simulationControl->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
     alpha_bdf = bdf_coefficients(1, time_steps);
@@ -1040,10 +1040,10 @@ GDNavierStokesSolver<dim>::solve()
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
-  while (this->simulationControl->integrate())
+  while (this->simulation_control->integrate())
     {
-      this->simulationControl->print_progression(this->pcout);
-      if (this->simulationControl->is_at_start())
+      this->simulation_control->print_progression(this->pcout);
+      if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
         {

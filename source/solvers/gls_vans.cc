@@ -40,7 +40,7 @@ GLSVANSSolver<dim>::calculate_void_fraction()
 {
   const MappingQ<dim> mapping(this->velocity_fem_degree);
 
-  const double t = this->simulationControl->get_current_time();
+  const double t = this->simulation_control->get_current_time();
   this->nsparam.void_fraction->void_fraction.set_time(t);
 
   VectorTools::interpolate(mapping,
@@ -129,7 +129,7 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
 
   std::vector<double> time_steps_vector =
-    this->simulationControl->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
 
   // Time steps and inverse time steps which is used for numerous calculations
   const double dt  = time_steps_vector[0];
@@ -691,10 +691,10 @@ GLSVANSSolver<dim>::solve()
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
-  while (this->simulationControl->integrate())
+  while (this->simulation_control->integrate())
     {
-      this->simulationControl->print_progression(this->pcout);
-      if (this->simulationControl->is_at_start())
+      this->simulation_control->print_progression(this->pcout);
+      if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
         {

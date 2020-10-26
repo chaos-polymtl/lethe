@@ -22,6 +22,7 @@ SimulationControl::SimulationControl(Parameters::SimulationControl param)
   , group_files(param.group_files)
   , output_name(param.output_name)
   , output_path(param.output_folder)
+  , output_boundaries(param.output_boundaries)
 {
   time_step_vector.resize(numberTimeStepStored);
   time_step_vector[0] = param.dt;

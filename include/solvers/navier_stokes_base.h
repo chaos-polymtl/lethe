@@ -312,7 +312,7 @@ protected:
   unsigned int       number_quadrature_points;
 
   // Simulation control for time stepping and I/Os
-  std::shared_ptr<SimulationControl> simulationControl;
+  std::shared_ptr<SimulationControl> simulation_control;
   // SimulationControl simulationControl;
 
   // Post-processing variables

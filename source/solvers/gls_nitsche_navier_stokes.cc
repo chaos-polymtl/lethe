@@ -266,7 +266,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
 
 
   solid_forces_table.add_value("time",
-                               this->simulationControl->get_current_time());
+                               this->simulation_control->get_current_time());
   solid_forces_table.add_value("f_x", force[0][0]);
   solid_forces_table.add_value("f_y", force[0][1]);
   if (dim == 3)
@@ -320,12 +320,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
   this->setup_dofs();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
-  while (this->simulationControl->integrate())
+  while (this->simulation_control->integrate())
     {
-      this->simulationControl->print_progression(this->pcout);
+      this->simulation_control->print_progression(this->pcout);
       if (this->nsparam.nitsche->enable_particles_motion)
         {
-          if (this->simulationControl->is_at_start())
+          if (this->simulation_control->is_at_start())
             {
               solid.initial_setup();
               solid.setup_particles();
@@ -334,11 +334,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
               output_solid_particles(solid_ph);
               output_solid_triangulation();
             }
-          solid.integrate_velocity(this->simulationControl->get_time_step());
+          solid.integrate_velocity(this->simulation_control->get_time_step());
           solid.move_solid_triangulation(
-            this->simulationControl->get_time_step());
+            this->simulation_control->get_time_step());
         }
-      if (this->simulationControl->is_at_start())
+      if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
         {
@@ -353,7 +353,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           postprocess_solid_forces();
         }
 
-      if (this->simulationControl->is_output_iteration())
+      if (this->simulation_control->is_output_iteration())
         {
           std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
             solid.get_solid_particle_handler();
@@ -376,12 +376,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
   Particles::DataOut<spacedim, spacedim> particles_out;
   particles_out.build_patches(*particle_handler);
 
-  const std::string folder = this->simulationControl->get_output_path();
+  const std::string folder = this->simulation_control->get_output_path();
   const std::string solution_name =
-    this->simulationControl->get_output_name() + "_solid_particles";
-  const unsigned int iter        = this->simulationControl->get_step_number();
-  const double       time        = this->simulationControl->get_current_time();
-  const unsigned int group_files = this->simulationControl->get_group_files();
+    this->simulation_control->get_output_name() + "_solid_particles";
+  const unsigned int iter        = this->simulation_control->get_step_number();
+  const double       time        = this->simulation_control->get_current_time();
+  const unsigned int group_files = this->simulation_control->get_group_files();
 
   write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles,
                                  *(&particles_out),
@@ -403,12 +403,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
 
   data_out.build_patches();
 
-  const std::string folder = this->simulationControl->get_output_path();
+  const std::string folder = this->simulation_control->get_output_path();
   const std::string solution_name =
-    this->simulationControl->get_output_name() + "_solid_triangulation";
-  const unsigned int iter        = this->simulationControl->get_step_number();
-  const double       time        = this->simulationControl->get_current_time();
-  const unsigned int group_files = this->simulationControl->get_group_files();
+    this->simulation_control->get_output_name() + "_solid_triangulation";
+  const unsigned int iter        = this->simulation_control->get_step_number();
+  const double       time        = this->simulation_control->get_current_time();
+  const unsigned int group_files = this->simulation_control->get_group_files();
 
   write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation,
                          data_out,
