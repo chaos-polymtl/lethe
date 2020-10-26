@@ -558,7 +558,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   if (this->nsparam.simulation_control.method !=
                       Parameters::SimulationControl::TimeSteppingMethod::steady)
                     table_t[p].add_value(
-                      "time", this->simulationControl->get_current_time());
+                      "time", this->simulation_control->get_current_time());
                   table_t[p].add_value("T_z", t_torque_);
                   table_t[p].set_precision(
                     "T_z", this->nsparam.simulation_control.log_precision);
@@ -569,7 +569,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   if (this->nsparam.simulation_control.method !=
                       Parameters::SimulationControl::TimeSteppingMethod::steady)
                     table_f[p].add_value(
-                      "time", this->simulationControl->get_current_time());
+                      "time", this->simulation_control->get_current_time());
                   table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
                   table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
 
@@ -1066,7 +1066,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   if (this->nsparam.simulation_control.method !=
                       Parameters::SimulationControl::TimeSteppingMethod::steady)
                     table_t[p].add_value(
-                      "time", this->simulationControl->get_current_time());
+                      "time", this->simulation_control->get_current_time());
                   table_t[p].add_value("T_x", t_torque_x);
                   table_t[p].set_precision(
                     "T_x", this->nsparam.simulation_control.log_precision);
@@ -1083,7 +1083,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   if (this->nsparam.simulation_control.method !=
                       Parameters::SimulationControl::TimeSteppingMethod::steady)
                     table_f[p].add_value(
-                      "time", this->simulationControl->get_current_time());
+                      "time", this->simulation_control->get_current_time());
 
                   table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
                   table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
@@ -1148,7 +1148,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
 {
-  if (this->simulationControl->is_output_iteration())
+  if (this->simulation_control->is_output_iteration())
     this->write_output_results(this->present_solution);
 
   // Calculate error with respect to analytical solution
@@ -1156,7 +1156,7 @@ GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
     {
       // Update the time of the exact solution to the actual time
       this->exact_solution->set_time(
-        this->simulationControl->get_current_time());
+        this->simulation_control->get_current_time());
       const double error = this->calculate_L2_error_particles();
 
       if (this->nsparam.simulation_control.method ==
@@ -1179,7 +1179,7 @@ GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
       else
         {
           this->error_table.add_value(
-            "time", this->simulationControl->get_current_time());
+            "time", this->simulation_control->get_current_time());
           this->error_table.add_value("error_velocity", error);
         }
       if (this->nsparam.analytical_solution->verbosity ==
@@ -2580,7 +2580,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
 
   std::vector<double> time_steps_vector =
-    this->simulationControl->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
   // support point
   MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
@@ -3325,10 +3325,10 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
-  while (this->simulationControl->integrate())
+  while (this->simulation_control->integrate())
     {
-      this->simulationControl->print_progression(this->pcout);
-      if (this->simulationControl->is_at_start())
+      this->simulation_control->print_progression(this->pcout);
+      if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
         {

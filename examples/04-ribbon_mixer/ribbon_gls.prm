@@ -9,6 +9,7 @@ subsection simulation control
   set method                  = steady
   set output name             = mixer
   set output frequency        = 1
+  set output boundaries       = true
   set subdivision             = 0
   set number mesh adapt       = 4      # If steady, nb mesh adaptation
 end
@@ -38,13 +39,6 @@ end
 subsection velocity source
     set type=srf
     set omega_z=-6.28318
-end
-
-#--------------------------------------------------
-# Post-processing
-#--------------------------------------------------
-subsection post-processing
-    set output boundaries = true
 end
 
 #---------------------------------------------------

@@ -84,6 +84,11 @@ protected:
   // by the time
   double output_time_frequency;
 
+  // Output boundaries
+  // Control if the boundaries of the domain are outputted when writing results
+  //
+  bool output_boundaries;
+
   // Log iteration frequency
   // Controls the frequency at which status of the simulation is written to
   // the terminal
@@ -173,6 +178,16 @@ public:
    */
   virtual bool
   is_output_iteration();
+
+  /**
+   * @brief Check if the boundaries of the domain should be outputted
+   * when writing results
+   */
+  bool
+  get_output_boundaries()
+  {
+    return output_boundaries;
+  };
 
   /**
    * @brief Check if the present iteration is a verbose iteration where

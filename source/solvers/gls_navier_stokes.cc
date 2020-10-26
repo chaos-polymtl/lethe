@@ -294,7 +294,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
 
   std::vector<double> time_steps_vector =
-    this->simulationControl->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
 
   // Time steps and inverse time steps which is used for numerous calculations
   const double dt  = time_steps_vector[0];
@@ -1047,9 +1047,9 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     }
 
 
-  if (this->simulationControl->is_first_assembly())
+  if (this->simulation_control->is_first_assembly())
     {
-      this->simulationControl->provide_residual(this->system_rhs.l2_norm());
+      this->simulation_control->provide_residual(this->system_rhs.l2_norm());
     }
 }
 template <int dim>
@@ -1491,12 +1491,12 @@ GLSNavierStokesSolver<dim>::solve()
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
-  while (this->simulationControl->integrate())
+  while (this->simulation_control->integrate())
     {
       this->dynamic_flow_control(this->present_solution);
-      this->simulationControl->print_progression(this->pcout);
+      this->simulation_control->print_progression(this->pcout);
 
-      if (this->simulationControl->is_at_start())
+      if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
         {

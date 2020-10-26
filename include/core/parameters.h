@@ -120,6 +120,9 @@ namespace Parameters
     // Frequency of the output
     double output_time;
 
+    // Enable output of the boundaries
+    bool output_boundaries;
+
     // Frequency of the log output to the terminal
     unsigned int log_frequency;
 
@@ -225,9 +228,6 @@ namespace Parameters
   struct PostProcessing
   {
     Verbosity verbosity;
-
-    // Enable output of the boundaries
-    bool output_boundaries;
 
     // Enable total kinetic energy post-processing
     bool calculate_kinetic_energy;

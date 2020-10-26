@@ -59,6 +59,12 @@ namespace Parameters
                         Patterns::Integer(),
                         "Output frequency");
 
+      prm.declare_entry(
+        "output boundaries",
+        "false",
+        Patterns::Bool(),
+        "Output the boundaries of the domain along with their ID");
+
       prm.declare_entry("log frequency",
                         "1",
                         Patterns::Integer(),
@@ -136,13 +142,16 @@ namespace Parameters
         prm.get_double("adaptative time step scaling");
       startup_timestep_scaling = prm.get_double("startup time scaling");
       number_mesh_adaptation   = prm.get_integer("number mesh adapt");
-      output_folder            = prm.get("output path");
-      output_name              = prm.get("output name");
-      output_frequency         = prm.get_integer("output frequency");
-      subdivision              = prm.get_integer("subdivision");
-      group_files              = prm.get_integer("group files");
-      log_frequency            = prm.get_integer("log frequency");
-      log_precision            = prm.get_integer("log precision");
+
+      output_folder     = prm.get("output path");
+      output_name       = prm.get("output name");
+      output_frequency  = prm.get_integer("output frequency");
+      output_boundaries = prm.get_bool("output boundaries");
+
+      subdivision   = prm.get_integer("subdivision");
+      group_files   = prm.get_integer("group files");
+      log_frequency = prm.get_integer("log frequency");
+      log_precision = prm.get_integer("log precision");
     }
     prm.leave_subsection();
   }
@@ -315,12 +324,6 @@ namespace Parameters
         "Choices are <quiet|verbose>.");
 
       prm.declare_entry(
-        "output boundaries",
-        "false",
-        Patterns::Bool(),
-        "Output the boundaries of the domain along with their ID");
-
-      prm.declare_entry(
         "calculate kinetic energy",
         "false",
         Patterns::Bool(),
@@ -368,7 +371,6 @@ namespace Parameters
       if (op == "quiet")
         verbosity = Verbosity::quiet;
 
-      output_boundaries          = prm.get_bool("output boundaries");
       calculate_kinetic_energy   = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy        = prm.get_bool("calculate enstrophy");
       kinetic_energy_output_name = prm.get("kinetic energy name");
