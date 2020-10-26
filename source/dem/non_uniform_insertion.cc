@@ -198,8 +198,7 @@ NonUniformInsertion<dim>::assign_insertion_points(
                               (physical_properties.diameter / 2) +
                               (j * insertion_information.distance_threshold *
                                physical_properties.diameter) +
-                              random_number_vector[insertion_information
-                                                     .inserted_this_step -
+                              random_number_vector[inserted_this_step -
                                                    particle_counter - 1] *
                                 physical_properties.diameter;
                 if (dim == 3)
