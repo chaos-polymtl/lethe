@@ -573,5 +573,4 @@ PeriodicHillsGrid<dim, spacedim>::make_grid(
   triangulation.set_all_manifold_ids(1);
 }
 
-
 #endif
