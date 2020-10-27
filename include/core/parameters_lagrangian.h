@@ -144,9 +144,6 @@ namespace Parameters
     class FloatingWalls
     {
     public:
-      // Maximum number of floating walls
-      unsigned int max_size;
-
       // Number of floating walls
       unsigned int floating_walls_number;
 
@@ -170,6 +167,30 @@ namespace Parameters
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_floating_wall(ParameterHandler &prm);
+    };
+
+    template <int dim>
+    class BoundaryMotions
+    {
+    public:
+      // Number of moving boundaries
+      unsigned int moving_boundary_number;
+
+      // Translational velocities of moving boundaries
+      std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity;
+
+      // Rotational speeds of rotating boundaries
+      std::unordered_map<int, double> boundary_rotational_speed;
+
+      void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+      void
+      declareDefaultEntry(ParameterHandler &prm);
+      void
+      parse_boundary_motions(ParameterHandler &  prm,
+                             const unsigned int &boundary_id);
     };
 
   } // namespace Lagrangian

@@ -359,8 +359,6 @@ namespace Parameters
     void
     FloatingWalls<dim>::declare_parameters(ParameterHandler &prm)
     {
-      this->max_size = 10;
-
       prm.enter_subsection("floating walls");
       {
         prm.declare_entry("number of floating walls",
@@ -523,8 +521,185 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    template <int dim>
+    void
+    BoundaryMotions<dim>::declareDefaultEntry(ParameterHandler &prm)
+    {
+      prm.declare_entry("type",
+                        "none",
+                        Patterns::Selection("none|translational|rotational"),
+                        "Type of boundary rotation"
+                        "Choices are <none|translational|rotational>.");
+
+      prm.declare_entry("speed x",
+                        "0.",
+                        Patterns::Double(),
+                        "Translational boundary speed in x direction");
+      prm.declare_entry("speed y",
+                        "0.",
+                        Patterns::Double(),
+                        "Translational boundary speed in y direction");
+      prm.declare_entry("speed z",
+                        "0.",
+                        Patterns::Double(),
+                        "Translational boundary speed in z direction");
+
+      prm.declare_entry("rotational speed",
+                        "0.",
+                        Patterns::Double(),
+                        "Rotational boundary speed");
+    }
+
+    template <int dim>
+    void
+    BoundaryMotions<dim>::parse_boundary_motions(
+      ParameterHandler &  prm,
+      const unsigned int &boundary_id)
+    {
+      const std::string motion_type = prm.get("type");
+
+      if (motion_type == "translational")
+        {
+          Tensor<1, dim> translational_velocity;
+          translational_velocity[0] = prm.get_double("speed x");
+          translational_velocity[1] = prm.get_double("speed y");
+          if (dim == 3)
+            translational_velocity[2] = prm.get_double("speed z");
+
+          this->boundary_translational_velocity.insert(
+            {boundary_id, translational_velocity});
+        }
+
+      else if (motion_type == "rotational")
+        {
+          double rotational_speed;
+          rotational_speed = prm.get_double("rotational speed");
+
+          this->boundary_rotational_speed.insert(
+            {boundary_id, rotational_speed});
+        }
+    }
+
+    template <int dim>
+    void
+    BoundaryMotions<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("boundary motions");
+      {
+        prm.declare_entry("number of boundary motions",
+                          "0",
+                          Patterns::Integer(),
+                          "Number of boundary motions");
+
+        prm.enter_subsection("moving boundary 0");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("moving boundary 1");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("moving boundary 2");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("moving boundary 3");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("moving boundary 4");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("moving boundary 5");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("moving boundary 6");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+      }
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    BoundaryMotions<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("boundary motions");
+      {
+        moving_boundary_number = prm.get_integer("number of boundary motions");
+
+        if (moving_boundary_number >= 1)
+          {
+            prm.enter_subsection("moving boundary 0");
+            {
+              parse_boundary_motions(prm, 0);
+            }
+            prm.leave_subsection();
+          }
+        if (moving_boundary_number >= 2)
+          {
+            prm.enter_subsection("moving boundary 1");
+            {
+              parse_boundary_motions(prm, 1);
+            }
+            prm.leave_subsection();
+          }
+        if (moving_boundary_number >= 3)
+          {
+            prm.enter_subsection("moving boundary 2");
+            {
+              parse_boundary_motions(prm, 2);
+            }
+            prm.leave_subsection();
+          }
+        if (moving_boundary_number >= 4)
+          {
+            prm.enter_subsection("moving boundary 3");
+            {
+              parse_boundary_motions(prm, 3);
+            }
+            prm.leave_subsection();
+          }
+        if (moving_boundary_number >= 5)
+          {
+            prm.enter_subsection("moving boundary 4");
+            {
+              parse_boundary_motions(prm, 4);
+            }
+            prm.leave_subsection();
+          }
+        if (moving_boundary_number >= 6)
+          {
+            prm.enter_subsection("moving boundary 5");
+            {
+              parse_boundary_motions(prm, 5);
+            }
+            prm.leave_subsection();
+          }
+      }
+      prm.leave_subsection();
+    }
+
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
+    template class BoundaryMotions<2>;
+    template class BoundaryMotions<3>;
 
   } // namespace Lagrangian
 
