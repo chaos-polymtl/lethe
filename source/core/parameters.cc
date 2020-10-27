@@ -337,6 +337,27 @@ namespace Parameters
         "Enable calculation of total enstrophy. The total enstrophy "
         "is calculated from the volumetric integral of the enstrophy over the domain.");
 
+      prm.declare_entry(
+        "calculate velocities",
+        "false",
+        Patterns::Bool(),
+        "Enable calculation of velocity fluctuations and velocity profiles.");
+
+      prm.declare_entry("initial time",
+                        "0.0",
+                        Patterns::Double(),
+                        "Initial time to start calculations for velocities");
+
+      prm.declare_entry("boundary id",
+                        "0",
+                        Patterns::Integer(),
+                        "Boundary id of the inlet flow");
+
+      prm.declare_entry("flow direction",
+                        "0",
+                        Patterns::Integer(),
+                        "Flow direction at flow inlet");
+
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
                         Patterns::FileName(),
@@ -373,6 +394,10 @@ namespace Parameters
 
       calculate_kinetic_energy   = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy        = prm.get_bool("calculate enstrophy");
+      calculate_velocities       = prm.get_bool("calculate velocities");
+      initial_time               = prm.get_double("initial time");
+      id_flow_control            = prm.get_integer("boundary id");
+      flow_direction             = prm.get_integer("flow direction");
       kinetic_energy_output_name = prm.get("kinetic energy name");
       enstrophy_output_name      = prm.get("enstrophy name");
       calculation_frequency      = prm.get_integer("calculation frequency");
@@ -1075,7 +1100,7 @@ namespace Parameters
       prm.declare_entry("flow direction",
                         "0",
                         Patterns::Integer(),
-                        "Flow direction where the flow comes from");
+                        "Flow direction at flow inlet");
       prm.declare_entry("initial beta",
                         "0",
                         Patterns::Double(),

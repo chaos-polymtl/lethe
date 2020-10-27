@@ -35,6 +35,7 @@
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
+#include <solvers/postprocessing_velocities.h>
 
 #include "core/time_integration_utilities.h"
 
@@ -867,6 +868,38 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           this->enstrophy_table.write_text(output);
         }
     }
+
+  if (this->nsparam.post_processing.calculate_velocities &&
+      simulation_control->get_current_time() >=
+        nsparam.post_processing.initial_time)
+    {
+      // If Flow Control is disable, it calculates the bulk velocity
+      if (!nsparam.flow_control.enable_flow_control)
+        {
+          nsparam.flow_control.id_flow_control =
+            nsparam.post_processing.id_flow_control;
+          nsparam.flow_control.flow_direction =
+            nsparam.post_processing.flow_direction;
+
+          this->flow.calculate_beta(this->dof_handler,
+                                    this->present_solution,
+                                    nsparam.flow_control,
+                                    nsparam.simulation_control,
+                                    nsparam.fem_parameters,
+                                    this->simulation_control->get_step_number(),
+                                    mpi_communicator);
+        }
+
+      this->velocities_data.calculate_velocity_fluctuations(
+        this->dof_handler,
+        this->present_solution,
+        nsparam.simulation_control,
+        nsparam.fem_parameters,
+        this->simulation_control->get_step_number(),
+        flow.bulk_velocity(),
+        mpi_communicator);
+    }
+
 
   if (this->nsparam.post_processing.calculate_kinetic_energy)
     {

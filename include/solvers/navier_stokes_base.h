@@ -98,6 +98,7 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
+#include <solvers/postprocessing_velocities.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
@@ -317,7 +318,8 @@ protected:
 
   // Post-processing variables
   TableHandler enstrophy_table;
-  TableHandler kinetic_energy_table;
+  TableHandler                              kinetic_energy_table;
+  PostprocessingVelocities<dim, VectorType> velocities_data;
 
   // Convergence Analysis
   ConvergenceTable error_table;

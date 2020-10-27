@@ -97,7 +97,7 @@
 #include <core/physics_solver.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
-//#include <solvers/flow_control.h>
+#include <solvers/flow_control.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
@@ -113,29 +113,30 @@ template <int dim, typename VectorType>
 class PostprocessingVelocities
 {
 public:
-  std::vector<Tensor<1, 3>>
+  std::vector<Tensor<1, dim>>
   calculate_velocity_fluctuations(
     const DoFHandler<dim> &              dof_handler,
-    const VectorType &                   present_solution,
+    const VectorType &                   evaluation_point,
     const Parameters::SimulationControl &simulation_control,
     const Parameters::FEM &              fem_parameters,
     const double &                       step_number,
+    const double &                       bulk_velocity,
     const MPI_Comm &                     mpi_communicator);
 
 private:
-  // double bulk_velocity = FlowControl<dim, VectorType>::bulk_velocity();
-  std::vector<Tensor<1, 3>> velocity_fluctuations;
-  Tensor<1, dim>            average_velocities;
+  std::vector<Tensor<1, dim>> velocity_fluctuations;
+  Tensor<1, dim>              average_velocities;
 };
 
 template <int dim, typename VectorType>
-std::vector<Tensor<1, 3>>
+std::vector<Tensor<1, dim>>
 PostprocessingVelocities<dim, VectorType>::calculate_velocity_fluctuations(
   const DoFHandler<dim> &              dof_handler,
   const VectorType &                   evaluation_point,
   const Parameters::SimulationControl &simulation_control,
   const Parameters::FEM &              fem_parameters,
   const double &                       step_number,
+  const double &                       bulk_velocity,
   const MPI_Comm &                     mpi_communicator)
 {
   const FiniteElement<dim> &fe = dof_handler.get_fe();
@@ -157,12 +158,12 @@ PostprocessingVelocities<dim, VectorType>::calculate_velocity_fluctuations(
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
+          fe_values[velocities].get_function_values(evaluation_point,
+                                                    present_velocity_values);
           for (unsigned int q = 0; q < n_q_points; q++)
             {
-              fe_values[velocities].get_function_gradients(
-                evaluation_point, present_velocity_values);
-              std::cout << "velocity values : " << present_velocity_values
-                        << std::endl;
+              double time = simulation_control.dt * step_number;
+              // calculs ici
             }
         }
     }
