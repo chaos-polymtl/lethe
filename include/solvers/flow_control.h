@@ -26,6 +26,27 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_q.h>
 
+// Lac
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/precondition_block.h>
+#include <deal.II/lac/solver_bicgstab.h>
+#include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/sparse_direct.h>
+#include <deal.II/lac/sparse_ilu.h>
+#include <deal.II/lac/sparse_matrix.h>
+#include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/vector.h>
+
+// Lac - Trilinos includes
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
+
 // Lethe includes
 #include <core/parameters.h>
 
@@ -48,6 +69,8 @@ public:
                  const MPI_Comm &                      mpi_communicator);
   std::vector<double>
   flow_summary();
+  double
+  bulk_velocity();
 
 private:
   // The coefficients are stored in the following fashion :
@@ -57,7 +80,7 @@ private:
   double         beta_n1     = 0;
   double         flow_rate_n = 0;
   double         flow_rate_1n;
-  double         area = 0;
+  double         area;
 };
 
 template <int dim, typename VectorType>
@@ -155,6 +178,14 @@ FlowControl<dim, VectorType>::flow_summary()
 {
   std::vector<double> summary{area, flow_rate_n, beta_n1};
   return summary;
+}
+
+template <int dim, typename VectorType>
+double
+FlowControl<dim, VectorType>::bulk_velocity()
+{
+  double u_b = flow_rate_n / area;
+  return u_b;
 }
 
 #endif

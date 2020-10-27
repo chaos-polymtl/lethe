@@ -235,8 +235,20 @@ namespace Parameters
     // Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
+    // Enable velocity post-processing
+    bool calculate_velocities;
+
+    // Set initial time to start calculations for velocities
+    double initial_time;
+
     // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
+
+    // Id of the boundary where the flow inlet
+    unsigned int id_flow_control;
+
+    // Flow direction (x=0, y=1 ,z=2)
+    unsigned int flow_direction;
 
     // Frequency of the output
     unsigned int output_frequency;
@@ -252,6 +264,7 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
+
 
   /**
    * @brief FEM - The finite element section
@@ -569,7 +582,7 @@ namespace Parameters
     // Volumetric flow rate (L^3/t)
     double flow_rate;
 
-    // Id of the boundary where the flow come from
+    // Id of the boundary where the flow inlet
     unsigned int id_flow_control;
 
     // Flow direction (x=0, y=1 ,z=2)
