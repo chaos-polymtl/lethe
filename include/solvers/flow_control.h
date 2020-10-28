@@ -44,7 +44,7 @@ public:
                  const Parameters::DynamicFlowControl &flow_control,
                  const Parameters::SimulationControl & simulation_control,
                  const Parameters::FEM &               fem_parameters,
-                 const double &                        step_number,
+                 const unsigned int &                  step_number,
                  const MPI_Comm &                      mpi_communicator);
   std::vector<double>
   flow_summary();
@@ -68,7 +68,7 @@ FlowControl<dim, VectorType>::calculate_beta(
   const Parameters::DynamicFlowControl &flow_control,
   const Parameters::SimulationControl & simulation_control,
   const Parameters::FEM &               fem_parameters,
-  const double &                        step_number,
+  const unsigned int &                  step_number,
   const MPI_Comm &                      mpi_communicator)
 {
   beta_n       = beta_n1;
@@ -130,7 +130,7 @@ FlowControl<dim, VectorType>::calculate_beta(
   const double dt          = simulation_control.dt;
   const double flow_rate_0 = flow_control.flow_rate;
 
-  if (step_number == 1)
+  if (step_number <= 1)
     beta_n1 = flow_control.beta_0;
   else if (step_number == 2)
     beta_n1 = beta_n - (flow_rate_0 - flow_rate_n) / (area * dt);
@@ -153,7 +153,7 @@ template <int dim, typename VectorType>
 std::vector<double>
 FlowControl<dim, VectorType>::flow_summary()
 {
-  std::vector<double> summary{area, flow_rate_n, beta_n};
+  std::vector<double> summary{area, flow_rate_n, beta_n1};
   return summary;
 }
 

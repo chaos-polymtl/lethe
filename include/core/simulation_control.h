@@ -84,11 +84,6 @@ protected:
   // by the time
   double output_time_frequency;
 
-  // Output boundaries
-  // Control if the boundaries of the domain are outputted when writing results
-  //
-  bool output_boundaries;
-
   // Log iteration frequency
   // Controls the frequency at which status of the simulation is written to
   // the terminal
@@ -105,6 +100,11 @@ protected:
 
   // Output path
   std::string output_path;
+
+  // Output boundaries
+  // Control if the boundaries of the domain are outputted when writing results
+  //
+  bool output_boundaries;
 
   // Indicator to tell if this is the first assembly of a step
   bool first_assembly;
