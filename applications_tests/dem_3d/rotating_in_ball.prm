@@ -28,8 +28,8 @@ end
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
-  set contact detection method 		   		 = dynamic
-  set dynamic contact search size coefficient	 	 = 0.9
+  set contact detection method 		   		 = constant
+  set contact detection frequency                 	 = 20
   set repartition frequency 				 = 10000000
   set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
@@ -96,7 +96,7 @@ subsection boundary motions
     subsection moving boundary 0
 	set boundary id					= 4
         set type              				= rotational
-	set rotational speed				= 2
+	set rotational speed				= 0.1
 	set rotational vector x				= 1
 	set rotational vector y				= 0
 	set rotational vector z				= 0
