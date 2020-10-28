@@ -55,7 +55,7 @@ PWContactForce<dim>::update_contact_information(
     {
       contact_relative_velocity =
         particle_velocity -
-        this->boundary_translational_velocity_map.at(boundary_id) +
+        this->boundary_translational_velocity_map[boundary_id] +
         cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
                             particle_omega +
                           this->triangulation_radius *
@@ -66,10 +66,9 @@ PWContactForce<dim>::update_contact_information(
   if (dim == 2)
     {
       contact_relative_velocity =
-        particle_velocity -
-        this->triangulation_radius *
-          this->boundary_rotational_speed_map.at(boundary_id) *
-          cross_product_2d(normal_vector);
+        particle_velocity - this->triangulation_radius *
+                              this->boundary_rotational_speed_map[boundary_id] *
+                              cross_product_2d(normal_vector);
     }
 
   // Calculation of normal relative velocity

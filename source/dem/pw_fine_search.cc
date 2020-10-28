@@ -148,9 +148,12 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
               // Creating a sample from the pw_contact_info_struct and adding
               // contact info to the sample
               pw_contact_info_struct<dim> contact_info;
-              contact_info.particle           = particle;
-              contact_info.normal_vector      = normal_vector;
-              contact_info.point_on_boundary  = point_on_floating_wall;
+              contact_info.particle          = particle;
+              contact_info.normal_vector     = normal_vector;
+              contact_info.point_on_boundary = point_on_floating_wall;
+              // The boundary ID of floating walls is set to 100, it should be
+              // modified after adding motion of floating walls
+              contact_info.boundary_id        = 100;
               contact_info.tangential_overlap = tangential_overlap;
 
               pfw_pairs_in_contact[particle_id].insert(
