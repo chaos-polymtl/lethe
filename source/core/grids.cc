@@ -82,9 +82,24 @@ read_mesh_and_manifolds(
                                boundary_conditions);
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
-  // Refine the triangulation to its initial size
-  const int initialSize = mesh_parameters.initial_refinement;
-  triangulation->refine_global(initialSize);
+  if (mesh_parameters.refine_until_target_size)
+    {
+      double minimal_cell_size =
+        GridTools::minimal_cell_diameter(*triangulation);
+      unsigned int number_refinement = 0;
+      double       target_size       = mesh_parameters.target_size;
+      while (minimal_cell_size / 2 >= mesh_parameters.target_size)
+        {
+          triangulation->refine_global(1);
+          number_refinement++;
+          minimal_cell_size = GridTools::minimal_cell_diameter(*triangulation);
+        }
+    }
+  else
+    {
+      const int initial_refinement = mesh_parameters.initial_refinement;
+      triangulation->refine_global(initial_refinement);
+    }
 }
 
 template void attach_grid_to_triangulation(

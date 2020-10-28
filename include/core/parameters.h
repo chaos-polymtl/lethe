@@ -417,6 +417,12 @@ namespace Parameters
     // Initial refinement level of primitive mesh
     unsigned int initial_refinement;
 
+    // Enabling fixing initial refinement from a target size
+    bool refine_until_target_size;
+
+    // Target size when automatically refining initial mesh
+    double target_size;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void

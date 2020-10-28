@@ -197,8 +197,29 @@ DEMSolver<dim>::read_mesh()
       "Unsupported mesh type - mesh will not be created");
 
   triangulation_diameter = 0.5 * GridTools::diameter(triangulation);
-  const int initial_size = parameters.mesh.initial_refinement;
-  triangulation.refine_global(initial_size);
+
+  if (parameters.mesh.refine_until_target_size)
+    {
+      double minimal_cell_size =
+        GridTools::minimal_cell_diameter(triangulation);
+      unsigned int number_refinement = 0;
+      double       target_size       = parameters.mesh.target_size;
+      pcout << "Automatically refining grid until target size : " << target_size
+            << std::endl;
+      while (minimal_cell_size / 2 >= parameters.mesh.target_size)
+        {
+          triangulation.refine_global(1);
+          number_refinement++;
+          minimal_cell_size = GridTools::minimal_cell_diameter(triangulation);
+        }
+      pcout << "Mesh was automatically refined : " << number_refinement
+            << " times" << std::endl;
+    }
+  else
+    {
+      const int initial_refinement = parameters.mesh.initial_refinement;
+      triangulation.refine_global(initial_refinement);
+    }
 }
 
 template <int dim>
