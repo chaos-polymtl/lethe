@@ -63,10 +63,11 @@ localize_contacts(
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
-    &pw_contact_candidates,
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>> &pw_contact_candidates,
   std::unordered_map<int,
                      std::unordered_map<int, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates);

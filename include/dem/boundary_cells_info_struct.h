@@ -37,7 +37,10 @@ struct boundary_cells_info_struct
   // The boundary cell
   typename Triangulation<dim>::active_cell_iterator cell;
 
-  // The id of the boundary face in the boundary cell
+  // ID of boundary
+  unsigned int boundary_id;
+
+  // ID of boundary face in the boundary cell
   unsigned int boundary_face_id;
 
   // Normal vector of the boundary face

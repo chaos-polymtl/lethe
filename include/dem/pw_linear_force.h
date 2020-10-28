@@ -47,18 +47,28 @@ template <int dim>
 class PWLinearForce : public PWContactForce<dim>
 {
 public:
-  PWLinearForce()
-  {}
+  PWLinearForce(
+    const std::unordered_map<int, Tensor<1, dim>>
+                                                  boundary_translational_velocity,
+    const std::unordered_map<int, double>         boundary_rotational_speed,
+    const std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector,
+    const double                                  triangulation_radius)
+  {
+    this->boundary_translational_velocity_map = boundary_translational_velocity;
+    this->boundary_rotational_speed_map       = boundary_rotational_speed;
+    this->boundary_rotational_vector          = boundary_rotational_vector;
+    this->triangulation_radius                = triangulation_radius;
+  }
 
   /**
    * Carries out the calculation of the particle-wall contact force using
    * linear (Hookean) model
    *
-   * @param pw_pairs_in_contact Required information for calculation of the
-   * particle-wall contact force, these information were obtained in the
-   * fine search
-   * @param physical_properties DEM physical properties declared in the .prm
-   * file
+   * @param pw_pairs_in_contact Required information for calculation of
+   * the particle-wall contact force, these information were obtained in
+   * the fine search
+   * @param physical_properties DEM physical properties declared in the
+   * .prm file
    * @param dt DEM time step
    */
   virtual void

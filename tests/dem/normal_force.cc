@@ -72,6 +72,7 @@ test()
   double             dt                                      = 0.000001;
   double             particle_diameter                       = 0.001;
   int                particle_density                        = 7850;
+  unsigned int       rotating_wall_maximum_number            = 6;
   dem_parameters.physical_properties.youngs_modulus_particle = 200000000000;
   dem_parameters.physical_properties.youngs_modulus_wall     = 200000000000;
   dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
@@ -82,6 +83,23 @@ test()
   dem_parameters.physical_properties.friction_coefficient_wall        = 0.3;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
   dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
+
+  // Initializing motion of boundaries
+  Tensor<1, dim> translational_and_rotational_veclocity;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      translational_and_rotational_veclocity[d] = 0;
+    }
+  for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
+       ++counter)
+    {
+      dem_parameters.boundary_motions.boundary_rotational_speed.insert(
+        {counter, 0});
+      dem_parameters.boundary_motions.boundary_translational_velocity.insert(
+        {counter, translational_and_rotational_veclocity});
+      dem_parameters.boundary_motions.boundary_rotational_vector.insert(
+        {counter, translational_and_rotational_veclocity});
+    }
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
@@ -121,9 +139,11 @@ test()
   PWBroadSearch<dim> pw_broad_search_object;
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>>
     pw_contact_list;
   pw_broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
@@ -133,8 +153,12 @@ test()
   // P-W fine search
   PWFineSearch<dim> pw_fine_search_object;
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-                                pw_contact_information;
-  PWNonLinearForce<dim>         pw_force_object;
+                        pw_contact_information;
+  PWNonLinearForce<dim> pw_force_object(
+    dem_parameters.boundary_motions.boundary_translational_velocity,
+    dem_parameters.boundary_motions.boundary_rotational_speed,
+    dem_parameters.boundary_motions.boundary_rotational_vector,
+    0.5 * GridTools::diameter(tr));
   VelocityVerletIntegrator<dim> integrator_object;
   double                        distance;
 

@@ -102,6 +102,11 @@ protected:
   Tensor<1, dim>
   find_projection(const Tensor<1, dim> &vector_a,
                   const Tensor<1, dim> &vector_b);
+
+  std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity_map;
+  std::unordered_map<int, double>         boundary_rotational_speed_map;
+  std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
+  double                                  triangulation_radius;
 };
 
 #endif /* particle_wall_contact_force_h */

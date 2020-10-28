@@ -280,9 +280,11 @@ private:
     pfw_pairs_in_contact;
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>>
     pw_contact_candidates;
   std::unordered_map<int,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>

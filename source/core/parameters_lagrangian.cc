@@ -525,6 +525,10 @@ namespace Parameters
     void
     BoundaryMotions<dim>::declareDefaultEntry(ParameterHandler &prm)
     {
+      prm.declare_entry("boundary id",
+                        "0",
+                        Patterns::Integer(),
+                        "Moving boundary ID");
       prm.declare_entry("type",
                         "none",
                         Patterns::Selection("none|translational|rotational"),
@@ -548,15 +552,26 @@ namespace Parameters
                         "0.",
                         Patterns::Double(),
                         "Rotational boundary speed");
+      prm.declare_entry("rotational vector x",
+                        "0.",
+                        Patterns::Double(),
+                        "Rotational vector element in x direction");
+      prm.declare_entry("rotational vector y",
+                        "0.",
+                        Patterns::Double(),
+                        "Rotational vector element in y direction");
+      prm.declare_entry("rotational vector z",
+                        "0.",
+                        Patterns::Double(),
+                        "Rotational vector element in z direction");
     }
 
     template <int dim>
     void
-    BoundaryMotions<dim>::parse_boundary_motions(
-      ParameterHandler &  prm,
-      const unsigned int &boundary_id)
+    BoundaryMotions<dim>::parse_boundary_motions(ParameterHandler &prm)
     {
-      const std::string motion_type = prm.get("type");
+      const unsigned int boundary_id = prm.get_integer("boundary id");
+      const std::string  motion_type = prm.get("type");
 
       if (motion_type == "translational")
         {
@@ -566,17 +581,23 @@ namespace Parameters
           if (dim == 3)
             translational_velocity[2] = prm.get_double("speed z");
 
-          this->boundary_translational_velocity.insert(
-            {boundary_id, translational_velocity});
+          this->boundary_translational_velocity.at(boundary_id) =
+            translational_velocity;
         }
 
-      else if (motion_type == "rotational")
+      if (motion_type == "rotational")
         {
-          double rotational_speed;
-          rotational_speed = prm.get_double("rotational speed");
+          double         rotational_speed = prm.get_double("rotational speed");
+          Tensor<1, dim> rotational_vector;
+          if (dim == 3)
+            {
+              rotational_vector[0] = prm.get_double("rotational vector x");
+              rotational_vector[1] = prm.get_double("rotational vector y");
+              rotational_vector[2] = prm.get_double("rotational vector z");
+            }
 
-          this->boundary_rotational_speed.insert(
-            {boundary_id, rotational_speed});
+          this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
+          this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
         }
     }
 
@@ -641,6 +662,9 @@ namespace Parameters
     BoundaryMotions<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("boundary motions");
+      initialize_containers(boundary_translational_velocity,
+                            boundary_rotational_speed,
+                            boundary_rotational_vector);
       {
         moving_boundary_number = prm.get_integer("number of boundary motions");
 
@@ -648,7 +672,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 0");
             {
-              parse_boundary_motions(prm, 0);
+              parse_boundary_motions(prm);
             }
             prm.leave_subsection();
           }
@@ -656,7 +680,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 1");
             {
-              parse_boundary_motions(prm, 1);
+              parse_boundary_motions(prm);
             }
             prm.leave_subsection();
           }
@@ -664,7 +688,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 2");
             {
-              parse_boundary_motions(prm, 2);
+              parse_boundary_motions(prm);
             }
             prm.leave_subsection();
           }
@@ -672,7 +696,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 3");
             {
-              parse_boundary_motions(prm, 3);
+              parse_boundary_motions(prm);
             }
             prm.leave_subsection();
           }
@@ -680,7 +704,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 4");
             {
-              parse_boundary_motions(prm, 4);
+              parse_boundary_motions(prm);
             }
             prm.leave_subsection();
           }
@@ -688,12 +712,34 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 5");
             {
-              parse_boundary_motions(prm, 5);
+              parse_boundary_motions(prm);
             }
             prm.leave_subsection();
           }
       }
       prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    BoundaryMotions<dim>::initialize_containers(
+      std::unordered_map<int, Tensor<1, dim>> &boundary_translational_velocity,
+      std::unordered_map<int, double> &        boundary_rotational_speed,
+      std::unordered_map<int, Tensor<1, dim>> &boundary_rotational_vector)
+    {
+      Tensor<1, dim> zero_tensor;
+      for (unsigned int d = 0; d < dim; ++d)
+        {
+          zero_tensor[d] = 0;
+        }
+
+      for (unsigned int counter = 0; counter < moving_boundary_maximum_number;
+           ++counter)
+        {
+          boundary_translational_velocity.insert({counter, zero_tensor});
+          boundary_rotational_speed.insert({counter, 0});
+          boundary_rotational_vector.insert({counter, zero_tensor});
+        }
     }
 
     template class FloatingWalls<2>;

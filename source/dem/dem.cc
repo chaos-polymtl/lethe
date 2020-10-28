@@ -472,13 +472,21 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
   if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
-      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>();
+      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
+        parameters.boundary_motions.boundary_translational_velocity,
+        parameters.boundary_motions.boundary_rotational_speed,
+        parameters.boundary_motions.boundary_rotational_vector,
+        0.5 * GridTools::diameter(triangulation));
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
              pw_nonlinear)
     {
-      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>();
+      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>(
+        parameters.boundary_motions.boundary_translational_velocity,
+        parameters.boundary_motions.boundary_rotational_speed,
+        parameters.boundary_motions.boundary_rotational_vector,
+        0.5 * GridTools::diameter(triangulation));
     }
   else
     {
@@ -563,7 +571,8 @@ DEMSolver<dim>::solve()
   set_body_force();
 
   // Finding the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blab diamater
+  // cell size - largest particle radius) and (security factor * (blab
+  // diamater
   // - 1) *  largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =

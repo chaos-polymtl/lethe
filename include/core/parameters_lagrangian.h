@@ -182,6 +182,9 @@ namespace Parameters
       // Rotational speeds of rotating boundaries
       std::unordered_map<int, double> boundary_rotational_speed;
 
+      // Rotational vectors of rotating boundaries
+      std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
+
       void
       declare_parameters(ParameterHandler &prm);
       void
@@ -189,8 +192,16 @@ namespace Parameters
       void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_motions(ParameterHandler &  prm,
-                             const unsigned int &boundary_id);
+      parse_boundary_motions(ParameterHandler &prm);
+
+    private:
+      unsigned int moving_boundary_maximum_number = 6;
+      void
+      initialize_containers(
+        std::unordered_map<int, Tensor<1, dim>>
+          &                              boundary_translational_velocity,
+        std::unordered_map<int, double> &boundary_rotational_speed,
+        std::unordered_map<int, Tensor<1, dim>> &boundary_rotational_vector);
     };
 
   } // namespace Lagrangian

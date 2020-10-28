@@ -39,7 +39,7 @@ public:
   Parameters::Lagrangian::InsertionInfo        insertion_info;
   Parameters::Lagrangian::ModelParameters      model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>   floating_walls;
-  Parameters::Lagrangian::BoundaryMotions<dim> boundary_rotations;
+  Parameters::Lagrangian::BoundaryMotions<dim> boundary_motions;
 
   void
   declare(ParameterHandler &prm)
@@ -52,7 +52,7 @@ public:
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
     floating_walls.declare_parameters(prm);
-    boundary_rotations.declare_parameters(prm);
+    boundary_motions.declare_parameters(prm);
   }
 
   void
@@ -66,7 +66,7 @@ public:
     model_parameters.parse_parameters(prm);
     simulation_control.parse_parameters(prm);
     floating_walls.parse_parameters(prm);
-    boundary_rotations.parse_parameters(prm);
+    boundary_motions.parse_parameters(prm);
   }
 };
 
