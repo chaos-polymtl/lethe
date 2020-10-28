@@ -66,7 +66,7 @@ PWContactForce<dim>::update_contact_information(
   if (dim == 2)
     {
       contact_relative_velocity =
-        particle_velocity +
+        particle_velocity -
         this->triangulation_radius *
           this->boundary_rotational_speed_map.at(boundary_id) *
           cross_product_2d(normal_vector);
