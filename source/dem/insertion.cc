@@ -77,14 +77,16 @@ Insertion<dim>::assign_particle_properties(
       double w_z      = 0.0;
       double mass     = physical_properties.density *
                     ((4.0 / 3.0) * 3.1415 * pow((diameter / 2.0), 3));
-      double MOI = (2.0 / 5.0) * (mass)*pow((diameter / 2.0), 2);
-      double T_x = 0;
-      double T_y = 0;
-      double T_z = 0;
+      double MOI          = (2.0 / 5.0) * (mass)*pow((diameter / 2.0), 2);
+      double T_x          = 0;
+      double T_y          = 0;
+      double T_z          = 0;
+      double displacement = 0;
 
       std::vector<double> properties_of_one_particle{
-        type, diameter, density, vel_x, vel_y, vel_z, acc_x, acc_y, acc_z, f_x,
-        f_y,  f_z,      w_x,     w_y,   w_z,   mass,  MOI,   T_x,   T_y,   T_z};
+        type,  diameter, density, vel_x, vel_y, vel_z, acc_x,
+        acc_y, acc_z,    f_x,     f_y,   f_z,   w_x,   w_y,
+        w_z,   mass,     MOI,     T_x,   T_y,   T_z,   displacement};
 
       properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();

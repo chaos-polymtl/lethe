@@ -1,6 +1,6 @@
 /* ---------------------------------------------------------------------
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
+ * Copyright (C) triangulation_diameter019 - 2020 by the Lethe authors
  *
  * This file is part of the Lethe library
  *

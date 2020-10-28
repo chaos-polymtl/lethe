@@ -196,6 +196,7 @@ DEMSolver<dim>::read_mesh()
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
+  triangulation_diameter = 0.5 * GridTools::diameter(triangulation);
   const int initial_size = parameters.mesh.initial_refinement;
   triangulation.refine_global(initial_size);
 }
@@ -476,7 +477,7 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motions.boundary_translational_velocity,
         parameters.boundary_motions.boundary_rotational_speed,
         parameters.boundary_motions.boundary_rotational_vector,
-        0.5 * GridTools::diameter(triangulation));
+        triangulation_diameter);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -486,7 +487,7 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motions.boundary_translational_velocity,
         parameters.boundary_motions.boundary_rotational_speed,
         parameters.boundary_motions.boundary_rotational_vector,
-        0.5 * GridTools::diameter(triangulation));
+        triangulation_diameter);
     }
   else
     {

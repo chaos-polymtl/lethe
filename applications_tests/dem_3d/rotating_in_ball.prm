@@ -30,7 +30,7 @@ end
 subsection model parameters
   set contact detection method 		   		 = dynamic
   set dynamic contact search size coefficient	 	 = 0.9
-  set repartition frequency 				 = 10000
+  set repartition frequency 				 = 10000000
   set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
