@@ -81,6 +81,12 @@ Visualization<dim>::build_patches(
                ++property_index)
             patches[i].data(property_index, 0) =
               particle_properties[property_index - 1];
+
+          // Resetting force to zero
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              particle_properties[DEM::PropertiesIndex::force_x + d] = 0;
+            }
         }
     }
 }
@@ -106,6 +112,12 @@ Visualization<dim>::print_xyz(
             (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
         }
       local_particles.insert({particle->get_id(), particle});
+
+      // Resetting force to zero
+      for (unsigned int d = 0; d < dim; ++d)
+        {
+          particle_properties[DEM::PropertiesIndex::force_x + d] = 0;
+        }
     }
 
   std::vector<int> precision = {0, 0, 5, 3, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1};
@@ -131,7 +143,7 @@ Visualization<dim>::print_xyz(
 
       // Looping over properties of particle
       for (unsigned int property_number = 0;
-           property_number < this->number_of_properties_to_write;
+           property_number < this->number_of_properties_to_write - 1;
            ++property_number, ++counter)
         {
           std::cout.precision(precision[counter]);
