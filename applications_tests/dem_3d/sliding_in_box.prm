@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 1e-5
-  set time end       					 = 0.4
+  set time end       					 = 0.2
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -94,7 +94,7 @@ subsection boundary motions
     subsection moving boundary 0
 	set boundary id	 				= 4
         set type              				= translational
-	set speed x					= 0.1
+	set speed x					= 0.2
 	set speed y					= 0
 	set speed z					= 0
     end

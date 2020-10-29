@@ -80,7 +80,6 @@ PPContactForce<dim>::update_contact_information(
     }
   else
     {
-      // if dim == 2
       contact_relative_velocity = particle_one_velocity - particle_two_velocity;
     }
 
@@ -119,7 +118,6 @@ PPContactForce<dim>::update_contact_information(
       tangential_overlap +
     contact_info.tangential_relative_velocity * dt;
 
-  // std::cout << contact_info.tangential_relative_velocity << std::endl;
   // Updating the contact_info container based on the new calculated values
   contact_info.tangential_overlap           = modified_tangential_overlap;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
