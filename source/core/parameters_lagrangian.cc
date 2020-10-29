@@ -523,7 +523,7 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotions<dim>::declareDefaultEntry(ParameterHandler &prm)
+    BoundaryMotion<dim>::declareDefaultEntry(ParameterHandler &prm)
     {
       prm.declare_entry("boundary id",
                         "0",
@@ -568,7 +568,7 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotions<dim>::parse_boundary_motions(ParameterHandler &prm)
+    BoundaryMotion<dim>::parse_boundary_motion(ParameterHandler &prm)
     {
       const unsigned int boundary_id = prm.get_integer("boundary id");
       const std::string  motion_type = prm.get("type");
@@ -603,14 +603,14 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotions<dim>::declare_parameters(ParameterHandler &prm)
+    BoundaryMotion<dim>::declare_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("boundary motions");
+      prm.enter_subsection("boundary motion");
       {
-        prm.declare_entry("number of boundary motions",
+        prm.declare_entry("number of boundary motion",
                           "0",
                           Patterns::Integer(),
-                          "Number of boundary motions");
+                          "Number of boundary motion");
 
         prm.enter_subsection("moving boundary 0");
         {
@@ -659,20 +659,20 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotions<dim>::parse_parameters(ParameterHandler &prm)
+    BoundaryMotion<dim>::parse_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("boundary motions");
+      prm.enter_subsection("boundary motion");
       initialize_containers(boundary_translational_velocity,
                             boundary_rotational_speed,
                             boundary_rotational_vector);
       {
-        moving_boundary_number = prm.get_integer("number of boundary motions");
+        moving_boundary_number = prm.get_integer("number of boundary motion");
 
         if (moving_boundary_number >= 1)
           {
             prm.enter_subsection("moving boundary 0");
             {
-              parse_boundary_motions(prm);
+              parse_boundary_motion(prm);
             }
             prm.leave_subsection();
           }
@@ -680,7 +680,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 1");
             {
-              parse_boundary_motions(prm);
+              parse_boundary_motion(prm);
             }
             prm.leave_subsection();
           }
@@ -688,7 +688,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 2");
             {
-              parse_boundary_motions(prm);
+              parse_boundary_motion(prm);
             }
             prm.leave_subsection();
           }
@@ -696,7 +696,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 3");
             {
-              parse_boundary_motions(prm);
+              parse_boundary_motion(prm);
             }
             prm.leave_subsection();
           }
@@ -704,7 +704,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 4");
             {
-              parse_boundary_motions(prm);
+              parse_boundary_motion(prm);
             }
             prm.leave_subsection();
           }
@@ -712,7 +712,7 @@ namespace Parameters
           {
             prm.enter_subsection("moving boundary 5");
             {
-              parse_boundary_motions(prm);
+              parse_boundary_motion(prm);
             }
             prm.leave_subsection();
           }
@@ -722,7 +722,7 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotions<dim>::initialize_containers(
+    BoundaryMotion<dim>::initialize_containers(
       std::unordered_map<int, Tensor<1, dim>> &boundary_translational_velocity,
       std::unordered_map<int, double> &        boundary_rotational_speed,
       std::unordered_map<int, Tensor<1, dim>> &boundary_rotational_vector)
@@ -744,8 +744,8 @@ namespace Parameters
 
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
-    template class BoundaryMotions<2>;
-    template class BoundaryMotions<3>;
+    template class BoundaryMotion<2>;
+    template class BoundaryMotion<3>;
 
   } // namespace Lagrangian
 

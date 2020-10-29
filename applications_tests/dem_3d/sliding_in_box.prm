@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 1e-5
-  set time end       					 = 0.2
+  set time end       					 = 0.15
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -62,15 +62,15 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 500
-    set inserted number of particles at each time step  = 500
+    set n total              				= 20
+    set inserted number of particles at each time step  = 20
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.03
+    set insertion box minimum z            	        = -0.06
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = 0.07
+    set insertion box maximum z            	        = 0
     set insertion distance threshold			= 2
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
@@ -82,19 +82,19 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_cube
-    set grid arguments       				= -0.07 : 0.07 : false
+    set grid arguments       				= -0.07 : 0.07 : true
     set initial refinement   				= 3
 end
 
 #---------------------------------------------------
-# Boundary Motions
+# Boundary Motion
 #---------------------------------------------------
-subsection boundary motions
-  set number of boundary motions          		= 1
+subsection boundary motion
+  set number of boundary motion        			= 1
     subsection moving boundary 0
 	set boundary id	 				= 4
         set type              				= translational
-	set speed x					= 0.2
+	set speed x					= 0.15
 	set speed y					= 0
 	set speed z					= 0
     end

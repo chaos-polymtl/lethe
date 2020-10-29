@@ -85,10 +85,10 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Boundary Motions
+# Boundary Motion
 #---------------------------------------------------
-subsection boundary motions
-  set number of boundary motions          		= 1
+subsection boundary motion
+  set number of boundary motion         		= 1
     subsection moving boundary 0
 	set boundary id					= 2
         set type              				= rotational

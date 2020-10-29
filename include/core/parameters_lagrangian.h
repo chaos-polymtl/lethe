@@ -170,7 +170,7 @@ namespace Parameters
     };
 
     template <int dim>
-    class BoundaryMotions
+    class BoundaryMotion
     {
     public:
       // Number of moving boundaries
@@ -192,7 +192,7 @@ namespace Parameters
       void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_motions(ParameterHandler &prm);
+      parse_boundary_motion(ParameterHandler &prm);
 
     private:
       unsigned int moving_boundary_maximum_number = 6;
