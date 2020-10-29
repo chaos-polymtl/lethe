@@ -96,7 +96,7 @@ subsection boundary motions
     subsection moving boundary 0
 	set boundary id					= 4
         set type              				= rotational
-	set rotational speed				= 0.1
+	set rotational speed				= 1
 	set rotational vector x				= 1
 	set rotational vector y				= 0
 	set rotational vector z				= 0

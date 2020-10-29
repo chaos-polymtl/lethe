@@ -393,7 +393,7 @@ DEMSolver<dim>::finish_simulation()
         {
           if (this_mpi_process == processor_number)
             {
-              visualization_object.print_xyz(particle_handler, properties, g);
+              visualization_object.print_xyz(particle_handler, g);
             }
           MPI_Barrier(MPI_COMM_WORLD);
         }

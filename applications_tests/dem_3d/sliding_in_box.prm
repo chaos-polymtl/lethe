@@ -94,7 +94,7 @@ subsection boundary motions
     subsection moving boundary 0
 	set boundary id	 				= 4
         set type              				= translational
-	set speed x					= 0.01
+	set speed x					= 0.1
 	set speed y					= 0
 	set speed z					= 0
     end
