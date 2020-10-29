@@ -91,11 +91,11 @@ test()
   for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
        ++counter)
     {
-      dem_parameters.boundary_motions.boundary_rotational_speed.insert(
+      dem_parameters.boundary_motion.boundary_rotational_speed.insert(
         {counter, 0});
-      dem_parameters.boundary_motions.boundary_translational_velocity.insert(
+      dem_parameters.boundary_motion.boundary_translational_velocity.insert(
         {counter, translational_and_rotational_veclocity});
-      dem_parameters.boundary_motions.boundary_rotational_vector.insert(
+      dem_parameters.boundary_motion.boundary_rotational_vector.insert(
         {counter, translational_and_rotational_veclocity});
     }
 
@@ -155,9 +155,9 @@ test()
 
   // Calling linear force
   PWLinearForce<dim> force_object(
-    dem_parameters.boundary_motions.boundary_translational_velocity,
-    dem_parameters.boundary_motions.boundary_rotational_speed,
-    dem_parameters.boundary_motions.boundary_rotational_vector,
+    dem_parameters.boundary_motion.boundary_translational_velocity,
+    dem_parameters.boundary_motion.boundary_rotational_speed,
+    dem_parameters.boundary_motion.boundary_rotational_vector,
     0.5 * GridTools::diameter(tr));
   force_object.calculate_pw_contact_force(&pw_contact_information,
                                           dem_parameters.physical_properties,
