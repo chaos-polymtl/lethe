@@ -317,9 +317,11 @@ protected:
   // SimulationControl simulationControl;
 
   // Post-processing variables
-  TableHandler enstrophy_table;
+  TableHandler                              enstrophy_table;
   TableHandler                              kinetic_energy_table;
-  PostprocessingVelocities<dim, VectorType> velocities_data;
+  PostprocessingVelocities<dim, VectorType> velocity_data;
+  std::vector<std::vector<double>>          average_velocities;
+  std::vector<std::vector<double>>          velocity_fluctuations;
 
   // Convergence Analysis
   ConvergenceTable error_table;

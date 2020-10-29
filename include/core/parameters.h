@@ -241,14 +241,14 @@ namespace Parameters
     // Set initial time to start calculations for velocities
     double initial_time;
 
-    // Frequency of the calculation of the post-processed quantity
-    unsigned int calculation_frequency;
-
     // Id of the boundary where the flow inlet
     unsigned int id_flow_control;
 
     // Flow direction (x=0, y=1 ,z=2)
     unsigned int flow_direction;
+
+    // Frequency of the calculation of the post-processed quantity
+    unsigned int calculation_frequency;
 
     // Frequency of the output
     unsigned int output_frequency;

@@ -835,7 +835,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     this->write_output_results(this->present_solution);
 
 
-
   if (this->nsparam.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -869,9 +868,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-  if (this->nsparam.post_processing.calculate_velocities &&
-      simulation_control->get_current_time() >=
-        nsparam.post_processing.initial_time)
+
+  if (this->nsparam.post_processing.calculate_velocities)
     {
       // If Flow Control is disable, it calculates the bulk velocity
       if (!nsparam.flow_control.enable_flow_control)
@@ -890,14 +888,18 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                     mpi_communicator);
         }
 
-      this->velocities_data.calculate_velocity_fluctuations(
+      this->velocity_data.calculate_velocity_fluctuations(
         this->dof_handler,
         this->present_solution,
         nsparam.simulation_control,
         nsparam.fem_parameters,
-        this->simulation_control->get_step_number(),
+        nsparam.post_processing,
+        this->simulation_control->get_current_time(),
         flow.bulk_velocity(),
         mpi_communicator);
+
+      this->average_velocities    = velocity_data.average_velocities();
+      this->velocity_fluctuations = velocity_data.velocity_fluctuations();
     }
 
 
@@ -1109,7 +1111,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
-
   DataOut<dim> data_out;
 
   // Additional flag to enable the output of high-order elements
@@ -1124,6 +1125,23 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            solution_names,
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
+  /*
+    if (this->nsparam.post_processing.calculate_velocities)
+      {
+        data_out.add_data_vector(average_velocities[0], "average_velocity_u",
+    DataOut<dim>::type_automatic,
+                                 DataComponentInterpretation::DataComponentInterpretation::component_is_scalar);
+        data_out.add_data_vector(average_velocities[1], "average_velocity_v");
+        data_out.add_data_vector(average_velocities[2], "average_velocity_w");
+        data_out.add_data_vector(velocity_fluctuations[0],
+    "velocity_fluctuation_u");
+        data_out.add_data_vector(velocity_fluctuations[1],
+    "velocity_fluctuation_v");
+        data_out.add_data_vector(velocity_fluctuations[2],
+    "velocity_fluctuation_w");
+      }
+  */
+
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
