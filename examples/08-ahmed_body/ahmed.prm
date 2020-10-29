@@ -9,7 +9,7 @@ subsection simulation control
   set method                  = bdf1
   set output frequency        = 1
   set output name             = ahmed-output
-  set output path             = ./Re1000_4s/
+  set output path             = ./
   set time end                = 4
   set time step		      = 0.01
 end
@@ -24,7 +24,7 @@ end
 # Timer
 #---------------------------------------------------
 subsection timer
-    set type    = none                                  # <none|iteration|end>
+    set type    = iteration                                  # <none|iteration|end>
 end
 #---------------------------------------------------
 # Initial condition
@@ -84,7 +84,7 @@ subsection mesh adaptation
   set max number elements     = 70000
   set max refinement level    = 5
   set min refinement level    = 0
-  set frequency               = 1
+  set frequency               = 5
   set fraction refinement     = 0.3
   set fraction coarsening     = 0.1
 end
