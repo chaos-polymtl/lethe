@@ -831,10 +831,6 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 {
-  if (this->simulation_control->is_output_iteration())
-    this->write_output_results(this->present_solution);
-
-
   if (this->nsparam.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -888,18 +884,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                     mpi_communicator);
         }
 
-      this->velocity_data.calculate_velocity_fluctuations(
-        this->dof_handler,
+      this->average_solution = average_velocities.calculate_average_velocities(
         this->present_solution,
         nsparam.simulation_control,
-        nsparam.fem_parameters,
         nsparam.post_processing,
         this->simulation_control->get_current_time(),
-        flow.bulk_velocity(),
+        locally_owned_dofs,
+        locally_relevant_dofs,
         mpi_communicator);
-
-      this->average_velocities    = velocity_data.average_velocities();
-      this->velocity_fluctuations = velocity_data.velocity_fluctuations();
     }
 
 
@@ -1003,6 +995,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             }
         }
     }
+  if (this->simulation_control->is_output_iteration())
+    this->write_output_results(this->present_solution);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1101,14 +1095,22 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const unsigned int subdivision = simulation_control->get_number_subdivision();
   const unsigned int group_files = simulation_control->get_group_files();
 
-  // Add the interpretation of the solution. The dim first components are the
-  // velocity vectors and the following one is the pressure.
+  // Add the interpretation of the solution and average solution. The dim first
+  // components are the velocity vectors and the following one is the pressure.
   std::vector<std::string> solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       dim, DataComponentInterpretation::component_is_part_of_vector);
   data_component_interpretation.push_back(
+    DataComponentInterpretation::component_is_scalar);
+
+  std::vector<std::string> average_solution_names(dim, "average_velocity");
+  average_solution_names.push_back("average_pressure");
+  std::vector<DataComponentInterpretation::DataComponentInterpretation>
+    average_data_component_interpretation(
+      dim, DataComponentInterpretation::component_is_part_of_vector);
+  average_data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
   DataOut<dim> data_out;
@@ -1125,22 +1127,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            solution_names,
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
-  /*
-    if (this->nsparam.post_processing.calculate_velocities)
-      {
-        data_out.add_data_vector(average_velocities[0], "average_velocity_u",
-    DataOut<dim>::type_automatic,
-                                 DataComponentInterpretation::DataComponentInterpretation::component_is_scalar);
-        data_out.add_data_vector(average_velocities[1], "average_velocity_v");
-        data_out.add_data_vector(average_velocities[2], "average_velocity_w");
-        data_out.add_data_vector(velocity_fluctuations[0],
-    "velocity_fluctuation_u");
-        data_out.add_data_vector(velocity_fluctuations[1],
-    "velocity_fluctuation_v");
-        data_out.add_data_vector(velocity_fluctuations[2],
-    "velocity_fluctuation_w");
-      }
-  */
+  data_out.add_data_vector(this->average_solution,
+                           average_solution_names,
+                           DataOut<dim>::type_dof_data,
+                           average_data_component_interpretation);
 
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)

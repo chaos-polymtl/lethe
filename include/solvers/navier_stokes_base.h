@@ -306,6 +306,7 @@ protected:
   VectorType solution_m1;
   VectorType solution_m2;
   VectorType solution_m3;
+  VectorType average_solution;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
@@ -317,11 +318,9 @@ protected:
   // SimulationControl simulationControl;
 
   // Post-processing variables
-  TableHandler                              enstrophy_table;
-  TableHandler                              kinetic_energy_table;
-  PostprocessingVelocities<dim, VectorType> velocity_data;
-  std::vector<std::vector<double>>          average_velocities;
-  std::vector<std::vector<double>>          velocity_fluctuations;
+  TableHandler                                 enstrophy_table;
+  TableHandler                                 kinetic_energy_table;
+  AverageVelocities<dim, VectorType, DofsType> average_velocities;
 
   // Convergence Analysis
   ConvergenceTable error_table;
