@@ -11,10 +11,11 @@ void
 PWFineSearch<dim>::particle_wall_fine_search(
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
-    &pw_contact_pair_candidates,
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>> &pw_contact_pair_candidates,
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact)
 {
@@ -58,9 +59,11 @@ PWFineSearch<dim>::particle_wall_fine_search(
           // Creating a sample from the pw_contact_info_struct and adding
           // contact info to the sample
           pw_contact_info_struct<dim> contact_info;
-          contact_info.particle           = particle;
-          contact_info.normal_vector      = normal_vector;
-          contact_info.point_on_boundary  = point_on_boundary;
+          contact_info.particle          = particle;
+          contact_info.normal_vector     = normal_vector;
+          contact_info.point_on_boundary = point_on_boundary;
+          contact_info.boundary_id =
+            std::get<3>(particle_pair_candidate_content);
           contact_info.tangential_overlap = tangential_overlap;
 
           pw_pairs_in_contact[particle_id].insert({face_id, contact_info});
@@ -145,9 +148,12 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
               // Creating a sample from the pw_contact_info_struct and adding
               // contact info to the sample
               pw_contact_info_struct<dim> contact_info;
-              contact_info.particle           = particle;
-              contact_info.normal_vector      = normal_vector;
-              contact_info.point_on_boundary  = point_on_floating_wall;
+              contact_info.particle          = particle;
+              contact_info.normal_vector     = normal_vector;
+              contact_info.point_on_boundary = point_on_floating_wall;
+              // The boundary ID of floating walls is set to 100, it should be
+              // modified after adding motion of floating walls
+              contact_info.boundary_id        = 100;
               contact_info.tangential_overlap = tangential_overlap;
 
               pfw_pairs_in_contact[particle_id].insert(

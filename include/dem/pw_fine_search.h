@@ -70,7 +70,8 @@ public:
       std::unordered_map<int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
-                                    Point<dim>>>> &pw_contact_pair_candidates,
+                                    Point<dim>,
+                                    unsigned int>>> &pw_contact_pair_candidates,
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
       &pw_pairs_in_contact);
 

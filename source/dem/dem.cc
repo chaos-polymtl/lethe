@@ -196,6 +196,7 @@ DEMSolver<dim>::read_mesh()
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
+  triangulation_diameter = 0.5 * GridTools::diameter(triangulation);
   const int initial_size = parameters.mesh.initial_refinement;
   triangulation.refine_global(initial_size);
 }
@@ -392,7 +393,7 @@ DEMSolver<dim>::finish_simulation()
         {
           if (this_mpi_process == processor_number)
             {
-              visualization_object.print_xyz(particle_handler, properties, g);
+              visualization_object.print_xyz(particle_handler, g);
             }
           MPI_Barrier(MPI_COMM_WORLD);
         }
@@ -472,13 +473,21 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
   if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
-      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>();
+      pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
+        parameters.boundary_motion.boundary_translational_velocity,
+        parameters.boundary_motion.boundary_rotational_speed,
+        parameters.boundary_motion.boundary_rotational_vector,
+        triangulation_diameter);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
              pw_nonlinear)
     {
-      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>();
+      pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>(
+        parameters.boundary_motion.boundary_translational_velocity,
+        parameters.boundary_motion.boundary_rotational_speed,
+        parameters.boundary_motion.boundary_rotational_vector,
+        triangulation_diameter);
     }
   else
     {
@@ -563,7 +572,8 @@ DEMSolver<dim>::solve()
   set_body_force();
 
   // Finding the smallest contact search frequency criterion between (smallest
-  // cell size - largest particle radius) and (security factor * (blab diamater
+  // cell size - largest particle radius) and (security factor * (blab
+  // diamater
   // - 1) *  largest particle radius). This value is used in
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =

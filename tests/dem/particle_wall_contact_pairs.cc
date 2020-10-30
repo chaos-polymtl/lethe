@@ -91,9 +91,11 @@ test()
   PWBroadSearch<dim> broad_search_object;
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>>
     pw_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),

@@ -68,12 +68,10 @@ public:
    * Prints the data of particles in the xyz format
    *
    * @param particle_handler The particle handler of active particles
-   * @param properties Properties of particles
    * @param g Body force for calculation of the exerted force on particles
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
-            std::vector<std::pair<std::string, int>> properties,
             const Tensor<1, dim> &                   g);
 
   ~Visualization();

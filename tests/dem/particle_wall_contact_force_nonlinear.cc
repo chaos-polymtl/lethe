@@ -59,7 +59,8 @@ test()
                             -1 * hyper_cube_length,
                             hyper_cube_length,
                             true);
-  int refinement_number = 2;
+  const double grid_radius       = 0.5 * GridTools::diameter(tr);
+  int          refinement_number = 2;
   tr.refine_global(refinement_number);
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
@@ -71,6 +72,7 @@ test()
   double         dt                                          = 0.00001;
   double         particle_diameter                           = 0.005;
   int            particle_density                            = 2500;
+  unsigned int   rotating_wall_maximum_number                = 6;
   dem_parameters.physical_properties.youngs_modulus_particle = 50000000;
   dem_parameters.physical_properties.youngs_modulus_wall     = 50000000;
   dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
@@ -81,6 +83,23 @@ test()
   dem_parameters.physical_properties.friction_coefficient_wall        = 0.5;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
   dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
+
+  // Initializing motion of boundaries
+  Tensor<1, dim> translational_and_rotational_veclocity;
+  for (unsigned int d = 0; d < dim; ++d)
+    {
+      translational_and_rotational_veclocity[d] = 0;
+    }
+  for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
+       ++counter)
+    {
+      dem_parameters.boundary_motion.boundary_rotational_speed.insert(
+        {counter, 0});
+      dem_parameters.boundary_motion.boundary_translational_velocity.insert(
+        {counter, translational_and_rotational_veclocity});
+      dem_parameters.boundary_motion.boundary_rotational_vector.insert(
+        {counter, translational_and_rotational_veclocity});
+    }
 
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
 
@@ -118,9 +137,11 @@ test()
   PWBroadSearch<dim> broad_search_object;
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>>
     pw_contact_list;
   broad_search_object.find_particle_wall_contact_pairs(
     boundary_cells_object.get_boundary_cells_information(),
@@ -135,7 +156,11 @@ test()
                                                pw_contact_information);
 
   // Calling non-linear force
-  PWNonLinearForce<dim> force_object;
+  PWNonLinearForce<dim> force_object(
+    dem_parameters.boundary_motion.boundary_translational_velocity,
+    dem_parameters.boundary_motion.boundary_rotational_speed,
+    dem_parameters.boundary_motion.boundary_rotational_vector,
+    grid_radius);
   force_object.calculate_pw_contact_force(&pw_contact_information,
                                           dem_parameters.physical_properties,
                                           dt);

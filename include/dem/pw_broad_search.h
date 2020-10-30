@@ -62,8 +62,8 @@ public:
    * cells
    * @param pw_contact_candidates A two-layered unordered map of tuples. Each
    * tuple contains a particle located near boundaries, the normal vector of
-   * the corresponding face boundary and a point on the boundary. The contact
-   * pair is used in the fine search
+   * the corresponding face boundary, a point on the boundary and boundary id.
+   * The contact pair is used in the fine search
    */
 
   void
@@ -76,7 +76,8 @@ public:
       std::unordered_map<int,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
-                                    Point<dim>>>> &pw_contact_candidates);
+                                    Point<dim>,
+                                    unsigned int>>> &pw_contact_candidates);
 
   /**
    * Finds a two-layered unordered map of particle iterators which shows the

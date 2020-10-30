@@ -17,10 +17,11 @@ localize_contacts(
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<dim>, Tensor<1, dim>, Point<dim>>>>
-    &pw_contact_candidates,
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<dim>,
+                                  Tensor<1, dim>,
+                                  Point<dim>,
+                                  unsigned int>>> &pw_contact_candidates,
   std::unordered_map<int,
                      std::unordered_map<int, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates)
@@ -189,10 +190,11 @@ localize_contacts(
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<2>, Tensor<1, 2>, Point<2>>>>
-    &pw_contact_candidates,
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<2>,
+                                  Tensor<1, 2>,
+                                  Point<2>,
+                                  unsigned int>>> &pw_contact_candidates,
   std::unordered_map<int,
                      std::unordered_map<int, Particles::ParticleIterator<2>>>
     pfw_contact_candidates);
@@ -211,10 +213,11 @@ localize_contacts(
   std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
     int,
-    std::unordered_map<
-      int,
-      std::tuple<Particles::ParticleIterator<3>, Tensor<1, 3>, Point<3>>>>
-    &pw_contact_candidates,
+    std::unordered_map<int,
+                       std::tuple<Particles::ParticleIterator<3>,
+                                  Tensor<1, 3>,
+                                  Point<3>,
+                                  unsigned int>>> &pw_contact_candidates,
   std::unordered_map<int,
                      std::unordered_map<int, Particles::ParticleIterator<3>>>
     pfw_contact_candidates);

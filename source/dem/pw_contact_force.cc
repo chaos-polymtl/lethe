@@ -28,7 +28,8 @@ PWContactForce<dim>::update_contact_information(
   const ArrayView<const double> &particle_properties,
   const double &                 dt)
 {
-  auto normal_vector = contact_info.normal_vector;
+  auto               normal_vector = contact_info.normal_vector;
+  const unsigned int boundary_id   = contact_info.boundary_id;
 
   // Using velocity and angular velocity of particle as
   // local vectors
@@ -53,16 +54,21 @@ PWContactForce<dim>::update_contact_information(
   if (dim == 3)
     {
       contact_relative_velocity =
-        particle_velocity +
-        cross_product_3d((((particle_properties[DEM::PropertiesIndex::dp]) /
-                           2) *
-                          particle_omega),
+        particle_velocity -
+        this->boundary_translational_velocity_map[boundary_id] +
+        cross_product_3d((0.5 * particle_properties[DEM::PropertiesIndex::dp] *
+                            particle_omega +
+                          this->triangulation_radius *
+                            this->boundary_rotational_speed_map[boundary_id] *
+                            this->boundary_rotational_vector[boundary_id]),
                          normal_vector);
     }
-
   if (dim == 2)
     {
-      contact_relative_velocity = particle_velocity;
+      contact_relative_velocity =
+        particle_velocity - this->triangulation_radius *
+                              this->boundary_rotational_speed_map[boundary_id] *
+                              cross_product_2d(normal_vector);
     }
 
   // Calculation of normal relative velocity

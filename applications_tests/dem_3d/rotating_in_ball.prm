@@ -4,8 +4,8 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 			 = 0.00001
-  set time end       					 = 0.5
+  set time step                 			 = 1e-5
+  set time end       					 = 0.2
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -29,8 +29,9 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		 = constant
-  set contact detection frequency                 	 = 10
-  set neighborhood threshold				 = 1.5
+  set contact detection frequency                 	 = 20
+  set repartition frequency 				 = 10000000
+  set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
   set integration method				 = velocity_verlet
@@ -40,8 +41,9 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set gx            		 			= 9.81
-    set gy            		 			= -9.81
+    set gx            		 			= 0.0
+    set gy            		 			= 0.0
+    set gz            		 			= -9.81
     set diameter            	 			= 0.005
     set density            	 			= 2000
     set young modulus particle         			= 1000000
@@ -61,17 +63,20 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 10
-    set inserted number of particles at each time step  = 10
+    set n total              				= 100
+    set inserted number of particles at each time step  = 100
     set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= 0.01
+    set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
-    set insertion box maximum x            	        = 0.06
-    set insertion box maximum y           	 	= 0
+    set insertion box minimum z            	        = -0.03
+    set insertion box maximum x            	        = 0.05
+    set insertion box maximum y           	 	= 0.05
+    set insertion box maximum z            	        = 0.07
     set insertion distance threshold			= 2
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
 end
+
 
 #---------------------------------------------------
 # Mesh
@@ -79,6 +84,21 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type      	     				= hyper_ball
-    set grid arguments       				= 0.0, 0.0 : 0.1 : false
+    set grid arguments       				= 0.0, 0.0, 0.0 : 0.1 : true
     set initial refinement   				= 3
+end
+
+#---------------------------------------------------
+# Boundary Motion
+#---------------------------------------------------
+subsection boundary motion
+  set number of boundary motion         		= 1
+    subsection moving boundary 0
+	set boundary id					= 4
+        set type              				= rotational
+	set rotational speed				= 2.5
+	set rotational vector x				= 1
+	set rotational vector y				= 0
+	set rotational vector z				= 0
+    end
 end
