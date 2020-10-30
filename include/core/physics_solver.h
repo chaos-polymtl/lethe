@@ -100,16 +100,16 @@ public:
   {
     nonzero_constraints.distribute(local_evaluation_point);
   }
-  // TODO get private
+  //getters
   VectorType &
   get_local_evaluation_point();
 
   // TODO std::unique or std::shared pointer
+  // TODO switch to private
   NonLinearSolver<VectorType> *non_linear_solver;
 
   VectorType system_rhs;
   VectorType evaluation_point;
-  //  VectorType local_evaluation_point;
   VectorType present_solution;
   VectorType newton_update;
 
@@ -163,6 +163,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
                                  force_matrix_renewal);
 }
 
+//getters
 template <typename VectorType>
 VectorType &
 PhysicsSolver<VectorType>::get_local_evaluation_point()
