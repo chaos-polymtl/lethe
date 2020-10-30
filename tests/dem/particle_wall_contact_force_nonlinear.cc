@@ -59,7 +59,8 @@ test()
                             -1 * hyper_cube_length,
                             hyper_cube_length,
                             true);
-  int refinement_number = 2;
+  const double grid_radius       = 0.5 * GridTools::diameter(tr);
+  int          refinement_number = 2;
   tr.refine_global(refinement_number);
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
@@ -159,7 +160,7 @@ test()
     dem_parameters.boundary_motion.boundary_translational_velocity,
     dem_parameters.boundary_motion.boundary_rotational_speed,
     dem_parameters.boundary_motion.boundary_rotational_vector,
-    0.5 * GridTools::diameter(tr));
+    grid_radius);
   force_object.calculate_pw_contact_force(&pw_contact_information,
                                           dem_parameters.physical_properties,
                                           dt);
