@@ -59,7 +59,7 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining simulation general parameters
-  const unsigned int n_properties = 24;
+  const unsigned int n_properties = DEM::PropertiesIndex::n_properties;
   Tensor<1, dim>     g{{0, 0, -9.81}};
   double             dt = 0.00001;
 
