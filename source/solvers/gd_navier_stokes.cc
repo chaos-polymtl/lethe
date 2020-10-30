@@ -586,8 +586,8 @@ GDNavierStokesSolver<dim>::setup_dofs()
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  //auto local_evaluation_point = this->get_local_evaluation_point();
-  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+  auto local_evaluation_point = this->get_local_evaluation_point();
+  local_evaluation_point.reinit(this->locally_owned_dofs,
                                       this->mpi_communicator);
 
 

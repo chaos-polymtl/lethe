@@ -1483,9 +1483,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   this->system_matrix.set(inside_index,
                                           local_dof_indices[dim],
                                           sum_line);
-
+                  auto local_evaluation_point = this->get_local_evaluation_point();
                   this->system_rhs(inside_index) =
-                    0 - this->local_evaluation_point(inside_index) * sum_line;
+                    0 - local_evaluation_point(inside_index) * sum_line;
                 }
 
 
