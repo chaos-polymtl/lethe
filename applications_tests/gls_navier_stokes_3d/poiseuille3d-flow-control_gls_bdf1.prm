@@ -1,0 +1,123 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# Simulation and IO Control
+#---------------------------------------------------
+subsection simulation control
+  set method                       = bdf1
+  set output name                  = poiseuille3d-flow-control_gls_bdf1
+  set time step                    = 0.01   # Time step
+  set output frequency        	   = 1      # Frequency of simulation output
+  set time end                     = 0.1    # End time of simulation
+
+end
+
+#---------------------------------------------------
+# Physical Properties
+#---------------------------------------------------
+subsection physical properties
+    set kinematic viscosity        = 1
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
+    set qmapping all              = true
+end
+
+#---------------------------------------------------
+# Timer
+#---------------------------------------------------
+subsection timer
+    set type    = none
+end
+
+#---------------------------------------------------
+# Mesh
+#---------------------------------------------------
+subsection mesh
+    set type                     = dealii
+    set grid type                = cylinder
+    set grid arguments           = 1 : 1
+    set initial refinement       = 2
+end
+
+
+# --------------------------------------------------
+# Boundary Conditions
+#---------------------------------------------------
+subsection boundary conditions
+  set number                     = 2
+    subsection bc 0
+        set type                 = noslip
+        set id                   = 0
+    end
+    subsection bc 1
+        set type                 = periodic
+        set id                   = 1
+        set periodic_id          = 2
+        set periodic_direction   = 0
+    end
+
+end
+
+
+#---------------------------------------------------
+# Flow control
+#---------------------------------------------------
+subsection flow control
+    set enable                     = true
+    set volumetric flow rate       = -10    # Negative flow rate for positive velocity since it's calculated with outward normal vector
+    set boundary id    		       = 1      # 0=x, 1=y, 2=z
+    set flow direction 		       = 0
+    set initial beta		       = 20
+end
+
+
+# --------------------------------------------------
+# Analytical Solution
+#---------------------------------------------------
+subsection analytical solution
+  set enable                 = true
+    subsection uvw
+            set Function constants = H=1, G=1, mu=1, rho=1
+            set Function expression =  ((H^2)*G*rho/(4*mu)) * (1 - (y^2+z^2)/(H^2)) ; 0 ; 0; 0  
+    end
+end
+
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                        = none
+end
+
+
+# --------------------------------------------------
+# Non-Linear Solver Control
+#---------------------------------------------------
+subsection non-linear solver
+  set tolerance               = 1e-8
+  set max iterations          = 10
+  set residual precision      = 2
+  set verbosity               = quiet
+end
+
+
+# --------------------------------------------------
+# Linear Solver Control
+#---------------------------------------------------
+subsection linear solver
+  set method                                 = gmres
+  set max iters                              = 5000
+  set relative residual                      = 1e-4
+  set minimum residual                       = 1e-9
+  set ilu preconditioner fill                = 1
+  set ilu preconditioner absolute tolerance  = 1e-6
+  set ilu preconditioner relative tolerance  = 1.00
+  set verbosity               = quiet
+end
