@@ -114,13 +114,13 @@ class AverageVelocities
 public:
   VectorType
   calculate_average_velocities(
-    const VectorType &                   present_solution,
+    const VectorType &                   local_evaluation_point,
     const Parameters::SimulationControl &simulation_control,
     const Parameters::PostProcessing &   post_processing,
     const double &                       current_time,
     const DofsType &                     locally_owned_dofs,
-    const DofsType &                     locally_relevant_dofs,
     const MPI_Comm &                     mpi_communicator);
+
   VectorType
   nondimensionalize_average_velocities(const double bulk_velocity);
 
@@ -133,56 +133,47 @@ private:
 template <int dim, typename VectorType, typename DofsType>
 VectorType
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
-  const VectorType &                   present_solution,
+  const VectorType &                   local_evaluation_point,
   const Parameters::SimulationControl &simulation_control,
   const Parameters::PostProcessing &   post_processing,
   const double &                       current_time,
   const DofsType &                     locally_owned_dofs,
-  const DofsType &                     locally_relevant_dofs,
   const MPI_Comm &                     mpi_communicator)
 {
   const double         total_time = current_time - post_processing.initial_time;
-  const TrilinosScalar trilinos_total_time = total_time;
-  const TrilinosScalar trilinos_dt         = simulation_control.dt;
-  VectorType           velocity_dt;
-  velocity_dt.reinit(locally_owned_dofs,
-                     locally_relevant_dofs,
-                     mpi_communicator);
-  velocity_dt.equ(trilinos_dt, present_solution);
+  const TrilinosScalar trilinos_inv_range_time = 1. / (total_time + simulation_control.dt) ;
+  const TrilinosScalar trilinos_dt = simulation_control.dt;
+  VectorType           velocity_dt(locally_owned_dofs,
+                                   mpi_communicator);
+  velocity_dt.equ(trilinos_dt, local_evaluation_point);
 
   if (current_time - 0.0 < 1e-6)
-    {
-      std::cout << "foo0" << std::endl;
-      // Reinitilizing vectors with zeros at t = 0
-      sum_velocity_dt.reinit(present_solution);
-      average_velocities.reinit(present_solution);
-      std::cout << "foo" << std::endl;
-    }
-  else if (abs(total_time) < 1e-6)
-    {
-      // Starting to sum velocity*dt because t = initial time
-      sum_velocity_dt = velocity_dt;
-      std::cout << "foo2" << std::endl;
-    }
-  else if (total_time >= 1e-6)
-    {
-      // Generating average velocities at each time step
-      sum_velocity_dt += velocity_dt;
-      average_velocities.equ(1. / trilinos_total_time, sum_velocity_dt);
-      std::cout << "foo3" << std::endl;
-    }
-  std::cout << "foo4" << std::endl;
+  {
+    // Reinitilizing vectors with zeros at t = 0
+    sum_velocity_dt.reinit(locally_owned_dofs,
+                           mpi_communicator);
+    average_velocities.reinit(locally_owned_dofs,
+                              mpi_communicator);
+  }
+  else if (abs(total_time) < 1e-6 || total_time > 1e-6)
+  {
+    // Generating average velocities at each time step
+    sum_velocity_dt += velocity_dt;
+    average_velocities.equ(trilinos_inv_range_time, sum_velocity_dt);
+  }
   return average_velocities;
 }
 
+
+// Function not tested yet
 template <int dim, typename VectorType, typename DofsType>
 VectorType
 AverageVelocities<dim, VectorType, DofsType>::
-  nondimensionalize_average_velocities(const double bulk_velocity)
+nondimensionalize_average_velocities(const double bulk_velocity)
 {
-  const TrilinosScalar trilinos_bulk_velocity = bulk_velocity;
-  nondimensionalized_average_velocities       = average_velocities;
-  nondimensionalized_average_velocities.equ(trilinos_bulk_velocity,
+  const TrilinosScalar trilinos_inv_bulk_velocity = 1. / bulk_velocity;
+  nondimensionalized_average_velocities = average_velocities;
+  nondimensionalized_average_velocities.equ(trilinos_inv_bulk_velocity,
                                             average_velocities);
   return nondimensionalized_average_velocities;
 }
