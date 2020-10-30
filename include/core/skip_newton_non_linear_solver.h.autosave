@@ -1,82 +1,61 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 -  by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019 -
- */
-
-#ifndef lethe_newton_non_linear_solver_h
-#define lethe_newton_non_linear_solver_h
+#ifndef lethe_skip_newton_non_linear_solver
+#define lethe_skip_newton_non_linear_solver
 
 #include "non_linear_solver.h"
 
 /**
- * @brief NewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
+ * @brief SkipNewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
  * method with \alpha relaxation to ensure that the residual is monotonically
- * decreasing.
+ * decreasing. This non-linear solver only recalculates the jacobian matrix at a
+ * given frequency.
  */
 template <typename VectorType>
-class NewtonNonLinearSolver : public NonLinearSolver<VectorType>
+class SkipNewtonNonLinearSolver : public NonLinearSolver<VectorType>
 {
 public:
   /**
-   * @brief Constructor for the NewtonNonLinearSolver.
+   * @brief Constructor for the SkipNewtonNonLinearSolver.
    *
    * @param physics_solver A pointer to the physics solver to which the non-linear solver is attached
    *
    * @param param Non-linear solver parameters
    *
+   * @param force_matrix_renewal A boolean variables that controls if the matrix and the preconditioner
+   * will be forced to be recalculated even if the number of skipped iteration
+   * has not been reached. This is generally used when the value of the time
+   * step or the time stepping scheme changes.
+   *
    */
-  NewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
-                        const Parameters::NonLinearSolver &param);
+  SkipNewtonNonLinearSolver(PhysicsSolver<VectorType> *        physics_solver,
+                            const Parameters::NonLinearSolver &param);
 
-
-  /**
-   * @brief Solve the non-linear system of equation.
-   *
-   * @param time_stepping_method Time stepping method being used. This is
-   * required since the jacobian of the matrix is going to depend on the method
-   * used
-   *
-   * @param is_initial_step Boolean variable that controls which constraints are
-   * going to be applied to the equations
-   *
-   * @param force_matrix_renewal Boolean variable that controls if the Newton non-linear
-   * solver will force the re-caculation of the jacobian matrix and the
-   * reconstruction of the preconditioner at every iteration.
-   */
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,
         const bool is_initial_step,
-        const bool force_matrix_renewal = true) override;
+        const bool force_matrix_renewal) override;
+
+
+private:
+  const Parameters::NonLinearSolver parameters;
+  unsigned int                      consecutive_iters;
 };
 
 template <typename VectorType>
-NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
+SkipNewtonNonLinearSolver<VectorType>::SkipNewtonNonLinearSolver(
   PhysicsSolver<VectorType> *        physics_solver,
   const Parameters::NonLinearSolver &params)
   : NonLinearSolver<VectorType>(physics_solver, params)
+  , parameters(params)
+  , consecutive_iters(0)
 {}
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve(
+SkipNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step,
-  const bool)
+  const bool                                              force_matrix_renewal)
 {
   double       current_res;
   double       last_res;
@@ -85,6 +64,9 @@ NewtonNonLinearSolver<VectorType>::solve(
   last_res                     = 1.0;
   current_res                  = 1.0;
 
+  bool assembly_needed =
+    consecutive_iters == 0 || is_initial_step || force_matrix_renewal;
+
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
   while ((current_res > this->params.tolerance) &&
@@ -92,7 +74,11 @@ NewtonNonLinearSolver<VectorType>::solve(
     {
       solver->evaluation_point = solver->present_solution;
 
-      solver->assemble_matrix_and_rhs(time_stepping_method);
+      if (assembly_needed)
+        solver->assemble_matrix_and_rhs(time_stepping_method);
+
+      else if (outer_iteration == 0)
+        solver->assemble_rhs(time_stepping_method);
 
       if (outer_iteration == 0)
         {
@@ -106,11 +92,11 @@ NewtonNonLinearSolver<VectorType>::solve(
                         << "  - Residual:  " << current_res << std::endl;
         }
 
-      solver->solve_linear_system(first_step);
+      solver->solve_linear_system(first_step, assembly_needed);
 
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
-//          solver->local_evaluation_point = solver->present_solution;
+          //solver->local_evaluation_point = solver->present_solution;
           auto local_evaluation_point = solver->get_local_evaluation_point();
           local_evaluation_point = solver->present_solution;
           solver->local_evaluation_point.add(alpha, solver->newton_update);
@@ -128,8 +114,7 @@ NewtonNonLinearSolver<VectorType>::solve(
                             << current_res << std::endl;
             }
 
-          if (current_res < this->params.step_tolerance * last_res ||
-              last_res < this->params.tolerance)
+          if (current_res < 0.9 * last_res || last_res < this->params.tolerance)
             {
               break;
             }
@@ -138,6 +123,12 @@ NewtonNonLinearSolver<VectorType>::solve(
       solver->present_solution = solver->evaluation_point;
       last_res                 = current_res;
       ++outer_iteration;
+      assembly_needed = false;
+    }
+  if (!force_matrix_renewal)
+    {
+      consecutive_iters++;
+      consecutive_iters = consecutive_iters % parameters.skip_iterations;
     }
 }
 

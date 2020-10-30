@@ -101,18 +101,24 @@ public:
     nonzero_constraints.distribute(local_evaluation_point);
   }
 
+  template <typename VectorType> get_local_evaluation_point();
+
   // TODO std::unique or std::shared pointer
   NonLinearSolver<VectorType> *non_linear_solver;
 
   VectorType system_rhs;
   VectorType evaluation_point;
-  VectorType local_evaluation_point;
+//  VectorType local_evaluation_point;
   VectorType present_solution;
   VectorType newton_update;
 
   AffineConstraints<double> nonzero_constraints;
 
   ConditionalOStream pcout;
+
+private:
+  VectorType local_evaluation_point;
+
 };
 
 template <typename VectorType>
@@ -155,6 +161,12 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   this->non_linear_solver->solve(time_stepping_method,
                                  first_iteration,
                                  force_matrix_renewal);
+}
+
+template <typename VectorType>
+PhysicsSolver<VectorType>::get_local_evaluation_point()
+{
+    return local_evaluation_point;
 }
 
 #endif
