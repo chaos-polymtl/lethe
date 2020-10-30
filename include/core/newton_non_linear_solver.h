@@ -96,7 +96,8 @@ NewtonNonLinearSolver<VectorType>::solve(
 
       if (outer_iteration == 0)
         {
-          current_res = solver->system_rhs.l2_norm();
+          auto &system_rhs = solver->get_system_rhs();
+          current_res = system_rhs.l2_norm();
           last_res    = current_res;
         }
 
@@ -117,7 +118,8 @@ NewtonNonLinearSolver<VectorType>::solve(
           solver->evaluation_point = local_evaluation_point;
           solver->assemble_rhs(time_stepping_method);
 
-          current_res = solver->system_rhs.l2_norm();
+          auto &system_rhs = solver->get_system_rhs();
+          current_res = system_rhs.l2_norm();
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {

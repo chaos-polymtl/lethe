@@ -1483,8 +1483,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   this->system_matrix.set(inside_index,
                                           local_dof_indices[dim],
                                           sum_line);
-                  auto local_evaluation_point = this->get_local_evaluation_point();
-                  this->system_rhs(inside_index) =
+                  auto &local_evaluation_point = this->get_local_evaluation_point();
+                  auto &system_rhs = this->get_system_rhs();
+                  system_rhs(inside_index) =
                     0 - local_evaluation_point(inside_index) * sum_line;
                 }
 
@@ -1789,7 +1790,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               this->system_matrix.set(global_index_overwrite,
                                                       global_index_overwrite,
                                                       sum_line);
-                              this->system_rhs(global_index_overwrite) = 0;
+                              auto &system_rhs = this->get_system_rhs();
+                              system_rhs(global_index_overwrite) = 0;
                               // Tolerence to define a intersection of
                               // the DOF and IB
                               if (vect_dist.norm() <= 1e-12 * dr)
@@ -1798,7 +1800,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 }
                               else
                                 {
-                                  this->system_rhs(global_index_overwrite) = 0;
+                                  system_rhs(global_index_overwrite) = 0;
                                 }
                             }
 
@@ -2262,11 +2264,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol_4 * fp2_5;
                                     }
 
-
-                                  this->system_rhs(global_index_overwrite) =
+                                  auto &system_rhs = this->get_system_rhs();
+                                  system_rhs(global_index_overwrite) =
                                     vx * sum_line + rhs_add;
                                   if (do_rhs)
-                                    this->system_rhs(global_index_overwrite) =
+                                    system_rhs(global_index_overwrite) =
                                       vx * sum_line -
                                       this->evaluation_point(
                                         global_index_overwrite) *
@@ -2355,11 +2357,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol_4 * fp2_5;
                                     }
 
-
-                                  this->system_rhs(global_index_overwrite) =
+                                  auto &system_rhs = this->get_system_rhs();
+                                  system_rhs(global_index_overwrite) =
                                     vy * sum_line + rhs_add;
                                   if (do_rhs)
-                                    this->system_rhs(global_index_overwrite) =
+                                    system_rhs(global_index_overwrite) =
                                       vy * sum_line -
                                       this->evaluation_point(
                                         global_index_overwrite) *
@@ -2427,11 +2429,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol_4 * fp2_5;
                                     }
 
-
-                                  this->system_rhs(global_index_overwrite) =
+                                  auto &system_rhs = this->get_system_rhs();
+                                  system_rhs(global_index_overwrite) =
                                     vz * sum_line + rhs_add;
                                   if (do_rhs)
-                                    this->system_rhs(global_index_overwrite) =
+                                    system_rhs(global_index_overwrite) =
                                       vz * sum_line -
                                       this->evaluation_point(
                                         global_index_overwrite) *
@@ -2512,7 +2514,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               this->system_matrix.set(global_index_overwrite,
                                                       global_index_overwrite,
                                                       sum_line);
-                              this->system_rhs(global_index_overwrite) = 0;
+                              auto &system_rhs = this->get_system_rhs();
+                              system_rhs(global_index_overwrite) = 0;
                             }
                         }
                     }
@@ -2522,7 +2525,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
     }
 
   this->system_matrix.compress(VectorOperation::insert);
-  this->system_rhs.compress(VectorOperation::insert);
+  auto &system_rhs = this->get_system_rhs();
+  system_rhs.compress(VectorOperation::insert);
 }
 
 template <int dim>
@@ -2532,10 +2536,11 @@ template <bool                                              assemble_matrix,
 void
 GLSSharpNavierStokesSolver<dim>::assembleGLS()
 {
+  auto &system_rhs = this->get_system_rhs();
   MPI_Barrier(this->mpi_communicator);
   if (assemble_matrix)
     this->system_matrix = 0;
-  this->system_rhs = 0;
+  system_rhs = 0;
   // erase_inertia();
   double         viscosity_ = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
@@ -3050,13 +3055,13 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                     local_rhs,
                     local_dof_indices,
                     this->system_matrix,
-                    this->system_rhs);
+                    system_rhs);
                 }
               else
                 {
                   constraints_used.distribute_local_to_global(local_rhs,
                                                               local_dof_indices,
-                                                              this->system_rhs);
+                                                              system_rhs);
                 }
             }
           else
@@ -3070,7 +3075,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
   if (assemble_matrix)
     this->system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>

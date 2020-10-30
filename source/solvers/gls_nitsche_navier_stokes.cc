@@ -132,15 +132,17 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
         }
       const AffineConstraints<double> &constraints_used =
         this->zero_constraints;
+      auto &system_rhs = this->get_system_rhs();
       constraints_used.distribute_local_to_global(local_matrix,
                                                   local_rhs,
                                                   fluid_dof_indices,
                                                   this->system_matrix,
-                                                  this->system_rhs);
+                                                  system_rhs);
       particle = pic.end();
     }
   this->system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  auto &system_rhs = this->get_system_rhs();
+  system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim, int spacedim>

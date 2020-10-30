@@ -58,9 +58,11 @@ template <bool                                              assemble_matrix,
 void
 GLSVANSSolver<dim>::assembleGLS()
 {
+  auto &system_rhs = this->get_system_rhs();
+
   if (assemble_matrix)
     system_matrix = 0;
-  this->system_rhs = 0;
+  system_rhs = 0;
 
   double         viscosity = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
@@ -604,19 +606,19 @@ GLSVANSSolver<dim>::assembleGLS()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           system_matrix,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
           else
             {
               constraints_used.distribute_local_to_global(local_rhs,
                                                           local_dof_indices,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
         }
     }
   if (assemble_matrix)
     system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 /**

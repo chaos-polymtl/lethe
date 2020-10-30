@@ -105,7 +105,8 @@ GDNavierStokesSolver<dim>::assembleGD()
   if (assemble_matrix)
     system_matrix = 0;
 
-  this->system_rhs = 0;
+  auto &system_rhs = this->get_system_rhs();
+  system_rhs = 0;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
@@ -302,13 +303,13 @@ GDNavierStokesSolver<dim>::assembleGD()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           system_matrix,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
           else
             {
               constraints_used.distribute_local_to_global(local_rhs,
                                                           local_dof_indices,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
         }
     }
@@ -329,7 +330,7 @@ GDNavierStokesSolver<dim>::assembleGD()
       // zero. Luckily, FGMRES handles these rows without any problem.
       system_matrix.block(1, 1) = 0;
     }
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -337,7 +338,8 @@ void
 GDNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
-  this->system_rhs = 0;
+  auto &system_rhs = this->get_system_rhs();
+  system_rhs = 0;
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
@@ -412,11 +414,11 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
                                                       local_rhs,
                                                       local_dof_indices,
                                                       system_matrix,
-                                                      this->system_rhs);
+                                                      system_rhs);
         }
     }
   system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 
@@ -585,7 +587,9 @@ GDNavierStokesSolver<dim>::setup_dofs()
                            this->mpi_communicator);
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  TrilinosWrappers::MPI::BlockVector &system_rhs =
+    this->get_system_rhs();
+  system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   TrilinosWrappers::MPI::BlockVector &local_evaluation_point =
     this->get_local_evaluation_point();
   local_evaluation_point.reinit(this->locally_owned_dofs,
@@ -875,10 +879,12 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                               const double relative_residual,
                                               const bool   renewed_matrix)
 {
+  auto &system_rhs = this->get_system_rhs();
+
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
@@ -905,7 +911,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
     solver.solve(system_matrix,
                  this->newton_update,
-                 this->system_rhs,
+                 system_rhs,
                  *system_ilu_preconditioner);
     if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
@@ -926,10 +932,12 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                             const double relative_residual,
                                             const bool   renewed_matrix)
 {
+  auto &system_rhs = this->get_system_rhs();
+
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
@@ -954,7 +962,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
     solver.solve(system_matrix,
                  this->newton_update,
-                 this->system_rhs,
+                 system_rhs,
                  *system_amg_preconditioner);
     if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
@@ -972,11 +980,13 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                                            double     absolute_residual,
                                            double     relative_residual)
 {
+  auto &system_rhs = this->get_system_rhs();
+
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
     initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
@@ -1011,7 +1021,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
 
   solver.solve(system_matrix,
                completely_distributed_solution,
-               this->system_rhs,
+               system_rhs,
                preconditioner);
 
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)

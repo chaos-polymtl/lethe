@@ -68,6 +68,7 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
     consecutive_iters == 0 || is_initial_step || force_matrix_renewal;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
+  auto &system_rhs = solver->get_system_rhs();
 
   while ((current_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
@@ -82,7 +83,7 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
 
       if (outer_iteration == 0)
         {
-          current_res = solver->system_rhs.l2_norm();
+          current_res = system_rhs.l2_norm();
           last_res    = current_res;
         }
 
@@ -103,7 +104,7 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
           solver->evaluation_point = local_evaluation_point;
           solver->assemble_rhs(time_stepping_method);
 
-          current_res = solver->system_rhs.l2_norm();
+          current_res = system_rhs.l2_norm();
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {

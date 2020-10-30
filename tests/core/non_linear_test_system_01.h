@@ -55,8 +55,9 @@ public:
   {
     // Initialize the vectors needed for the Physics Solver
     this->evaluation_point.reinit(2);
-    this->system_rhs.reinit(2);
+    auto &system_rhs = this->get_system_rhs();
     auto &local_evaluation_point = this->get_local_evaluation_point();
+    system_rhs.reinit(2);
     local_evaluation_point.reinit(2);
     this->present_solution.reinit(2);
     this->newton_update.reinit(2);
@@ -90,8 +91,8 @@ public:
     system_matrix.set(1, 0, 0);
     system_matrix.set(1, 1, 2);
 
-    this->system_rhs[0] = -(x_0 * x_0 + x_1);
-    this->system_rhs[1] = -(2 * x_1 + 3);
+    system_rhs[0] = -(x_0 * x_0 + x_1);
+    system_rhs[1] = -(2 * x_1 + 3);
 
     system_matrix.set_property(LAPACKSupport::general);
     system_matrix.compute_lu_factorization();
@@ -103,8 +104,8 @@ public:
   {
     double x_0          = this->evaluation_point[0];
     double x_1          = this->evaluation_point[1];
-    this->system_rhs[0] = -(x_0 * x_0 + x_1);
-    this->system_rhs[1] = -(2 * x_1 + 3);
+    system_rhs[0] = -(x_0 * x_0 + x_1);
+    system_rhs[1] = -(2 * x_1 + 3);
   }
 
   /**
@@ -116,8 +117,8 @@ public:
   void
   solve_linear_system(const bool, const bool) override
   {
-    system_matrix.solve(this->system_rhs);
-    newton_update = this->system_rhs;
+    system_matrix.solve(system_rhs);
+    newton_update = system_rhs;
   }
 
   virtual void
