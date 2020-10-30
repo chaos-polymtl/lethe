@@ -56,9 +56,10 @@ public:
     // Initialize the vectors needed for the Physics Solver
     this->evaluation_point.reinit(2);
     this->system_rhs.reinit(2);
-    //auto local_evaluation_point = this->get_local_evaluation_point();
-    //local_evaluation_point.reinit(2);
-    this->local_evaluation_point.reinit(2);
+    // auto local_evaluation_point = this->get_local_evaluation_point();
+    // local_evaluation_point.reinit(2);
+    auto &local_evaluation_point = this->get_local_evaluation_point();
+    local_evaluation_point.reinit(2);
     this->present_solution.reinit(2);
     this->newton_update.reinit(2);
 

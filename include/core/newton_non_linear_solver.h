@@ -110,8 +110,8 @@ NewtonNonLinearSolver<VectorType>::solve(
 
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
-          auto local_evaluation_point = solver->get_local_evaluation_point();
-          local_evaluation_point = solver->present_solution;
+          auto &local_evaluation_point = solver->get_local_evaluation_point();
+          local_evaluation_point       = solver->present_solution;
           local_evaluation_point.add(alpha, solver->newton_update);
           solver->apply_constraints();
           solver->evaluation_point = local_evaluation_point;
