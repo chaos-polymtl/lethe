@@ -59,8 +59,8 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining general simulation parameters
-  Tensor<1, dim>     g{{0, 0, -9.81}};
-  double             dt = 0.00001;
+  Tensor<1, dim> g{{0, 0, -9.81}};
+  double         dt = 0.00001;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(
