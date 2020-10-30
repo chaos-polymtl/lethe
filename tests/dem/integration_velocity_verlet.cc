@@ -59,12 +59,12 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining simulation general parameters
-  const unsigned int n_properties = DEM::PropertiesIndex::n_properties;
-  Tensor<1, dim>     g{{0, 0, -9.81}};
-  double             dt = 0.00001;
+  Tensor<1, dim> g{{0, 0, -9.81}};
+  double         dt = 0.00001;
 
   // Defning particle handler
-  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
 
   // inserting one particle at x = 0 , y = 0 and z = 0 m
   // initial velocity of particles = 0, 0, 0 m/s
