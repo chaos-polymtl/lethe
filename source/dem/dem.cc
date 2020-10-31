@@ -637,9 +637,10 @@ DEMSolver<dim>::solve()
           contact_search_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
+          particle_handler.exchange_ghost_particles();
         }
-
-      particle_handler.exchange_ghost_particles();
+      else
+        particle_handler.update_ghost_particles();
 
       // Broad particle-particle contact search
       if (particles_insertion_step || load_balancing_step ||
