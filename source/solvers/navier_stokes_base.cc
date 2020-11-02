@@ -145,7 +145,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
       this->beta =
-        flow.calculate_beta(this->dof_handler,
+        flow.get_beta(this->dof_handler,
                             present_solution,
                             nsparam.flow_control,
                             nsparam.simulation_control,
