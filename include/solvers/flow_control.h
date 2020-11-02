@@ -59,14 +59,34 @@ template <int dim, typename VectorType>
 class FlowControl
 {
 public:
+  void
+  calculate_flow_rate(    const DoFHandler<dim> &               dof_handler,
+                          const VectorType &                    present_solution,
+                          const Parameters::DynamicFlowControl &flow_control,
+                          const Parameters::FEM &               fem_parameters,
+                          const MPI_Comm &                      mpi_communicator);
+
+  void
+  calculate_beta(  const Parameters::DynamicFlowControl & flow_control,
+                   const Parameters::SimulationControl &  simulation_control,
+                   const unsigned int &                   step_number);
+
+  double
+    get_flow_rate(    const DoFHandler<dim> &               dof_handler,
+                      const VectorType &                    present_solution,
+                      const Parameters::DynamicFlowControl &flow_control,
+                      const Parameters::FEM &               fem_parameters,
+                      const MPI_Comm &                      mpi_communicator);
+
   Tensor<1, dim>
-  calculate_beta(const DoFHandler<dim> &               dof_handler,
-                 const VectorType &                    present_solution,
-                 const Parameters::DynamicFlowControl &flow_control,
-                 const Parameters::SimulationControl & simulation_control,
-                 const Parameters::FEM &               fem_parameters,
-                 const unsigned int &                  step_number,
-                 const MPI_Comm &                      mpi_communicator);
+  get_beta(  const DoFHandler<dim> &                 dof_handler,
+             const VectorType & present_solution,
+             const Parameters::DynamicFlowControl &flow_control,
+             const Parameters::SimulationControl & simulation_control,
+             const Parameters::FEM &               fem_parameters,
+             const unsigned int &                  step_number,
+             const MPI_Comm &                      mpi_communicator);
+
   std::vector<double>
   flow_summary();
   double
@@ -89,22 +109,15 @@ private:
 };
 
 template <int dim, typename VectorType>
-Tensor<1, dim>
-FlowControl<dim, VectorType>::calculate_beta(
+void
+FlowControl<dim, VectorType>::calculate_flow_rate(
   const DoFHandler<dim> &               dof_handler,
   const VectorType &                    present_solution,
   const Parameters::DynamicFlowControl &flow_control,
-  const Parameters::SimulationControl & simulation_control,
   const Parameters::FEM &               fem_parameters,
-  const unsigned int &                  step_number,
   const MPI_Comm &                      mpi_communicator)
 {
-  beta_1n      = beta_n;
-  beta_n       = beta_n1;
-  flow_rate_1n = flow_rate_n;
-
   const FiniteElement<dim> &fe = dof_handler.get_fe();
-
   const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
   QGauss<dim - 1>     face_quadrature_formula(fe.degree + 1);
   const unsigned int  n_q_points = face_quadrature_formula.size();
@@ -154,6 +167,18 @@ FlowControl<dim, VectorType>::calculate_beta(
 
   area        = Utilities::MPI::sum(area, mpi_communicator);
   flow_rate_n = Utilities::MPI::sum(flow_rate_n, mpi_communicator);
+}
+
+template <int dim, typename VectorType>
+void
+FlowControl<dim, VectorType>::calculate_beta(
+  const Parameters::DynamicFlowControl & flow_control,
+  const Parameters::SimulationControl &  simulation_control,
+  const unsigned int &                   step_number)
+{
+  beta_1n      = beta_n;
+  beta_n       = beta_n1;
+  flow_rate_1n = flow_rate_n;
 
   const double dt          = simulation_control.dt;
   const double flow_rate_0 = flow_control.flow_rate;
@@ -211,6 +236,46 @@ FlowControl<dim, VectorType>::calculate_beta(
     beta[1] = beta_n1; // beta = f_y
   else if (flow_control.flow_direction == 2)
     beta[2] = beta_n1; // beta = f_z
+
+}
+
+template <int dim, typename VectorType>
+double
+  FlowControl<dim, VectorType>::get_flow_rate(
+    const DoFHandler<dim> &               dof_handler,
+    const VectorType &                    present_solution,
+    const Parameters::DynamicFlowControl &flow_control,
+    const Parameters::FEM &               fem_parameters,
+    const MPI_Comm &                      mpi_communicator)
+{
+  calculate_flow_rate(dof_handler,
+                      present_solution,
+                      flow_control,
+                      fem_parameters,
+                      mpi_communicator);
+  return flow_rate_n;
+}
+
+template <int dim, typename VectorType>
+Tensor<1, dim>
+FlowControl<dim, VectorType>::get_beta(
+  const DoFHandler<dim> &               dof_handler,
+  const VectorType &                     present_solution,
+  const Parameters::DynamicFlowControl &flow_control,
+  const Parameters::SimulationControl & simulation_control,
+  const Parameters::FEM &               fem_parameters,
+  const unsigned int &                  step_number,
+  const MPI_Comm &                      mpi_communicator)
+{
+  calculate_flow_rate(dof_handler,
+                      present_solution,
+                      flow_control,
+                      fem_parameters,
+                      mpi_communicator);
+
+  calculate_beta(flow_control,
+                 simulation_control,
+                 step_number);
 
   return beta;
 }
