@@ -86,14 +86,10 @@ read_mesh_and_manifolds(
     {
       double minimal_cell_size =
         GridTools::minimal_cell_diameter(*triangulation);
-      unsigned int number_refinement = 0;
-      double       target_size       = mesh_parameters.target_size;
-      while (minimal_cell_size / 2 >= mesh_parameters.target_size)
-        {
-          triangulation->refine_global(1);
-          number_refinement++;
-          minimal_cell_size = GridTools::minimal_cell_diameter(*triangulation);
-        }
+      double       target_size = mesh_parameters.target_size;
+      unsigned int number_refinement =
+        floor(std::log(minimal_cell_size / target_size) / std::log(2));
+      triangulation->refine_global(number_refinement);
     }
   else
     {

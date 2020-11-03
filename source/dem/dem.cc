@@ -196,22 +196,18 @@ DEMSolver<dim>::read_mesh()
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
-  triangulation_diameter = 0.5 * GridTools::diameter(triangulation);
+  triangulation_cell_diameter = 0.5 * GridTools::diameter(triangulation);
 
   if (parameters.mesh.refine_until_target_size)
     {
       double minimal_cell_size =
         GridTools::minimal_cell_diameter(triangulation);
-      unsigned int number_refinement = 0;
-      double       target_size       = parameters.mesh.target_size;
+      double       target_size = parameters.mesh.target_size;
+      unsigned int number_refinement =
+        floor(std::log(minimal_cell_size / target_size) / std::log(2));
       pcout << "Automatically refining grid until target size : " << target_size
             << std::endl;
-      while (minimal_cell_size / 2 >= parameters.mesh.target_size)
-        {
-          triangulation.refine_global(1);
-          number_refinement++;
-          minimal_cell_size = GridTools::minimal_cell_diameter(triangulation);
-        }
+      triangulation.refine_global(number_refinement);
       pcout << "Mesh was automatically refined : " << number_refinement
             << " times" << std::endl;
     }
@@ -498,7 +494,7 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_diameter);
+        triangulation_cell_diameter);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -508,7 +504,7 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_diameter);
+        triangulation_cell_diameter);
     }
   else
     {
