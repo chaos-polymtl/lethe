@@ -342,6 +342,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
     {
       if (cell->is_locally_owned())
         {
+          auto &evaluation_point = this->get_evaluation_point();
           fe_values.reinit(cell);
 
           if (dim == 2)
@@ -355,18 +356,18 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           local_rhs    = 0;
 
           // Gather velocity (values, gradient and laplacian)
-          fe_values[velocities].get_function_values(this->evaluation_point,
+          fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
           fe_values[velocities].get_function_gradients(
-            this->evaluation_point, present_velocity_gradients);
+            evaluation_point, present_velocity_gradients);
           fe_values[velocities].get_function_laplacians(
-            this->evaluation_point, present_velocity_laplacians);
+            evaluation_point, present_velocity_laplacians);
 
           // Gather pressure (values, gradient)
-          fe_values[pressure].get_function_values(this->evaluation_point,
+          fe_values[pressure].get_function_values(evaluation_point,
                                                   present_pressure_values);
           fe_values[pressure].get_function_gradients(
-            this->evaluation_point, present_pressure_gradients);
+            evaluation_point, present_pressure_gradients);
 
           std::vector<Point<dim>> quadrature_points =
             fe_values.get_quadrature_points();

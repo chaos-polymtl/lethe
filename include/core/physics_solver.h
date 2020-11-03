@@ -102,23 +102,25 @@ public:
   }
   //getters
   VectorType & get_local_evaluation_point();
+  VectorType & get_evaluation_point();
   VectorType & get_system_rhs();
 
   // TODO std::unique or std::shared pointer
-  // TODO switch to private
+  ConditionalOStream pcout;
+
+  // TODO Jeanne: switch to private
   NonLinearSolver<VectorType> *non_linear_solver;
 
-  VectorType evaluation_point;
   VectorType present_solution;
   VectorType newton_update;
 
   AffineConstraints<double> nonzero_constraints;
 
-  ConditionalOStream pcout;
 
 private:
   VectorType local_evaluation_point;
   VectorType system_rhs;
+  VectorType evaluation_point;
 };
 
 template <typename VectorType>
@@ -169,6 +171,13 @@ VectorType &
 PhysicsSolver<VectorType>::get_local_evaluation_point()
 {
   return local_evaluation_point;
+}
+
+template <typename VectorType>
+VectorType &
+PhysicsSolver<VectorType>::get_evaluation_point()
+{
+  return evaluation_point;
 }
 
 template <typename VectorType>

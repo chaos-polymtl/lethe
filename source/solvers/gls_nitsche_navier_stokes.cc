@@ -99,8 +99,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                 {
                   // Get the velocity at non-quadrature point (particle in
                   // fluid)
+                  auto &evaluation_point = this->get_evaluation_point();
                   velocity[comp_k] +=
-                    this->evaluation_point[fluid_dof_indices[k]] *
+                    evaluation_point[fluid_dof_indices[k]] *
                     this->fe.shape_value(k, ref_q);
                 }
             }
@@ -179,10 +180,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
 
       // Generate FEField functoin to evaluate values and gradients
       // at the particle location
+      auto &evaluation_point = this->get_evaluation_point();
       Functions::FEFieldFunction<spacedim,
                                  DoFHandler<spacedim>,
                                  TrilinosWrappers::MPI::Vector>
-        fe_field(this->dof_handler, this->evaluation_point);
+        fe_field(this->dof_handler, evaluation_point);
 
       fe_field.set_active_cell(dh_cell);
 

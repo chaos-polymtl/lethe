@@ -54,7 +54,8 @@ public:
     : PhysicsSolver(params)
   {
     // Initialize the vectors needed for the Physics Solver
-    this->evaluation_point.reinit(2);
+    auto &evaluation_point = this->get_evaluation_point();
+    evaluation_point.reinit(2);
     auto &system_rhs = this->get_system_rhs();
     auto &local_evaluation_point = this->get_local_evaluation_point();
     system_rhs.reinit(2);
@@ -84,8 +85,9 @@ public:
     // Jacobian
     // 2x_0     1
     // 0        2
-    double x_0 = this->evaluation_point[0];
-    double x_1 = this->evaluation_point[1];
+    auto &evaluation_point = this->get_evaluation_point();
+    double x_0 = evaluation_point[0];
+    double x_1 = evaluation_point[1];
     system_matrix.set(0, 0, 2 * x_0);
     system_matrix.set(0, 1, 1);
     system_matrix.set(1, 0, 0);
@@ -103,9 +105,10 @@ public:
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override
   {
-    double x_0          = this->evaluation_point[0];
-    double x_1          = this->evaluation_point[1];
+    auto &evaluation_point = this->get_evaluation_point();
     auto &system_rhs = this->get_system_rhs();
+    double x_0          = evaluation_point[0];
+    double x_1          = evaluation_point[1];
 
     system_rhs[0] = -(x_0 * x_0 + x_1);
     system_rhs[1] = -(2 * x_1 + 3);
