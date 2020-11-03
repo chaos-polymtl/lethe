@@ -6,7 +6,6 @@ calculate_average_velocities(
   const TrilinosWrappers::MPI::Vector &local_evaluation_point,
   const Parameters::SimulationControl &simulation_control,
   const Parameters::PostProcessing &   post_processing,
-  const double &                       current_time,
   const IndexSet &                     locally_owned_dofs,
   const MPI_Comm &                     mpi_communicator);
 
@@ -16,7 +15,6 @@ calculate_average_velocities(
   const TrilinosWrappers::MPI::Vector &local_evaluation_point,
   const Parameters::SimulationControl &simulation_control,
   const Parameters::PostProcessing &   post_processing,
-  const double &                       current_time,
   const IndexSet &                     locally_owned_dofs,
   const MPI_Comm &                     mpi_communicator);
 
@@ -26,7 +24,6 @@ calculate_average_velocities(
   const TrilinosWrappers::MPI::BlockVector &local_evaluation_point,
   const Parameters::SimulationControl      &simulation_control,
   const Parameters::PostProcessing &        post_processing,
-  const double &                            current_time,
   const std::vector<IndexSet> &             locally_owned_dofs,
   const MPI_Comm &                          mpi_communicator);
 
@@ -36,6 +33,5 @@ calculate_average_velocities(
   const TrilinosWrappers::MPI::BlockVector &local_evaluation_point,
   const Parameters::SimulationControl      &simulation_control,
   const Parameters::PostProcessing &        post_processing,
-  const double &                            current_time,
   const std::vector<IndexSet> &             locally_owned_dofs,
   const MPI_Comm &                          mpi_communicator);

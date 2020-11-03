@@ -123,13 +123,15 @@ public:
   VectorType
   nondimensionalize_average_velocities(const double bulk_velocity);
 
-  VectorType
-  calculate_reynolds_stresses(const VectorType & local_evaluation_point,
-                              const DofsType &   locally_owned_dofs,
-                              const MPI_Comm &   mpi_communicator);
+  Vector<double>
+  calculate_reynolds_stress(
+    const VectorType &                        local_evaluation_point,
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const DofsType &                          locally_owned_dofs,
+    const MPI_Comm &                          mpi_communicator);
 
   VectorType
-  nondimensionalize_reynolds_stresses(const double bulk_velocity);
+  nondimensionalize_reynolds_stress(const double bulk_velocity);
 
 private:
   double time;
@@ -138,10 +140,10 @@ private:
   VectorType average_velocities;
   VectorType nondimensionalized_average_velocities;
 
-  Vector<double> sum_normal_stresses_dt;
+  Vector<double> sum_normal_stress_dt;
   Vector<double> sum_shear_stress_dt;
-  VectorType normal_stresses;
-  VectorType shear_stress;
+  Vector<double> normal_stress;
+  Vector<double>  shear_stress;
 
   TrilinosScalar inv_range_time;
   TrilinosScalar dt;
@@ -159,25 +161,26 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   time = simulation_control->get_current_time();
   total_time = time - post_processing.initial_time;
 
-  if (time <= 0)
+  if (simulation_control->get_step_number() == 0)
   {
-    // Reinitializing vectors with zeros at t = 0
+    // Reinitializing vectors with zeros and dt at t = 0
     sum_velocity_dt.reinit(locally_owned_dofs,
                            mpi_communicator);
     average_velocities.reinit(locally_owned_dofs,
                               mpi_communicator);
-  }
-  else if (total_time >= 0)
-  {
-    // Generating average velocities at each time step at initial time
-    inv_range_time = 1. / (total_time + simulation_control->calculate_time_step()) ;
     dt = simulation_control->calculate_time_step();
+  }
+  else if (abs(total_time) < 1e-6 || total_time > 0)
+  {
+    // Generating average velocities at each time from initial time
+    inv_range_time = 1. / (total_time + dt);
 
+    std::cout << total_time + dt << std::endl;
     VectorType velocity_dt(locally_owned_dofs,
                            mpi_communicator);
     velocity_dt.equ(dt, local_evaluation_point);
-
     sum_velocity_dt += velocity_dt;
+
     if (simulation_control->is_output_iteration())
       average_velocities.equ(inv_range_time, sum_velocity_dt);
   }
@@ -190,69 +193,67 @@ VectorType
 AverageVelocities<dim, VectorType, DofsType>::
 nondimensionalize_average_velocities(const double bulk_velocity)
 {
-  const TrilinosScalar trilinos_inv_bulk_velocity = 1. / bulk_velocity;
+  const TrilinosScalar inv_bulk_velocity = 1. / bulk_velocity;
   nondimensionalized_average_velocities = average_velocities;
-  nondimensionalized_average_velocities.equ(trilinos_inv_bulk_velocity,
-                                            average_velocities);
+  nondimensionalized_average_velocities.equ(inv_bulk_velocity, average_velocities);
   return nondimensionalized_average_velocities;
 }
 
-//Reynolds stresses
+//Reynolds stress
 template <int dim, typename VectorType, typename DofsType>
-VectorType
-AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
-  const VectorType & local_evaluation_point,
-  const DofsType &   locally_owned_dofs,
-  const MPI_Comm &   mpi_communicator)
+Vector<double>
+AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
+  const VectorType &                        local_evaluation_point,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const DofsType &                          locally_owned_dofs,
+  const MPI_Comm &                          mpi_communicator)
 {
-  /*
-  if (time - 0.0 < 1e-6)
+  if (simulation_control->get_step_number() == 0)
   {
     // Reinitializing vectors with zeros at t = 0
-    sum_normal_stresses_dt.reinit(3 * local_evaluation_point.size() / 4);
-    normal_stresses = sum_normal_stresses_dt;
+    sum_normal_stress_dt.reinit(3 * local_evaluation_point.size() / 4);
+    normal_stress.reinit(3 * local_evaluation_point.size() / 4);
     sum_shear_stress_dt.reinit(local_evaluation_point.size() / 4);
-    shear_stress = sum_shear_stress_dt;
+    shear_stress.reinit(local_evaluation_point.size() / 4);
   }
   else if (abs(total_time) < 1e-6 || total_time > 1e-6)
+  {
+    Vector<double> normal_stress_dt(normal_stress.size());
+    Vector<double> shear_stress_dt(normal_stress.size());
+
+    // Won't work with blockVector
+    for (unsigned int q = 0; q < local_evaluation_point.size(); q += 4)
     {
-      Vector<double> normal_stresses_dt(sum_normal_stresses_dt.size());
-      Vector<double> shear_stress_dt(sum_shear_stress_dt.size());
-      for (const auto &dof : locally_owned_dofs)
-        {
-          for (unsigned int q = 0; q < local_evaluation_point.size(); q += 4)
-            {
-              unsigned int i = 0;
-              unsigned int j = 0;
-                {
-                  //normal_stresses_dt[i] = local_evaluation_point[q].add(-average_velocities[q]);
-                  //normal_stresses_dt[i+1] = local_evaluation_point[q+1].add(-average_velocities[q+1]);
-                  //normal_stresses_dt[i+2] = local_evaluation_point[q+2].add(-average_velocities[q+2]);
+      unsigned int i = 0;
+      unsigned int j = 0;
+        //normal_stress_dt[i] = local_evaluation_point[q].add(-average_velocities[q]);
+        //normal_stress_dt[i+1] = local_evaluation_point[q+1].add(-average_velocities[q+1]);
+        //normal_stress_dt[i+2] = local_evaluation_point[q+2].add(-average_velocities[q+2]);
 
-                  // Calculate u'*dt, v'*dt and w'*dt
-                  normal_stresses_dt[i] = (local_evaluation_point[q] - average_velocities[q]) * trilinos_dt;
-                  normal_stresses_dt[i+1] = (local_evaluation_point[q+1] - average_velocities[q+1]) * trilinos_dt;
-                  normal_stresses_dt[i+2] = (local_evaluation_point[q+2] - average_velocities[q+2]) * trilinos_dt;
-                  i += 3;
+        // Calculate u'*dt, v'*dt and w'*dt
+        normal_stress_dt[i] = (local_evaluation_point[q] - average_velocities[q]) * dt;
+        normal_stress_dt[i+1] = (local_evaluation_point[q+1] - average_velocities[q+1]) * dt;
+        normal_stress_dt[i+2] = (local_evaluation_point[q+2] - average_velocities[q+2]) * dt;
+        i += 3;
 
-                  // Calulate u'v'*dt (u'*dt * u'*dt) / dt with normal_stresses_dt vectors)
-                  shear_stress_dt[j] = normal_stresses_dt[i] * normal_stresses_dt[i+1] / trilinos_dt;
-                  j++;
-                }
-            }
-        }
-      sum_normal_stresses_dt += normal_stresses_dt;
-      normal_stresses.equ(trilinos_inv_range_time, sum_normal_stresses_dt);
+        // Calulate u'v'*dt (u'*dt * u'*dt) / dt with normal_stress_dt vectors)
+        shear_stress_dt[j] = normal_stress_dt[i] * normal_stress_dt[i+1] / dt;
+        j++;
+    }
+
+      sum_normal_stress_dt += normal_stress_dt;
+      sum_shear_stress_dt += shear_stress_dt;
+      normal_stress.equ(inv_range_time, sum_normal_stress_dt);
 
       sum_shear_stress_dt += shear_stress_dt;
-      shear_stress.equ(trilinos_inv_range_time, sum_shear_stress_dt);
+      shear_stress.equ(inv_range_time, sum_shear_stress_dt);
     }
-  return normal_stresses; */
+  return normal_stress;
 }
 
 template <int dim, typename VectorType, typename DofsType>
 VectorType
-AverageVelocities<dim, VectorType, DofsType>::nondimensionalize_reynolds_stresses(
+AverageVelocities<dim, VectorType, DofsType>::nondimensionalize_reynolds_stress(
   const double bulk_velocity)
 {
 

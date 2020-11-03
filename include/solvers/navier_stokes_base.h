@@ -307,6 +307,8 @@ protected:
   VectorType solution_m2;
   VectorType solution_m3;
   VectorType average_solution;
+  VectorType normal_reynolds_stress;
+
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
