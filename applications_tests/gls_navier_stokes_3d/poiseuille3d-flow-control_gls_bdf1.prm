@@ -6,9 +6,9 @@
 subsection simulation control
   set method                       = bdf1
   set output name                  = poiseuille3d-flow-control_gls_bdf1
-  set time step                    = 0.01   # Time step
-  set output frequency        	   = 1      # Frequency of simulation output
-  set time end                     = 0.1    # End time of simulation
+  set time step                    = 0.1  # Time step
+  set output frequency        	   = 1    # Frequency of simulation output
+  set time end                     = 5    # End time of simulation
 
 end
 
@@ -42,7 +42,7 @@ subsection mesh
     set type                     = dealii
     set grid type                = cylinder
     set grid arguments           = 1 : 1
-    set initial refinement       = 2
+    set initial refinement       = 3
 end
 
 
@@ -71,21 +71,9 @@ end
 subsection flow control
     set enable                     = true
     set volumetric flow rate       = -10    # Negative flow rate for positive velocity since it's calculated with outward normal vector
-    set boundary id    		       = 1      # 0=x, 1=y, 2=z
-    set flow direction 		       = 0
-    set initial beta		       = 20
-end
-
-
-# --------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-subsection analytical solution
-  set enable                 = true
-    subsection uvw
-            set Function constants = H=1, G=1, mu=1, rho=1
-            set Function expression =  ((H^2)*G*rho/(4*mu)) * (1 - (y^2+z^2)/(H^2)) ; 0 ; 0; 0  
-    end
+    set boundary id    		   = 1      # 0=x, 1=y, 2=z
+    set flow direction 		   = 0
+    set initial beta		   = 70
 end
 
 
