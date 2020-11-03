@@ -643,7 +643,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
     {
       assemble_L2_projection();
       solve_system_GMRES(true, 1e-15, 1e-15, true);
-      this->present_solution = this->newton_update;
+      auto &present_solution = this->get_present_solution();
+      present_solution = this->newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }

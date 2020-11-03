@@ -87,11 +87,13 @@ NewtonNonLinearSolver<VectorType>::solve(
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
+  auto &evaluation_point = solver->get_evaluation_point();
+  auto &present_solution = solver->get_present_solution();
+
   while ((current_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
     {
-      auto &evaluation_point = solver->get_evaluation_point();
-      evaluation_point = solver->present_solution;
+      evaluation_point = present_solution;
 
       solver->assemble_matrix_and_rhs(time_stepping_method);
 
@@ -113,8 +115,7 @@ NewtonNonLinearSolver<VectorType>::solve(
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
           auto &local_evaluation_point = solver->get_local_evaluation_point();
-          auto &evaluation_point = solver->get_evaluation_point();
-          local_evaluation_point       = solver->present_solution;
+          local_evaluation_point       = present_solution;
           local_evaluation_point.add(alpha, solver->newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
@@ -138,7 +139,7 @@ NewtonNonLinearSolver<VectorType>::solve(
             }
         }
 
-      solver->present_solution = evaluation_point;
+      present_solution = evaluation_point;
       last_res                 = current_res;
       ++outer_iteration;
     }

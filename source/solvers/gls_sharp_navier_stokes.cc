@@ -404,26 +404,27 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // solution at the point previously define
                   for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
                     {
+                      auto &present_solution = this->get_present_solution();
                       const unsigned int component_i =
                         this->fe.system_to_component_index(j).first;
                       if (component_i < dim)
                         {
                           u_2[component_i] +=
                             this->fe.shape_value(j, second_point_v) *
-                            this->present_solution(local_dof_indices[j]);
+                            present_solution(local_dof_indices[j]);
 
                           u_3[component_i] +=
                             this->fe.shape_value(j, third_point_v) *
-                            this->present_solution(local_dof_indices_2[j]);
+                            present_solution(local_dof_indices_2[j]);
                         }
                       if (component_i == dim)
                         {
                           P1 += this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
+                                present_solution(local_dof_indices[j]);
                           P2 += this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
+                                present_solution(local_dof_indices_2[j]);
                           P3 += this->fe.shape_value(j, fourth_point_v) *
-                                this->present_solution(local_dof_indices_3[j]);
+                                present_solution(local_dof_indices_3[j]);
                         }
                     }
                   // Evaluate the solution in the reference frame of the
@@ -845,27 +846,28 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                         {
                           const unsigned int component_i =
                             this->fe.system_to_component_index(j).first;
+                          auto &present_solution = this->get_present_solution();
                           if (component_i < dim)
                             {
                               u_2[component_i] +=
                                 this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
+                                present_solution(local_dof_indices[j]);
 
                               u_3[component_i] +=
                                 this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
+                                present_solution(local_dof_indices_2[j]);
                             }
                           if (component_i == dim)
                             {
                               P1 +=
                                 this->fe.shape_value(j, second_point_v) *
-                                this->present_solution(local_dof_indices[j]);
+                                present_solution(local_dof_indices[j]);
                               P2 +=
                                 this->fe.shape_value(j, third_point_v) *
-                                this->present_solution(local_dof_indices_2[j]);
+                                present_solution(local_dof_indices_2[j]);
                               P3 +=
                                 this->fe.shape_value(j, fourth_point_v) *
-                                this->present_solution(local_dof_indices_3[j]);
+                                present_solution(local_dof_indices_3[j]);
                             }
                         }
 
@@ -1148,8 +1150,9 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
 {
+  auto &present_solution = this->get_present_solution();
   if (this->simulation_control->is_output_iteration())
-    this->write_output_results(this->present_solution);
+    this->write_output_results(present_solution);
 
   // Calculate error with respect to analytical solution
   if (!firstIter && this->nsparam.analytical_solution->calculate_error())
@@ -1274,10 +1277,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           if (check_error)
             {
               auto &evaluation_point = this->get_evaluation_point();
+              auto &present_solution = this->get_present_solution();
               fe_values.reinit(cell);
-              fe_values[velocities].get_function_values(this->present_solution,
+              fe_values[velocities].get_function_values(present_solution,
                                                         local_velocity_values);
-              fe_values[pressure].get_function_values(this->present_solution,
+              fe_values[pressure].get_function_values(present_solution,
                                                       local_pressure_values);
               fe_values[velocities].get_function_gradients(
                 evaluation_point, present_velocity_gradients);

@@ -74,7 +74,8 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
          outer_iteration < this->params.max_iterations)
     {
       auto &evaluation_point = solver->get_evaluation_point();
-      evaluation_point = solver->present_solution;
+      auto &present_solution = solver->get_present_solution();
+      evaluation_point = present_solution;
 
       if (assembly_needed)
         solver->assemble_matrix_and_rhs(time_stepping_method);
@@ -99,7 +100,7 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
           auto &local_evaluation_point = solver->get_local_evaluation_point();
-          local_evaluation_point = solver->present_solution;
+          local_evaluation_point = present_solution;
           local_evaluation_point.add(alpha, solver->newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
@@ -121,7 +122,7 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
             }
         }
 
-      solver->present_solution = evaluation_point;
+      present_solution = evaluation_point;
       last_res                 = current_res;
       ++outer_iteration;
       assembly_needed = false;

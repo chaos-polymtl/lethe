@@ -573,7 +573,9 @@ GDNavierStokesSolver<dim>::setup_dofs()
   }
   this->zero_constraints.close();
 
-  this->present_solution.reinit(this->locally_owned_dofs,
+  TrilinosWrappers::MPI::BlockVector &present_solution =
+    this->get_present_solution();
+  present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
@@ -639,7 +641,8 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::set_solution_vector(double value)
 {
-  this->present_solution = value;
+  auto &present_solution = this->get_present_solution();
+  present_solution = value;
 }
 
 
@@ -664,7 +667,8 @@ GDNavierStokesSolver<dim>::set_initial_condition(
     {
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
-      this->present_solution = this->newton_update;
+      auto &present_solution = this->get_present_solution();
+      present_solution = this->newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }

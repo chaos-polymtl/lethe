@@ -58,14 +58,15 @@ public:
     evaluation_point.reinit(2);
     auto &system_rhs = this->get_system_rhs();
     auto &local_evaluation_point = this->get_local_evaluation_point();
+    auto &present_solution = this->get_present_solution();
     system_rhs.reinit(2);
     local_evaluation_point.reinit(2);
-    this->present_solution.reinit(2);
+    present_solution.reinit(2);
     this->newton_update.reinit(2);
 
     // Set the initial value of the solution
-    this->present_solution[0] = 1;
-    this->present_solution[1] = 0;
+    present_solution[0] = 1;
+    present_solution[1] = 0;
 
     this->nonzero_constraints.close();
   }
