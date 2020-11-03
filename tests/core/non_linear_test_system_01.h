@@ -90,6 +90,7 @@ public:
     system_matrix.set(0, 1, 1);
     system_matrix.set(1, 0, 0);
     system_matrix.set(1, 1, 2);
+    auto &system_rhs = this->get_system_rhs();
 
     system_rhs[0] = -(x_0 * x_0 + x_1);
     system_rhs[1] = -(2 * x_1 + 3);
@@ -104,6 +105,8 @@ public:
   {
     double x_0          = this->evaluation_point[0];
     double x_1          = this->evaluation_point[1];
+    auto &system_rhs = this->get_system_rhs();
+
     system_rhs[0] = -(x_0 * x_0 + x_1);
     system_rhs[1] = -(2 * x_1 + 3);
   }
@@ -117,6 +120,7 @@ public:
   void
   solve_linear_system(const bool, const bool) override
   {
+    auto &system_rhs = this->get_system_rhs();
     system_matrix.solve(system_rhs);
     newton_update = system_rhs;
   }
