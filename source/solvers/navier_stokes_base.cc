@@ -865,7 +865,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     }
 
 
-  if (this->nsparam.post_processing.calculate_velocities)
+  if (this->nsparam.post_processing.calculate_average_velocities)
     {
       // If Flow Control is disable, it calculates the bulk velocity through
       // this class

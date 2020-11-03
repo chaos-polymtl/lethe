@@ -123,7 +123,17 @@ public:
   VectorType
   nondimensionalize_average_velocities(const double bulk_velocity);
 
+  VectorType
+  calculate_reynolds_stresses(const VectorType & local_evaluation_point,
+                              const DofsType &   locally_owned_dofs,
+                              const MPI_Comm &   mpi_communicator);
+
+  VectorType
+  nondimensionalize_reynolds_stresses(const double bulk_velocity);
+
 private:
+  double time;
+  double total_time;
   VectorType sum_velocity_dt;
   VectorType average_velocities;
   VectorType nondimensionalized_average_velocities;
@@ -151,7 +161,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
 
   if (time <= 0)
   {
-    // Reinitilizing vectors with zeros at t = 0
+    // Reinitializing vectors with zeros at t = 0
     sum_velocity_dt.reinit(locally_owned_dofs,
                            mpi_communicator);
     average_velocities.reinit(locally_owned_dofs,
@@ -173,7 +183,6 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   }
   return average_velocities;
 }
-
 
 // Function not tested yet
 template <int dim, typename VectorType, typename DofsType>
