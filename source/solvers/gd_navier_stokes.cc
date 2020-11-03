@@ -588,8 +588,9 @@ GDNavierStokesSolver<dim>::setup_dofs()
   this->solution_m3.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
-
-  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  TrilinosWrappers::MPI::BlockVector &newton_update =
+    this->get_newton_update();
+  newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   TrilinosWrappers::MPI::BlockVector &system_rhs =
     this->get_system_rhs();
   system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
@@ -668,7 +669,8 @@ GDNavierStokesSolver<dim>::set_initial_condition(
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
       auto &present_solution = this->get_present_solution();
-      present_solution = this->newton_update;
+      auto &newton_update = this->get_newton_update();
+      present_solution = newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }
@@ -914,8 +916,9 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   {
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+    auto &newton_update = this->get_newton_update();
     solver.solve(system_matrix,
-                 this->newton_update,
+                 newton_update,
                  system_rhs,
                  *system_ilu_preconditioner);
     if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
@@ -924,7 +927,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                     << solver_control.last_step() << " steps " << std::endl;
       }
 
-    constraints_used.distribute(this->newton_update);
+    constraints_used.distribute(newton_update);
   }
 }
 
@@ -964,9 +967,10 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
   {
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+    auto &newton_update = this->get_newton_update();
 
     solver.solve(system_matrix,
-                 this->newton_update,
+                 newton_update,
                  system_rhs,
                  *system_amg_preconditioner);
     if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
@@ -975,7 +979,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                     << solver_control.last_step() << " steps " << std::endl;
       }
 
-    constraints_used.distribute(this->newton_update);
+    constraints_used.distribute(newton_update);
   }
 }
 
@@ -1036,7 +1040,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
     }
 
   constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
+  auto &newton_update = this->get_newton_update();
+  newton_update = completely_distributed_solution;
 }
 
 

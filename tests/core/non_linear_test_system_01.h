@@ -59,10 +59,11 @@ public:
     auto &system_rhs = this->get_system_rhs();
     auto &local_evaluation_point = this->get_local_evaluation_point();
     auto &present_solution = this->get_present_solution();
+    auto &newton_update = this->get_newton_update();
     system_rhs.reinit(2);
     local_evaluation_point.reinit(2);
     present_solution.reinit(2);
-    this->newton_update.reinit(2);
+    newton_update.reinit(2);
 
     // Set the initial value of the solution
     present_solution[0] = 1;
@@ -125,6 +126,7 @@ public:
   solve_linear_system(const bool, const bool) override
   {
     auto &system_rhs = this->get_system_rhs();
+    auto &newton_update = this->get_newton_update();
     system_matrix.solve(system_rhs);
     newton_update = system_rhs;
   }

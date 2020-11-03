@@ -115,8 +115,9 @@ NewtonNonLinearSolver<VectorType>::solve(
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
           auto &local_evaluation_point = solver->get_local_evaluation_point();
+          auto &newton_update = solver->get_newton_update();
           local_evaluation_point       = present_solution;
-          local_evaluation_point.add(alpha, solver->newton_update);
+          local_evaluation_point.add(alpha, newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
           solver->assemble_rhs(time_stepping_method);

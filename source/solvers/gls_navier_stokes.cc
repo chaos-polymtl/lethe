@@ -199,7 +199,9 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
 
-  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  TrilinosWrappers::MPI::Vector &newton_update =
+    this->get_newton_update();
+  newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   TrilinosWrappers::MPI::Vector &system_rhs =
     this->get_system_rhs();
   system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
@@ -815,7 +817,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       assemble_L2_projection();
       solve_system_GMRES(true, 1e-15, 1e-15, true);
       auto &present_solution = this->get_present_solution();
-      present_solution = this->newton_update;
+      auto &newton_update = this->get_newton_update();
+      present_solution = newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }
@@ -1359,7 +1362,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
       }
   }
   constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
+  auto &newton_update = this->get_newton_update();
+  newton_update = completely_distributed_solution;
 }
 
 template <int dim>
@@ -1408,7 +1412,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
                     << solver_control.last_step() << " steps " << std::endl;
       }
     constraints_used.distribute(completely_distributed_solution);
-    this->newton_update = completely_distributed_solution;
+    auto &newton_update = this->get_newton_update();
+    newton_update = completely_distributed_solution;
   }
 }
 
@@ -1462,7 +1467,8 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
     constraints_used.distribute(completely_distributed_solution);
 
-    this->newton_update = completely_distributed_solution;
+    auto &newton_update = this->get_newton_update();
+    newton_update = completely_distributed_solution;
   }
 }
 
@@ -1493,7 +1499,8 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   solver.initialize(system_matrix);
   solver.solve(completely_distributed_solution, system_rhs);
   constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
+  auto &newton_update = this->get_newton_update();
+  newton_update = completely_distributed_solution;
 }
 
 template <int dim>

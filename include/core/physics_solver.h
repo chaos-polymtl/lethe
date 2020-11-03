@@ -103,6 +103,7 @@ public:
   //getters
   VectorType & get_evaluation_point();
   VectorType & get_local_evaluation_point();
+  VectorType & get_newton_update();
   VectorType & get_present_solution();
   VectorType & get_system_rhs();
 
@@ -112,15 +113,13 @@ public:
   // TODO Jeanne: switch to private
   NonLinearSolver<VectorType> *non_linear_solver;
 
-
-  VectorType newton_update;
-
   AffineConstraints<double> nonzero_constraints;
 
 
 private:
   VectorType evaluation_point;
   VectorType local_evaluation_point;
+  VectorType newton_update;
   VectorType present_solution;
   VectorType system_rhs;
 
@@ -188,6 +187,13 @@ VectorType &
 PhysicsSolver<VectorType>::get_present_solution()
 {
   return present_solution;
+}
+
+template <typename VectorType>
+VectorType &
+PhysicsSolver<VectorType>::get_newton_update()
+{
+  return newton_update;
 }
 
 template <typename VectorType>

@@ -993,19 +993,20 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
   const FEValuesExtractors::Scalar pressure(dim);
   const MappingQ<dim>              mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
+  auto &newton_update = this->get_newton_update();
   VectorTools::interpolate(mapping,
                            this->dof_handler,
                            this->nsparam.initial_condition->uvwp,
-                           this->newton_update,
+                           newton_update,
                            this->fe.component_mask(velocities));
   VectorTools::interpolate(mapping,
                            this->dof_handler,
                            this->nsparam.initial_condition->uvwp,
-                           this->newton_update,
+                           newton_update,
                            this->fe.component_mask(pressure));
-  this->nonzero_constraints.distribute(this->newton_update);
+  this->nonzero_constraints.distribute(newton_update);
   auto &present_solution = this->get_present_solution();
-  present_solution = this->newton_update;
+  present_solution = newton_update;
 }
 
 
@@ -1043,10 +1044,11 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(4);
 
-  VectorType distributed_system(this->newton_update);
-  VectorType distributed_system_m1(this->newton_update);
-  VectorType distributed_system_m2(this->newton_update);
-  VectorType distributed_system_m3(this->newton_update);
+  auto &newton_update = this->get_newton_update();
+  VectorType distributed_system(newton_update);
+  VectorType distributed_system_m1(newton_update);
+  VectorType distributed_system_m2(newton_update);
+  VectorType distributed_system_m3(newton_update);
   x_system[0] = &(distributed_system);
   x_system[1] = &(distributed_system_m1);
   x_system[2] = &(distributed_system_m2);
