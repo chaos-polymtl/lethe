@@ -308,6 +308,7 @@ private:
   const unsigned int repartition_frequency;
   const unsigned int insertion_frequency;
   const Parameters::Lagrangian::PhysicalProperties physical_properties;
+  const double                                     rayleigh_time_step;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;
