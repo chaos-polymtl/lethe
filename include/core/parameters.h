@@ -236,7 +236,7 @@ namespace Parameters
     bool calculate_enstrophy;
 
     // Enable velocity post-processing
-    bool calculate_velocities;
+    bool calculate_average_velocities;
 
     // Set initial time to start calculations for velocities
     double initial_time;
