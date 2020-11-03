@@ -8,7 +8,7 @@ subsection simulation control
   set output name                  = poiseuille3d-flow-control_gls_bdf1
   set time step                    = 0.1  # Time step
   set output frequency        	   = 1    # Frequency of simulation output
-  set time end                     = 5    # End time of simulation
+  set time end                     = 1    # End time of simulation
 
 end
 
@@ -42,7 +42,7 @@ subsection mesh
     set type                     = dealii
     set grid type                = cylinder
     set grid arguments           = 1 : 1
-    set initial refinement       = 3
+    set initial refinement       = 2
 end
 
 

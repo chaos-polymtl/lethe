@@ -55,6 +55,13 @@
 
 using namespace dealii;
 
+
+/**
+ * @brief FlowControl. The FlowControl class calculates the volumetric flow
+ * rate at the inlet or at a selected boundary. It also allows to dynamically
+ * control the flow with a beta coefficient calculated at each step time.
+ */
+
 template <int dim, typename VectorType>
 class FlowControl
 {
@@ -79,13 +86,13 @@ public:
                 const MPI_Comm &                       mpi_communicator);
 
   Tensor<1, dim>
-  get_beta(  const DoFHandler<dim> &                dof_handler,
-             const VectorType &                     present_solution,
-             const Parameters::DynamicFlowControl & flow_control,
-             const Parameters::SimulationControl &  simulation_control,
-             const Parameters::FEM &                fem_parameters,
-             const unsigned int &                   step_number,
-             const MPI_Comm &                       mpi_communicator);
+  get_beta(const DoFHandler<dim> &                dof_handler,
+           const VectorType &                     present_solution,
+           const Parameters::DynamicFlowControl & flow_control,
+           const Parameters::SimulationControl &  simulation_control,
+           const Parameters::FEM &                fem_parameters,
+           const unsigned int &                   step_number,
+           const MPI_Comm &                       mpi_communicator);
 
   std::vector<double>
   flow_summary();
@@ -108,6 +115,24 @@ private:
   double         threshold_factor = 1.01; // 1%
 };
 
+
+/**
+ * @brief calculate_flow_rate. This function calculates the volumetric flow
+ * rate at the selected boundary. It actually calculates the flow rate through
+ * the summation of the value at each cell surface with the normal vector,
+ * the velocity value and the area.
+ *
+ * @param dof_handler. The argument used to get finite elements.
+ *
+ * @param present_solution. The vector which contains all the values to
+ *                          calculate the flow rate.
+ *
+ * @param flow_control. The flow control parameters
+ *
+ * @param fem_parameters. The FEM parameters
+ *
+ * @param mpi_communicator. The mpi communicator information
+ */
 template <int dim, typename VectorType>
 void
 FlowControl<dim, VectorType>::calculate_flow_rate(
@@ -169,6 +194,18 @@ FlowControl<dim, VectorType>::calculate_flow_rate(
   flow_rate_n = Utilities::MPI::sum(flow_rate_n, mpi_communicator);
 }
 
+/**
+ * @brief calculate_beta. This function calculates a beta coefficient which
+ * applies a force to the flow in order to adjust the flow rate to a desired
+ * value through the previous flow rate. Once the flow rate is reached, the
+ * algorithm calculates a new beta to keep a constant flow rate.
+ *
+ * @param flow_control. The flow control parameters
+ *
+ * @param simulation_control. The simulation control parameters
+ *
+ * @param step_number. The current step
+ */
 template <int dim, typename VectorType>
 void
 FlowControl<dim, VectorType>::calculate_beta(
@@ -193,7 +230,7 @@ FlowControl<dim, VectorType>::calculate_beta(
       threshold_factor = 1 + 0.5 * (threshold_factor - 1);
   }
 
-  // If flow rate is over the intended value at time step 1 and beta applied at
+  // If flow rate is over the desired value at time step 1 and beta applied at
   // time step 2 decreased it under the value.
   if (step_number == 3 && abs(flow_rate_n) < abs(flow_rate_0) &&
       abs(flow_rate_1n) > abs(flow_rate_0))
@@ -208,7 +245,7 @@ FlowControl<dim, VectorType>::calculate_beta(
            abs(flow_rate_n) < threshold_factor * abs(flow_rate_0)
            && adjusted == false)
   {
-    // If the flow rate is between intended flow rate value and the threshold
+    // If the flow rate is between targeted flow rate value and the threshold
     // and if it didn't reached it the value, it decreases by itself
     // (no force applied)
     beta_n1 = 0;
@@ -222,8 +259,8 @@ FlowControl<dim, VectorType>::calculate_beta(
   {
     // Standard flow controller.
     // Calculate the new beta to control the flow.
-    // If intended flow rate is reached, new beta only maintains the force to
-    // keep the flow at the intended value. Is so, if calculated beta is
+    // If desired flow rate is reached, new beta only maintains the force to
+    // keep the flow at the desired value. Is so, if calculated beta is
     // negative it's set to 0 to avoided +/- oscillations
     beta_n1 =
       beta_n - (flow_rate_0 - 2 * flow_rate_n + flow_rate_1n) / (area * dt);
@@ -245,6 +282,10 @@ FlowControl<dim, VectorType>::calculate_beta(
 
 }
 
+/**
+ * @brief get_flow_rate. This function gives the flow rate of the
+ * step time. Arguments are the same as calculate_flow_rate(...)
+ */
 template <int dim, typename VectorType>
 double
 FlowControl<dim, VectorType>::get_flow_rate(
@@ -262,6 +303,11 @@ FlowControl<dim, VectorType>::get_flow_rate(
   return flow_rate_n;
 }
 
+/**
+ * @brief get_beta. This function gives the beta coefficient of the
+ * step time. Arguments are those of calculate_flow_rate (...) and
+ * calculate_beta(...)
+ */
 template <int dim, typename VectorType>
 Tensor<1, dim>
 FlowControl<dim, VectorType>::get_beta(
@@ -286,6 +332,9 @@ FlowControl<dim, VectorType>::get_beta(
   return beta;
 }
 
+/**
+ * @brief flow_summary. This function gives information of the flow control
+ */
 template <int dim, typename VectorType>
 std::vector<double>
 FlowControl<dim, VectorType>::flow_summary()
@@ -294,6 +343,10 @@ FlowControl<dim, VectorType>::flow_summary()
   return summary;
 }
 
+/**
+ * @brief bulk_velocity. This function calculates the bulk velocity which is the
+ * velocity at the boundary.
+ */
 template <int dim, typename VectorType>
 double
 FlowControl<dim, VectorType>::bulk_velocity()
