@@ -141,8 +141,9 @@ private:
   VectorType average_velocities;
   VectorType nondimensionalized_average_velocities;
 
-  VectorType sum_reynolds_stress_dt;
+  VectorType sum_reynolds_stress;
   VectorType reynolds_stress;
+  VectorType sum_shear_stress;
 
   unsigned int average_steps = 0;
   TrilinosScalar inv_steps;
@@ -171,13 +172,13 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   }
   else if (average_steps >= 1)
   {
-    std::cout << average_steps << std::endl;
     // Generating average velocities at each time from initial time
     inv_steps = 1. / average_steps;
     sum_velocity += local_evaluation_point;
 
-    if (simulation_control->is_output_iteration())
+    //if (simulation_control->is_output_iteration())
       average_velocities.equ(inv_steps, sum_velocity);
+
     average_steps++;
   }
 
@@ -205,66 +206,54 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
   const DofsType &                          locally_owned_dofs,
   const MPI_Comm &                          mpi_communicator)
 {
-  /*
+
   if (simulation_control->get_step_number() == 0)
   {
     // Reinitializing vectors with zeros at t = 0
-    sum_reynolds_stress_dt.reinit(locally_owned_dofs,
+    sum_reynolds_stress.reinit(locally_owned_dofs,
                                   mpi_communicator);
     reynolds_stress.reinit(locally_owned_dofs,
                            mpi_communicator);
+    sum_shear_stress.reinit(locally_owned_dofs,
+                            mpi_communicator);
   }
-  else if (abs(total_time) < 1e-6 || total_time > 1e-6)
+  else if (average_steps >= 1)
   {
-    VectorType reynolds_stress_dt(locally_owned_dofs,
-                                  mpi_communicator);
+    VectorType velocity_fluctuations = local_evaluation_point;
+    velocity_fluctuations -= average_velocities;
+    velocity_fluctuations.scale(velocity_fluctuations);
+
+    // Calculate u'u', v'v' and w'w'
+    sum_reynolds_stress += velocity_fluctuations;
 
     if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
     {
-      reynolds_stress_dt = local_evaluation_point.add(-average_velocities);
-      reynolds_stress_dt.scale(reynolds_stress_dt);
-
-
       for (unsigned int i = local_evaluation_point.local_range().first;
            i < local_evaluation_point.local_range().second;
            i++)
       {
+        //std::cout << "i : " << i << std::endl;
         // Won't work with blockVector
-        if (i + 4 % 4 == 0)
+        if ((i + 1) % 4 == 0)
         {
-          // normal_stress_dt[i] = local_evaluation_point[q].add(-average_velocities[q]);
-          // normal_stress_dt[i+1] = local_evaluation_point[q+1].add(-average_velocities[q+1]);
-          // normal_stress_dt[i+2] = local_evaluation_point[q+2].add(-average_velocities[q+2]);
-
+          //std::cout << "line : " << __LINE__ << std::endl;
           // Calculate u'*dt, v'*dt and w'*dt
-          std::cout << "ici" << std::endl;
-          reynolds_stress_dt[i] =
-            (local_evaluation_point[i] - average_velocities[i]) *
-            (local_evaluation_point[i] - average_velocities[i]) * dt;
-          reynolds_stress_dt[i + 1] =
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-            dt;
-          reynolds_stress_dt[i + 2] =
-            (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-            (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-            dt;
-          reynolds_stress_dt[i + 3] =
-            (local_evaluation_point[i] - average_velocities[i]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-            dt;
+          //std::cout << "ici" << std::endl;
 
-          sum_reynolds_stress_dt += reynolds_stress_dt;
+          sum_shear_stress[i] = sum_reynolds_stress[i - 3] *
+                                   sum_reynolds_stress[i - 2];
+
+          sum_reynolds_stress[i] = sum_shear_stress[i];
+
 
           if (simulation_control->is_output_iteration())
-            reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
-          std::cout << "nop trop long.." << std::endl;
+            reynolds_stress.equ(inv_steps, sum_reynolds_stress);
+          //std::cout << "nop trop long.." << std::endl;
         }
       }
     }
   }
   return reynolds_stress;
-   */
 
 }
 
