@@ -140,10 +140,8 @@ private:
   VectorType average_velocities;
   VectorType nondimensionalized_average_velocities;
 
-  Vector<double> sum_normal_stress_dt;
-  Vector<double> sum_shear_stress_dt;
-  Vector<double> normal_stress;
-  Vector<double>  shear_stress;
+  Vector<TrilinosScalar> sum_reynolds_stress_dt;
+  Vector<TrilinosScalar> reynolds_stress;
 
   TrilinosScalar inv_range_time;
   TrilinosScalar dt;
@@ -201,54 +199,53 @@ nondimensionalize_average_velocities(const double bulk_velocity)
 
 //Reynolds stress
 template <int dim, typename VectorType, typename DofsType>
-Vector<double>
+Vector<TrilinosScalar>
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
-  const VectorType &                        local_evaluation_point,
+  const VectorType &                        present_solution,
   const std::shared_ptr<SimulationControl> &simulation_control,
   const DofsType &                          locally_owned_dofs,
   const MPI_Comm &                          mpi_communicator)
 {
+  Vector<TrilinosScalar> solution = present_solution;
+
   if (simulation_control->get_step_number() == 0)
   {
     // Reinitializing vectors with zeros at t = 0
-    sum_normal_stress_dt.reinit(3 * local_evaluation_point.size() / 4);
-    normal_stress.reinit(3 * local_evaluation_point.size() / 4);
-    sum_shear_stress_dt.reinit(local_evaluation_point.size() / 4);
-    shear_stress.reinit(local_evaluation_point.size() / 4);
+    sum_reynolds_stress_dt.reinit(solution.size());
+    reynolds_stress.reinit(solution.size());
   }
   else if (abs(total_time) < 1e-6 || total_time > 1e-6)
-  {
-    Vector<double> normal_stress_dt(normal_stress.size());
-    Vector<double> shear_stress_dt(normal_stress.size());
-
-    // Won't work with blockVector
-    for (unsigned int q = 0; q < local_evaluation_point.size(); q += 4)
     {
-      unsigned int i = 0;
-      unsigned int j = 0;
-        //normal_stress_dt[i] = local_evaluation_point[q].add(-average_velocities[q]);
-        //normal_stress_dt[i+1] = local_evaluation_point[q+1].add(-average_velocities[q+1]);
-        //normal_stress_dt[i+2] = local_evaluation_point[q+2].add(-average_velocities[q+2]);
+      Vector<TrilinosScalar> reynolds_stress_dt(reynolds_stress.size());
 
-        // Calculate u'*dt, v'*dt and w'*dt
-        normal_stress_dt[i] = (local_evaluation_point[q] - average_velocities[q]) * dt;
-        normal_stress_dt[i+1] = (local_evaluation_point[q+1] - average_velocities[q+1]) * dt;
-        normal_stress_dt[i+2] = (local_evaluation_point[q+2] - average_velocities[q+2]) * dt;
-        i += 3;
+      // Won't work with blockVector
+      for (unsigned int i = 0; i < solution.size(); i += 4)
+        {
+          // normal_stress_dt[i] = local_evaluation_point[q].add(-average_velocities[q]);
+          // normal_stress_dt[i+1] = local_evaluation_point[q+1].add(-average_velocities[q+1]);
+          // normal_stress_dt[i+2] = local_evaluation_point[q+2].add(-average_velocities[q+2]);
 
-        // Calulate u'v'*dt (u'*dt * u'*dt) / dt with normal_stress_dt vectors)
-        shear_stress_dt[j] = normal_stress_dt[i] * normal_stress_dt[i+1] / dt;
-        j++;
+          // Calculate u'*dt, v'*dt and w'*dt
+          reynolds_stress_dt[i] = (solution[i] - average_velocities[i]) *
+                                  (solution[i] - average_velocities[i]) * dt;
+          reynolds_stress_dt[i + 1] =
+            (solution[i + 1] - average_velocities[i + 1]) *
+            (solution[i + 1] - average_velocities[i + 1]) * dt;
+          reynolds_stress_dt[i + 2] =
+            (solution[i + 2] - average_velocities[i + 2]) *
+            (solution[i + 2] - average_velocities[i + 2]) * dt;
+          reynolds_stress_dt[i + 3] =
+            (solution[i] - average_velocities[i]) *
+            (solution[i + 1] - average_velocities[i + 1]) * dt;
+
+          sum_reynolds_stress_dt += reynolds_stress_dt;
+
+          if (simulation_control->is_output_iteration())
+            reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
+        }
     }
 
-      sum_normal_stress_dt += normal_stress_dt;
-      sum_shear_stress_dt += shear_stress_dt;
-      normal_stress.equ(inv_range_time, sum_normal_stress_dt);
-
-      sum_shear_stress_dt += shear_stress_dt;
-      shear_stress.equ(inv_range_time, sum_shear_stress_dt);
-    }
-  return normal_stress;
+  return reynolds_stress;
 }
 
 template <int dim, typename VectorType, typename DofsType>

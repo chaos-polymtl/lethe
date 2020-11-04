@@ -904,12 +904,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
       this->average_solution = average_solution_tmp;
 
-      this->normal_reynolds_stress.reinit(this->locally_owned_dofs,
-                                          this->locally_relevant_dofs,
-                                          this->mpi_communicator);
-
-      this->normal_reynolds_stress = average_velocities.calculate_reynolds_stress(
-                                      this->local_evaluation_point,
+      this->reynolds_stress = average_velocities.calculate_reynolds_stress(
+                                      this->present_solution,
                                       this->simulation_control,
                                       locally_owned_dofs,
                                       mpi_communicator);
@@ -1129,15 +1125,21 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   std::vector<std::string> average_solution_names(dim, "average_velocity");
   average_solution_names.push_back("average_pressure");
+
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     average_data_component_interpretation(
       dim, DataComponentInterpretation::component_is_part_of_vector);
   average_data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
+  std::vector<std::string> reynolds_stress_names(dim, "normal reynolds stress");
+  reynolds_stress_names.push_back("shear stress");
+
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    normal_reynolds_stress_data_component_interpretation(
+    reynolds_stress_data_component_interpretation(
     dim, DataComponentInterpretation::component_is_part_of_vector);
+  reynolds_stress_data_component_interpretation.push_back(
+    DataComponentInterpretation::component_is_scalar);
 
   DataOut<dim> data_out;
 
@@ -1159,10 +1161,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            average_data_component_interpretation);
 
-  data_out.add_data_vector(this->normal_reynolds_stress,
-                           "normal_reynolds_stress",
+  data_out.add_data_vector(this->reynolds_stress,
+                           reynolds_stress_names,
                            DataOut<dim>::type_dof_data,
-                           normal_reynolds_stress_data_component_interpretation);
+                           reynolds_stress_data_component_interpretation);
 
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
