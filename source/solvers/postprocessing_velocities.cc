@@ -18,6 +18,7 @@ calculate_average_velocities(
   const IndexSet &                     locally_owned_dofs,
   const MPI_Comm &                     mpi_communicator);
 
+/*
 template TrilinosWrappers::MPI::BlockVector
 AverageVelocities<2, TrilinosWrappers::MPI::BlockVector, std::vector<IndexSet>>::
 calculate_average_velocities(
@@ -34,4 +35,4 @@ calculate_average_velocities(
   const Parameters::SimulationControl      &simulation_control,
   const Parameters::PostProcessing &        post_processing,
   const std::vector<IndexSet> &             locally_owned_dofs,
-  const MPI_Comm &                          mpi_communicator);
+  const MPI_Comm &                          mpi_communicator); */

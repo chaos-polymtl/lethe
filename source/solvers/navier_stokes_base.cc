@@ -905,7 +905,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
       this->average_solution = average_solution_tmp;
 
       this->reynolds_stress = average_velocities.calculate_reynolds_stress(
-                                      this->present_solution,
+                                      this->local_evaluation_point,
                                       this->simulation_control,
                                       locally_owned_dofs,
                                       mpi_communicator);
@@ -1132,8 +1132,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   average_data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
-  std::vector<std::string> reynolds_stress_names(dim, "normal reynolds stress");
-  reynolds_stress_names.push_back("shear stress");
+  std::vector<std::string> reynolds_stress_names(dim, "normal_reynolds_stress");
+  reynolds_stress_names.push_back("shear_stress");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     reynolds_stress_data_component_interpretation(
