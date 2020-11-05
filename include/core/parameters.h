@@ -238,6 +238,9 @@ namespace Parameters
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
+    // Enable nondimensionalize average velocities
+    bool nondimensionalization;
+
     // Set initial time to start calculations for velocities
     double initial_time;
 
@@ -246,6 +249,14 @@ namespace Parameters
 
     // Flow direction (x=0, y=1 ,z=2)
     unsigned int flow_direction;
+
+    // Component value of all the time-averaged velocities (often called
+    // simply average_velocities) is averaged at the component_location
+    double component_average;
+
+    // Component value where the time-averaged velocities (often called
+    // simply average_velocities) is averaged
+    double component_location;
 
     // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;

@@ -869,7 +869,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     {
       // If Flow Control is disable, it calculates the bulk velocity through
       // this class
-      if (!nsparam.flow_control.enable_flow_control)
+      if (!nsparam.flow_control.enable_flow_control &&
+          nsparam.post_processing.nondimensionalization)
         {
           nsparam.flow_control.id_flow_control =
             nsparam.post_processing.id_flow_control;
@@ -895,20 +896,31 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                       this->locally_relevant_dofs,
                                       this->mpi_communicator);
 
-      average_solution_tmp = average_velocities.calculate_average_velocities(
+      this->average_velocities.calculate_average_velocities(
                               this->local_evaluation_point,
                               this->simulation_control,
                               nsparam.post_processing,
                               locally_owned_dofs,
                               mpi_communicator);
 
-      this->average_solution = average_solution_tmp;
+      //Get the bulk velocity of the flow_control class (after merge of Flow Control)
 
-       this->reynolds_stress = average_velocities.calculate_reynolds_stress(
+      /*if (nsparam.post_processing.nondimensionalization)
+      {
+        const double bulk_velocity = flow.get_bulk_velocity();
+        average_solution = average_velocities.get_average_velocities(bulk_velocity);
+      }
+      else */
+      this->average_solution = average_velocities.get_average_velocities();
+
+      /*
+      this->average_velocities.calculate_reynolds_stress(
                                       this->local_evaluation_point,
                                       this->simulation_control,
                                       locally_owned_dofs,
                                       mpi_communicator);
+      this->reynolds_stress = average_velocities.get_reynolds_stress();
+      */
     }
 
 
@@ -1124,6 +1136,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   std::vector<std::string> average_solution_names(dim, "average_velocity");
   average_solution_names.push_back("average_pressure");
+
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     average_data_component_interpretation(
       dim, DataComponentInterpretation::component_is_part_of_vector);
@@ -1132,11 +1145,14 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   std::vector<std::string> reynolds_stress_names(dim, "normal_reynolds_stress");
   reynolds_stress_names.push_back("shear_stress");
+
+  /*
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     reynolds_stress_data_component_interpretation(
     dim, DataComponentInterpretation::component_is_part_of_vector);
   reynolds_stress_data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
+*/
 
   DataOut<dim> data_out;
 
@@ -1158,11 +1174,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            average_data_component_interpretation);
 
+  /*
   data_out.add_data_vector(this->reynolds_stress,
                            reynolds_stress_names,
                            DataOut<dim>::type_dof_data,
                            reynolds_stress_data_component_interpretation);
-
+  */
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();

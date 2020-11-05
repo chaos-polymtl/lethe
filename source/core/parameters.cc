@@ -341,7 +341,13 @@ namespace Parameters
         "calculate average velocities",
         "false",
         Patterns::Bool(),
-        "Enable calculation of velocity fluctuations and velocity profiles.");
+        "Enable calculation of average velocity and reynolds stress profiles.");
+
+      prm.declare_entry(
+        "nondimensionalization",
+        "false",
+        Patterns::Bool(),
+        "Nondimensionalize average velocity and reynolds stress profiles.");
 
       prm.declare_entry("initial time",
                         "0.0",
@@ -352,6 +358,21 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Boundary id of the inlet flow");
+
+      prm.declare_entry("flow direction",
+                        "0",
+                        Patterns::Integer(),
+                        "Flow direction at flow inlet");
+
+      prm.declare_entry("profil averaging",
+                        "0",
+                        Patterns::Integer(),
+                        "Component where time-averaged velocities are averaged");
+
+      prm.declare_entry("location",
+                        "0",
+                        Patterns::Double(),
+                        "Location component to average the time-averaged velocities");
 
       prm.declare_entry("flow direction",
                         "0",
@@ -395,9 +416,12 @@ namespace Parameters
       calculate_kinetic_energy     = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy          = prm.get_bool("calculate enstrophy");
       calculate_average_velocities = prm.get_bool("calculate average velocities");
+      nondimensionalization        = prm.get_bool("nondimensionalization");
       initial_time                 = prm.get_double("initial time");
       id_flow_control              = prm.get_integer("boundary id");
       flow_direction               = prm.get_integer("flow direction");
+      component_average            = prm.get_integer("profile averaging");
+      component_location           = prm.get_double("profile location");
       kinetic_energy_output_name   = prm.get("kinetic energy name");
       enstrophy_output_name        = prm.get("enstrophy name");
       calculation_frequency        = prm.get_integer("calculation frequency");

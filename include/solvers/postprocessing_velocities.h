@@ -23,51 +23,16 @@
 // Dealii Includes
 
 // Base
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/convergence_table.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/index_set.h>
-#include <deal.II/base/quadrature_lib.h>
-#include <deal.II/base/table_handler.h>
-#include <deal.II/base/timer.h>
 #include <deal.II/base/utilities.h>
 
-// Lac
-#include <deal.II/lac/affine_constraints.h>
-#include <deal.II/lac/dynamic_sparsity_pattern.h>
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/precondition_block.h>
-#include <deal.II/lac/solver_bicgstab.h>
-#include <deal.II/lac/solver_cg.h>
-#include <deal.II/lac/solver_gmres.h>
-#include <deal.II/lac/sparse_direct.h>
-#include <deal.II/lac/sparse_ilu.h>
-#include <deal.II/lac/sparse_matrix.h>
-#include <deal.II/lac/sparsity_tools.h>
-#include <deal.II/lac/vector.h>
 
 // Lac - Trilinos includes
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
-#include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/trilinos_solver.h>
-#include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-// Grid
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_refinement.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold_lib.h>
-#include <deal.II/grid/tria.h>
-#include <deal.II/grid/tria_accessor.h>
-#include <deal.II/grid/tria_iterator.h>
 
 // Dofs
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
 // Fe
@@ -77,25 +42,11 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Numerics
-#include <deal.II/numerics/data_out.h>
-#include <deal.II/numerics/error_estimator.h>
-#include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
-// Distributed
-#include <deal.II/distributed/grid_refinement.h>
-#include <deal.II/distributed/solution_transfer.h>
-
-
 // Lethe Includes
-#include <core/bdf.h>
-#include <core/boundary_conditions.h>
-#include <core/manifolds.h>
-#include <core/newton_non_linear_solver.h>
 #include <core/parameters.h>
-#include <core/physics_solver.h>
-#include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
 
@@ -113,7 +64,7 @@ template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
-  VectorType
+  void
   calculate_average_velocities(
     const VectorType &                       local_evaluation_point,
     const std::shared_ptr<SimulationControl> &simulation_control,
@@ -121,36 +72,39 @@ public:
     const DofsType &                         locally_owned_dofs,
     const MPI_Comm &                         mpi_communicator);
 
-  VectorType
-  nondimensionalize_average_velocities(const double bulk_velocity);
-
-  VectorType
+  void
   calculate_reynolds_stress(
     const VectorType &                        local_evaluation_point,
     const std::shared_ptr<SimulationControl> &simulation_control,
     const DofsType &                          locally_owned_dofs,
     const MPI_Comm &                          mpi_communicator);
 
-  VectorType
-  nondimensionalize_reynolds_stress(const double bulk_velocity);
+  const VectorType
+  get_average_velocities();
+
+  const VectorType
+  get_average_velocities(const double bulk_velocity);
+
+  const VectorType
+  get_reynolds_stress();
+
+  const VectorType
+  get_reynolds_stress(const double bulk_velocity);
+
 
 private:
-  double time;
-  double total_time;
-  VectorType sum_velocity;
+  TrilinosScalar inv_range_time;
+  TrilinosScalar dt;
+
+  VectorType sum_velocity_dt;
   VectorType average_velocities;
-  VectorType nondimensionalized_average_velocities;
 
-  VectorType sum_reynolds_stress;
+  VectorType sum_reynolds_stress_dt;
   VectorType reynolds_stress;
-  VectorType sum_shear_stress;
-
-  unsigned int average_steps = 0;
-  TrilinosScalar inv_steps;
 };
 
 template <int dim, typename VectorType, typename DofsType>
-VectorType
+void
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const VectorType &                       local_evaluation_point,
   const std::shared_ptr<SimulationControl> &simulation_control,
@@ -158,109 +112,251 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const DofsType &                         locally_owned_dofs,
   const MPI_Comm &                         mpi_communicator)
 {
-  if (abs(simulation_control->get_current_time() -
-          post_processing.initial_time) < 1e-6)
-    average_steps = 1;
+  double time = simulation_control->get_current_time();
+  double total_time = time - post_processing.initial_time;
+  dt = simulation_control->calculate_time_step();
 
   if (simulation_control->get_step_number() == 0)
   {
     // Reinitializing vectors with zeros and dt at t = 0
-    sum_velocity.reinit(locally_owned_dofs,
-                        mpi_communicator);
+    sum_velocity_dt.reinit(locally_owned_dofs,
+                           mpi_communicator);
     average_velocities.reinit(locally_owned_dofs,
                               mpi_communicator);
   }
-  else if (average_steps >= 1)
+  else if (abs(total_time) < 1e-6 || total_time > 0)
   {
     // Generating average velocities at each time from initial time
-    inv_steps = 1. / average_steps;
-    sum_velocity += local_evaluation_point;
+    inv_range_time = 1. / (total_time + dt);
 
-    //if (simulation_control->is_output_iteration())
-      average_velocities.equ(inv_steps, sum_velocity);
+    VectorType velocity_dt(locally_owned_dofs,
+                           mpi_communicator);
+    velocity_dt.equ(dt, local_evaluation_point);
+    sum_velocity_dt += velocity_dt;
 
-    average_steps++;
+    if (simulation_control->is_output_iteration())
+      average_velocities.equ(inv_range_time, sum_velocity_dt);
   }
-
-  return average_velocities;
 }
 
-// Function not tested yet
-template <int dim, typename VectorType, typename DofsType>
-VectorType
-AverageVelocities<dim, VectorType, DofsType>::
-nondimensionalize_average_velocities(const double bulk_velocity)
-{
-  const TrilinosScalar inv_bulk_velocity = 1. / bulk_velocity;
-  nondimensionalized_average_velocities = average_velocities;
-  nondimensionalized_average_velocities.equ(inv_bulk_velocity, average_velocities);
-  return nondimensionalized_average_velocities;
-}
 
-//Reynolds stress
 template <int dim, typename VectorType, typename DofsType>
-VectorType
+void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
   const VectorType &                        local_evaluation_point,
   const std::shared_ptr<SimulationControl> &simulation_control,
   const DofsType &                          locally_owned_dofs,
   const MPI_Comm &                          mpi_communicator)
 {
-
+  /*
   if (simulation_control->get_step_number() == 0)
   {
     // Reinitializing vectors with zeros at t = 0
-    sum_reynolds_stress.reinit(locally_owned_dofs,
+    sum_reynolds_stress_dt.reinit(locally_owned_dofs,
                                   mpi_communicator);
     reynolds_stress.reinit(locally_owned_dofs,
                            mpi_communicator);
-    sum_shear_stress.reinit(locally_owned_dofs,
-                            mpi_communicator);
   }
-  else if (average_steps >= 1)
+  else if (abs(total_time) < 1e-6 || total_time > 1e-6)
   {
-    VectorType velocity_fluctuations = local_evaluation_point;
-    velocity_fluctuations -= average_velocities;
-    velocity_fluctuations.scale(velocity_fluctuations);
+    VectorType reynolds_stress_dt(locally_owned_dofs,
+                                  mpi_communicator);
 
-    // Calculate u'u', v'v' and w'w'
-    sum_reynolds_stress += velocity_fluctuations;
-
+    // ***Won't work with BlockVectors if output needed
     if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
     {
       for (unsigned int i = local_evaluation_point.local_range().first;
-           i < local_evaluation_point.local_range().second;
-           i++)
+           i < local_evaluation_point.local_range().second; i++)
       {
-        //std::cout << "i : " << i << std::endl;
-        // Won't work with blockVector
-        if ((i + 1) % 4 == 0)
+        if ((i + 4) % 4 == 0)
         {
-          //std::cout << "line : " << __LINE__ << std::endl;
-          // Calculate u'*dt, v'*dt and w'*dt
-          //std::cout << "ici" << std::endl;
+          // Calculating (u'u')*dt, (v'v')*dt (w'w')*dt and (u'v')*dt
+          reynolds_stress_dt[i] =
+            (local_evaluation_point[i] - average_velocities[i]) *
+            (local_evaluation_point[i] - average_velocities[i]) * dt;
+          reynolds_stress_dt[i + 1] =
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
+          reynolds_stress_dt[i + 2] =
+            (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
+            (local_evaluation_point[i + 2] - average_velocities[i + 2]) * dt;
+          reynolds_stress_dt[i + 3] =
+            (local_evaluation_point[i] - average_velocities[i]) *
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
 
-          sum_shear_stress[i] = sum_reynolds_stress[i - 3] *
-                                   sum_reynolds_stress[i - 2];
+          // Summation of all reynolds stress during simulation
+          sum_reynolds_stress_dt += reynolds_stress_dt;
 
-          sum_reynolds_stress[i] = sum_shear_stress[i];
-
-
+          // Calculating time-averaged reynolds stress
           if (simulation_control->is_output_iteration())
-            reynolds_stress.equ(inv_steps, sum_reynolds_stress);
-          //std::cout << "nop trop long.." << std::endl;
+            reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
         }
       }
     }
-  }
-  return reynolds_stress;
-
+  } */
 }
 
+
+
 template <int dim, typename VectorType, typename DofsType>
-VectorType
-AverageVelocities<dim, VectorType, DofsType>::nondimensionalize_reynolds_stress(
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::
+get_average_velocities()
+{
+  return average_velocities;
+}
+
+// Function not tested yet
+template <int dim, typename VectorType, typename DofsType>
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::
+get_average_velocities(const double bulk_velocity)
+{
+  VectorType nondimensionalized_average_velocities(average_velocities);
+  nondimensionalized_average_velocities /= bulk_velocity;
+  return nondimensionalized_average_velocities;
+}
+
+// Function not tested yet
+template <int dim, typename VectorType, typename DofsType>
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress()
+{
+  return reynolds_stress;
+}
+
+// Function not tested yet
+template <int dim, typename VectorType, typename DofsType>
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress(
   const double bulk_velocity)
+{
+  VectorType nondimensionalized_reynolds_stress(reynolds_stress);
+  nondimensionalized_reynolds_stress /= bulk_velocity;
+  return nondimensionalized_reynolds_stress;
+}
+
+
+
+
+template <int dim, typename VectorType, typename DofsType>
+class VelocityProfiles
+{
+public:
+  void
+  average_velocity_profiles(
+    const VectorType &                average_velocities,
+    const DoFHandler<dim> &           dof_handler,
+    const Parameters::PostProcessing &post_processing,
+    const Parameters::FEM &           fem_parameters,
+    const MPI_Comm &                  mpi_communicator);
+
+  void
+  reynolds_stress_profile(unsigned int, double pos);
+
+private:
+  std::map<types::global_dof_index, Point<dim>> support_points;
+  //Tensor<1, dim> sum_average_velocity_values;
+  //double         sum_pressure_values;
+  //double         volume = 0;
+};
+
+
+template <int dim, typename VectorType, typename DofsType>
+void
+VelocityProfiles<dim, VectorType, DofsType>::average_velocity_profiles(
+  const VectorType &                    average_velocities,
+  const DoFHandler<dim> &               dof_handler,
+  const Parameters::PostProcessing &    post_processing,
+  const Parameters::FEM &               fem_parameters,
+  const MPI_Comm &                      mpi_communicator)
+{
+
+  const FiniteElement<dim> &fe = dof_handler.get_fe();
+  const MappingQ<dim>   mapping(fe.degree, fem_parameters.qmapping_all);
+  support_points.resize(average_velocities.size());
+
+  DoFTools::map_dofs_to_support_points(mapping, dof_handler,
+                                       support_points);
+
+  //Trouver un moyen de déterminer les min/max dans la direction tangente
+
+
+  std::vector<double> u_profile;
+  std::vector<double> sum_u_profile;
+
+  unsigned int component = post_processing.flow_direction;
+  double location = post_processing.component_location;
+
+  for (auto const& [index, point] : support_points)
+  {
+    if (point[component] - location < 1e-6)
+    {
+        if ((index + 4) % 4 == 0)
+        {
+
+        }
+    }
+  }
+
+
+  /*
+  // TEST (I know the boundary_id)
+  // Point generator
+  const Point<dim-1> location_point;
+  location_point = (4.5, 0.);
+
+  const FiniteElement<dim> &        fe = dof_handler.get_fe();
+  const MappingQ<dim>               mapping(fe.degree, fem_parameters.qmapping_all);
+  QGauss<dim>                       quadrature_formula(fe.degree + 1);
+  const unsigned int                n_q_points = quadrature_formula.size();
+  const FEValuesExtractors::Vector  velocities(0);
+  const FEValuesExtractors::Scalar  pressure(dim);
+  std::vector<Tensor<1, dim>>       velocity_values(n_q_points);
+  std::vector<double>               pressure_values(n_q_points);
+
+  FEValues<dim> fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_quadrature_points |
+                          update_JxW_values);
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+  {
+    if (cell->is_locally_owned() && cell->is_inside_unit_cell(location_point))
+    {
+      fe_values.reinit(cell);
+      fe_values[velocities].get_function_values(
+        average_velocities, velocity_values);
+      fe_values[pressure].get_function_values(
+        average_velocities, pressure_values);
+
+      for (unsigned int q = 0; q < n_q_points; q++)
+      {
+        volume += fe_values.JxW(q);
+
+        Tensor<1, dim>  av_dv = velocity_values[q] * fe_values.JxW(q);
+        sum_average_velocity_values += av_dv;
+
+
+
+
+      }
+    }
+  }
+   */
+}
+
+
+
+
+
+
+template <int dim, typename VectorType, typename DofsType>
+void
+VelocityProfiles<dim, VectorType, DofsType>::reynolds_stress_profile(
+  unsigned int,
+  double pos)
 {
 
 }
