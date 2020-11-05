@@ -250,14 +250,6 @@ namespace Parameters
     // Flow direction (x=0, y=1 ,z=2)
     unsigned int flow_direction;
 
-    // Component value of all the time-averaged velocities (often called
-    // simply average_velocities) is averaged at the component_location
-    double component_average;
-
-    // Component value where the time-averaged velocities (often called
-    // simply average_velocities) is averaged
-    double component_location;
-
     // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
 
