@@ -36,7 +36,7 @@ void
 update_ghost_iterator_pp_contact_container(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &ghost_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<int, Particles::ParticleIterator<dim>>
     &ghost_particle_container);
 
 #endif /* update_ghost_iterator_particle_particle_contact_container_h */

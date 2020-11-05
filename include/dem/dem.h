@@ -37,6 +37,7 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/input_parameter_inspection.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
@@ -308,7 +309,6 @@ private:
   const unsigned int repartition_frequency;
   const unsigned int insertion_frequency;
   const Parameters::Lagrangian::PhysicalProperties physical_properties;
-  const double                                     rayleigh_time_step;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;

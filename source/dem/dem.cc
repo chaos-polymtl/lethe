@@ -51,13 +51,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , repartition_frequency(parameters.model_parameters.repartition_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , physical_properties(parameters.physical_properties)
-  , rayleigh_time_step(
-      M_PI_2 * parameters.physical_properties.diameter *
-      sqrt(2 * parameters.physical_properties.density *
-           (2 + parameters.physical_properties.poisson_ratio_particle) *
-           (1 - parameters.physical_properties.poisson_ratio_particle) /
-           parameters.physical_properties.youngs_modulus_particle) /
-      (0.1631 * parameters.physical_properties.poisson_ratio_particle + 0.8766))
   , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs
@@ -114,6 +107,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error(
         "Specified contact detection method is not valid");
     }
+
+  // Calling input_parameter_inspection to evaluate input parameters in the
+  // parameter handler file
+  if (this_mpi_process == 0)
+    input_parameter_inspection(parameters);
 }
 
 template <int dim>
@@ -124,20 +122,6 @@ DEMSolver<dim>::print_initial_info()
     << "***************************************************************** \n";
   pcout << "Starting simulation with Lethe/DEM on " << n_mpi_processes
         << " processors" << std::endl;
-  if (simulation_control->get_time_step() > 0.15 * rayleigh_time_step)
-    {
-      pcout << "Warning: DEM time-step is "
-            << (simulation_control->get_time_step() / rayleigh_time_step) * 100
-            << "% of Rayleigh time step" << std::endl;
-      pcout << "It is recommended to decrease the time-step" << std::endl;
-    }
-  else if (simulation_control->get_time_step() < 0.01 * rayleigh_time_step)
-    {
-      pcout << "Warning: DEM time-step is "
-            << (simulation_control->get_time_step() / rayleigh_time_step) * 100
-            << "% of Rayleigh time step" << std::endl;
-      pcout << "It is recommended to increase the time-step" << std::endl;
-    }
   pcout << "***************************************************************** "
            "\n\n";
 }
