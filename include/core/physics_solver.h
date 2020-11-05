@@ -111,9 +111,6 @@ public:
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
 
-  // TODO Jeanne: switch to private
-  NonLinearSolver<VectorType> *non_linear_solver;
-
 private:
   VectorType evaluation_point;
   VectorType local_evaluation_point;
@@ -121,6 +118,7 @@ private:
   VectorType present_solution;
   VectorType system_rhs;
   AffineConstraints<double> nonzero_constraints;
+  NonLinearSolver<VectorType> *non_linear_solver;
 
 };
 
