@@ -52,7 +52,7 @@ end
 #---------------------------------------------------
 subsection post-processing
     set calculate average velocities    = true
-    set initial time 		        = 20
+    set initial time 		        = 0.1
     set boundary id    	           	= 0
     set flow direction 		        = 0
     set nondimensionalization           = true

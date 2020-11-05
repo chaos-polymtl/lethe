@@ -890,10 +890,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                     this->locally_relevant_dofs,
                                     this->mpi_communicator);
 
-      VectorType average_solution_tmp(this->locally_owned_dofs,
-                                      this->locally_relevant_dofs,
-                                      this->mpi_communicator);
-
       this->average_velocities.calculate_average_velocities(
                               this->local_evaluation_point,
                               this->simulation_control,
@@ -908,7 +904,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         average_solution = average_velocities.get_average_velocities(bulk_velocity);
       }
       else
-      this->average_solution = average_velocities.get_average_velocities();
+        this->average_solution = average_velocities.get_average_velocities();
     }
 
 

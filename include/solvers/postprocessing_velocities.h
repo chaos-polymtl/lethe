@@ -20,11 +20,6 @@
 #ifndef lethe_postprocessing_velocities_h
 #define lethe_postprocessing_velocities_h
 
-// Dealii Includes
-
-// Base
-#include <deal.II/base/utilities.h>
-
 
 // Lac - Trilinos includes
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
@@ -35,12 +30,6 @@
 #include <deal.II/dofs/dof_handler.h>
 #include <deal.II/dofs/dof_tools.h>
 
-// Fe
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/mapping_q.h>
-
 // Numerics
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
@@ -48,18 +37,18 @@
 // Lethe Includes
 #include <core/parameters.h>
 #include <core/simulation_control.h>
-#include <solvers/flow_control.h>
-
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 
-// Std
-#include <fstream>
-#include <iostream>
-#include <type_traits>
 
 using namespace dealii;
 
+
+/**
+ * @brief AverageVelocities. The AverageVelocities class calculates the
+ * time-averaged velocities and pressure. The generated vector is output
+ * with the solution and visualization is possible.
+ */
 template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
@@ -87,6 +76,20 @@ private:
   VectorType average_velocities;
 };
 
+/**
+ * @brief calculate_average_velocities. This function calculates time-averaged
+ * velocities and pressure with dof vector with no ghost cell.
+ *
+ * @param local_evaluation_point. The vector solutions with no ghost cells
+ *
+ * @param simulation_control. The simulation information (time)
+ *
+ * @param post_processing. The parameters to start the processing
+ *
+ * @param locally_owned_dofs. The owned dofs
+ *
+ * @param mpi_communicator. The mpi communicator information
+ */
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
@@ -123,6 +126,9 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   }
 }
 
+/**
+ * @brief get_average_velocities. Gives the average of solutions
+ */
 template <int dim, typename VectorType, typename DofsType>
 const VectorType
 AverageVelocities<dim, VectorType, DofsType>::
@@ -131,7 +137,11 @@ get_average_velocities()
   return average_velocities;
 }
 
-// Function not tested yet
+/**
+ * @brief get_average_velocities. Gives the nondimensionalized of solutions
+ *
+ * @param bulk_velocity. The bulk velocity calculated by the FlowControl class
+ */
 template <int dim, typename VectorType, typename DofsType>
 const VectorType
 AverageVelocities<dim, VectorType, DofsType>::
@@ -139,8 +149,8 @@ get_average_velocities(const double bulk_velocity)
 {
   VectorType nondimensionalized_average_velocities(average_velocities);
   nondimensionalized_average_velocities /= bulk_velocity;
+
   return nondimensionalized_average_velocities;
 }
-
 
 #endif
