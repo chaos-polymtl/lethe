@@ -364,20 +364,6 @@ namespace Parameters
                         Patterns::Integer(),
                         "Flow direction at flow inlet");
 
-      prm.declare_entry("profil averaging",
-                        "0",
-                        Patterns::Integer(),
-                        "Component where time-averaged velocities are averaged");
-
-      prm.declare_entry("location",
-                        "0",
-                        Patterns::Double(),
-                        "Location component to average the time-averaged velocities");
-
-      prm.declare_entry("flow direction",
-                        "0",
-                        Patterns::Integer(),
-                        "Flow direction at flow inlet");
 
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
@@ -420,8 +406,6 @@ namespace Parameters
       initial_time                 = prm.get_double("initial time");
       id_flow_control              = prm.get_integer("boundary id");
       flow_direction               = prm.get_integer("flow direction");
-      component_average            = prm.get_integer("profile averaging");
-      component_location           = prm.get_double("profile location");
       kinetic_energy_output_name   = prm.get("kinetic energy name");
       enstrophy_output_name        = prm.get("enstrophy name");
       calculation_frequency        = prm.get_integer("calculation frequency");
