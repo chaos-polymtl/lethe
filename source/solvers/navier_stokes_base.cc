@@ -146,7 +146,7 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
       this->beta =
-        flow.calculate_beta(this->dof_handler,
+        flow.get_beta(this->dof_handler,
                             present_solution,
                             nsparam.flow_control,
                             nsparam.simulation_control,
@@ -877,12 +877,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           nsparam.flow_control.flow_direction =
             nsparam.post_processing.flow_direction;
 
-          this->flow.calculate_beta(this->dof_handler,
+          this->flow.calculate_flow_rate(this->dof_handler,
                                     this->present_solution,
                                     nsparam.flow_control,
-                                    nsparam.simulation_control,
                                     nsparam.fem_parameters,
-                                    this->simulation_control->get_step_number(),
                                     mpi_communicator);
         }
 
@@ -903,24 +901,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                               locally_owned_dofs,
                               mpi_communicator);
 
-      //Get the bulk velocity of the flow_control class (after merge of Flow Control)
-
-      /*if (nsparam.post_processing.nondimensionalization)
+      // Get the bulk velocity with flow_control class
+      if (nsparam.post_processing.nondimensionalization)
       {
-        const double bulk_velocity = flow.get_bulk_velocity();
+        const double bulk_velocity = flow.bulk_velocity();
         average_solution = average_velocities.get_average_velocities(bulk_velocity);
       }
-      else */
+      else
       this->average_solution = average_velocities.get_average_velocities();
-
-      /*
-      this->average_velocities.calculate_reynolds_stress(
-                                      this->local_evaluation_point,
-                                      this->simulation_control,
-                                      locally_owned_dofs,
-                                      mpi_communicator);
-      this->reynolds_stress = average_velocities.get_reynolds_stress();
-      */
     }
 
 
