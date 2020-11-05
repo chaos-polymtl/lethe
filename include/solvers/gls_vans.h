@@ -51,9 +51,10 @@ public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
                 const unsigned int                 degree_velocity,
                 const unsigned int                 degree_pressure);
+  ~GLSVANSSolver();
 
   virtual void
-  solve();
+  solve() override;
 
 private:
   void
@@ -73,6 +74,15 @@ protected:
   void
   assembleGLS();
 
+  virtual void
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override;
+
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override;
+
   /**
    * @brief a function for adding data vectors to the data_out object for
    * post_processing additional results
@@ -85,8 +95,6 @@ protected:
    */
 
 protected:
-  TrilinosWrappers::SparseMatrix system_matrix;
-
 private:
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
