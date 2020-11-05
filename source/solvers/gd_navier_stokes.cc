@@ -409,8 +409,9 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
             }
 
           cell->get_dof_indices(local_dof_indices);
+          auto &nonzero_constraints = this->get_nonzero_constraints();
           const AffineConstraints<double> &constraints_used =
-            this->nonzero_constraints;
+            nonzero_constraints;
           constraints_used.distribute_local_to_global(local_matrix,
                                                       local_rhs,
                                                       local_dof_indices,
@@ -468,11 +469,12 @@ GDNavierStokesSolver<dim>::setup_dofs()
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
+  auto &nonzero_constraints = this->get_nonzero_constraints();
   {
-    this->nonzero_constraints.clear();
+    nonzero_constraints.clear();
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->nonzero_constraints);
+                                            nonzero_constraints);
     for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
          ++i_bc)
       {
@@ -484,7 +486,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
-              this->nonzero_constraints,
+              nonzero_constraints,
               this->fe.component_mask(velocities));
           }
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
@@ -497,7 +499,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->dof_handler,
               0,
               no_normal_flux_boundaries,
-              this->nonzero_constraints);
+              nonzero_constraints);
           }
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::function)
@@ -510,7 +512,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
                 &this->nsparam.boundary_conditions.bcFunctions[i_bc].u,
                 &this->nsparam.boundary_conditions.bcFunctions[i_bc].v,
                 &this->nsparam.boundary_conditions.bcFunctions[i_bc].w),
-              this->nonzero_constraints,
+              nonzero_constraints,
               this->fe.component_mask(velocities));
           }
 
@@ -522,11 +524,11 @@ GDNavierStokesSolver<dim>::setup_dofs()
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
               this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->nonzero_constraints);
+              nonzero_constraints);
           }
       }
   }
-  this->nonzero_constraints.close();
+  nonzero_constraints.close();
 
   {
     this->zero_constraints.clear();
@@ -616,7 +618,7 @@ GDNavierStokesSolver<dim>::setup_dofs()
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   coupling,
                                   sparsity_pattern,
-                                  this->nonzero_constraints,
+                                  nonzero_constraints,
                                   true,
                                   Utilities::MPI::this_mpi_process(
                                     MPI_COMM_WORLD));
@@ -887,9 +889,10 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                               const bool   renewed_matrix)
 {
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
@@ -941,9 +944,10 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                             const bool   renewed_matrix)
 {
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
@@ -990,10 +994,11 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                                            double     relative_residual)
 {
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
 
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 

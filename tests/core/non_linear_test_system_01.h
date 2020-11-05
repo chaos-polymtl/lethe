@@ -69,7 +69,8 @@ public:
     present_solution[0] = 1;
     present_solution[1] = 0;
 
-    this->nonzero_constraints.close();
+    auto &nonzero_constraints = this->get_nonzero_constraints();
+    nonzero_constraints.close();
   }
 
 

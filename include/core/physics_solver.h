@@ -106,6 +106,7 @@ public:
   VectorType & get_newton_update();
   VectorType & get_present_solution();
   VectorType & get_system_rhs();
+  AffineConstraints<double> & get_nonzero_constraints();
 
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
@@ -113,15 +114,13 @@ public:
   // TODO Jeanne: switch to private
   NonLinearSolver<VectorType> *non_linear_solver;
 
-  AffineConstraints<double> nonzero_constraints;
-
-
 private:
   VectorType evaluation_point;
   VectorType local_evaluation_point;
   VectorType newton_update;
   VectorType present_solution;
   VectorType system_rhs;
+  AffineConstraints<double> nonzero_constraints;
 
 };
 
@@ -201,6 +200,13 @@ VectorType &
 PhysicsSolver<VectorType>::get_system_rhs()
 {
   return system_rhs;
+}
+
+template <typename VectorType>
+AffineConstraints<double> &
+PhysicsSolver<VectorType>::get_nonzero_constraints()
+{
+  return nonzero_constraints;
 }
 
 #endif

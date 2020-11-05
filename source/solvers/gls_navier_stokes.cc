@@ -79,11 +79,12 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
+  auto &nonzero_constraints = this->get_nonzero_constraints();
   {
-    this->nonzero_constraints.clear();
+    nonzero_constraints.clear();
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
-                                            this->nonzero_constraints);
+                                            nonzero_constraints);
     for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
          ++i_bc)
       {
@@ -95,7 +96,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               this->dof_handler,
               this->nsparam.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
-              this->nonzero_constraints,
+              nonzero_constraints,
               this->fe.component_mask(velocities));
           }
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
@@ -108,7 +109,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               this->dof_handler,
               0,
               no_normal_flux_boundaries,
-              this->nonzero_constraints);
+              nonzero_constraints);
           }
         else if (this->nsparam.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::function)
@@ -121,7 +122,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                 &this->nsparam.boundary_conditions.bcFunctions[i_bc].u,
                 &this->nsparam.boundary_conditions.bcFunctions[i_bc].v,
                 &this->nsparam.boundary_conditions.bcFunctions[i_bc].w),
-              this->nonzero_constraints,
+              nonzero_constraints,
               this->fe.component_mask(velocities));
           }
 
@@ -133,11 +134,11 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               this->nsparam.boundary_conditions.id[i_bc],
               this->nsparam.boundary_conditions.periodic_id[i_bc],
               this->nsparam.boundary_conditions.periodic_direction[i_bc],
-              this->nonzero_constraints);
+              nonzero_constraints);
           }
       }
   }
-  this->nonzero_constraints.close();
+  nonzero_constraints.close();
 
   {
     this->zero_constraints.clear();
@@ -213,7 +214,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   DynamicSparsityPattern dsp(this->locally_relevant_dofs);
   DoFTools::make_sparsity_pattern(this->dof_handler,
                                   dsp,
-                                  this->nonzero_constraints,
+                                  nonzero_constraints,
                                   false);
   SparsityTools::distribute_sparsity_pattern(
     dsp,
@@ -922,8 +923,9 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
             }
 
           cell->get_dof_indices(local_dof_indices);
+          auto &nonzero_constraints = this->get_nonzero_constraints();
           const AffineConstraints<double> &constraints_used =
-            this->nonzero_constraints;
+            nonzero_constraints;
           constraints_used.distribute_local_to_global(local_matrix,
                                                       local_rhs,
                                                       local_dof_indices,
@@ -1319,9 +1321,10 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const bool   renewed_matrix)
 {
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
@@ -1376,9 +1379,10 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
@@ -1425,8 +1429,10 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const bool   renewed_matrix)
 {
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
 
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
@@ -1481,9 +1487,10 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
                                                 const bool /*renewed_matrix*/)
 {
   auto &system_rhs = this->get_system_rhs();
+  auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
-    initial_step ? this->nonzero_constraints : this->zero_constraints;
+    initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 

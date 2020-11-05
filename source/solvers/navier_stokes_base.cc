@@ -772,10 +772,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  nonzero_constraints.distribute(tmp);
+  nonzero_constraints.distribute(tmp_m1);
+  nonzero_constraints.distribute(tmp_m2);
+  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
   present_solution = tmp;
@@ -824,10 +825,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  nonzero_constraints.distribute(tmp);
+  nonzero_constraints.distribute(tmp_m1);
+  nonzero_constraints.distribute(tmp_m2);
+  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
   present_solution = tmp;
@@ -1004,7 +1006,8 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
                            this->nsparam.initial_condition->uvwp,
                            newton_update,
                            this->fe.component_mask(pressure));
-  this->nonzero_constraints.distribute(newton_update);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  nonzero_constraints.distribute(newton_update);
   auto &present_solution = this->get_present_solution();
   present_solution = newton_update;
 }
