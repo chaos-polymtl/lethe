@@ -6,11 +6,11 @@
 subsection simulation control
   set method                       = bdf1
   set number mesh adapt            = 0
-  set output name                  = periodic_hills_test_av-output
+  set output name                  = periodic_hills-output
   set subdivision                  = 2
-  set time step                    = 0.1   
+  set time step                    = 0.5     
   set output frequency             = 1     
-  set time end                     = 5
+  set time end                     = 20
 end
 
 #---------------------------------------------------
@@ -52,9 +52,10 @@ end
 #---------------------------------------------------
 subsection post-processing
     set calculate average velocities    = true
-    set initial time 		        = 1
+    set initial time 		        = 5
     set boundary id    	           	= 0
     set flow direction 		        = 0
+    #set nondimensionalization           = true
 end
 
 # --------------------------------------------------
@@ -88,8 +89,8 @@ end
 # FEM
 #---------------------------------------------------
 subsection FEM
-    set velocity order            = 1
-    set pressure order            = 1
+    set velocity order            = 2
+    set pressure order            = 2
     set qmapping all              = true
 end
 

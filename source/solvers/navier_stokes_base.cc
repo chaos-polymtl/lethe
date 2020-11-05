@@ -1146,14 +1146,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   std::vector<std::string> reynolds_stress_names(dim, "normal_reynolds_stress");
   reynolds_stress_names.push_back("shear_stress");
 
-  /*
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    reynolds_stress_data_component_interpretation(
-    dim, DataComponentInterpretation::component_is_part_of_vector);
-  reynolds_stress_data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
-*/
-
   DataOut<dim> data_out;
 
   // Additional flag to enable the output of high-order elements
@@ -1174,12 +1166,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            average_data_component_interpretation);
 
-  /*
-  data_out.add_data_vector(this->reynolds_stress,
-                           reynolds_stress_names,
-                           DataOut<dim>::type_dof_data,
-                           reynolds_stress_data_component_interpretation);
-  */
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
