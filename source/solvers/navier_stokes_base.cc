@@ -871,22 +871,19 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
       // this class
       if (!nsparam.flow_control.enable_flow_control &&
           nsparam.post_processing.nondimensionalization)
-        {
-          nsparam.flow_control.id_flow_control =
-            nsparam.post_processing.id_flow_control;
-          nsparam.flow_control.flow_direction =
-            nsparam.post_processing.flow_direction;
+      {
+        nsparam.flow_control.id_flow_control =
+          nsparam.post_processing.id_flow_control;
+        nsparam.flow_control.flow_direction =
+          nsparam.post_processing.flow_direction;
 
-          this->flow.calculate_flow_rate(this->dof_handler,
-                                         this->present_solution,
-                                         nsparam.flow_control,
-                                         nsparam.fem_parameters,
-                                         mpi_communicator);
-        }
+        this->flow.calculate_flow_rate(this->dof_handler,
+                                       this->present_solution,
+                                       nsparam.flow_control,
+                                       nsparam.fem_parameters,
+                                       mpi_communicator);
+      }
 
-
-      // Reinit average_solution and temporary store average velocity prior
-      // having ghost cells in average_solution after transfer
       this->average_solution.reinit(this->locally_owned_dofs,
                                     this->locally_relevant_dofs,
                                     this->mpi_communicator);
@@ -909,7 +906,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         locally_owned_dofs,
         mpi_communicator);
 
-      // Get the bulk velocity with flow_control class
+      // Getting the bulk velocity with flow_control class
       if (nsparam.post_processing.nondimensionalization)
       {
         const double bulk_velocity = flow.bulk_velocity();
