@@ -637,7 +637,7 @@ DEMSolver<dim>::solve()
           contact_search_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
-          particle_handler.exchange_ghost_particles();
+          particle_handler.exchange_ghost_particles(true);
         }
       else
         particle_handler.update_ghost_particles();
