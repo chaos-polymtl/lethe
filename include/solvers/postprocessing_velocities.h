@@ -43,7 +43,6 @@
 
 using namespace dealii;
 
-
 /**
  * @brief AverageVelocities. The AverageVelocities class calculates the
  * time-averaged velocities and pressure. The generated vector is output
@@ -61,19 +60,37 @@ public:
     const DofsType &                         locally_owned_dofs,
     const MPI_Comm &                         mpi_communicator);
 
+  void
+  calculate_reynolds_stress(
+    const VectorType &                        local_evaluation_point,
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const DofsType &                          locally_owned_dofs,
+    const MPI_Comm &                          mpi_communicator);
+
   const VectorType
   get_average_velocities();
 
   const VectorType
   get_average_velocities(const double bulk_velocity);
 
+  const VectorType
+  get_reynolds_stress();
+
+  const VectorType
+  get_reynolds_stress(const double bulk_velocity);
+
 
 private:
+  double total_time;
+
   TrilinosScalar inv_range_time;
   TrilinosScalar dt;
 
   VectorType sum_velocity_dt;
   VectorType average_velocities;
+
+  VectorType sum_reynolds_stress_dt;
+  VectorType reynolds_stress;
 };
 
 /**
@@ -100,7 +117,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const MPI_Comm &                         mpi_communicator)
 {
   double time = simulation_control->get_current_time();
-  double total_time = time - post_processing.initial_time;
+  total_time = time - post_processing.initial_time;
   dt = simulation_control->calculate_time_step();
 
   if (simulation_control->get_step_number() == 0)
@@ -126,13 +143,93 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   }
 }
 
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
+  const VectorType &                        local_evaluation_point,
+  const std::shared_ptr<SimulationControl> &simulation_control,
+  const DofsType &                          locally_owned_dofs,
+  const MPI_Comm &                          mpi_communicator)
+{
+
+  if (simulation_control->get_step_number() == 0)
+  {
+    // Reinitializing vectors with zeros at t = 0
+    sum_reynolds_stress_dt.reinit(locally_owned_dofs,
+                                  mpi_communicator);
+    reynolds_stress.reinit(locally_owned_dofs,
+                           mpi_communicator);
+  }
+  else if (abs(total_time) < 1e-6 || total_time > 1e-6)
+  {
+    VectorType reynolds_stress_dt(locally_owned_dofs,
+                                  mpi_communicator);
+
+
+    // ***Won't work with BlockVectors if output needed so far
+    if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+    {
+      const unsigned int begin_index = local_evaluation_point.local_range().first;
+      const unsigned int end_index = local_evaluation_point.local_range().second;
+
+      for (unsigned int i = begin_index; i < end_index; i++)
+      {
+        if ((i + 4) % 4 == 0)
+        {
+          // Calculating (u'u')*dt, (v'v')*dt (w'w')*dt and (u'v')*dt
+          reynolds_stress_dt[i] =
+            (local_evaluation_point[i] - average_velocities[i]) *
+            (local_evaluation_point[i] - average_velocities[i]) * dt;
+          reynolds_stress_dt[i + 1] =
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
+          reynolds_stress_dt[i + 2] =
+            (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
+            (local_evaluation_point[i + 2] - average_velocities[i + 2]) * dt;
+          reynolds_stress_dt[i + 3] =
+            (local_evaluation_point[i] - average_velocities[i]) *
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
+
+          // Summation of all reynolds stress during simulation
+          sum_reynolds_stress_dt += reynolds_stress_dt;
+        }
+      }
+    }
+    else if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
+    {
+      unsigned int begin_index = local_evaluation_point.block(0).local_range().first;
+      unsigned int end_index   = local_evaluation_point.block(0).local_range().second;
+
+      reynolds_stress_dt.block(0) = local_evaluation_point.block(0);
+      reynolds_stress_dt.block(0) -= average_velocities.block(0);
+      reynolds_stress_dt.block(0).scale(reynolds_stress_dt.block(0));
+      reynolds_stress_dt.block(0) *= dt;
+
+      for (unsigned int i = begin_index; i < end_index; i++)
+        if ((i + 3) % 3 == 0)
+        {
+          reynolds_stress_dt.block(1)[i/3] = reynolds_stress_dt.block(0)[i] *
+                                             reynolds_stress_dt.block(0)[i + 1] / dt;
+        }
+
+      sum_reynolds_stress_dt += reynolds_stress_dt;
+    }
+
+  }
+
+  // Calculating time-averaged reynolds stress
+  if (simulation_control->is_output_iteration())
+    reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
+}
+
+
 /**
  * @brief get_average_velocities. Gives the average of solutions
  */
 template <int dim, typename VectorType, typename DofsType>
 const VectorType
-AverageVelocities<dim, VectorType, DofsType>::
-get_average_velocities()
+AverageVelocities<dim, VectorType, DofsType>::get_average_velocities()
 {
   return average_velocities;
 }
@@ -152,5 +249,25 @@ get_average_velocities(const double bulk_velocity)
 
   return nondimensionalized_average_velocities;
 }
+
+// Function not tested yet
+template <int dim, typename VectorType, typename DofsType>
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress()
+{
+  return reynolds_stress;
+}
+
+// Function not tested yet
+template <int dim, typename VectorType, typename DofsType>
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress(
+  const double bulk_velocity)
+{
+  VectorType nondimensionalized_reynolds_stress(reynolds_stress);
+  nondimensionalized_reynolds_stress /= bulk_velocity;
+  return nondimensionalized_reynolds_stress;
+}
+
 
 #endif
