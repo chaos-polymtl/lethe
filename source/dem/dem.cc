@@ -107,6 +107,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error(
         "Specified contact detection method is not valid");
     }
+
+  // Calling input_parameter_inspection to evaluate input parameters in the
+  // parameter handler file
+  if (this_mpi_process == 0)
+    input_parameter_inspection(parameters);
 }
 
 template <int dim>

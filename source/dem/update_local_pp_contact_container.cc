@@ -7,8 +7,7 @@ void
 update_local_pp_contact_container_iterators(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
-    &particle_container)
+  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container)
 {
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
        adjacent_particles_iterator != local_adjacent_particles.end();
@@ -23,9 +22,9 @@ update_local_pp_contact_container_iterators(
           int particle_two_id = pp_map_iterator->first;
 
           pp_map_iterator->second.particle_one =
-            particle_container.at(particle_one_id);
+            particle_container[particle_one_id];
           pp_map_iterator->second.particle_two =
-            particle_container.at(particle_two_id);
+            particle_container[particle_two_id];
         }
     }
 }
@@ -34,12 +33,10 @@ template void
 update_local_pp_contact_container_iterators(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
     &local_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<2>>
-    &particle_container);
+  std::unordered_map<int, Particles::ParticleIterator<2>> &particle_container);
 
 template void
 update_local_pp_contact_container_iterators(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<3>>>
     &local_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<3>>
-    &particle_container);
+  std::unordered_map<int, Particles::ParticleIterator<3>> &particle_container);
