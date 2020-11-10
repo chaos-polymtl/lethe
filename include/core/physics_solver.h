@@ -132,7 +132,7 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   NonLinearSolver<VectorType> *non_linear_solver)
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_current(0) //remove after validation
+  , number_physic_current(0) //remove after validation ==> see how to
   , number_physic_total(1) //remove after validation
   , evaluation_point(number_physic_total)
   , local_evaluation_point(number_physic_total)
@@ -147,7 +147,7 @@ template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   Parameters::NonLinearSolver non_linear_solver_parameters)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_current(0) //remove after validation
+  , number_physic_current(0) //remove after validation ==> see how to
   , number_physic_total(1) //remove after validation
   , evaluation_point(number_physic_total)
   , local_evaluation_point(number_physic_total)
@@ -181,7 +181,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const bool                                              force_matrix_renewal)
 {
 //    this->number_physic_total=1;
-    for (int iphys=0 ; iphys<number_physic_total ; iphys++) {
+    for (int iphys=0 ; iphys<this->number_physic_total ; iphys++) {
         this->number_physic_current=iphys;
         this->non_linear_solver->solve(time_stepping_method,
                                        first_iteration,
