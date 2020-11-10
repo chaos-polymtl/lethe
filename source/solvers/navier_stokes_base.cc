@@ -144,14 +144,13 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
       nsparam.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->beta =
-        flow.get_beta(this->dof_handler,
-                            present_solution,
-                            nsparam.flow_control,
-                            nsparam.simulation_control,
-                            nsparam.fem_parameters,
-                            this->simulation_control->get_step_number(),
-                            mpi_communicator);
+      this->beta = flow.get_beta(this->dof_handler,
+                                 present_solution,
+                                 nsparam.flow_control,
+                                 nsparam.simulation_control,
+                                 nsparam.fem_parameters,
+                                 this->simulation_control->get_step_number(),
+                                 mpi_communicator);
 
       // Showing results (area and flow rate)
       if (simulation_control->get_step_number() - 1 != 0)
