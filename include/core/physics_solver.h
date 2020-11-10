@@ -101,7 +101,6 @@ public:
     nonzero_constraints[number_physic_current].distribute(local_evaluation_point[number_physic_current]);
   }
 
-
   //getters
   VectorType & get_evaluation_point();
   VectorType & get_local_evaluation_point();
@@ -110,7 +109,7 @@ public:
   VectorType & get_system_rhs();
   AffineConstraints<double> & get_nonzero_constraints();
 
-
+  //Attributes
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
 
@@ -120,7 +119,6 @@ private:
 
   std::vector<VectorType> evaluation_point;
   std::vector<VectorType> local_evaluation_point;
-//  VectorType local_evaluation_point;
   std::vector<VectorType> newton_update;
   std::vector<VectorType> present_solution;
   std::vector<VectorType> system_rhs;
@@ -128,6 +126,7 @@ private:
   NonLinearSolver<VectorType> *non_linear_solver;
 };
 
+//constructors
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   NonLinearSolver<VectorType> *non_linear_solver)
@@ -143,8 +142,6 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   , nonzero_constraints(number_physic_total)
 {
 }
-
-
 
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
@@ -175,6 +172,7 @@ PhysicsSolver<VectorType>::PhysicsSolver(
     }
 }
 
+//solver method
 template <typename VectorType>
 void
 PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -182,9 +180,14 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const bool                                              first_iteration,
   const bool                                              force_matrix_renewal)
 {
-  this->non_linear_solver->solve(time_stepping_method,
-                                 first_iteration,
-                                 force_matrix_renewal);
+    int iphys(0);
+    for (iphys=0 ; iphys<number_physic_total ; iphys++) {
+        this->number_physic_current=iphys;
+        this->non_linear_solver->solve(time_stepping_method,
+                                       first_iteration,
+                                       force_matrix_renewal);
+    }
+
 }
 
 //getters
