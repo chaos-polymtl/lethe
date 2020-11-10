@@ -117,7 +117,7 @@ private:
 
   std::vector<VectorType> evaluation_point;
   VectorType local_evaluation_point;
-  VectorType newton_update;
+  std::vector<VectorType> newton_update;
   VectorType present_solution;
   VectorType system_rhs;
   AffineConstraints<double> nonzero_constraints;
@@ -132,6 +132,7 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   , number_physic_current(0) //remove after validation
   , number_physic_total(1) //remove after validation
   , evaluation_point(number_physic_total)
+  , newton_update(number_physic_total)
 {
 }
 
@@ -144,6 +145,7 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   , number_physic_current(0) //remove after validation
   , number_physic_total(1) //remove after validation
   , evaluation_point(number_physic_total)
+  , newton_update(number_physic_total)
 {
   switch (non_linear_solver_parameters.solver)
     {
@@ -199,7 +201,7 @@ template <typename VectorType>
 VectorType &
 PhysicsSolver<VectorType>::get_newton_update()
 {
-  return newton_update;
+  return newton_update[number_physic_current];
 }
 
 template <typename VectorType>
