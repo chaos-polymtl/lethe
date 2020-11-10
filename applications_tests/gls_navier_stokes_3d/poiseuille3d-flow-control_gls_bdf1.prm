@@ -69,11 +69,13 @@ end
 # Flow control
 #---------------------------------------------------
 subsection flow control
+    set calculate flow rate        = true
+    set boundary id    		   = 1      # 0=x, 1=y, 2=z
     set enable                     = true
     set volumetric flow rate       = -10    # Negative flow rate for positive velocity since it's calculated with outward normal vector
-    set boundary id    		   = 1      # 0=x, 1=y, 2=z
     set flow direction 		   = 0
     set initial beta		   = 70
+    set verbosity                  = verbose
 end
 
 
