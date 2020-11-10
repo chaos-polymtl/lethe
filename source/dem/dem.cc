@@ -640,7 +640,9 @@ DEMSolver<dim>::solve()
           particle_handler.exchange_ghost_particles(true);
         }
       else
-        particle_handler.update_ghost_particles();
+        {
+          particle_handler.update_ghost_particles();
+        }
 
       // Broad particle-particle contact search
       if (particles_insertion_step || load_balancing_step ||
