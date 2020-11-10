@@ -569,6 +569,12 @@ namespace Parameters
    */
   struct DynamicFlowControl
   {
+    // Type of verbosity for the flow control
+    Verbosity verbosity;
+
+    // Enable calculate flow rate and area (no control needed)
+    bool calculate_flow_rate;
+
     // Enable flow control
     bool enable_flow_control;
 

@@ -169,7 +169,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               this->zero_constraints);
           }
         else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
-          // || Parameters::function)
+             // || Parameters::function)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
@@ -853,7 +853,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1493,8 +1493,8 @@ GLSNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->dynamic_flow_control(this->present_solution);
       this->simulation_control->print_progression(this->pcout);
+      this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
         this->first_iteration();

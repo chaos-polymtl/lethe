@@ -30,6 +30,7 @@
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
@@ -66,6 +67,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , nsparam(p_nsparam)
+  , flow_control(nsparam.flow_control)
   , velocity_fem_degree(p_degreeVelocity)
   , pressure_fem_degree(p_degreePressure)
   , number_quadrature_points(p_degreeVelocity + 1)
@@ -126,42 +128,43 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
 }
 
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
+  const VectorType &evaluation_point)
+{
+  this->flow_rate = calculate_flow_rate(this->dof_handler,
+                                        evaluation_point,
+                                        nsparam.flow_control.id_flow_control,
+                                        nsparam.fem_parameters,
+                                        mpi_communicator);
 
-/**
- * @brief dynamic_flow_control
- * If set to enable, dynamic_flow_control allows to control the flow by
- * calculate a beta coefficient at each time step added to the force of the
- * source term for gls_navier_stokes solver.
- */
+  // Showing results (area and flow rate)
+  if (nsparam.flow_control.verbosity == Parameters::Verbosity::verbose &&
+      simulation_control->get_step_number() > 0 && this->this_mpi_process == 0)
+    {
+      std::cout << "+------------------------------------------+" << std::endl;
+      std::cout << "|  Flow rate summary                       |" << std::endl;
+      std::cout << "+------------------------------------------+" << std::endl;
+      this->pcout << "Inlet area : " << flow_rate.second << std::endl;
+      this->pcout << "Flow rate : " << flow_rate.first << std::endl;
+      this->pcout << "Beta applied : "
+                  << beta[nsparam.flow_control.flow_direction] << std::endl;
+    }
+}
+
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
-  const VectorType &present_solution)
+NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 {
   // Verification if simulation is transient
-  if (nsparam.flow_control.enable_flow_control &&
-      nsparam.simulation_control.method !=
-        Parameters::SimulationControl::TimeSteppingMethod::steady)
-    {
-      this->beta = flow.get_beta(this->dof_handler,
-                                 present_solution,
-                                 nsparam.flow_control,
-                                 nsparam.simulation_control,
-                                 nsparam.fem_parameters,
-                                 this->simulation_control->get_step_number(),
-                                 mpi_communicator);
+  this->flow_control.calculate_beta(flow_rate,
+                                    simulation_control->get_time_step(),
+                                    simulation_control->get_step_number());
 
-      // Showing results (area and flow rate)
-      if (simulation_control->get_step_number() - 1 != 0)
-        {
-          std::vector<double> summary = flow.flow_summary();
-          this->pcout << "\n"
-                      << "Inlet area : " << summary[0] << std::endl;
-          this->pcout << "Flow rate : " << summary[1] << std::endl;
-          this->pcout << "Beta applied : " << summary[2] << std::endl;
-        }
-    }
+
+  this->beta = flow_control.get_beta();
 }
 
 
@@ -832,8 +835,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
   if (this->simulation_control->is_output_iteration())
     this->write_output_results(this->present_solution);
 
-
-
   if (this->nsparam.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
@@ -896,6 +897,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           kinetic_energy_table.set_precision("kinetic-energy", 12);
           this->kinetic_energy_table.write_text(output);
         }
+    }
+
+  // Calculate inlet flow rate and area
+  if (this->nsparam.flow_control.calculate_flow_rate)
+    {
+      this->postprocessing_flow_rate(this->present_solution);
     }
 
   if (!firstIter)

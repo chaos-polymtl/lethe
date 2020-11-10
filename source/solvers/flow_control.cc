@@ -1,85 +1,41 @@
 #include <solvers/flow_control.h>
 
-
 template <int dim, typename VectorType>
-void
-FlowControl<dim, VectorType>::calculate_flow_rate(
-  const DoFHandler<dim> &               dof_handler,
-  const VectorType &                    present_solution,
-  const Parameters::DynamicFlowControl &flow_control,
-  const Parameters::FEM &               fem_parameters,
-  const MPI_Comm &                      mpi_communicator)
+FlowControl<dim, VectorType>::FlowControl(
+  const Parameters::DynamicFlowControl &flow_control)
 {
-  unsigned int boundary_id = flow_control.id_flow_control;
-
-  const FiniteElement<dim> &fe = dof_handler.get_fe();
-  const MappingQ<dim>       mapping(fe.degree, fem_parameters.qmapping_all);
-  QGauss<dim - 1>           face_quadrature_formula(fe.degree + 1);
-  const unsigned int        n_q_points = face_quadrature_formula.size();
-  const FEValuesExtractors::Vector velocities(0);
-  std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
-  Tensor<1, dim>                   normal_vector;
-
-  FEFaceValues<dim> fe_face_values(mapping,
-                                   fe,
-                                   face_quadrature_formula,
-                                   update_values | update_quadrature_points |
-                                     update_JxW_values | update_normal_vectors);
-
-  // Resetting next flow rate and area prior new calculation
-  flow_rate_n = 0;
-  area        = 0;
-
-  // Calculating area and volumetric flow rate at the inlet flow
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned() && cell->at_boundary())
-        {
-          for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
-               face++)
-            {
-              if (cell->face(face)->at_boundary())
-                {
-                  fe_face_values.reinit(cell, face);
-                  if (cell->face(face)->boundary_id() == boundary_id)
-                    {
-                      for (unsigned int q = 0; q < n_q_points; q++)
-                        {
-                          area += fe_face_values.JxW(q);
-                          normal_vector = fe_face_values.normal_vector(q);
-                          fe_face_values[velocities].get_function_values(
-                            present_solution, velocity_values);
-                          flow_rate_n += velocity_values[q] * normal_vector *
-                                         fe_face_values.JxW(q);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-  area        = Utilities::MPI::sum(area, mpi_communicator);
-  flow_rate_n = Utilities::MPI::sum(flow_rate_n, mpi_communicator);
+  flow_rate_0      = flow_control.flow_rate;
+  beta_0           = flow_control.beta_0;
+  flow_direction   = flow_control.flow_direction;
+  beta_n1          = 0;
+  flow_rate_n      = 0;
+  no_force         = true;
+  threshold_factor = 1.01; // 1%
 }
 
 template <int dim, typename VectorType>
 void
 FlowControl<dim, VectorType>::calculate_beta(
-  const Parameters::DynamicFlowControl &flow_control,
-  const Parameters::SimulationControl & simulation_control,
-  const unsigned int &                  step_number)
+  const std::pair<double, double> &flow_rate,
+  const double &                   dt,
+  const unsigned int &             step_number)
 {
-  const double dt          = simulation_control.dt;
-  const double flow_rate_0 = flow_control.flow_rate;
+  // Getting flow rate and area of the last time step.
+  flow_rate_n = flow_rate.first;
+  area        = flow_rate.second;
 
-  beta_n = beta_n1;
-
-  // If flow is reached with no force, adjusted is set to true,
-  // threshold factor may be decreased
+  // If flow is now reached with no force, the "no_force" variable is set to
+  // false. It may means that slowing down the flow with the pressure drop
+  // (no force applied) is ineffective (too big pressure drop) or the flow rate
+  // now reached the intended value without force.
+  // In case the flow rate is in the initial threshold but the pressure drop is
+  // too small to slow it down, the threshold factor decreases by 2.
+  // Otherwise, the flow rate may take a lot time to reached the flow rate value
+  // only with the pressure drop.
   if (abs(beta_n - 0) < 1e-6 && step_number > 1)
     {
       if (abs(flow_rate_n) < abs(flow_rate_0))
-        adjusted = true;
+        no_force = false;
       else if (abs(flow_rate_1n - flow_rate_n) <
                  abs(flow_rate_n - flow_rate_0) &&
                threshold_factor > 1.00125)
@@ -87,94 +43,71 @@ FlowControl<dim, VectorType>::calculate_beta(
     }
 
   // If flow rate is over the desired value at time step 1 and beta applied at
-  // time step 2 decreased it under the value.
+  // time step 2 decreased it under the value, "no_force" is disable.
+  // As the previous condition, if flow rate is below the value after the small
+  // beta applied at time step 2, it means the pressure drop is too big. Then,
+  // slowing down the flow rate with the pressure drop is ineffective.
+  // This early disabling prevents to set a potential beta to 0 which could
+  // ruins a good flow convergence after many step time
   if (step_number == 3 && abs(flow_rate_n) < abs(flow_rate_0) &&
       abs(flow_rate_1n) > abs(flow_rate_0))
-    adjusted = true;
+    no_force = false;
 
   if (step_number <= 1)
     {
       // Initial beta
-      beta_n1 = flow_control.beta_0;
+      beta_n1 = beta_0;
     }
   else if (abs(flow_rate_n) > abs(flow_rate_0) &&
            abs(flow_rate_n) < threshold_factor * abs(flow_rate_0) &&
-           adjusted == false)
+           no_force == true)
     {
       // If the flow rate is between targeted flow rate value and the threshold
-      // and if it didn't reached it the value, it decreases by itself
-      // (no force applied)
+      // and if it didn't reached it the value (no_force is enable), it
+      // decreases by itself (pressure drop)
       beta_n1 = 0;
     }
   else if (step_number == 2)
     {
-      // 2nd time step if not in the
+      // The calculated beta at time step 2 is small if the initial beta brings
+      // the flow rate close to the fixed value but not enough to get in the
+      // threshold
       beta_n1 = 0.5 * (flow_rate_n - flow_rate_0) / (area * dt);
     }
   else
     {
       // Standard flow controller.
       // Calculate the new beta to control the flow.
-      // If desired flow rate is reached, new beta only maintains the force to
-      // keep the flow at the desired value. Is so, if calculated beta is
-      // negative it's set to 0 to avoided +/- oscillations
       beta_n1 =
         beta_n - (flow_rate_0 - 2 * flow_rate_n + flow_rate_1n) / (area * dt);
-      // If flow rate was already adjusted and beta is the same sign
-      // than flow_rate_0
-      if (flow_rate_0 * beta_n1 > 0 && adjusted == true)
+
+      // If desired flow rate is reached, new beta only maintains the force to
+      // keep the flow at the desired value. Is so, if calculated beta is
+      // negative it's set to 0 to avoided +/- pressure.
+      if (flow_rate_0 * beta_n1 > 0 && no_force == false)
         beta_n1 = 0;
     }
 
-  flow_rate_1n = flow_rate_n;
 
-  // Setting beta coefficient only to new time step
-  if (flow_control.flow_direction == 0)
+  // Setting beta coefficient to the tensor according to the flow direction
+  if (flow_direction == 0)
     beta[0] = beta_n1; // beta = f_x
-  else if (flow_control.flow_direction == 1)
+  else if (flow_direction == 1)
     beta[1] = beta_n1; // beta = f_y
-  else if (flow_control.flow_direction == 2)
+  else if (flow_direction == 2)
     beta[2] = beta_n1; // beta = f_z
-}
 
-
-template <int dim, typename VectorType>
-double
-FlowControl<dim, VectorType>::get_flow_rate(
-  const DoFHandler<dim> &               dof_handler,
-  const VectorType &                    present_solution,
-  const Parameters::DynamicFlowControl &flow_control,
-  const Parameters::FEM &               fem_parameters,
-  const MPI_Comm &                      mpi_communicator)
-{
-  calculate_flow_rate(dof_handler,
-                      present_solution,
-                      flow_control,
-                      fem_parameters,
-                      mpi_communicator);
-  return flow_rate_n;
+  // Assigning values of this time step as previous values prior next
+  // calculation
+  beta_n       = beta_n1;
+  flow_rate_1n = flow_rate_n;
 }
 
 
 template <int dim, typename VectorType>
 Tensor<1, dim>
-FlowControl<dim, VectorType>::get_beta(
-  const DoFHandler<dim> &               dof_handler,
-  const VectorType &                    present_solution,
-  const Parameters::DynamicFlowControl &flow_control,
-  const Parameters::SimulationControl & simulation_control,
-  const Parameters::FEM &               fem_parameters,
-  const unsigned int &                  step_number,
-  const MPI_Comm &                      mpi_communicator)
+FlowControl<dim, VectorType>::get_beta()
 {
-  calculate_flow_rate(dof_handler,
-                      present_solution,
-                      flow_control,
-                      fem_parameters,
-                      mpi_communicator);
-
-  calculate_beta(flow_control, simulation_control, step_number);
-
   return beta;
 }
 
