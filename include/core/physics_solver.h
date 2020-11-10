@@ -112,6 +112,9 @@ public:
   ConditionalOStream pcout;
 
 private:
+  int number_physic_current;
+  int number_physic_total;
+
   std::vector<VectorType> evaluation_point;
   VectorType local_evaluation_point;
   VectorType newton_update;
@@ -119,10 +122,6 @@ private:
   VectorType system_rhs;
   AffineConstraints<double> nonzero_constraints;
   NonLinearSolver<VectorType> *non_linear_solver;
-
-  int number_physic_current;
-  int number_physic_total;
-
 };
 
 template <typename VectorType>
@@ -130,12 +129,10 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   NonLinearSolver<VectorType> *non_linear_solver)
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
+  , number_physic_current(0) //remove after validation
+  , number_physic_total(1) //remove after validation
+  , evaluation_point(number_physic_total)
 {
-    //remove after validation
-    number_physic_current = 0;
-    number_physic_total = 1;
-    //vector initialization
-    std::vector<VectorType> evaluation_point(number_physic_total);
 }
 
 
@@ -144,14 +141,10 @@ template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   Parameters::NonLinearSolver non_linear_solver_parameters)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
+  , number_physic_current(0) //remove after validation
+  , number_physic_total(1) //remove after validation
+  , evaluation_point(number_physic_total)
 {
-    //remove after validation
-    number_physic_current = 0;
-    number_physic_total = 1;
-
-    //vector initialization
-    std::vector<VectorType> evaluation_point(number_physic_total);
-
   switch (non_linear_solver_parameters.solver)
     {
       case Parameters::NonLinearSolver::SolverType::newton:
