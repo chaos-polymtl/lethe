@@ -135,7 +135,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
 {
   this->flow_rate = calculate_flow_rate(this->dof_handler,
                                         evaluation_point,
-                                        nsparam.flow_control.id_flow_control,
+                                        nsparam.flow_control.boundary_flow_id,
                                         nsparam.fem_parameters,
                                         mpi_communicator);
 
@@ -903,7 +903,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     }
 
   // Calculate inlet flow rate and area
-  if (this->nsparam.flow_control.calculate_flow_rate)
+  if (this->nsparam.flow_control.enable_flow_control)
     {
       this->postprocessing_flow_rate(this->present_solution);
     }

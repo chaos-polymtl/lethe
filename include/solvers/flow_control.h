@@ -40,7 +40,7 @@ using namespace dealii;
  * control the flow with a beta coefficient calculated at each step time.
  */
 
-template <int dim, typename VectorType>
+template <int dim>
 class FlowControl
 {
 public:

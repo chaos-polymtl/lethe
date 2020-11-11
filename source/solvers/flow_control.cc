@@ -1,10 +1,10 @@
 #include <solvers/flow_control.h>
 
-template <int dim, typename VectorType>
-FlowControl<dim, VectorType>::FlowControl(
+template <int dim>
+FlowControl<dim>::FlowControl(
   const Parameters::DynamicFlowControl &flow_control)
 {
-  flow_rate_0      = flow_control.flow_rate;
+  flow_rate_0      = flow_control.flow_rate_0;
   beta_0           = flow_control.beta_0;
   flow_direction   = flow_control.flow_direction;
   beta_n1          = 0;
@@ -13,17 +13,17 @@ FlowControl<dim, VectorType>::FlowControl(
   threshold_factor = 1.01; // 1%
 }
 
-template <int dim, typename VectorType>
+template <int dim>
 void
-FlowControl<dim, VectorType>::calculate_beta(
-  const std::pair<double, double> &flow_rate,
-  const double &                   dt,
-  const unsigned int &             step_number)
+FlowControl<dim>::calculate_beta(const std::pair<double, double> &flow_rate,
+                                 const double &                   dt,
+                                 const unsigned int &             step_number)
 {
   // Getting flow rate and area of the last time step.
   flow_rate_n = flow_rate.first;
   area        = flow_rate.second;
 
+  // (Only after step time 1)
   // If flow is now reached with no force, the "no_force" variable is set to
   // false. It may means that slowing down the flow with the pressure drop
   // (no force applied) is ineffective (too big pressure drop) or the flow rate
@@ -42,18 +42,27 @@ FlowControl<dim, VectorType>::calculate_beta(
         threshold_factor = 1 + 0.5 * (threshold_factor - 1);
     }
 
+  // (Only at step time 3)
   // If flow rate is over the desired value at time step 1 and beta applied at
   // time step 2 decreased it under the value, "no_force" is disable.
   // As the previous condition, if flow rate is below the value after the small
   // beta applied at time step 2, it means the pressure drop is too big. Then,
   // slowing down the flow rate with the pressure drop is ineffective.
   // This early disabling prevents to set a potential beta to 0 which could
-  // ruins a good flow convergence after many step time
+  // ruins a good flow convergence after many step time.
   if (step_number == 3 && abs(flow_rate_n) < abs(flow_rate_0) &&
       abs(flow_rate_1n) > abs(flow_rate_0))
     no_force = false;
 
-  if (step_number <= 1)
+  if (step_number == 0)
+    {
+      // No force applied at first time step.
+      // At this moment, calculate_beta is not called at this time step but
+      // the condition prevents a beta calculation if the way it's called
+      // changes.
+      beta_n1 = 0.0;
+    }
+  else if (step_number == 1)
     {
       // Initial beta
       beta_n1 = beta_0;
@@ -64,14 +73,14 @@ FlowControl<dim, VectorType>::calculate_beta(
     {
       // If the flow rate is between targeted flow rate value and the threshold
       // and if it didn't reached it the value (no_force is enable), it
-      // decreases by itself (pressure drop)
+      // decreases by itself (pressure drop).
       beta_n1 = 0;
     }
   else if (step_number == 2)
     {
       // The calculated beta at time step 2 is small if the initial beta brings
       // the flow rate close to the fixed value but not enough to get in the
-      // threshold
+      // threshold.
       beta_n1 = 0.5 * (flow_rate_n - flow_rate_0) / (area * dt);
     }
   else
@@ -89,7 +98,7 @@ FlowControl<dim, VectorType>::calculate_beta(
     }
 
 
-  // Setting beta coefficient to the tensor according to the flow direction
+  // Setting beta coefficient to the tensor according to the flow direction.
   if (flow_direction == 0)
     beta[0] = beta_n1; // beta = f_x
   else if (flow_direction == 1)
@@ -98,21 +107,19 @@ FlowControl<dim, VectorType>::calculate_beta(
     beta[2] = beta_n1; // beta = f_z
 
   // Assigning values of this time step as previous values prior next
-  // calculation
+  // calculation.
   beta_n       = beta_n1;
   flow_rate_1n = flow_rate_n;
 }
 
 
-template <int dim, typename VectorType>
+template <int dim>
 Tensor<1, dim>
-FlowControl<dim, VectorType>::get_beta()
+FlowControl<dim>::get_beta()
 {
   return beta;
 }
 
 
-template class FlowControl<2, TrilinosWrappers::MPI::Vector>;
-template class FlowControl<3, TrilinosWrappers::MPI::Vector>;
-template class FlowControl<2, TrilinosWrappers::MPI::BlockVector>;
-template class FlowControl<3, TrilinosWrappers::MPI::BlockVector>;
+template class FlowControl<2>;
+template class FlowControl<3>;

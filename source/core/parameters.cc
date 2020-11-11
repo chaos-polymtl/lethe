@@ -1090,10 +1090,6 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether from the flow control information should be printed "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("calculate flow rate",
-                        "false",
-                        Patterns::Bool(),
-                        "Calculate the volumetric flow rate at inlet");
       prm.declare_entry("enable",
                         "false",
                         Patterns::Bool(),
@@ -1128,10 +1124,9 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      calculate_flow_rate = prm.get_bool("calculate flow rate");
       enable_flow_control = prm.get_bool("enable");
-      flow_rate           = prm.get_double("volumetric flow rate");
-      id_flow_control     = prm.get_integer("boundary id");
+      flow_rate_0         = prm.get_double("volumetric flow rate");
+      boundary_flow_id    = prm.get_integer("boundary id");
       flow_direction      = prm.get_integer("flow direction");
       beta_0              = prm.get_double("initial beta");
     }

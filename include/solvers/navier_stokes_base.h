@@ -310,8 +310,8 @@ protected:
   std::pair<double, double> flow_rate;
 
   // Dynamic flow control
-  FlowControl<dim, VectorType> flow_control;
-  Tensor<1, dim>               beta;
+  FlowControl<dim> flow_control;
+  Tensor<1, dim>   beta;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
