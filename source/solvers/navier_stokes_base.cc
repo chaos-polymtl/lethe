@@ -145,14 +145,13 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
       nsparam.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->beta =
-        flow.get_beta(this->dof_handler,
-                            present_solution,
-                            nsparam.flow_control,
-                            nsparam.simulation_control,
-                            nsparam.fem_parameters,
-                            this->simulation_control->get_step_number(),
-                            mpi_communicator);
+      this->beta = flow.get_beta(this->dof_handler,
+                                 present_solution,
+                                 nsparam.flow_control,
+                                 nsparam.simulation_control,
+                                 nsparam.fem_parameters,
+                                 this->simulation_control->get_step_number(),
+                                 mpi_communicator);
 
       // Showing results (area and flow rate)
       if (simulation_control->get_step_number() - 1 != 0)
@@ -864,22 +863,25 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-
-  if (this->nsparam.post_processing.calculate_average_velocities)
+  // Calculate average velocities when the time reaches the initial time.
+  // time >= initial time with the epsilon as tolerance.
+  if (this->nsparam.post_processing.calculate_average_velocities &&
+      simulation_control->get_current_time() >
+        (nsparam.post_processing.initial_time - epsilon))
     {
-
-      // Reinit average_solution and temporary store average velocity prior
-      // having ghost cells in average_solution after transfer
-      this->average_solution.reinit(this->locally_owned_dofs,
-                                    this->locally_relevant_dofs,
-                                    this->mpi_communicator);
+      // If time = initial time, average solution is reinit
+      if (abs(simulation_control->get_current_time() -
+              nsparam.post_processing.initial_time) < epsilon)
+        this->average_solution.reinit(this->locally_owned_dofs,
+                                      this->locally_relevant_dofs,
+                                      this->mpi_communicator);
 
       this->average_velocities.calculate_average_velocities(
-                              this->local_evaluation_point,
-                              this->simulation_control,
-                              nsparam.post_processing,
-                              locally_owned_dofs,
-                              mpi_communicator);
+        this->local_evaluation_point,
+        this->simulation_control,
+        nsparam.post_processing,
+        locally_owned_dofs,
+        mpi_communicator);
 
       this->average_solution = average_velocities.get_average_velocities();
     }

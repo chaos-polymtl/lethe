@@ -324,6 +324,9 @@ protected:
   TableHandler                                 kinetic_energy_table;
   AverageVelocities<dim, VectorType, DofsType> average_velocities;
 
+  // Tolerance to compare doubles
+  double epsilon = 1e-6;
+
   // Convergence Analysis
   ConvergenceTable error_table;
 

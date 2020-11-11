@@ -37,6 +37,7 @@
 // Lethe Includes
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 
@@ -53,6 +54,7 @@ template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
+  AverageVelocities();
   /**
    * @brief calculate_average_velocities. This function calculates time-averaged
    * velocities and pressure with dof vector with no ghost cell.
@@ -83,55 +85,12 @@ public:
 
 private:
   TrilinosScalar inv_range_time;
-  TrilinosScalar dt;
+  TrilinosScalar dt_0;
 
+  VectorType velocity_dt;
   VectorType sum_velocity_dt;
   VectorType average_velocities;
+
+  double epsilon;
 };
-
-template <int dim, typename VectorType, typename DofsType>
-void
-AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
-  const VectorType &                       local_evaluation_point,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const Parameters::PostProcessing &       post_processing,
-  const DofsType &                         locally_owned_dofs,
-  const MPI_Comm &                         mpi_communicator)
-{
-  double time = simulation_control->get_current_time();
-  double total_time = time - post_processing.initial_time;
-  dt = simulation_control->calculate_time_step();
-
-  if (simulation_control->get_step_number() == 0)
-  {
-    // Reinitializing vectors with zeros and dt at t = 0
-    sum_velocity_dt.reinit(locally_owned_dofs,
-                           mpi_communicator);
-    average_velocities.reinit(locally_owned_dofs,
-                              mpi_communicator);
-  }
-  else if (abs(total_time) < 1e-6 || total_time > 0)
-  {
-    // Generating average velocities at each time from initial time
-    inv_range_time = 1. / (total_time + dt);
-
-    VectorType velocity_dt(locally_owned_dofs,
-                           mpi_communicator);
-    velocity_dt.equ(dt, local_evaluation_point);
-    sum_velocity_dt += velocity_dt;
-
-    if (simulation_control->is_output_iteration())
-      average_velocities.equ(inv_range_time, sum_velocity_dt);
-  }
-}
-
-template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::
-get_average_velocities()
-{
-  return average_velocities;
-}
-
-
 #endif
