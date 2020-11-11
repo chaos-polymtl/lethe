@@ -863,27 +863,30 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-  // Calculate average velocities when the time reaches the initial time.
-  // time >= initial time with the epsilon as tolerance.
-  if (this->nsparam.post_processing.calculate_average_velocities &&
-      simulation_control->get_current_time() >
-        (nsparam.post_processing.initial_time - epsilon))
+  if (this->nsparam.post_processing.calculate_average_velocities)
     {
-      // If time = initial time, average solution is reinit
-      if (abs(simulation_control->get_current_time() -
-              nsparam.post_processing.initial_time) < epsilon)
-        this->average_solution.reinit(this->locally_owned_dofs,
-                                      this->locally_relevant_dofs,
-                                      this->mpi_communicator);
+      // Reinitiation of the average_solution vector at the first iteration.
+      if (firstIter)
+        {
+          this->average_solution.reinit(this->locally_owned_dofs,
+                                        this->locally_relevant_dofs,
+                                        this->mpi_communicator);
+        }
 
-      this->average_velocities.calculate_average_velocities(
-        this->local_evaluation_point,
-        this->simulation_control,
-        nsparam.post_processing,
-        locally_owned_dofs,
-        mpi_communicator);
+      // Calculate average velocities when the time reaches the initial time.
+      // time >= initial time with the epsilon as tolerance.
+      else if (simulation_control->get_current_time() >
+               (nsparam.post_processing.initial_time - epsilon))
+        {
+          this->average_velocities.calculate_average_velocities(
+            this->local_evaluation_point,
+            this->simulation_control,
+            nsparam.post_processing,
+            locally_owned_dofs,
+            mpi_communicator);
 
-      this->average_solution = average_velocities.get_average_velocities();
+          this->average_solution = average_velocities.get_average_velocities();
+        }
     }
 
 
