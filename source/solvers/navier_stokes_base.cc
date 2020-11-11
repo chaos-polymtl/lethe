@@ -144,7 +144,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
       simulation_control->get_step_number() > 0 && this->this_mpi_process == 0)
     {
       std::cout << "+------------------------------------------+" << std::endl;
-      std::cout << "|  Flow rate summary                       |" << std::endl;
+      std::cout << "|  Flow control summary                    |" << std::endl;
       std::cout << "+------------------------------------------+" << std::endl;
       this->pcout << "Inlet area : " << flow_rate.second << std::endl;
       this->pcout << "Flow rate : " << flow_rate.first << std::endl;
@@ -158,13 +158,16 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 {
-  // Verification if simulation is transient
-  this->flow_control.calculate_beta(flow_rate,
-                                    simulation_control->get_time_step(),
-                                    simulation_control->get_step_number());
+  if (nsparam.flow_control.enable_flow_control &&
+      nsparam.simulation_control.method !=
+        Parameters::SimulationControl::TimeSteppingMethod::steady)
+    {
+      this->flow_control.calculate_beta(flow_rate,
+                                        simulation_control->get_time_step(),
+                                        simulation_control->get_step_number());
 
-
-  this->beta = flow_control.get_beta();
+      this->beta = flow_control.get_beta();
+    }
 }
 
 

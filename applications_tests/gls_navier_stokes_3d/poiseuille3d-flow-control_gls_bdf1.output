@@ -7,7 +7,7 @@ Running on 1 MPI rank(s)...
 Transient iteration : 1        Time : 0.1      Time step : 0.1      CFL : 0       
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -10.0508
@@ -17,7 +17,7 @@ Beta applied : 70
 Transient iteration : 2        Time : 0.2      Time step : 0.1      CFL : 2.60756 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -5.94272
@@ -27,7 +27,7 @@ Beta applied : 0
 Transient iteration : 3        Time : 0.3      Time step : 0.1      CFL : 1.827   
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -7.47185
@@ -37,7 +37,7 @@ Beta applied : 26.6715
 Transient iteration : 4        Time : 0.4      Time step : 0.1      CFL : 2.18858 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -8.82045
@@ -47,7 +47,7 @@ Beta applied : 29.9347
 Transient iteration : 5        Time : 0.5      Time step : 0.1      CFL : 2.57058 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -9.55337
@@ -57,7 +57,7 @@ Beta applied : 29.3825
 Transient iteration : 6        Time : 0.6      Time step : 0.1      CFL : 2.80818 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -9.87294
@@ -67,7 +67,7 @@ Beta applied : 28.4473
 Transient iteration : 7        Time : 0.7      Time step : 0.1      CFL : 2.9253  
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -9.98558
@@ -77,7 +77,7 @@ Beta applied : 27.8185
 Transient iteration : 8        Time : 0.8      Time step : 0.1      CFL : 2.97314 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -10.0134
@@ -87,7 +87,7 @@ Beta applied : 27.4977
 Transient iteration : 9        Time : 0.9      Time step : 0.1      CFL : 2.98869 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -10.0137
@@ -97,7 +97,7 @@ Beta applied : 27.363
 Transient iteration : 10       Time : 1        Time step : 0.1      CFL : 2.99183 
 *****************************************************************
 +------------------------------------------+
-|  Flow rate summary                       |
+|  Flow control summary                    |
 +------------------------------------------+
 Inlet area : 3.06147
 Flow rate : -10.0084
