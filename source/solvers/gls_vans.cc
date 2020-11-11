@@ -454,26 +454,27 @@ GLSVANSSolver<dim>::assembleGLS()
                               // Momentum terms
                               viscosity *
                                 scalar_product(grad_phi_u[j], grad_phi_u[i]) +
+                              // TODO VERIFY ADVECTION TERMS
                               // Advection terms (eps.u.del(u))'
                               ((phi_u[j] * present_void_fraction_values[q] *
                                 present_velocity_gradients[q] * phi_u[i]) +
                                (grad_phi_u[j] *
                                 present_void_fraction_values[q] *
-                                present_velocity_values[q] * phi_u[i])) +
+                                present_velocity_values[q] * phi_u[i]))
                               // (u.del.eps.u)'
-                              (((present_void_fraction_values[q] *
-                                 div_phi_u[j]) +
-                                (phi_u[j] *
-                                 present_void_fraction_gradients[q])) *
-                                 present_velocity_values[q] +
-                               phi_u[j] *
-                                 (present_velocity_divergence *
-                                    present_void_fraction_values[q] +
-                                  present_velocity_values[q] *
-                                    present_void_fraction_gradients[q])) *
-                                phi_u[i] -
+                              //+(((present_void_fraction_values[q] *
+                              //   div_phi_u[j]) +
+                              //  (phi_u[j] *
+                              //   present_void_fraction_gradients[q])) *
+                              //   present_velocity_values[q] +
+                              // phi_u[j] *
+                              //   (present_velocity_divergence *
+                              //      present_void_fraction_values[q] +
+                              //    present_velocity_values[q] *
+                              //      present_void_fraction_gradients[q])) *
+                              //  phi_u[i] -
                               // Pressure
-                              (div_phi_u[i] * phi_p[j]) +
+                              - (div_phi_u[i] * phi_p[j]) +
                               // Continuity
                               phi_p[i] *
                                 ((present_void_fraction_values[q] *
@@ -561,13 +562,13 @@ GLSVANSSolver<dim>::assembleGLS()
                       // Advection terms eps.udel(u)
                       (present_velocity_gradients[q] *
                        present_velocity_values[q] *
-                       present_void_fraction_values[q] * phi_u[i]) -
+                       present_void_fraction_values[q] * phi_u[i])
                       // u.del.eps.u
-                      (present_velocity_divergence *
-                         present_void_fraction_values[q] +
-                       present_velocity_values[q] *
-                         present_void_fraction_gradients[q]) *
-                        present_velocity_values[q] * phi_u[i]
+                      //-(present_velocity_divergence *
+                      //   present_void_fraction_values[q] +
+                      // present_velocity_values[q] *
+                      //   present_void_fraction_gradients[q]) *
+                      //  present_velocity_values[q] * phi_u[i]
                       // Pressure and force
                       + present_pressure_values[q] * div_phi_u[i] +
                       force * present_void_fraction_values[q] * phi_u[i] -
