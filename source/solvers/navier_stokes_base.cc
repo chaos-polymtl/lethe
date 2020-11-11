@@ -867,22 +867,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.post_processing.calculate_average_velocities)
     {
-      // If Flow Control is disable, it calculates the bulk velocity through
-      // this class
-      if (!nsparam.flow_control.enable_flow_control &&
-          nsparam.post_processing.nondimensionalization)
-        {
-          nsparam.flow_control.id_flow_control =
-            nsparam.post_processing.id_flow_control;
-          nsparam.flow_control.flow_direction =
-            nsparam.post_processing.flow_direction;
-
-          this->flow.calculate_flow_rate(this->dof_handler,
-                                    this->present_solution,
-                                    nsparam.flow_control,
-                                    nsparam.fem_parameters,
-                                    mpi_communicator);
-        }
 
       // Reinit average_solution and temporary store average velocity prior
       // having ghost cells in average_solution after transfer
@@ -897,14 +881,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                               locally_owned_dofs,
                               mpi_communicator);
 
-      // Get the bulk velocity with flow_control class
-      if (nsparam.post_processing.nondimensionalization)
-      {
-        const double bulk_velocity = flow.bulk_velocity();
-        average_solution = average_velocities.get_average_velocities(bulk_velocity);
-      }
-      else
-        this->average_solution = average_velocities.get_average_velocities();
+      this->average_solution = average_velocities.get_average_velocities();
     }
 
 

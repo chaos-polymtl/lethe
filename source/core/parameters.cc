@@ -343,12 +343,6 @@ namespace Parameters
         Patterns::Bool(),
         "Enable calculation of average velocity and reynolds stress profiles.");
 
-      prm.declare_entry(
-        "nondimensionalization",
-        "false",
-        Patterns::Bool(),
-        "Nondimensionalize average velocity and reynolds stress profiles.");
-
       prm.declare_entry("initial time",
                         "0.0",
                         Patterns::Double(),
@@ -402,7 +396,6 @@ namespace Parameters
       calculate_kinetic_energy     = prm.get_bool("calculate kinetic energy");
       calculate_enstrophy          = prm.get_bool("calculate enstrophy");
       calculate_average_velocities = prm.get_bool("calculate average velocities");
-      nondimensionalization        = prm.get_bool("nondimensionalization");
       initial_time                 = prm.get_double("initial time");
       id_flow_control              = prm.get_integer("boundary id");
       flow_direction               = prm.get_integer("flow direction");
