@@ -189,14 +189,12 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const bool                                              first_iteration,
   const bool                                              force_matrix_renewal)
 {
-//    this->number_physic_total=1;
     for (unsigned int iphys=0 ; iphys<this->number_physic_total ; iphys++) {
         this->number_physic_current=iphys;
         this->non_linear_solver->solve(time_stepping_method,
                                        first_iteration,
                                        force_matrix_renewal);
     }
-
 }
 
 //getters
