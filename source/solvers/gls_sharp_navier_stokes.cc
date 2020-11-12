@@ -859,15 +859,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                             }
                           if (component_i == dim)
                             {
-                              P1 +=
-                                this->fe.shape_value(j, second_point_v) *
-                                present_solution(local_dof_indices[j]);
-                              P2 +=
-                                this->fe.shape_value(j, third_point_v) *
-                                present_solution(local_dof_indices_2[j]);
-                              P3 +=
-                                this->fe.shape_value(j, fourth_point_v) *
-                                present_solution(local_dof_indices_3[j]);
+                              P1 += this->fe.shape_value(j, second_point_v) *
+                                    present_solution(local_dof_indices[j]);
+                              P2 += this->fe.shape_value(j, third_point_v) *
+                                    present_solution(local_dof_indices_2[j]);
+                              P3 += this->fe.shape_value(j, fourth_point_v) *
+                                    present_solution(local_dof_indices_3[j]);
                             }
                         }
 
@@ -1488,7 +1485,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   this->system_matrix.set(inside_index,
                                           local_dof_indices[dim],
                                           sum_line);
-                  auto &local_evaluation_point = this->get_local_evaluation_point();
+                  auto &local_evaluation_point =
+                    this->get_local_evaluation_point();
                   auto &system_rhs = this->get_system_rhs();
                   system_rhs(inside_index) =
                     0 - local_evaluation_point(inside_index) * sum_line;
@@ -1842,7 +1840,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                           // then 5 the stencil is define
                                           // trough direct extrapolation of
                                           // the cell
-                                          auto &evaluation_point = this->get_evaluation_point();
+                                          auto &evaluation_point =
+                                            this->get_evaluation_point();
 
                                           if (this->nsparam.particlesParameters
                                                 .order == 1)
@@ -2014,7 +2013,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // cell in which the third point is
                                       else
                                         {
-                                          auto &evaluation_point = this->get_evaluation_point();
+                                          auto &evaluation_point =
+                                            this->get_evaluation_point();
                                           if (this->nsparam.particlesParameters
                                                 .order == 1)
                                             {
@@ -2227,7 +2227,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                            particles[p].velocity[0];
                                     }
 
-                                  auto &evaluation_point = this->get_evaluation_point();
+                                  auto &evaluation_point =
+                                    this->get_evaluation_point();
                                   if (this->nsparam.particlesParameters.order ==
                                       1)
                                     {
@@ -2277,8 +2278,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   if (do_rhs)
                                     system_rhs(global_index_overwrite) =
                                       vx * sum_line -
-                                      evaluation_point(
-                                        global_index_overwrite) *
+                                      evaluation_point(global_index_overwrite) *
                                         sum_line;
                                 }
                               else if (component_i == 1)
@@ -2321,7 +2321,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                            particles[p].velocity[2];
                                     }
 
-                                  auto &evaluation_point = this->get_evaluation_point();
+                                  auto &evaluation_point =
+                                    this->get_evaluation_point();
                                   if (this->nsparam.particlesParameters.order ==
                                       1)
                                     {
@@ -2370,8 +2371,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   if (do_rhs)
                                     system_rhs(global_index_overwrite) =
                                       vy * sum_line -
-                                      evaluation_point(
-                                        global_index_overwrite) *
+                                      evaluation_point(global_index_overwrite) *
                                         sum_line;
                                 }
                               else if (component_i == 2 && dim == 3)
@@ -2394,7 +2394,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                     particles[p].velocity[2];
 
                                   double rhs_add = 0;
-                                  auto &evaluation_point = this->get_evaluation_point();
+                                  auto & evaluation_point =
+                                    this->get_evaluation_point();
                                   if (this->nsparam.particlesParameters.order ==
                                       1)
                                     {
@@ -2443,8 +2444,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   if (do_rhs)
                                     system_rhs(global_index_overwrite) =
                                       vz * sum_line -
-                                      evaluation_point(
-                                        global_index_overwrite) *
+                                      evaluation_point(global_index_overwrite) *
                                         sum_line;
                                 }
                             }

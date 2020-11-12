@@ -91,9 +91,9 @@ RestartNavierStokes<dim>::run()
   this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
   this->postprocess(false);
-  auto &present_solution = this->get_present_solution();
-  auto   errors_p1 = this->calculate_L2_error(present_solution);
-  double error1    = errors_p1.first;
+  auto & present_solution = this->get_present_solution();
+  auto   errors_p1        = this->calculate_L2_error(present_solution);
+  double error1           = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step();
 

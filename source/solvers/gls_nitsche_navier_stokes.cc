@@ -100,9 +100,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                   // Get the velocity at non-quadrature point (particle in
                   // fluid)
                   auto &evaluation_point = this->get_evaluation_point();
-                  velocity[comp_k] +=
-                    evaluation_point[fluid_dof_indices[k]] *
-                    this->fe.shape_value(k, ref_q);
+                  velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
+                                      this->fe.shape_value(k, ref_q);
                 }
             }
           for (unsigned int i = 0; i < dofs_per_cell; ++i)

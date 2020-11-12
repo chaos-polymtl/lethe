@@ -106,7 +106,7 @@ GDNavierStokesSolver<dim>::assembleGD()
     system_matrix = 0;
 
   auto &system_rhs = this->get_system_rhs();
-  system_rhs = 0;
+  system_rhs       = 0;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
@@ -340,7 +340,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   auto &system_rhs = this->get_system_rhs();
-  system_rhs = 0;
+  system_rhs       = 0;
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
@@ -354,7 +354,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
+                                                        Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -578,8 +578,8 @@ GDNavierStokesSolver<dim>::setup_dofs()
   TrilinosWrappers::MPI::BlockVector &present_solution =
     this->get_present_solution();
   present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+                          this->locally_relevant_dofs,
+                          this->mpi_communicator);
 
   this->solution_m1.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
@@ -590,11 +590,9 @@ GDNavierStokesSolver<dim>::setup_dofs()
   this->solution_m3.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector &newton_update =
-    this->get_newton_update();
+  TrilinosWrappers::MPI::BlockVector &newton_update = this->get_newton_update();
   newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector &system_rhs =
-    this->get_system_rhs();
+  TrilinosWrappers::MPI::BlockVector &system_rhs = this->get_system_rhs();
   system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   TrilinosWrappers::MPI::BlockVector &local_evaluation_point =
     this->get_local_evaluation_point();
@@ -645,7 +643,7 @@ void
 GDNavierStokesSolver<dim>::set_solution_vector(double value)
 {
   auto &present_solution = this->get_present_solution();
-  present_solution = value;
+  present_solution       = value;
 }
 
 
@@ -671,8 +669,8 @@ GDNavierStokesSolver<dim>::set_initial_condition(
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
       auto &present_solution = this->get_present_solution();
-      auto &newton_update = this->get_newton_update();
-      present_solution = newton_update;
+      auto &newton_update    = this->get_newton_update();
+      present_solution       = newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }
@@ -888,7 +886,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                               const double relative_residual,
                                               const bool   renewed_matrix)
 {
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs          = this->get_system_rhs();
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
@@ -919,7 +917,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   {
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-    auto &newton_update = this->get_newton_update();
+    auto &             newton_update = this->get_newton_update();
     solver.solve(system_matrix,
                  newton_update,
                  system_rhs,
@@ -943,7 +941,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                             const double relative_residual,
                                             const bool   renewed_matrix)
 {
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs          = this->get_system_rhs();
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
@@ -971,7 +969,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
   {
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-    auto &newton_update = this->get_newton_update();
+    auto &             newton_update = this->get_newton_update();
 
     solver.solve(system_matrix,
                  newton_update,
@@ -993,7 +991,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                                            double     absolute_residual,
                                            double     relative_residual)
 {
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs          = this->get_system_rhs();
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
@@ -1046,7 +1044,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
 
   constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->get_newton_update();
-  newton_update = completely_distributed_solution;
+  newton_update       = completely_distributed_solution;
 }
 
 

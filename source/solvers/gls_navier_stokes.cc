@@ -50,7 +50,7 @@ void
 GLSNavierStokesSolver<dim>::set_solution_vector(double value)
 {
   auto &present_solution = this->get_present_solution();
-  present_solution = value;
+  present_solution       = value;
 }
 
 template <int dim>
@@ -188,8 +188,8 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   TrilinosWrappers::MPI::Vector &present_solution =
     this->get_present_solution();
   present_solution.reinit(this->locally_owned_dofs,
-                                this->locally_relevant_dofs,
-                                this->mpi_communicator);
+                          this->locally_relevant_dofs,
+                          this->mpi_communicator);
   this->solution_m1.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
@@ -200,11 +200,9 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
 
-  TrilinosWrappers::MPI::Vector &newton_update =
-    this->get_newton_update();
+  TrilinosWrappers::MPI::Vector &newton_update = this->get_newton_update();
   newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector &system_rhs =
-    this->get_system_rhs();
+  TrilinosWrappers::MPI::Vector &system_rhs = this->get_system_rhs();
   system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   TrilinosWrappers::MPI::Vector &local_evaluation_point =
     this->get_local_evaluation_point();
@@ -247,7 +245,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   if (assemble_matrix)
     system_matrix = 0;
   auto &system_rhs = this->get_system_rhs();
-  system_rhs = 0;
+  system_rhs       = 0;
 
   double         viscosity = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
@@ -818,8 +816,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
       assemble_L2_projection();
       solve_system_GMRES(true, 1e-15, 1e-15, true);
       auto &present_solution = this->get_present_solution();
-      auto &newton_update = this->get_newton_update();
-      present_solution = newton_update;
+      auto &newton_update    = this->get_newton_update();
+      present_solution       = newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }
@@ -854,7 +852,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   auto &system_rhs = this->get_system_rhs();
-  system_rhs = 0;
+  system_rhs       = 0;
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
@@ -868,7 +866,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                               Vector<double>(dim + 1));
+                                                        Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1320,7 +1318,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double relative_residual,
                                                const bool   renewed_matrix)
 {
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs          = this->get_system_rhs();
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
@@ -1366,7 +1364,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   }
   constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->get_newton_update();
-  newton_update = completely_distributed_solution;
+  newton_update       = completely_distributed_solution;
 }
 
 template <int dim>
@@ -1378,8 +1376,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   const bool   renewed_matrix)
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
-  auto &system_rhs = this->get_system_rhs();
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &             system_rhs          = this->get_system_rhs();
+  auto &             nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
@@ -1417,7 +1415,7 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
       }
     constraints_used.distribute(completely_distributed_solution);
     auto &newton_update = this->get_newton_update();
-    newton_update = completely_distributed_solution;
+    newton_update       = completely_distributed_solution;
   }
 }
 
@@ -1428,7 +1426,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const double relative_residual,
                                              const bool   renewed_matrix)
 {
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs          = this->get_system_rhs();
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
@@ -1474,7 +1472,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
     constraints_used.distribute(completely_distributed_solution);
 
     auto &newton_update = this->get_newton_update();
-    newton_update = completely_distributed_solution;
+    newton_update       = completely_distributed_solution;
   }
 }
 
@@ -1486,7 +1484,7 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
                                                 const double relative_residual,
                                                 const bool /*renewed_matrix*/)
 {
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs          = this->get_system_rhs();
   auto &nonzero_constraints = this->get_nonzero_constraints();
 
   const AffineConstraints<double> &constraints_used =
@@ -1507,7 +1505,7 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   solver.solve(completely_distributed_solution, system_rhs);
   constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->get_newton_update();
-  newton_update = completely_distributed_solution;
+  newton_update       = completely_distributed_solution;
 }
 
 template <int dim>
