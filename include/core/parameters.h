@@ -569,14 +569,17 @@ namespace Parameters
    */
   struct DynamicFlowControl
   {
+    // Type of verbosity for the flow control
+    Verbosity verbosity;
+
     // Enable flow control
     bool enable_flow_control;
 
     // Volumetric flow rate (L^3/t)
-    double flow_rate;
+    double flow_rate_0;
 
     // Id of the boundary where the flow come from
-    unsigned int id_flow_control;
+    unsigned int boundary_flow_id;
 
     // Flow direction (x=0, y=1 ,z=2)
     unsigned int flow_direction;

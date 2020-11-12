@@ -1084,6 +1084,12 @@ namespace Parameters
   {
     prm.enter_subsection("flow control");
     {
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the flow control information should be printed "
+        "Choices are <quiet|verbose>.");
       prm.declare_entry("enable",
                         "false",
                         Patterns::Bool(),
@@ -1113,9 +1119,14 @@ namespace Parameters
   {
     prm.enter_subsection("flow control");
     {
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Verbosity::verbose;
+      if (op == "quiet")
+        verbosity = Verbosity::quiet;
       enable_flow_control = prm.get_bool("enable");
-      flow_rate           = prm.get_double("volumetric flow rate");
-      id_flow_control     = prm.get_integer("boundary id");
+      flow_rate_0         = prm.get_double("volumetric flow rate");
+      boundary_flow_id    = prm.get_integer("boundary id");
       flow_direction      = prm.get_integer("flow direction");
       beta_0              = prm.get_double("initial beta");
     }

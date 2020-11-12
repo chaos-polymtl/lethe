@@ -21,8 +21,6 @@
 #include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_q.h>
 
@@ -34,127 +32,56 @@
 
 using namespace dealii;
 
-template <int dim, typename VectorType>
+/**
+ * @brief FlowControl. The FlowControl class allows to dynamically
+ * control the flow with a beta coefficient calculated at each step time.
+ */
+
+template <int dim>
 class FlowControl
 {
 public:
+  FlowControl(const Parameters::DynamicFlowControl &flow_control);
+  /**
+   * @brief calculate_beta. This function calculates a beta coefficient which
+   * applies a force to the flow in order to adjust the flow rate to a desired
+   * value through the previous flow rate. Once the flow rate is reached, the
+   * algorithm calculates a new beta to keep a constant flow rate.
+   *
+   * @param flow_rate. The last step flow rate
+   *
+   * @param dt. The current time step
+   *
+   * @param step_number. The current step
+   */
+  void
+  calculate_beta(const std::pair<double, double> &flow_rate,
+                 const double &                   dt,
+                 const unsigned int &             step_number);
+
+  /**
+   * @brief get_beta. This function gives the beta coefficient of the
+   * step time
+   */
   Tensor<1, dim>
-  calculate_beta(const DoFHandler<dim> &               dof_handler,
-                 const VectorType &                    present_solution,
-                 const Parameters::DynamicFlowControl &flow_control,
-                 const Parameters::SimulationControl & simulation_control,
-                 const Parameters::FEM &               fem_parameters,
-                 const unsigned int &                  step_number,
-                 const MPI_Comm &                      mpi_communicator);
-  std::vector<double>
-  flow_summary();
+  get_beta();
 
 private:
   // The coefficients are stored in the following fashion :
-  // 0 - Flow control intended, n - n, 1n - n-1, n1 - n+1
+  // 0 - flow rate intended, n - n, 1n - n-1, n1 - n+1
   Tensor<1, dim> beta;
+  double         beta_0;
   double         beta_n;
-  double         beta_n1     = 0;
-  double         flow_rate_n = 0;
+  double         beta_n1;
+  double         flow_rate_0;
   double         flow_rate_1n;
-  double         area = 0;
+  double         flow_rate_n;
+  double         area;
+  unsigned int   flow_direction;
+
+  // Variables used to improve convergence
+  bool   no_force;
+  double threshold_factor;
 };
-
-template <int dim, typename VectorType>
-Tensor<1, dim>
-FlowControl<dim, VectorType>::calculate_beta(
-  const DoFHandler<dim> &               dof_handler,
-  const VectorType &                    present_solution,
-  const Parameters::DynamicFlowControl &flow_control,
-  const Parameters::SimulationControl & simulation_control,
-  const Parameters::FEM &               fem_parameters,
-  const unsigned int &                  step_number,
-  const MPI_Comm &                      mpi_communicator)
-{
-  beta_n       = beta_n1;
-  flow_rate_1n = flow_rate_n;
-
-  const FiniteElement<dim> &fe = dof_handler.get_fe();
-
-  const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
-  QGauss<dim - 1>     face_quadrature_formula(fe.degree + 1);
-  const unsigned int  n_q_points = face_quadrature_formula.size();
-  const FEValuesExtractors::Vector velocities(0);
-  std::vector<Tensor<1, dim>>      velocity_values(n_q_points);
-  Tensor<1, dim>                   normal_vector;
-
-  FEFaceValues<dim> fe_face_values(mapping,
-                                   fe,
-                                   face_quadrature_formula,
-                                   update_values | update_quadrature_points |
-                                     update_JxW_values | update_normal_vectors);
-
-  unsigned int boundary_id = flow_control.id_flow_control;
-
-  // Resetting next flow rate and area at inlet prior new calculation
-  flow_rate_n = 0;
-  area        = 0;
-
-  // Calculating area and volumetric flow rate at the inlet flow
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned() && cell->at_boundary())
-        {
-          for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
-               face++)
-            {
-              if (cell->face(face)->at_boundary())
-                {
-                  fe_face_values.reinit(cell, face);
-                  if (cell->face(face)->boundary_id() == boundary_id)
-                    {
-                      for (unsigned int q = 0; q < n_q_points; q++)
-                        {
-                          area += fe_face_values.JxW(q);
-                          normal_vector = fe_face_values.normal_vector(q);
-                          fe_face_values[velocities].get_function_values(
-                            present_solution, velocity_values);
-                          flow_rate_n += velocity_values[q] * normal_vector *
-                                         fe_face_values.JxW(q);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-  area        = Utilities::MPI::sum(area, mpi_communicator);
-  flow_rate_n = Utilities::MPI::sum(flow_rate_n, mpi_communicator);
-
-  // Calculating the next beta coefficient
-  const double dt          = simulation_control.dt;
-  const double flow_rate_0 = flow_control.flow_rate;
-
-  if (step_number <= 1)
-    beta_n1 = flow_control.beta_0;
-  else if (step_number == 2)
-    beta_n1 = beta_n - (flow_rate_0 - flow_rate_n) / (area * dt);
-  else
-    beta_n1 =
-      beta_n - (flow_rate_0 - 2 * flow_rate_n + flow_rate_1n) / (area * dt);
-
-  // Setting beta coefficient only to new time step
-  if (flow_control.flow_direction == 0)
-    beta[0] = beta_n1; // beta = f_x
-  else if (flow_control.flow_direction == 1)
-    beta[1] = beta_n1; // beta = f_y
-  else if (flow_control.flow_direction == 2)
-    beta[2] = beta_n1; // beta = f_z
-
-  return beta;
-}
-
-template <int dim, typename VectorType>
-std::vector<double>
-FlowControl<dim, VectorType>::flow_summary()
-{
-  std::vector<double> summary{area, flow_rate_n, beta_n1};
-  return summary;
-}
 
 #endif
