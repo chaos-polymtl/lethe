@@ -7,7 +7,7 @@ FlowControl<2, TrilinosWrappers::MPI::Vector>::get_beta(
   const Parameters::DynamicFlowControl &flow_control,
   const Parameters::SimulationControl & simulation_control,
   const Parameters::FEM &               fem_parameters,
-  const unsigned int &                  step_number,
+  const double &                        step_number,
   const MPI_Comm &                      mpi_communicator);
 
 template Tensor<1, 3>
@@ -17,7 +17,7 @@ FlowControl<3, TrilinosWrappers::MPI::Vector>::get_beta(
   const Parameters::DynamicFlowControl &flow_control,
   const Parameters::SimulationControl & simulation_control,
   const Parameters::FEM &               fem_parameters,
-  const unsigned int &                  step_number,
+  const double &                        step_number,
   const MPI_Comm &                      mpi_communicator);
 
 template Tensor<1, 2>
@@ -27,7 +27,7 @@ FlowControl<2, TrilinosWrappers::MPI::BlockVector>::get_beta(
   const Parameters::DynamicFlowControl &    flow_control,
   const Parameters::SimulationControl &     simulation_control,
   const Parameters::FEM &                   fem_parameters,
-  const unsigned int &                      step_number,
+  const double &                            step_number,
   const MPI_Comm &                          mpi_communicator);
 
 template Tensor<1, 3>
@@ -37,5 +37,5 @@ FlowControl<3, TrilinosWrappers::MPI::BlockVector>::get_beta(
   const Parameters::DynamicFlowControl &    flow_control,
   const Parameters::SimulationControl &     simulation_control,
   const Parameters::FEM &                   fem_parameters,
-  const unsigned int &                      step_number,
+  const double &                            step_number,
   const MPI_Comm &                          mpi_communicator);
