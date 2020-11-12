@@ -2,12 +2,6 @@
 
 
 template <int dim, typename VectorType, typename DofsType>
-AverageVelocities<dim, VectorType, DofsType>::AverageVelocities()
-{
-  epsilon = 1e-6;
-}
-
-template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const VectorType &                        local_evaluation_point,
@@ -16,6 +10,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const DofsType &                          locally_owned_dofs,
   const MPI_Comm &                          mpi_communicator)
 {
+  double epsilon = 1e-6;
   double total_time =
     simulation_control->get_current_time() - post_processing.initial_time;
   double dt = simulation_control->get_time_step();

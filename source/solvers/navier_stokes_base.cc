@@ -145,13 +145,14 @@ NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
       nsparam.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->beta = flow.get_beta(this->dof_handler,
-                                 present_solution,
-                                 nsparam.flow_control,
-                                 nsparam.simulation_control,
-                                 nsparam.fem_parameters,
-                                 this->simulation_control->get_step_number(),
-                                 mpi_communicator);
+      this->beta =
+        flow.calculate_beta(this->dof_handler,
+                            present_solution,
+                            nsparam.flow_control,
+                            nsparam.simulation_control,
+                            nsparam.fem_parameters,
+                            this->simulation_control->get_step_number(),
+                            mpi_communicator);
 
       // Showing results (area and flow rate)
       if (simulation_control->get_step_number() - 1 != 0)
@@ -865,6 +866,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.post_processing.calculate_average_velocities)
     {
+      double epsilon = 1e-6;
       // Reinitiation of the average_solution vector at the first iteration.
       if (firstIter)
         {
@@ -1108,9 +1110,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       dim, DataComponentInterpretation::component_is_part_of_vector);
   average_data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
-
-  std::vector<std::string> reynolds_stress_names(dim, "normal_reynolds_stress");
-  reynolds_stress_names.push_back("shear_stress");
 
   DataOut<dim> data_out;
 

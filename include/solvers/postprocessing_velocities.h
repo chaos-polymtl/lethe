@@ -43,18 +43,15 @@
 
 
 using namespace dealii;
-
-
 /**
  * @brief AverageVelocities. The AverageVelocities class calculates the
- * time-averaged velocities and pressure. The generated vector is output
- * with the solution and visualization is possible.
+ * time-averaged velocities and pressure (<u>, <v>, <w>, <p>). The generated
+ * vector is output with the solution and visualization is possible.
  */
 template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
-  AverageVelocities();
   /**
    * @brief calculate_average_velocities. This function calculates time-averaged
    * velocities and pressure with dof vector with no ghost cell.
@@ -90,7 +87,5 @@ private:
   VectorType velocity_dt;
   VectorType sum_velocity_dt;
   VectorType average_velocities;
-
-  double epsilon;
 };
 #endif
