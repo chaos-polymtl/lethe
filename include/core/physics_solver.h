@@ -42,12 +42,16 @@ public:
   /**
    * @brief PhysicsSolver - Constructor that takes an existing non-linear solver
    * @param non_linear_solver Non-linear solver that will be used to drive the physics solver
+   * @param p_number_physic_total Indicates the number of physics solved
+   * default value = 1, meaning only the flow equations are solved
    */
   PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver, unsigned int p_number_physic_total=1);
 
   /**
    * @brief PhysicsSolver
    * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
+   * @param p_number_physic_total Indicates the number of physics solved
+   * default value = 1, meaning only the flow equations are solved
    */
   PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters, unsigned int p_number_physic_total=1);
 
@@ -101,7 +105,12 @@ public:
     nonzero_constraints[number_physic_current].distribute(local_evaluation_point[number_physic_current]);
   }
 
-  //getters for private attributes
+  /**
+   * @brief Get methods to get the private attributes for the physic currently solved
+   *
+   * @param number_physic_current Indicates the number associated with the physic currently solved
+   * default value = 0, meaning only one physic, associated with the flow equations, is solved by default
+   */
   VectorType & get_evaluation_point(unsigned int number_physic_current=0);
   VectorType & get_local_evaluation_point(unsigned int number_physic_current=0);
   VectorType & get_newton_update(unsigned int number_physic_current=0);
