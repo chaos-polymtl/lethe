@@ -308,7 +308,6 @@ protected:
   VectorType solution_m3;
   VectorType average_solution;
 
-
   // Finite element order used
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;

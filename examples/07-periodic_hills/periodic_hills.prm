@@ -10,7 +10,7 @@ subsection simulation control
   set subdivision                  = 2
   set time step                    = 0.1     
   set output frequency             = 1     
-  set time end                     = 30
+  set time end                     = 20
 end
 
 #---------------------------------------------------
@@ -52,7 +52,7 @@ end
 #---------------------------------------------------
 subsection post-processing
     set calculate average velocities    = true
-    set initial time 		        = 20
+    set initial time 		        = 15
 end
 
 # --------------------------------------------------

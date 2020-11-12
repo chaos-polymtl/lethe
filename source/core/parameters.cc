@@ -343,10 +343,11 @@ namespace Parameters
         Patterns::Bool(),
         "Enable calculation of average velocity and reynolds stress profiles.");
 
-      prm.declare_entry("initial time",
-                        "0.0",
-                        Patterns::Double(),
-                        "Initial time to start calculations for average velocities");
+      prm.declare_entry(
+        "initial time",
+        "0.0",
+        Patterns::Double(),
+        "Initial time to start calculations for average velocities");
 
       prm.declare_entry("boundary id",
                         "0",
@@ -393,16 +394,17 @@ namespace Parameters
       if (op == "quiet")
         verbosity = Verbosity::quiet;
 
-      calculate_kinetic_energy     = prm.get_bool("calculate kinetic energy");
-      calculate_enstrophy          = prm.get_bool("calculate enstrophy");
-      calculate_average_velocities = prm.get_bool("calculate average velocities");
-      initial_time                 = prm.get_double("initial time");
-      id_flow_control              = prm.get_integer("boundary id");
-      flow_direction               = prm.get_integer("flow direction");
-      kinetic_energy_output_name   = prm.get("kinetic energy name");
-      enstrophy_output_name        = prm.get("enstrophy name");
-      calculation_frequency        = prm.get_integer("calculation frequency");
-      output_frequency             = prm.get_integer("output frequency");
+      calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
+      calculate_enstrophy      = prm.get_bool("calculate enstrophy");
+      calculate_average_velocities =
+        prm.get_bool("calculate average velocities");
+      initial_time               = prm.get_double("initial time");
+      id_flow_control            = prm.get_integer("boundary id");
+      flow_direction             = prm.get_integer("flow direction");
+      kinetic_energy_output_name = prm.get("kinetic energy name");
+      enstrophy_output_name      = prm.get("enstrophy name");
+      calculation_frequency      = prm.get_integer("calculation frequency");
+      output_frequency           = prm.get_integer("output frequency");
     }
     prm.leave_subsection();
   }

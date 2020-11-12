@@ -1102,15 +1102,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
-  std::vector<std::string> average_solution_names(dim, "average_velocity");
-  average_solution_names.push_back("average_pressure");
-
-  std::vector<DataComponentInterpretation::DataComponentInterpretation>
-    average_data_component_interpretation(
-      dim, DataComponentInterpretation::component_is_part_of_vector);
-  average_data_component_interpretation.push_back(
-    DataComponentInterpretation::component_is_scalar);
-
   DataOut<dim> data_out;
 
   // Additional flag to enable the output of high-order elements
@@ -1126,16 +1117,27 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
 
-  data_out.add_data_vector(this->average_solution,
-                           average_solution_names,
-                           DataOut<dim>::type_dof_data,
-                           average_data_component_interpretation);
+  if (nsparam.post_processing.calculate_average_velocities)
+    {
+      std::vector<std::string> average_solution_names(dim, "average_velocity");
+      average_solution_names.push_back("average_pressure");
+
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        average_data_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
+      average_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
+
+      data_out.add_data_vector(this->average_solution,
+                               average_solution_names,
+                               DataOut<dim>::type_dof_data,
+                               average_data_component_interpretation);
+    }
 
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
-
 
   // Create additional post-processor that derives information from the solution
   VorticityPostprocessor<dim> vorticity;
