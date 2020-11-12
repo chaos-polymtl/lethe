@@ -24,9 +24,6 @@
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_q.h>
 
-// Lac - Trilinos includes
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
-
 // Lethe includes
 #include <core/parameters.h>
 

@@ -1,4 +1,8 @@
+// Lac - Trilinos includes
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+
 #include <solvers/postprocessing_cfd.h>
+
 
 
 template <int dim, typename VectorType>

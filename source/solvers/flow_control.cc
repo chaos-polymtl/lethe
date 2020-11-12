@@ -3,15 +3,14 @@
 template <int dim>
 FlowControl<dim>::FlowControl(
   const Parameters::DynamicFlowControl &flow_control)
-{
-  flow_rate_0      = flow_control.flow_rate_0;
-  beta_0           = flow_control.beta_0;
-  flow_direction   = flow_control.flow_direction;
-  beta_n1          = 0;
-  flow_rate_n      = 0;
-  no_force         = true;
-  threshold_factor = 1.01; // 1%
-}
+  : beta_0(flow_control.beta_0)
+  , beta_n1(0)
+  , flow_rate_0(flow_control.flow_rate_0)
+  , flow_rate_n(0)
+  , flow_direction(flow_control.flow_direction)
+  , no_force(true)
+  , threshold_factor(1.01)
+{}
 
 template <int dim>
 void
