@@ -399,8 +399,6 @@ namespace Parameters
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
       initial_time               = prm.get_double("initial time");
-      id_flow_control            = prm.get_integer("boundary id");
-      flow_direction             = prm.get_integer("flow direction");
       kinetic_energy_output_name = prm.get("kinetic energy name");
       enstrophy_output_name      = prm.get("enstrophy name");
       calculation_frequency      = prm.get_integer("calculation frequency");

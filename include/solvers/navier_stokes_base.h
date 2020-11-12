@@ -98,8 +98,8 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
-#include <solvers/postprocessing_velocities.h>
 #include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
