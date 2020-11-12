@@ -43,13 +43,13 @@ public:
    * @brief PhysicsSolver - Constructor that takes an existing non-linear solver
    * @param non_linear_solver Non-linear solver that will be used to drive the physics solver
    */
-  PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver);
+  PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver, unsigned int p_number_physic_total=1);
 
   /**
    * @brief PhysicsSolver
    * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
    */
-  PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters);
+  PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters, unsigned int p_number_physic_total=1);
 
   ~PhysicsSolver()
   {
@@ -101,21 +101,21 @@ public:
     nonzero_constraints[number_physic_current].distribute(local_evaluation_point[number_physic_current]);
   }
 
-  //getters
-  VectorType & get_evaluation_point();
-  VectorType & get_local_evaluation_point();
-  VectorType & get_newton_update();
-  VectorType & get_present_solution();
-  VectorType & get_system_rhs();
-  AffineConstraints<double> & get_nonzero_constraints();
+  //getters for private attributes
+  VectorType & get_evaluation_point(unsigned int number_physic_current=0);
+  VectorType & get_local_evaluation_point(unsigned int number_physic_current=0);
+  VectorType & get_newton_update(unsigned int number_physic_current=0);
+  VectorType & get_present_solution(unsigned int number_physic_current=0);
+  VectorType & get_system_rhs(unsigned int number_physic_current=0);
+  AffineConstraints<double> & get_nonzero_constraints(unsigned int number_physic_current=0);
 
-  //Attributes
+  //attributes
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
 
 private:
-  int number_physic_current;
-  int number_physic_total;
+  unsigned int number_physic_current;
+  unsigned int number_physic_total;
 
   std::vector<VectorType> evaluation_point;
   std::vector<VectorType> local_evaluation_point;
@@ -129,11 +129,11 @@ private:
 //constructors
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
-  NonLinearSolver<VectorType> *non_linear_solver)
+  NonLinearSolver<VectorType> *non_linear_solver,
+  unsigned int p_number_physic_total)
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_current(0) //remove after validation ==> see how to
-  , number_physic_total(1) //remove after validation
+  , number_physic_total(p_number_physic_total)
   , evaluation_point(number_physic_total)
   , local_evaluation_point(number_physic_total)
   , newton_update(number_physic_total)
@@ -145,10 +145,10 @@ PhysicsSolver<VectorType>::PhysicsSolver(
 
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
-  Parameters::NonLinearSolver non_linear_solver_parameters)
+  Parameters::NonLinearSolver non_linear_solver_parameters,
+  unsigned int p_number_physic_total)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_current(0) //remove after validation ==> see how to
-  , number_physic_total(1) //remove after validation
+  , number_physic_total(p_number_physic_total)
   , evaluation_point(number_physic_total)
   , local_evaluation_point(number_physic_total)
   , newton_update(number_physic_total)
@@ -181,7 +181,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const bool                                              force_matrix_renewal)
 {
 //    this->number_physic_total=1;
-    for (int iphys=0 ; iphys<this->number_physic_total ; iphys++) {
+    for (unsigned int iphys=0 ; iphys<this->number_physic_total ; iphys++) {
         this->number_physic_current=iphys;
         this->non_linear_solver->solve(time_stepping_method,
                                        first_iteration,
@@ -193,14 +193,14 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
 //getters
 template <typename VectorType>
 VectorType &
-PhysicsSolver<VectorType>::get_evaluation_point()
+PhysicsSolver<VectorType>::get_evaluation_point(unsigned int number_physic_current)
 {
   return evaluation_point[number_physic_current];
 }
 
 template <typename VectorType>
 VectorType &
-PhysicsSolver<VectorType>::get_local_evaluation_point()
+PhysicsSolver<VectorType>::get_local_evaluation_point(unsigned int number_physic_current)
 {
   return local_evaluation_point[number_physic_current];
 //  return local_evaluation_point;
@@ -208,28 +208,28 @@ PhysicsSolver<VectorType>::get_local_evaluation_point()
 
 template <typename VectorType>
 VectorType &
-PhysicsSolver<VectorType>::get_newton_update()
+PhysicsSolver<VectorType>::get_newton_update(unsigned int number_physic_current)
 {
   return newton_update[number_physic_current];
 }
 
 template <typename VectorType>
 VectorType &
-PhysicsSolver<VectorType>::get_present_solution()
+PhysicsSolver<VectorType>::get_present_solution(unsigned int number_physic_current)
 {
   return present_solution[number_physic_current];
 }
 
 template <typename VectorType>
 VectorType &
-PhysicsSolver<VectorType>::get_system_rhs()
+PhysicsSolver<VectorType>::get_system_rhs(unsigned int number_physic_current)
 {
   return system_rhs[number_physic_current];
 }
 
 template <typename VectorType>
 AffineConstraints<double> &
-PhysicsSolver<VectorType>::get_nonzero_constraints()
+PhysicsSolver<VectorType>::get_nonzero_constraints(unsigned int number_physic_current)
 {
   return nonzero_constraints[number_physic_current];
 }
