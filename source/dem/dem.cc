@@ -107,6 +107,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error(
         "Specified contact detection method is not valid");
     }
+
+  // Calling input_parameter_inspection to evaluate input parameters in the
+  // parameter handler file
+  if (this_mpi_process == 0)
+    input_parameter_inspection(parameters);
 }
 
 template <int dim>
@@ -196,9 +201,26 @@ DEMSolver<dim>::read_mesh()
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
-  triangulation_diameter = 0.5 * GridTools::diameter(triangulation);
-  const int initial_size = parameters.mesh.initial_refinement;
-  triangulation.refine_global(initial_size);
+  triangulation_cell_diameter = 0.5 * GridTools::diameter(triangulation);
+
+  if (parameters.mesh.refine_until_target_size)
+    {
+      double minimal_cell_size =
+        GridTools::minimal_cell_diameter(triangulation);
+      double       target_size = parameters.mesh.target_size;
+      unsigned int number_refinement =
+        floor(std::log(minimal_cell_size / target_size) / std::log(2));
+      pcout << "Automatically refining grid until target size : " << target_size
+            << std::endl;
+      triangulation.refine_global(number_refinement);
+      pcout << "Mesh was automatically refined : " << number_refinement
+            << " times" << std::endl;
+    }
+  else
+    {
+      const int initial_refinement = parameters.mesh.initial_refinement;
+      triangulation.refine_global(initial_refinement);
+    }
 }
 
 template <int dim>
@@ -477,7 +499,7 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_diameter);
+        triangulation_cell_diameter);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -487,7 +509,7 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_diameter);
+        triangulation_cell_diameter);
     }
   else
     {

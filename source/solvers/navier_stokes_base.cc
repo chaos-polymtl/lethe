@@ -30,6 +30,7 @@
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_force.h>
@@ -67,6 +68,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , nsparam(p_nsparam)
+  , flow_control(nsparam.flow_control)
   , velocity_fem_degree(p_degreeVelocity)
   , pressure_fem_degree(p_degreePressure)
   , number_quadrature_points(p_degreeVelocity + 1)
@@ -127,42 +129,45 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
 }
 
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
+  const VectorType &evaluation_point)
+{
+  this->flow_rate = calculate_flow_rate(this->dof_handler,
+                                        evaluation_point,
+                                        nsparam.flow_control.boundary_flow_id,
+                                        nsparam.fem_parameters,
+                                        mpi_communicator);
 
-/**
- * @brief dynamic_flow_control
- * If set to enable, dynamic_flow_control allows to control the flow by
- * calculate a beta coefficient at each time step added to the force of the
- * source term for gls_navier_stokes solver.
- */
+  // Showing results (area and flow rate)
+  if (nsparam.flow_control.verbosity == Parameters::Verbosity::verbose &&
+      simulation_control->get_step_number() > 0 && this->this_mpi_process == 0)
+    {
+      std::cout << "+------------------------------------------+" << std::endl;
+      std::cout << "|  Flow control summary                    |" << std::endl;
+      std::cout << "+------------------------------------------+" << std::endl;
+      this->pcout << "Inlet area : " << flow_rate.second << std::endl;
+      this->pcout << "Flow rate : " << flow_rate.first << std::endl;
+      this->pcout << "Beta applied : "
+                  << beta[nsparam.flow_control.flow_direction] << std::endl;
+    }
+}
+
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control(
-  const VectorType &present_solution)
+NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 {
-  // Verification if simulation is transient
   if (nsparam.flow_control.enable_flow_control &&
       nsparam.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->beta =
-        flow.calculate_beta(this->dof_handler,
-                            present_solution,
-                            nsparam.flow_control,
-                            nsparam.simulation_control,
-                            nsparam.fem_parameters,
-                            this->simulation_control->get_step_number(),
-                            mpi_communicator);
+      this->flow_control.calculate_beta(flow_rate,
+                                        simulation_control->get_time_step(),
+                                        simulation_control->get_step_number());
 
-      // Showing results (area and flow rate)
-      if (simulation_control->get_step_number() - 1 != 0)
-        {
-          std::vector<double> summary = flow.flow_summary();
-          this->pcout << "\n"
-                      << "Inlet area : " << summary[0] << std::endl;
-          this->pcout << "Flow rate : " << summary[1] << std::endl;
-          this->pcout << "Beta applied : " << summary[2] << std::endl;
-        }
+      this->beta = flow_control.get_beta();
     }
 }
 
@@ -891,7 +896,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-
   if (this->nsparam.post_processing.calculate_kinetic_energy)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
@@ -921,6 +925,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           kinetic_energy_table.set_precision("kinetic-energy", 12);
           this->kinetic_energy_table.write_text(output);
         }
+    }
+
+  // Calculate inlet flow rate and area
+  if (this->nsparam.flow_control.enable_flow_control)
+    {
+      this->postprocessing_flow_rate(this->present_solution);
     }
 
   if (!firstIter)
@@ -1092,8 +1102,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const unsigned int subdivision = simulation_control->get_number_subdivision();
   const unsigned int group_files = simulation_control->get_group_files();
 
-  // Add the interpretation of the solution and average solution. The dim first
-  // components are the velocity vectors and the following one is the pressure.
+  // Add the interpretation of the solution. The dim first components are the
+  // velocity vectors and the following one is the pressure.
   std::vector<std::string> solution_names(dim, "velocity");
   solution_names.push_back("pressure");
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1101,6 +1111,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       dim, DataComponentInterpretation::component_is_part_of_vector);
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
+
 
   DataOut<dim> data_out;
 
@@ -1117,6 +1128,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
 
+  // Add the interpretation of the average solution. The dim first components
+  // are the average velocity vectors and the following one is the average
+  // pressure. (<u>, <v>, <w>, <p>)
   if (nsparam.post_processing.calculate_average_velocities)
     {
       std::vector<std::string> average_solution_names(dim, "average_velocity");
@@ -1138,6 +1152,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();
   data_out.add_data_vector(subdomain, "subdomain");
+
 
   // Create additional post-processor that derives information from the solution
   VorticityPostprocessor<dim> vorticity;

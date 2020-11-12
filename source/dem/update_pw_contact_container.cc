@@ -7,8 +7,7 @@ void
 update_pw_contact_container_iterators(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
-    &particle_container)
+  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container)
 {
   for (auto pw_pairs_in_contact_iterator = pw_pairs_in_contact.begin();
        pw_pairs_in_contact_iterator != pw_pairs_in_contact.end();
@@ -22,7 +21,7 @@ update_pw_contact_container_iterators(
            pw_map_iterator != pairs_in_contant_content->end();
            ++pw_map_iterator)
         {
-          pw_map_iterator->second.particle = particle_container.at(particle_id);
+          pw_map_iterator->second.particle = particle_container[particle_id];
         }
     }
 }
@@ -30,13 +29,11 @@ update_pw_contact_container_iterators(
 template void
 update_pw_contact_container_iterators(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<2>>>
-    &pw_pairs_in_contact,
-  const std::unordered_map<int, Particles::ParticleIterator<2>>
-    &particle_container);
+    &                                                      pw_pairs_in_contact,
+  std::unordered_map<int, Particles::ParticleIterator<2>> &particle_container);
 
 template void
 update_pw_contact_container_iterators(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<3>>>
-    &pw_pairs_in_contact,
-  const std::unordered_map<int, Particles::ParticleIterator<3>>
-    &particle_container);
+    &                                                      pw_pairs_in_contact,
+  std::unordered_map<int, Particles::ParticleIterator<3>> &particle_container);

@@ -36,7 +36,7 @@ void
 update_local_pp_contact_container_iterators(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<int, Particles::ParticleIterator<dim>>
     &particle_container);
 
 #endif /* update_local_particle_particle_contact_container_h */

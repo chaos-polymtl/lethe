@@ -169,7 +169,7 @@ GLSNavierStokesSolver<dim>::setup_dofs()
               this->zero_constraints);
           }
         else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
-          // || Parameters::function)
+             // || Parameters::function)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
@@ -1493,8 +1493,8 @@ GLSNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
-      this->dynamic_flow_control(this->present_solution);
       this->simulation_control->print_progression(this->pcout);
+      this->dynamic_flow_control();
 
       if (this->simulation_control->is_at_start())
         this->first_iteration();

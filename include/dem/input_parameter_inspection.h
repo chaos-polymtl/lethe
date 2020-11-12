@@ -16,27 +16,25 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <dem/pw_contact_info_struct.h>
 
-using namespace dealii;
+#include <dem/dem_solver_parameters.h>
 
-#ifndef update_particle_wall_contact_container_h
-#  define update_particle_wall_contact_container_h
+using namespace std;
+
+#ifndef input_parameter_inspection_h
+#  define input_parameter_inspection_h
 
 /**
- * Updates the iterators to particles in pw_contact_container (output of pw
- * fine search)
+ * Manages checking input parameters in the parameter handler to be in the
+ * correct range. Warnings or error would appear if the parameters are not in
+ * their acceptable range.
  *
- * @param pw_pairs_in_contact Output of particle-wall fine search
- * @param particle_container Output of update_particle_container function
+ * @param dem_parameters Input DEM parameters in the parameter handler file
+ *
  */
 
 template <int dim>
 void
-update_pw_contact_container_iterators(
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    &pw_pairs_in_contact,
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
-    &particle_container);
+input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters);
 
-#endif /* update_particle_wall_contact_container_h */
+#endif /* input_parameter_inspection_h */
