@@ -99,7 +99,12 @@ private:
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
 
-  Vector<double>                cell_void_fraction;
+  Vector<double> cell_void_fraction;
+
+  TrilinosWrappers::MPI::Vector solution_vf_m1;
+  TrilinosWrappers::MPI::Vector solution_vf_m2;
+  TrilinosWrappers::MPI::Vector solution_vf_m3;
+
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
 
