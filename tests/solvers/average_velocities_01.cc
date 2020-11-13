@@ -38,8 +38,11 @@ main(int argc, char **argv)
 
       // SimulationControl parameters
       Parameters::SimulationControl simulation_control_parameters;
+      simulation_control_parameters.method =
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1;
       simulation_control_parameters.dt      = 0.1;
       simulation_control_parameters.timeEnd = 1.0;
+      simulation_control_parameters.adapt   = false;
 
       // Variables for AverageVelocities
       AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
