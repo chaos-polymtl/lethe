@@ -99,9 +99,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                 {
                   // Get the velocity at non-quadrature point (particle in
                   // fluid)
-                  velocity[comp_k] +=
-                    this->evaluation_point[fluid_dof_indices[k]] *
-                    this->fe.shape_value(k, ref_q);
+                  auto &evaluation_point = this->get_evaluation_point();
+                  velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
+                                      this->fe.shape_value(k, ref_q);
                 }
             }
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -132,15 +132,17 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
         }
       const AffineConstraints<double> &constraints_used =
         this->zero_constraints;
+      auto &system_rhs = this->get_system_rhs();
       constraints_used.distribute_local_to_global(local_matrix,
                                                   local_rhs,
                                                   fluid_dof_indices,
                                                   this->system_matrix,
-                                                  this->system_rhs);
+                                                  system_rhs);
       particle = pic.end();
     }
   this->system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  auto &system_rhs = this->get_system_rhs();
+  system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim, int spacedim>
@@ -177,10 +179,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
 
       // Generate FEField functoin to evaluate values and gradients
       // at the particle location
+      auto &evaluation_point = this->get_evaluation_point();
       Functions::FEFieldFunction<spacedim,
                                  DoFHandler<spacedim>,
                                  TrilinosWrappers::MPI::Vector>
-        fe_field(this->dof_handler, this->evaluation_point);
+        fe_field(this->dof_handler, evaluation_point);
 
       fe_field.set_active_cell(dh_cell);
 

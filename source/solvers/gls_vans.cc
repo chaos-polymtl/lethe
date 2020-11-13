@@ -58,9 +58,11 @@ template <bool                                              assemble_matrix,
 void
 GLSVANSSolver<dim>::assembleGLS()
 {
+  auto &system_rhs = this->get_system_rhs();
+
   if (assemble_matrix)
     system_matrix = 0;
-  this->system_rhs = 0;
+  system_rhs = 0;
 
   double         viscosity = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
@@ -185,18 +187,19 @@ GLSVANSSolver<dim>::assembleGLS()
           local_rhs    = 0;
 
           // Gather velocity (values, gradient and laplacian)
-          fe_values[velocities].get_function_values(this->evaluation_point,
+          auto &evaluation_point = this->get_evaluation_point();
+          fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
           fe_values[velocities].get_function_gradients(
-            this->evaluation_point, present_velocity_gradients);
+            evaluation_point, present_velocity_gradients);
           fe_values[velocities].get_function_laplacians(
-            this->evaluation_point, present_velocity_laplacians);
+            evaluation_point, present_velocity_laplacians);
 
           // Gather pressure (values, gradient)
-          fe_values[pressure].get_function_values(this->evaluation_point,
+          fe_values[pressure].get_function_values(evaluation_point,
                                                   present_pressure_values);
           fe_values[pressure].get_function_gradients(
-            this->evaluation_point, present_pressure_gradients);
+            evaluation_point, present_pressure_gradients);
 
           // Gather void fraction (values, gradient)
           fe_values_void_fraction.get_function_values(
@@ -604,19 +607,19 @@ GLSVANSSolver<dim>::assembleGLS()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           system_matrix,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
           else
             {
               constraints_used.distribute_local_to_global(local_rhs,
                                                           local_dof_indices,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
         }
     }
   if (assemble_matrix)
     system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 /**
@@ -640,7 +643,9 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
     {
       assemble_L2_projection();
       solve_system_GMRES(true, 1e-15, 1e-15, true);
-      this->present_solution = this->newton_update;
+      auto &present_solution = this->get_present_solution();
+      auto &newton_update    = this->get_newton_update();
+      present_solution       = newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }

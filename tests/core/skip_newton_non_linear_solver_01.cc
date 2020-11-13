@@ -46,7 +46,7 @@ main(int argc, char **argv)
   solver->solve_non_linear_system(
     Parameters::SimulationControl::TimeSteppingMethod::steady, true, true);
 
-
-  deallog << "The final solution is : " << solver->present_solution[0] << " "
-          << solver->present_solution[1] << std::endl;
+  auto &present_solution = solver->get_present_solution();
+  deallog << "The final solution is : " << present_solution[0] << " "
+          << present_solution[1] << std::endl;
 }
