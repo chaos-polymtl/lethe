@@ -19,7 +19,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   if (abs(total_time) < epsilon)
     {
       // Store the first dt value in case dt varies.
-      dt_0 = simulation_control->calculate_time_step();
+      dt_0 = dt;
 
       // Reinitialisation of the vectors to get the right length
       velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
