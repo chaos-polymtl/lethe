@@ -41,7 +41,7 @@ main(int argc, char **argv)
       simulation_control_parameters.dt      = 0.1;
       simulation_control_parameters.timeEnd = 1.0;
 
-      // Variables for the AverageVelocities
+      // Variables for AverageVelocities
       AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
 
       auto simulation_control = std::make_shared<SimulationControlTransient>(
@@ -68,8 +68,8 @@ main(int argc, char **argv)
       // Time info
       const double time_end     = simulation_control_parameters.timeEnd;
       const double initial_time = postprocessing_parameters.initial_time;
-      double       epsilon      = 1e-6;
       double       time         = simulation_control->get_current_time();
+      double       epsilon      = 1e-6;
 
       while (time < (time_end + epsilon)) // Until time reached end time
         {
@@ -83,18 +83,17 @@ main(int argc, char **argv)
 
               average_solution = average.get_average_velocities();
 
-              deallog << " Time :        " << time << std::endl;
+              deallog << " Time :             " << time << std::endl;
               deallog << " Average solution : " << average_solution[0] << " "
                       << average_solution[1] << " " << average_solution[2]
                       << std::endl;
               deallog << "" << std::endl;
 
-              solution *= 0.9; // new values of solutions for next step
+              solution *= 0.9; // new solution values for next step
             }
 
           // Integrate to get the next time
           simulation_control->integrate();
-          simulation_control->get_current_time();
 
           // Break if the next time from integrate() is the same because
           // time will never get over the time end, but the average velocities
