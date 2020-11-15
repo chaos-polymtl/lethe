@@ -55,10 +55,10 @@ public:
   BoundaryCellsInformation<dim>();
 
   /**
-   * @brief The build fonction builds all the boundary cell information structure
-   * that find which cell has a boundary face, boundary line or a boundary
-   * point. Additionnaly, it identifies which cell are located in the vicinity
-   * (controlled by the max cell diameter of flaoting  walls
+   * @brief The build fonction builds all the boundary cell information
+   * structure that find which cell has a boundary face, boundary line or a
+   * boundary point. Additionnaly, it identifies which cell are located in the
+   * vicinity (controlled by the max cell diameter of flaoting  walls
    * @param triangulation Triangulation to access the information of the cells
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
@@ -78,16 +78,19 @@ public:
     return boundary_cells_information;
   }
 
-  std::vector<
+  std::unordered_map<
+    std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>> &
   get_boundary_cells_with_points()
   {
     return boundary_cells_with_points;
   }
 
-  std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                         Point<dim>,
-                         Point<dim>>> &
+  std::unordered_map<
+    std::string,
+    std::tuple<typename Triangulation<dim>::active_cell_iterator,
+               Point<dim>,
+               Point<dim>>> &
   get_boundary_cells_with_lines()
   {
     return boundary_cells_with_lines;
@@ -100,7 +103,6 @@ public:
   {
     return boundary_cells_for_floating_walls;
   }
-
 
 private:
   /**
@@ -159,15 +161,17 @@ private:
   // Structure that contains the necessary information for boundaries
   std::map<int, boundary_cells_info_struct<dim>> boundary_cells_information;
 
-
   // Structure that contains the boundary cells which have a line
-  std::vector<std::tuple<typename Triangulation<dim>::active_cell_iterator,
-                         Point<dim>,
-                         Point<dim>>>
+  std::unordered_map<
+    std::string,
+    std::tuple<typename Triangulation<dim>::active_cell_iterator,
+               Point<dim>,
+               Point<dim>>>
     boundary_cells_with_lines;
 
   // Structure that contains the boundary cells which have a point
-  std::vector<
+  std::unordered_map<
+    std::string,
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
     boundary_cells_with_points;
 

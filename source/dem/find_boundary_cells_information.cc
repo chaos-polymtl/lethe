@@ -230,14 +230,18 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
       if (number_of_boundary_vertices == 1)
         {
           // It means the cells has a boundary point
-          boundary_cells_with_points.push_back(
-            std::make_pair(cell, *boundary_points.begin()));
+          boundary_cells_with_points.insert(
+            {cell->id().to_string(),
+             std::make_pair(cell, *boundary_points.begin())});
         }
       else if (number_of_boundary_vertices == 2)
         {
           // It means the cells has a boundary line
-          boundary_cells_with_lines.push_back(std::make_tuple(
-            cell, *boundary_points.begin(), *boundary_points.end()));
+          boundary_cells_with_lines.insert(
+            {cell->id().to_string(),
+             std::make_tuple(cell,
+                             *boundary_points.begin(),
+                             *(++boundary_points.begin()))});
         }
     }
 }

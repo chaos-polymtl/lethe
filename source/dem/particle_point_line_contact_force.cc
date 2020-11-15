@@ -40,8 +40,9 @@ ParticlePointLineForce<dim>::calculate_particle_point_line_contact_force(
       // are used to consider non-linear relation of the contact force to
       // the normal overlap
       double model_parameter_betha =
-        log(physical_properties.poisson_ratio_wall) /
-        sqrt(pow(log(physical_properties.poisson_ratio_wall), 2.0) + 9.8696);
+        log(physical_properties.restitution_coefficient_wall) /
+        sqrt(pow(log(physical_properties.restitution_coefficient_wall), 2.0) +
+             9.8696);
       double model_parameter_sn =
         2.0 * effective_youngs_modulus *
         sqrt(particle_properties[DEM::PropertiesIndex::dp] *

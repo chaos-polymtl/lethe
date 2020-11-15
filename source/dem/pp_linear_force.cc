@@ -188,7 +188,7 @@ PPLinearForce<dim>::calculate_pp_contact_force(
     }
 }
 
-// Calculates nonlinear contact force and torques
+// Calculates linear contact force and torques
 template <int dim>
 void
 PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
@@ -236,13 +236,13 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
            (sqrt(effective_radius) * effective_youngs_modulus)),
           0.2) +
     DBL_MIN;
-  double normal_damping_constant = sqrt(
-    (4.0 * effective_mass * normal_spring_constant) /
-    (1.0 +
-     (3.1415 /
-      (log(physical_properties.restitution_coefficient_particle) + DBL_MIN)) *
-       (3.1415 / (log(physical_properties.restitution_coefficient_particle) +
-                  DBL_MIN))));
+  double normal_damping_constant =
+    sqrt((4.0 * effective_mass * normal_spring_constant) /
+         (1.0 +
+          (M_PI / (log(physical_properties.restitution_coefficient_particle) +
+                   DBL_MIN)) *
+            (M_PI / (log(physical_properties.restitution_coefficient_particle) +
+                     DBL_MIN))));
   double tangential_damping_constant =
     normal_damping_constant *
     sqrt(tangential_spring_constant / normal_spring_constant);
@@ -253,24 +253,29 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     ((normal_damping_constant * normal_relative_velocity_value) *
      normal_unit_vector);
 
-  double maximum_tangential_overlap =
-    physical_properties.friction_coefficient_particle * normal_force.norm() /
-    tangential_spring_constant;
+  // Calculation of tangential force using spring and dashpot tangential
+  // forces. Since we need dashpot tangential force in the gross sliding again,
+  // we define it as a separate variable
+  Tensor<1, dim> dashpot_tangential_force =
+    (tangential_damping_constant * contact_info.tangential_relative_velocity);
+  tangential_force =
+    (tangential_spring_constant * contact_info.tangential_overlap) +
+    dashpot_tangential_force;
 
+  double coulomb_threshold =
+    physical_properties.friction_coefficient_particle * normal_force.norm();
   // Check for gross sliding
-  if (contact_info.tangential_overlap.norm() > maximum_tangential_overlap)
+  if (tangential_force.norm() > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangnetial
       // force are limited to Coulumb's criterion
+      tangential_force =
+        coulomb_threshold * (tangential_force / tangential_force.norm());
+
       contact_info.tangential_overlap =
-        maximum_tangential_overlap * (contact_info.tangential_overlap /
-                                      contact_info.tangential_overlap.norm());
+        (tangential_force - dashpot_tangential_force) /
+        (tangential_spring_constant + DBL_MIN);
     }
-  // Calculation of tangential force using spring and dashpot tangential
-  // forces
-  tangential_force =
-    (-1.0 * tangential_spring_constant * contact_info.tangential_overlap) +
-    (tangential_damping_constant * contact_info.tangential_relative_velocity);
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
