@@ -62,15 +62,15 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 500
-    set inserted number of particles at each time step  = 500
+    set n total              				= 200
+    set inserted number of particles at each time step  = 200
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.03
+    set insertion box minimum z            	        = -0.06
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = 0.0
+    set insertion box maximum z            	        = -0.02
     set insertion distance threshold			= 1.5
     set insertion random number range			= 0.75
     set insertion random number seed			= 19

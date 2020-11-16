@@ -62,8 +62,8 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 100
-    set inserted number of particles at each time step  = 100
+    set n total              				= 50
+    set inserted number of particles at each time step  = 50
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
@@ -92,6 +92,6 @@ subsection boundary motion
     subsection moving boundary 0
 	set boundary id					= 2
         set type              				= rotational
-	set rotational speed				= 3
+	set rotational speed				= 1
     end
 end
