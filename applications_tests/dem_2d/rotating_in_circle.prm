@@ -51,10 +51,10 @@ subsection physical properties
     set poisson ratio wall            			= 0.3
     set restitution coefficient particle		= 0.3
     set restitution coefficient wall           		= 0.3
-    set friction coefficient particle         		= 0.1
-    set friction coefficient wall         		= 0.1
-    set rolling friction particle         		= 0.05
-    set rolling friction wall         	      	  	= 0.05
+    set friction coefficient particle         		= 0.05
+    set friction coefficient wall         		= 0.05
+    set rolling friction particle         		= 0.01
+    set rolling friction wall         	      	  	= 0.01
 end
 
 #---------------------------------------------------
@@ -68,7 +68,7 @@ subsection insertion info
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
     set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.0
+    set insertion box maximum y           	 	= -0.02
     set insertion distance threshold			= 1.5
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
