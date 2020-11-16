@@ -101,9 +101,11 @@ private:
 
   Vector<double> cell_void_fraction;
 
-  TrilinosWrappers::MPI::Vector solution_vf_m1;
-  TrilinosWrappers::MPI::Vector solution_vf_m2;
-  TrilinosWrappers::MPI::Vector solution_vf_m3;
+  // Solution of the void fraction at previous time steps
+
+  TrilinosWrappers::MPI::Vector void_fraction_m1;
+  TrilinosWrappers::MPI::Vector void_fraction_m2;
+  TrilinosWrappers::MPI::Vector void_fraction_m3;
 
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;

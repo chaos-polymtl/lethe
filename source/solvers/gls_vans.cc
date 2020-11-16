@@ -115,8 +115,8 @@ GLSVANSSolver<dim>::assembleGLS()
 
   // Velocity dependent source term
   //----------------------------------
-  // Angular velocity of the rotating frame. This is always a 3D vector even in
-  // 2D.
+  // Angular velocity of the rotating frame. This is always a 3D vector even
+  // in 2D.
   Tensor<1, dim> omega_vector;
 
   double omega_z  = this->nsparam.velocitySource.omega_z;
@@ -139,9 +139,9 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
 
   // Values at previous time step for transient schemes for void fraction
-  //  std::vector<double> p1_void_fraction_values(n_q_points);
-  //  std::vector<double> p2_void_fraction_values(n_q_points);
-  //  std::vector<double> p3_void_fraction_values(n_q_points);
+  std::vector<double> p1_void_fraction_values(n_q_points);
+  std::vector<double> p2_void_fraction_values(n_q_points);
+  std::vector<double> p3_void_fraction_values(n_q_points);
 
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
@@ -249,18 +249,34 @@ GLSVANSSolver<dim>::assembleGLS()
 
           // Gather the previous time steps depending on the number of stages
           // of the time integration scheme for the void fraction
-          //          if (scheme !=
-          //              Parameters::SimulationControl::TimeSteppingMethod::steady)
-          //            fe_values_void_fraction.get_function_values(
-          //              this->solution_m1, p1_void_fraction_values);
 
-          //          if (time_stepping_method_has_two_stages(scheme))
-          //            fe_values_void_fraction.get_function_values(
-          //              this->solution_m2, p2_void_fraction_values);
+          if (scheme !=
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
+            {
+              void_fraction_m1.reinit(nodal_void_fraction_relevant,
+                                      this->mpi_communicator);
+              void_fraction_m2.reinit(nodal_void_fraction_relevant,
+                                      this->mpi_communicator);
+              void_fraction_m3.reinit(nodal_void_fraction_relevant,
+                                      this->mpi_communicator);
 
-          //          if (time_stepping_method_has_three_stages(scheme))
-          //            fe_values_void_fraction.get_function_values(
-          //              this->solution_m3, p3_void_fraction_values);
+              void_fraction_m3 = void_fraction_m2;
+              void_fraction_m2 = void_fraction_m1;
+              void_fraction_m1 = nodal_void_fraction_relevant;
+
+              fe_values_void_fraction.get_function_values(
+                void_fraction_m1, p1_void_fraction_values);
+
+              if (time_stepping_method_has_two_stages(scheme))
+                fe_values_void_fraction.get_function_values(
+                  void_fraction_m2, p2_void_fraction_values);
+
+              if (time_stepping_method_has_three_stages(scheme))
+                fe_values_void_fraction.get_function_values(
+                  void_fraction_m3, p3_void_fraction_values);
+            }
+
+
 
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -274,9 +290,9 @@ GLSVANSSolver<dim>::assembleGLS()
               const double JxW = fe_values.JxW(q);
 
               // Calculation of the GLS stabilization parameter. The
-              // stabilization parameter used is different if the simulation is
-              // steady or unsteady. In the unsteady case it includes the value
-              // of the time-step
+              // stabilization parameter used is different if the simulation
+              // is steady or unsteady. In the unsteady case it includes the
+              // value of the time-step
               const double tau =
                 scheme ==
                     Parameters::SimulationControl::TimeSteppingMethod::steady ?
@@ -286,8 +302,8 @@ GLSVANSSolver<dim>::assembleGLS()
                     std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                               9 * std::pow(4 * viscosity / (h * h), 2));
 
-              // Gather the shape functions, their gradient and their laplacian
-              // for the velocity and the pressure
+              // Gather the shape functions, their gradient and their
+              // laplacian for the velocity and the pressure
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
                   div_phi_u[k]  = fe_values[velocities].divergence(k, q);
@@ -351,9 +367,9 @@ GLSVANSSolver<dim>::assembleGLS()
               /* Adjust the strong residual in cases where the scheme is
                transient.
                The BDF schemes require values at previous time steps which are
-               stored in the p1, p2 and p3 vectors. The SDIRK scheme require the
-               values at the different stages, which are also stored in the same
-               arrays.
+               stored in the p1, p2 and p3 vectors. The SDIRK scheme require
+               the values at the different stages, which are also stored in
+               the same arrays.
                */
 
               if (scheme ==
@@ -361,27 +377,27 @@ GLSVANSSolver<dim>::assembleGLS()
                 strong_residual += bdf_coefs[0] * present_velocity_values[q] *
                                      present_void_fraction_values[q] +
                                    bdf_coefs[1] * p1_velocity_values[q] *
-                                     present_void_fraction_values[q];
+                                     p1_void_fraction_values[q];
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 strong_residual += bdf_coefs[0] * present_velocity_values[q] *
                                      present_void_fraction_values[q] +
                                    bdf_coefs[1] * p1_velocity_values[q] *
-                                     present_void_fraction_values[q] +
+                                     p1_void_fraction_values[q] +
                                    bdf_coefs[2] * p2_velocity_values[q] *
-                                     present_void_fraction_values[q];
+                                     p2_void_fraction_values[q];
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 strong_residual += bdf_coefs[0] * present_velocity_values[q] *
                                      present_void_fraction_values[q] +
                                    bdf_coefs[1] * p1_velocity_values[q] *
-                                     present_void_fraction_values[q] +
+                                     p1_void_fraction_values[q] +
                                    bdf_coefs[2] * p2_velocity_values[q] *
-                                     present_void_fraction_values[q] +
+                                     p2_void_fraction_values[q] +
                                    bdf_coefs[3] * p3_velocity_values[q] *
-                                     present_void_fraction_values[q];
+                                     p3_void_fraction_values[q];
 
 
               if (is_sdirk_step1(scheme))
@@ -389,7 +405,7 @@ GLSVANSSolver<dim>::assembleGLS()
                                      present_velocity_values[q] *
                                      present_void_fraction_values[q] +
                                    sdirk_coefs[0][1] * p1_velocity_values[q] *
-                                     present_void_fraction_values[q];
+                                     p1_void_fraction_values[q];
 
               if (is_sdirk_step2(scheme))
                 {
@@ -397,9 +413,9 @@ GLSVANSSolver<dim>::assembleGLS()
                                        present_velocity_values[q] *
                                        present_void_fraction_values[q] +
                                      sdirk_coefs[1][1] * p1_velocity_values[q] *
-                                       present_void_fraction_values[q] +
+                                       p1_void_fraction_values[q] +
                                      sdirk_coefs[1][2] * p2_velocity_values[q] *
-                                       present_void_fraction_values[q];
+                                       p2_void_fraction_values[q];
                 }
 
               if (is_sdirk_step3(scheme))
@@ -408,11 +424,11 @@ GLSVANSSolver<dim>::assembleGLS()
                                        present_velocity_values[q] *
                                        present_void_fraction_values[q] +
                                      sdirk_coefs[2][1] * p1_velocity_values[q] *
-                                       present_void_fraction_values[q] +
+                                       p1_void_fraction_values[q] +
                                      sdirk_coefs[2][2] * p2_velocity_values[q] *
-                                       present_void_fraction_values[q] +
+                                       p2_void_fraction_values[q] +
                                      sdirk_coefs[2][3] * p3_velocity_values[q] *
-                                       present_void_fraction_values[q];
+                                       p3_void_fraction_values[q];
                 }
 
               // Matrix assembly
@@ -513,8 +529,8 @@ GLSVANSSolver<dim>::assembleGLS()
                             }
 
 
-                          // PSPG TAU term is currently disabled because it does
-                          // not alter the matrix sufficiently
+                          // PSPG TAU term is currently disabled because it
+                          // does not alter the matrix sufficiently
                           // local_matrix(i, j) +=
                           //  -tau * tau * tau * 4 / h / h *
                           //  (present_velocity_values[q] * phi_u[j]) *
@@ -531,8 +547,8 @@ GLSVANSSolver<dim>::assembleGLS()
                                  strong_residual * (grad_phi_u[i] * phi_u[j])) *
                                 JxW;
 
-                              // SUPG TAU term is currently disabled because it
-                              // does not alter the matrix sufficiently
+                              // SUPG TAU term is currently disabled because
+                              // it does not alter the matrix sufficiently
                               // local_matrix(i, j)
                               // +=
                               //   -strong_residual
@@ -583,21 +599,21 @@ GLSVANSSolver<dim>::assembleGLS()
                   // Residual associated with BDF schemes
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-                    local_rhs(i) -= bdf_coefs[0] *
-                                    (present_void_fraction_values[q] *
-                                       present_velocity_values[q] -
-                                     present_void_fraction_values[q] *
-                                       p1_velocity_values[q]) *
-                                    phi_u[i] * JxW;
+                    local_rhs(i) -=
+                      bdf_coefs[0] *
+                      (present_void_fraction_values[q] *
+                         present_velocity_values[q] -
+                       p1_void_fraction_values[q] * p1_velocity_values[q]) *
+                      phi_u[i] * JxW;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     local_rhs(i) -=
                       (bdf_coefs[0] * (present_void_fraction_values[q] *
                                        present_velocity_values[q] * phi_u[i]) +
-                       bdf_coefs[1] * (present_void_fraction_values[q] *
+                       bdf_coefs[1] * (p1_void_fraction_values[q] *
                                        p1_velocity_values[q] * phi_u[i]) +
-                       bdf_coefs[2] * (present_void_fraction_values[q] *
+                       bdf_coefs[2] * (p2_void_fraction_values[q] *
                                        p2_velocity_values[q] * phi_u[i])) *
                       JxW;
 
@@ -606,11 +622,11 @@ GLSVANSSolver<dim>::assembleGLS()
                     local_rhs(i) -=
                       (bdf_coefs[0] * (present_void_fraction_values[q] *
                                        present_velocity_values[q] * phi_u[i]) +
-                       bdf_coefs[1] * (present_void_fraction_values[q] *
+                       bdf_coefs[1] * (p1_void_fraction_values[q] *
                                        p1_velocity_values[q] * phi_u[i]) +
-                       bdf_coefs[2] * (present_void_fraction_values[q] *
+                       bdf_coefs[2] * (p2_void_fraction_values[q] *
                                        p2_velocity_values[q] * phi_u[i]) +
-                       bdf_coefs[3] * (present_void_fraction_values[q] *
+                       bdf_coefs[3] * (p3_void_fraction_values[q] *
                                        p3_velocity_values[q] * phi_u[i])) *
                       JxW;
 
@@ -620,7 +636,7 @@ GLSVANSSolver<dim>::assembleGLS()
                       (sdirk_coefs[0][0] *
                          (present_void_fraction_values[q] *
                           present_velocity_values[q] * phi_u[i]) +
-                       sdirk_coefs[0][1] * (present_void_fraction_values[q] *
+                       sdirk_coefs[0][1] * (p1_void_fraction_values[q] *
                                             p1_velocity_values[q] * phi_u[i])) *
                       JxW;
 
@@ -631,11 +647,11 @@ GLSVANSSolver<dim>::assembleGLS()
                            (present_void_fraction_values[q] *
                             present_velocity_values[q] * phi_u[i]) +
                          sdirk_coefs[1][1] *
-                           (present_void_fraction_values[q] *
-                            p1_velocity_values[q] * phi_u[i]) +
+                           (p1_void_fraction_values[q] * p1_velocity_values[q] *
+                            phi_u[i]) +
                          sdirk_coefs[1][2] *
-                           (present_void_fraction_values[q] *
-                            p2_velocity_values[q] * phi_u[i])) *
+                           (p2_void_fraction_values[q] * p2_velocity_values[q] *
+                            phi_u[i])) *
                         JxW;
                     }
 
@@ -646,14 +662,14 @@ GLSVANSSolver<dim>::assembleGLS()
                            (present_void_fraction_values[q] *
                             present_velocity_values[q] * phi_u[i]) +
                          sdirk_coefs[2][1] *
-                           (present_void_fraction_values[q] *
-                            p1_velocity_values[q] * phi_u[i]) +
+                           (p1_void_fraction_values[q] * p1_velocity_values[q] *
+                            phi_u[i]) +
                          sdirk_coefs[2][2] *
-                           (present_void_fraction_values[q] *
-                            p2_velocity_values[q] * phi_u[i]) +
+                           (p2_void_fraction_values[q] * p2_velocity_values[q] *
+                            phi_u[i]) +
                          sdirk_coefs[2][3] *
-                           (present_void_fraction_values[q] *
-                            p3_velocity_values[q] * phi_u[i])) *
+                           (p3_void_fraction_values[q] * p3_velocity_values[q] *
+                            phi_u[i])) *
                         JxW;
                     }
 
@@ -707,14 +723,6 @@ GLSVANSSolver<dim>::assembleGLS()
 
 
           cell->get_dof_indices(local_dof_indices);
-
-          //          if (nsparam.simulation_control.method !=
-          //              Parameters::SimulationControl::TimeSteppingMethod::steady)
-          //            {
-          //              solution_vf_m3 = solution_vf_m2;
-          //              solution_vf_m2 = solution_vf_m1;
-          //              solution_vf_m1 = present_void_fraction_values;
-          //            }
 
 
           // The non-linear solver assumes that the nonzero constraints have
@@ -1052,6 +1060,7 @@ GLSVANSSolver<dim>::solve()
 }
 
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
-// valid before we actually compile the solver This greatly helps with debugging
+// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library
+// is valid before we actually compile the solver This greatly helps with
+// debugging
 template class GLSVANSSolver<2>;
