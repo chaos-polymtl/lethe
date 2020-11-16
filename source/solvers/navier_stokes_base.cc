@@ -485,11 +485,12 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
   if (nsparam.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->solution_m3 = this->solution_m2;
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      const double CFL  = calculate_CFL(this->dof_handler,
-                                       this->present_solution,
+      this->solution_m3      = this->solution_m2;
+      this->solution_m2      = this->solution_m1;
+      auto &present_solution = this->get_present_solution();
+      this->solution_m1      = present_solution;
+      const double CFL       = calculate_CFL(this->dof_handler,
+                                       present_solution,
                                        nsparam.fem_parameters,
                                        simulation_control->get_time_step(),
                                        mpi_communicator);
@@ -517,6 +518,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
+  auto &present_solution = this->get_present_solution();
   if (nsparam.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
     {
@@ -524,7 +526,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
         false,
         false);
-      this->solution_m2 = this->present_solution;
+      this->solution_m2 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
@@ -540,14 +542,14 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         false,
         false);
 
-      this->solution_m2 = this->present_solution;
+      this->solution_m2 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
         false,
         false);
 
-      this->solution_m3 = this->present_solution;
+      this->solution_m3 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
@@ -568,6 +570,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
+  auto &present_solution = this->get_present_solution();
   // First step if the method is not a multi-step method
   if (!is_bdf_high_order(nsparam.simulation_control.method))
     {
@@ -587,7 +590,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
+      this->solution_m1 = present_solution;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
@@ -617,7 +620,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
+      this->solution_m1 = present_solution;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
@@ -628,7 +631,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m3 = this->solution_m2;
       this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
+      this->solution_m1 = present_solution;
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step
@@ -679,6 +682,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
                               this->nsparam.fem_parameters.qmapping_all);
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
+  auto &present_solution = this->get_present_solution();
   if (this->nsparam.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
     {
@@ -687,7 +691,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         this->dof_handler,
         QGauss<dim - 1>(this->number_quadrature_points + 1),
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
+        present_solution,
         estimated_error_per_cell,
         this->fe.component_mask(pressure));
     }
@@ -699,7 +703,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         this->dof_handler,
         QGauss<dim - 1>(this->number_quadrature_points + 1),
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
-        this->present_solution,
+        present_solution,
         estimated_error_per_cell,
         this->fe.component_mask(velocity));
     }
@@ -747,8 +751,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
-  solution_transfer.prepare_for_coarsening_and_refinement(
-    this->present_solution);
+  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
   solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
@@ -769,16 +772,17 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  nonzero_constraints.distribute(tmp);
+  nonzero_constraints.distribute(tmp_m1);
+  nonzero_constraints.distribute(tmp_m2);
+  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
-  this->present_solution = tmp;
-  this->solution_m1      = tmp_m1;
-  this->solution_m2      = tmp_m2;
-  this->solution_m3      = tmp_m3;
+  present_solution  = tmp;
+  this->solution_m1 = tmp_m1;
+  this->solution_m2 = tmp_m2;
+  this->solution_m3 = tmp_m3;
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -796,8 +800,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
-  solution_transfer.prepare_for_coarsening_and_refinement(
-    this->present_solution);
+  auto &present_solution = this->get_present_solution();
+  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
   solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
@@ -820,26 +824,29 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
-  this->nonzero_constraints.distribute(tmp);
-  this->nonzero_constraints.distribute(tmp_m1);
-  this->nonzero_constraints.distribute(tmp_m2);
-  this->nonzero_constraints.distribute(tmp_m3);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  nonzero_constraints.distribute(tmp);
+  nonzero_constraints.distribute(tmp_m1);
+  nonzero_constraints.distribute(tmp_m2);
+  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
-  this->present_solution = tmp;
-  this->solution_m1      = tmp_m1;
-  this->solution_m2      = tmp_m2;
-  this->solution_m3      = tmp_m3;
+  present_solution  = tmp;
+  this->solution_m1 = tmp_m1;
+  this->solution_m2 = tmp_m2;
+  this->solution_m3 = tmp_m3;
 }
 
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 {
+  auto &present_solution = this->get_present_solution();
+
   if (this->nsparam.post_processing.calculate_enstrophy)
     {
       double enstrophy = calculate_enstrophy(this->dof_handler,
-                                             this->present_solution,
+                                             present_solution,
                                              nsparam.fem_parameters,
                                              mpi_communicator);
 
@@ -884,7 +891,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                (nsparam.post_processing.initial_time - 1e-6))
         {
           this->average_velocities.calculate_average_velocities(
-            this->local_evaluation_point,
+            this->get_local_evaluation_point(),
             nsparam.post_processing,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
@@ -899,7 +906,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
-                                           this->present_solution,
+                                           present_solution,
                                            nsparam.fem_parameters,
                                            mpi_communicator);
       this->kinetic_energy_table.add_value(
@@ -929,7 +936,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
   // Calculate inlet flow rate and area
   if (this->nsparam.flow_control.enable_flow_control)
     {
-      this->postprocessing_flow_rate(this->present_solution);
+      this->postprocessing_flow_rate(this->get_present_solution());
     }
 
   if (!firstIter)
@@ -940,7 +947,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           if (simulation_control->get_step_number() %
                 this->nsparam.forces_parameters.calculation_frequency ==
               0)
-            this->postprocessing_forces(this->present_solution);
+            this->postprocessing_forces(present_solution);
           if (simulation_control->get_step_number() %
                 this->nsparam.forces_parameters.output_frequency ==
               0)
@@ -953,7 +960,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           if (simulation_control->get_step_number() %
                 this->nsparam.forces_parameters.calculation_frequency ==
               0)
-            this->postprocessing_torques(this->present_solution);
+            this->postprocessing_torques(present_solution);
           if (simulation_control->get_step_number() %
                 this->nsparam.forces_parameters.output_frequency ==
               0)
@@ -967,7 +974,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           this->exact_solution->set_time(
             simulation_control->get_current_time());
           const std::pair<double, double> errors =
-            this->calculate_L2_error(this->present_solution);
+            this->calculate_L2_error(present_solution);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
           if (nsparam.simulation_control.method ==
@@ -1013,18 +1020,21 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
   const FEValuesExtractors::Scalar pressure(dim);
   const MappingQ<dim>              mapping(this->velocity_fem_degree,
                               this->nsparam.fem_parameters.qmapping_all);
+  auto &                           newton_update = this->get_newton_update();
   VectorTools::interpolate(mapping,
                            this->dof_handler,
                            this->nsparam.initial_condition->uvwp,
-                           this->newton_update,
+                           newton_update,
                            this->fe.component_mask(velocities));
   VectorTools::interpolate(mapping,
                            this->dof_handler,
                            this->nsparam.initial_condition->uvwp,
-                           this->newton_update,
+                           newton_update,
                            this->fe.component_mask(pressure));
-  this->nonzero_constraints.distribute(this->newton_update);
-  this->present_solution = this->newton_update;
+  auto &nonzero_constraints = this->get_nonzero_constraints();
+  nonzero_constraints.distribute(newton_update);
+  auto &present_solution = this->get_present_solution();
+  present_solution       = newton_update;
 }
 
 
@@ -1062,10 +1072,11 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(4);
 
-  VectorType distributed_system(this->newton_update);
-  VectorType distributed_system_m1(this->newton_update);
-  VectorType distributed_system_m2(this->newton_update);
-  VectorType distributed_system_m3(this->newton_update);
+  auto &     newton_update = this->get_newton_update();
+  VectorType distributed_system(newton_update);
+  VectorType distributed_system_m1(newton_update);
+  VectorType distributed_system_m2(newton_update);
+  VectorType distributed_system_m3(newton_update);
   x_system[0] = &(distributed_system);
   x_system[1] = &(distributed_system_m1);
   x_system[2] = &(distributed_system_m2);
@@ -1073,7 +1084,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
   system_trans_vectors.deserialize(x_system);
-  this->present_solution = distributed_system;
+  auto &present_solution = this->get_present_solution();
+  present_solution       = distributed_system;
   this->solution_m1      = distributed_system_m1;
   this->solution_m2      = distributed_system_m2;
   this->solution_m3      = distributed_system_m3;
@@ -1245,7 +1257,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
     this->pvdhandler.save(prefix);
 
   std::vector<const VectorType *> sol_set_transfer;
-  sol_set_transfer.push_back(&this->present_solution);
+  auto &present_solution = this->get_present_solution();
+  sol_set_transfer.push_back(&present_solution);
   sol_set_transfer.push_back(&this->solution_m1);
   sol_set_transfer.push_back(&this->solution_m2);
   sol_set_transfer.push_back(&this->solution_m3);

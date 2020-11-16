@@ -91,13 +91,14 @@ RestartNavierStokes<dim>::run()
   this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
   this->postprocess(false);
-  auto   errors_p1 = this->calculate_L2_error(this->present_solution);
-  double error1    = errors_p1.first;
+  auto & present_solution = this->get_present_solution();
+  auto   errors_p1        = this->calculate_L2_error(present_solution);
+  double error1           = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step();
 
   this->set_solution_vector(0.);
-  auto errors_p2 = this->calculate_L2_error(this->present_solution);
+  auto errors_p2 = this->calculate_L2_error(present_solution);
 
   double error2 = errors_p2.first;
 
@@ -109,7 +110,7 @@ RestartNavierStokes<dim>::run()
   this->triangulation->refine_global(0);
 
   this->set_initial_condition(this->nsparam.initial_condition->type, true);
-  auto errors_p3 = this->calculate_L2_error(this->present_solution);
+  auto errors_p3 = this->calculate_L2_error(present_solution);
 
   double error3 = errors_p3.first;
   deallog << "Error after restarting the simulation: " << error3 << std::endl;
