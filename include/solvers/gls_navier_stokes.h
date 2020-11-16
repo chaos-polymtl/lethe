@@ -47,10 +47,16 @@ public:
 
 protected:
   virtual void
-  setup_dofs();
-  void
+  setup_dofs_cfd();
+
+  virtual void
   set_initial_condition(Parameters::InitialConditionType initial_condition_type,
                         bool                             restart = false);
+
+  void
+  set_initial_condition_cfd(
+    Parameters::InitialConditionType initial_condition_type,
+    bool                             restart = false);
 
   void
   set_solution_vector(double value);
@@ -70,6 +76,10 @@ protected:
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
+
+  void
+  solve_linear_system_cfd(const bool initial_step,
+                          const bool renewed_matrix = true);
 
 private:
   void

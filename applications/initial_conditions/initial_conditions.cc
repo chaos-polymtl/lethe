@@ -47,7 +47,7 @@ InitialConditionsNavierStokes<dim>::run()
                           this->nsparam.manifolds_parameters,
                           this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
-  this->setup_dofs();
+  this->setup_dofs_cfd();
   this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
@@ -61,7 +61,7 @@ InitialConditionsNavierStokes<dim>::runTest()
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
 
-  this->setup_dofs();
+  this->setup_dofs_cfd();
   this->exact_solution = new ExactInitialSolution<dim>;
   this->set_initial_condition(Parameters::InitialConditionType::L2projection);
   auto &present_solution = this->get_present_solution();

@@ -87,8 +87,9 @@ NewtonNonLinearSolver<VectorType>::solve(
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  auto &evaluation_point = solver->get_evaluation_point();
-  auto &present_solution = solver->get_present_solution();
+  const int current_physics  = solver->get_current_physics();
+  auto &    evaluation_point = solver->get_evaluation_point(current_physics);
+  auto &    present_solution = solver->get_present_solution(current_physics);
 
   while ((current_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
@@ -99,7 +100,7 @@ NewtonNonLinearSolver<VectorType>::solve(
 
       if (outer_iteration == 0)
         {
-          auto &system_rhs = solver->get_system_rhs();
+          auto &system_rhs = solver->get_system_rhs(current_physics);
           current_res      = system_rhs.l2_norm();
           last_res         = current_res;
         }
@@ -112,17 +113,22 @@ NewtonNonLinearSolver<VectorType>::solve(
 
       solver->solve_linear_system(first_step);
 
+<<<<<<< HEAD
       for (double alpha = 1.0; alpha > 1e-1; alpha *= 0.5)
+=======
+      for (double alpha = 1.0; alpha >= 1; alpha *= 0.5)
+>>>>>>> Add heat transfer transient equation
         {
-          auto &local_evaluation_point = solver->get_local_evaluation_point();
-          auto &newton_update          = solver->get_newton_update();
-          local_evaluation_point       = present_solution;
+          auto &local_evaluation_point =
+            solver->get_local_evaluation_point(current_physics);
+          auto &newton_update    = solver->get_newton_update(current_physics);
+          local_evaluation_point = present_solution;
           local_evaluation_point.add(alpha, newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
           solver->assemble_rhs(time_stepping_method);
 
-          auto &system_rhs = solver->get_system_rhs();
+          auto &system_rhs = solver->get_system_rhs(current_physics);
           current_res      = system_rhs.l2_norm();
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
