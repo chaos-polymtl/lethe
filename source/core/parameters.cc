@@ -349,17 +349,6 @@ namespace Parameters
         Patterns::Double(),
         "Initial time to start calculations for average velocities");
 
-      prm.declare_entry("boundary id",
-                        "0",
-                        Patterns::Integer(),
-                        "Boundary id of the inlet flow");
-
-      prm.declare_entry("flow direction",
-                        "0",
-                        Patterns::Integer(),
-                        "Flow direction at flow inlet");
-
-
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
                         Patterns::FileName(),

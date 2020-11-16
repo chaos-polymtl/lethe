@@ -52,15 +52,18 @@ template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
+  AverageVelocities();
   /**
    * @brief calculate_average_velocities. This function calculates time-averaged
    * velocities and pressure with dof vector with no ghost cell.
    *
    * @param local_evaluation_point. The vector solutions with no ghost cells
    *
-   * @param simulation_control. The simulation information (time)
-   *
    * @param post_processing. The parameters to start the processing
+   *
+   * @param current_time. The current time in the simulation
+   *
+   * @param time_step. The current time step
    *
    * @param locally_owned_dofs. The owned dofs
    *
@@ -68,11 +71,12 @@ public:
    */
   void
   calculate_average_velocities(
-    const VectorType &                        local_evaluation_point,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const Parameters::PostProcessing &        post_processing,
-    const DofsType &                          locally_owned_dofs,
-    const MPI_Comm &                          mpi_communicator);
+    const VectorType &                local_evaluation_point,
+    const Parameters::PostProcessing &post_processing,
+    const double &                    current_time,
+    const double &                    time_step,
+    const DofsType &                  locally_owned_dofs,
+    const MPI_Comm &                  mpi_communicator);
 
   /**
    * @brief get_average_velocities. Gives the average of solutions.
@@ -87,5 +91,8 @@ private:
   VectorType velocity_dt;
   VectorType sum_velocity_dt;
   VectorType average_velocities;
+
+  bool   average_calculation;
+  double real_initial_time;
 };
 #endif

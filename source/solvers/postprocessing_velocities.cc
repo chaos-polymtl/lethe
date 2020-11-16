@@ -1,23 +1,30 @@
 #include <solvers/postprocessing_velocities.h>
 
+template <int dim, typename VectorType, typename DofsType>
+AverageVelocities<dim, VectorType, DofsType>::AverageVelocities()
+  : average_calculation(false)
+{}
 
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
-  const VectorType &                        local_evaluation_point,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const Parameters::PostProcessing &        post_processing,
-  const DofsType &                          locally_owned_dofs,
-  const MPI_Comm &                          mpi_communicator)
+  const VectorType &                local_evaluation_point,
+  const Parameters::PostProcessing &post_processing,
+  const double &                    current_time,
+  const double &                    time_step,
+  const DofsType &                  locally_owned_dofs,
+  const MPI_Comm &                  mpi_communicator)
 {
-  double epsilon = 1e-6;
-  double total_time =
-    simulation_control->get_current_time() - post_processing.initial_time;
-  double dt = simulation_control->get_time_step();
+  const double epsilon      = 1e-6;
+  const double initial_time = post_processing.initial_time;
+  const double dt           = time_step;
 
-  // When averaging velocities begins (time = initial time)
-  if (abs(total_time) < epsilon)
+  // When averaging velocities begins
+  if (current_time >= (initial_time - epsilon) && average_calculation == false)
     {
+      average_calculation = true;
+      real_initial_time   = current_time;
+
       // Store the first dt value in case dt varies.
       dt_0 = dt;
 
@@ -34,7 +41,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   // Get the inverse of the total time with the first time step since
   // the weighted velocities are calculated with the first velocity when
   // total time = 0.
-  inv_range_time = 1. / (total_time + dt_0);
+  inv_range_time = 1. / ((current_time - real_initial_time) + dt_0);
 
   // Calculate average_velocities. (u*dt) / (total time + dt)
   // The sum of all weighted velocities in time / total time calculated

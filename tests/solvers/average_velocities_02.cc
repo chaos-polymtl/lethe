@@ -18,7 +18,8 @@
 */
 
 /**
- * @brief This code tests averaging values in time with Trilinos vectors.
+ * @brief This code tests averaging values in time with Trilinos vectors with
+ * adaptative time step scaling.
  */
 
 #include <core/parameters.h>
@@ -39,9 +40,10 @@ test(int argc, char **argv)
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt      = 0.1;
-  simulation_control_parameters.timeEnd = 1.0;
-  simulation_control_parameters.adapt   = false;
+  simulation_control_parameters.dt                           = 0.1;
+  simulation_control_parameters.timeEnd                      = 1.0;
+  simulation_control_parameters.adapt                        = true;
+  simulation_control_parameters.adaptative_time_step_scaling = 0.95;
 
   // Variables for AverageVelocities
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
@@ -68,23 +70,25 @@ test(int argc, char **argv)
   const double time_end     = simulation_control_parameters.timeEnd;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
-  double       epsilon      = 1e-6;
+  double       dt           = 0.0;
+
+  const double epsilon = 1e-6;
 
   while (time < (time_end + epsilon)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {
-          average.calculate_average_velocities(
-            solution,
-            postprocessing_parameters,
-            simulation_control->get_current_time(),
-            simulation_control->get_time_step(),
-            locally_owned_dofs,
-            mpi_communicator);
+          average.calculate_average_velocities(solution,
+                                               postprocessing_parameters,
+                                               time,
+                                               dt,
+                                               locally_owned_dofs,
+                                               mpi_communicator);
 
           average_solution = average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
+          deallog << " Time step :        " << dt << std::endl;
           deallog << " Average solution : " << average_solution[0] << " "
                   << average_solution[1] << " " << average_solution[2]
                   << std::endl;
@@ -103,6 +107,7 @@ test(int argc, char **argv)
       if (abs(time - simulation_control->get_current_time()) < epsilon)
         break;
 
+      dt   = simulation_control->get_time_step();
       time = simulation_control->get_current_time();
     }
 }

@@ -584,7 +584,7 @@ namespace Parameters
     // Volumetric flow rate (L^3/t)
     double flow_rate_0;
 
-    // Id of the boundary where the flow inlet
+    // Boundary id at flow inlet
     unsigned int boundary_flow_id;
 
     // Flow direction (x=0, y=1 ,z=2)

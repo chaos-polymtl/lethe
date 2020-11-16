@@ -871,7 +871,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   if (this->nsparam.post_processing.calculate_average_velocities)
     {
-      double epsilon = 1e-6;
       // Reinitiation of the average_solution vector at the first iteration.
       if (firstIter)
         {
@@ -879,16 +878,16 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                         this->locally_relevant_dofs,
                                         this->mpi_communicator);
         }
-
       // Calculate average velocities when the time reaches the initial time.
       // time >= initial time with the epsilon as tolerance.
       else if (simulation_control->get_current_time() >
-               (nsparam.post_processing.initial_time - epsilon))
+               (nsparam.post_processing.initial_time - 1e-6))
         {
           this->average_velocities.calculate_average_velocities(
             this->local_evaluation_point,
-            this->simulation_control,
             nsparam.post_processing,
+            simulation_control->get_current_time(),
+            simulation_control->get_time_step(),
             locally_owned_dofs,
             mpi_communicator);
 
