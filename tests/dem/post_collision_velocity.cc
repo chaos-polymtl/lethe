@@ -70,16 +70,16 @@ test()
   // Defining general simulation parameters
   const unsigned int n_properties = 21;
   Tensor<1, dim>     g{{0, 0, 0}};
-  double             dt                                      = 0.0000001;
+  double             dt                                      = 0.00000001;
   double             particle_diameter                       = 0.002;
   int                particle_density                        = 2000;
   unsigned int       rotating_wall_maximum_number            = 6;
-  dem_parameters.physical_properties.youngs_modulus_particle = 1000000;
-  dem_parameters.physical_properties.youngs_modulus_wall     = 1000000;
+  dem_parameters.physical_properties.youngs_modulus_particle = 800000000;
+  dem_parameters.physical_properties.youngs_modulus_wall     = 800000000;
   dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
   dem_parameters.physical_properties.poisson_ratio_wall      = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle = 0.7;
-  dem_parameters.physical_properties.restitution_coefficient_wall     = 0.7;
+  dem_parameters.physical_properties.restitution_coefficient_particle = 0.9;
+  dem_parameters.physical_properties.restitution_coefficient_wall     = 0.9;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.3;
   dem_parameters.physical_properties.friction_coefficient_wall        = 0.3;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
@@ -165,7 +165,7 @@ test()
 
   auto particle1 = particle_handler.begin();
 
-  for (double time = 0; time < 0.00115; time += dt)
+  for (double time = 0; time < 0.0001; time += dt)
     {
       // If particle and wall are in contact
       pw_fine_search_object.particle_wall_fine_search(pw_contact_list,
@@ -176,7 +176,7 @@ test()
       integrator_object.integrate(particle_handler, g, dt);
     }
 
-  deallog << "Coefficient of restitution is 0.7 and the velocity of particle "
+  deallog << "Coefficient of restitution is 0.9 and the velocity of particle "
              "before collision is 0.1, the velocity of particle after "
              "collision is: "
           << particle1->get_properties()[DEM::PropertiesIndex::v_x]

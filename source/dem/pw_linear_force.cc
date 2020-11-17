@@ -55,7 +55,7 @@ PWLinearForce<dim>::calculate_pw_contact_force(
             ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
             (projected_vector.norm());
 
-          if (normal_overlap > 0.0)
+          if (normal_overlap > 0)
             {
               contact_information->normal_overlap = normal_overlap;
 
@@ -114,21 +114,21 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
   double normal_spring_constant =
-    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
     effective_youngs_modulus *
     pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
          contact_info.normal_relative_velocity *
          contact_info.normal_relative_velocity /
-         (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+         (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
           effective_youngs_modulus)),
         0.2);
   double tangential_spring_constant =
-    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
       effective_youngs_modulus *
       pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
-           (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2.0)) *
+           (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
             effective_youngs_modulus)),
           0.2) +
     DBL_MIN;
@@ -193,7 +193,7 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   Tensor<1, dim> pw_angular_velocity;
   for (int d = 0; d < dim; ++d)
     {
-      pw_angular_velocity[d] = 0.0;
+      pw_angular_velocity[d] = 0;
     }
 
   double omega_value = angular_velocity.norm();
@@ -204,8 +204,8 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calcualation of rolling resistance torque
   Tensor<1, dim> rolling_resistance_torque =
-    -1.0 * physical_properties.rolling_friction_wall *
-    ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+    -physical_properties.rolling_friction_wall *
+    ((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
     normal_force.norm() * pw_angular_velocity;
 
   return std::make_tuple(normal_force,

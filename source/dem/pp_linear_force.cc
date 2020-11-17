@@ -218,8 +218,8 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
           particle_two_properties[DEM::PropertiesIndex::dp]));
   double effective_youngs_modulus =
     physical_properties.youngs_modulus_particle /
-    (2.0 * (1.0 - physical_properties.poisson_ratio_particle *
-                    physical_properties.poisson_ratio_particle));
+    (2 * (1 - physical_properties.poisson_ratio_particle *
+                physical_properties.poisson_ratio_particle));
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
@@ -236,13 +236,12 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
            (sqrt(effective_radius) * effective_youngs_modulus)),
           0.2) +
     DBL_MIN;
-  double normal_damping_constant =
-    sqrt((4.0 * effective_mass * normal_spring_constant) /
-         (1.0 +
-          (M_PI / (log(physical_properties.restitution_coefficient_particle) +
-                   DBL_MIN)) *
-            (M_PI / (log(physical_properties.restitution_coefficient_particle) +
-                     DBL_MIN))));
+  double normal_damping_constant = sqrt(
+    (4 * effective_mass * normal_spring_constant) /
+    (1 + (M_PI / (log(physical_properties.restitution_coefficient_particle) +
+                  DBL_MIN)) *
+           (M_PI / (log(physical_properties.restitution_coefficient_particle) +
+                    DBL_MIN))));
   double tangential_damping_constant =
     normal_damping_constant *
     sqrt(tangential_spring_constant / normal_spring_constant);
@@ -306,9 +305,9 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   omega_ij_direction    = omega_ij / omega_ij_value;
 
   // Calculation of rolling resistance torque
-  rolling_resistance_torque =
-    -1.0 * physical_properties.rolling_friction_particle * effective_radius *
-    normal_force.norm() * omega_ij_direction;
+  rolling_resistance_torque = -physical_properties.rolling_friction_particle *
+                              effective_radius * normal_force.norm() *
+                              omega_ij_direction;
 }
 
 template class PPLinearForce<2>;
