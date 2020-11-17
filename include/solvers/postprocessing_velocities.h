@@ -65,6 +65,9 @@ public:
    *
    * @param time_step. The current time step
    *
+   * @param is_output_iteration. The information if output is required at this
+   *                             iteration
+   *
    * @param locally_owned_dofs. The owned dofs
    *
    * @param mpi_communicator. The mpi communicator information
@@ -75,30 +78,25 @@ public:
     const Parameters::PostProcessing &post_processing,
     const double &                    current_time,
     const double &                    time_step,
+    const bool &                      is_output_iteration,
     const DofsType &                  locally_owned_dofs,
     const MPI_Comm &                  mpi_communicator);
 
 
   /**
- * @brief calculate_reynolds_stress. This function calculates normal
- * time-averaged Reynold stresses and shear stress (<u'u'>, <v'v'>, <w'w'>
- * and <u'v'>.
- *
- * @param local_evaluation_point. The vector solutions with no ghost cells
- *
- * @param simulation_control. The simulation information (time)
- *
- * @param locally_owned_dofs. The owned dofs
- *
- * @param mpi_communicator. The mpi communicator information
- */
+   * @brief calculate_reynolds_stress. This function calculates normal
+   * time-averaged Reynold stresses and shear stress (<u'u'>, <v'v'>, <w'w'>
+   * and <u'v'>.
+   *
+   * @param local_evaluation_point. The vector solutions with no ghost cells
+   *
+   * @param is_output_iteration. The information if output is required at this
+   *                             iteration
+   *
+   */
   void
-  calculate_reynolds_stress(
-    const VectorType &                        local_evaluation_point,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const DofsType &                          locally_owned_dofs,
-    const MPI_Comm &                          mpi_communicator);
-
+  calculate_reynolds_stress(const VectorType &local_evaluation_point,
+                            const bool &      is_output_iteration);
   /**
    * @brief get_average_velocities. Gives the average of solutions.
    */
@@ -106,9 +104,9 @@ public:
   get_average_velocities();
 
   /**
- * @brief get_reynolds_stress. Gives the time-averaged Reynold stresses
- * and shear stress
- */
+   * @brief get_reynolds_stress. Gives the time-averaged normal Reynolds
+   * stresses and shear stress
+   */
   const VectorType
   get_reynolds_stress();
 
@@ -124,82 +122,16 @@ private:
   VectorType sum_reynolds_stress_dt;
   VectorType reynolds_stress;
 
+  double dt;
   bool   average_calculation;
   double real_initial_time;
 };
 
 template <int dim, typename VectorType, typename DofsType>
-void
-AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
-  const VectorType &                        local_evaluation_point,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const DofsType &                          locally_owned_dofs,
-  const MPI_Comm &                          mpi_communicator)
+const VectorType
+AverageVelocities<dim, VectorType, DofsType>::get_average_velocities()
 {
-
-  if (total_time + dt >= -1e-6 && total_time < -1e-6)
-  {
-    // Reinitializing vectors before calculating average
-    sum_reynolds_stress_dt.reinit(locally_owned_dofs,
-                                  mpi_communicator);
-    reynolds_stress.reinit(locally_owned_dofs,
-                           mpi_communicator);
-  }
-  else if (total_time >= -1e-6)
-  {
-    VectorType reynolds_stress_dt(locally_owned_dofs,
-                                  mpi_communicator);
-
-    if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
-    {
-      const unsigned int begin_index = local_evaluation_point.local_range().first;
-      const unsigned int end_index = local_evaluation_point.local_range().second;
-
-      for (unsigned int i = begin_index; i <= end_index; i++)
-      {
-        if ((i + 4) % 4 == 0)
-        {
-          // Calculating (u'u')*dt, (v'v')*dt (w'w')*dt and (u'v')*dt
-          reynolds_stress_dt[i] =
-            (local_evaluation_point[i] - average_velocities[i]) *
-            (local_evaluation_point[i] - average_velocities[i]) * dt;
-          reynolds_stress_dt[i + 1] =
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
-          reynolds_stress_dt[i + 2] =
-            (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-            (local_evaluation_point[i + 2] - average_velocities[i + 2]) * dt;
-          reynolds_stress_dt[i + 3] =
-            (local_evaluation_point[i] - average_velocities[i]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
-        }
-      }
-      // Summation of all reynolds stress during simulation
-      sum_reynolds_stress_dt += reynolds_stress_dt;
-    }
-      // Next condition not tested yet.
-    else if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
-    {
-      unsigned int begin_index = local_evaluation_point.block(0).local_range().first;
-      unsigned int end_index   = local_evaluation_point.block(0).local_range().second;
-
-      reynolds_stress_dt.block(0) = local_evaluation_point.block(0);
-      reynolds_stress_dt.block(0) -= average_velocities.block(0);
-      reynolds_stress_dt.block(0).scale(reynolds_stress_dt.block(0));
-      reynolds_stress_dt.block(0) *= dt;
-
-      for (unsigned int i = begin_index; i <= end_index; i += 3)
-        if ((i + 3) % 3 == 0)
-          reynolds_stress_dt.block(1)[i/3] = reynolds_stress_dt.block(0)[i] *
-                                             reynolds_stress_dt.block(0)[i + 1] / dt;
-
-      sum_reynolds_stress_dt += reynolds_stress_dt;
-    }
-  }
-
-  // Calculating time-averaged reynolds stress
-  if (simulation_control->is_output_iteration())
-    reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
+  return average_velocities;
 }
 
 // Function not tested yet

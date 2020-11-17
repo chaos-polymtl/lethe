@@ -876,9 +876,17 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-  if (this->nsparam.post_processing.calculate_average_velocities)
+  // Time-averaged velocities are calculated if calculate average velocities
+  // and/or calculate reynolds stress is enabled because the last one needs
+  // the time-averaged values at each time step.
+  // The average_solution and reynolds_stress vectors are reinitialize at the
+  // first iteration.
+  // The average velocities and/or reynolds stresses are calculated when the
+  // time reaches the initial time. (time >= initial time) with 1e-6 as
+  // tolerance.
+  if (this->nsparam.post_processing.calculate_average_velocities ||
+      this->nsparam.post_processing.calculate_reynolds_stress)
     {
-      // Reinitiation of the average_solution vector at the first iteration.
       if (firstIter)
         {
           this->average_solution.reinit(this->locally_owned_dofs,
@@ -889,8 +897,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                        this->locally_relevant_dofs,
                                        this->mpi_communicator);
         }
-      // Calculate average velocities when the time reaches the initial time.
-      // time >= initial time with the epsilon as tolerance.
       else if (simulation_control->get_current_time() >
                (nsparam.post_processing.initial_time - 1e-6))
         {
@@ -899,18 +905,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             nsparam.post_processing,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
-            locally_owned_dofs,
-            mpi_communicator);
-
-          this->average_velocities.calculate_reynolds_stress(
-            this->get_local_evaluation_point(),
-            this->simulation_control,
+            simulation_control->is_output_iteration(),
             locally_owned_dofs,
             mpi_communicator);
 
           this->average_solution = average_velocities.get_average_velocities();
-          this->reynolds_stress  = average_velocities.get_reynolds_stress();
 
+          if (this->nsparam.post_processing.calculate_reynolds_stress)
+            this->reynolds_stress = average_velocities.get_reynolds_stress();
         }
     }
 
@@ -1153,7 +1155,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   // Add the interpretation of the average solution. The dim first components
   // are the average velocity vectors and the following one is the average
   // pressure. (<u>, <v>, <w>, <p>)
-  if (nsparam.post_processing.calculate_average_velocities)
+  if (this->nsparam.post_processing.calculate_average_velocities)
     {
       std::vector<std::string> average_solution_names(dim, "average_velocity");
       average_solution_names.push_back("average_pressure");
@@ -1163,25 +1165,31 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       average_data_component_interpretation.push_back(
         DataComponentInterpretation::component_is_scalar);
 
-      std::vector<std::string> reynolds_stress_names(dim, "normal_reynolds_stress");
-      reynolds_stress_names.push_back("shear_stress");
-      std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        reynolds_stress_data_component_interpretation(
-        dim, DataComponentInterpretation::component_is_part_of_vector);
-      reynolds_stress_data_component_interpretation.push_back(
-        DataComponentInterpretation::component_is_scalar);
-
       data_out.add_data_vector(this->average_solution,
                                average_solution_names,
                                DataOut<dim>::type_dof_data,
                                average_data_component_interpretation);
+    }
+
+  // Add the interpretation of the reynolds stresses of solution.
+  // The dim first components are the normal reynolds stress vectors and
+  // the following one is the shear stress. (<u'u'>, <v'v'>, <w'w'>, <u'v'>)
+  if (this->nsparam.post_processing.calculate_reynolds_stress)
+    {
+      std::vector<std::string> reynolds_stress_names(dim,
+                                                     "normal_reynolds_stress");
+      reynolds_stress_names.push_back("shear_stress");
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        reynolds_stress_data_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
+      reynolds_stress_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
 
       data_out.add_data_vector(this->reynolds_stress,
                                reynolds_stress_names,
                                DataOut<dim>::type_dof_data,
                                reynolds_stress_data_component_interpretation);
     }
-
 
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
