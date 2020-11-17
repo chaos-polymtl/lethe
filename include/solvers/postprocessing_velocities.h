@@ -134,7 +134,6 @@ AverageVelocities<dim, VectorType, DofsType>::get_average_velocities()
   return average_velocities;
 }
 
-// Function not tested yet
 template <int dim, typename VectorType, typename DofsType>
 const VectorType
 AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress()

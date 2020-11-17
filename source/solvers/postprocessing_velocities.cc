@@ -54,10 +54,10 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   inv_range_time = 1. / ((current_time - real_initial_time) + dt_0);
 
 
-  // If calculate reynolds stress is enable, average velocuties must be
+  // If calculate reynolds stress is enable, average velocities must be
   // calculated at every iteration since the average values are needed to get
-  // reynolds stress at each iteration. If it is disabled, average velocities
-  // only need to be calculated when output is required.
+  // reynolds stress. If it is disabled, average velocities only need to be
+  // calculated when output is required.
   if (post_processing.calculate_reynolds_stress)
     {
       average_velocities.equ(inv_range_time, sum_velocity_dt);
@@ -73,6 +73,12 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
     }
 }
 
+// Since Trilinos vectors and block vectors data doesn't have the same
+// structure, those vectors need to be processed in different ways.
+// Same about the dimension, where 2D solutions are stored in (u,v,p) groups
+// for vectors and [(u,v)][p] for block vectors and where 3D solutions
+// are stored in (u,v,w,p) groups for vectors and [(u,v,w)][p] for
+// block vectors.
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
@@ -88,7 +94,21 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
 
       for (unsigned int i = begin_index; i <= end_index; i++)
         {
-          if ((i + 4) % 4 == 0)
+          if (dim == 2 && (i + 3) % 3 == 0)
+            {
+              reynolds_stress_dt[i] =
+                (local_evaluation_point[i] - average_velocities[i]) *
+                (local_evaluation_point[i] - average_velocities[i]) * dt;
+              reynolds_stress_dt[i + 1] =
+                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+                dt;
+              reynolds_stress_dt[i + 2] =
+                (local_evaluation_point[i] - average_velocities[i]) *
+                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+                dt;
+            }
+          else if (dim == 3 && (i + 4) % 4 == 0)
             {
               // Calculating (u'u')*dt, (v'v')*dt (w'w')*dt and (u'v')*dt
               reynolds_stress_dt[i] =
@@ -111,30 +131,39 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
       // Summation of all reynolds stress during simulation
       sum_reynolds_stress_dt += reynolds_stress_dt;
     }
-  // Next condition not tested yet.
   else if constexpr (std::is_same_v<VectorType,
                                     TrilinosWrappers::MPI::BlockVector>)
     {
-      unsigned int begin_index =
-        local_evaluation_point.block(0).local_range().first;
-      unsigned int end_index =
-        local_evaluation_point.block(0).local_range().second;
-
       reynolds_stress_dt.block(0) = local_evaluation_point.block(0);
       reynolds_stress_dt.block(0) -= average_velocities.block(0);
       reynolds_stress_dt.block(0).scale(reynolds_stress_dt.block(0));
       reynolds_stress_dt.block(0) *= dt;
 
+      unsigned int begin_index =
+        local_evaluation_point.block(0).local_range().first;
+      unsigned int end_index =
+        local_evaluation_point.block(0).local_range().second;
+
       for (unsigned int i = begin_index; i <= end_index; i += 3)
-        if ((i + 3) % 3 == 0)
-          reynolds_stress_dt.block(1)[i / 3] =
-            reynolds_stress_dt.block(0)[i] *
-            reynolds_stress_dt.block(0)[i + 1] / dt;
+        {
+          if (dim == 2 && (i + 2) % 2 == 0)
+            {
+              reynolds_stress_dt.block(1)[i / 2] =
+                reynolds_stress_dt.block(0)[i] *
+                reynolds_stress_dt.block(0)[i + 1] / dt;
+            }
+          else if (dim == 3 && (i + 3) % 3 == 0)
+            {
+              reynolds_stress_dt.block(1)[i / 3] =
+                reynolds_stress_dt.block(0)[i] *
+                reynolds_stress_dt.block(0)[i + 1] / dt;
+            }
+        }
 
       sum_reynolds_stress_dt += reynolds_stress_dt;
     }
   // Calculating time-averaged reynolds stress
-  if (is_output_iteration == true)
+  if (is_output_iteration)
     reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
 }
 
