@@ -42,6 +42,7 @@ test(int argc, char **argv)
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.dt                           = 0.1;
   simulation_control_parameters.timeEnd                      = 1.0;
+  simulation_control_parameters.output_frequency             = 1;
   simulation_control_parameters.adapt                        = true;
   simulation_control_parameters.adaptative_time_step_scaling = 0.95;
 
@@ -66,11 +67,12 @@ test(int argc, char **argv)
   TrilinosWrappers::MPI::Vector average_solution(locally_owned_dofs,
                                                  mpi_communicator);
 
-  // Time info
+  // Time and output info
   const double time_end     = simulation_control_parameters.timeEnd;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;
+  bool         is_output    = simulation_control->is_output_iteration();
 
   const double epsilon = 1e-6;
 
@@ -82,6 +84,7 @@ test(int argc, char **argv)
                                                postprocessing_parameters,
                                                time,
                                                dt,
+                                               is_output,
                                                locally_owned_dofs,
                                                mpi_communicator);
 

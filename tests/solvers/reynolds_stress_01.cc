@@ -18,7 +18,8 @@
 */
 
 /**
- * @brief This code tests averaging values in time with Trilinos vectors.
+ * @brief This code tests the reynolds stress calculations in 3d with
+ * Trilinos vectors.
  */
 
 #include <core/parameters.h>
@@ -39,31 +40,41 @@ test(int argc, char **argv)
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt      = 0.1;
-  simulation_control_parameters.timeEnd = 1.0;
+  simulation_control_parameters.dt               = 0.1;
+  simulation_control_parameters.timeEnd          = 1.0;
   simulation_control_parameters.adapt            = false;
   simulation_control_parameters.output_frequency = 1;
 
   // Variables for AverageVelocities
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
+  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
+    postprocessing_velocities;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
   IndexSet locally_owned_dofs;
-  locally_owned_dofs.add_range(0, 3);
+  locally_owned_dofs.add_range(0, 8);
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
+  postprocessing_parameters.calculate_reynolds_stress    = true;
   postprocessing_parameters.initial_time                 = 0.5;
 
   TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
-  solution(0) = 0.0;
-  solution(1) = 2.5;
-  solution(2) = 10;
+  solution(0) = 2.0;
+  solution(1) = 0.1;
+  solution(2) = 0.0;
+  solution(3) = 30;
+  solution(4) = 2.5;
+  solution(5) = 0.56;
+  solution(6) = 0.1;
+  solution(7) = 20;
+
 
   TrilinosWrappers::MPI::Vector average_solution(locally_owned_dofs,
                                                  mpi_communicator);
+  TrilinosWrappers::MPI::Vector stress_solution(locally_owned_dofs,
+                                                mpi_communicator);
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -75,7 +86,7 @@ test(int argc, char **argv)
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {
-          average.calculate_average_velocities(
+          postprocessing_velocities.calculate_average_velocities(
             solution,
             postprocessing_parameters,
             simulation_control->get_current_time(),
@@ -84,16 +95,22 @@ test(int argc, char **argv)
             locally_owned_dofs,
             mpi_communicator);
 
-          average_solution = average.get_average_velocities();
+          average_solution = postprocessing_velocities.get_average_velocities();
+          stress_solution  = postprocessing_velocities.get_reynolds_stress();
 
-          deallog << " Time :             " << time << std::endl;
-          deallog << " Average solution : " << average_solution[0] << " "
-                  << average_solution[1] << " " << average_solution[2]
-                  << std::endl;
+          deallog << " Time  : " << time << std::endl;
+          deallog << "<u'u'> : " << stress_solution[0] << " "
+                  << stress_solution[4] << std::endl;
+          deallog << "<v'v'> : " << stress_solution[1] << " "
+                  << stress_solution[5] << std::endl;
+          deallog << "<w'w'> : " << stress_solution[2] << " "
+                  << stress_solution[6] << std::endl;
+          deallog << "<u'v'> : " << stress_solution[3] << " "
+                  << stress_solution[7] << std::endl;
           deallog << "" << std::endl;
         }
 
-      // new solution values for next step
+      // New solution values for next step
       solution *= 0.9;
 
       // Integrate to get the next time
