@@ -1,13 +1,15 @@
 # Lethe
 
 Lethe is an open source and we try to follow the deal.II mentality of having it
-developed an open accessible environment. Consequently, all scientific
-development made within Lethe are accessible to everyone even as they are
+developed in an open accessible environment. Consequently, all scientific
+developments made within Lethe are accessible to everyone even as they are
 currently being written. Anybody that wishes to use and contribute to a feature
-is welcomed to do so.
+is welcome to do so.
 
-This document aims at establishing from guidelines for contributions within
+This document aims at establishing guidelines for contributions within
 Lethe.
+
+Lethe has a wiki which is openly accessible on : https://github.com/lethe-cfd/lethe/wiki
 
 
 # How can I contribute?
@@ -23,13 +25,13 @@ used to open pull requests
 A pull request should contain the following elements:
 
 - A brief title (less than 60 characters) that describes the goal of the pull
-requests
+requests.
 - A detailed description of the content added by the pull request:
-i) If the PR adds a new feature. The feature should be documented, tests (with
-  a unit tests and/or an application test) and if the features adds or alters
+i) If the PR adds a new feature: The feature should be documented, tests (with
+  a unit tests and/or an application test) and if the feature adds or alters
   parameters in the input file, the appropriate section of the wiki should
   be updated accordingly.
-ii) If the pull requests corrects a bug, the source of the bug should be
+ii) If the pull requests corrects a bug: the source of the bug should be
 explained and the way it was identified should be briefy described. A unit
 test or application test that reproduces the bug should be added.
 
