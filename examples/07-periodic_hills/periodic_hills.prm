@@ -8,8 +8,8 @@ subsection simulation control
   set number mesh adapt            = 0
   set output name                  = periodic_hills-output
   set subdivision                  = 2
-  set time step                    = 0.1   
-  set output frequency             = 1     
+  set time step                    = 0.1
+  set output frequency             = 1
   set time end                     = 1
 end
 
@@ -48,6 +48,14 @@ subsection flow control
     set verbosity                  = verbose
 end
 
+#---------------------------------------------------
+# Post-Processing
+#---------------------------------------------------
+subsection post-processing
+    set calculate average velocities    = true
+    set initial time 		        = 0.5
+end
+
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
@@ -80,7 +88,7 @@ end
 #---------------------------------------------------
 subsection FEM
     set velocity order            = 2
-    set pressure order            = 1
+    set pressure order            = 2
     set qmapping all              = true
 end
 

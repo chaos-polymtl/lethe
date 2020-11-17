@@ -36,6 +36,7 @@
 #include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
+#include <solvers/postprocessing_velocities.h>
 
 #include "core/time_integration_utilities.h"
 
@@ -841,8 +842,6 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 {
   auto &present_solution = this->get_present_solution();
-  if (this->simulation_control->is_output_iteration())
-    this->write_output_results(present_solution);
 
   if (this->nsparam.post_processing.calculate_enstrophy)
     {
@@ -874,6 +873,32 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           enstrophy_table.set_precision("time", 12);
           enstrophy_table.set_precision("enstrophy", 12);
           this->enstrophy_table.write_text(output);
+        }
+    }
+
+  if (this->nsparam.post_processing.calculate_average_velocities)
+    {
+      // Reinitiation of the average_solution vector at the first iteration.
+      if (firstIter)
+        {
+          this->average_solution.reinit(this->locally_owned_dofs,
+                                        this->locally_relevant_dofs,
+                                        this->mpi_communicator);
+        }
+      // Calculate average velocities when the time reaches the initial time.
+      // time >= initial time with the epsilon as tolerance.
+      else if (simulation_control->get_current_time() >
+               (nsparam.post_processing.initial_time - 1e-6))
+        {
+          this->average_velocities.calculate_average_velocities(
+            this->get_local_evaluation_point(),
+            nsparam.post_processing,
+            simulation_control->get_current_time(),
+            simulation_control->get_time_step(),
+            locally_owned_dofs,
+            mpi_communicator);
+
+          this->average_solution = average_velocities.get_average_velocities();
         }
     }
 
@@ -983,6 +1008,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             }
         }
     }
+  if (this->simulation_control->is_output_iteration())
+    this->write_output_results(present_solution);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1111,6 +1138,27 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            solution_names,
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
+
+  // Add the interpretation of the average solution. The dim first components
+  // are the average velocity vectors and the following one is the average
+  // pressure. (<u>, <v>, <w>, <p>)
+  if (nsparam.post_processing.calculate_average_velocities)
+    {
+      std::vector<std::string> average_solution_names(dim, "average_velocity");
+      average_solution_names.push_back("average_pressure");
+
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        average_data_component_interpretation(
+          dim, DataComponentInterpretation::component_is_part_of_vector);
+      average_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
+
+      data_out.add_data_vector(this->average_solution,
+                               average_solution_names,
+                               DataOut<dim>::type_dof_data,
+                               average_data_component_interpretation);
+    }
+
   Vector<float> subdomain(this->triangulation->n_active_cells());
   for (unsigned int i = 0; i < subdomain.size(); ++i)
     subdomain(i) = this->triangulation->locally_owned_subdomain();

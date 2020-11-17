@@ -99,6 +99,7 @@
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
 #include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
 
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
@@ -320,6 +321,7 @@ protected:
   VectorType solution_m1;
   VectorType solution_m2;
   VectorType solution_m3;
+  VectorType average_solution;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
@@ -331,8 +333,9 @@ protected:
   // SimulationControl simulationControl;
 
   // Post-processing variables
-  TableHandler enstrophy_table;
-  TableHandler kinetic_energy_table;
+  TableHandler                                 enstrophy_table;
+  TableHandler                                 kinetic_energy_table;
+  AverageVelocities<dim, VectorType, DofsType> average_velocities;
 
   // Convergence Analysis
   ConvergenceTable error_table;

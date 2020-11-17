@@ -26,6 +26,7 @@ Contributors (in alphabetical order):
 - Antoine Avrit
 - Lucka Barbeau
 - Valérie Bibeau
+- Audrey Collard-Daigneault
 - Carole-Anne Daunais
 - Toni El Geitani
 - Simon Gauvin

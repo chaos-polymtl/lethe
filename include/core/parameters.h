@@ -235,6 +235,12 @@ namespace Parameters
     // Enable total enstrophy post-processing
     bool calculate_enstrophy;
 
+    // Enable velocity post-processing
+    bool calculate_average_velocities;
+
+    // Set initial time to start calculations for velocities
+    double initial_time;
+
     // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
 
@@ -578,7 +584,7 @@ namespace Parameters
     // Volumetric flow rate (L^3/t)
     double flow_rate_0;
 
-    // Id of the boundary where the flow come from
+    // Boundary id at flow inlet
     unsigned int boundary_flow_id;
 
     // Flow direction (x=0, y=1 ,z=2)
