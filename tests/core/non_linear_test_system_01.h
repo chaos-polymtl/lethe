@@ -17,17 +17,7 @@
  * Author: Simon Gauvin, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/lapack_full_matrix.h>
-#include <deal.II/lac/sparse_direct.h>
-#include <deal.II/lac/vector.h>
-
-#include <core/newton_non_linear_solver.h>
-#include <core/non_linear_solver.h>
 #include <core/physics_solver.h>
-
-#include <iostream>
-#include <memory>
 
 #include "../tests.h"
 
