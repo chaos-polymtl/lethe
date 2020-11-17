@@ -145,6 +145,7 @@ GDNavierStokesSolver<dim>::assembleGD()
   std::vector<double>         phi_p(dofs_per_cell);
 
   Tensor<1, dim> force;
+  Tensor<1, dim> beta_force = this->beta;
 
   // Get the BDF coefficients
   Vector<double> alpha_bdf;
@@ -214,6 +215,9 @@ GDNavierStokesSolver<dim>::assembleGD()
                     this->fe.system_to_component_index(i).first;
                   force[i] = rhs_force[q](component_i);
                 }
+              // Correct force to include the dynamic forcing term for flow
+              // control
+              force = force + beta_force;
 
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
@@ -1068,6 +1072,8 @@ GDNavierStokesSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
+      this->dynamic_flow_control();
+
       if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
