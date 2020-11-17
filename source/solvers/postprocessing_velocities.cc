@@ -12,15 +12,16 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const Parameters::PostProcessing &post_processing,
   const double &                    current_time,
   const double &                    time_step,
+  const bool &                      is_output_iteration,
   const DofsType &                  locally_owned_dofs,
   const MPI_Comm &                  mpi_communicator)
 {
   const double epsilon      = 1e-6;
   const double initial_time = post_processing.initial_time;
-  const double dt           = time_step;
+  dt                        = time_step;
 
   // When averaging velocities begins
-  if (current_time >= (initial_time - epsilon) && average_calculation == false)
+  if (current_time >= (initial_time - epsilon) && !average_calculation)
     {
       average_calculation = true;
       real_initial_time   = current_time;
@@ -28,10 +29,19 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
       // Store the first dt value in case dt varies.
       dt_0 = dt;
 
-      // Reinitialisation of the vectors to get the right length
+      // Reinitialisation of the average velocity vectors to get the right
+      // length
       velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
       sum_velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
       average_velocities.reinit(locally_owned_dofs, mpi_communicator);
+
+      // Reinitialisation of reynolds stress vectors if calculation is enable
+      if (post_processing.calculate_reynolds_stress)
+        {
+          reynolds_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
+          sum_reynolds_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
+          reynolds_stress.reinit(locally_owned_dofs, mpi_communicator);
+        }
     }
 
   // Calculate (u*dt) at each time step and accumulate the values
@@ -43,17 +53,91 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   // total time = 0.
   inv_range_time = 1. / ((current_time - real_initial_time) + dt_0);
 
-  // Calculate average_velocities. (u*dt) / (total time + dt)
-  // The sum of all weighted velocities in time / total time calculated
-  average_velocities.equ(inv_range_time, sum_velocity_dt);
+
+  // If calculate reynolds stress is enable, average velocuties must be
+  // calculated at every iteration since the average values are needed to get
+  // reynolds stress at each iteration. If it is disabled, average velocities
+  // only need to be calculated when output is required.
+  if (post_processing.calculate_reynolds_stress)
+    {
+      average_velocities.equ(inv_range_time, sum_velocity_dt);
+
+      this->calculate_reynolds_stress(local_evaluation_point,
+                                      is_output_iteration);
+    }
+  else if (is_output_iteration)
+    {
+      // Calculate average_velocities. (u*dt) / (total time + dt)
+      // The sum of all weighted velocities in time / total time calculated
+      average_velocities.equ(inv_range_time, sum_velocity_dt);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::get_average_velocities()
+void
+AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
+  const VectorType &local_evaluation_point,
+  const bool &      is_output_iteration)
 {
-  return average_velocities;
+  if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
+    {
+      const unsigned int begin_index =
+        local_evaluation_point.local_range().first;
+      const unsigned int end_index =
+        local_evaluation_point.local_range().second;
+
+      for (unsigned int i = begin_index; i <= end_index; i++)
+        {
+          if ((i + 4) % 4 == 0)
+            {
+              // Calculating (u'u')*dt, (v'v')*dt (w'w')*dt and (u'v')*dt
+              reynolds_stress_dt[i] =
+                (local_evaluation_point[i] - average_velocities[i]) *
+                (local_evaluation_point[i] - average_velocities[i]) * dt;
+              reynolds_stress_dt[i + 1] =
+                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+                dt;
+              reynolds_stress_dt[i + 2] =
+                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
+                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
+                dt;
+              reynolds_stress_dt[i + 3] =
+                (local_evaluation_point[i] - average_velocities[i]) *
+                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+                dt;
+            }
+        }
+      // Summation of all reynolds stress during simulation
+      sum_reynolds_stress_dt += reynolds_stress_dt;
+    }
+  // Next condition not tested yet.
+  else if constexpr (std::is_same_v<VectorType,
+                                    TrilinosWrappers::MPI::BlockVector>)
+    {
+      unsigned int begin_index =
+        local_evaluation_point.block(0).local_range().first;
+      unsigned int end_index =
+        local_evaluation_point.block(0).local_range().second;
+
+      reynolds_stress_dt.block(0) = local_evaluation_point.block(0);
+      reynolds_stress_dt.block(0) -= average_velocities.block(0);
+      reynolds_stress_dt.block(0).scale(reynolds_stress_dt.block(0));
+      reynolds_stress_dt.block(0) *= dt;
+
+      for (unsigned int i = begin_index; i <= end_index; i += 3)
+        if ((i + 3) % 3 == 0)
+          reynolds_stress_dt.block(1)[i / 3] =
+            reynolds_stress_dt.block(0)[i] *
+            reynolds_stress_dt.block(0)[i + 1] / dt;
+
+      sum_reynolds_stress_dt += reynolds_stress_dt;
+    }
+  // Calculating time-averaged reynolds stress
+  if (is_output_iteration == true)
+    reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
 }
+
 
 template class AverageVelocities<2, TrilinosWrappers::MPI::Vector, IndexSet>;
 
