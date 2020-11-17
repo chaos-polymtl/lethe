@@ -98,6 +98,7 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
+#include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
 #include "navier_stokes_solver_parameters.h"
@@ -162,11 +163,22 @@ protected:
   postprocessing_torques(const VectorType &evaluation_point);
 
   /**
-   * @brief dynamic_flow_control
-   * Calculate a dynamic force to control inlet flow
+   * @brief calculate_flow_rate
+   * @return inlet flow rate and area
+   * Post-processing function
+   * Calculate the volumetric flow rate on the inlet boundary
    */
   void
-  dynamic_flow_control(const VectorType &evaluation_point);
+  postprocessing_flow_rate(const VectorType &evaluation_point);
+
+  /**
+   * @brief dynamic_flow_control
+   * If set to enable, dynamic_flow_control allows to control the flow by
+   * calculate a beta coefficient at each time step added to the force of the
+   * source term for gls_navier_stokes solver.
+   */
+  void
+  dynamic_flow_control();
 
   /**
    * @brief finish_time_step
@@ -295,9 +307,12 @@ protected:
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
 
+  // Inlet flow rate and area
+  std::pair<double, double> flow_rate;
+
   // Dynamic flow control
-  FlowControl<dim, VectorType> flow;
-  Tensor<1, dim>               beta;
+  FlowControl<dim> flow_control;
+  Tensor<1, dim>   beta;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;

@@ -344,26 +344,10 @@ namespace Parameters
         "Enable calculation of average velocity and reynolds stress profiles.");
 
       prm.declare_entry(
-        "nondimensionalization",
-        "false",
-        Patterns::Bool(),
-        "Nondimensionalize average velocity and reynolds stress profiles.");
-
-      prm.declare_entry("initial time",
-                        "0.0",
-                        Patterns::Double(),
-                        "Initial time to start calculations for average velocities");
-
-      prm.declare_entry("boundary id",
-                        "0",
-                        Patterns::Integer(),
-                        "Boundary id of the inlet flow");
-
-      prm.declare_entry("flow direction",
-                        "0",
-                        Patterns::Integer(),
-                        "Flow direction at flow inlet");
-
+        "initial time",
+        "0.0",
+        Patterns::Double(),
+        "Initial time to start calculations for average velocities");
 
       prm.declare_entry("kinetic energy name",
                         "kinetic_energy",
@@ -399,17 +383,15 @@ namespace Parameters
       if (op == "quiet")
         verbosity = Verbosity::quiet;
 
-      calculate_kinetic_energy     = prm.get_bool("calculate kinetic energy");
-      calculate_enstrophy          = prm.get_bool("calculate enstrophy");
-      calculate_average_velocities = prm.get_bool("calculate average velocities");
-      nondimensionalization        = prm.get_bool("nondimensionalization");
-      initial_time                 = prm.get_double("initial time");
-      id_flow_control              = prm.get_integer("boundary id");
-      flow_direction               = prm.get_integer("flow direction");
-      kinetic_energy_output_name   = prm.get("kinetic energy name");
-      enstrophy_output_name        = prm.get("enstrophy name");
-      calculation_frequency        = prm.get_integer("calculation frequency");
-      output_frequency             = prm.get_integer("output frequency");
+      calculate_kinetic_energy = prm.get_bool("calculate kinetic energy");
+      calculate_enstrophy      = prm.get_bool("calculate enstrophy");
+      calculate_average_velocities =
+        prm.get_bool("calculate average velocities");
+      initial_time               = prm.get_double("initial time");
+      kinetic_energy_output_name = prm.get("kinetic energy name");
+      enstrophy_output_name      = prm.get("enstrophy name");
+      calculation_frequency      = prm.get_integer("calculation frequency");
+      output_frequency           = prm.get_integer("output frequency");
     }
     prm.leave_subsection();
   }
@@ -529,6 +511,20 @@ namespace Parameters
           prm.declare_entry("grid type", "hyper_cube");
           prm.declare_entry("grid arguments", "-1 : 1 : false");
         }
+      prm.declare_entry(
+        "enable target size",
+        "false",
+        Patterns::Bool(),
+        "Enable initial refinement until target size is reached.");
+
+      prm.declare_entry("target size",
+                        "1",
+                        Patterns::Double(),
+                        "Target size of the initial refinement");
+
+
+      prm.declare_entry("grid type", "hyper_cube");
+      prm.declare_entry("grid arguments", "-1 : 1 : false");
     }
     prm.leave_subsection();
   }
@@ -557,6 +553,9 @@ namespace Parameters
 
       grid_type      = prm.get("grid type");
       grid_arguments = prm.get("grid arguments");
+
+      refine_until_target_size = prm.get_bool("enable target size");
+      target_size              = prm.get_double("target size");
     }
     prm.leave_subsection();
   }
@@ -1100,6 +1099,12 @@ namespace Parameters
   {
     prm.enter_subsection("flow control");
     {
+      prm.declare_entry(
+        "verbosity",
+        "quiet",
+        Patterns::Selection("quiet|verbose"),
+        "State whether from the flow control information should be printed "
+        "Choices are <quiet|verbose>.");
       prm.declare_entry("enable",
                         "false",
                         Patterns::Bool(),
@@ -1129,9 +1134,14 @@ namespace Parameters
   {
     prm.enter_subsection("flow control");
     {
+      const std::string op = prm.get("verbosity");
+      if (op == "verbose")
+        verbosity = Verbosity::verbose;
+      if (op == "quiet")
+        verbosity = Verbosity::quiet;
       enable_flow_control = prm.get_bool("enable");
-      flow_rate           = prm.get_double("volumetric flow rate");
-      id_flow_control     = prm.get_integer("boundary id");
+      flow_rate_0         = prm.get_double("volumetric flow rate");
+      boundary_flow_id    = prm.get_integer("boundary id");
       flow_direction      = prm.get_integer("flow direction");
       beta_0              = prm.get_double("initial beta");
     }

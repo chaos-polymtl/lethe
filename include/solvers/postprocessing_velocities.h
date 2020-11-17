@@ -37,114 +37,49 @@
 // Lethe Includes
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+
 #include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
 
 
 using namespace dealii;
-
 /**
  * @brief AverageVelocities. The AverageVelocities class calculates the
- * time-averaged velocities and pressure. The generated vector is output
- * with the solution and visualization is possible.
+ * time-averaged velocities and pressure (<u>, <v>, <w>, <p>). The generated
+ * vector is output with the solution and visualization is possible.
  */
 template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
+  AverageVelocities();
+  /**
+   * @brief calculate_average_velocities. This function calculates time-averaged
+   * velocities and pressure with dof vector with no ghost cell.
+   *
+   * @param local_evaluation_point. The vector solutions with no ghost cells
+   *
+   * @param post_processing. The parameters to start the processing
+   *
+   * @param current_time. The current time in the simulation
+   *
+   * @param time_step. The current time step
+   *
+   * @param locally_owned_dofs. The owned dofs
+   *
+   * @param mpi_communicator. The mpi communicator information
+   */
   void
   calculate_average_velocities(
-    const VectorType &                       local_evaluation_point,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const Parameters::PostProcessing &       post_processing,
-    const DofsType &                         locally_owned_dofs,
-    const MPI_Comm &                         mpi_communicator);
-
-  void
-  calculate_reynolds_stress(
-    const VectorType &                        local_evaluation_point,
-    const std::shared_ptr<SimulationControl> &simulation_control,
-    const DofsType &                          locally_owned_dofs,
-    const MPI_Comm &                          mpi_communicator);
-
-  const VectorType
-  get_average_velocities();
-
-  const VectorType
-  get_average_velocities(const double bulk_velocity);
-
-  const VectorType
-  get_reynolds_stress();
-
-  const VectorType
-  get_reynolds_stress(const double bulk_velocity);
+    const VectorType &                local_evaluation_point,
+    const Parameters::PostProcessing &post_processing,
+    const double &                    current_time,
+    const double &                    time_step,
+    const DofsType &                  locally_owned_dofs,
+    const MPI_Comm &                  mpi_communicator);
 
 
-private:
-  double total_time;
-
-  TrilinosScalar inv_range_time;
-  TrilinosScalar dt;
-
-  VectorType sum_velocity_dt;
-  VectorType average_velocities;
-
-  VectorType sum_reynolds_stress_dt;
-  VectorType reynolds_stress;
-};
-
-/**
- * @brief calculate_average_velocities. This function calculates time-averaged
- * velocities and pressure with dof vector with no ghost cell.
- *
- * @param local_evaluation_point. The vector solutions with no ghost cells
- *
- * @param simulation_control. The simulation information (time)
- *
- * @param post_processing. The parameters to start the processing
- *
- * @param locally_owned_dofs. The owned dofs
- *
- * @param mpi_communicator. The mpi communicator information
- */
-template <int dim, typename VectorType, typename DofsType>
-void
-AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
-  const VectorType &                       local_evaluation_point,
-  const std::shared_ptr<SimulationControl> &simulation_control,
-  const Parameters::PostProcessing &       post_processing,
-  const DofsType &                         locally_owned_dofs,
-  const MPI_Comm &                         mpi_communicator)
-{
-  double time = simulation_control->get_current_time();
-  total_time = time - post_processing.initial_time;
-  dt = simulation_control->calculate_time_step();
-
-  if (total_time + dt >= -1e-6 && total_time < -1e-6)
-  {
-    // Reinitializing vectors before calculating average
-    sum_velocity_dt.reinit(locally_owned_dofs,
-                           mpi_communicator);
-    average_velocities.reinit(locally_owned_dofs,
-                              mpi_communicator);
-  }
-  else if (total_time >= -1e-6)
-  {
-    // Generating average velocities at each time from initial time
-    inv_range_time = 1. / (total_time + dt);
-
-    VectorType velocity_dt(locally_owned_dofs,
-                           mpi_communicator);
-    velocity_dt.equ(dt, local_evaluation_point);
-    sum_velocity_dt += velocity_dt;
-
-    if (simulation_control->is_output_iteration())
-      average_velocities.equ(inv_range_time, sum_velocity_dt);
-  }
-}
-
-
-/**
+  /**
  * @brief calculate_reynolds_stress. This function calculates normal
  * time-averaged Reynold stresses and shear stress (<u'u'>, <v'v'>, <w'w'>
  * and <u'v'>.
@@ -157,6 +92,42 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
  *
  * @param mpi_communicator. The mpi communicator information
  */
+  void
+  calculate_reynolds_stress(
+    const VectorType &                        local_evaluation_point,
+    const std::shared_ptr<SimulationControl> &simulation_control,
+    const DofsType &                          locally_owned_dofs,
+    const MPI_Comm &                          mpi_communicator);
+
+  /**
+   * @brief get_average_velocities. Gives the average of solutions.
+   */
+  const VectorType
+  get_average_velocities();
+
+  /**
+ * @brief get_reynolds_stress. Gives the time-averaged Reynold stresses
+ * and shear stress
+ */
+  const VectorType
+  get_reynolds_stress();
+
+private:
+  TrilinosScalar inv_range_time;
+  TrilinosScalar dt_0;
+
+  VectorType velocity_dt;
+  VectorType sum_velocity_dt;
+  VectorType average_velocities;
+
+  VectorType reynolds_stress_dt;
+  VectorType sum_reynolds_stress_dt;
+  VectorType reynolds_stress;
+
+  bool   average_calculation;
+  double real_initial_time;
+};
+
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
@@ -206,7 +177,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
       // Summation of all reynolds stress during simulation
       sum_reynolds_stress_dt += reynolds_stress_dt;
     }
-    // Next condition not tested yet.
+      // Next condition not tested yet.
     else if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::BlockVector>)
     {
       unsigned int begin_index = local_evaluation_point.block(0).local_range().first;
@@ -231,32 +202,6 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
     reynolds_stress.equ(inv_range_time, sum_reynolds_stress_dt);
 }
 
-/**
- * @brief get_average_velocities. Gives the average of solutions
- */
-template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::get_average_velocities()
-{
-  return average_velocities;
-}
-
-/**
- * @brief get_average_velocities. Gives the nondimensionalized of solutions
- *
- * @param bulk_velocity. The bulk velocity calculated by the FlowControl class
- */
-template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::
-get_average_velocities(const double bulk_velocity)
-{
-  VectorType nondimensionalized_average_velocities(average_velocities);
-  nondimensionalized_average_velocities /= bulk_velocity;
-
-  return nondimensionalized_average_velocities;
-}
-
 // Function not tested yet
 template <int dim, typename VectorType, typename DofsType>
 const VectorType
@@ -264,17 +209,5 @@ AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress()
 {
   return reynolds_stress;
 }
-
-// Function not tested yet
-template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress(
-  const double bulk_velocity)
-{
-  VectorType nondimensionalized_reynolds_stress(reynolds_stress);
-  nondimensionalized_reynolds_stress /= bulk_velocity;
-  return nondimensionalized_reynolds_stress;
-}
-
 
 #endif

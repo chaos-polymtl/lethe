@@ -67,12 +67,15 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
   bool assembly_needed =
     consecutive_iters == 0 || is_initial_step || force_matrix_renewal;
 
-  PhysicsSolver<VectorType> *solver = this->physics_solver;
+  PhysicsSolver<VectorType> *solver     = this->physics_solver;
+  auto &                     system_rhs = solver->get_system_rhs();
 
   while ((current_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)
     {
-      solver->evaluation_point = solver->present_solution;
+      auto &evaluation_point = solver->get_evaluation_point();
+      auto &present_solution = solver->get_present_solution();
+      evaluation_point       = present_solution;
 
       if (assembly_needed)
         solver->assemble_matrix_and_rhs(time_stepping_method);
@@ -82,7 +85,7 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
 
       if (outer_iteration == 0)
         {
-          current_res = solver->system_rhs.l2_norm();
+          current_res = system_rhs.l2_norm();
           last_res    = current_res;
         }
 
@@ -96,13 +99,15 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
 
       for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
         {
-          solver->local_evaluation_point = solver->present_solution;
-          solver->local_evaluation_point.add(alpha, solver->newton_update);
+          auto &local_evaluation_point = solver->get_local_evaluation_point();
+          auto &newton_update          = solver->get_newton_update();
+          local_evaluation_point       = present_solution;
+          local_evaluation_point.add(alpha, newton_update);
           solver->apply_constraints();
-          solver->evaluation_point = solver->local_evaluation_point;
+          evaluation_point = local_evaluation_point;
           solver->assemble_rhs(time_stepping_method);
 
-          current_res = solver->system_rhs.l2_norm();
+          current_res = system_rhs.l2_norm();
 
           if (this->params.verbosity != Parameters::Verbosity::quiet)
             {
@@ -118,8 +123,8 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
             }
         }
 
-      solver->present_solution = solver->evaluation_point;
-      last_res                 = current_res;
+      present_solution = evaluation_point;
+      last_res         = current_res;
       ++outer_iteration;
       assembly_needed = false;
     }

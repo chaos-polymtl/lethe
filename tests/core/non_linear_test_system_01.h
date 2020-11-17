@@ -54,17 +54,23 @@ public:
     : PhysicsSolver(params)
   {
     // Initialize the vectors needed for the Physics Solver
-    this->evaluation_point.reinit(2);
-    this->system_rhs.reinit(2);
-    this->local_evaluation_point.reinit(2);
-    this->present_solution.reinit(2);
-    this->newton_update.reinit(2);
+    auto &evaluation_point = this->get_evaluation_point();
+    evaluation_point.reinit(2);
+    auto &system_rhs             = this->get_system_rhs();
+    auto &local_evaluation_point = this->get_local_evaluation_point();
+    auto &present_solution       = this->get_present_solution();
+    auto &newton_update          = this->get_newton_update();
+    system_rhs.reinit(2);
+    local_evaluation_point.reinit(2);
+    present_solution.reinit(2);
+    newton_update.reinit(2);
 
     // Set the initial value of the solution
-    this->present_solution[0] = 1;
-    this->present_solution[1] = 0;
+    present_solution[0] = 1;
+    present_solution[1] = 0;
 
-    this->nonzero_constraints.close();
+    auto &nonzero_constraints = this->get_nonzero_constraints();
+    nonzero_constraints.close();
   }
 
 
@@ -82,15 +88,17 @@ public:
     // Jacobian
     // 2x_0     1
     // 0        2
-    double x_0 = this->evaluation_point[0];
-    double x_1 = this->evaluation_point[1];
+    auto & evaluation_point = this->get_evaluation_point();
+    double x_0              = evaluation_point[0];
+    double x_1              = evaluation_point[1];
     system_matrix.set(0, 0, 2 * x_0);
     system_matrix.set(0, 1, 1);
     system_matrix.set(1, 0, 0);
     system_matrix.set(1, 1, 2);
+    auto &system_rhs = this->get_system_rhs();
 
-    this->system_rhs[0] = -(x_0 * x_0 + x_1);
-    this->system_rhs[1] = -(2 * x_1 + 3);
+    system_rhs[0] = -(x_0 * x_0 + x_1);
+    system_rhs[1] = -(2 * x_1 + 3);
 
     system_matrix.set_property(LAPACKSupport::general);
     system_matrix.compute_lu_factorization();
@@ -100,10 +108,13 @@ public:
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override
   {
-    double x_0          = this->evaluation_point[0];
-    double x_1          = this->evaluation_point[1];
-    this->system_rhs[0] = -(x_0 * x_0 + x_1);
-    this->system_rhs[1] = -(2 * x_1 + 3);
+    auto & evaluation_point = this->get_evaluation_point();
+    auto & system_rhs       = this->get_system_rhs();
+    double x_0              = evaluation_point[0];
+    double x_1              = evaluation_point[1];
+
+    system_rhs[0] = -(x_0 * x_0 + x_1);
+    system_rhs[1] = -(2 * x_1 + 3);
   }
 
   /**
@@ -115,8 +126,10 @@ public:
   void
   solve_linear_system(const bool, const bool) override
   {
-    system_matrix.solve(this->system_rhs);
-    newton_update = this->system_rhs;
+    auto &system_rhs    = this->get_system_rhs();
+    auto &newton_update = this->get_newton_update();
+    system_matrix.solve(system_rhs);
+    newton_update = system_rhs;
   }
 
   virtual void

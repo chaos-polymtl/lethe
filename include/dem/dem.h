@@ -37,6 +37,7 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/input_parameter_inspection.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
@@ -254,7 +255,7 @@ private:
   Particles::ParticleHandler<dim, dim>      particle_handler;
   unsigned int                              contact_detection_step;
   Tensor<1, dim>                            g;
-  double                                    triangulation_diameter;
+  double                                    triangulation_cell_diameter;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;

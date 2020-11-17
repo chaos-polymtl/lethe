@@ -238,17 +238,8 @@ namespace Parameters
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
-    // Enable nondimensionalize average velocities
-    bool nondimensionalization;
-
     // Set initial time to start calculations for velocities
     double initial_time;
-
-    // Id of the boundary where the flow inlet
-    unsigned int id_flow_control;
-
-    // Flow direction (x=0, y=1 ,z=2)
-    unsigned int flow_direction;
 
     // Frequency of the calculation of the post-processed quantity
     unsigned int calculation_frequency;
@@ -267,7 +258,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-
 
   /**
    * @brief FEM - The finite element section
@@ -433,6 +423,12 @@ namespace Parameters
     // Initial refinement level of primitive mesh
     unsigned int initial_refinement;
 
+    // Enabling fixing initial refinement from a target size
+    bool refine_until_target_size;
+
+    // Target size when automatically refining initial mesh
+    double target_size;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -579,14 +575,17 @@ namespace Parameters
    */
   struct DynamicFlowControl
   {
+    // Type of verbosity for the flow control
+    Verbosity verbosity;
+
     // Enable flow control
     bool enable_flow_control;
 
     // Volumetric flow rate (L^3/t)
-    double flow_rate;
+    double flow_rate_0;
 
-    // Id of the boundary where the flow inlet
-    unsigned int id_flow_control;
+    // Boundary id at flow inlet
+    unsigned int boundary_flow_id;
 
     // Flow direction (x=0, y=1 ,z=2)
     unsigned int flow_direction;
