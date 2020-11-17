@@ -144,6 +144,12 @@ void
 BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
+  // Here, we first loop through all the non-boundary faces of the local cells
+  // and find (add them to all cells_with_boundary_lines container) all boundary
+  // lines of these faces. Then the boundary lines which are the borders of two
+  // boundary faces should be removed from this container. Finally the remained
+  // elements of this container are added to boundary_cells_with_lines
+
   // Boundary lines only exist in three-dimensional cases
   if (dim == 3)
     {
@@ -245,7 +251,11 @@ BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
         }
     }
 
-  // Finding boundary points
+  // Finding boundary points. We need this container because at_boundary()
+  // function is not defined for vertex id (unsigned int) nor vertex position
+  // (Point<dim>). For line and face objects, at_boundary() function is
+  // available to help
+
   // First getting a set of all boundary vertices
   std::set<unsigned int> boundary_vertices;
   for (const auto &face : triangulation.active_face_iterators())
