@@ -37,8 +37,28 @@ GLSVANSSolver<dim>::setup_dofs()
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
                                       this->mpi_communicator);
+  void_fraction_m1.reinit(locally_owned_dofs_voidfraction,
+                          locally_relevant_dofs_voidfraction,
+                          this->mpi_communicator);
+  void_fraction_m2.reinit(locally_owned_dofs_voidfraction,
+                          locally_relevant_dofs_voidfraction,
+                          this->mpi_communicator);
+  void_fraction_m3.reinit(locally_owned_dofs_voidfraction,
+                          locally_relevant_dofs_voidfraction,
+                          this->mpi_communicator);
   nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
                                    this->mpi_communicator);
+}
+
+template <int dim>
+void
+GLSVANSSolver<dim>::finish_time_step()
+{
+  GLSNavierStokesSolver<dim>::finish_time_step();
+
+  void_fraction_m3 = void_fraction_m2;
+  void_fraction_m2 = void_fraction_m1;
+  void_fraction_m1 = nodal_void_fraction_relevant;
 }
 
 template <int dim>
@@ -253,17 +273,6 @@ GLSVANSSolver<dim>::assembleGLS()
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
-              void_fraction_m1.reinit(nodal_void_fraction_relevant,
-                                      this->mpi_communicator);
-              void_fraction_m2.reinit(nodal_void_fraction_relevant,
-                                      this->mpi_communicator);
-              void_fraction_m3.reinit(nodal_void_fraction_relevant,
-                                      this->mpi_communicator);
-
-              void_fraction_m3 = void_fraction_m2;
-              void_fraction_m2 = void_fraction_m1;
-              void_fraction_m1 = nodal_void_fraction_relevant;
-
               fe_values_void_fraction.get_function_values(
                 void_fraction_m1, p1_void_fraction_values);
 

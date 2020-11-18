@@ -185,7 +185,7 @@ protected:
    * Finishes the time step
    * Post-processing and time stepping
    */
-  void
+  virtual void
   finish_time_step();
 
   /**

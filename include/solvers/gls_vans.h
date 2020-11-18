@@ -67,6 +67,15 @@ private:
   virtual void
   setup_dofs() override;
 
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step
+   * Post-processing and time stepping
+   */
+  virtual void
+  finish_time_step();
+
 protected:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
