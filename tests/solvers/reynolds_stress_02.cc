@@ -19,7 +19,7 @@
 
 /**
  * @brief This code tests the reynolds stress calculations in 2d with
- * Trilinos block vectors and MPI rank of 1 and 2.
+ * Trilinos block vectors and MPI rank of 1 and 2 with adaptive time.
  */
 
 #include <core/parameters.h>

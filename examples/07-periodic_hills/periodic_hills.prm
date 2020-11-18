@@ -6,11 +6,11 @@
 subsection simulation control
   set method                       = bdf1
   set number mesh adapt            = 0
-  set output name                  = periodic_hills_RS-output
+  set output name                  = periodic_hills-output
   set subdivision                  = 2
   set time step                    = 0.1
   set output frequency             = 1
-  set time end                     = 10
+  set time end                     = 5
 end
 
 #---------------------------------------------------
@@ -54,7 +54,7 @@ end
 subsection post-processing
     set calculate average velocities    = true
     set calculate reynolds stress       = true
-    set initial time 		        = 2
+    set initial time 		        = 4
 end
 
 # --------------------------------------------------
