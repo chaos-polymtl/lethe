@@ -18,8 +18,8 @@
 */
 
 /**
- * @brief This code tests the reynolds stress calculations in 3d with
- * Trilinos vectors.
+ * @brief This code tests the reynolds stress calculations in 2d with
+ * Trilinos block vectors.
  */
 
 #include <core/parameters.h>
@@ -46,32 +46,35 @@ test(int argc, char **argv)
   simulation_control_parameters.output_frequency = 1;
 
   // Variables for AverageVelocities
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
+  AverageVelocities<2,
+                    TrilinosWrappers::MPI::BlockVector,
+                    std::vector<IndexSet>>
     postprocessing_velocities;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs;
-  locally_owned_dofs.add_range(0, 8);
+
+  std::vector<IndexSet> locally_owned_dofs(2);
+  locally_owned_dofs[0].add_range(0, 4);
+  locally_owned_dofs[1].add_range(4, 6);
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
   postprocessing_parameters.calculate_reynolds_stress    = true;
   postprocessing_parameters.initial_time                 = 0.5;
 
-  TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
-  solution(0) = 2.0;
-  solution(1) = 0.1;
-  solution(2) = 0.0;
-  solution(3) = 30;
-  solution(4) = 2.5;
-  solution(5) = 0.56;
-  solution(6) = 0.1;
-  solution(7) = 20;
+  TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
+                                              mpi_communicator);
+  solution.block(0)[0] = 2.0;
+  solution.block(0)[1] = 0.1;
+  solution.block(0)[2] = 2.5;
+  solution.block(0)[3] = 0.56;
+  solution.block(1)[4] = 30;
+  solution.block(1)[5] = 20;
 
-  TrilinosWrappers::MPI::Vector stress_solution(locally_owned_dofs,
-                                                mpi_communicator);
+  TrilinosWrappers::MPI::BlockVector stress_solution(locally_owned_dofs,
+                                                     mpi_communicator);
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -92,17 +95,15 @@ test(int argc, char **argv)
             locally_owned_dofs,
             mpi_communicator);
 
-          stress_solution  = postprocessing_velocities.get_reynolds_stress();
+          stress_solution = postprocessing_velocities.get_reynolds_stress();
 
           deallog << " Time  : " << time << std::endl;
-          deallog << "<u'u'> : " << stress_solution[0] << " "
-                  << stress_solution[4] << std::endl;
-          deallog << "<v'v'> : " << stress_solution[1] << " "
-                  << stress_solution[5] << std::endl;
-          deallog << "<w'w'> : " << stress_solution[2] << " "
-                  << stress_solution[6] << std::endl;
-          deallog << "<u'v'> : " << stress_solution[3] << " "
-                  << stress_solution[7] << std::endl;
+          deallog << "<u'u'> : " << stress_solution.block(0)[0] << " "
+                  << stress_solution.block(0)[2] << std::endl;
+          deallog << "<v'v'> : " << stress_solution.block(0)[1] << " "
+                  << stress_solution.block(0)[3] << std::endl;
+          deallog << "<u'v'> : " << stress_solution.block(1)[4] << " "
+                  << stress_solution.block(1)[5] << std::endl;
           deallog << "" << std::endl;
         }
 

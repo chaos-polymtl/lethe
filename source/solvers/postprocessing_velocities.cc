@@ -92,7 +92,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
       const unsigned int end_index =
         local_evaluation_point.local_range().second;
 
-      for (unsigned int i = begin_index; i <= end_index; i++)
+      for (unsigned int i = begin_index; i < end_index; i++)
         {
           if (dim == 2 && (i + 3) % 3 == 0)
             {
@@ -139,22 +139,28 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
       reynolds_stress_dt.block(0).scale(reynolds_stress_dt.block(0));
       reynolds_stress_dt.block(0) *= dt;
 
+      std::cout << reynolds_stress_dt.block(0)[1] / dt << " "
+                << reynolds_stress_dt.block(0)[2] / dt << std::endl;
+
       unsigned int begin_index =
         local_evaluation_point.block(0).local_range().first;
       unsigned int end_index =
         local_evaluation_point.block(0).local_range().second;
+      unsigned int size_velocity_block = reynolds_stress.block(0).size();
 
-      for (unsigned int i = begin_index; i <= end_index; i += 3)
+      for (unsigned int i = begin_index; i < end_index; i++)
         {
           if (dim == 2 && (i + 2) % 2 == 0)
             {
-              reynolds_stress_dt.block(1)[i / 2] =
+              std::cout << i << " " << i / 2 + size_velocity_block << std::endl;
+              reynolds_stress_dt.block(1)[i / 2 + size_velocity_block] =
                 reynolds_stress_dt.block(0)[i] *
                 reynolds_stress_dt.block(0)[i + 1] / dt;
             }
           else if (dim == 3 && (i + 3) % 3 == 0)
             {
-              reynolds_stress_dt.block(1)[i / 3] =
+              std::cout << i << " " << i / 3 + size_velocity_block << std::endl;
+              reynolds_stress_dt.block(1)[i / 3 + size_velocity_block] =
                 reynolds_stress_dt.block(0)[i] *
                 reynolds_stress_dt.block(0)[i + 1] / dt;
             }
