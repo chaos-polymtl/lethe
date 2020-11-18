@@ -144,100 +144,160 @@ void
 BoundaryCellsInformation<dim>::find_particle_point_and_line_contact_cells(
   const parallel::distributed::Triangulation<dim> &triangulation)
 {
-  // This vector stores both the cells with boundary lines and cells with
-  // boundary points
-  std::vector<typename Triangulation<dim>::active_cell_iterator>
-    boundary_cells_with_lines_or_points;
+  // Here, we first loop through all the non-boundary faces of the local cells
+  // and find (add them to all cells_with_boundary_lines container) all boundary
+  // lines of these faces. Then the boundary lines which are the borders of two
+  // boundary faces should be removed from this container. Finally the remained
+  // elements of this container are added to boundary_cells_with_lines
 
-  // This unordered map stores the vertex index and position of boundary
-  // vertices
-  std::unordered_map<int, Point<dim>> boundary_vertices;
-
-  // Iterating over the active cells in the trangulation
-  for (const auto &cell : triangulation.active_cell_iterators())
+  // Boundary lines only exist in three-dimensional cases
+  if (dim == 3)
     {
-      if (cell->is_locally_owned() && cell->at_boundary())
+      std::unordered_map<
+        std::string,
+        std::unordered_map<unsigned int, std::pair<Point<dim>, Point<dim>>>>
+        all_cells_with_boundary_lines;
+
+      // Iterating over the active cells in the trangulation
+      for (const auto &cell : triangulation.active_cell_iterators())
         {
-          // Iterating over the faces of each cell
-          for (int face_id = 0;
-               face_id < int(GeometryInfo<dim>::faces_per_cell);
-               ++face_id)
+          if (cell->is_locally_owned())
             {
-              // Check to see if the face is located at boundary
-              if (cell->face(face_id)->at_boundary())
+              // Looping through all the faces of the cell
+              for (int face_id = 0;
+                   face_id < int(GeometryInfo<dim>::faces_per_cell);
+                   ++face_id)
                 {
-                  for (unsigned int v = 0;
-                       v < GeometryInfo<dim>::vertices_per_face;
-                       ++v)
+                  // Check to see if the face is not located at boundary
+                  if (!(cell->face(face_id)->at_boundary()))
                     {
-                      boundary_vertices.insert(
-                        {cell->face(face_id)->vertex_index(v),
-                         cell->face(face_id)->vertex(v)});
+                      // Adding all the boundary lines of these faces into the
+                      // all_cells_with_boundary_lines container
+                      for (unsigned int l = 0;
+                           l < GeometryInfo<dim>::lines_per_face;
+                           ++l)
+                        {
+                          if (cell->face(face_id)->line(l)->at_boundary())
+                            {
+                              all_cells_with_boundary_lines[cell->id()
+                                                              .to_string()]
+                                .insert(
+                                  {cell->face(face_id)->line_index(l),
+                                   std::make_pair(
+                                     cell->face(face_id)->line(l)->vertex(0),
+                                     cell->face(face_id)->line(l)->vertex(1))});
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+      // Now iterating again over the cells, faces and lines and if the boundary
+      // line of the boundary face exists in the container, it is removed from
+      // the container
+      if (!all_cells_with_boundary_lines.empty())
+        {
+          for (const auto &cell : triangulation.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  for (int face_id = 0;
+                       face_id < int(GeometryInfo<dim>::faces_per_cell);
+                       ++face_id)
+                    {
+                      // Check to see if the face is located at boundary
+                      if ((cell->face(face_id)->at_boundary()))
+                        {
+                          for (unsigned int l = 0;
+                               l < GeometryInfo<dim>::lines_per_face;
+                               ++l)
+                            {
+                              all_cells_with_boundary_lines[cell->id()
+                                                              .to_string()]
+                                .erase(cell->face(face_id)->line_index(l));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+      // Finally, adding the remained elements of the
+      // all_cells_with_boundary_lines container to boundary_cells_with_lines
+      if (!all_cells_with_boundary_lines.empty())
+        {
+          for (const auto &cell : triangulation.active_cell_iterators())
+            {
+              if (cell->is_locally_owned())
+                {
+                  std::string cell_id_string = cell->id().to_string();
+                  auto &      cell_boundary_lines =
+                    all_cells_with_boundary_lines[cell_id_string];
+
+                  if (!cell_boundary_lines.empty())
+                    {
+                      for (auto &map_iterator : cell_boundary_lines)
+                        {
+                          boundary_cells_with_lines.insert(
+                            {cell_id_string,
+                             std::make_tuple(cell,
+                                             map_iterator.second.first,
+                                             map_iterator.second.second)});
+                        }
                     }
                 }
             }
         }
     }
 
-  // Looping over boundary vertices, finding all the adjacent cells to these
-  // vertices and if these cells (which atleast own one boundary vertex) do not
-  // exist in the boundary_cells_with_faces, they will be stored in
-  // boundary_cells_with_lines_or_points
+  // Finding boundary points. We need this container because at_boundary()
+  // function is not defined for vertex id (unsigned int) nor vertex position
+  // (Point<dim>). For line and face objects, at_boundary() function is
+  // available to help
 
-  auto v_to_c = GridTools::vertex_to_cell_map(triangulation);
-
-  for (auto iterator = boundary_vertices.begin();
-       iterator != boundary_vertices.end();
-       ++iterator)
+  // First getting a set of all boundary vertices
+  std::set<unsigned int> boundary_vertices;
+  for (const auto &face : triangulation.active_face_iterators())
     {
-      auto vertex_index = iterator->first;
-
-      for (const auto &neighbor : v_to_c[vertex_index])
+      if (face->at_boundary())
         {
-          if (neighbor->is_locally_owned() && !neighbor->at_boundary())
+          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_face;
+               ++v)
             {
-              boundary_cells_with_lines_or_points.push_back(neighbor);
+              boundary_vertices.insert(face->vertex_index(v));
             }
         }
     }
 
-  // Looping over boundary_cells_with_lines_or_points and counting the
-  // number of boundary vertices for each cell. If the cell have one
-  // boundary vertex it will be stored in boundary_cells_with_points,
-  // and if it has two boundary vertices in boundary_cells_with_lines
-  // The location of these boundary vertices are also stored to be used
-  // for contact detection (fine search)
-  for (unsigned int counter = 0;
-       counter != boundary_cells_with_lines_or_points.size();
-       ++counter)
+  // If a cell does not have any boundary line, but has boundary vertex, it is
+  // added to boundary_cells_with_points container Iterating over the active
+  // cells in the trangulation
+  for (const auto &cell : triangulation.active_cell_iterators())
     {
-      unsigned int number_of_boundary_vertices = 0;
-
-      // This vector stores the location of vertices on boundaries for
-      // each cell. The size of this vector can be 1 or 2, since cells
-      // with points have one boundary vertex and cells with lines have
-      // two boundary vertices
-      std::vector<Point<dim>> boundary_points;
-      auto cell = boundary_cells_with_lines_or_points[counter];
-      for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell; ++v)
+      if (cell->is_locally_owned() && !(cell->has_boundary_lines()))
         {
-          if (boundary_vertices.count(cell->vertex_index(v)) > 0)
+          for (int face_id = 0;
+               face_id < int(GeometryInfo<dim>::faces_per_cell);
+               ++face_id)
             {
-              boundary_points.push_back(cell->vertex(v));
-              ++number_of_boundary_vertices;
+              if (!(cell->face(face_id)->at_boundary()))
+                {
+                  for (unsigned int v = 0;
+                       v < GeometryInfo<dim>::vertices_per_face;
+                       ++v)
+                    {
+                      if (boundary_vertices.count(
+                            cell->face(face_id)->vertex_index(v)) > 0)
+                        {
+                          boundary_cells_with_points.insert(
+                            {cell->id().to_string(),
+                             std::make_pair(cell,
+                                            cell->face(face_id)->vertex(v))});
+                        }
+                    }
+                }
             }
-        }
-      if (number_of_boundary_vertices == 1)
-        {
-          // It means the cells has a boundary point
-          boundary_cells_with_points.push_back(
-            std::make_pair(cell, *boundary_points.begin()));
-        }
-      else if (number_of_boundary_vertices == 2)
-        {
-          // It means the cells has a boundary line
-          boundary_cells_with_lines.push_back(std::make_tuple(
-            cell, *boundary_points.begin(), *boundary_points.end()));
         }
     }
 }

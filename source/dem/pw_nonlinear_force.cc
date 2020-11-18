@@ -55,7 +55,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
             (projected_vector.norm());
 
-          if (normal_overlap > 0.0)
+          if (normal_overlap > 0)
             {
               contact_information->normal_overlap = normal_overlap;
 
@@ -84,6 +84,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             {
               for (int d = 0; d < dim; ++d)
                 {
+                  contact_information->normal_overlap        = 0;
                   contact_information->tangential_overlap[d] = 0;
                 }
             }
@@ -102,25 +103,33 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation of effective Young's modulus and shear
   // modulus of the contact
   double effective_youngs_modulus =
-    physical_properties.youngs_modulus_wall /
-    (2.0 * (1.0 - pow(physical_properties.poisson_ratio_wall, 2.0)));
+    (physical_properties.youngs_modulus_particle *
+     physical_properties.youngs_modulus_wall) /
+    (physical_properties.youngs_modulus_wall *
+       (1 - physical_properties.poisson_ratio_particle *
+              physical_properties.poisson_ratio_particle) +
+     physical_properties.youngs_modulus_particle *
+       (1 - physical_properties.poisson_ratio_wall *
+              physical_properties.poisson_ratio_wall));
   double effective_shear_modulus =
-    physical_properties.youngs_modulus_wall /
-    (4.0 * (2.0 - physical_properties.poisson_ratio_wall) *
-     (1.0 + physical_properties.poisson_ratio_wall));
+    (physical_properties.youngs_modulus_particle *
+     physical_properties.youngs_modulus_wall) /
+    ((2 * physical_properties.youngs_modulus_wall *
+      (2 - physical_properties.poisson_ratio_particle) *
+      (1 + physical_properties.poisson_ratio_particle)) +
+     (2 * physical_properties.youngs_modulus_particle *
+      (2 - physical_properties.poisson_ratio_wall) *
+      (1 + physical_properties.poisson_ratio_wall)));
 
-  // Calculation of model parameters (betha, sn and st). These values
+  // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
-  double model_parameter_betha =
-    log(physical_properties.poisson_ratio_wall) /
-    sqrt(pow(log(physical_properties.poisson_ratio_wall), 2.0) + 9.8696);
+  double model_parameter_beta =
+    log(physical_properties.restitution_coefficient_wall) /
+    sqrt(pow(log(physical_properties.restitution_coefficient_wall), 2) +
+         9.8696);
   double model_parameter_sn =
-    2.0 * effective_youngs_modulus *
-    sqrt(particle_properties[DEM::PropertiesIndex::dp] *
-         contact_info.normal_overlap);
-  double model_parameter_st =
-    8.0 * effective_shear_modulus *
+    2 * effective_youngs_modulus *
     sqrt(particle_properties[DEM::PropertiesIndex::dp] *
          contact_info.normal_overlap);
 
@@ -128,55 +137,46 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // using particle and wall properties
   double normal_spring_constant =
     1.3333 * effective_youngs_modulus *
-    sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2.0 *
+    sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
          contact_info.normal_overlap);
   double normal_damping_constant =
-    -1.8257 * model_parameter_betha *
+    -1.8257 * model_parameter_beta *
     sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
   double tangential_spring_constant =
-    8.0 * effective_shear_modulus *
-      sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2.0 *
+    8 * effective_shear_modulus *
+      sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
            contact_info.normal_overlap) +
     DBL_MIN;
-  ;
-  double tangential_damping_constant =
-    -1.8257 * model_parameter_betha *
-    sqrt(model_parameter_st * particle_properties[DEM::PropertiesIndex::mass]);
 
   // Calculation of normal force using spring and dashpot normal forces
   Tensor<1, dim> spring_normal_force =
     (normal_spring_constant * contact_info.normal_overlap) *
     contact_info.normal_vector;
-
   Tensor<1, dim> dashpot_normal_force =
     (normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
-
   Tensor<1, dim> normal_force = spring_normal_force - dashpot_normal_force;
-
-  double maximum_tangential_overlap =
-    physical_properties.friction_coefficient_wall * normal_force.norm() /
-    tangential_spring_constant;
-
-  // Check for gross sliding
-  if (contact_info.tangential_overlap.norm() > maximum_tangential_overlap)
-    {
-      // Gross sliding occurs and the tangential overlap and tangnetial
-      // force are limited to Coulumb's criterion
-      contact_info.tangential_overlap =
-        maximum_tangential_overlap * (contact_info.tangential_overlap /
-                                      contact_info.tangential_overlap.norm());
-    }
 
   // Calculation of tangential force using spring and dashpot tangential
   // forces
   Tensor<1, dim> spring_tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, dim> dashpot_tangential_force =
-    tangential_damping_constant * contact_info.tangential_relative_velocity;
+  Tensor<1, dim> tangential_force = -spring_tangential_force;
 
-  Tensor<1, dim> tangential_force =
-    -1.0 * spring_tangential_force - dashpot_tangential_force;
+  double coulomb_threshold =
+    physical_properties.friction_coefficient_wall * normal_force.norm();
+
+  // Check for gross sliding
+  if (tangential_force.norm() > coulomb_threshold)
+    {
+      // Gross sliding occurs and the tangential overlap and tangnetial
+      // force are limited to Coulumb's criterion
+      tangential_force =
+        coulomb_threshold * (tangential_force / tangential_force.norm());
+
+      contact_info.tangential_overlap =
+        -tangential_force / (tangential_spring_constant + DBL_MIN);
+    }
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
@@ -206,8 +206,8 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
 
   // Calcualation of rolling resistance torque
   Tensor<1, dim> rolling_resistance_torque =
-    -1.0 * physical_properties.rolling_friction_wall *
-    ((particle_properties[DEM::PropertiesIndex::dp]) / 2.0) *
+    -physical_properties.rolling_friction_wall *
+    ((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
     normal_force.norm() * pw_angular_velocity;
 
   return std::make_tuple(normal_force,
