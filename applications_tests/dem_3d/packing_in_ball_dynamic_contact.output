@@ -4,7 +4,7 @@ Starting simulation with Lethe/DEM on 1 processors
 ***************************************************************** 
 
 ***************************************************************** 
-100 particles were inserted, 0 particles remains
+100 particles were inserted, 0 particles remaining
 ***************************************************************** 
 id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, 
 0 1 0.00500 2000.000 0.483 0.003 0.096 0.0 0.0 -9.8 0.00 0.00 0.00 138.3 -178.5 39.7 

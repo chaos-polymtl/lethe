@@ -32,7 +32,7 @@ Insertion<dim>::print_insertion_info(const unsigned int inserted_this_step,
         << "***************************************************************** "
            "\n";
       std::cout << inserted_this_step << " particles were inserted, "
-                << remained_particles << " particles remains" << std::endl;
+                << remained_particles << " particles remaining" << std::endl;
       std::cout
         << "***************************************************************** "
            "\n";
