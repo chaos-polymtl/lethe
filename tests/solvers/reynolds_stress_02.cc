@@ -19,7 +19,7 @@
 
 /**
  * @brief This code tests the reynolds stress calculations in 2d with
- * Trilinos block vectors.
+ * Trilinos block vectors and MPI rank of 1 and 2.
  */
 
 #include <core/parameters.h>
@@ -40,10 +40,12 @@ test(int argc, char **argv)
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt               = 0.1;
-  simulation_control_parameters.timeEnd          = 1.0;
-  simulation_control_parameters.adapt            = false;
-  simulation_control_parameters.output_frequency = 1;
+  simulation_control_parameters.dt                           = 0.1;
+  simulation_control_parameters.timeEnd                      = 1.0;
+  simulation_control_parameters.adapt                        = false;
+  simulation_control_parameters.output_frequency             = 1;
+  simulation_control_parameters.adapt                        = true;
+  simulation_control_parameters.adaptative_time_step_scaling = 0.99;
 
   // Variables for AverageVelocities
   AverageVelocities<2,
@@ -54,10 +56,9 @@ test(int argc, char **argv)
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-
   std::vector<IndexSet> locally_owned_dofs(2);
-  locally_owned_dofs[0].add_range(0, 4);
-  locally_owned_dofs[1].add_range(4, 6);
+  locally_owned_dofs[0].add_range(0, 6);
+  locally_owned_dofs[1].add_range(6, 9);
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -70,8 +71,11 @@ test(int argc, char **argv)
   solution.block(0)[1] = 0.1;
   solution.block(0)[2] = 2.5;
   solution.block(0)[3] = 0.56;
-  solution.block(1)[4] = 30;
-  solution.block(1)[5] = 20;
+  solution.block(0)[4] = 0;
+  solution.block(0)[5] = 7.9;
+  solution.block(1)[6] = 30;
+  solution.block(1)[7] = 20;
+  solution.block(1)[8] = 26;
 
   TrilinosWrappers::MPI::BlockVector stress_solution(locally_owned_dofs,
                                                      mpi_communicator);
@@ -80,6 +84,7 @@ test(int argc, char **argv)
   const double time_end     = simulation_control_parameters.timeEnd;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
+  double       dt           = 0.0;
   double       epsilon      = 1e-6;
 
   while (time < (time_end + epsilon)) // Until time reached end time
@@ -97,13 +102,17 @@ test(int argc, char **argv)
 
           stress_solution = postprocessing_velocities.get_reynolds_stress();
 
-          deallog << " Time  : " << time << std::endl;
-          deallog << "<u'u'> : " << stress_solution.block(0)[0] << " "
-                  << stress_solution.block(0)[2] << std::endl;
-          deallog << "<v'v'> : " << stress_solution.block(0)[1] << " "
-                  << stress_solution.block(0)[3] << std::endl;
-          deallog << "<u'v'> : " << stress_solution.block(1)[4] << " "
-                  << stress_solution.block(1)[5] << std::endl;
+          deallog << " Time  :      " << time << std::endl;
+          deallog << " Time step  : " << dt << std::endl;
+          deallog << " <u'u'> :     " << stress_solution.block(0)[0] << " "
+                  << stress_solution.block(0)[2] << " "
+                  << stress_solution.block(0)[4] << std::endl;
+          deallog << " <v'v'> :     " << stress_solution.block(0)[1] << " "
+                  << stress_solution.block(0)[3] << " "
+                  << stress_solution.block(0)[5] << std::endl;
+          deallog << " <u'v'> :     " << stress_solution.block(1)[6] << " "
+                  << stress_solution.block(1)[7] << " "
+                  << stress_solution.block(1)[8] << std::endl;
           deallog << "" << std::endl;
         }
 
@@ -119,6 +128,7 @@ test(int argc, char **argv)
       if (abs(time - simulation_control->get_current_time()) < epsilon)
         break;
 
+      dt   = simulation_control->get_time_step();
       time = simulation_control->get_current_time();
     }
 }
