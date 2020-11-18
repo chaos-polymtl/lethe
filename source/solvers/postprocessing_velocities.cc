@@ -38,6 +38,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
       // Reinitialisation of reynolds stress vectors if calculation is enable
       if (post_processing.calculate_reynolds_stress)
         {
+          fluctuation.reinit(locally_owned_dofs, mpi_communicator);
           reynolds_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
           sum_reynolds_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
           reynolds_stress.reinit(locally_owned_dofs, mpi_communicator);
@@ -134,13 +135,11 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
   else if constexpr (std::is_same_v<VectorType,
                                     TrilinosWrappers::MPI::BlockVector>)
     {
-      reynolds_stress_dt.block(0) = local_evaluation_point.block(0);
-      reynolds_stress_dt.block(0) -= average_velocities.block(0);
+      fluctuation.block(0) = local_evaluation_point.block(0);
+      fluctuation.block(0) -= average_velocities.block(0);
+      reynolds_stress_dt.block(0) = fluctuation.block(0);
       reynolds_stress_dt.block(0).scale(reynolds_stress_dt.block(0));
       reynolds_stress_dt.block(0) *= dt;
-
-      std::cout << reynolds_stress_dt.block(0)[1] / dt << " "
-                << reynolds_stress_dt.block(0)[2] / dt << std::endl;
 
       unsigned int begin_index =
         local_evaluation_point.block(0).local_range().first;
@@ -152,17 +151,13 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stress(
         {
           if (dim == 2 && (i + 2) % 2 == 0)
             {
-              std::cout << i << " " << i / 2 + size_velocity_block << std::endl;
               reynolds_stress_dt.block(1)[i / 2 + size_velocity_block] =
-                reynolds_stress_dt.block(0)[i] *
-                reynolds_stress_dt.block(0)[i + 1] / dt;
+                fluctuation.block(0)[i] * fluctuation.block(0)[i + 1] * dt;
             }
           else if (dim == 3 && (i + 3) % 3 == 0)
             {
-              std::cout << i << " " << i / 3 + size_velocity_block << std::endl;
               reynolds_stress_dt.block(1)[i / 3 + size_velocity_block] =
-                reynolds_stress_dt.block(0)[i] *
-                reynolds_stress_dt.block(0)[i + 1] / dt;
+                fluctuation.block(0)[i] * fluctuation.block(0)[i + 1] * dt;
             }
         }
 

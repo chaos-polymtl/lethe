@@ -118,6 +118,7 @@ private:
   VectorType sum_velocity_dt;
   VectorType average_velocities;
 
+  VectorType fluctuation;
   VectorType reynolds_stress_dt;
   VectorType sum_reynolds_stress_dt;
   VectorType reynolds_stress;
