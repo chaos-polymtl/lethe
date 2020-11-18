@@ -6,18 +6,18 @@
 subsection simulation control
   set method                       = bdf1
   set number mesh adapt            = 0
-  set output name                  = periodic_hills-output
+  set output name                  = periodic_hills_re5600_dt1E-1-output
   set subdivision                  = 2
   set time step                    = 0.1
-  set output frequency             = 1
-  set time end                     = 5
+  set output frequency             = 2
+  set time end                     = 10
 end
 
 #---------------------------------------------------
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity        = 1.78571E-04
+    set kinematic viscosity        = 1.95E-05 # Re = 5600
 end
 
 #---------------------------------------------------
@@ -44,7 +44,7 @@ subsection flow control
     set boundary id    		   = 0
     set volumetric flow rate       = -1
     set flow direction 		   = 0
-    set initial beta		   = 0.8335
+    set initial beta		   = 0.834
     set verbosity                  = verbose
 end
 
@@ -54,7 +54,7 @@ end
 subsection post-processing
     set calculate average velocities    = true
     set calculate reynolds stress       = true
-    set initial time 		        = 4
+    set initial time 		        = 100
 end
 
 # --------------------------------------------------
