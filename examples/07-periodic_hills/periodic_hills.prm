@@ -6,6 +6,7 @@
 subsection simulation control
   set method                       = bdf1
   set output name                  = periodic_hills-output
+  set subdivision                  = 2
   set time step                    = 0.1
   set output frequency             = 1
   set time end                     = 5.0
