@@ -409,7 +409,6 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      MPI_Barrier(MPI_COMM_WORLD);
       for (unsigned int processor_number = 0;
            processor_number < n_mpi_processes;
            ++processor_number)
