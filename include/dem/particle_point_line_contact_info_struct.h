@@ -35,9 +35,8 @@ template <int dim>
 struct particle_point_line_contact_info_struct
 {
   Particles::ParticleIterator<dim> particle;
-  double                           normal_overlap;
-  Tensor<1, dim>                   normal_vector;
-  double                           normal_relative_velocity;
+  Point<dim>                       point_one;
+  Point<dim>                       point_two;
 };
 
 #endif /* particle_point_line_contact_info_struct_h */

@@ -51,17 +51,46 @@ public:
    * Carries out the calculation of the particle-point contact force using
    * non-linear (Hertzian) model
    *
-   * @param particle_point_line_pairs_in_contact Required information for
-   * calculation of the particle-point and particle-line contact forces, these
-   * information were obtained in the fine search
+   * @param particle_point_pairs_in_contact Required information for
+   * calculation of the particle-point contact force
    * @param physical_properties DEM physical_properties declared in the .prm
    * file
    */
   void
-  calculate_particle_point_line_contact_force(
+  calculate_particle_point_contact_force(
     const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
       *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::PhysicalProperties &physical_properties);
+
+  /**
+   * Carries out the calculation of the particle-line contact force using
+   * non-linear (Hertzian) model
+   *
+   * @param particle_line_pairs_in_contact Required information for
+   * calculation of the particle-line contact force
+   * @param physical_properties DEM physical_properties declared in the .prm
+   * file
+   */
+  void
+  calculate_particle_line_contact_force(
+    const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+      *particle_line_pairs_in_contact,
+    const Parameters::Lagrangian::PhysicalProperties &physical_properties);
+
+private:
+  /** This private function is used to find the projection of point_p on
+   * a line with beginning and ending vertices of point_a and point_b,
+   * respectively
+   * @param point_p A point which is going to be projected on the line
+   * @param point_a Beginning point of the line
+   * @param point_b Ending point of the line
+   * @return The projection of point_p on the line (from point_a to point_b)
+   */
+
+  Point<dim>
+  find_projection_point(Point<dim> point_p,
+                        Point<dim> point_a,
+                        Point<dim> point_b);
 };
 
 #endif

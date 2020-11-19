@@ -10,7 +10,7 @@ ParticlePointLineBroadSearch<dim>::ParticlePointLineBroadSearch()
 // This function finds all the particle-point contact candidates
 template <int dim>
 std::unordered_map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-ParticlePointLineBroadSearch<dim>::find_Particle_Point_Contact_Pairs(
+ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,
@@ -69,7 +69,7 @@ template <int dim>
 std::unordered_map<
   int,
   std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-ParticlePointLineBroadSearch<dim>::find_Particle_Line_Contact_Pairs(
+ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
     std::string,

@@ -74,7 +74,7 @@ test()
   dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
-  double neighborhood_threshold = 1.3 * particle_diameter;
+  const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleHandler<dim> particle_handler(triangulation,
                                                    mapping,
