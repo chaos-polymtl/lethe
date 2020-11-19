@@ -43,7 +43,6 @@ test(int argc, char **argv)
   simulation_control_parameters.dt               = 0.1;
   simulation_control_parameters.timeEnd          = 1.0;
   simulation_control_parameters.adapt            = false;
-  simulation_control_parameters.output_frequency = 1;
 
   // Variables for AverageVelocities
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
@@ -57,7 +56,6 @@ test(int argc, char **argv)
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
-  postprocessing_parameters.calculate_reynolds_stress    = true;
   postprocessing_parameters.initial_time                 = 0.5;
 
   TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
@@ -88,7 +86,6 @@ test(int argc, char **argv)
             postprocessing_parameters,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
-            simulation_control->is_output_iteration(),
             locally_owned_dofs,
             mpi_communicator);
 

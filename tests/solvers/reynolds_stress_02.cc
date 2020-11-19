@@ -42,8 +42,6 @@ test(int argc, char **argv)
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.dt                           = 0.1;
   simulation_control_parameters.timeEnd                      = 1.0;
-  simulation_control_parameters.adapt                        = false;
-  simulation_control_parameters.output_frequency             = 1;
   simulation_control_parameters.adapt                        = true;
   simulation_control_parameters.adaptative_time_step_scaling = 0.99;
 
@@ -62,7 +60,6 @@ test(int argc, char **argv)
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
-  postprocessing_parameters.calculate_reynolds_stress    = true;
   postprocessing_parameters.initial_time                 = 0.5;
 
   TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
@@ -96,7 +93,6 @@ test(int argc, char **argv)
             postprocessing_parameters,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
-            simulation_control->is_output_iteration(),
             locally_owned_dofs,
             mpi_communicator);
 

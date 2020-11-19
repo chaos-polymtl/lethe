@@ -72,7 +72,6 @@ test(int argc, char **argv)
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;
-  bool         is_output    = simulation_control->is_output_iteration();
 
   const double epsilon = 1e-6;
 
@@ -84,7 +83,6 @@ test(int argc, char **argv)
                                                postprocessing_parameters,
                                                time,
                                                dt,
-                                               is_output,
                                                locally_owned_dofs,
                                                mpi_communicator);
 

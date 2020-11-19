@@ -876,16 +876,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-  // Time-averaged velocities are calculated if calculate average velocities
-  // and/or calculate reynolds stress is enabled because the last one needs
-  // the time-averaged values at each time step.
   // The average_solution and reynolds_stress vectors are reinitialize at the
   // first iteration.
-  // The average velocities and/or reynolds stresses are calculated when the
+  // The average velocities and reynolds stresses are calculated when the
   // time reaches the initial time. (time >= initial time) with 1e-6 as
   // tolerance.
-  if (this->nsparam.post_processing.calculate_average_velocities ||
-      this->nsparam.post_processing.calculate_reynolds_stress)
+  if (this->nsparam.post_processing.calculate_average_velocities)
     {
       if (firstIter)
         {
@@ -905,14 +901,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             nsparam.post_processing,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
-            simulation_control->is_output_iteration(),
             locally_owned_dofs,
             mpi_communicator);
 
           this->average_solution = average_velocities.get_average_velocities();
-
-          if (this->nsparam.post_processing.calculate_reynolds_stress)
-            this->reynolds_stress = average_velocities.get_reynolds_stress();
+          this->reynolds_stress  = average_velocities.get_reynolds_stress();
         }
     }
 
@@ -1152,11 +1145,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
 
-  // Add the interpretation of the average solution. The dim first components
-  // are the average velocity vectors and the following one is the average
-  // pressure. (<u>, <v>, <w>, <p>)
   if (this->nsparam.post_processing.calculate_average_velocities)
     {
+      // Add the interpretation of the average solution. The dim first
+      // components are the average velocity vectors and the following one is
+      // the average pressure. (<u>, <v>, <w>, <p>)
       std::vector<std::string> average_solution_names(dim, "average_velocity");
       average_solution_names.push_back("average_pressure");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
@@ -1169,13 +1162,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                                average_solution_names,
                                DataOut<dim>::type_dof_data,
                                average_data_component_interpretation);
-    }
 
-  // Add the interpretation of the reynolds stresses of solution.
-  // The dim first components are the normal reynolds stress vectors and
-  // the following one is the shear stress. (<u'u'>, <v'v'>, <w'w'>, <u'v'>)
-  if (this->nsparam.post_processing.calculate_reynolds_stress)
-    {
+      // Add the interpretation of the reynolds stresses of solution.
+      // The dim first components are the normal reynolds stress vectors and
+      // the following one is the shear stress. (<u'u'>, <v'v'>, <w'w'>, <u'v'>)
       std::vector<std::string> reynolds_stress_names(dim,
                                                      "normal_reynolds_stress");
       reynolds_stress_names.push_back("shear_stress");

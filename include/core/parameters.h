@@ -238,9 +238,6 @@ namespace Parameters
     // Enable velocity post-processing
     bool calculate_average_velocities;
 
-    // Enable reynolds stress post-processing
-    bool calculate_reynolds_stress;
-
     // Set initial time to start calculations for velocities
     double initial_time;
 

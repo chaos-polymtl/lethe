@@ -5,12 +5,10 @@
 #---------------------------------------------------
 subsection simulation control
   set method                       = bdf1
-  set number mesh adapt            = 0
-  set output name                  = periodic_hills_re5600_dt1E-1-output
-  set subdivision                  = 2
+  set output name                  = periodic_hills-output
   set time step                    = 0.1
-  set output frequency             = 2
-  set time end                     = 10
+  set output frequency             = 1
+  set time end                     = 5.0
 end
 
 #---------------------------------------------------
@@ -42,9 +40,9 @@ end
 subsection flow control
     set enable                     = true
     set boundary id    		   = 0
-    set volumetric flow rate       = -1
+    set volumetric flow rate       = -1        # bulk velocity = -0.1092
     set flow direction 		   = 0
-    set initial beta		   = 0.834
+    set initial beta		   = 0.833
     set verbosity                  = verbose
 end
 
@@ -53,8 +51,7 @@ end
 #---------------------------------------------------
 subsection post-processing
     set calculate average velocities    = true
-    set calculate reynolds stress       = true
-    set initial time 		        = 100
+    set initial time 		        = 4.0
 end
 
 # --------------------------------------------------
@@ -93,14 +90,12 @@ subsection FEM
     set qmapping all              = true
 end
 
-
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
   set type                        = none
 end
-
 
 # --------------------------------------------------
 # Non-Linear Solver Control

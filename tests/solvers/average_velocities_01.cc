@@ -41,8 +41,7 @@ test(int argc, char **argv)
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.dt      = 0.1;
   simulation_control_parameters.timeEnd = 1.0;
-  simulation_control_parameters.adapt            = false;
-  simulation_control_parameters.output_frequency = 1;
+  simulation_control_parameters.adapt   = false;
 
   // Variables for AverageVelocities
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
@@ -80,7 +79,6 @@ test(int argc, char **argv)
             postprocessing_parameters,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
-            simulation_control->is_output_iteration(),
             locally_owned_dofs,
             mpi_communicator);
 

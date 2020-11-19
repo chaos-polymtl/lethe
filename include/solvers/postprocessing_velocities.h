@@ -65,9 +65,6 @@ public:
    *
    * @param time_step. The current time step
    *
-   * @param is_output_iteration. The information if output is required at this
-   *                             iteration
-   *
    * @param locally_owned_dofs. The owned dofs
    *
    * @param mpi_communicator. The mpi communicator information
@@ -78,7 +75,6 @@ public:
     const Parameters::PostProcessing &post_processing,
     const double &                    current_time,
     const double &                    time_step,
-    const bool &                      is_output_iteration,
     const DofsType &                  locally_owned_dofs,
     const MPI_Comm &                  mpi_communicator);
 
@@ -90,25 +86,27 @@ public:
    *
    * @param local_evaluation_point. The vector solutions with no ghost cells
    *
-   * @param is_output_iteration. The information if output is required at this
-   *                             iteration
-   *
    */
   void
-  calculate_reynolds_stress(const VectorType &local_evaluation_point,
-                            const bool &      is_output_iteration);
+  calculate_reynolds_stress(const VectorType &local_evaluation_point);
   /**
    * @brief get_average_velocities. Gives the average of solutions.
    */
   const VectorType
-  get_average_velocities();
+  get_average_velocities()
+  {
+    return average_velocities;
+  }
 
   /**
    * @brief get_reynolds_stress. Gives the time-averaged normal Reynolds
    * stresses and shear stress
    */
   const VectorType
-  get_reynolds_stress();
+  get_reynolds_stress()
+  {
+    return reynolds_stress;
+  }
 
 private:
   TrilinosScalar inv_range_time;
@@ -118,7 +116,6 @@ private:
   VectorType sum_velocity_dt;
   VectorType average_velocities;
 
-  VectorType fluctuation;
   VectorType reynolds_stress_dt;
   VectorType sum_reynolds_stress_dt;
   VectorType reynolds_stress;
@@ -127,19 +124,5 @@ private:
   bool   average_calculation;
   double real_initial_time;
 };
-
-template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::get_average_velocities()
-{
-  return average_velocities;
-}
-
-template <int dim, typename VectorType, typename DofsType>
-const VectorType
-AverageVelocities<dim, VectorType, DofsType>::get_reynolds_stress()
-{
-  return reynolds_stress;
-}
 
 #endif
