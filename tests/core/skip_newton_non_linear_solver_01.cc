@@ -43,6 +43,36 @@ test(int argc, char **argv)
 int
 main(int argc, char **argv)
 {
-  initlog();
-  test(argc, argv);
+  try
+    {
+      initlog();
+      test(argc, argv);
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+
+  return 0;
 }
