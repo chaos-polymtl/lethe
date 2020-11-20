@@ -47,6 +47,9 @@ using namespace dealii;
  * @brief AverageVelocities. The AverageVelocities class calculates the
  * time-averaged velocities and pressure (<u>, <v>, <w>, <p>). The generated
  * vector is output with the solution and visualization is possible.
+ *
+ * Important : Time-averaging velocities and calculating reynolds stresses are
+ * currently unavailable for mesh adaptation.
  */
 template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities

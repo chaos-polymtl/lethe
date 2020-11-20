@@ -885,6 +885,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     {
       if (firstIter)
         {
+          if (nsparam.mesh_adaptation.type ==
+              Parameters::MeshAdaptation::Type::none)
+            AssertThrow(true,
+                        ExcMessage(
+                          "Time-averaging velocities and calculating reynolds "
+                          "stresses are currently unavailable for mesh "
+                          "adaptation."));
+
           this->average_solution.reinit(this->locally_owned_dofs,
                                         this->locally_relevant_dofs,
                                         this->mpi_communicator);
