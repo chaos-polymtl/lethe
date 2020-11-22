@@ -32,7 +32,7 @@ matrix:
 
 before_script:
   - if [ "$STEP" = "compile_and_test" ]; then
-        docker pull dealii/dealii:v9.2.0-focal;
+        docker pull blaisb/dealii_docker:dealii_master_nov_2020;
     fi
 
 script:
@@ -43,7 +43,7 @@ script:
     fi
   - if [ "$STEP" = "compile_and_test" ]; then
 
-         docker run -i -t dealii/dealii:v9.2.0-focal /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest";
+         docker run -i -t blaisb/dealii_docker:dealii_master_nov_2020 /bin/sh -c "git clone https://github.com/$TRAVIS_REPO_SLUG && cd lethe && git checkout $BRANCH && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
 
     fi
  
