@@ -40,9 +40,9 @@ test(int argc, char **argv)
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt               = 0.1;
-  simulation_control_parameters.timeEnd          = 1.0;
-  simulation_control_parameters.adapt            = false;
+  simulation_control_parameters.dt      = 0.1;
+  simulation_control_parameters.timeEnd = 1.0;
+  simulation_control_parameters.adapt   = false;
 
   // Variables for AverageVelocities
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
@@ -89,7 +89,7 @@ test(int argc, char **argv)
             locally_owned_dofs,
             mpi_communicator);
 
-          stress_solution  = postprocessing_velocities.get_reynolds_stress();
+          stress_solution = postprocessing_velocities.get_reynolds_stress();
 
           deallog << " Time  : " << time << std::endl;
           deallog << "<u'u'> : " << stress_solution[0] << " "
