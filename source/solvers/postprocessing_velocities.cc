@@ -84,51 +84,43 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
         {
           // Set related index from solution vector to reynolds tensor
           // which is stored in a data vector.
-          unsigned int j = get_tensor_index(i);
+          unsigned int j = get_new_index(i);
 
           // u'u'*dt
           reynolds_stress_dt[j] =
             (local_evaluation_point[i] - average_velocities[i]) *
             (local_evaluation_point[i] - average_velocities[i]) * dt;
 
-          // u'v'*dt
+          // v'v'*dt
           reynolds_stress_dt[j + 1] =
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
+            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
+
+          // u'v'*dt
+          reynolds_stress_dt[j + dim] =
             (local_evaluation_point[i] - average_velocities[i]) *
             (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
 
-          // v'u'*dt
-          reynolds_stress_dt[j + dim] = reynolds_stress_dt[j + dim];
-
-          // v'v'*dt
-          reynolds_stress_dt[j + dim + 1] =
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
 
 
           if (dim == 3)
             {
-              // u'w'*dt
+              // w'w'*dt
               reynolds_stress_dt[j + 2] =
-                (local_evaluation_point[i] - average_velocities[i]) *
-                (local_evaluation_point[i + 2] - average_velocities[i + 2]) * dt;
+                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
+                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
+                dt;
 
               // v'w'*dt
-              reynolds_stress_dt[j + 5] =
+              reynolds_stress_dt[j + 4] =
                 (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
                 (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
                 dt;
 
               // w'u'*dt
-              reynolds_stress_dt[j + 6] = reynolds_stress_dt[j + 2];
-
-              // w'v'*dt
-              reynolds_stress_dt[j + 7] = reynolds_stress_dt[j + 5];
-
-              // w'w'*dt
-              reynolds_stress_dt[j + 8] =
+              reynolds_stress_dt[j + 5] =
                 (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-                dt;
+                (local_evaluation_point[i] - average_velocities[i]) * dt;
             }
         }
     }
@@ -150,21 +142,21 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 
 template <int dim, typename VectorType, typename DofsType>
 unsigned int
-AverageVelocities<dim, VectorType, DofsType>::get_tensor_index(unsigned int i)
+AverageVelocities<dim, VectorType, DofsType>::get_new_index(unsigned int i)
 {
   unsigned int j;
-  j = i / (dim + 1) * dim * dim;
+  j = i * dim / 2;
 
   return j;
 }
 
 template <int dim, typename VectorType, typename DofsType>
 IndexSet
-AverageVelocities<dim, VectorType, DofsType>::get_tensor_index_set(
-  const DofsType &locally_owned_dofs,
+AverageVelocities<dim, VectorType, DofsType>::get_new_index_set(
+  const DofsType &    locally_owned_dofs,
   const unsigned int &n_dofs)
 {
-  IndexSet locally_owned_tensor(9 * n_dofs / 4);
+  IndexSet locally_owned_tensor(6 * n_dofs / 4);
 
   unsigned int first_index, last_index;
 
@@ -180,11 +172,12 @@ AverageVelocities<dim, VectorType, DofsType>::get_tensor_index_set(
       last_index  = first_index + locally_owned_dofs[0].n_elements();
     }
 
-  first_index = get_tensor_index(first_index);
-  last_index  = get_tensor_index(last_index);
+  first_index = get_new_index(first_index);
+  last_index  = get_new_index(last_index);
 
   std::cout << "----------------------" << std::endl;
-  std::cout << "first_index" << first_index << "last_index" << last_index << std::endl;
+  std::cout << "first_index" << first_index << "last_index" << last_index
+            << std::endl;
 
   locally_owned_tensor.add_range(first_index, last_index);
 

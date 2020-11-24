@@ -897,8 +897,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                         this->mpi_communicator);
 
           IndexSet locally_owned_tensor_components =
-            average_velocities.get_tensor_index_set(this->locally_owned_dofs,
-                                                    dof_handler.n_dofs());
+            average_velocities.get_new_index_set(this->locally_owned_dofs,
+                                                 dof_handler.n_dofs());
           // IndexSet locally_relevant_tensor_components =
           // average_velocities.get_tensor_index_set(locally_relevant_dofs);
 
@@ -1178,30 +1178,54 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // Add the interpretation of the reynolds stresses of solution.
       // The dim first components are the normal reynolds stress vectors and
       // the following one is the shear stress. (<u'u'>, <v'v'>, <w'w'>, <u'v'>)
-      FESystem<dim>   fe_tensor(FE_Q<dim>(1), dim * dim);
+      FESystem<dim>   fe_tensor(FE_Q<dim>(this->velocity_fem_degree),
+                              dim,
+                              FE_Q<dim>(velocity_fem_degree),
+                              1,
+                              FE_Q<dim>(velocity_fem_degree),
+                              1,
+                              FE_Q<dim>(velocity_fem_degree),
+                              1);
       DoFHandler<dim> dof_handler_tensor(*this->triangulation);
       dof_handler_tensor.distribute_dofs(fe_tensor);
-      //MappingQ<
-      
+      // const MappingQ<dim> mapping_tensor(this->velocity_fem_degree * dim,
+      //                                 nsparam.fem_parameters.qmapping_all);
+
       std::cout << dof_handler_tensor.n_dofs() << std::endl;
 
       DataOut<dim> data_out_tensor;
 
       data_out_tensor.attach_dof_handler(dof_handler_tensor);
 
-      std::vector<std::string> reynolds_stress_names(dim * dim, "reynolds_stresses");
+      std::vector<std::string> reynolds_stress_names(
+        dim, "normal_reynolds_stresses");
+      reynolds_stress_names.push_back("<u'v'>");
+      reynolds_stress_names.push_back("<v'w'>");
+      reynolds_stress_names.push_back("<w'u'>");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         reynolds_stress_data_component_interpretation(
-          dim * dim, DataComponentInterpretation::component_is_part_of_tensor);
+          dim, DataComponentInterpretation::component_is_part_of_vector);
+      reynolds_stress_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
+      reynolds_stress_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
+      reynolds_stress_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
 
-      data_out_tensor.add_data_vector(dof_handler_tensor,
-                               this->reynolds_stresses,
-                               reynolds_stress_names,
-                               reynolds_stress_data_component_interpretation);
+      // data_out_tensor.set_flags(flags);
 
-      data_out.build_patches(mapping,
-                             subdivision,
-                             DataOut<dim>::curved_inner_cells);
+      data_out_tensor.add_data_vector(
+        dof_handler_tensor,
+        this->reynolds_stresses,
+        reynolds_stress_names,
+        reynolds_stress_data_component_interpretation);
+
+      // output_field_hook(data_out_tensor);
+
+      // data_out_tensor.build_patches(mapping_tensor,
+      //                             subdivision,
+      //                           DataOut<dim>::curved_inner_cells);
+
 
       write_vtu_and_pvd<dim>(this->pvdhandler,
                              data_out_tensor,
@@ -1211,8 +1235,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                              iter,
                              group_files,
                              this->mpi_communicator);
-
-
     }
 
   Vector<float> subdomain(this->triangulation->n_active_cells());

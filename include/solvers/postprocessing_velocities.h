@@ -98,12 +98,12 @@ public:
 
 
   IndexSet
-  get_tensor_index_set(const DofsType &locally_owned_dofs,
-                       const unsigned int &n_dofs);
+  get_new_index_set(const DofsType &    locally_owned_dofs,
+                    const unsigned int &n_dofs);
 
 
   unsigned int
-  get_tensor_index(unsigned int i);
+  get_new_index(unsigned int i);
 
   /**
    * @brief get_average_velocities. Gives the average of solutions.
