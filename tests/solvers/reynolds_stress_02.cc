@@ -74,8 +74,13 @@ test(int argc, char **argv)
   solution.block(1)[7] = 20;
   solution.block(1)[8] = 26;
 
-  TrilinosWrappers::MPI::BlockVector stress_solution(locally_owned_dofs,
-                                                     mpi_communicator);
+  IndexSet locally_owned_tensor =
+    postprocessing_velocities.get_tensor_index_set(
+      locally_owned_dofs, locally_owned_dofs[0].n_elements());
+
+
+  LinearAlgebra::distributed::Vector<double> stress_solution(locally_owned_tensor,
+                                                             mpi_communicator);
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -96,19 +101,19 @@ test(int argc, char **argv)
             locally_owned_dofs,
             mpi_communicator);
 
-          stress_solution = postprocessing_velocities.get_reynolds_stress();
+          stress_solution = postprocessing_velocities.get_reynolds_stresses();
 
           deallog << " Time  :      " << time << std::endl;
           deallog << " Time step  : " << dt << std::endl;
-          deallog << " <u'u'> :     " << stress_solution.block(0)[0] << " "
-                  << stress_solution.block(0)[2] << " "
-                  << stress_solution.block(0)[4] << std::endl;
-          deallog << " <v'v'> :     " << stress_solution.block(0)[1] << " "
-                  << stress_solution.block(0)[3] << " "
-                  << stress_solution.block(0)[5] << std::endl;
-          deallog << " <u'v'> :     " << stress_solution.block(1)[6] << " "
-                  << stress_solution.block(1)[7] << " "
-                  << stress_solution.block(1)[8] << std::endl;
+          deallog << " <u'u'> :     " << stress_solution[0] << " "
+                  << stress_solution[4] << " "
+                  << stress_solution[8] << std::endl;
+          deallog << " <v'v'> :     " << stress_solution[3] << " "
+                  << stress_solution[7] << " "
+                  << stress_solution[11] << std::endl;
+          deallog << " <u'v'> :     " << stress_solution[1] << " "
+                  << stress_solution[5] << " "
+                  << stress_solution[9] << std::endl;
           deallog << "" << std::endl;
         }
 

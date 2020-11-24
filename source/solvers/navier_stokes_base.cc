@@ -896,9 +896,14 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                         this->locally_relevant_dofs,
                                         this->mpi_communicator);
 
-          this->reynolds_stress.reinit(this->locally_owned_dofs,
-                                       this->locally_relevant_dofs,
-                                       this->mpi_communicator);
+          IndexSet locally_owned_tensor_components =
+            average_velocities.get_tensor_index_set(this->locally_owned_dofs,
+                                                    dof_handler.n_dofs());
+          // IndexSet locally_relevant_tensor_components =
+          // average_velocities.get_tensor_index_set(locally_relevant_dofs);
+
+          this->reynolds_stresses.reinit(locally_owned_tensor_components,
+                                         this->mpi_communicator);
         }
       else if (simulation_control->get_current_time() >
                (nsparam.post_processing.initial_time - 1e-6))
@@ -911,8 +916,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             locally_owned_dofs,
             mpi_communicator);
 
-          this->average_solution = average_velocities.get_average_velocities();
-          this->reynolds_stress  = average_velocities.get_reynolds_stress();
+          this->average_solution  = average_velocities.get_average_velocities();
+          this->reynolds_stresses = average_velocities.get_reynolds_stresses();
         }
     }
 
@@ -1173,19 +1178,41 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // Add the interpretation of the reynolds stresses of solution.
       // The dim first components are the normal reynolds stress vectors and
       // the following one is the shear stress. (<u'u'>, <v'v'>, <w'w'>, <u'v'>)
-      std::vector<std::string> reynolds_stress_names(dim,
-                                                     "normal_reynolds_stress");
-      reynolds_stress_names.push_back("shear_stress");
+      FESystem<dim>   fe_tensor(FE_Q<dim>(1), dim * dim);
+      DoFHandler<dim> dof_handler_tensor(*this->triangulation);
+      dof_handler_tensor.distribute_dofs(fe_tensor);
+      //MappingQ<
+      
+      std::cout << dof_handler_tensor.n_dofs() << std::endl;
+
+      DataOut<dim> data_out_tensor;
+
+      data_out_tensor.attach_dof_handler(dof_handler_tensor);
+
+      std::vector<std::string> reynolds_stress_names(dim * dim, "reynolds_stresses");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         reynolds_stress_data_component_interpretation(
-          dim, DataComponentInterpretation::component_is_part_of_vector);
-      reynolds_stress_data_component_interpretation.push_back(
-        DataComponentInterpretation::component_is_scalar);
+          dim * dim, DataComponentInterpretation::component_is_part_of_tensor);
 
-      data_out.add_data_vector(this->reynolds_stress,
+      data_out_tensor.add_data_vector(dof_handler_tensor,
+                               this->reynolds_stresses,
                                reynolds_stress_names,
-                               DataOut<dim>::type_dof_data,
                                reynolds_stress_data_component_interpretation);
+
+      data_out.build_patches(mapping,
+                             subdivision,
+                             DataOut<dim>::curved_inner_cells);
+
+      write_vtu_and_pvd<dim>(this->pvdhandler,
+                             data_out_tensor,
+                             folder,
+                             solution_name,
+                             time,
+                             iter,
+                             group_files,
+                             this->mpi_communicator);
+
+
     }
 
   Vector<float> subdomain(this->triangulation->n_active_cells());

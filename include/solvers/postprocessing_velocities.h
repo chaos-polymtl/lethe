@@ -20,8 +20,12 @@
 #ifndef lethe_postprocessing_velocities_h
 #define lethe_postprocessing_velocities_h
 
+// Base
+#include <deal.II/base/symmetric_tensor.h>
+#include <deal.II/base/table_indices.h>
 
 // Lac - Trilinos includes
+#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
@@ -88,10 +92,19 @@ public:
    * and <u'v'>.
    *
    * @param local_evaluation_point. The vector solutions with no ghost cells
-   *
    */
   void
-  calculate_reynolds_stress(const VectorType &local_evaluation_point);
+  calculate_reynolds_stresses(const VectorType &local_evaluation_point);
+
+
+  IndexSet
+  get_tensor_index_set(const DofsType &locally_owned_dofs,
+                       const unsigned int &n_dofs);
+
+
+  unsigned int
+  get_tensor_index(unsigned int i);
+
   /**
    * @brief get_average_velocities. Gives the average of solutions.
    */
@@ -105,10 +118,10 @@ public:
    * @brief get_reynolds_stress. Gives the time-averaged normal Reynolds
    * stresses and shear stress
    */
-  const VectorType
-  get_reynolds_stress()
+  const LinearAlgebra::distributed::Vector<double>
+  get_reynolds_stresses()
   {
-    return reynolds_stress;
+    return reynolds_stresses;
   }
 
 private:
@@ -119,9 +132,13 @@ private:
   VectorType sum_velocity_dt;
   VectorType average_velocities;
 
-  VectorType reynolds_stress_dt;
-  VectorType sum_reynolds_stress_dt;
-  VectorType reynolds_stress;
+  LinearAlgebra::distributed::Vector<double> reynolds_stress_dt;
+  LinearAlgebra::distributed::Vector<double> sum_reynolds_stress_dt;
+  LinearAlgebra::distributed::Vector<double> reynolds_stresses;
+
+  IndexSet locally_owned_tensor_components;
+
+  int tensor_components_size;
 
   double dt;
   bool   average_calculation;

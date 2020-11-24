@@ -322,7 +322,7 @@ protected:
   VectorType solution_m2;
   VectorType solution_m3;
   VectorType average_solution;
-  VectorType reynolds_stress;
+  LinearAlgebra::distributed::Vector<double> reynolds_stresses;
 
 
   // Finite element order used
