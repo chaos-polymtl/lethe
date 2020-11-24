@@ -56,19 +56,25 @@ GLSVANSSolver<dim>::finish_time_step()
 {
   GLSNavierStokesSolver<dim>::finish_time_step();
 
-  void_fraction_m3 = void_fraction_m2;
-  void_fraction_m2 = void_fraction_m1;
-  void_fraction_m1 = nodal_void_fraction_relevant;
+  //  void_fraction_m3 = void_fraction_m2;
+  //  void_fraction_m2 = void_fraction_m1;
+  //  void_fraction_m1 = nodal_void_fraction_relevant;
 }
 
 template <int dim>
 void
 GLSVANSSolver<dim>::calculate_void_fraction()
 {
+  void_fraction_m3 = void_fraction_m2;
+  void_fraction_m2 = void_fraction_m1;
+  void_fraction_m1 = nodal_void_fraction_relevant;
+
   const MappingQ<dim> mapping(this->velocity_fem_degree);
 
   const double t = this->simulation_control->get_current_time();
   this->nsparam.void_fraction->void_fraction.set_time(t);
+
+  this->forcing_function->set_time(t);
 
   VectorTools::interpolate(mapping,
                            void_fraction_dof_handler,
@@ -326,6 +332,7 @@ GLSVANSSolver<dim>::assembleGLS()
                     laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
                 }
 
+
               // Establish the force vector
               for (int i = 0; i < dim; ++i)
                 {
@@ -333,7 +340,9 @@ GLSVANSSolver<dim>::assembleGLS()
                     this->fe.system_to_component_index(i).first;
                   force[i] = rhs_force[q](component_i);
                 }
-
+              const unsigned int component_mass =
+                this->fe.system_to_component_index(dim).first;
+              double mass_source = rhs_force[q](component_mass);
 
               // Calculate the divergence of the velocity
               const double present_velocity_divergence =
@@ -385,10 +394,9 @@ GLSVANSSolver<dim>::assembleGLS()
                     Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
                   scheme == Parameters::SimulationControl::TimeSteppingMethod::
                               steady_bdf)
-                strong_residual += bdf_coefs[0] * present_velocity_values[q] *
-                                     present_void_fraction_values[q] +
-                                   bdf_coefs[1] * p1_velocity_values[q] *
-                                     p1_void_fraction_values[q];
+                strong_residual += (bdf_coefs[0] * present_velocity_values[q] +
+                                    bdf_coefs[1] * p1_velocity_values[q]) *
+                                   present_void_fraction_values[q];
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -603,7 +611,8 @@ GLSVANSSolver<dim>::assembleGLS()
                       (present_velocity_divergence *
                          present_void_fraction_values[q] +
                        present_velocity_values[q] *
-                         present_void_fraction_gradients[q]) *
+                         present_void_fraction_gradients[q] -
+                       mass_source) *
                         phi_p[i]) *
                     JxW;
 
@@ -612,12 +621,16 @@ GLSVANSSolver<dim>::assembleGLS()
                                   TimeSteppingMethod::bdf1 ||
                       scheme == Parameters::SimulationControl::
                                   TimeSteppingMethod::steady_bdf)
-                    local_rhs(i) -=
-                      bdf_coefs[0] *
-                      ((present_void_fraction_values[q] *
-                        present_velocity_values[q]) -
-                       (p1_void_fraction_values[q] * p1_velocity_values[q])) *
-                      phi_u[i] * JxW;
+                    {
+                      local_rhs(i) -=
+                        (bdf_coefs[0] * present_velocity_values[q] +
+                         bdf_coefs[1] * p1_velocity_values[q]) *
+                        present_void_fraction_values[q] * phi_u[i] * JxW;
+                      local_rhs(i) -=
+                        (bdf_coefs[0] * present_void_fraction_values[q] +
+                         bdf_coefs[1] * p1_void_fraction_values[q]) *
+                        phi_p[i] * JxW;
+                    }
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -733,7 +746,6 @@ GLSVANSSolver<dim>::assembleGLS()
                     }
                 }
             }
-
 
           cell->get_dof_indices(local_dof_indices);
 
