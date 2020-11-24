@@ -83,6 +83,7 @@ public:
     const double &                    current_time,
     const double &                    time_step,
     const DofsType &                  locally_owned_dofs,
+    const IndexSet &                  locally_owned_rs_components,
     const MPI_Comm &                  mpi_communicator);
 
 
@@ -96,22 +97,13 @@ public:
   void
   calculate_reynolds_stresses(const VectorType &local_evaluation_point);
 
-
-  IndexSet
-  get_new_index_set(const DofsType &    locally_owned_dofs,
-                    const unsigned int &n_dofs);
-
-
-  unsigned int
-  get_new_index(unsigned int i);
-
   /**
    * @brief get_average_velocities. Gives the average of solutions.
    */
   const VectorType
   get_average_velocities()
   {
-    return average_velocities;
+    return this->average_velocities;
   }
 
   /**
@@ -121,7 +113,7 @@ public:
   const LinearAlgebra::distributed::Vector<double>
   get_reynolds_stresses()
   {
-    return reynolds_stresses;
+    return this->reynolds_stresses;
   }
 
 private:
@@ -135,10 +127,6 @@ private:
   LinearAlgebra::distributed::Vector<double> reynolds_stress_dt;
   LinearAlgebra::distributed::Vector<double> sum_reynolds_stress_dt;
   LinearAlgebra::distributed::Vector<double> reynolds_stresses;
-
-  IndexSet locally_owned_tensor_components;
-
-  int tensor_components_size;
 
   double dt;
   bool   average_calculation;

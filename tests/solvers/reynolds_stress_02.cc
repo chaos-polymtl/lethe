@@ -74,13 +74,11 @@ test(int argc, char **argv)
   solution.block(1)[7] = 20;
   solution.block(1)[8] = 26;
 
-  IndexSet locally_owned_tensor =
-    postprocessing_velocities.get_tensor_index_set(
-      locally_owned_dofs, locally_owned_dofs[0].n_elements());
+  IndexSet locally_owned_rs_components;
+  locally_owned_rs_components.add_range(0, 12);
 
-
-  LinearAlgebra::distributed::Vector<double> stress_solution(locally_owned_tensor,
-                                                             mpi_communicator);
+  LinearAlgebra::distributed::Vector<double> stress_solution(
+    locally_owned_rs_components, mpi_communicator);
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -99,6 +97,7 @@ test(int argc, char **argv)
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
             locally_owned_dofs,
+            locally_owned_rs_components,
             mpi_communicator);
 
           stress_solution = postprocessing_velocities.get_reynolds_stresses();
@@ -106,14 +105,14 @@ test(int argc, char **argv)
           deallog << " Time  :      " << time << std::endl;
           deallog << " Time step  : " << dt << std::endl;
           deallog << " <u'u'> :     " << stress_solution[0] << " "
-                  << stress_solution[4] << " "
-                  << stress_solution[8] << std::endl;
-          deallog << " <v'v'> :     " << stress_solution[3] << " "
-                  << stress_solution[7] << " "
-                  << stress_solution[11] << std::endl;
-          deallog << " <u'v'> :     " << stress_solution[1] << " "
-                  << stress_solution[5] << " "
-                  << stress_solution[9] << std::endl;
+                  << stress_solution[3] << " " << stress_solution[6]
+                  << std::endl;
+          deallog << " <v'v'> :     " << stress_solution[1] << " "
+                  << stress_solution[4] << " " << stress_solution[7]
+                  << std::endl;
+          deallog << " <u'v'> :     " << stress_solution[2] << " "
+                  << stress_solution[5] << " " << stress_solution[8]
+                  << std::endl;
           deallog << "" << std::endl;
         }
 
