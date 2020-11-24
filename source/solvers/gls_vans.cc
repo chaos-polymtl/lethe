@@ -382,7 +382,9 @@ GLSVANSSolver<dim>::assembleGLS()
                */
 
               if (scheme ==
-                  Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+                  scheme == Parameters::SimulationControl::TimeSteppingMethod::
+                              steady_bdf)
                 strong_residual += bdf_coefs[0] * present_velocity_values[q] *
                                      present_void_fraction_values[q] +
                                    bdf_coefs[1] * p1_velocity_values[q] *
@@ -606,13 +608,15 @@ GLSVANSSolver<dim>::assembleGLS()
                     JxW;
 
                   // Residual associated with BDF schemes
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+                  if (scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::bdf1 ||
+                      scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::steady_bdf)
                     local_rhs(i) -=
                       bdf_coefs[0] *
-                      (present_void_fraction_values[q] *
-                         present_velocity_values[q] -
-                       p1_void_fraction_values[q] * p1_velocity_values[q]) *
+                      ((present_void_fraction_values[q] *
+                        present_velocity_values[q]) -
+                       (p1_void_fraction_values[q] * p1_velocity_values[q])) *
                       phi_u[i] * JxW;
 
                   if (scheme ==
