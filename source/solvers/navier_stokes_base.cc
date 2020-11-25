@@ -33,7 +33,6 @@
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
-#include <solvers/postprocessing_force.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
 #include <solvers/postprocessing_velocities.h>
