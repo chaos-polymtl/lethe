@@ -100,20 +100,20 @@ public:
   /**
    * @brief get_average_velocities. Gives the average of solutions.
    */
-  const VectorType
+  const VectorType &
   get_average_velocities()
   {
-    return this->average_velocities;
+    return average_velocities;
   }
 
   /**
    * @brief get_reynolds_stress. Gives the time-averaged normal Reynolds
    * stresses and shear stress
    */
-  const LinearAlgebra::distributed::Vector<double>
+  const LinearAlgebra::distributed::Vector<double> &
   get_reynolds_stresses()
   {
-    return this->reynolds_stresses;
+    return reynolds_stresses;
   }
 
 private:

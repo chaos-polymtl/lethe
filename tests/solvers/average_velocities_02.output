@@ -1,37 +1,37 @@
 
 DEAL:: Time :             0.529816
 DEAL:: Time step :        0.0773781
-DEAL:: Average solution : 0.00000 1.32860 5.31441
+DEAL:: Average solution : 0.00000 1.32860 5.31441 81.9482
 DEAL::
 DEAL:: Time :             0.603325
 DEAL:: Time step :        0.0735092
-DEAL:: Average solution : 0.00000 1.26388 5.05550
+DEAL:: Average solution : 0.00000 1.26388 5.05550 77.9559
 DEAL::
 DEAL:: Time :             0.673159
 DEAL:: Time step :        0.0698337
-DEAL:: Average solution : 0.00000 1.20449 4.81795
+DEAL:: Average solution : 0.00000 1.20449 4.81795 74.2928
 DEAL::
 DEAL:: Time :             0.739501
 DEAL:: Time step :        0.0663420
-DEAL:: Average solution : 0.00000 1.14996 4.59984
+DEAL:: Average solution : 0.00000 1.14996 4.59984 70.9296
 DEAL::
 DEAL:: Time :             0.802526
 DEAL:: Time step :        0.0630249
-DEAL:: Average solution : 0.00000 1.09987 4.39946
+DEAL:: Average solution : 0.00000 1.09987 4.39946 67.8397
 DEAL::
 DEAL:: Time :             0.862400
 DEAL:: Time step :        0.0598737
-DEAL:: Average solution : 0.00000 1.05381 4.21525
+DEAL:: Average solution : 0.00000 1.05381 4.21525 64.9991
 DEAL::
 DEAL:: Time :             0.919280
 DEAL:: Time step :        0.0568800
-DEAL:: Average solution : 0.00000 1.01144 4.04577
+DEAL:: Average solution : 0.00000 1.01144 4.04577 62.3858
 DEAL::
 DEAL:: Time :             0.973316
 DEAL:: Time step :        0.0540360
-DEAL:: Average solution : 0.00000 0.972439 3.88976
+DEAL:: Average solution : 0.00000 0.972439 3.88976 59.9801
 DEAL::
 DEAL:: Time :             1.00000
 DEAL:: Time step :        0.0266842
-DEAL:: Average solution : 0.00000 0.952921 3.81168
+DEAL:: Average solution : 0.00000 0.952921 3.81168 58.7762
 DEAL::

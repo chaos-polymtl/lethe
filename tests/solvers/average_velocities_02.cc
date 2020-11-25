@@ -47,25 +47,35 @@ test(int argc, char **argv)
   simulation_control_parameters.adaptative_time_step_scaling = 0.95;
 
   // Variables for AverageVelocities
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
+  AverageVelocities<3,
+                    TrilinosWrappers::MPI::BlockVector,
+                    std::vector<IndexSet>>
+    average;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs;
-  locally_owned_dofs.add_range(0, 3);
+  std::vector<IndexSet> locally_owned_dofs(2);
+  locally_owned_dofs[0].add_range(0, 3);
+  locally_owned_dofs[1].add_range(3, 4);
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
   postprocessing_parameters.initial_time                 = 0.5;
 
-  TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
-  solution(0) = 0.0;
-  solution(1) = 2.5;
-  solution(2) = 10;
+  TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
+                                              mpi_communicator);
 
-  TrilinosWrappers::MPI::Vector average_solution(locally_owned_dofs,
-                                                 mpi_communicator);
+  solution.block(0)[0] = 0.0;
+  solution.block(0)[1] = 2.5;
+  solution.block(0)[2] = 10;
+  solution.block(1)[3] = 154.2;
+
+  IndexSet locally_owned_rs_components(6);
+  locally_owned_rs_components.add_range(0, 6);
+
+  TrilinosWrappers::MPI::BlockVector average_solution(locally_owned_dofs,
+                                                      mpi_communicator);
 
   // Time and output info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -84,15 +94,17 @@ test(int argc, char **argv)
                                                time,
                                                dt,
                                                locally_owned_dofs,
+                                               locally_owned_rs_components,
                                                mpi_communicator);
 
           average_solution = average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Time step :        " << dt << std::endl;
-          deallog << " Average solution : " << average_solution[0] << " "
-                  << average_solution[1] << " " << average_solution[2]
-                  << std::endl;
+          deallog << " Average solution : " << average_solution.block(0)[0]
+                  << " " << average_solution.block(0)[1] << " "
+                  << average_solution.block(0)[2] << " "
+                  << average_solution.block(1)[3] << std::endl;
           deallog << "" << std::endl;
         }
 

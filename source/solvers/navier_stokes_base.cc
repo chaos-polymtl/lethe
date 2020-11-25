@@ -879,6 +879,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
   // The average_solution and reynolds_stress vectors are reinitialize at the
   // first iteration.
+  // Since the reynolds_stress (rs) vector doesn't have the same number of
+  // elements than the number of dofs, it's required its own dof_handler object
+  // even if data is not dofs. It allows to know locally owned elements and
+  // to output data.
   // The average velocities and reynolds stresses are calculated when the
   // time reaches the initial time. (time >= initial time) with 1e-6 as
   // tolerance.

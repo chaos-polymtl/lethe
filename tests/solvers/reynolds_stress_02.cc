@@ -74,8 +74,8 @@ test(int argc, char **argv)
   solution.block(1)[7] = 20;
   solution.block(1)[8] = 26;
 
-  IndexSet locally_owned_rs_components;
-  locally_owned_rs_components.add_range(0, 12);
+  IndexSet locally_owned_rs_components(9);
+  locally_owned_rs_components.add_range(0, 9);
 
   LinearAlgebra::distributed::Vector<double> stress_solution(
     locally_owned_rs_components, mpi_communicator);
@@ -101,6 +101,16 @@ test(int argc, char **argv)
             mpi_communicator);
 
           stress_solution = postprocessing_velocities.get_reynolds_stresses();
+
+          std::cout << stress_solution[0] << std::endl;
+          std::cout << stress_solution[1] << std::endl;
+          std::cout << stress_solution[2] << std::endl;
+          std::cout << stress_solution[3] << std::endl;
+          std::cout << stress_solution[4] << std::endl;
+          std::cout << stress_solution[5] << std::endl;
+          std::cout << stress_solution[6] << std::endl;
+          std::cout << stress_solution[7] << std::endl;
+          std::cout << stress_solution[8] << std::endl;
 
           deallog << " Time  :      " << time << std::endl;
           deallog << " Time step  : " << dt << std::endl;

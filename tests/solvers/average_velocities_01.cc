@@ -49,8 +49,9 @@ test(int argc, char **argv)
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs;
-  locally_owned_dofs.add_range(0, 3);
+  IndexSet locally_owned_dofs(4);
+  locally_owned_dofs.add_range(0, 4);
+
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -60,9 +61,13 @@ test(int argc, char **argv)
   solution(0) = 0.0;
   solution(1) = 2.5;
   solution(2) = 10;
+  solution(3) = 154.2;
 
   TrilinosWrappers::MPI::Vector average_solution(locally_owned_dofs,
                                                  mpi_communicator);
+
+  IndexSet locally_owned_rs_components(6);
+  locally_owned_rs_components.add_range(0, 6);
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -80,14 +85,15 @@ test(int argc, char **argv)
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
             locally_owned_dofs,
+            locally_owned_rs_components,
             mpi_communicator);
 
           average_solution = average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Average solution : " << average_solution[0] << " "
-                  << average_solution[1] << " " << average_solution[2]
-                  << std::endl;
+                  << average_solution[1] << " " << average_solution[2] << " "
+                  << average_solution[3] << std::endl;
           deallog << "" << std::endl;
         }
 

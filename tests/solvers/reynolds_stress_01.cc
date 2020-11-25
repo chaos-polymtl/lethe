@@ -51,7 +51,7 @@ test(int argc, char **argv)
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs;
+  IndexSet locally_owned_dofs(8);
   locally_owned_dofs.add_range(0, 8);
 
   Parameters::PostProcessing postprocessing_parameters;
@@ -68,7 +68,7 @@ test(int argc, char **argv)
   solution(6) = 0.1;
   solution(7) = 20;
 
-  IndexSet locally_owned_rs_components;
+  IndexSet locally_owned_rs_components(12);
   locally_owned_rs_components.add_range(0, 12);
 
   LinearAlgebra::distributed::Vector<double> stress_solution(

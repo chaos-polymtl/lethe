@@ -71,115 +71,64 @@ void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
-  unsigned int begin_index, end_index;
+  unsigned int begin_index, end_index, n_dofs_per_node;
+
+  const TrilinosWrappers::MPI::Vector *local_solution;
+  const TrilinosWrappers::MPI::Vector *local_average;
 
   if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
     {
-      begin_index = local_evaluation_point.local_range().first;
-      end_index   = local_evaluation_point.local_range().second;
-
-      for (unsigned int i = begin_index; i < end_index; i += dim + 1)
-        {
-          // Set related index from solution vector to reynolds tensor
-          // which is stored in a data vector.
-          unsigned int j = i * dim / 2;
-
-          // u'u'*dt
-          reynolds_stress_dt[j] =
-            (local_evaluation_point[i] - average_velocities[i]) *
-            (local_evaluation_point[i] - average_velocities[i]) * dt;
-
-          // v'v'*dt
-          reynolds_stress_dt[j + 1] =
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
-
-          // u'v'*dt
-          reynolds_stress_dt[j + dim] =
-            (local_evaluation_point[i] - average_velocities[i]) *
-            (local_evaluation_point[i + 1] - average_velocities[i + 1]) * dt;
-
-          if (dim == 3)
-            {
-              // w'w'*dt
-              reynolds_stress_dt[j + 2] =
-                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-                dt;
-
-              // v'w'*dt
-              reynolds_stress_dt[j + 4] =
-                (local_evaluation_point[i + 1] - average_velocities[i + 1]) *
-                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-                dt;
-
-              // w'u'*dt
-              reynolds_stress_dt[j + 5] =
-                (local_evaluation_point[i + 2] - average_velocities[i + 2]) *
-                (local_evaluation_point[i] - average_velocities[i]) * dt;
-            }
-        }
+      begin_index     = local_evaluation_point.local_range().first;
+      end_index       = local_evaluation_point.local_range().second;
+      n_dofs_per_node = dim + 1;
+      local_solution  = &local_evaluation_point;
+      local_average   = &average_velocities;
     }
   else if constexpr (std::is_same_v<VectorType,
                                     TrilinosWrappers::MPI::BlockVector>)
     {
-      begin_index = local_evaluation_point.block(0).local_range().first;
-      end_index   = local_evaluation_point.block(0).local_range().second;
+      begin_index     = local_evaluation_point.block(0).local_range().first;
+      end_index       = local_evaluation_point.block(0).local_range().second;
+      n_dofs_per_node = dim;
+      local_solution  = &local_evaluation_point.block(0);
+      local_average   = &average_velocities.block(0);
+    }
 
-      for (unsigned int i = begin_index; i < end_index; i += dim)
+  for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_node)
+    {
+      // Set index from solution vector to reynolds stresses vector.
+      unsigned int j = i * dim / 2;
+
+      // u'u'*dt
+      reynolds_stress_dt[j] = ((*local_solution)[i] - (*local_average)[i]) *
+                              ((*local_solution)[i] - (*local_average)[i]) * dt;
+
+      // v'v'*dt
+      reynolds_stress_dt[j + 1] =
+        ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+        ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
+
+      // u'v'*dt
+      reynolds_stress_dt[j + dim] =
+        ((*local_solution)[i] - (*local_average)[i]) *
+        ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
+
+      if (dim == 3)
         {
-          // Set related index from solution vector to reynolds tensor
-          // which is stored in a data vector.
-          unsigned int j = i * dim / 2;
+          // w'w'*dt
+          reynolds_stress_dt[j + 2] =
+            ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
+            ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
 
-          // u'u'*dt
-          reynolds_stress_dt[j] = (local_evaluation_point.block(0)[i] -
-                                   average_velocities.block(0)[i]) *
-                                  (local_evaluation_point.block(0)[i] -
-                                   average_velocities.block(0)[i]) *
-                                  dt;
+          // v'w'*dt
+          reynolds_stress_dt[j + 4] =
+            ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+            ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
 
-          // v'v'*dt
-          reynolds_stress_dt[j + 1] = (local_evaluation_point.block(0)[i + 1] -
-                                       average_velocities.block(0)[i + 1]) *
-                                      (local_evaluation_point.block(0)[i + 1] -
-                                       average_velocities.block(0)[i + 1]) *
-                                      dt;
-
-          // u'v'*dt
-          reynolds_stress_dt[j + dim] =
-            (local_evaluation_point.block(0)[i] -
-             average_velocities.block(0)[i]) *
-            (local_evaluation_point.block(0)[i + 1] -
-             average_velocities.block(0)[i + 1]) *
-            dt;
-
-          if (dim == 3)
-            {
-              // w'w'*dt
-              reynolds_stress_dt[j + 2] =
-                (local_evaluation_point.block(0)[i + 2] -
-                 average_velocities.block(0)[i + 2]) *
-                (local_evaluation_point.block(0)[i + 2] -
-                 average_velocities.block(0)[i + 2]) *
-                dt;
-
-              // v'w'*dt
-              reynolds_stress_dt[j + 4] =
-                (local_evaluation_point.block(0)[i + 1] -
-                 average_velocities.block(0)[i + 1]) *
-                (local_evaluation_point.block(0)[i + 2] -
-                 average_velocities.block(0)[i + 2]) *
-                dt;
-
-              // w'u'*dt
-              reynolds_stress_dt[j + 5] =
-                (local_evaluation_point.block(0)[i + 2] -
-                 average_velocities.block(0)[i + 2]) *
-                (local_evaluation_point.block(0)[i] -
-                 average_velocities.block(0)[i]) *
-                dt;
-            }
+          // w'u'*dt
+          reynolds_stress_dt[j + 5] =
+            ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
+            ((*local_solution)[i] - (*local_average)[i]) * dt;
         }
     }
 
