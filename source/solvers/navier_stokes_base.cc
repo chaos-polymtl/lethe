@@ -975,6 +975,17 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   this->solution_m1      = distributed_system_m1;
   this->solution_m2      = distributed_system_m2;
   this->solution_m3      = distributed_system_m3;
+
+  if (nsparam.flow_control.enable_flow_control)
+    {
+      this->flow_control.read(prefix);
+      this->flow_rate =
+        calculate_flow_rate(this->dof_handler,
+                            present_solution,
+                            nsparam.flow_control.boundary_flow_id,
+                            nsparam.fem_parameters,
+                            mpi_communicator);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1183,9 +1194,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
   std::string        prefix = this->nsparam.restart_parameters.filename;
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    simulation_control->save(prefix);
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    this->pvdhandler.save(prefix);
+    {
+      simulation_control->save(prefix);
+      this->flow_control.save(prefix);
+      this->pvdhandler.save(prefix);
+    }
 
   std::vector<const VectorType *> sol_set_transfer;
   auto &present_solution = this->get_present_solution();

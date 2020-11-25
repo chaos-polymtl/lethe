@@ -111,14 +111,42 @@ FlowControl<dim>::calculate_beta(const std::pair<double, double> &flow_rate,
   flow_rate_1n = flow_rate_n;
 }
 
-
 template <int dim>
-Tensor<1, dim>
-FlowControl<dim>::get_beta()
+void
+FlowControl<dim>::save(std::string prefix)
 {
-  return beta;
+  std::string   filename = prefix + ".flowcontrol";
+  std::ofstream output(filename.c_str());
+  output << "Flow control" << std::endl;
+  output << "Beta parameter " << beta_0 << std::endl;
+  output << "Flow rate parameter " << flow_rate_0 << std::endl;
+  output << "Previous beta " << beta_n << std::endl;
+  output << "Previous flow rate " << flow_rate_1n << std::endl;
+  output << "Flow direction " << flow_direction << std::endl;
+  output << "No force " << no_force << std::endl;
+  output << "Threshold factor " << threshold_factor << std::endl;
 }
 
+template <int dim>
+void
+FlowControl<dim>::read(std::string prefix)
+{
+  std::string   filename = prefix + ".flowcontrol";
+  std::ifstream input(filename.c_str());
+  if (!input)
+    {
+      throw("Unable to open file");
+    }
+  std::string buffer;
+  std::getline(input, buffer);
+  input >> buffer >> beta_0;
+  input >> buffer >> flow_rate_0;
+  input >> buffer >> beta_n;
+  input >> buffer >> flow_rate_1n;
+  input >> buffer >> flow_direction;
+  input >> buffer >> no_force;
+  input >> buffer >> threshold_factor;
+}
 
 template class FlowControl<2>;
 template class FlowControl<3>;
