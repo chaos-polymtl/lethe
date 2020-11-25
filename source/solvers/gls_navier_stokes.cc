@@ -28,13 +28,8 @@
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
 GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
-  NavierStokesSolverParameters<dim> &p_nsparam,
-  const unsigned int                 p_degreeVelocity,
-  const unsigned int                 p_degreePressure)
-  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(
-      p_nsparam,
-      p_degreeVelocity,
-      p_degreePressure)
+  NavierStokesSolverParameters<dim> &p_nsparam)
+  : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam)
 {}
 
 template <int dim>

@@ -28,10 +28,8 @@
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
 GLSSharpNavierStokesSolver<dim>::GLSSharpNavierStokesSolver(
-  NavierStokesSolverParameters<dim> &p_nsparam,
-  const unsigned int                 p_degreeVelocity,
-  const unsigned int                 p_degreePressure)
-  : GLSNavierStokesSolver<dim>(p_nsparam, p_degreeVelocity, p_degreePressure)
+  NavierStokesSolverParameters<dim> &p_nsparam)
+  : GLSNavierStokesSolver<dim>(p_nsparam)
 {}
 
 template <int dim>

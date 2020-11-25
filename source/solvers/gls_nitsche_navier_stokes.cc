@@ -36,13 +36,11 @@
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
 GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
-  NavierStokesSolverParameters<spacedim> &p_nsparam,
-  const unsigned int                      p_degreeVelocity,
-  const unsigned int                      p_degreePressure)
-  : GLSNavierStokesSolver<spacedim>(p_nsparam,
-                                    p_degreeVelocity,
-                                    p_degreePressure)
-  , solid(this->nsparam.nitsche, this->triangulation, p_degreeVelocity)
+  NavierStokesSolverParameters<spacedim> &p_nsparam)
+  : GLSNavierStokesSolver<spacedim>(p_nsparam)
+  , solid(this->nsparam.nitsche,
+          this->triangulation,
+          p_nsparam.fem_parameters.velocity_order)
 {}
 
 template <int dim, int spacedim>

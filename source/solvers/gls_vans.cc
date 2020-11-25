@@ -2,12 +2,10 @@
 
 // Constructor for class GLS_VANS
 template <int dim>
-GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam,
-                                  const unsigned int p_degree_velocity,
-                                  const unsigned int p_degree_pressure)
-  : GLSNavierStokesSolver<dim>(p_nsparam, p_degree_velocity, p_degree_pressure)
+GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam)
+  : GLSNavierStokesSolver<dim>(p_nsparam)
   , void_fraction_dof_handler(*this->triangulation)
-  , fe_void_fraction(p_degree_velocity)
+  , fe_void_fraction(p_nsparam.fem_parameters.velocity_order)
 
 {}
 

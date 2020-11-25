@@ -40,9 +40,7 @@ template <int dim>
 class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSSharpNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                             const unsigned int                 degreeVelocity,
-                             const unsigned int                 degreePressure);
+  GLSSharpNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam);
   ~GLSSharpNavierStokesSolver();
 
   void

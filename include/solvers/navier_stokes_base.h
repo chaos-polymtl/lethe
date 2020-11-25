@@ -130,9 +130,7 @@ template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
-  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,
-                   const unsigned int                 velocity_fem_degree,
-                   const unsigned int                 degreePressure);
+  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam);
 
   virtual ~NavierStokesBase()
   {}

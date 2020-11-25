@@ -39,9 +39,7 @@ class GLSNavierStokesSolver
   : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
 {
 public:
-  GLSNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                        const unsigned int                 velocity_fem_degree,
-                        const unsigned int                 degreePressure);
+  GLSNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam);
   ~GLSNavierStokesSolver();
 
   virtual void

@@ -29,10 +29,8 @@ template <int dim>
 class InitialConditionsNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  InitialConditionsNavierStokes(NavierStokesSolverParameters<dim> nsparam,
-                                const unsigned int degreeVelocity,
-                                const unsigned int degreePressure)
-    : GLSNavierStokesSolver<dim>(nsparam, degreeVelocity, degreePressure)
+  InitialConditionsNavierStokes(NavierStokesSolverParameters<dim> nsparam)
+    : GLSNavierStokesSolver<dim>(nsparam)
   {}
   void
   runTest();
@@ -111,10 +109,7 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       nsparam.parse(prm);
 
-      InitialConditionsNavierStokes<2> problem_2d(
-        nsparam,
-        nsparam.fem_parameters.velocity_order,
-        nsparam.fem_parameters.pressure_order);
+      InitialConditionsNavierStokes<2> problem_2d(nsparam);
       if (nsparam.test.enabled)
         problem_2d.runTest();
       else

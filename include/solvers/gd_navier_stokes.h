@@ -71,9 +71,7 @@ class GDNavierStokesSolver
                             std::vector<IndexSet>>
 {
 public:
-  GDNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam,
-                       const unsigned int                 velocity_fem_degree,
-                       const unsigned int                 degreePressure);
+  GDNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam);
   ~GDNavierStokesSolver();
 
   void

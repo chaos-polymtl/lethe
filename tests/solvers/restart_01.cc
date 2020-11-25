@@ -76,10 +76,8 @@ template <int dim>
 class RestartNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  RestartNavierStokes(NavierStokesSolverParameters<dim> nsparam,
-                      const unsigned int                degreeVelocity,
-                      const unsigned int                degreePressure)
-    : GLSNavierStokesSolver<dim>(nsparam, degreeVelocity, degreePressure)
+  RestartNavierStokes(NavierStokesSolverParameters<dim> nsparam)
+    : GLSNavierStokesSolver<dim>(nsparam)
   {}
   void
   run();
@@ -140,9 +138,7 @@ test()
   NSparam.linear_solver.verbosity       = Parameters::Verbosity::quiet;
   NSparam.boundary_conditions.createDefaultNoSlip();
 
-  RestartNavierStokes<2> problem_2d(NSparam,
-                                    NSparam.fem_parameters.velocity_order,
-                                    NSparam.fem_parameters.pressure_order);
+  RestartNavierStokes<2> problem_2d(NSparam);
   problem_2d.run();
 }
 

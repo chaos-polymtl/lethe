@@ -273,11 +273,6 @@ namespace Parameters
     // Interpolation order pressure
     unsigned int pressure_order;
 
-    // Number of quadrature points per dimension
-    // The final number of quadrature point will be
-    // number_quadrature_points^dim
-    unsigned int number_quadrature_points;
-
     // Apply high order mapping everywhere
     bool qmapping_all;
 

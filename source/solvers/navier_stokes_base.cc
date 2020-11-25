@@ -46,9 +46,7 @@
  */
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
-  NavierStokesSolverParameters<dim> &p_nsparam,
-  const unsigned int                 p_degreeVelocity,
-  const unsigned int                 p_degreePressure)
+  NavierStokesSolverParameters<dim> &p_nsparam)
   : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver)
   //      new NewtonNonLinearSolver<VectorType>(this,
   //      p_nsparam.nonLinearSolver))
@@ -62,16 +60,19 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
           Triangulation<dim>::smoothing_on_refinement |
           Triangulation<dim>::smoothing_on_coarsening))))
   , dof_handler(*this->triangulation)
-  , fe(FE_Q<dim>(p_degreeVelocity), dim, FE_Q<dim>(p_degreePressure), 1)
+  , fe(FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
+       dim,
+       FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
+       1)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , nsparam(p_nsparam)
   , flow_control(nsparam.flow_control)
-  , velocity_fem_degree(p_degreeVelocity)
-  , pressure_fem_degree(p_degreePressure)
-  , number_quadrature_points(p_degreeVelocity + 1)
+  , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
+  , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
+  , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
 {
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
@@ -97,11 +98,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         simulation_control = std::make_shared<SimulationControlTransient>(
           nsparam.simulation_control);
     }
-
-
-  // Override default value of quadrature point if they are specified
-  if (nsparam.fem_parameters.number_quadrature_points > 0)
-    number_quadrature_points = nsparam.fem_parameters.number_quadrature_points;
 
   // Change the behavior of the timer for situations when you don't want outputs
   if (nsparam.timer.type == Parameters::Timer::Type::none)
