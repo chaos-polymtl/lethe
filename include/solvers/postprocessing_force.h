@@ -57,8 +57,6 @@ using namespace dealii;
  *
  * @param physical_properties The parameters containing the required physical properties
  *
- * @param fem_parameters The fem_parameters of the simulation
- *
  * @param boundary_conditions The boundary conditions object
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
@@ -69,7 +67,6 @@ calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
-  const Parameters::FEM &                              fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator);
 

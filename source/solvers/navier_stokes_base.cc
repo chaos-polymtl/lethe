@@ -180,7 +180,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   this->forces_on_boundaries = calculate_forces(this->dof_handler,
                                                 evaluation_point,
                                                 nsparam.physical_properties,
-                                                nsparam.fem_parameters,
                                                 nsparam.boundary_conditions,
                                                 mpi_communicator);
 

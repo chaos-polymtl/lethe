@@ -35,7 +35,6 @@ calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
-  const Parameters::FEM &                              fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator)
 {
@@ -43,9 +42,9 @@ calculate_forces(
 
   double viscosity = physical_properties.viscosity;
 
-  QGauss<dim - 1>     face_quadrature_formula(fe.degree + 1);
-  const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
-  const unsigned int  n_q_points = face_quadrature_formula.size();
+  QGauss<dim - 1>                  face_quadrature_formula(fe.degree + 1);
+  const MappingQ<dim>              mapping(fe.degree, true);
+  const unsigned int               n_q_points = face_quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   std::vector<double>              pressure_values(n_q_points);
@@ -72,34 +71,39 @@ calculate_forces(
         {
           if (cell->is_locally_owned())
             {
-              for (unsigned int face = 0;
-                   face < GeometryInfo<dim>::faces_per_cell;
-                   face++)
+              if (cell->at_boundary())
                 {
-                  if (cell->face(face)->at_boundary())
+                  for (unsigned int face = 0;
+                       face < GeometryInfo<dim>::faces_per_cell;
+                       face++)
                     {
-                      fe_face_values.reinit(cell, face);
-                      if (cell->face(face)->boundary_id() == boundary_id)
+                      if (cell->face(face)->at_boundary())
                         {
-                          std::vector<Point<dim>> q_points =
-                            fe_face_values.get_quadrature_points();
-                          fe_face_values[velocities].get_function_gradients(
-                            evaluation_point, velocity_gradients);
-                          fe_face_values[pressure].get_function_values(
-                            evaluation_point, pressure_values);
-                          for (unsigned int q = 0; q < n_q_points; q++)
+                          fe_face_values.reinit(cell, face);
+                          if (cell->face(face)->boundary_id() == boundary_id)
                             {
-                              normal_vector = -fe_face_values.normal_vector(q);
-                              for (int d = 0; d < dim; ++d)
+                              std::vector<Point<dim>> q_points =
+                                fe_face_values.get_quadrature_points();
+                              fe_face_values[velocities].get_function_gradients(
+                                evaluation_point, velocity_gradients);
+                              fe_face_values[pressure].get_function_values(
+                                evaluation_point, pressure_values);
+                              for (unsigned int q = 0; q < n_q_points; q++)
                                 {
-                                  fluid_pressure[d][d] = pressure_values[q];
+                                  normal_vector =
+                                    -fe_face_values.normal_vector(q);
+                                  for (int d = 0; d < dim; ++d)
+                                    {
+                                      fluid_pressure[d][d] = pressure_values[q];
+                                    }
+                                  fluid_stress =
+                                    viscosity *
+                                      (velocity_gradients[q] +
+                                       transpose(velocity_gradients[q])) -
+                                    fluid_pressure;
+                                  force += fluid_stress * normal_vector *
+                                           fe_face_values.JxW(q);
                                 }
-                              fluid_stress =
-                                viscosity * (velocity_gradients[q] +
-                                             transpose(velocity_gradients[q])) -
-                                fluid_pressure;
-                              force += fluid_stress * normal_vector *
-                                       fe_face_values.JxW(q);
                             }
                         }
                     }
@@ -116,7 +120,6 @@ calculate_forces<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
-  const Parameters::FEM &                            fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const MPI_Comm &                                   mpi_communicator);
 template std::vector<Tensor<1, 3>>
@@ -124,7 +127,6 @@ calculate_forces<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::Vector &              evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
-  const Parameters::FEM &                            fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const MPI_Comm &                                   mpi_communicator);
 
@@ -133,7 +135,6 @@ calculate_forces<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
-  const Parameters::FEM &                            fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<2> &boundary_conditions,
   const MPI_Comm &                                   mpi_communicator);
 
@@ -142,6 +143,5 @@ calculate_forces<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                              dof_handler,
   const TrilinosWrappers::MPI::BlockVector &         evaluation_point,
   const Parameters::PhysicalProperties &             physical_properties,
-  const Parameters::FEM &                            fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<3> &boundary_conditions,
   const MPI_Comm &                                   mpi_communicator);
