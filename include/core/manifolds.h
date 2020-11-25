@@ -106,8 +106,7 @@ public:
     const DataPostprocessorInputs::Vector<dim> &input_data,
     std::vector<Vector<double>> &computed_quantities) const override
   {
-    const typename DoFHandler<dim>::cell_iterator current_cell =
-      input_data.template get_cell<DoFHandler<dim>>();
+    auto current_cell = input_data.template get_cell<dim>();
 
     for (unsigned int p = 0; p < input_data.evaluation_points.size(); ++p)
       {
@@ -165,17 +164,20 @@ attach_manifolds_to_triangulation(
  *
  * @param manifold_id Identifier of the manifold
  */
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id);
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   std::string                                                   cad_name,
   unsigned int                                                  manifold_id);
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id);
