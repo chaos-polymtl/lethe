@@ -901,7 +901,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                         this->locally_relevant_dofs,
                                         this->mpi_communicator);
 
-          if constexpr (dim == 2)
+          if (dim == 2)
             {
               FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
                                   dim,
@@ -910,7 +910,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
               this->dof_handler_rs.distribute_dofs(fe_rs);
             }
-          else if constexpr (dim == 3)
+          else if (dim == 3)
             {
               FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
                                   dim,

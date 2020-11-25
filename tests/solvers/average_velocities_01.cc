@@ -28,13 +28,9 @@
 #include "../tests.h"
 
 void
-test(int argc, char **argv)
+test()
 {
-  // MPI initialization
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-
-  MPI_Comm mpi_communicator = MPI_COMM_WORLD;
+  MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   // SimulationControl parameters
   Parameters::SimulationControl simulation_control_parameters;
@@ -121,7 +117,9 @@ main(int argc, char **argv)
   try
     {
       initlog();
-      test(argc, argv);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test();
     }
   catch (std::exception &exc)
     {
