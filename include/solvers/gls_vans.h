@@ -119,6 +119,7 @@ private:
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
 
+  const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
 };

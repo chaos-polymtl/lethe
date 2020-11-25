@@ -56,9 +56,9 @@ GLSVANSSolver<dim>::finish_time_step()
 {
   GLSNavierStokesSolver<dim>::finish_time_step();
 
-  //  void_fraction_m3 = void_fraction_m2;
-  //  void_fraction_m2 = void_fraction_m1;
-  //  void_fraction_m1 = nodal_void_fraction_relevant;
+  // void_fraction_m3 = void_fraction_m2;
+  // void_fraction_m2 = void_fraction_m1;
+  // void_fraction_m1 = nodal_void_fraction_relevant;
 }
 
 template <int dim>
@@ -530,8 +530,9 @@ GLSVANSSolver<dim>::assembleGLS()
                               phi_u[i] * sdirk_coefs[0][0] * JxW;
 
                           // PSPG GLS term
-                          local_matrix(i, j) +=
-                            tau * strong_jac * grad_phi_p[i] * JxW;
+                          if (PSPG)
+                            local_matrix(i, j) +=
+                              tau * strong_jac * grad_phi_p[i] * JxW;
 
                           if (velocity_source == Parameters::VelocitySource::
                                                    VelocitySourceType::srf)
@@ -631,6 +632,36 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[1] * p1_void_fraction_values[q]) *
                         phi_p[i] * JxW;
                     }
+
+                  // std::cout << "mass source " << mass_source << std::endl;
+                  // std::cout << "mass derivative "
+                  //          << (bdf_coefs[0] * present_void_fraction_values[q]
+                  //          +
+                  //              bdf_coefs[1] * p1_void_fraction_values[q])
+                  //          << std::endl;
+                  // std::cout << "velocity divergence "
+                  //          << present_velocity_divergence *
+                  //               present_void_fraction_values[q]
+                  //          << std::endl;
+                  // std::cout << "void gradient "
+                  //          << present_velocity_values[q] *
+                  //               present_void_fraction_gradients[q]
+                  //          << std::endl;
+
+
+                  // std::cout << "first term : "
+                  //          << (bdf_coefs[0] *
+                  //          present_velocity_values[q] +
+                  //              bdf_coefs[1] *
+                  //              p1_velocity_values[q])
+                  //          << std::endl;
+                  // std::cout << "first term : "
+                  //          << (bdf_coefs[0] *
+                  //          present_void_fraction_values[q]
+                  //          +
+                  //              bdf_coefs[1] *
+                  //              p1_void_fraction_values[q])
+                  //          << std::endl;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -732,8 +763,9 @@ GLSVANSSolver<dim>::assembleGLS()
                     }
 
                   // PSPG GLS term
-                  local_rhs(i) +=
-                    -tau * (strong_residual * grad_phi_p[i]) * JxW;
+                  if (PSPG)
+                    local_rhs(i) +=
+                      -tau * (strong_residual * grad_phi_p[i]) * JxW;
 
                   // SUPG GLS term
                   if (SUPG)
@@ -1069,7 +1101,10 @@ GLSVANSSolver<dim>::solve()
     {
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        {
+          calculate_void_fraction();
+          this->first_iteration();
+        }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
