@@ -20,37 +20,25 @@
 #ifndef lethe_postprocessing_velocities_h
 #define lethe_postprocessing_velocities_h
 
-// Base
-#include <deal.II/base/symmetric_tensor.h>
-#include <deal.II/base/table_indices.h>
-
 // Lac - Trilinos includes
 #include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 // Dofs
-#include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
-#include <deal.II/dofs/dof_tools.h>
-
-// Numerics
-#include <deal.II/numerics/solution_transfer.h>
-#include <deal.II/numerics/vector_tools.h>
 
 // Lethe Includes
 #include <core/parameters.h>
-#include <core/simulation_control.h>
-
-#include "navier_stokes_solver_parameters.h"
-#include "post_processors.h"
-
 
 using namespace dealii;
+
 /**
  * @brief AverageVelocities. The AverageVelocities class calculates the
- * time-averaged velocities and pressure (<u>, <v>, <w>, <p>). The generated
- * vector is output with the solution and visualization is possible.
+ * time-averaged velocities and pressure (<u>, <v>, <w>, <p>) and the
+ * independent components of the Reynolds stresses tensor (<u'u'>, <v'v'>,
+ * <w'w'>, <u'v'>, <v'w'>, <w'u'>). The generated vectors are displayable of
+ * visualization software.
  *
  * Important : Time-averaging velocities and calculating reynolds stresses are
  * currently unavailable for mesh adaptation.
@@ -74,6 +62,8 @@ public:
    *
    * @param locally_owned_dofs. The owned dofs
    *
+   * @param locally_owned_rs_components. The owned Reynolds stress components
+   *
    * @param mpi_communicator. The mpi communicator information
    */
   void
@@ -86,11 +76,10 @@ public:
     const IndexSet &                  locally_owned_rs_components,
     const MPI_Comm &                  mpi_communicator);
 
-
   /**
-   * @brief calculate_reynolds_stress. This function calculates normal
-   * time-averaged Reynold stresses and shear stress (<u'u'>, <v'v'>, <w'w'>
-   * and <u'v'>.
+   * @brief calculate_reynolds_stress. This function calculates normal and
+   * other resolved time-averaged Reynold stresses (<u'u'>, <v'v'>, <w'w'>
+   * and <u'v'>, <v'w'>, <w'u'>).
    *
    * @param local_evaluation_point. The vector solutions with no ghost cells
    */
@@ -107,8 +96,8 @@ public:
   }
 
   /**
-   * @brief get_reynolds_stress. Gives the time-averaged normal Reynolds
-   * stresses and shear stress
+   * @brief get_reynolds_stress. Gives the time-averaged Reynolds
+   * stresses.
    */
   const LinearAlgebra::distributed::Vector<double> &
   get_reynolds_stresses()

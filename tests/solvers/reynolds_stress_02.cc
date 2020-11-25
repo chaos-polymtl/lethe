@@ -23,6 +23,7 @@
  */
 
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 #include <solvers/postprocessing_velocities.h>
 
 #include "../tests.h"
@@ -87,6 +88,7 @@ test(int argc, char **argv)
   double       dt           = 0.0;
   double       epsilon      = 1e-6;
 
+  // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
@@ -101,16 +103,6 @@ test(int argc, char **argv)
             mpi_communicator);
 
           stress_solution = postprocessing_velocities.get_reynolds_stresses();
-
-          std::cout << stress_solution[0] << std::endl;
-          std::cout << stress_solution[1] << std::endl;
-          std::cout << stress_solution[2] << std::endl;
-          std::cout << stress_solution[3] << std::endl;
-          std::cout << stress_solution[4] << std::endl;
-          std::cout << stress_solution[5] << std::endl;
-          std::cout << stress_solution[6] << std::endl;
-          std::cout << stress_solution[7] << std::endl;
-          std::cout << stress_solution[8] << std::endl;
 
           deallog << " Time  :      " << time << std::endl;
           deallog << " Time step  : " << dt << std::endl;

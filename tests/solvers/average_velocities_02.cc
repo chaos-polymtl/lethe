@@ -23,6 +23,7 @@
  */
 
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 #include <solvers/postprocessing_velocities.h>
 
 #include "../tests.h"
@@ -82,9 +83,9 @@ test(int argc, char **argv)
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;
+  const double epsilon      = 1e-6;
 
-  const double epsilon = 1e-6;
-
+  // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time

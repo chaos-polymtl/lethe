@@ -877,10 +877,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-  // The average_solution and reynolds_stress vectors are reinitialize at the
+  // The average_solution and reynolds_stresses vectors are reinitialized at the
   // first iteration.
   // Since the reynolds_stress (rs) vector doesn't have the same number of
-  // elements than the number of dofs, it's required its own dof_handler object
+  // elements than the number of dofs, it requires its own dof_handler object
   // even if data is not dofs. It allows to know locally owned elements and
   // to output data.
   // The average velocities and reynolds stresses are calculated when the
@@ -916,8 +916,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           DoFTools::extract_locally_relevant_dofs(
             this->dof_handler_rs, this->locally_relevant_rs_components);
 
-          this->reynolds_stresses.reinit(locally_owned_rs_components,
-                                         locally_relevant_rs_components,
+          this->reynolds_stresses.reinit(this->locally_owned_rs_components,
+                                         this->locally_relevant_rs_components,
                                          this->mpi_communicator);
         }
       else if (simulation_control->get_current_time() >
@@ -928,9 +928,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             nsparam.post_processing,
             simulation_control->get_current_time(),
             simulation_control->get_time_step(),
-            locally_owned_dofs,
-            locally_owned_rs_components,
-            mpi_communicator);
+            this->locally_owned_dofs,
+            this->locally_owned_rs_components,
+            this->mpi_communicator);
 
           this->average_solution  = average_velocities.get_average_velocities();
           this->reynolds_stresses = average_velocities.get_reynolds_stresses();
