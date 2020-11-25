@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output name              = case0_vans
+  set output name              = mms2d_
 end
 
 #---------------------------------------------------
@@ -32,7 +32,7 @@ end
 subsection void fraction
    set mode = function
      subsection function
-     set Function expression = 0.5
+     set Function expression = exp(-sin(pi*x)*sin(pi*y))/exp(1)
      end
 end
 
@@ -40,10 +40,50 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 1
+  set number                  = 4
     subsection bc 0
-        set type              = noslip
-    end
+        set id                = 0
+        set type              = function
+        subsection u
+            set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
+        end
+        subsection v
+            set Function expression = exp(sin(-pi)*sin(pi*y))/exp(1)
+        end
+end
+
+    subsection bc 1
+        set id                = 1
+        set type              = function
+        subsection u
+            set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
+        end
+        subsection v
+            set Function expression = exp(sin(pi)*sin(pi*y))/exp(1)
+        end
+end
+
+    subsection bc 2
+        set id                = 2
+        set type              = function
+        subsection u
+            set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
+        end
+        subsection v
+            set Function expression = exp(sin(pi*x)*sin(-pi))/exp(1)
+        end
+end
+
+    subsection bc 3
+        set id                = 3
+        set type              = function
+        subsection u
+            set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
+        end
+        subsection v
+            set Function expression = exp(sin(pi*x)*sin(pi))/exp(1)
+        end
+end
 end
 
 # --------------------------------------------------
@@ -52,7 +92,7 @@ end
 subsection source term
   set enable                 = true
     subsection xyz
-            set Function expression = pi*(16.0*pi*sin(pi*x)^2*cos(pi*y) - 4.0*pi*cos(pi*y) + 1.0*sin(pi*x)^3*sin(pi*y)*cos(pi*x) + 1.0*cos(pi*x))*sin(pi*y); pi*(-16.0*pi*sin(pi*y)^2*cos(pi*x) + 4.0*pi*cos(pi*x) + 1.0*sin(pi*x)*sin(pi*y)^3*cos(pi*y) + 1.0*cos(pi*y))*sin(pi*x); 0
+            set Function expression = pi*(pi*(cos(pi*(x - y)) + cos(2*pi*(x - y))/4 - cos(pi*(x + y)) + cos(2*pi*(x + y))/4 - 1/2)*exp(sin(pi*x)*sin(pi*y) + 2) + exp(sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(3)*sin(pi*y)*cos(pi*x))*exp(sin(pi*x)*sin(pi*y) - 2); pi*(pi*(cos(pi*(x - y)) + cos(2*pi*(x - y))/4 - cos(pi*(x + y)) + cos(2*pi*(x + y))/4 - 1/2)*exp(sin(pi*x)*sin(pi*y) + 2) + exp(sin(pi*x)*sin(pi*y))*sin(pi*(x + y)) + 0.5*exp(3)*sin(pi*x)*cos(pi*y))*exp(sin(pi*x)*sin(pi*y) - 2); 0
     end
 end
 
@@ -62,7 +102,7 @@ end
 subsection analytical solution
   set enable                 = true
     subsection uvw
-            set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
+            set Function expression = exp(sin(pi*x)*sin(pi*y))/exp(1) ; exp(sin(pi*x)*sin(pi*y))/exp(1); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
     end
 end
 # --------------------------------------------------
@@ -79,7 +119,6 @@ end
 subsection non-linear solver
   set tolerance               = 1e-8
   set max iterations          = 10
-  set residual precision      = 2
   set verbosity               = quiet
 end
 

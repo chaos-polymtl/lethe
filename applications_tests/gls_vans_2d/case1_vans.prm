@@ -6,7 +6,7 @@
 subsection simulation control
   set method                  = steady
   set number mesh adapt       = 2
-  set output name              = case0_vans
+  set output name              = case1_vans
 end
 
 #---------------------------------------------------
@@ -26,13 +26,20 @@ subsection mesh
     set initial refinement   = 4
 end
 
+
+subsection FEM
+set velocity order = 1
+set pressure order =1
+
+end
+
 #---------------------------------------------------
 # Void Fraction
 #---------------------------------------------------
 subsection void fraction
    set mode = function
      subsection function
-     set Function expression = 0.5
+     set Function expression = 0.5 + 0.25*sin(pi*x)*sin(pi*y)
      end
 end
 
@@ -52,7 +59,7 @@ end
 subsection source term
   set enable                 = true
     subsection xyz
-            set Function expression = pi*(16.0*pi*sin(pi*x)^2*cos(pi*y) - 4.0*pi*cos(pi*y) + 1.0*sin(pi*x)^3*sin(pi*y)*cos(pi*x) + 1.0*cos(pi*x))*sin(pi*y); pi*(-16.0*pi*sin(pi*y)^2*cos(pi*x) + 4.0*pi*cos(pi*x) + 1.0*sin(pi*x)*sin(pi*y)^3*cos(pi*y) + 1.0*cos(pi*y))*sin(pi*x); 0
+            set Function expression = pi*(-16*pi*sin(pi*x)^2*cos(pi*y) + 4*pi*cos(pi*y) + cos(pi*x))*sin(pi*y)/(0.25*sin(pi*x)*sin(pi*y) + 0.5) + 4*pi*sin(pi*x)^3*sin(pi*y)^2*cos(pi*x); pi*(16*pi*sin(pi*y)^2*cos(pi*x) - 4*pi*cos(pi*x) + cos(pi*y))*sin(pi*x)/(0.25*sin(pi*x)*sin(pi*y) + 0.5) + 4*pi*sin(pi*x)^2*sin(pi*y)^3*cos(pi*y); 0
     end
 end
 
@@ -62,7 +69,7 @@ end
 subsection analytical solution
   set enable                 = true
     subsection uvw
-            set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
+            set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
     end
 end
 # --------------------------------------------------
