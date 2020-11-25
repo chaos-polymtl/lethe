@@ -901,16 +901,29 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                                         this->locally_relevant_dofs,
                                         this->mpi_communicator);
 
-          FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
-                              dim,
-                              FE_Q<dim>(this->velocity_fem_degree),
-                              1,
-                              FE_Q<dim>(this->velocity_fem_degree),
-                              1,
-                              FE_Q<dim>(this->velocity_fem_degree),
-                              1);
+          if constexpr (dim == 2)
+            {
+              FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
+                                  dim,
+                                  FE_Q<dim>(this->velocity_fem_degree),
+                                  1);
 
-          dof_handler_rs.distribute_dofs(fe_rs);
+              this->dof_handler_rs.distribute_dofs(fe_rs);
+            }
+          else if constexpr (dim == 3)
+            {
+              FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
+                                  dim,
+                                  FE_Q<dim>(this->velocity_fem_degree),
+                                  1,
+                                  FE_Q<dim>(this->velocity_fem_degree),
+                                  1,
+                                  FE_Q<dim>(this->velocity_fem_degree),
+                                  1);
+
+              this->dof_handler_rs.distribute_dofs(fe_rs);
+            }
+
           this->locally_owned_rs_components =
             dof_handler_rs.locally_owned_dofs();
           DoFTools::extract_locally_relevant_dofs(
@@ -1191,25 +1204,29 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                                DataOut<dim>::type_dof_data,
                                average_data_component_interpretation);
 
-
       // Add the interpretation of the reynolds stresses of solution.
       // The dim first components are the normal reynolds stress vectors and
-      // the following ones are resolved reynolds stresses.
-      // (<u'u'>, <v'v'>, <w'w'>, <u'v'>, <v'w'>, <w'u'>)
+      // the following ones are others resolved reynolds stresses.
       std::vector<std::string> reynolds_stress_names(dim,
                                                      "normal_reynolds_stress");
-      reynolds_stress_names.push_back("uv_reynolds_stress");
-      reynolds_stress_names.push_back("vw_reynolds_stress");
-      reynolds_stress_names.push_back("wu_reynolds_stress");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         reynolds_stress_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
+      reynolds_stress_names.push_back("uv_reynolds_stress");
       reynolds_stress_data_component_interpretation.push_back(
         DataComponentInterpretation::component_is_scalar);
-      reynolds_stress_data_component_interpretation.push_back(
-        DataComponentInterpretation::component_is_scalar);
-      reynolds_stress_data_component_interpretation.push_back(
-        DataComponentInterpretation::component_is_scalar);
+
+      if (dim == 3)
+        {
+          reynolds_stress_names.push_back("vw_reynolds_stress");
+          reynolds_stress_names.push_back("wu_reynolds_stress");
+          reynolds_stress_data_component_interpretation.push_back(
+            DataComponentInterpretation::component_is_scalar);
+          reynolds_stress_data_component_interpretation.push_back(
+            DataComponentInterpretation::component_is_scalar);
+        }
+
+      this->reynolds_stresses.update_ghost_values();
 
       data_out.add_data_vector(this->dof_handler_rs,
                                this->reynolds_stresses,
