@@ -21,11 +21,8 @@
 #include "core/solid_base.h"
 
 void
-test(int argc, char *argv[])
+test()
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   auto param = std::make_shared<Parameters::Nitsche<2>>();
@@ -83,7 +80,9 @@ main(int argc, char *argv[])
   try
     {
       initlog();
-      test(argc, argv);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test();
     }
   catch (std::exception &exc)
     {

@@ -6,11 +6,8 @@
  */
 
 void
-test(int argc, char **argv)
+test()
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::quiet,
     Parameters::NonLinearSolver::SolverType::newton,
@@ -42,7 +39,9 @@ main(int argc, char **argv)
   try
     {
       initlog();
-      test(argc, argv);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test();
     }
   catch (std::exception &exc)
     {

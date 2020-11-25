@@ -32,11 +32,8 @@ output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,
 }
 
 void
-test(int argc, char *argv[])
+test()
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
   NavierStokesSolverParameters<3> NSparam;
@@ -104,7 +101,9 @@ main(int argc, char *argv[])
   try
     {
       initlog();
-      test(argc, argv);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test();
     }
   catch (std::exception &exc)
     {
