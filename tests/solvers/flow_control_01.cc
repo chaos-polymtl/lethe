@@ -22,10 +22,12 @@
  * force coefficient at each time step.
  */
 
+// Lethe
 #include <core/parameters.h>
 #include <solvers/flow_control.h>
 
-#include "../tests.h"
+// Tests
+#include <../tests/tests.h>
 
 void
 test()

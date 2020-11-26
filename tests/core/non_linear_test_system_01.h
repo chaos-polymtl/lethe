@@ -17,9 +17,11 @@
  * Author: Simon Gauvin, Polytechnique Montreal, 2019
  */
 
-#include <core/physics_solver.h>
+// Deal.II includes
+#include <deal.II/lac/lapack_full_matrix.h>
 
-#include "../tests.h"
+// Lethe
+#include <core/physics_solver.h>
 
 /**
  * @brief The TestClass houses a very simple non-linear system that is used to test the various non-linear solvers

@@ -1,7 +1,13 @@
-// check the read and write of simulationcontrol
+/**
+ * @brief This code tests the coefficients required for BDF integration
+ * of order n.
+ */
 
-#include "../tests.h"
-#include "core/bdf.h"
+// Lethe
+#include <core/bdf.h>
+
+// Tests
+#include <../tests/tests.h>
 
 
 void

@@ -22,10 +22,12 @@
  * do not affect the end of the simulation
  */
 
+// Lethe
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
-#include "../tests.h"
-#include "core/simulation_control.h"
+// Tests
+#include <../tests/tests.h>
 
 void
 test()

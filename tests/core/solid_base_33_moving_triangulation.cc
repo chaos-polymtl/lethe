@@ -17,11 +17,27 @@
 * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020-
 */
 
+// Deal.II includes
+#include <deal.II/base/utilities.h>
+
+#include <deal.II/distributed/tria.h>
+
 #include <deal.II/fe/mapping_q.h>
 
-#include "../tests.h"
-#include "core/solid_base.h"
-#include "core/solutions_output.h"
+#include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/particles/data_out.h>
+
+// Lethe
+#include <core/parameters.h>
+#include <core/solid_base.h>
+#include <core/solutions_output.h>
+#include <solvers/nitsche.h>
+
+// Tests
+#include <../tests/tests.h>
+
+
 
 void
 test()

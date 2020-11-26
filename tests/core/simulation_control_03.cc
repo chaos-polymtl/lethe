@@ -19,16 +19,18 @@
 
 /**
  * @brief This test checks that the transient simulation control stops
- * at the correct moment and behaves in a correct manner
+ * at the correct moment and behaves in a correct manner.
  */
 
 // We first check if the constant time-stepping number work
 // then we test adaptative time-stepping
 
+// Lethe
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
-#include "../tests.h"
-#include "core/simulation_control.h"
+// Tests
+#include <../tests/tests.h>
 
 void
 test()

@@ -1,9 +1,17 @@
-// check the read and write of simulationcontrol
+/**
+ * @brief This code checks the read and write of simulationcontrol.
+ */
+
+// Deal.II includes
+#include <deal.II/base/function.h>
+#include <deal.II/base/types.h>
+
+// Lethe
+#include <core/parameters.h>
+#include <solvers/gls_navier_stokes.h>
+#include <solvers/navier_stokes_solver_parameters.h>
 
 #include "../tests.h"
-#include "core/parameters.h"
-#include "solvers/gls_navier_stokes.h"
-#include "solvers/navier_stokes_solver_parameters.h"
 
 template <int dim>
 class ExactSolutionMMS : public Function<dim>

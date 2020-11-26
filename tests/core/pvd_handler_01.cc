@@ -2,8 +2,11 @@
  * @brief Check the read and write of simulationcontrol
  */
 
-#include "../tests.h"
-#include "core/pvd_handler.h"
+// Lethe
+#include <core/pvd_handler.h>
+
+// Tests
+#include <../tests/tests.h>
 
 void
 test()

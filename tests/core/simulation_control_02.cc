@@ -22,11 +22,12 @@
  * at the correct moment and behaves in a correct manner
  */
 
-
+// Lethe
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 
-#include "../tests.h"
-#include "core/simulation_control.h"
+// Tests
+#include <../tests/tests.h>
 
 void
 test()
@@ -37,7 +38,6 @@ test()
   simulationControlParameters.adapt  = false;
   simulationControlParameters.maxCFL = 99;
   simulationControlParameters.method =
-
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
 
   simulationControlParameters.timeEnd                = 999;

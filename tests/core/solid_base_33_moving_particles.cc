@@ -17,8 +17,22 @@
 * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
 */
 
-#include "../tests.h"
-#include "core/solid_base.h"
+// Deal.II includes
+#include <deal.II/base/utilities.h>
+
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/particles/data_out.h>
+
+// Lethe
+#include <core/parameters.h>
+#include <core/solid_base.h>
+#include <solvers/nitsche.h>
+
+// Tests
+#include <../tests/tests.h>
 
 void
 output(std::shared_ptr<Particles::ParticleHandler<3>> particle_handler,

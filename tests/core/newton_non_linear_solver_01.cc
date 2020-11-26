@@ -1,9 +1,17 @@
-#include "non_linear_test_system_01.h"
-
 /**
  * @brief The TestClass tests the non-linear solvers using a simple systme of two
  * equations, only one of which is non-linear
  */
+
+// Deal.II includes
+#include <deal.II/base/utilities.h>
+
+// Lethe
+#include <core/parameters.h>
+
+// Tests
+#include <../tests/core/non_linear_test_system_01.h>
+#include <../tests/tests.h>
 
 void
 test()
