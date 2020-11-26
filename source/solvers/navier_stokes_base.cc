@@ -31,9 +31,6 @@
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_enstrophy.h>
-#include <solvers/postprocessing_kinetic_energy.h>
-#include <solvers/postprocessing_torque.h>
 #include <solvers/postprocessing_velocities.h>
 
 #include "core/time_integration_utilities.h"

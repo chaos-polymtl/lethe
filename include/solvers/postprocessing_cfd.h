@@ -66,6 +66,48 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
               const MPI_Comm &       mpi_communicator);
 
 /**
+ * @brief Calculate the average enstrophy in the simulation domain
+ * @return average kinetic energy in the domain
+ * Post-processing function
+ * This function calculates the average enstrophy in the simulation domain
+ *
+ * @param dof_handler The dof_handler used for the calculation
+ *
+ * @param evaluation_point The solution at which the force is calculated
+ *
+ * @param fem_parameters The fem_parameters of the simulation
+ *
+ * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ */
+template <int dim, typename VectorType>
+double
+calculate_enstrophy(const DoFHandler<dim> &dof_handler,
+                    const VectorType &     evaluation_point,
+                    const Parameters::FEM &fem_parameters,
+                    const MPI_Comm &       mpi_communicator);
+
+/**
+ * @brief Calculate the average kinetic energy in the simulation domain
+ * @return average kinetic energy in the domain
+ * Post-processing function
+ * This function calculates the average kinetic energy in the simulation domain
+ *
+ * @param dof_handler The dof_handler used for the calculation
+ *
+ * @param evaluation_point The solution at which the force is calculated
+ *
+ * @param fem_parameters The fem_parameters of the simulation
+ *
+ * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ */
+template <int dim, typename VectorType>
+double
+calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
+                         const VectorType &     evaluation_point,
+                         const Parameters::FEM &fem_parameters,
+                         const MPI_Comm &       mpi_communicator);
+
+/**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
  * @return std::vector of forces on each boundary condition
  * Post-processing function
@@ -89,6 +131,37 @@ calculate_forces(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
+  const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
+  const MPI_Comm &                                     mpi_communicator);
+
+
+/**
+ * @brief Calculates the torques due to the fluid motion on every boundary conditions
+ * @return std::vector of torques on each boundary condition
+ * Post-processing function
+ * This function calculates the torqueacting on each of the boundary conditions
+ * within the domain. It generates a vector which size is the number of boundary
+ * conditions.
+ *
+ * @param dof_handler The dof_handler used for the calculation.
+ *
+ * @param evaluation_point The solution at which the torque is calculated.
+ *
+ * @param physical_properties The parameters containing the required physical properties.
+ *
+ * @param fem_parameters The fem_parameters of the simulation.
+ *
+ * @param boundary_conditions The boundary conditions object.
+ *
+ * @param mpi_communicator The mpi communicator. It is used to reduce the torque calculation.
+ */
+template <int dim, typename VectorType>
+std::vector<Tensor<1, 3>>
+calculate_torques(
+  const DoFHandler<dim> &                              dof_handler,
+  const VectorType &                                   evaluation_point,
+  const Parameters::PhysicalProperties &               physical_properties,
+  const Parameters::FEM &                              fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator);
 
