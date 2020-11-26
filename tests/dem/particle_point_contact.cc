@@ -82,6 +82,7 @@ test()
   dem_parameters.physical_properties.friction_coefficient_wall        = 0.05;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
   dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
+  const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
@@ -137,14 +138,15 @@ test()
       particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
 
       contact_candidates =
-        broad_search_object.find_Particle_Point_Contact_Pairs(
+        broad_search_object.find_particle_point_contact_pairs(
           particle_handler,
           boundary_cells_object.get_boundary_cells_with_points());
 
       contact_information =
-        fine_search_object.Particle_Point_Fine_Search(contact_candidates);
+        fine_search_object.particle_point_fine_search(contact_candidates,
+                                                      neighborhood_threshold);
 
-      force_object.calculate_particle_point_line_contact_force(
+      force_object.calculate_particle_point_contact_force(
         &contact_information, dem_parameters.physical_properties);
       integrator_object.integrate(particle_handler, g, dt);
 

@@ -92,8 +92,8 @@ test()
   typename Triangulation<dim>::active_cell_iterator cell1 =
     GridTools::find_active_cell_around_point(triangulation,
                                              particle1.get_location());
-  double particle_diameter      = 0.005;
-  double neighborhood_threshold = 1.3 * particle_diameter;
+  double       particle_diameter      = 0.005;
+  const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);

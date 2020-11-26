@@ -55,17 +55,19 @@ public:
    *
    * @param particle_point_contact_candidates The output of particle-point broad
    * search which shows contact pair candidates
+   * @param neighborhood_threshold A value which defines the neighbor particles
    * @return A map which contains all the required information (normal overlap,
    * normal vector and contact normal relative velocity) for calculation of
    * particle-point contact force
    */
 
   std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
-  Particle_Point_Fine_Search(
+  particle_point_fine_search(
     const std::unordered_map<
       int,
       std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-      &particle_point_contact_candidates);
+      &           particle_point_contact_candidates,
+    const double &neighborhood_threshold);
 
   /**
    * Iterates over a map of tuples (particle_line_contact_candidates) to see if
@@ -75,17 +77,19 @@ public:
    *
    * @param particle_line_contact_candidates The output of particle-line broad
    * search which shows contact pair candidates
+   * @param neighborhood_threshold A value which defines the neighbor particles
    * @return A map which contains all the required information (normal overlap,
    * normal vector and contact normal relative velocity) for calculation of
    * particle-line contact force
    */
 
   std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
-  Particle_Line_Fine_Search(
+  particle_line_fine_search(
     const std::unordered_map<
       int,
       std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-      &particle_line_contact_candidates);
+      &           particle_line_contact_candidates,
+    const double &neighborhood_threshold);
 
 private:
   /** This private function is used to find the projection of point_p on
@@ -98,9 +102,9 @@ private:
    */
 
   Point<dim>
-  find_projection_point(Point<dim> point_p,
-                        Point<dim> point_a,
-                        Point<dim> point_b);
+  find_projection_point(const Point<dim> &point_p,
+                        const Point<dim> &point_a,
+                        const Point<dim> &point_b);
 };
 
 #endif /* particle_point_line_fine_search_h */
