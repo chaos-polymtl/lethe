@@ -17,19 +17,21 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test generates a triangulation that is twiced refined and check if the
-// cells neighbors are the correct ones
+/**
+ * @brief This test generates a triangulation that is twiced refined and check
+ * if the cells neighbors are the correct ones.
+ */
 
+// Deal.II includes
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
+// Lethe
 #include <dem/find_cell_neighbors.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 

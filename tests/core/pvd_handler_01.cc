@@ -5,7 +5,7 @@
 // Lethe
 #include <core/pvd_handler.h>
 
-// Tests
+// Tests (with common definitions)
 #include <../tests/tests.h>
 
 void

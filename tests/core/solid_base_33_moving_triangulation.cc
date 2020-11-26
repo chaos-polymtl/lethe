@@ -18,8 +18,6 @@
 */
 
 // Deal.II includes
-#include <deal.II/base/utilities.h>
-
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -34,7 +32,7 @@
 #include <core/solutions_output.h>
 #include <solvers/nitsche.h>
 
-// Tests
+// Tests (with common definitions)
 #include <../tests/tests.h>
 
 

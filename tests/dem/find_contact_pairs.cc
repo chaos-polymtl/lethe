@@ -17,12 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// Three particles are inserted manually in the x direction.
-// We check if these particles appear correctly to each other
-// as potential neighbhors
+/**
+ * @brief Three particles are inserted manually in the x direction.
+ * We check if these particles appear correctly to each other as potential
+ * neighbors.
+ */
 
-#include <deal.II/base/point.h>
-
+// Deal.II includes
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
@@ -31,13 +32,12 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/find_cell_neighbors.h>
 #include <dem/pp_broad_search.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 

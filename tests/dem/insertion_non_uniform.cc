@@ -17,26 +17,24 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// Inserting one particle using uniform insertion class
+/**
+ * @brief Inserting one particle using uniform insertion class.
+ */
 
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
-
+// Deal.II includes
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle.h>
 
+// Lethe
 #include <dem/dem_solver_parameters.h>
 #include <dem/non_uniform_insertion.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 

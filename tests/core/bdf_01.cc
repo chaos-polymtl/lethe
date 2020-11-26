@@ -6,7 +6,7 @@
 // Lethe
 #include <core/bdf.h>
 
-// Tests
+// Tests (with common definitions)
 #include <../tests/tests.h>
 
 

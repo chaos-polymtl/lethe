@@ -17,10 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test checks the performance of the explicit Euler integrator class
+/**
+ * @brief This test checks the performance of the explicit Euler integrator
+ * class.
+ */
 
+// Deal.II includes
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
 
 #include <deal.II/fe/mapping_q.h>
 
@@ -33,13 +36,12 @@
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/property_pool.h>
 
+// Lethe
 #include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 

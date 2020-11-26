@@ -29,7 +29,7 @@
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 
-// Tests
+// Tests (with common definitions)
 #include <../tests/tests.h>
 
 void

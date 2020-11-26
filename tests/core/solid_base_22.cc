@@ -18,12 +18,8 @@
 */
 
 // Deal.II includes
-#include <deal.II/base/utilities.h>
-
 #include <deal.II/distributed/tria.h>
-
 #include <deal.II/grid/grid_generator.h>
-
 #include <deal.II/particles/data_out.h>
 
 // Lethe
@@ -31,9 +27,8 @@
 #include <core/solid_base.h>
 #include <solvers/nitsche.h>
 
-// Tests
+// Tests (with common definitions)
 #include <../tests/tests.h>
-
 void
 test()
 {

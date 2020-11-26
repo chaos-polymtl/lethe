@@ -17,24 +17,26 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test reports the normal overlap and corresponding normal force during a
-// complete particle-wall contact. Interested reader may be interested in
-// plotting normal force against normal overlap
+/**
+ * @brief This test reports the normal overlap and corresponding normal force
+ * during a complete particle-wall contact. Interested reader may be interested
+ * inplotting normal force against normal overlap.
+ */
 
+// Deal.II
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
-
-#include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
@@ -43,10 +45,8 @@
 #include <dem/particle_point_line_fine_search.h>
 #include <dem/velocity_verlet_integrator.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 

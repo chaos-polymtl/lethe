@@ -17,11 +17,14 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// In this test, the performance of non-linear (Hertzian) particle-particle
-// contact force  is checked
+/**
+ * @brief In this test, the performance of non-linear (Hertzian)
+ * particle-particle contact force is checked.
+ */
 
+
+// Deal.II
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
 
 #include <deal.II/fe/mapping_q.h>
 
@@ -33,6 +36,7 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
@@ -41,10 +45,8 @@
 #include <dem/pp_nonlinear_force.h>
 #include <dem/velocity_verlet_integrator.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 

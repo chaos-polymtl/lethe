@@ -3,13 +3,10 @@
  * equations, only one of which is non-linear
  */
 
-// Deal.II includes
-#include <deal.II/base/utilities.h>
-
 // Lethe
 #include <core/parameters.h>
 
-// Tests
+// Tests (with common definitions)
 #include <../tests/core/non_linear_test_system_01.h>
 #include <../tests/tests.h>
 

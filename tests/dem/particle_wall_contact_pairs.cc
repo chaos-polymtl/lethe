@@ -17,9 +17,15 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// In this test, the performance of particle-wall broad search is investigated
+/**
+ * @brief In this test, the performance of particle-wall broad search is
+ * investigated.
+ */
 
-#include <deal.II/base/point.h>
+// Deal.II
+#include <deal.II/base/parameter_handler.h>
+
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
@@ -29,13 +35,12 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/find_boundary_cells_information.h>
 #include <dem/pw_broad_search.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 
