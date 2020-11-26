@@ -12,10 +12,9 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
-*/
+ *
+ * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
+ */
 
 /**
  * @brief This code tests the reynolds stress calculations in 2d with
@@ -52,8 +51,10 @@ test()
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
   std::vector<IndexSet> locally_owned_dofs(2);
+  locally_owned_dofs[0].set_size(6);
+  locally_owned_dofs[1].set_size(3);
   locally_owned_dofs[0].add_range(0, 6);
-  locally_owned_dofs[1].add_range(6, 9);
+  locally_owned_dofs[1].add_range(0, 3);
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -67,9 +68,9 @@ test()
   solution.block(0)[3] = 0.56;
   solution.block(0)[4] = 0;
   solution.block(0)[5] = 7.9;
-  solution.block(1)[6] = 30;
-  solution.block(1)[7] = 20;
-  solution.block(1)[8] = 26;
+  solution.block(1)[0] = 30;
+  solution.block(1)[1] = 20;
+  solution.block(1)[2] = 26;
 
   IndexSet locally_owned_rs_components(9);
   locally_owned_rs_components.add_range(0, 9);

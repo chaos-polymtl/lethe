@@ -52,9 +52,12 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  std::vector<IndexSet> locally_owned_dofs(4);
+  std::vector<IndexSet> locally_owned_dofs(2);
+  locally_owned_dofs[0].set_size(3);
+  locally_owned_dofs[1].set_size(1);
   locally_owned_dofs[0].add_range(0, 3);
-  locally_owned_dofs[1].add_range(3, 4);
+  locally_owned_dofs[1].add_range(0, 1);
+
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -66,7 +69,7 @@ test()
   solution.block(0)[0] = 0.0;
   solution.block(0)[1] = 2.5;
   solution.block(0)[2] = 10;
-  solution.block(1)[3] = 154.2;
+  solution.block(1)[0] = 154.2;
 
   IndexSet locally_owned_rs_components(6);
   locally_owned_rs_components.add_range(0, 6);
@@ -101,7 +104,7 @@ test()
           deallog << " Average solution : " << average_solution.block(0)[0]
                   << " " << average_solution.block(0)[1] << " "
                   << average_solution.block(0)[2] << " "
-                  << average_solution.block(1)[3] << std::endl;
+                  << average_solution.block(1)[0] << std::endl;
           deallog << "" << std::endl;
         }
 
