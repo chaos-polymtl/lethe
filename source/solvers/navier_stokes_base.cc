@@ -31,7 +31,6 @@
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_cfl.h>
 #include <solvers/postprocessing_enstrophy.h>
 #include <solvers/postprocessing_kinetic_energy.h>
 #include <solvers/postprocessing_torque.h>
@@ -485,7 +484,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->solution_m1      = present_solution;
       const double CFL       = calculate_CFL(this->dof_handler,
                                        present_solution,
-                                       nsparam.fem_parameters,
                                        simulation_control->get_time_step(),
                                        mpi_communicator);
       this->simulation_control->set_CFL(CFL);

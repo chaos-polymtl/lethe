@@ -33,7 +33,6 @@ template <int dim, typename VectorType>
 double
 calculate_CFL(const DoFHandler<dim> &dof_handler,
               const VectorType &     evaluation_point,
-              const Parameters::FEM &fem_parameters,
               const double           time_step,
               const MPI_Comm &       mpi_communicator)
 {
@@ -88,7 +87,6 @@ template double
 calculate_CFL<2, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<2> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Parameters::FEM &              fem_parameters,
   const double                         time_step,
   const MPI_Comm &                     mpi_communicator);
 
@@ -96,7 +94,6 @@ template double
 calculate_CFL<3, TrilinosWrappers::MPI::Vector>(
   const DoFHandler<3> &                dof_handler,
   const TrilinosWrappers::MPI::Vector &evaluation_point,
-  const Parameters::FEM &              fem_parameters,
   const double                         time_step,
   const MPI_Comm &                     mpi_communicator);
 
@@ -104,7 +101,6 @@ template double
 calculate_CFL<2, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<2> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Parameters::FEM &                   fem_parameters,
   const double                              time_step,
   const MPI_Comm &                          mpi_communicator);
 
@@ -112,7 +108,6 @@ template double
 calculate_CFL<3, TrilinosWrappers::MPI::BlockVector>(
   const DoFHandler<3> &                     dof_handler,
   const TrilinosWrappers::MPI::BlockVector &evaluation_point,
-  const Parameters::FEM &                   fem_parameters,
   const double                              time_step,
   const MPI_Comm &                          mpi_communicator);
 
