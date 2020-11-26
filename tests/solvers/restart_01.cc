@@ -11,7 +11,8 @@
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/navier_stokes_solver_parameters.h>
 
-#include "../tests.h"
+// Tests
+#include <../tests/tests.h>
 
 template <int dim>
 class ExactSolutionMMS : public Function<dim>
