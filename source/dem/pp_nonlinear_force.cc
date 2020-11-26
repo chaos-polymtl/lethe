@@ -231,31 +231,33 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   const double effective_radius =
     (particle_one_properties[PropertiesIndex::dp] *
      particle_two_properties[PropertiesIndex::dp]) /
-    (2.0 * (particle_one_properties[PropertiesIndex::dp] +
-            particle_two_properties[PropertiesIndex::dp]));
+    (2 * (particle_one_properties[PropertiesIndex::dp] +
+          particle_two_properties[PropertiesIndex::dp]));
   const double effective_youngs_modulus =
     physical_properties.youngs_modulus_particle /
-    (2.0 * (1.0 - (physical_properties.poisson_ratio_particle *
-                   physical_properties.poisson_ratio_particle)));
+    (2 * (1 - (physical_properties.poisson_ratio_particle *
+               physical_properties.poisson_ratio_particle)));
   const double effective_shear_modulus =
     physical_properties.youngs_modulus_particle /
-    (4.0 * (2.0 - physical_properties.poisson_ratio_particle) *
-     (1.0 + physical_properties.poisson_ratio_particle));
+    (4 * (2 - physical_properties.poisson_ratio_particle) *
+     (1 + physical_properties.poisson_ratio_particle));
 
-  // Calculation of model parameters (betha, sn and st). These values
+  // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
-  const double Poisson_ratio_particle_log =
-    std::log(physical_properties.poisson_ratio_particle);
+  const double restitution_coefficient_particle_log =
+    std::log(physical_properties.restitution_coefficient_particle);
   const double model_parameter_beta =
-    Poisson_ratio_particle_log /
-    sqrt(Poisson_ratio_particle_log * Poisson_ratio_particle_log + 9.8696);
+    restitution_coefficient_particle_log /
+    sqrt(restitution_coefficient_particle_log *
+           restitution_coefficient_particle_log +
+         9.8696);
   const double radius_times_overlap_sqrt =
     sqrt(effective_radius * normal_overlap);
   const double model_parameter_sn =
-    2.0 * effective_youngs_modulus * radius_times_overlap_sqrt;
+    2 * effective_youngs_modulus * radius_times_overlap_sqrt;
   double model_parameter_st =
-    8.0 * effective_shear_modulus * radius_times_overlap_sqrt;
+    8 * effective_shear_modulus * radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
@@ -264,7 +266,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   double normal_damping_constant =
     -1.8257 * model_parameter_beta * sqrt(model_parameter_sn * effective_mass);
   double tangential_spring_constant =
-    8.0 * effective_shear_modulus * radius_times_overlap_sqrt + DBL_MIN;
+    8 * effective_shear_modulus * radius_times_overlap_sqrt + DBL_MIN;
   double tangential_damping_constant =
     -1.8257 * model_parameter_beta * sqrt(model_parameter_st * effective_mass);
 
@@ -274,32 +276,36 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     ((normal_damping_constant * normal_relative_velocity_value) *
      normal_unit_vector);
 
-  double maximum_tangential_overlap =
-    physical_properties.friction_coefficient_particle * normal_force.norm() /
-    tangential_spring_constant;
+  // Calculation of tangential force using spring and dashpot tangential
+  // forces. Since we need dashpot tangential force in the gross sliding again,
+  // we define it as a separate variable
+  Tensor<1, dim> dashpot_tangential_force =
+    (tangential_damping_constant * contact_info.tangential_relative_velocity);
+  tangential_force =
+    (tangential_spring_constant * contact_info.tangential_overlap) +
+    dashpot_tangential_force;
 
+  double coulomb_threshold =
+    physical_properties.friction_coefficient_particle * normal_force.norm();
   // Check for gross sliding
-  if (contact_info.tangential_overlap.norm() > maximum_tangential_overlap)
+  if (tangential_force.norm() > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangnetial
       // force are limited to Coulumb's criterion
+      tangential_force =
+        coulomb_threshold * (tangential_force / tangential_force.norm());
+
       contact_info.tangential_overlap =
-        maximum_tangential_overlap * (contact_info.tangential_overlap /
-                                      contact_info.tangential_overlap.norm());
+        (tangential_force - dashpot_tangential_force) /
+        (tangential_spring_constant + DBL_MIN);
     }
-  // Calculation of tangential force using spring and dashpot tangential
-  // forces
-  tangential_force =
-    -1.0 * (tangential_spring_constant * contact_info.tangential_overlap) +
-    (tangential_damping_constant * contact_info.tangential_relative_velocity);
 
   // Calculation of torque
   // Torque caused by tangential force (tangential_torque)
   if (dim == 3)
     {
       tangential_torque =
-        cross_product_3d((0.5 * particle_one_properties[PropertiesIndex::dp] *
-                          normal_unit_vector),
+        cross_product_3d((effective_radius * normal_unit_vector),
                          tangential_force);
     }
 
@@ -320,9 +326,9 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
   // Calculation of rolling resistance torque
-  rolling_resistance_torque =
-    -1.0 * physical_properties.rolling_friction_particle * effective_radius *
-    normal_force.norm() * omega_ij_direction;
+  rolling_resistance_torque = -physical_properties.rolling_friction_particle *
+                              effective_radius * normal_force.norm() *
+                              omega_ij_direction;
 }
 
 template class PPNonLinearForce<2>;

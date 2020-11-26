@@ -34,16 +34,17 @@ ParticlePointLineForce<dim>::calculate_particle_point_line_contact_force(
       // Calculation of effective Young's modulus of the contact
       double effective_youngs_modulus =
         physical_properties.youngs_modulus_wall /
-        (2.0 * (1.0 - pow(physical_properties.poisson_ratio_wall, 2.0)));
+        (2 * (1 - pow(physical_properties.poisson_ratio_wall, 2)));
 
-      // Calculation of model parameters (betha and sn). These values
+      // Calculation of model parameters (beta and sn). These values
       // are used to consider non-linear relation of the contact force to
       // the normal overlap
-      double model_parameter_betha =
-        log(physical_properties.poisson_ratio_wall) /
-        sqrt(pow(log(physical_properties.poisson_ratio_wall), 2.0) + 9.8696);
+      double model_parameter_beta =
+        log(physical_properties.restitution_coefficient_wall) /
+        sqrt(pow(log(physical_properties.restitution_coefficient_wall), 2) +
+             9.8696);
       double model_parameter_sn =
-        2.0 * effective_youngs_modulus *
+        2 * effective_youngs_modulus *
         sqrt(particle_properties[DEM::PropertiesIndex::dp] *
              contact_information->normal_overlap);
 
@@ -51,10 +52,10 @@ ParticlePointLineForce<dim>::calculate_particle_point_line_contact_force(
       // using particle and wall properties
       double normal_spring_constant =
         1.3333 * effective_youngs_modulus *
-        sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2.0 *
+        sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
              contact_information->normal_overlap);
       double normal_damping_constant =
-        -1.8257 * model_parameter_betha *
+        -1.8257 * model_parameter_beta *
         sqrt(model_parameter_sn *
              particle_properties[DEM::PropertiesIndex::mass]);
 

@@ -86,22 +86,11 @@ PWContactForce<dim>::update_contact_information(
   // This variable is the main reason that we have iteration over
   // two different vectors (pairs_in_contact and
   // contact_pair_candidates): tangential_overlap of the particles
-  // which were already in contact (pairs_in_contact) needs to
+  // which were already in contact (pairs_in_contact) needs to be
   // modified using its history, while the tangential_overlaps of
   // new particles are equal to zero
-  Tensor<1, dim> last_step_tangential_overlap = contact_info.tangential_overlap;
-  Tensor<1, dim> tangential_overlap =
-    last_step_tangential_overlap -
-    (last_step_tangential_overlap * normal_vector) * normal_vector;
-
-  // Adding a small value to the tangential_overlap_norm to avoid
-  // 0/0 occurance
-  double tangential_overlap_norm = tangential_overlap.norm() + DBL_MIN;
-
   Tensor<1, dim> modified_tangential_overlap =
-    (last_step_tangential_overlap.norm() / tangential_overlap_norm) *
-      tangential_overlap +
-    contact_info.tangential_relative_velocity * dt;
+    contact_info.tangential_overlap + tangential_relative_velocity * dt;
 
   // Updating the contact_info container based on the new calculated values
   contact_info.normal_relative_velocity     = normal_relative_velocity_value;

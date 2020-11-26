@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/lethe-cfd/lethe.svg?branch=master)](https://travis-ci.com/lethe-cfd/lethe)
+[![Build Status](https://github.com/lethe-cfd/lethe/workflows/CI/badge.svg)](https://github.com/lethe-cfd/lethe/workflows/CI/badge.svg)
 ![Lethe](logo/logo_black.png?raw=true)
 # What is Lethe?
 

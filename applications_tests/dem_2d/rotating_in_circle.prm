@@ -49,12 +49,12 @@ subsection physical properties
     set young modulus wall            			= 1000000
     set poisson ratio particle          		= 0.3
     set poisson ratio wall            			= 0.3
-    set restitution coefficient particle		= 0.95
-    set restitution coefficient wall           		= 0.95
+    set restitution coefficient particle		= 0.3
+    set restitution coefficient wall           		= 0.3
     set friction coefficient particle         		= 0.05
     set friction coefficient wall         		= 0.05
-    set rolling friction particle         		= 0.1
-    set rolling friction wall         	      	  	= 0.1
+    set rolling friction particle         		= 0.01
+    set rolling friction wall         	      	  	= 0.01
 end
 
 #---------------------------------------------------
@@ -62,14 +62,14 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 100
-    set inserted number of particles at each time step  = 100
+    set n total              				= 50
+    set inserted number of particles at each time step  = 50
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
     set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
-    set insertion distance threshold			= 2
+    set insertion box maximum y           	 	= -0.02
+    set insertion distance threshold			= 1.5
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
 end
@@ -92,6 +92,6 @@ subsection boundary motion
     subsection moving boundary 0
 	set boundary id					= 2
         set type              				= rotational
-	set rotational speed				= 3
+	set rotational speed				= 1
     end
 end

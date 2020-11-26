@@ -11,9 +11,11 @@ ParticlePointLineBroadSearch<dim>::ParticlePointLineBroadSearch()
 template <int dim>
 std::unordered_map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
 ParticlePointLineBroadSearch<dim>::find_Particle_Point_Contact_Pairs(
-  const Particles::ParticleHandler<dim> &   particle_handler,
-  const std::vector<std::pair<typename Triangulation<dim>::active_cell_iterator,
-                              Point<dim>>> &boundary_cells_with_points)
+  const Particles::ParticleHandler<dim> &particle_handler,
+  const std::unordered_map<
+    std::string,
+    std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
+    &boundary_cells_with_points)
 {
   std::unordered_map<int,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
@@ -28,12 +30,12 @@ ParticlePointLineBroadSearch<dim>::find_Particle_Point_Contact_Pairs(
   // This vector contains all the required information of the boundary
   // cells with points. In this loop we find the particles located in each of
   // these boundary cells with points
-  for (auto cells_with_boundary_points_information =
-         boundary_cells_with_points.begin();
-       cells_with_boundary_points_information !=
-       boundary_cells_with_points.end();
-       ++cells_with_boundary_points_information)
+  for (auto map_iterator = boundary_cells_with_points.begin();
+       map_iterator != boundary_cells_with_points.end();
+       ++map_iterator)
     {
+      auto cells_with_boundary_points_information = &map_iterator->second;
+
       // Getting the cell and boundary vertex as local variables
       auto cell_with_boundary_point =
         cells_with_boundary_points_information->first;
@@ -69,7 +71,8 @@ std::unordered_map<
   std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
 ParticlePointLineBroadSearch<dim>::find_Particle_Line_Contact_Pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
-  const std::vector<
+  const std::unordered_map<
+    std::string,
     std::tuple<typename Triangulation<dim>::active_cell_iterator,
                Point<dim>,
                Point<dim>>> &boundary_cells_with_lines)
@@ -88,11 +91,12 @@ ParticlePointLineBroadSearch<dim>::find_Particle_Line_Contact_Pairs(
   // This vector contains all the required information of the boundary
   // cells with lines. In this loop we find the particles located in each of
   // these boundary cells with lines
-  for (auto cells_with_boundary_lines_information =
-         boundary_cells_with_lines.begin();
-       cells_with_boundary_lines_information != boundary_cells_with_lines.end();
-       ++cells_with_boundary_lines_information)
+  for (auto map_iterator = boundary_cells_with_lines.begin();
+       map_iterator != boundary_cells_with_lines.end();
+       ++map_iterator)
     {
+      auto cells_with_boundary_lines_information = &map_iterator->second;
+
       // Getting the cell and the locations of boundary vertices (beginning and
       // ending points of the boundary line) as local variables
       auto cell_with_boundary_line =

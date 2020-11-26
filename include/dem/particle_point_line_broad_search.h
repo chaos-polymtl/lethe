@@ -64,7 +64,8 @@ public:
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
   find_Particle_Point_Contact_Pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const std::vector<
+    const std::unordered_map<
+      std::string,
       std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
       &boundary_cells_with_points);
 
@@ -87,7 +88,8 @@ public:
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
   find_Particle_Line_Contact_Pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
-    const std::vector<
+    const std::unordered_map<
+      std::string,
       std::tuple<typename Triangulation<dim>::active_cell_iterator,
                  Point<dim>,
                  Point<dim>>> &boundary_cells_with_lines);

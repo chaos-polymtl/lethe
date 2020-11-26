@@ -52,7 +52,7 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  std::vector<IndexSet> locally_owned_dofs(2);
+  std::vector<IndexSet> locally_owned_dofs(4);
   locally_owned_dofs[0].add_range(0, 3);
   locally_owned_dofs[1].add_range(3, 4);
 

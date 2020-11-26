@@ -70,6 +70,8 @@ test()
   dem_parameters.physical_properties.diameter         = 0.005;
   dem_parameters.physical_properties.density          = 2500;
   dem_parameters.insertion_info.total_particle_number = 10;
+  dem_parameters.insertion_info.random_number_range   = 0.75;
+  dem_parameters.insertion_info.random_number_seed    = 19;
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
