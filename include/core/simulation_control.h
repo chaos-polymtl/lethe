@@ -25,8 +25,8 @@
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient
  * simulations carried out with Lethe. This base class is a pure virtual class
- *and cannot be instantiated. However, it stores the core variables which are
- *necessary for its serialization (write and read)
+ * and cannot be instantiated. However, it stores the core variables which are
+ * necessary for its serialization (write and read)
  **/
 
 class SimulationControl
@@ -58,6 +58,7 @@ protected:
   // Courant-Friedrich-Levy (CFL) condition
   // Since the simulation control is unaware of the information propagation
   // mechanism (for instance the velocity), the current CFL must be set by the
+  // solver itself
   double CFL;
 
   // Maximal CFL condition. This is used to control adaptative time stepping. In
@@ -119,11 +120,18 @@ public:
    * @brief The simulation control class is constructed by a simple parameter structure
    * from which it draws it's arguments. This structure is not kept internally.
    * This means that require information is copied from the struct to the class.
+   *
+   * @param param Structure of the parameters for the simulation control
+   *
    **/
+
   SimulationControl(Parameters::SimulationControl param);
 
   /**
-   * @brief Pure virtual functoin to controls the progression of the simulation.
+   * @brief Pure virtual function to control the progression of the simulation.
+   * As long as integrate returns true, a simulation should proceed. The
+   * criteria used to stop/continue the simulation in iterate is a property of
+   * each individual time stepping control.
    **/
   virtual bool
   integrate() = 0;
@@ -170,6 +178,7 @@ public:
 
   /**
    * @brief print_progress Function that prints the current progress status of the simulation
+   *
    * @param pcout the ConditionalOSStream that is use to write
    */
   virtual void
@@ -200,7 +209,9 @@ public:
   is_verbose_iteration();
 
   /**
-   * @brief Check if this is the first assembly of the present iteration
+   * @brief Check if this is the first assembly of the present iteration.
+   * If it indeed is the first assembly, then the first_assembly is set to
+   * false.
    */
   virtual bool
   is_first_assembly()
@@ -209,6 +220,13 @@ public:
     first_assembly    = false;
     return return_value;
   };
+
+
+  /**
+   * @brief Set the value of the CFL conditoin
+   *
+   * @param p_CFL Value of the CFL condition calculated by the solver.
+   */
 
   void
   set_CFL(const double p_CFL)
