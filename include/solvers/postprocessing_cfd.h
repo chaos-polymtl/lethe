@@ -43,6 +43,29 @@
 #  include <core/boundary_conditions.h>
 #  include <core/parameters.h>
 
+
+/**
+ * @brief Calculate the CFL condition on the simulation domain
+ * @return CFL maximal value in the domain
+ * Post-processing function
+ * This function calculates the maximal CFL value in the domain
+ *
+ * @param dof_handler The dof_handler used for the calculation
+ *
+ * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
+ *
+ * @param fem_parameters The fem_parameters of the simulation
+ *
+ * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
+ */
+template <int dim, typename VectorType>
+double
+calculate_CFL(const DoFHandler<dim> &dof_handler,
+              const VectorType &     evaluation_point,
+              const Parameters::FEM &fem_parameters,
+              const double           time_step,
+              const MPI_Comm &       mpi_communicator);
+
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
  * @return std::vector of forces on each boundary condition
