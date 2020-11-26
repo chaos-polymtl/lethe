@@ -693,9 +693,10 @@ DEMSolver<dim>::solve()
         }
       else
         {
-          locate_ghost_particles_in_cells<dim>(particle_handler,
-                                               ghost_particle_container,
-                                               ghost_adjacent_particles);
+          // This shouuld not be needed anymore BB
+          // locate_ghost_particles_in_cells<dim>(particle_handler,
+          //                                     ghost_particle_container,
+          //                                     ghost_adjacent_particles);
         }
 
       // Particle-particle contact force
