@@ -17,6 +17,9 @@
  * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020 -
  */
 
+// Base
+#include <deal.II/base/tensor.h>
+
 // Dofs
 #include <deal.II/dofs/dof_handler.h>
 

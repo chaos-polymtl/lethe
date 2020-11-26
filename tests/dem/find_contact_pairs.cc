@@ -17,12 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// Three particles are inserted manually in the x direction.
-// We check if these particles appear correctly to each other
-// as potential neighbhors
+/**
+ * @brief Three particles are inserted manually in the x direction.
+ * We check if these particles appear correctly to each other as potential
+ * neighbors.
+ */
 
-#include <deal.II/base/point.h>
-
+// Deal.II includes
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
@@ -31,13 +32,12 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/find_cell_neighbors.h>
 #include <dem/pp_broad_search.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -82,7 +82,7 @@ test()
 
   // Manually insert the three particles
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-                                   pt1_info = GridTools::find_active_cell_around_point(mapping,
+    pt1_info = GridTools::find_active_cell_around_point(mapping,
                                                         triangulation,
                                                         position1);
   Particles::Particle<dim>         particle1(position1, pt1_info.second, id1);
@@ -90,7 +90,7 @@ test()
     particle_handler.insert_particle(particle1, pt1_info.first);
 
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-                                   pt2_info = GridTools::find_active_cell_around_point(mapping,
+    pt2_info = GridTools::find_active_cell_around_point(mapping,
                                                         triangulation,
                                                         position2);
   Particles::Particle<dim>         particle2(position2, pt2_info.second, id2);
@@ -98,7 +98,7 @@ test()
     particle_handler.insert_particle(particle2, pt2_info.first);
 
   std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>
-                                   pt3_info = GridTools::find_active_cell_around_point(mapping,
+    pt3_info = GridTools::find_active_cell_around_point(mapping,
                                                         triangulation,
                                                         position3);
   Particles::Particle<dim>         particle3(position3, pt3_info.second, id3);
@@ -149,8 +149,37 @@ test()
 int
 main(int argc, char **argv)
 {
-  initlog();
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-  test<3>();
+  try
+    {
+      initlog();
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test<3>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
 }

@@ -17,11 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// In this test, the performance of particle-particle fine search class is
-// evaluated
+/**
+ * @brief In this test, the performance of particle-particle fine search class
+ * is evaluated.
+ */
 
+// Deal.II
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
 
 #include <deal.II/fe/mapping_q.h>
 
@@ -33,16 +35,14 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#include <dem/dem_solver_parameters.h>
+// Lethe
 #include <dem/find_cell_neighbors.h>
 #include <dem/pp_broad_search.h>
 #include <dem/pp_contact_info_struct.h>
 #include <dem/pp_fine_search.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -202,7 +202,36 @@ test()
 int
 main(int argc, char **argv)
 {
-  initlog();
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-  test<3>();
+  try
+    {
+      initlog();
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+      test<3>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
 }
