@@ -49,7 +49,7 @@ test(int argc, char **argv)
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs;
+  IndexSet locally_owned_dofs(3);
   locally_owned_dofs.add_range(0, 3);
 
   Parameters::PostProcessing postprocessing_parameters;
