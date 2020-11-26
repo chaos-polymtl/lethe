@@ -95,10 +95,10 @@ jobs:
           echo "Docker image is good, ready for action!"
           docker run blaisb/dealii_docker:dealii_master_nov_2020 /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Debug -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
 
-  indentation:
+  formatting:
 
       # Runs a set of commands using the runners shell
-      - name: format
+      - name: formatting
         if: github.event_name != 'pull_request'
         run: |
           git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout "${GITHUB_REF#refs/heads/}"
