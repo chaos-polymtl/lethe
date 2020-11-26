@@ -21,26 +21,31 @@
 #define lethe_solid_base_h
 
 // Dealii Includes
+#include <deal.II/base/config.h>
 
-// Dofs
-#include <deal.II/dofs/dof_accessor.h>
-#include <deal.II/dofs/dof_handler.h>
+#include <deal.II/distributed/tria_base.h>
 
-// Fe
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
+#include <deal.II/particles/data_out.h>
+//#include <deal.II/dofs/dof_handler.h>
 
-// Distributed
+
+#include <deal.II/base/function.h>
+
 #include <deal.II/distributed/tria.h>
 #include <deal.II/distributed/tria_base.h>
 
-// Particles
+#include <deal.II/dofs/block_info.h>
+#include <deal.II/dofs/dof_accessor.h>
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+
 #include <deal.II/particles/data_out.h>
 #include <deal.II/particles/particle_accessor.h>
 #include <deal.II/particles/particle_handler.h>
 
-// Function
-#include <deal.II/base/function.h>
+#include <solvers/nitsche.h>
 
 // Lethe Includes
 #include <core/parameters.h>

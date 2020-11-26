@@ -1,4 +1,6 @@
-#include "core/parameters.h"
+#include <deal.II/base/patterns.h>
+
+#include <core/parameters.h>
 
 namespace Parameters
 {

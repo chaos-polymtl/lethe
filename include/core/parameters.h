@@ -26,11 +26,9 @@
  * are required.
  */
 
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/parameter_acceptor.h>
+#include <deal.II/base/config.h>
+
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
 
 #include <core/ib_particle.h>
 

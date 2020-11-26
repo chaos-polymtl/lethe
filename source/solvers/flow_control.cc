@@ -1,6 +1,7 @@
 #include <solvers/flow_control.h>
 
 #include <fstream>
+#include <string>
 
 template <int dim>
 FlowControl<dim>::FlowControl(

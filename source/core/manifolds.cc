@@ -1,14 +1,14 @@
 // Dealii Includes
-// Base
+#include <deal.II/base/patterns.h>
 #include <deal.II/base/point.h>
+#include <deal.II/base/utilities.h>
 
-// Grid
 #include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
 
-#include "core/manifolds.h"
+#include <core/manifolds.h>
 
 namespace Parameters
 {
@@ -288,7 +288,8 @@ attach_manifolds_to_triangulation(
     }
 }
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>>,
   std::string,
   unsigned int)
@@ -296,7 +297,8 @@ void attach_cad_to_manifold(
   throw std::runtime_error("IGES manifolds are not supported in 2D");
 }
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>>,
   std::string,
   unsigned int)
@@ -304,7 +306,8 @@ void attach_cad_to_manifold(
   throw std::runtime_error("IGES manifolds are not supported in 2D/3D");
 }
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id)
@@ -342,14 +345,17 @@ void attach_cad_to_manifold(
 }
 
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   Parameters::Manifolds                                      manifolds);
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   Parameters::Manifolds                                      manifolds);
 
-template void attach_manifolds_to_triangulation(
+template void
+attach_manifolds_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   Parameters::Manifolds                                         manifolds);

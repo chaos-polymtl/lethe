@@ -1,5 +1,11 @@
 
+#include <deal.II/base/geometry_info.h>
+
+#include <deal.II/fe/mapping_q1.h>
+#include <deal.II/fe/mapping_q_generic.h>
+
 #include <core/utilities.h>
+
 
 
 template <int dim, typename T>

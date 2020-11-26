@@ -1,5 +1,9 @@
 #include "core/parameters_lagrangian.h"
 
+#include <deal.II/base/patterns.h>
+
+#include <string>
+
 namespace Parameters
 {
   namespace Lagrangian

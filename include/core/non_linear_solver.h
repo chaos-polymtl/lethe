@@ -20,7 +20,7 @@
 #ifndef lethe_non_linear_solver_h
 #define lethe_non_linear_solver_h
 
-#include "parameters.h"
+#include <core/parameters.h>
 
 template <typename VectorType>
 class PhysicsSolver;

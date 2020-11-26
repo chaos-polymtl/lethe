@@ -20,7 +20,8 @@
 #ifndef lethe_newton_non_linear_solver_h
 #define lethe_newton_non_linear_solver_h
 
-#include "non_linear_solver.h"
+#include <core/non_linear_solver.h>
+#include <core/parameters.h>
 
 /**
  * @brief NewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton

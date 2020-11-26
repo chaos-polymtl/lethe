@@ -1,16 +1,7 @@
-// dealii includes
-#include <deal.II/numerics/data_out.h>
-
-
-// Lethe includes
-#include <core/manifolds.h>
-#include <core/pvd_handler.h>
 #include <core/solutions_output.h>
 
-
-// Std
-#include <fstream>
 #include <iostream>
+
 
 template <int dim, int spacedim>
 void

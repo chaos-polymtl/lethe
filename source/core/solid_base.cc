@@ -17,23 +17,23 @@
  * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
  */
 #include <deal.II/base/bounding_box.h>
-#include <deal.II/base/point.h>
+#include <deal.II/base/geometry_info.h>
 #include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/base/utilities.h>
 
-#include <deal.II/fe/fe.h>
-#include <deal.II/fe/fe_nothing.h>
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_update_flags.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/tria.h>
 
-#include <deal.II/particles/data_out.h>
-
-#include <core/grids.h>
 #include <core/parameters.h>
 #include <core/solid_base.h>
-#include <memory.h>
-#include <solvers/navier_stokes_solver_parameters.h>
 
+#include <vector>
 
 
 template <int dim, int spacedim>

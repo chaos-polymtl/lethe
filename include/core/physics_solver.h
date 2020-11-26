@@ -20,12 +20,19 @@
 #ifndef LETHE_PHYSICSSOLVER
 #define LETHE_PHYSICSSOLVER
 
-#include <deal.II/lac/affine_constraints.h>
 
-#include "newton_non_linear_solver.h"
-#include "non_linear_solver.h"
-#include "parameters.h"
-#include "skip_newton_non_linear_solver.h"
+#include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/utilities.h>
+
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/trilinos_vector.h>
+
+#include <core/newton_non_linear_solver.h>
+#include <core/parameters.h>
+#include <core/skip_newton_non_linear_solver.h>
+
+#include <vector>
 
 /**
  * This interface class is used to house all the common elements of physics

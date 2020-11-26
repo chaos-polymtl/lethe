@@ -1,5 +1,3 @@
-#include <deal.II/lac/full_matrix.h>
-
 #include <core/sdirk.h>
 
 // Matrix of coefficients for the SDIRK methods

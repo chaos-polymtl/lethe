@@ -20,7 +20,11 @@
 #ifndef lethe_simulation_control_h
 #define lethe_simulation_control_h
 
+#include <deal.II/base/conditional_ostream.h>
+
 #include <core/parameters.h>
+
+#include <string>
 
 /**
  * @brief The SimulationControl class is responsible for the control of steady-state and transient

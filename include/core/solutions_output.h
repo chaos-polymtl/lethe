@@ -20,12 +20,15 @@
 #ifndef lethe_solutions_output_h
 #define lethe_solutions_output_h
 
-#include <deal.II/numerics/data_out.h>
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/data_out_base.h>
+
 #include <deal.II/numerics/data_out_faces.h>
 
-
-// Lethe includes
 #include <core/pvd_handler.h>
+
+#include <string>
 
 using namespace dealii;
 

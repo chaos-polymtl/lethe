@@ -17,13 +17,15 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
+#include <deal.II/base/config.h>
+
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/mapping_manifold.h>
-#include <deal.II/fe/mapping_q1.h>
+#include <string>
+#include <vector>
 
 #ifndef lethe_utilities_h
 #  define lethe_utilities_h

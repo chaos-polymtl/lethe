@@ -12,7 +12,6 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
  *
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
@@ -21,11 +20,9 @@
 #ifndef lethe_sdirk_h
 #define lethe_sdirk_h
 
+#include <deal.II/base/config.h>
+
 #include <deal.II/lac/full_matrix.h>
-
-#include <core/parameters.h>
-
-#include <vector>
 
 using namespace dealii;
 

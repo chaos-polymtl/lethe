@@ -20,6 +20,8 @@
 #ifndef lethe_boundary_conditions_h
 #define lethe_boundary_conditions_h
 
+#include <deal.II/base/config.h>
+
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
 

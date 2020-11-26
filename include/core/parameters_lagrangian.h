@@ -4,18 +4,20 @@
  *  Created on: Dec 16, 2019
  *      Author: shahab
  */
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/parameter_acceptor.h>
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
 
-#include <string>
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/tensor.h>
+
+#include <unordered_map>
+#include <vector>
 
 #ifndef PARAMETERS_LAGRANGIAN_H_
 #  define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
+
 namespace Parameters
 {
   namespace Lagrangian

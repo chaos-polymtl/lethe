@@ -1,7 +1,8 @@
 #ifndef lethe_skip_newton_non_linear_solver
 #define lethe_skip_newton_non_linear_solver
 
-#include "non_linear_solver.h"
+#include <core/non_linear_solver.h>
+#include <core/parameters.h>
 
 /**
  * @brief SkipNewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton

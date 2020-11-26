@@ -16,7 +16,10 @@
  * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
+#include <deal.II/base/config.h>
+
 #include <deal.II/base/point.h>
+#include <deal.II/base/tensor.h>
 
 
 #ifndef lethe_ib_particle_h

@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "core/boundary_conditions.h"
+#include <core/boundary_conditions.h>
 
 namespace BoundaryConditions
 {

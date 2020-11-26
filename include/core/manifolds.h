@@ -20,22 +20,20 @@
 #ifndef lethe_manifolds_h
 #define lethe_manifolds_h
 
-#include <deal.II/base/data_out_base.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/parsed_function.h>
+#include <deal.II/base/config.h>
 
-#include <deal.II/distributed/tria.h>
+#include <deal.II/base/data_out_base.h>
+#include <deal.II/base/geometry_info.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/tensor.h>
+
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/tria.h>
-
 #include <deal.II/numerics/data_postprocessor.h>
 
-
+#include <vector>
 
 using namespace dealii;
 
@@ -91,7 +89,7 @@ namespace Parameters
 } // namespace Parameters
 
 /**
- * @brief BounearyPostprocessor Post-processor class used to attach the boundary
+ * @brief BoundaryPostprocessor Post-processor class used to attach the boundary
  * id to the faces when outputting the surfaces within the domain.
  */
 template <int dim>
@@ -169,17 +167,20 @@ attach_manifolds_to_triangulation(
  *
  * @param manifold_id Identifier of the manifold
  */
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id);
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   std::string                                                   cad_name,
   unsigned int                                                  manifold_id);
 
-void attach_cad_to_manifold(
+void
+attach_cad_to_manifold(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   std::string                                                cad_name,
   unsigned int                                               manifold_id);
