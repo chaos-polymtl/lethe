@@ -88,9 +88,9 @@ private:
    */
 
   Point<dim>
-  find_projection_point(Point<dim> point_p,
-                        Point<dim> point_a,
-                        Point<dim> point_b);
+  find_projection_point(const Point<dim> &point_p,
+                        const Point<dim> &point_a,
+                        const Point<dim> &point_b);
 };
 
 #endif

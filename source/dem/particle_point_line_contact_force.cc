@@ -277,9 +277,9 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
 
 template <int dim>
 Point<dim>
-ParticlePointLineForce<dim>::find_projection_point(Point<dim> point_p,
-                                                   Point<dim> point_a,
-                                                   Point<dim> point_b)
+ParticlePointLineForce<dim>::find_projection_point(const Point<dim> &point_p,
+                                                   const Point<dim> &point_a,
+                                                   const Point<dim> &point_b)
 {
   Tensor<1, dim> vector_ab = point_b - point_a;
   Tensor<1, dim> vector_ap = point_p - point_a;
