@@ -546,6 +546,164 @@ calculate_torques<3, TrilinosWrappers::MPI::BlockVector>(
   const MPI_Comm &                                   mpi_communicator);
 
 
+// Find the l2 norm of the error between the finite element sol'n and the exact
+// sol'n for both the velocity and the pressure
+// Mean pressure is removed from both the analytical and the simulation solution
+template <int dim, typename VectorType>
+std::pair<double, double>
+calculate_L2_error(const DoFHandler<dim> &dof_handler,
+                   const VectorType &     evaluation_point,
+                   const Function<dim> *  l_exact_solution,
+                   const Parameters::FEM &fem_parameters,
+                   const MPI_Comm &       mpi_communicator)
+{
+  const FiniteElement<dim> &fe = dof_handler.get_fe();
+
+
+  QGauss<dim>         quadrature_formula(fe.degree + 2);
+  const MappingQ<dim> mapping(fe.degree, fem_parameters.qmapping_all);
+  FEValues<dim>       fe_values(mapping,
+                          fe,
+                          quadrature_formula,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+
+  const unsigned int dofs_per_cell =
+    fe.dofs_per_cell; // This gives you dofs per cell
+  std::vector<types::global_dof_index> local_dof_indices(
+    dofs_per_cell); //  Local connectivity
+
+  const unsigned int n_q_points = quadrature_formula.size();
+
+  std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(dim + 1));
+
+  std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
+  std::vector<double>         local_pressure_values(n_q_points);
+
+  double pressure_integral       = 0;
+  double exact_pressure_integral = 0;
+
+  // loop over elements to calculate average pressure
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          fe_values[pressure].get_function_values(evaluation_point,
+                                                  local_pressure_values);
+          // Get the exact solution at all gauss points
+          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
+                                              q_exactSol);
+
+
+          // Retrieve the effective "connectivity matrix" for this element
+          cell->get_dof_indices(local_dof_indices);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              pressure_integral += local_pressure_values[q] * fe_values.JxW(q);
+              exact_pressure_integral += q_exactSol[q][dim] * fe_values.JxW(q);
+            }
+        }
+    }
+
+  pressure_integral = Utilities::MPI::sum(pressure_integral, mpi_communicator);
+  exact_pressure_integral =
+    Utilities::MPI::sum(exact_pressure_integral, mpi_communicator);
+
+  double global_volume    = GridTools::volume(dof_handler.get_triangulation());
+  double average_pressure = pressure_integral / global_volume;
+  double average_exact_pressure = exact_pressure_integral / global_volume;
+
+
+  double l2errorU = 0.;
+  double l2errorP = 0.;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          fe_values[velocities].get_function_values(evaluation_point,
+                                                    local_velocity_values);
+          fe_values[pressure].get_function_values(evaluation_point,
+                                                  local_pressure_values);
+
+          // Retrieve the effective "connectivity matrix" for this element
+          cell->get_dof_indices(local_dof_indices);
+
+          // Get the exact solution at all gauss points
+          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
+                                              q_exactSol);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              // Find the values of x and u_h (the finite element solution) at
+              // the quadrature points
+              double ux_sim   = local_velocity_values[q][0];
+              double ux_exact = q_exactSol[q][0];
+
+              double uy_sim   = local_velocity_values[q][1];
+              double uy_exact = q_exactSol[q][1];
+
+              l2errorU +=
+                (ux_sim - ux_exact) * (ux_sim - ux_exact) * fe_values.JxW(q);
+              l2errorU +=
+                (uy_sim - uy_exact) * (uy_sim - uy_exact) * fe_values.JxW(q);
+
+              if (dim == 3)
+                {
+                  double uz_sim   = local_velocity_values[q][2];
+                  double uz_exact = q_exactSol[q][2];
+                  l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
+                              fe_values.JxW(q);
+                }
+
+              double p_sim   = local_pressure_values[q] - average_pressure;
+              double p_exact = q_exactSol[q][dim] - average_exact_pressure;
+              l2errorP +=
+                (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
+            }
+        }
+    }
+  l2errorU = Utilities::MPI::sum(l2errorU, mpi_communicator);
+  l2errorP = Utilities::MPI::sum(l2errorP, mpi_communicator);
+
+  return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
+}
+
+template std::pair<double, double>
+calculate_L2_error(const DoFHandler<2> &                dof_handler,
+                   const TrilinosWrappers::MPI::Vector &present_solution,
+                   const Function<2> *                  l_exact_solution,
+                   const Parameters::FEM &              fem_parameters,
+                   const MPI_Comm &                     mpi_communicator);
+
+template std::pair<double, double>
+calculate_L2_error(const DoFHandler<3> &                dof_handler,
+                   const TrilinosWrappers::MPI::Vector &present_solution,
+                   const Function<3> *                  l_exact_solution,
+                   const Parameters::FEM &              fem_parameters,
+                   const MPI_Comm &                     mpi_communicator);
+
+template std::pair<double, double>
+calculate_L2_error(const DoFHandler<2> &                     dof_handler,
+                   const TrilinosWrappers::MPI::BlockVector &present_solution,
+                   const Function<2> *                       l_exact_solution,
+                   const Parameters::FEM &                   fem_parameters,
+                   const MPI_Comm &                          mpi_communicator);
+
+template std::pair<double, double>
+calculate_L2_error(const DoFHandler<3> &                     dof_handler,
+                   const TrilinosWrappers::MPI::BlockVector &present_solution,
+                   const Function<3> *                       l_exact_solution,
+                   const Parameters::FEM &                   fem_parameters,
+                   const MPI_Comm &                          mpi_communicator);
+
 template <int dim, typename VectorType>
 std::pair<double, double>
 calculate_flow_rate(const DoFHandler<dim> &dof_handler,

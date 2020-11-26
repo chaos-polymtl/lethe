@@ -65,7 +65,11 @@ InitialConditionsNavierStokes<dim>::runTest()
   this->set_initial_condition(Parameters::InitialConditionType::L2projection);
   auto &present_solution = this->get_present_solution();
   const std::pair<double, double> errors =
-    this->calculate_L2_error(present_solution);
+    calculate_L2_error(this->dof_handler,
+                       present_solution,
+                       this->exact_solution,
+                       this->nsparam.fem_parameters,
+                       this->mpi_communicator);
   double error_L2projection = errors.first;
   if (error_L2projection < 1e-9)
     {
@@ -78,7 +82,11 @@ InitialConditionsNavierStokes<dim>::runTest()
 
   this->set_initial_condition(Parameters::InitialConditionType::nodal);
   const std::pair<double, double> errors_nodal =
-    this->calculate_L2_error(present_solution);
+    calculate_L2_error(this->dof_handler,
+                       present_solution,
+                       this->exact_solution,
+                       this->nsparam.fem_parameters,
+                       this->mpi_communicator);
   double error_nodal = errors_nodal.first;
   if (error_nodal < 1e-9)
     {

@@ -166,6 +166,20 @@ calculate_torques(
   const MPI_Comm &                                     mpi_communicator);
 
 
+/**
+ * @brief calculate_L2_error
+ * @return L2 norm of the error for velocity and pressure
+ * Post-processing function
+ * Calculates the L2 norm of the error
+ */
+template <int dim, typename VectorType>
+std::pair<double, double>
+calculate_L2_error(const DoFHandler<dim> &dof_handler,
+                   const VectorType &     evaluation_point,
+                   const Function<dim> *  l_exact_solution,
+                   const Parameters::FEM &fem_parameters,
+                   const MPI_Comm &       mpi_communicator);
+
 
 /**
  * @brief calculate_flow_rate. This function calculates the volumetric flow

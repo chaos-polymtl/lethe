@@ -144,15 +144,6 @@ protected:
   postprocessing_forces(const VectorType &evaluation_point);
 
   /**
-   * @brief calculate_L2_error
-   * @return L2 norm of the error for velocity and pressure
-   * Post-processing function
-   * Calculates the L2 norm of the error
-   */
-  std::pair<double, double>
-  calculate_L2_error(const VectorType &evaluation_point);
-
-  /**
    * @brief calculate_torques
    * Post-processing function
    * Calculate torque acting on each boundary condition
