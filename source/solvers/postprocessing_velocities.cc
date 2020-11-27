@@ -148,7 +148,7 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
                           FE_Q<dim>(velocity_fem_degree),
                           1);
 
-#if (DEAL_II_VERSION_MINOR == 2)
+#if (DEAL_II_VERSION_MINOR <= 2)
       this->handler_rs.initialize(triangulation, fe_rs);
 #else
       this->handler_rs.reinit(triangulation);
@@ -166,7 +166,7 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
                           FE_Q<dim>(velocity_fem_degree),
                           1);
 
-#if (DEAL_II_VERSION_MINOR == 2)
+#if (DEAL_II_VERSION_MINOR <= 2)
       this->handler_rs.initialize(triangulation, fe_rs);
 #else
       this->handler_rs.reinit(triangulation);
