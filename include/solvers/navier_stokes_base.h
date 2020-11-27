@@ -336,10 +336,6 @@ protected:
   TableHandler                                 kinetic_energy_table;
   AverageVelocities<dim, VectorType, DofsType> average_velocities;
   VectorType                                   average_solution;
-  LinearAlgebra::distributed::Vector<double>   reynolds_stresses;
-  DoFHandler<dim>                              dof_handler_rs;
-  IndexSet                                     locally_owned_rs_components;
-  IndexSet                                     locally_relevant_rs_components;
 
   // Convergence Analysis
   ConvergenceTable error_table;

@@ -71,10 +71,7 @@ public:
     const VectorType &                local_evaluation_point,
     const Parameters::PostProcessing &post_processing,
     const double &                    current_time,
-    const double &                    time_step,
-    const DofsType &                  locally_owned_dofs,
-    const IndexSet &                  locally_owned_rs_components,
-    const MPI_Comm &                  mpi_communicator);
+    const double &                    time_step);
 
   /**
    * @brief calculate_reynolds_stress. This function calculates normal and
@@ -105,6 +102,24 @@ public:
     return reynolds_stresses;
   }
 
+  void
+  initialize_averaged_vectors(
+    parallel::DistributedTriangulationBase<dim> &triangulation,
+    const unsigned int &                         velocity_fem_degree,
+    const DofsType &                             locally_owned_dofs,
+    const DofsType &                             locally_relevant_dofs,
+    const MPI_Comm &                             mpi_communicator);
+
+  /**
+   * @brief get_reynolds_stress. Gives the time-averaged Reynolds
+   * stresses.
+   */
+  DoFHandler<dim> &
+  get_reynolds_stress_handler()
+  {
+    return handler_rs;
+  }
+
 private:
   TrilinosScalar inv_range_time;
   TrilinosScalar dt_0;
@@ -120,6 +135,8 @@ private:
   double dt;
   bool   average_calculation;
   double real_initial_time;
+
+  DoFHandler<dim> handler_rs;
 };
 
 #endif

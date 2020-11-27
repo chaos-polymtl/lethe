@@ -72,7 +72,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , velocity_fem_degree(p_degreeVelocity)
   , pressure_fem_degree(p_degreePressure)
   , number_quadrature_points(p_degreeVelocity + 1)
-  , dof_handler_rs(*this->triangulation)
 {
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
@@ -897,41 +896,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                         "stresses are currently unavailable for mesh "
                         "adaptation."));
 
-          this->average_solution.reinit(this->locally_owned_dofs,
-                                        this->locally_relevant_dofs,
-                                        this->mpi_communicator);
-
-          if (dim == 2)
-            {
-              FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
-                                  dim,
-                                  FE_Q<dim>(this->velocity_fem_degree),
-                                  1);
-
-              this->dof_handler_rs.distribute_dofs(fe_rs);
-            }
-          else if (dim == 3)
-            {
-              FESystem<dim> fe_rs(FE_Q<dim>(this->velocity_fem_degree),
-                                  dim,
-                                  FE_Q<dim>(this->velocity_fem_degree),
-                                  1,
-                                  FE_Q<dim>(this->velocity_fem_degree),
-                                  1,
-                                  FE_Q<dim>(this->velocity_fem_degree),
-                                  1);
-
-              this->dof_handler_rs.distribute_dofs(fe_rs);
-            }
-
-          this->locally_owned_rs_components =
-            dof_handler_rs.locally_owned_dofs();
-          DoFTools::extract_locally_relevant_dofs(
-            this->dof_handler_rs, this->locally_relevant_rs_components);
-
-          this->reynolds_stresses.reinit(this->locally_owned_rs_components,
-                                         this->locally_relevant_rs_components,
-                                         this->mpi_communicator);
+          this->average_velocities.initialize_averaged_vectors(
+            *this->triangulation,
+            this->velocity_fem_degree,
+            this->locally_owned_dofs,
+            this->locally_relevant_dofs,
+            this->mpi_communicator);
         }
       else if (simulation_control->get_current_time() >
                (nsparam.post_processing.initial_time - 1e-6))
@@ -940,13 +910,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             this->get_local_evaluation_point(),
             nsparam.post_processing,
             simulation_control->get_current_time(),
-            simulation_control->get_time_step(),
-            this->locally_owned_dofs,
-            this->locally_owned_rs_components,
-            this->mpi_communicator);
-
-          this->average_solution  = average_velocities.get_average_velocities();
-          this->reynolds_stresses = average_velocities.get_reynolds_stresses();
+            simulation_control->get_time_step());
         }
     }
 
@@ -1199,10 +1163,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       average_data_component_interpretation.push_back(
         DataComponentInterpretation::component_is_scalar);
 
-      data_out.add_data_vector(this->average_solution,
-                               average_solution_names,
-                               DataOut<dim>::type_dof_data,
-                               average_data_component_interpretation);
+      data_out.add_data_vector(
+        this->average_velocities.get_average_velocities(),
+        average_solution_names,
+        DataOut<dim>::type_dof_data,
+        average_data_component_interpretation);
 
       // Add the interpretation of the reynolds stresses of solution.
       // The dim first components are the normal reynolds stress vectors and
@@ -1226,12 +1191,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
             DataComponentInterpretation::component_is_scalar);
         }
 
-      this->reynolds_stresses.update_ghost_values();
-
-      data_out.add_data_vector(this->dof_handler_rs,
-                               this->reynolds_stresses,
-                               reynolds_stress_names,
-                               reynolds_stress_data_component_interpretation);
+      data_out.add_data_vector(
+        this->average_velocities.get_reynolds_stress_handler(),
+        this->average_velocities.get_reynolds_stresses(),
+        reynolds_stress_names,
+        reynolds_stress_data_component_interpretation);
     }
 
   Vector<float> subdomain(this->triangulation->n_active_cells());

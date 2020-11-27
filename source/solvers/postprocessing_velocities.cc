@@ -1,3 +1,8 @@
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+
 #include <solvers/postprocessing_velocities.h>
 
 template <int dim, typename VectorType, typename DofsType>
@@ -11,10 +16,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
   const VectorType &                local_evaluation_point,
   const Parameters::PostProcessing &post_processing,
   const double &                    current_time,
-  const double &                    time_step,
-  const DofsType &                  locally_owned_dofs,
-  const IndexSet &                  locally_owned_rs_components,
-  const MPI_Comm &                  mpi_communicator)
+  const double &                    time_step)
 {
   const double epsilon      = 1e-6;
   const double initial_time = post_processing.initial_time;
@@ -28,18 +30,6 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_average_velocities(
 
       // Store the first dt value in case dt varies.
       dt_0 = dt;
-
-      // Reinitialisation of the average velocity and reynolds stress vectors
-      // to get the right length.
-      velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
-      sum_velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
-      average_velocities.reinit(locally_owned_dofs, mpi_communicator);
-
-      // Reinitialize independent components of stress tensor vectors.
-      reynolds_stress_dt.reinit(locally_owned_rs_components, mpi_communicator);
-      sum_reynolds_stress_dt.reinit(locally_owned_rs_components,
-                                    mpi_communicator);
-      reynolds_stresses.reinit(locally_owned_rs_components, mpi_communicator);
     }
 
   // Calculate (u*dt) at each time step and accumulate the values
@@ -139,6 +129,60 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 
   // Calculate the reynolds stresses.
   reynolds_stresses.equ(inv_range_time, sum_reynolds_stress_dt);
+}
+
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::initialize_averaged_vectors(
+  parallel::DistributedTriangulationBase<dim> &triangulation,
+  const unsigned int &                         velocity_fem_degree,
+  const DofsType &                             locally_owned_dofs,
+  const DofsType &                             locally_relevant_dofs,
+  const MPI_Comm &                             mpi_communicator)
+{
+  if (dim == 2)
+    {
+      FESystem<dim> fe_rs(FE_Q<dim>(velocity_fem_degree),
+                          dim,
+                          FE_Q<dim>(velocity_fem_degree),
+                          1);
+
+      this->handler_rs.initialize(triangulation, fe_rs);
+    }
+  else if (dim == 3)
+    {
+      FESystem<dim> fe_rs(FE_Q<dim>(velocity_fem_degree),
+                          dim,
+                          FE_Q<dim>(velocity_fem_degree),
+                          1,
+                          FE_Q<dim>(velocity_fem_degree),
+                          1,
+                          FE_Q<dim>(velocity_fem_degree),
+                          1);
+
+      this->handler_rs.initialize(triangulation, fe_rs);
+    }
+
+  IndexSet locally_owned_rs_components = handler_rs.locally_owned_dofs();
+  IndexSet locally_relevant_rs_components;
+  DoFTools::extract_locally_relevant_dofs(handler_rs,
+                                          locally_relevant_rs_components);
+
+  // Reinitialisation of the average velocity and reynolds stress vectors
+  // to get the right length.
+  velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
+  sum_velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
+  average_velocities.reinit(locally_owned_dofs,
+                            locally_relevant_dofs,
+                            mpi_communicator);
+
+  // Reinitialize independent components of stress tensor vectors.
+  reynolds_stress_dt.reinit(locally_owned_rs_components, mpi_communicator);
+  sum_reynolds_stress_dt.reinit(locally_owned_rs_components, mpi_communicator);
+  reynolds_stresses.reinit(locally_owned_rs_components,
+                           locally_relevant_rs_components,
+                           mpi_communicator);
 }
 
 template class AverageVelocities<2, TrilinosWrappers::MPI::Vector, IndexSet>;
