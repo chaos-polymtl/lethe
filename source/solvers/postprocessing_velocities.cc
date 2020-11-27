@@ -148,7 +148,8 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
                           FE_Q<dim>(velocity_fem_degree),
                           1);
 
-      this->handler_rs.initialize(triangulation, fe_rs);
+      this->handler_rs.reinit(triangulation);
+      this->handler_rs.distribute_dofs(fe_rs);
     }
   else if (dim == 3)
     {
@@ -161,7 +162,8 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
                           FE_Q<dim>(velocity_fem_degree),
                           1);
 
-      this->handler_rs.initialize(triangulation, fe_rs);
+      this->handler_rs.reinit(triangulation);
+      this->handler_rs.distribute_dofs(fe_rs);
     }
 
   IndexSet locally_owned_rs_components = handler_rs.locally_owned_dofs();
