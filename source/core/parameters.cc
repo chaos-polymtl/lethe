@@ -337,11 +337,10 @@ namespace Parameters
         "Enable calculation of total enstrophy. The total enstrophy "
         "is calculated from the volumetric integral of the enstrophy over the domain.");
 
-      prm.declare_entry(
-        "calculate average velocities",
-        "false",
-        Patterns::Bool(),
-        "Enable calculation of average velocity and reynolds stress profiles.");
+      prm.declare_entry("calculate average velocities",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of average velocities.");
 
       prm.declare_entry(
         "initial time",

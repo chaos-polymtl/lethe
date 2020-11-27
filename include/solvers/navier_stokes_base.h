@@ -321,7 +321,6 @@ protected:
   VectorType solution_m1;
   VectorType solution_m2;
   VectorType solution_m3;
-  VectorType average_solution;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
@@ -336,6 +335,7 @@ protected:
   TableHandler                                 enstrophy_table;
   TableHandler                                 kinetic_energy_table;
   AverageVelocities<dim, VectorType, DofsType> average_velocities;
+  VectorType                                   average_solution;
 
   // Convergence Analysis
   ConvergenceTable error_table;

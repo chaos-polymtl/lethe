@@ -21,21 +21,32 @@
  * @brief This code tests averaging values in time with Trilinos vectors.
  */
 
+// Deal.II includes
+#include <deal.II/base/index_set.h>
+
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+
+#include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/lac/trilinos_vector.h>
+
+// Lethe
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "../tests.h"
+// Tests
+#include <../tests/tests.h>
 
 void
-test(int argc, char **argv)
+test()
 {
-  // MPI initialization
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
+  MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  MPI_Comm mpi_communicator = MPI_COMM_WORLD;
-
-  // SimulationControl parameters
+  // Parameters
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
@@ -43,26 +54,38 @@ test(int argc, char **argv)
   simulation_control_parameters.timeEnd = 1.0;
   simulation_control_parameters.adapt   = false;
 
-  // Variables for AverageVelocities
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
+  Parameters::PostProcessing postprocessing_parameters;
+  postprocessing_parameters.calculate_average_velocities = true;
+  postprocessing_parameters.initial_time                 = 0.5;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs(3);
-  locally_owned_dofs.add_range(0, 3);
+  // Some variables to fake the triangulation and the dofs
+  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
+  GridGenerator::hyper_cube(triangulation);
 
-  Parameters::PostProcessing postprocessing_parameters;
-  postprocessing_parameters.calculate_average_velocities = true;
-  postprocessing_parameters.initial_time                 = 0.5;
+  DoFHandler<3> dof_handler;
+  unsigned int  velocity_fem_degree = 1;
+  FESystem<3>   fe(FE_Q<3>(velocity_fem_degree),
+                 3,
+                 FE_Q<3>(velocity_fem_degree),
+                 1);
+  dof_handler.initialize(triangulation, fe);
+
+  IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
+  IndexSet locally_relevant_dofs;
+  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
+
+  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
 
   TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 0.0;
   solution(1) = 2.5;
   solution(2) = 10;
+  solution(3) = 154.2;
 
-  TrilinosWrappers::MPI::Vector average_solution(locally_owned_dofs,
-                                                 mpi_communicator);
+  TrilinosWrappers::MPI::Vector average_solution;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -70,6 +93,14 @@ test(int argc, char **argv)
   double       time         = simulation_control->get_current_time();
   double       epsilon      = 1e-6;
 
+  // Initialize averaged vectors
+  average.initialize_vectors(triangulation,
+                             velocity_fem_degree,
+                             locally_owned_dofs,
+                             locally_relevant_dofs,
+                             mpi_communicator);
+
+  // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
@@ -78,16 +109,14 @@ test(int argc, char **argv)
             solution,
             postprocessing_parameters,
             simulation_control->get_current_time(),
-            simulation_control->get_time_step(),
-            locally_owned_dofs,
-            mpi_communicator);
+            simulation_control->get_time_step());
 
           average_solution = average.get_average_velocities();
 
           deallog << " Time :             " << time << std::endl;
           deallog << " Average solution : " << average_solution[0] << " "
-                  << average_solution[1] << " " << average_solution[2]
-                  << std::endl;
+                  << average_solution[1] << " " << average_solution[2] << " "
+                  << average_solution[3] << std::endl;
           deallog << "" << std::endl;
         }
 
@@ -113,7 +142,9 @@ main(int argc, char **argv)
   try
     {
       initlog();
-      test(argc, argv);
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test();
     }
   catch (std::exception &exc)
     {

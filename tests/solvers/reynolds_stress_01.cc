@@ -18,8 +18,8 @@
 */
 
 /**
- * @brief This code tests averaging values in time with Trilinos vectors with
- * adaptative time step scaling.
+ * @brief This code tests the reynolds stress calculations in 3d with
+ * Trilinos vectors.
  */
 
 // Deal.II includes
@@ -32,7 +32,7 @@
 
 #include <deal.II/grid/grid_generator.h>
 
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 // Lethe
@@ -52,11 +52,9 @@ test()
   Parameters::SimulationControl simulation_control_parameters;
   simulation_control_parameters.method =
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
-  simulation_control_parameters.dt                           = 0.1;
-  simulation_control_parameters.timeEnd                      = 1.0;
-  simulation_control_parameters.output_frequency             = 1;
-  simulation_control_parameters.adapt                        = true;
-  simulation_control_parameters.adaptative_time_step_scaling = 0.95;
+  simulation_control_parameters.dt      = 0.1;
+  simulation_control_parameters.timeEnd = 1.0;
+  simulation_control_parameters.adapt   = false;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -71,77 +69,74 @@ test()
 
   DoFHandler<3> dof_handler;
   unsigned int  velocity_fem_degree = 1;
-
-  FESystem<3> fe(FE_Q<3>(velocity_fem_degree),
+  FESystem<3>   fe(FE_Q<3>(velocity_fem_degree),
                  3,
                  FE_Q<3>(velocity_fem_degree),
                  1);
   dof_handler.initialize(triangulation, fe);
 
-  std::vector<IndexSet> locally_owned_dofs(2);
-  std::vector<IndexSet> locally_relevant_dofs(2);
+  IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
+  IndexSet locally_relevant_dofs;
+  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
 
-  locally_owned_dofs[0] = dof_handler.locally_owned_dofs().get_view(0, 24);
-  locally_owned_dofs[1] = dof_handler.locally_owned_dofs().get_view(24, 32);
+  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
+    postprocessing_velocities;
 
-  IndexSet locally_relevant_dofs_acquisition;
-  DoFTools::extract_locally_relevant_dofs(dof_handler,
-                                          locally_relevant_dofs_acquisition);
+  TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
+  solution(0) = 2.0;
+  solution(1) = 0.1;
+  solution(2) = 0.0;
+  solution(3) = 30;
+  solution(4) = 2.5;
+  solution(5) = 0.56;
+  solution(6) = 0.1;
+  solution(7) = 20;
 
-  locally_relevant_dofs[0] = locally_relevant_dofs_acquisition.get_view(0, 24);
-  locally_relevant_dofs[1] = locally_relevant_dofs_acquisition.get_view(24, 32);
+  LinearAlgebra::distributed::Vector<double> stress_solution;
 
-  AverageVelocities<3,
-                    TrilinosWrappers::MPI::BlockVector,
-                    std::vector<IndexSet>>
-    average;
-
-  TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
-                                              mpi_communicator);
-  solution.block(0)[0] = 0.0;
-  solution.block(0)[1] = 2.5;
-  solution.block(0)[2] = 10;
-  solution.block(1)[0] = 154.2;
-
-  TrilinosWrappers::MPI::BlockVector average_solution(locally_owned_dofs,
-                                                      mpi_communicator);
-
-  // Time and output info
+  // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
-  double       dt           = 0.0;
-  const double epsilon      = 1e-6;
+  double       epsilon      = 1e-6;
 
   // Initialize averaged vectors
-  average.initialize_vectors(triangulation,
-                             velocity_fem_degree,
-                             locally_owned_dofs,
-                             locally_relevant_dofs,
-                             mpi_communicator);
+  postprocessing_velocities.initialize_vectors(triangulation,
+                                               velocity_fem_degree,
+                                               locally_owned_dofs,
+                                               locally_relevant_dofs,
+                                               mpi_communicator);
 
   // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {
-          average.calculate_average_velocities(solution,
-                                               postprocessing_parameters,
-                                               time,
-                                               dt);
+          postprocessing_velocities.calculate_average_velocities(
+            solution,
+            postprocessing_parameters,
+            simulation_control->get_current_time(),
+            simulation_control->get_time_step());
 
-          average_solution = average.get_average_velocities();
+          stress_solution = postprocessing_velocities.get_reynolds_stresses();
 
-          deallog << " Time :             " << time << std::endl;
-          deallog << " Time step :        " << dt << std::endl;
-          deallog << " Average solution : " << average_solution.block(0)[0]
-                  << " " << average_solution.block(0)[1] << " "
-                  << average_solution.block(0)[2] << " "
-                  << average_solution.block(1)[0] << std::endl;
+          deallog << " Time  : " << time << std::endl;
+          deallog << "<u'u'> : " << stress_solution[0] << " "
+                  << stress_solution[6] << std::endl;
+          deallog << "<v'v'> : " << stress_solution[1] << " "
+                  << stress_solution[7] << std::endl;
+          deallog << "<w'w'> : " << stress_solution[2] << " "
+                  << stress_solution[8] << std::endl;
+          deallog << "<u'v'> : " << stress_solution[3] << " "
+                  << stress_solution[9] << std::endl;
+          deallog << "<v'w'> : " << stress_solution[4] << " "
+                  << stress_solution[10] << std::endl;
+          deallog << "<w'u'> : " << stress_solution[5] << " "
+                  << stress_solution[11] << std::endl;
           deallog << "" << std::endl;
         }
 
-      // new solution values for next step
+      // New solution values for next step
       solution *= 0.9;
 
       // Integrate to get the next time
@@ -153,7 +148,6 @@ test()
       if (abs(time - simulation_control->get_current_time()) < epsilon)
         break;
 
-      dt   = simulation_control->get_time_step();
       time = simulation_control->get_current_time();
     }
 }

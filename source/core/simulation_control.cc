@@ -1,5 +1,6 @@
 #include "core/simulation_control.h"
 
+#include <cfloat>
 #include <fstream>
 
 #include "core/parameters.h"

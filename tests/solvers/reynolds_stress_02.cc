@@ -12,14 +12,13 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
-*
-* Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
-*/
+ *
+ * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
+ */
 
 /**
- * @brief This code tests averaging values in time with Trilinos vectors with
- * adaptative time step scaling.
+ * @brief This code tests the reynolds stress calculations in 2d with
+ * Trilinos block vectors and MPI rank of 1 and 2 with adaptive time.
  */
 
 // Deal.II includes
@@ -32,6 +31,7 @@
 
 #include <deal.II/grid/grid_generator.h>
 
+#include <deal.II/lac/la_parallel_vector.h>
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
@@ -54,9 +54,8 @@ test()
     Parameters::SimulationControl::TimeSteppingMethod::bdf1;
   simulation_control_parameters.dt                           = 0.1;
   simulation_control_parameters.timeEnd                      = 1.0;
-  simulation_control_parameters.output_frequency             = 1;
   simulation_control_parameters.adapt                        = true;
-  simulation_control_parameters.adaptative_time_step_scaling = 0.95;
+  simulation_control_parameters.adaptative_time_step_scaling = 0.99;
 
   Parameters::PostProcessing postprocessing_parameters;
   postprocessing_parameters.calculate_average_velocities = true;
@@ -66,82 +65,94 @@ test()
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
   // Some variables to fake the triangulation and the dofs
-  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
+  parallel::distributed::Triangulation<2> triangulation(mpi_communicator);
   GridGenerator::hyper_cube(triangulation);
 
-  DoFHandler<3> dof_handler;
+  DoFHandler<2> dof_handler;
   unsigned int  velocity_fem_degree = 1;
-
-  FESystem<3> fe(FE_Q<3>(velocity_fem_degree),
-                 3,
-                 FE_Q<3>(velocity_fem_degree),
-                 1);
+  FESystem<2>   fe(FE_Q<2>(velocity_fem_degree),
+                 2,
+                 FE_Q<2>(velocity_fem_degree),
+                 2);
   dof_handler.initialize(triangulation, fe);
 
   std::vector<IndexSet> locally_owned_dofs(2);
   std::vector<IndexSet> locally_relevant_dofs(2);
 
-  locally_owned_dofs[0] = dof_handler.locally_owned_dofs().get_view(0, 24);
-  locally_owned_dofs[1] = dof_handler.locally_owned_dofs().get_view(24, 32);
+  locally_owned_dofs[0] = dof_handler.locally_owned_dofs().get_view(0, 8);
+  locally_owned_dofs[1] = dof_handler.locally_owned_dofs().get_view(8, 12);
 
   IndexSet locally_relevant_dofs_acquisition;
   DoFTools::extract_locally_relevant_dofs(dof_handler,
                                           locally_relevant_dofs_acquisition);
 
-  locally_relevant_dofs[0] = locally_relevant_dofs_acquisition.get_view(0, 24);
-  locally_relevant_dofs[1] = locally_relevant_dofs_acquisition.get_view(24, 32);
+  locally_relevant_dofs[0] = locally_relevant_dofs_acquisition.get_view(0, 8);
+  locally_relevant_dofs[1] = locally_relevant_dofs_acquisition.get_view(8, 12);
 
-  AverageVelocities<3,
+  AverageVelocities<2,
                     TrilinosWrappers::MPI::BlockVector,
                     std::vector<IndexSet>>
-    average;
+    postprocessing_velocities;
 
   TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
                                               mpi_communicator);
-  solution.block(0)[0] = 0.0;
-  solution.block(0)[1] = 2.5;
-  solution.block(0)[2] = 10;
-  solution.block(1)[0] = 154.2;
+  solution.block(0)[0] = 2.0;
+  solution.block(0)[1] = 0.1;
+  solution.block(0)[2] = 2.5;
+  solution.block(0)[3] = 0.56;
+  solution.block(0)[4] = 0;
+  solution.block(0)[5] = 7.9;
+  solution.block(0)[6] = 1;
+  solution.block(0)[7] = 1.2;
+  solution.block(1)[0] = 30;
+  solution.block(1)[1] = 20;
+  solution.block(1)[2] = 26;
+  solution.block(1)[2] = 15;
 
-  TrilinosWrappers::MPI::BlockVector average_solution(locally_owned_dofs,
-                                                      mpi_communicator);
+  LinearAlgebra::distributed::Vector<double> stress_solution;
 
-  // Time and output info
+  // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       dt           = 0.0;
-  const double epsilon      = 1e-6;
+  double       epsilon      = 1e-6;
 
   // Initialize averaged vectors
-  average.initialize_vectors(triangulation,
-                             velocity_fem_degree,
-                             locally_owned_dofs,
-                             locally_relevant_dofs,
-                             mpi_communicator);
+  postprocessing_velocities.initialize_vectors(triangulation,
+                                               velocity_fem_degree,
+                                               locally_owned_dofs,
+                                               locally_relevant_dofs,
+                                               mpi_communicator);
 
   // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
     {
       if (time > (initial_time - epsilon)) // Time reached the initial time
         {
-          average.calculate_average_velocities(solution,
-                                               postprocessing_parameters,
-                                               time,
-                                               dt);
+          postprocessing_velocities.calculate_average_velocities(
+            solution,
+            postprocessing_parameters,
+            simulation_control->get_current_time(),
+            simulation_control->get_time_step());
 
-          average_solution = average.get_average_velocities();
+          stress_solution = postprocessing_velocities.get_reynolds_stresses();
 
-          deallog << " Time :             " << time << std::endl;
-          deallog << " Time step :        " << dt << std::endl;
-          deallog << " Average solution : " << average_solution.block(0)[0]
-                  << " " << average_solution.block(0)[1] << " "
-                  << average_solution.block(0)[2] << " "
-                  << average_solution.block(1)[0] << std::endl;
+          deallog << " Time  :      " << time << std::endl;
+          deallog << " Time step  : " << dt << std::endl;
+          deallog << " <u'u'> :     " << stress_solution[0] << " "
+                  << stress_solution[3] << " " << stress_solution[6] << " "
+                  << stress_solution[9] << std::endl;
+          deallog << " <v'v'> :     " << stress_solution[1] << " "
+                  << stress_solution[4] << " " << stress_solution[7] << " "
+                  << stress_solution[10] << std::endl;
+          deallog << " <u'v'> :     " << stress_solution[2] << " "
+                  << stress_solution[5] << " " << stress_solution[8] << " "
+                  << stress_solution[11] << std::endl;
           deallog << "" << std::endl;
         }
 
-      // new solution values for next step
+      // New solution values for next step
       solution *= 0.9;
 
       // Integrate to get the next time
