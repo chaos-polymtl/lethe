@@ -22,11 +22,26 @@
  * adaptative time step scaling.
  */
 
+// Deal.II includes
+#include <deal.II/base/index_set.h>
+
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+
+#include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/trilinos_vector.h>
+
+// Lethe
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "../tests.h"
+// Tests
+#include <../tests/tests.h>
 
 void
 test()
@@ -43,36 +58,50 @@ test()
   simulation_control_parameters.adapt                        = true;
   simulation_control_parameters.adaptative_time_step_scaling = 0.95;
 
-  // Variables for AverageVelocities
+  Parameters::PostProcessing postprocessing_parameters;
+  postprocessing_parameters.calculate_average_velocities = true;
+  postprocessing_parameters.initial_time                 = 0.5;
+
+  auto simulation_control =
+    std::make_shared<SimulationControlTransient>(simulation_control_parameters);
+
+  // Some variables to fake the triangulation and the dofs
+  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
+  GridGenerator::hyper_cube(triangulation);
+
+  DoFHandler<3> dof_handler;
+  unsigned int  velocity_fem_degree = 1;
+
+  FESystem<3> fe(FE_Q<3>(velocity_fem_degree),
+                 3,
+                 FE_Q<3>(velocity_fem_degree),
+                 1);
+  dof_handler.initialize(triangulation, fe);
+
+  std::vector<IndexSet> locally_owned_dofs(2);
+  std::vector<IndexSet> locally_relevant_dofs(2);
+
+  locally_owned_dofs[0] = dof_handler.locally_owned_dofs().get_view(0, 24);
+  locally_owned_dofs[1] = dof_handler.locally_owned_dofs().get_view(24, 32);
+
+  IndexSet locally_relevant_dofs_acquisition;
+  DoFTools::extract_locally_relevant_dofs(dof_handler,
+                                          locally_relevant_dofs_acquisition);
+
+  locally_relevant_dofs[0] = locally_relevant_dofs_acquisition.get_view(0, 24);
+  locally_relevant_dofs[1] = locally_relevant_dofs_acquisition.get_view(24, 32);
+
   AverageVelocities<3,
                     TrilinosWrappers::MPI::BlockVector,
                     std::vector<IndexSet>>
     average;
 
-  auto simulation_control =
-    std::make_shared<SimulationControlTransient>(simulation_control_parameters);
-
-  std::vector<IndexSet> locally_owned_dofs(2);
-  locally_owned_dofs[0].set_size(3);
-  locally_owned_dofs[1].set_size(1);
-  locally_owned_dofs[0].add_range(0, 3);
-  locally_owned_dofs[1].add_range(0, 1);
-
-
-  Parameters::PostProcessing postprocessing_parameters;
-  postprocessing_parameters.calculate_average_velocities = true;
-  postprocessing_parameters.initial_time                 = 0.5;
-
   TrilinosWrappers::MPI::BlockVector solution(locally_owned_dofs,
                                               mpi_communicator);
-
   solution.block(0)[0] = 0.0;
   solution.block(0)[1] = 2.5;
   solution.block(0)[2] = 10;
   solution.block(1)[0] = 154.2;
-
-  IndexSet locally_owned_rs_components(6);
-  locally_owned_rs_components.add_range(0, 6);
 
   TrilinosWrappers::MPI::BlockVector average_solution(locally_owned_dofs,
                                                       mpi_communicator);
@@ -84,6 +113,13 @@ test()
   double       dt           = 0.0;
   const double epsilon      = 1e-6;
 
+  // Initialize averaged vectors
+  average.initialize_vectors(triangulation,
+                             velocity_fem_degree,
+                             locally_owned_dofs,
+                             locally_relevant_dofs,
+                             mpi_communicator);
+
   // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
     {
@@ -92,10 +128,7 @@ test()
           average.calculate_average_velocities(solution,
                                                postprocessing_parameters,
                                                time,
-                                               dt,
-                                               locally_owned_dofs,
-                                               locally_owned_rs_components,
-                                               mpi_communicator);
+                                               dt);
 
           average_solution = average.get_average_velocities();
 

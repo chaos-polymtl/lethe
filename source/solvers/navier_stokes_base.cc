@@ -896,7 +896,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                         "stresses are currently unavailable for mesh "
                         "adaptation."));
 
-          this->average_velocities.initialize_averaged_vectors(
+          this->average_velocities.initialize_vectors(
             *this->triangulation,
             this->velocity_fem_degree,
             this->locally_owned_dofs,

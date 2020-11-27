@@ -22,13 +22,16 @@
  */
 
 // Deal.II includes
-#include <deal.II/dofs/block_info.h>
+#include <deal.II/base/index_set.h>
+
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 
 #include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/lac/trilinos_vector.h>
 
 // Lethe
 #include <core/parameters.h>
@@ -77,8 +80,6 @@ test()
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
 
   TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
-
-  solution    = 0;
   solution(0) = 0.0;
   solution(1) = 2.5;
   solution(2) = 10;
@@ -93,11 +94,11 @@ test()
   double       epsilon      = 1e-6;
 
   // Initialize averaged vectors
-  average.initialize_averaged_vectors(triangulation,
-                                      velocity_fem_degree,
-                                      locally_owned_dofs,
-                                      locally_relevant_dofs,
-                                      mpi_communicator);
+  average.initialize_vectors(triangulation,
+                             velocity_fem_degree,
+                             locally_owned_dofs,
+                             locally_relevant_dofs,
+                             mpi_communicator);
 
   // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time

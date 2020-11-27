@@ -103,12 +103,11 @@ public:
   }
 
   void
-  initialize_averaged_vectors(
-    parallel::DistributedTriangulationBase<dim> &triangulation,
-    const unsigned int &                         velocity_fem_degree,
-    const DofsType &                             locally_owned_dofs,
-    const DofsType &                             locally_relevant_dofs,
-    const MPI_Comm &                             mpi_communicator);
+  initialize_vectors(parallel::DistributedTriangulationBase<dim> &triangulation,
+                     const unsigned int &velocity_fem_degree,
+                     const DofsType &    locally_owned_dofs,
+                     const DofsType &    locally_relevant_dofs,
+                     const MPI_Comm &    mpi_communicator);
 
   /**
    * @brief get_reynolds_stress. Gives the time-averaged Reynolds

@@ -22,11 +22,26 @@
  * Trilinos vectors.
  */
 
+// Deal.II includes
+#include <deal.II/base/index_set.h>
+
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+
+#include <deal.II/grid/grid_generator.h>
+
+#include <deal.II/lac/la_parallel_vector.h>
+#include <deal.II/lac/trilinos_vector.h>
+
+// Lethe
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "../tests.h"
+// Tests
+#include <../tests/tests.h>
 
 void
 test()
@@ -41,19 +56,31 @@ test()
   simulation_control_parameters.timeEnd = 1.0;
   simulation_control_parameters.adapt   = false;
 
-  // Variables for AverageVelocities
-  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
-    postprocessing_velocities;
+  Parameters::PostProcessing postprocessing_parameters;
+  postprocessing_parameters.calculate_average_velocities = true;
+  postprocessing_parameters.initial_time                 = 0.5;
 
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  IndexSet locally_owned_dofs(8);
-  locally_owned_dofs.add_range(0, 8);
+  // Some variables to fake the triangulation and the dofs
+  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
+  GridGenerator::hyper_cube(triangulation);
 
-  Parameters::PostProcessing postprocessing_parameters;
-  postprocessing_parameters.calculate_average_velocities = true;
-  postprocessing_parameters.initial_time                 = 0.5;
+  DoFHandler<3> dof_handler;
+  unsigned int  velocity_fem_degree = 1;
+  FESystem<3>   fe(FE_Q<3>(velocity_fem_degree),
+                 3,
+                 FE_Q<3>(velocity_fem_degree),
+                 1);
+  dof_handler.initialize(triangulation, fe);
+
+  IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
+  IndexSet locally_relevant_dofs;
+  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
+
+  AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
+    postprocessing_velocities;
 
   TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 2.0;
@@ -65,17 +92,20 @@ test()
   solution(6) = 0.1;
   solution(7) = 20;
 
-  IndexSet locally_owned_rs_components(12);
-  locally_owned_rs_components.add_range(0, 12);
-
-  LinearAlgebra::distributed::Vector<double> stress_solution(
-    locally_owned_rs_components, mpi_communicator);
+  LinearAlgebra::distributed::Vector<double> stress_solution;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
   const double initial_time = postprocessing_parameters.initial_time;
   double       time         = simulation_control->get_current_time();
   double       epsilon      = 1e-6;
+
+  // Initialize averaged vectors
+  postprocessing_velocities.initialize_vectors(triangulation,
+                                               velocity_fem_degree,
+                                               locally_owned_dofs,
+                                               locally_relevant_dofs,
+                                               mpi_communicator);
 
   // Time loop
   while (time < (time_end + epsilon)) // Until time reached end time
@@ -86,10 +116,7 @@ test()
             solution,
             postprocessing_parameters,
             simulation_control->get_current_time(),
-            simulation_control->get_time_step(),
-            locally_owned_dofs,
-            locally_owned_rs_components,
-            mpi_communicator);
+            simulation_control->get_time_step());
 
           stress_solution = postprocessing_velocities.get_reynolds_stresses();
 

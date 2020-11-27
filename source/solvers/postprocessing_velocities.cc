@@ -134,7 +134,7 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-AverageVelocities<dim, VectorType, DofsType>::initialize_averaged_vectors(
+AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   parallel::DistributedTriangulationBase<dim> &triangulation,
   const unsigned int &                         velocity_fem_degree,
   const DofsType &                             locally_owned_dofs,
