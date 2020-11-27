@@ -17,24 +17,23 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test finds the boundary cells in a system and reports the corresponding
-// information of these cells
+/**
+ * @brief This test finds the boundary cells in a system and reports
+ * the corresponding information of these cells.
+ */
 
-#include <deal.II/base/mpi.h>
-#include <deal.II/base/point.h>
-
+// Deal.II includes
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
 
+// Lethe
 #include <core/parameters_lagrangian.h>
 #include <dem/find_boundary_cells_information.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests
+#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -73,8 +72,37 @@ test()
 int
 main(int argc, char **argv)
 {
-  initlog();
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(
-    argc, argv, numbers::invalid_unsigned_int);
-  test<3>();
+  try
+    {
+      initlog();
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+      test<3>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
 }

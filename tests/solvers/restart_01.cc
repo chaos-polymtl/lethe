@@ -1,9 +1,18 @@
-// check the read and write of simulationcontrol
+/**
+ * @brief This code checks the read and write of simulationcontrol.
+ */
 
-#include "../tests.h"
-#include "core/parameters.h"
-#include "solvers/gls_navier_stokes.h"
-#include "solvers/navier_stokes_solver_parameters.h"
+// Deal.II includes
+#include <deal.II/base/function.h>
+#include <deal.II/base/types.h>
+
+// Lethe
+#include <core/parameters.h>
+#include <solvers/gls_navier_stokes.h>
+#include <solvers/navier_stokes_solver_parameters.h>
+
+// Tests
+#include <../tests/tests.h>
 
 template <int dim>
 class ExactSolutionMMS : public Function<dim>
@@ -116,6 +125,27 @@ RestartNavierStokes<dim>::run()
   deallog << "Error after restarting the simulation: " << error3 << std::endl;
 }
 
+void
+test()
+{
+  ParameterHandler                prm;
+  NavierStokesSolverParameters<2> NSparam;
+  NSparam.declare(prm);
+  NSparam.parse(prm);
+
+  // Manually alter some of the default parameters of the solver
+  NSparam.restart_parameters.checkpoint = true;
+  NSparam.restart_parameters.frequency  = 1;
+  NSparam.non_linear_solver.verbosity   = Parameters::Verbosity::quiet;
+  NSparam.linear_solver.verbosity       = Parameters::Verbosity::quiet;
+  NSparam.boundary_conditions.createDefaultNoSlip();
+
+  RestartNavierStokes<2> problem_2d(NSparam,
+                                    NSparam.fem_parameters.velocity_order,
+                                    NSparam.fem_parameters.pressure_order);
+  problem_2d.run();
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -124,23 +154,7 @@ main(int argc, char *argv[])
       initlog();
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
-
-      ParameterHandler                prm;
-      NavierStokesSolverParameters<2> NSparam;
-      NSparam.declare(prm);
-      NSparam.parse(prm);
-
-      // Manually alter some of the default parameters of the solver
-      NSparam.restart_parameters.checkpoint = true;
-      NSparam.restart_parameters.frequency  = 1;
-      NSparam.non_linear_solver.verbosity   = Parameters::Verbosity::quiet;
-      NSparam.linear_solver.verbosity       = Parameters::Verbosity::quiet;
-      NSparam.boundary_conditions.createDefaultNoSlip();
-
-      RestartNavierStokes<2> problem_2d(NSparam,
-                                        NSparam.fem_parameters.velocity_order,
-                                        NSparam.fem_parameters.pressure_order);
-      problem_2d.run();
+      test();
     }
   catch (std::exception &exc)
     {

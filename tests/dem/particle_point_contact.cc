@@ -17,24 +17,26 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test reports the normal overlap and corresponding normal force during a
-// complete particle-wall contact. Interested reader may be interested in
-// plotting normal force against normal overlap
+/**
+ * @brief This test reports the normal overlap and corresponding normal force
+ * during a complete particle-wall contact. Interested reader may be interested
+ * inplotting normal force against normal overlap.
+ */
 
+// Deal.II
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
-
-#include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
@@ -43,10 +45,8 @@
 #include <dem/particle_point_line_fine_search.h>
 #include <dem/velocity_verlet_integrator.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -82,6 +82,7 @@ test()
   dem_parameters.physical_properties.friction_coefficient_wall        = 0.05;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
   dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
+  const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
   Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
@@ -137,14 +138,15 @@ test()
       particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
 
       contact_candidates =
-        broad_search_object.find_Particle_Point_Contact_Pairs(
+        broad_search_object.find_particle_point_contact_pairs(
           particle_handler,
           boundary_cells_object.get_boundary_cells_with_points());
 
       contact_information =
-        fine_search_object.Particle_Point_Fine_Search(contact_candidates);
+        fine_search_object.particle_point_fine_search(contact_candidates,
+                                                      neighborhood_threshold);
 
-      force_object.calculate_particle_point_line_contact_force(
+      force_object.calculate_particle_point_contact_force(
         &contact_information, dem_parameters.physical_properties);
       integrator_object.integrate(particle_handler, g, dt);
 
@@ -159,8 +161,37 @@ test()
 int
 main(int argc, char **argv)
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+  try
+    {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  initlog();
-  test<2>();
+      initlog();
+      test<2>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
 }

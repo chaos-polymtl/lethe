@@ -17,10 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test checks the performance of the explicit Euler integrator class
+/**
+ * @brief This test checks the performance of the explicit Euler integrator
+ * class.
+ */
 
+// Deal.II includes
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
 
 #include <deal.II/fe/mapping_q.h>
 
@@ -33,13 +36,12 @@
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/property_pool.h>
 
+// Lethe
 #include <dem/dem_properties.h>
 #include <dem/explicit_euler_integrator.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -118,8 +120,37 @@ test()
 int
 main(int argc, char **argv)
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+  try
+    {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
-  initlog();
-  test<3>();
+      initlog();
+      test<3>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
 }

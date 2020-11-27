@@ -17,11 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// In this test, the performance of linear (Hookean) particle-particle contact
-// force  is checked
+/**
+ * @brief In this test, the performance of linear (Hookean) particle-particle
+ * contact force  is checked.
+ */
 
+// Deal.II
 #include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/point.h>
 
 #include <deal.II/fe/mapping_q.h>
 
@@ -33,6 +35,7 @@
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+// Lethe
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_cell_neighbors.h>
@@ -40,10 +43,8 @@
 #include <dem/pp_fine_search.h>
 #include <dem/pp_linear_force.h>
 
-#include <iostream>
-#include <vector>
-
-#include "../tests.h"
+// Tests (with common definitions)
+#include <../tests/tests.h>
 
 using namespace dealii;
 
@@ -74,7 +75,7 @@ test()
   dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
   dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
   dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
-  double neighborhood_threshold = 1.3 * particle_diameter;
+  const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleHandler<dim> particle_handler(triangulation,
                                                    mapping,
@@ -202,7 +203,36 @@ test()
 int
 main(int argc, char **argv)
 {
-  Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
-  initlog();
-  test<3>();
+  try
+    {
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
+      initlog();
+      test<3>();
+    }
+  catch (std::exception &exc)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Exception on processing: " << std::endl
+                << exc.what() << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  catch (...)
+    {
+      std::cerr << std::endl
+                << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      std::cerr << "Unknown exception!" << std::endl
+                << "Aborting!" << std::endl
+                << "----------------------------------------------------"
+                << std::endl;
+      return 1;
+    }
+  return 0;
 }
