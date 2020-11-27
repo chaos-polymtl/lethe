@@ -1,3 +1,5 @@
+#include <boost/range/adaptor/map.hpp>
+
 #include <dem/pp_nonlinear_force.h>
 
 using namespace DEM;
@@ -6,9 +8,9 @@ template <int dim>
 void
 PPNonLinearForce<dim>::calculate_pp_contact_force(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    *local_adjacent_particles,
+    &local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    *                                               ghost_adjacent_particles,
+    &                                               ghost_adjacent_particles,
   const Parameters::Lagrangian::PhysicalProperties &physical_properties,
   const double &                                    dt)
 {
@@ -16,34 +18,20 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
   // pairs are differnet. Consequently, contact forces of local-local and
   // local-ghost particle pairs are performed in separate loops
 
-  // Looping over local_adjacent_particles with iterator
-  // adjacent_particles_iterator
-  for (auto adjacent_particles_iterator = local_adjacent_particles->begin();
-       adjacent_particles_iterator != local_adjacent_particles->end();
-       ++adjacent_particles_iterator)
+  // Looping over local_adjacent_particles values with iterator
+  // adjacent_particles_list
+  for (auto &&adjacent_particles_list :
+       local_adjacent_particles | boost::adaptors::map_values)
     {
-      // Now an iterator (adjacent_particles_list_iterator) on each element of
-      // the adjacent_particles_iterator map is defined. This iterator iterates
-      // over another map which contains the required information for
-      // calculation of the contact force
-      auto adjacent_particles_list = &adjacent_particles_iterator->second;
-
-      if (!adjacent_particles_list->empty())
+      if (!adjacent_particles_list.empty())
         {
-          for (auto adjacent_particles_list_iterator =
-                 adjacent_particles_list->begin();
-               adjacent_particles_list_iterator !=
-               adjacent_particles_list->end();
-               ++adjacent_particles_list_iterator)
+          for (auto &&contact_info :
+               adjacent_particles_list | boost::adaptors::map_values)
             {
-              // Defining the iterator's second value (map value) as a local
-              // parameter
-              auto contact_info = &adjacent_particles_list_iterator->second;
-
               // Getting information (location and propertis) of particle one
               // and two in contact
-              auto             particle_one = contact_info->particle_one;
-              auto             particle_two = contact_info->particle_two;
+              auto             particle_one = contact_info.particle_one;
+              auto             particle_two = contact_info.particle_two;
               const Point<dim> particle_one_location =
                 particle_one->get_location();
               const Point<dim> particle_two_location =
@@ -64,7 +52,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                   // this element of the container here. The rest of information
                   // are updated using the following function
                   this->update_contact_information(
-                    *contact_info,
+                    contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
                     particle_one_properties,
@@ -75,7 +63,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
                   this->calculate_nonlinear_contact_force_and_torque(
                     physical_properties,
-                    *contact_info,
+                    contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
                     normal_overlap,
@@ -102,7 +90,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info->tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0;
                     }
                 }
             }
@@ -111,34 +99,21 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
   // Doing the same calculations for local-ghost particle pairs
 
-  // Looping over ghost_adjacent_particles with iterator
-  // adjacent_particles_iterator
-  for (auto adjacent_particles_iterator = ghost_adjacent_particles->begin();
-       adjacent_particles_iterator != ghost_adjacent_particles->end();
-       ++adjacent_particles_iterator)
+  // Looping over ghost_adjacent_particles list with iterator
+  // adjacent_particles_list
+  for (auto &&adjacent_particles_list :
+       ghost_adjacent_particles | boost::adaptors::map_values)
     {
-      // Now an iterator (adjacent_particles_list_iterator) on each element of
-      // the adjacent_particles_iterator map is defined. This iterator iterates
-      // over another map which contains the required information for
-      // calculation of the contact force
-      auto adjacent_particles_list = &adjacent_particles_iterator->second;
-
-      if (!adjacent_particles_list->empty())
+      if (!adjacent_particles_list.empty())
         {
-          for (auto adjacent_particles_list_iterator =
-                 adjacent_particles_list->begin();
-               adjacent_particles_list_iterator !=
-               adjacent_particles_list->end();
-               ++adjacent_particles_list_iterator)
-            {
-              // Defining the iterator's second value (map value) as a local
-              // parameter
-              auto contact_info = &adjacent_particles_list_iterator->second;
+          for (auto &&contact_info :
+               adjacent_particles_list | boost::adaptors::map_values)
 
+            {
               // Getting information (location and propertis) of particle one
               // and two in contact
-              auto             particle_one = contact_info->particle_one;
-              auto             particle_two = contact_info->particle_two;
+              auto             particle_one = contact_info.particle_one;
+              auto             particle_two = contact_info.particle_two;
               const Point<dim> particle_one_location =
                 particle_one->get_location();
               const Point<dim> particle_two_location =
@@ -160,7 +135,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                   // this element of the container here. The rest of information
                   // are updated using the following function
                   this->update_contact_information(
-                    *contact_info,
+                    contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
                     particle_one_properties,
@@ -171,7 +146,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 
                   this->calculate_nonlinear_contact_force_and_torque(
                     physical_properties,
-                    *contact_info,
+                    contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
                     normal_overlap,
@@ -197,7 +172,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                   // tangential overlap is set to zero
                   for (int d = 0; d < dim; ++d)
                     {
-                      contact_info->tangential_overlap[d] = 0;
+                      contact_info.tangential_overlap[d] = 0;
                     }
                 }
             }

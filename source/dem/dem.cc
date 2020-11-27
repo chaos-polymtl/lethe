@@ -714,8 +714,8 @@ DEMSolver<dim>::solve()
 
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
-        &local_adjacent_particles,
-        &ghost_adjacent_particles,
+        local_adjacent_particles,
+        ghost_adjacent_particles,
         physical_properties,
         simulation_control->get_time_step());
 

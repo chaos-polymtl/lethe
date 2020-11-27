@@ -57,10 +57,10 @@ public:
   calculate_pp_contact_force(
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      *local_adjacent_particles,
+      &local_adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      *                                               ghost_adjacent_particles,
+      &                                               ghost_adjacent_particles,
     const Parameters::Lagrangian::PhysicalProperties &physical_properties,
     const double &                                    dt) = 0;
 
