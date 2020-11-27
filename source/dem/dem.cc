@@ -320,14 +320,14 @@ DEMSolver<dim>::particle_wall_broad_search()
     }
 
   particle_point_contact_candidates =
-    particle_point_line_broad_search_object.find_Particle_Point_Contact_Pairs(
+    particle_point_line_broad_search_object.find_particle_point_contact_pairs(
       particle_handler, boundary_cell_object.get_boundary_cells_with_points());
 
   if (dim == 3)
     {
       particle_line_contact_candidates =
         particle_point_line_broad_search_object
-          .find_Particle_Line_Contact_Pairs(
+          .find_particle_line_contact_pairs(
             particle_handler,
             boundary_cell_object.get_boundary_cells_with_lines());
     }
@@ -352,14 +352,14 @@ DEMSolver<dim>::particle_wall_fine_search()
     }
 
   particle_points_in_contact =
-    particle_point_line_fine_search_object.Particle_Point_Fine_Search(
-      particle_point_contact_candidates);
+    particle_point_line_fine_search_object.particle_point_fine_search(
+      particle_point_contact_candidates, neighborhood_threshold_squared);
 
   if (dim == 3)
     {
       particle_lines_in_contact =
-        particle_point_line_fine_search_object.Particle_Line_Fine_Search(
-          particle_line_contact_candidates);
+        particle_point_line_fine_search_object.particle_line_fine_search(
+          particle_line_contact_candidates, neighborhood_threshold_squared);
     }
 }
 
@@ -383,14 +383,14 @@ DEMSolver<dim>::particle_wall_contact_force()
     }
 
   particle_point_line_contact_force_object
-    .calculate_particle_point_line_contact_force(&particle_points_in_contact,
-                                                 physical_properties);
+    .calculate_particle_point_contact_force(&particle_points_in_contact,
+                                            physical_properties);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
-        .calculate_particle_point_line_contact_force(&particle_lines_in_contact,
-                                                     physical_properties);
+        .calculate_particle_line_contact_force(&particle_lines_in_contact,
+                                               physical_properties);
     }
 }
 
@@ -654,18 +654,10 @@ DEMSolver<dim>::solve()
 
           // Updating number of contact builds
           contact_build_number++;
-        }
 
-      // Particle-wall broad contact search
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
-        {
+          // Particle-wall broad contact search
           particle_wall_broad_search();
-        }
 
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
-        {
           localize_contacts<dim>(&local_adjacent_particles,
                                  &ghost_adjacent_particles,
                                  &pw_pairs_in_contact,
@@ -674,11 +666,7 @@ DEMSolver<dim>::solve()
                                  ghost_contact_pair_candidates,
                                  pw_contact_candidates,
                                  pfw_contact_candidates);
-        }
 
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
-        {
           locate_local_particles_in_cells<dim>(particle_handler,
                                                particle_container,
                                                ghost_adjacent_particles,
@@ -687,6 +675,18 @@ DEMSolver<dim>::solve()
                                                pfw_pairs_in_contact,
                                                particle_points_in_contact,
                                                particle_lines_in_contact);
+
+          // Particle-particle fine search
+          pp_fine_search_object.particle_particle_fine_search(
+            local_contact_pair_candidates,
+            ghost_contact_pair_candidates,
+            local_adjacent_particles,
+            ghost_adjacent_particles,
+            particle_container,
+            neighborhood_threshold_squared);
+
+          // Particles-wall fine search
+          particle_wall_fine_search();
         }
       else
         {
@@ -695,32 +695,12 @@ DEMSolver<dim>::solve()
                                                ghost_adjacent_particles);
         }
 
-      // Particle-particle fine search
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
-        {
-          pp_fine_search_object.particle_particle_fine_search(
-            local_contact_pair_candidates,
-            ghost_contact_pair_candidates,
-            local_adjacent_particles,
-            ghost_adjacent_particles,
-            particle_container,
-            neighborhood_threshold_squared);
-        }
-
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
         &local_adjacent_particles,
         &ghost_adjacent_particles,
         physical_properties,
         simulation_control->get_time_step());
-
-      // Particles-wall fine search
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
-        {
-          particle_wall_fine_search();
-        }
 
       // Particles-walls contact force:
       particle_wall_contact_force();

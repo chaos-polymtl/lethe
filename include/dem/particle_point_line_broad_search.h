@@ -62,7 +62,7 @@ public:
 
   std::unordered_map<int,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
-  find_Particle_Point_Contact_Pairs(
+  find_particle_point_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::unordered_map<
       std::string,
@@ -86,7 +86,7 @@ public:
   std::unordered_map<
     int,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
-  find_Particle_Line_Contact_Pairs(
+  find_particle_line_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
     const std::unordered_map<
       std::string,
