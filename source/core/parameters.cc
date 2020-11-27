@@ -116,9 +116,9 @@ namespace Parameters
       else if (sv == "bdf3")
         method = TimeSteppingMethod::bdf3;
       else if (sv == "sdirk2")
-        method = TimeSteppingMethod::sdirk2;
+        method = TimeSteppingMethod::sdirk22;
       else if (sv == "sdirk3")
-        method = TimeSteppingMethod::sdirk3;
+        method = TimeSteppingMethod::sdirk33;
       else
         {
           std::runtime_error("Invalid time stepping scheme");

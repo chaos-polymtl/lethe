@@ -956,29 +956,29 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -1015,29 +1015,29 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
         assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -1088,29 +1088,29 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -1146,29 +1146,29 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
+               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
         assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+                    Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)

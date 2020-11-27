@@ -382,39 +382,39 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->get_present_solution();
   if (nsparam.simulation_control.method ==
-      Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
+      Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
         false,
         false);
       this->solution_m2 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
         false,
         false);
     }
 
   else if (nsparam.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
         false,
         false);
 
       this->solution_m2 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
         false,
         false);
 
       this->solution_m3 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
         false,
         false);
     }
