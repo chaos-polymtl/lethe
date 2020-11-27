@@ -789,7 +789,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
-  TimerOutput::Scope t(this->computing_timer, "refine");
+  Timer::Scope t(this->computing_timer, "refine");
 
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
@@ -1173,18 +1173,18 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // The dim first components are the normal reynolds stress vectors and
       // the following ones are others resolved reynolds stresses.
       std::vector<std::string> reynolds_stress_names(dim,
-                                                     "normal_reynolds_stress");
+                                                     "reynolds_stress_normal");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         reynolds_stress_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
-      reynolds_stress_names.push_back("uv_reynolds_stress");
+      reynolds_stress_names.push_back("reynolds_stress_uv");
       reynolds_stress_data_component_interpretation.push_back(
         DataComponentInterpretation::component_is_scalar);
 
       if (dim == 3)
         {
-          reynolds_stress_names.push_back("vw_reynolds_stress");
-          reynolds_stress_names.push_back("wu_reynolds_stress");
+          reynolds_stress_names.push_back("reynolds_stress_vw");
+          reynolds_stress_names.push_back("_reynolds_stress_uw");
           reynolds_stress_data_component_interpretation.push_back(
             DataComponentInterpretation::component_is_scalar);
           reynolds_stress_data_component_interpretation.push_back(
