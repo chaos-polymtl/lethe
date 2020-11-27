@@ -789,7 +789,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 {
-  Timer::Scope t(this->computing_timer, "refine");
+  TimerOutput::Scope t(this->computing_timer, "refine");
 
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
