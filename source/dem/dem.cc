@@ -648,9 +648,7 @@ DEMSolver<dim>::solve()
       else
         {
 #if (DEAL_II_VERSION_MINOR <= 2)
-          locate_ghost_particles_in_cells<dim>(particle_handler,
-                                               ghost_particle_container,
-                                               ghost_adjacent_particles);
+          particle_handler.exchange_ghost_particles();
 #else
           particle_handler.update_ghost_particles();
 #endif
