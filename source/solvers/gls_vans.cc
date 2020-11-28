@@ -351,8 +351,18 @@ GLSVANSSolver<dim>::assembleGLS()
               // Calculate the strong residual for GLS stabilization
               auto strong_residual =
                 present_velocity_gradients[q] * present_velocity_values[q] *
-                  present_void_fraction_values[q] +
-                present_pressure_gradients[q] -
+                  present_void_fraction_values[q]
+                // Mass source term
+                + mass_source * present_velocity_values[q]
+                //..........................................
+                // u.del.eps.u
+                //                +
+                //                (present_velocity_divergence *
+                //                present_void_fraction_values[q] +
+                //                 present_velocity_values[q] *
+                //                   present_void_fraction_gradients[q]) *
+                //                  present_velocity_values[q]
+                + present_pressure_gradients[q] -
                 viscosity * present_velocity_laplacians[q] -
                 force * present_void_fraction_values[q];
 
@@ -396,7 +406,15 @@ GLSVANSSolver<dim>::assembleGLS()
                               steady_bdf)
                 strong_residual += (bdf_coefs[0] * present_velocity_values[q] +
                                     bdf_coefs[1] * p1_velocity_values[q]) *
-                                   present_void_fraction_values[q];
+                                   present_void_fraction_values[q]
+                  // Mass source term
+                  //                  + (bdf_coefs[0] *
+                  //                  present_void_fraction_values[q] +
+                  //                     bdf_coefs[1] *
+                  //                     p1_void_fraction_values[q]) *
+                  //                      present_velocity_values[q]
+
+                  ;
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -461,12 +479,34 @@ GLSVANSSolver<dim>::assembleGLS()
                         (present_velocity_gradients[q] * phi_u[j] *
                            present_void_fraction_values[q] +
                          grad_phi_u[j] * present_velocity_values[q] *
-                           present_void_fraction_values[q] +
-                         grad_phi_p[j] - viscosity * laplacian_phi_u[j]);
+                           present_void_fraction_values[q]
+                         // Mass source term
+                         + mass_source * phi_u[j]
+                         //..........................................
+                         // (u.del.eps.u)'
+                         /*    + (((present_void_fraction_values[q] *
+                            div_phi_u[j]) + (phi_u[j] *
+                            present_void_fraction_gradients[q])) *
+                                  present_velocity_values[q] +
+                                phi_u[j] * (present_velocity_divergence *
+                                              present_void_fraction_values[q] +
+                                            present_velocity_values[q] *
+                                              present_void_fraction_gradients[q]))*/
+                         + grad_phi_p[j] - viscosity * laplacian_phi_u[j]);
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
-                                      phi_u[j] * bdf_coefs[0];
+                                      phi_u[j] * bdf_coefs[0]
+                          // Mass source term
+                          //                          + (bdf_coefs[0] *
+                          //                          present_void_fraction_values[q]
+                          //                          +
+                          //                             bdf_coefs[1] *
+                          //                             p1_void_fraction_values[q])
+                          //                             *
+                          //                              phi_u[j]
+                          ;
+
                       if (is_sdirk(scheme))
                         strong_jac += present_void_fraction_values[q] *
                                       phi_u[j] * sdirk_coefs[0][0];
@@ -496,18 +536,30 @@ GLSVANSSolver<dim>::assembleGLS()
                                (grad_phi_u[j] *
                                 present_void_fraction_values[q] *
                                 present_velocity_values[q] * phi_u[i]))
+                              // Mass source term
+                              + mass_source * phi_u[j] * phi_u[i]
+                              //.........................................
                               // (u.del.eps.u)'
-                              //+(((present_void_fraction_values[q] *
-                              //   div_phi_u[j]) +
-                              //  (phi_u[j] *
-                              //   present_void_fraction_gradients[q])) *
-                              //   present_velocity_values[q] +
-                              // phi_u[j] *
-                              //   (present_velocity_divergence *
-                              //      present_void_fraction_values[q] +
-                              //    present_velocity_values[q] *
-                              //      present_void_fraction_gradients[q])) *
-                              //  phi_u[i] -
+                              //                              +
+                              //                              (((present_void_fraction_values[q]
+                              //                              *
+                              //                                   div_phi_u[j])
+                              //                                   +
+                              //                                  (phi_u[j] *
+                              //                                   present_void_fraction_gradients[q]))
+                              //                                   *
+                              //                                   present_velocity_values[q]
+                              //                                   +
+                              //                                 phi_u[j] *
+                              //                                   (present_velocity_divergence
+                              //                                   *
+                              //                                      present_void_fraction_values[q]
+                              //                                      +
+                              //                                    present_velocity_values[q]
+                              //                                    *
+                              //                                      present_void_fraction_gradients[q]))
+                              //                                      *
+                              //                                  phi_u[i]
                               // Pressure
                               - (div_phi_u[i] * phi_p[j]) +
                               // Continuity
@@ -522,7 +574,19 @@ GLSVANSSolver<dim>::assembleGLS()
                           if (is_bdf(scheme))
                             local_matrix(i, j) +=
                               present_void_fraction_values[q] * phi_u[j] *
-                              phi_u[i] * bdf_coefs[0] * JxW;
+                              phi_u[i] * bdf_coefs[0] * JxW
+                              // Mass source term
+                              //                              +
+                              //                              (bdf_coefs[0] *
+                              //                              present_void_fraction_values[q]
+                              //                              +
+                              //                               bdf_coefs[1] *
+                              //                               p1_void_fraction_values[q])
+                              //                               *
+                              //                                phi_u[j] *
+                              //                                phi_u[i] * JxW
+                              ;
+
 
                           if (is_sdirk(scheme))
                             local_matrix(i, j) +=
@@ -599,12 +663,18 @@ GLSVANSSolver<dim>::assembleGLS()
                       (present_velocity_gradients[q] *
                        present_velocity_values[q] *
                        present_void_fraction_values[q] * phi_u[i])
+                      // Mass source term
+                      - mass_source * present_velocity_values[q] * phi_u[i]
+                      //.............................................
                       // u.del.eps.u
-                      //-(present_velocity_divergence *
-                      //   present_void_fraction_values[q] +
-                      // present_velocity_values[q] *
-                      //   present_void_fraction_gradients[q]) *
-                      //  present_velocity_values[q] * phi_u[i]
+                      //                      - (present_velocity_divergence *
+                      //                           present_void_fraction_values[q]
+                      //                           +
+                      //                         present_velocity_values[q] *
+                      //                           present_void_fraction_gradients[q])
+                      //                           *
+                      //                          present_velocity_values[q] *
+                      //                          phi_u[i]
                       // Pressure and force
                       + present_pressure_values[q] * div_phi_u[i] +
                       force * present_void_fraction_values[q] * phi_u[i] -
@@ -626,7 +696,17 @@ GLSVANSSolver<dim>::assembleGLS()
                       local_rhs(i) -=
                         (bdf_coefs[0] * present_velocity_values[q] +
                          bdf_coefs[1] * p1_velocity_values[q]) *
-                        present_void_fraction_values[q] * phi_u[i] * JxW;
+                        present_void_fraction_values[q] * phi_u[i] * JxW
+                        // Mass source term
+                        //                        + (bdf_coefs[0] *
+                        //                        present_void_fraction_values[q]
+                        //                        +
+                        //                           bdf_coefs[1] *
+                        //                           p1_void_fraction_values[q])
+                        //                           *
+                        //                            present_velocity_values[q]
+                        //                            * phi_u[i] * JxW
+                        ;
                       local_rhs(i) -=
                         (bdf_coefs[0] * present_void_fraction_values[q] +
                          bdf_coefs[1] * p1_void_fraction_values[q]) *
