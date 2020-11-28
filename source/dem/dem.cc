@@ -637,11 +637,23 @@ DEMSolver<dim>::solve()
           contact_search_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
+
+#if (DEAL_II_VERSION_MINOR <= 2)
+          particle_handler.exchange_ghost_particles();
+
+#else
           particle_handler.exchange_ghost_particles(true);
+#endif
         }
       else
         {
+#if (DEAL_II_VERSION_MINOR <= 2)
+          locate_ghost_particles_in_cells<dim>(particle_handler,
+                                               ghost_particle_container,
+                                               ghost_adjacent_particles);
+#else
           particle_handler.update_ghost_particles();
+#endif
         }
 
       // Broad particle-particle contact search
@@ -693,10 +705,13 @@ DEMSolver<dim>::solve()
         }
       else
         {
-          // This shouuld not be needed anymore BB
-          // locate_ghost_particles_in_cells<dim>(particle_handler,
-          //                                     ghost_particle_container,
-          //                                     ghost_adjacent_particles);
+#if (DEAL_II_VERSION_MINOR <= 2)
+          locate_ghost_particles_in_cells<dim>(particle_handler,
+                                               ghost_particle_container,
+                                               ghost_adjacent_particles);
+#else
+          // This is not needed anymore with the update ghost mechanism
+#endif
         }
 
       // Particle-particle contact force
