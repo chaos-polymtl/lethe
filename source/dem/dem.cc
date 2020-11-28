@@ -16,7 +16,6 @@
  *
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
-
 #include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -24,6 +23,8 @@
 
 #include <core/solutions_output.h>
 #include <dem/dem.h>
+
+#include <chrono>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -369,7 +370,7 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    &pw_pairs_in_contact,
+    pw_pairs_in_contact,
     physical_properties,
     simulation_control->get_time_step());
 
@@ -377,7 +378,7 @@ DEMSolver<dim>::particle_wall_contact_force()
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(
-        &pfw_pairs_in_contact,
+        pfw_pairs_in_contact,
         physical_properties,
         simulation_control->get_time_step());
     }
@@ -626,12 +627,15 @@ DEMSolver<dim>::solve()
       // Load balancing
       bool load_balancing_step = load_balance();
 
+      auto start_dynamic = std::chrono::high_resolution_clock::now();
       // Check to see if it is contact search step
       bool contact_search_step = (this->*check_contact_search_step)();
+      auto end_dynamic         = std::chrono::high_resolution_clock::now();
 
       // Keep track if particles were inserted this step
       bool particles_insertion_step = insert_particles();
 
+      auto start_sort = std::chrono::high_resolution_clock::now();
       // Sort particles in cells
       if (particles_insertion_step || load_balancing_step ||
           contact_search_step)
@@ -658,19 +662,24 @@ DEMSolver<dim>::solve()
       if (particles_insertion_step || load_balancing_step ||
           contact_search_step)
         {
+          auto start_broad = std::chrono::high_resolution_clock::now();
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
             &cells_local_neighbor_list,
             &cells_ghost_neighbor_list,
             local_contact_pair_candidates,
             ghost_contact_pair_candidates);
+          auto end_broad = std::chrono::high_resolution_clock::now();
 
           // Updating number of contact builds
           contact_build_number++;
 
+          auto start_pwbroad = std::chrono::high_resolution_clock::now();
           // Particle-wall broad contact search
           particle_wall_broad_search();
+          auto end_pwbroad = std::chrono::high_resolution_clock::now();
 
+          auto start_localize = std::chrono::high_resolution_clock::now();
           localize_contacts<dim>(&local_adjacent_particles,
                                  &ghost_adjacent_particles,
                                  &pw_pairs_in_contact,
@@ -688,7 +697,9 @@ DEMSolver<dim>::solve()
                                                pfw_pairs_in_contact,
                                                particle_points_in_contact,
                                                particle_lines_in_contact);
+          auto end_localize = std::chrono::high_resolution_clock::now();
 
+          auto start_ppfine = std::chrono::high_resolution_clock::now();
           // Particle-particle fine search
           pp_fine_search_object.particle_particle_fine_search(
             local_contact_pair_candidates,
@@ -697,9 +708,18 @@ DEMSolver<dim>::solve()
             ghost_adjacent_particles,
             particle_container,
             neighborhood_threshold_squared);
+          auto end_ppfine = std::chrono::high_resolution_clock::now();
 
           // Particles-wall fine search
+          auto start_pwfine = std::chrono::high_resolution_clock::now();
           particle_wall_fine_search();
+          auto end_pwfine = std::chrono::high_resolution_clock::now();
+
+          elapsed_seconds3 += end_broad - start_broad;
+          elapsed_seconds4 += end_pwbroad - start_pwbroad;
+          elapsed_seconds5 += end_localize - start_localize;
+          elapsed_seconds6 += end_ppfine - start_ppfine;
+          elapsed_seconds7 += end_pwfine - start_pwfine;
         }
       else
         {
@@ -712,29 +732,52 @@ DEMSolver<dim>::solve()
 #endif
         }
 
+      auto start_ppforce = std::chrono::high_resolution_clock::now();
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
         local_adjacent_particles,
         ghost_adjacent_particles,
         physical_properties,
         simulation_control->get_time_step());
+      auto end_ppforce = std::chrono::high_resolution_clock::now();
 
+      auto start_pwforce = std::chrono::high_resolution_clock::now();
       // Particles-walls contact force:
       particle_wall_contact_force();
+      auto end_pwforce = std::chrono::high_resolution_clock::now();
 
+      auto start_integration = std::chrono::high_resolution_clock::now();
       // Integration
       integrator_object->integrate(particle_handler,
                                    g,
                                    simulation_control->get_time_step());
+      auto end_integration = std::chrono::high_resolution_clock::now();
 
       // Visualization
       if (simulation_control->is_output_iteration())
         {
           write_output_results();
         }
+
+      elapsed_seconds1 += end_dynamic - start_dynamic;
+      elapsed_seconds2 += end_sort - start_sort;
+      elapsed_seconds8 += end_ppforce - start_ppforce;
+      elapsed_seconds9 += end_pwforce - start_pwforce;
+      elapsed_seconds10 += end_integration - start_integration;
     }
 
   finish_simulation();
+
+  std::cout << "dynamic: " << elapsed_seconds1.count() << std::endl;
+  std::cout << "sort: " << elapsed_seconds2.count() << std::endl;
+  std::cout << "pp broad: " << elapsed_seconds3.count() << std::endl;
+  std::cout << "pw broad: " << elapsed_seconds4.count() << std::endl;
+  std::cout << "localize: " << elapsed_seconds5.count() << std::endl;
+  std::cout << "pp fine: " << elapsed_seconds6.count() << std::endl;
+  std::cout << "pw fine: " << elapsed_seconds7.count() << std::endl;
+  std::cout << "pp force: " << elapsed_seconds8.count() << std::endl;
+  std::cout << "pw force: " << elapsed_seconds9.count() << std::endl;
+  std::cout << "integration: " << elapsed_seconds10.count() << std::endl;
 }
 
 template class DEMSolver<2>;

@@ -1,5 +1,3 @@
-#include <boost/range/adaptor/map.hpp>
-
 #include <dem/pp_linear_force.h>
 
 using namespace dealii;

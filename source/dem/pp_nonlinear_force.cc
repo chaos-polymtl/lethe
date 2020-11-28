@@ -1,5 +1,3 @@
-#include <boost/range/adaptor/map.hpp>
-
 #include <dem/pp_nonlinear_force.h>
 
 using namespace DEM;

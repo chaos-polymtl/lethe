@@ -74,7 +74,7 @@ public:
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      *                                               pw_pairs_in_contact,
+      &                                               pw_pairs_in_contact,
     const Parameters::Lagrangian::PhysicalProperties &physical_properties,
     const double &                                    dt) override;
 

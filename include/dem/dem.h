@@ -326,6 +326,17 @@ private:
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
 
+  std::chrono::duration<double> elapsed_seconds1;
+  std::chrono::duration<double> elapsed_seconds2;
+  std::chrono::duration<double> elapsed_seconds3;
+  std::chrono::duration<double> elapsed_seconds4;
+  std::chrono::duration<double> elapsed_seconds5;
+  std::chrono::duration<double> elapsed_seconds6;
+  std::chrono::duration<double> elapsed_seconds7;
+  std::chrono::duration<double> elapsed_seconds8;
+  std::chrono::duration<double> elapsed_seconds9;
+  std::chrono::duration<double> elapsed_seconds10;
+
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
   PVDHandler      grid_pvdhandler;

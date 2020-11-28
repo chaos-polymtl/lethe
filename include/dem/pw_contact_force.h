@@ -16,6 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <boost/range/adaptor/map.hpp>
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
@@ -55,7 +56,7 @@ public:
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      *                                               pw_pairs_in_contact,
+      &                                               pw_pairs_in_contact,
     const Parameters::Lagrangian::PhysicalProperties &physical_properties,
     const double &                                    dt) = 0;
 

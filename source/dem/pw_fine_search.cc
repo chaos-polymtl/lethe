@@ -21,22 +21,12 @@ PWFineSearch<dim>::particle_wall_fine_search(
 {
   // Iterating over contact candidates from broad search and add the pairs to
   // the pw_pairs_in_contact
-  for (auto map_iterator = pw_contact_pair_candidates.begin();
-       map_iterator != pw_contact_pair_candidates.end();
-       ++map_iterator)
+  for (auto const &[particle_id, particle_pair_candidates] :
+       pw_contact_pair_candidates)
     {
-      auto particle_id              = map_iterator->first;
-      auto particle_pair_candidates = &map_iterator->second;
-
-      for (auto particle_pair_candidate_iterator =
-             particle_pair_candidates->begin();
-           particle_pair_candidate_iterator != particle_pair_candidates->end();
-           ++particle_pair_candidate_iterator)
+      for (auto const &[face_id, particle_pair_candidate_content] :
+           particle_pair_candidates)
         {
-          // Get the particle and face id once to improve efficiency
-          int  face_id = particle_pair_candidate_iterator->first;
-          auto particle_pair_candidate_content =
-            particle_pair_candidate_iterator->second;
           auto particle = std::get<0>(particle_pair_candidate_content);
 
           // Normal vector of the boundary and a point on the boudary are
@@ -90,16 +80,12 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
 
   // Iterating over contact candidates from broad search and add the pairs to
   // the pfw_pairs_in_contact
-  for (auto map_iterator = pfw_contact_candidates.begin();
-       map_iterator != pfw_contact_candidates.end();
-       ++map_iterator)
+  for (auto const &[particle_id, particle_pair_candidates] :
+       pfw_contact_candidates)
     {
-      auto particle_id              = map_iterator->first;
-      auto particle_pair_candidates = &map_iterator->second;
-
       for (auto particle_pair_candidate_iterator =
-             particle_pair_candidates->begin();
-           particle_pair_candidate_iterator != particle_pair_candidates->end();
+             particle_pair_candidates.begin();
+           particle_pair_candidate_iterator != particle_pair_candidates.end();
            ++particle_pair_candidate_iterator)
         {
           // Getting the floating wall id once to improve efficiency

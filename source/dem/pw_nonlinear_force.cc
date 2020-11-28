@@ -6,38 +6,29 @@ template <int dim>
 void
 PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *                                               pw_pairs_in_contact,
+    &                                               pw_pairs_in_contact,
   const Parameters::Lagrangian::PhysicalProperties &physical_properties,
   const double &                                    dt)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
-  for (auto pw_pairs_in_contact_iterator = pw_pairs_in_contact->begin();
-       pw_pairs_in_contact_iterator != pw_pairs_in_contact->end();
-       ++pw_pairs_in_contact_iterator)
+  for (auto &&pairs_in_contact_content :
+       pw_pairs_in_contact | boost::adaptors::map_values)
     {
       // Now an iterator (pw_contact_information_iterator) on each element of
       // the pw_pairs_in_contact vector is defined. This iterator iterates over
       // a map which contains the required information for calculation of the
       // contact force for each particle
-
-      auto pairs_in_contact_content = &pw_pairs_in_contact_iterator->second;
-      for (auto pw_contact_information_iterator =
-             pairs_in_contact_content->begin();
-           pw_contact_information_iterator != pairs_in_contact_content->end();
-           ++pw_contact_information_iterator)
+      for (auto &&contact_information :
+           pairs_in_contact_content | boost::adaptors::map_values)
         {
-          // Defining the iterator's second value (map value) as a local
-          // parameter
-          auto contact_information = &pw_contact_information_iterator->second;
-
           // Defining total force of the contact, properties of particle as
           // local parameters
-          auto particle            = contact_information->particle;
+          auto particle            = contact_information.particle;
           auto particle_properties = particle->get_properties();
 
-          auto normal_vector     = contact_information->normal_vector;
-          auto point_on_boundary = contact_information->point_on_boundary;
+          auto normal_vector     = contact_information.normal_vector;
+          auto point_on_boundary = contact_information.point_on_boundary;
 
           // A vector (point_to_particle_vector) is defined which connects the
           // center of particle to the point_on_boundary. This vector will then
@@ -57,9 +48,9 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
 
           if (normal_overlap > 0)
             {
-              contact_information->normal_overlap = normal_overlap;
+              contact_information.normal_overlap = normal_overlap;
 
-              this->update_contact_information(*contact_information,
+              this->update_contact_information(contact_information,
                                                particle_properties,
                                                dt);
 
@@ -73,7 +64,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
                 forces_and_torques =
                   this->calculate_nonlinear_contact_force_and_torque(
                     physical_properties,
-                    *contact_information,
+                    contact_information,
                     particle_properties);
 
               // Apply the calculated forces and torques on the particle pair
@@ -84,8 +75,8 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             {
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information->normal_overlap        = 0;
-                  contact_information->tangential_overlap[d] = 0;
+                  contact_information.normal_overlap        = 0;
+                  contact_information.tangential_overlap[d] = 0;
                 }
             }
         }
