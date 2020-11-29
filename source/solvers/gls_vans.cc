@@ -783,7 +783,6 @@ GLSVANSSolver<dim>::assembleGLS()
 
           cell->get_dof_indices(local_dof_indices);
 
-
           // The non-linear solver assumes that the nonzero constraints have
           // already been applied to the solution
           const AffineConstraints<double> &constraints_used =
