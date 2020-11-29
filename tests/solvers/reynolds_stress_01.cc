@@ -63,21 +63,11 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  // Some variables to fake the triangulation and the dofs
-  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
-  GridGenerator::hyper_cube(triangulation);
+  IndexSet locally_owned_dofs(8);
+  IndexSet locally_relevant_dofs(8);
 
-  DoFHandler<3> dof_handler;
-  unsigned int  velocity_fem_degree = 1;
-  FESystem<3>   fe(FE_Q<3>(velocity_fem_degree),
-                 3,
-                 FE_Q<3>(velocity_fem_degree),
-                 1);
-  dof_handler.initialize(triangulation, fe);
-
-  IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
-  IndexSet locally_relevant_dofs;
-  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
+  locally_owned_dofs.add_range(0, 8);
+  locally_relevant_dofs.add_range(0, 8);
 
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
     postprocessing_velocities;
@@ -92,7 +82,8 @@ test()
   solution(6) = 0.1;
   solution(7) = 20;
 
-  LinearAlgebra::distributed::Vector<double> stress_solution;
+  TrilinosWrappers::MPI::Vector reynolds_normal_stresses;
+  TrilinosWrappers::MPI::Vector reynolds_shear_stresses;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -101,10 +92,9 @@ test()
   double       epsilon      = 1e-6;
 
   // Initialize averaged vectors
-  postprocessing_velocities.initialize_vectors(triangulation,
-                                               velocity_fem_degree,
-                                               locally_owned_dofs,
+  postprocessing_velocities.initialize_vectors(locally_owned_dofs,
                                                locally_relevant_dofs,
+                                               4,
                                                mpi_communicator);
 
   // Time loop
@@ -118,21 +108,26 @@ test()
             simulation_control->get_current_time(),
             simulation_control->get_time_step());
 
-          stress_solution = postprocessing_velocities.get_reynolds_stresses();
+          reynolds_normal_stresses =
+            postprocessing_velocities.get_reynolds_normal_stresses();
+          reynolds_shear_stresses =
+            postprocessing_velocities.get_reynolds_shear_stresses();
 
           deallog << " Time  : " << time << std::endl;
-          deallog << "<u'u'> : " << stress_solution[0] << " "
-                  << stress_solution[6] << std::endl;
-          deallog << "<v'v'> : " << stress_solution[1] << " "
-                  << stress_solution[7] << std::endl;
-          deallog << "<w'w'> : " << stress_solution[2] << " "
-                  << stress_solution[8] << std::endl;
-          deallog << "<u'v'> : " << stress_solution[3] << " "
-                  << stress_solution[9] << std::endl;
-          deallog << "<v'w'> : " << stress_solution[4] << " "
-                  << stress_solution[10] << std::endl;
-          deallog << "<w'u'> : " << stress_solution[5] << " "
-                  << stress_solution[11] << std::endl;
+          deallog << "<u'u'> : " << reynolds_normal_stresses[0] << " "
+                  << reynolds_normal_stresses[4] << std::endl;
+          deallog << "<v'v'> : " << reynolds_normal_stresses[1] << " "
+                  << reynolds_normal_stresses[5] << std::endl;
+          deallog << "<w'w'> : " << reynolds_normal_stresses[2] << " "
+                  << reynolds_normal_stresses[6] << std::endl;
+          deallog << "<u'v'> : " << reynolds_shear_stresses[0] << " "
+                  << reynolds_shear_stresses[4] << std::endl;
+          deallog << "<v'w'> : " << reynolds_shear_stresses[1] << " "
+                  << reynolds_shear_stresses[5] << std::endl;
+          deallog << "<w'u'> : " << reynolds_shear_stresses[2] << " "
+                  << reynolds_shear_stresses[6] << std::endl;
+          deallog << " k :      " << reynolds_normal_stresses[3] << " "
+                  << reynolds_normal_stresses[7] << std::endl;
           deallog << "" << std::endl;
         }
 
