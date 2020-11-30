@@ -116,6 +116,7 @@ SimulationControlTransient::integrate()
 {
   if (!is_at_end())
     {
+      previous_time  = current_time;
       first_assembly = true;
       iteration_number++;
       add_time_step(calculate_time_step());
@@ -235,6 +236,7 @@ SimulationControlSteady::integrate()
 {
   if (!is_at_end())
     {
+      previous_time = current_time;
       iteration_number++;
       // Fix the time to the iteration number so that pvd outputs
       // do not lead to confusing results

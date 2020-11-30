@@ -80,7 +80,6 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 
   this->nsparam.void_fraction->void_fraction.set_time(time);
 
-  this->forcing_function->set_time(time);
 
   VectorTools::interpolate(mapping,
                            void_fraction_dof_handler,
@@ -114,8 +113,11 @@ GLSVANSSolver<dim>::first_iteration()
       double time_step =
         timeParameters.dt * timeParameters.startup_timestep_scaling;
       this->simulation_control->set_current_time_step(time_step);
-      calculate_void_fraction(this->simulation_control->get_current_time() +
-                              time_step);
+
+      double intermediate_time =
+        this->simulation_control->get_current_time() + time_step;
+      this->forcing_function->set_time(intermediate_time);
+      calculate_void_fraction(intermediate_time);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
@@ -130,8 +132,9 @@ GLSVANSSolver<dim>::first_iteration()
         timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
 
       this->simulation_control->set_current_time_step(time_step);
-      calculate_void_fraction(this->simulation_control->get_current_time() +
-                              timeParameters.dt);
+      intermediate_time += time_step;
+      this->forcing_function->set_time(intermediate_time);
+      calculate_void_fraction(intermediate_time);
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
@@ -151,27 +154,42 @@ GLSVANSSolver<dim>::first_iteration()
 
       this->simulation_control->set_current_time_step(time_step);
 
+      double intermediate_time = time_step;
+      this->forcing_function->set_time(intermediate_time);
+      calculate_void_fraction(intermediate_time);
+
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
+      void_fraction_m2  = void_fraction_m1;
+      void_fraction_m1  = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
 
       this->simulation_control->set_current_time_step(time_step);
+      intermediate_time += time_step;
+      this->forcing_function->set_time(intermediate_time);
+      calculate_void_fraction(intermediate_time);
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m3 = this->solution_m2;
       this->solution_m2 = this->solution_m1;
       this->solution_m1 = this->present_solution;
+      void_fraction_m3  = void_fraction_m2;
+      void_fraction_m2  = void_fraction_m1;
+      void_fraction_m1  = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step
       time_step =
         timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
       this->simulation_control->set_current_time_step(time_step);
+      intermediate_time += time_step;
+      this->forcing_function->set_time(intermediate_time);
+      calculate_void_fraction(intermediate_time);
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
@@ -189,16 +207,29 @@ GLSVANSSolver<dim>::iterate()
   if (this->nsparam.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
     {
+      const double previous_time =
+        this->simulation_control->get_previous_time();
+
+      double stage_step =
+        this->simulation_control->get_time_step() *
+        time_fraction_at_sdirk_stage(
+          Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1);
+
+      double intermediate_time = previous_time + stage_step;
+
+      this->forcing_function->set_time(intermediate_time);
+      calculate_void_fraction(intermediate_time);
+
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
         false,
         false);
       this->solution_m2 = this->present_solution;
       void_fraction_m2  = nodal_void_fraction_relevant;
-      // BB TO FIX THIS IS WRONG
+
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
       calculate_void_fraction(this->simulation_control->get_current_time());
-
-
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
         false,
@@ -235,6 +266,9 @@ GLSVANSSolver<dim>::iterate()
     }
   else
     {
+      calculate_void_fraction(this->simulation_control->get_current_time());
+      this->forcing_function->set_time(
+        this->simulation_control->get_current_time());
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         this->nsparam.simulation_control.method, false, false);
     }
@@ -1214,7 +1248,6 @@ GLSVANSSolver<dim>::solve()
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }
       this->postprocess(false);

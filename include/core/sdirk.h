@@ -23,6 +23,8 @@
 
 #include <deal.II/lac/full_matrix.h>
 
+#include <core/parameters.h>
+
 #include <vector>
 
 using namespace dealii;
@@ -33,6 +35,9 @@ using namespace dealii;
  * @param order Order of the SDIRK method to be used
  *
  * @param time_step Value of the time step used for time integration.
+ *
+ * SDIRK 22 -  Coefficients from Kennedy and Carpenter 2016
+ * Intermediary step is a t+ (1-sqrt(2)/2) * dt
  *
  * #SDIRK 33 - Coefficients from Kennedy and Carpenter 2016
  * gamma = 0.435866521508458999416019
@@ -45,8 +50,16 @@ using namespace dealii;
  * |c-gamma   gamma      0  |
  * |   b    1-b-gamma  gamma|
  * --------------------------
+ *
+ * Intermediary 1 step is at t+0.5 * dt
+ * Intermediary 2 step is at t+0.5 * dt
+ *
  */
 FullMatrix<double>
 sdirk_coefficients(const unsigned int order, const double time_step);
+
+double
+time_fraction_at_sdirk_stage(
+  const Parameters::SimulationControl::TimeSteppingMethod method);
 
 #endif

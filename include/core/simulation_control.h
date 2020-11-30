@@ -35,6 +35,9 @@ protected:
   // Time of the current iteration being solved for
   double current_time;
 
+  // Time of the previous iteration
+  double previous_time;
+
   // Time step linking the previous iteration and the current time
   double time_step;
 
@@ -284,6 +287,13 @@ public:
   {
     return current_time;
   }
+
+  double
+  get_previous_time()
+  {
+    return previous_time;
+  }
+
 
   std::vector<double>
   get_time_steps_vector()
