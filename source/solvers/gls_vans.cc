@@ -204,74 +204,11 @@ template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
 {
-  if (this->nsparam.simulation_control.method ==
-      Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
-    {
-      const double previous_time =
-        this->simulation_control->get_previous_time();
-
-      double stage_step =
-        this->simulation_control->get_time_step() *
-        time_fraction_at_sdirk_stage(
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1);
-
-      double intermediate_time = previous_time + stage_step;
-
-      this->forcing_function->set_time(intermediate_time);
-      calculate_void_fraction(intermediate_time);
-
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-        false,
-        false);
-      this->solution_m2 = this->present_solution;
-      void_fraction_m2  = nodal_void_fraction_relevant;
-
-      this->forcing_function->set_time(
-        this->simulation_control->get_current_time());
-      calculate_void_fraction(this->simulation_control->get_current_time());
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-        false,
-        false);
-    }
-
-  else if (this->nsparam.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
-    {
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-        false,
-        false);
-
-      this->solution_m2 = this->present_solution;
-      void_fraction_m2  = nodal_void_fraction_relevant;
-      // BB TO FIX THIS IS WRONG
-      calculate_void_fraction(this->simulation_control->get_current_time());
-
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-        false,
-        false);
-
-      this->solution_m3 = this->present_solution;
-      void_fraction_m3  = nodal_void_fraction_relevant;
-      // BB TO FIX THIS IS WRONG
-      calculate_void_fraction(this->simulation_control->get_current_time());
-
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-        false,
-        false);
-    }
-  else
-    {
-      calculate_void_fraction(this->simulation_control->get_current_time());
-      this->forcing_function->set_time(
-        this->simulation_control->get_current_time());
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        this->nsparam.simulation_control.method, false, false);
-    }
+  calculate_void_fraction(this->simulation_control->get_current_time());
+  this->forcing_function->set_time(
+    this->simulation_control->get_current_time());
+  PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+    this->nsparam.simulation_control.method, false, false);
 }
 
 
@@ -383,18 +320,6 @@ GLSVANSSolver<dim>::assembleGLS()
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     bdf_coefs = bdf_coefficients(3, time_steps_vector);
-
-  // Matrix of coefficients for the SDIRK methods
-  // The lines store the information required for each step
-  // Column 0 always refer to outcome of the step that is being calculated
-  // Column 1 always refer to step n
-  // Column 2+ refer to intermediary steps
-  FullMatrix<double> sdirk_coefs;
-  if (is_sdirk2(scheme))
-    sdirk_coefs = sdirk_coefficients(2, dt);
-
-  if (is_sdirk3(scheme))
-    sdirk_coefs = sdirk_coefficients(3, dt);
 
   // Element size
   double h;
@@ -579,9 +504,7 @@ GLSVANSSolver<dim>::assembleGLS()
               /* Adjust the strong residual in cases where the scheme is
                transient.
                The BDF schemes require values at previous time steps which are
-               stored in the p1, p2 and p3 vectors. The SDIRK scheme require
-               the values at the different stages, which are also stored in
-               the same arrays.
+               stored in the p1, p2 and p3 vectors.
                */
 
               if (scheme ==
@@ -609,31 +532,6 @@ GLSVANSSolver<dim>::assembleGLS()
                                    present_void_fraction_values[q];
 
 
-              if (is_sdirk_step1(scheme))
-                strong_residual +=
-                  (sdirk_coefs[0][0] * present_velocity_values[q] +
-                   sdirk_coefs[0][1] * p1_velocity_values[q]) *
-                  present_void_fraction_values[q];
-
-              if (is_sdirk_step2(scheme))
-                {
-                  strong_residual +=
-                    (sdirk_coefs[1][0] * present_velocity_values[q] +
-                     sdirk_coefs[1][1] * p1_velocity_values[q] +
-                     sdirk_coefs[1][2] * p2_velocity_values[q]) *
-                    present_void_fraction_values[q];
-                }
-
-              if (is_sdirk_step3(scheme))
-                {
-                  strong_residual +=
-                    (sdirk_coefs[2][0] * present_velocity_values[q] +
-                     sdirk_coefs[2][1] * p1_velocity_values[q] +
-                     sdirk_coefs[2][2] * p2_velocity_values[q] +
-                     sdirk_coefs[2][3] * p3_velocity_values[q]) *
-                    present_void_fraction_values[q];
-                }
-
               // Matrix assembly
               if (assemble_matrix)
                 {
@@ -654,10 +552,6 @@ GLSVANSSolver<dim>::assembleGLS()
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
                                       phi_u[j] * bdf_coefs[0];
-
-                      if (is_sdirk(scheme))
-                        strong_jac += present_void_fraction_values[q] *
-                                      phi_u[j] * sdirk_coefs[0][0];
 
                       if (velocity_source ==
                           Parameters::VelocitySource::VelocitySourceType::srf)
@@ -702,11 +596,6 @@ GLSVANSSolver<dim>::assembleGLS()
                             local_matrix(i, j) +=
                               present_void_fraction_values[q] * phi_u[j] *
                               phi_u[i] * bdf_coefs[0] * JxW;
-
-                          if (is_sdirk(scheme))
-                            local_matrix(i, j) +=
-                              present_void_fraction_values[q] * phi_u[j] *
-                              phi_u[i] * sdirk_coefs[0][0] * JxW;
 
                           // PSPG GLS term
                           if (PSPG)
@@ -877,52 +766,6 @@ GLSVANSSolver<dim>::assembleGLS()
                         phi_p[i] * JxW;
                     }
 
-                  // Residuals associated with SDIRK schemes
-                  if (is_sdirk_step1(scheme))
-                    {
-                      local_rhs(i) -=
-                        (sdirk_coefs[0][0] * present_velocity_values[q] +
-                         sdirk_coefs[0][1] * p1_velocity_values[q]) *
-                        present_void_fraction_values[q] * phi_u[i] * JxW;
-
-                      local_rhs(i) -=
-                        (sdirk_coefs[0][0] * present_void_fraction_values[q] +
-                         sdirk_coefs[0][1] * p1_void_fraction_values[q]) *
-                        phi_p[i] * JxW;
-                    }
-
-                  if (is_sdirk_step2(scheme))
-                    {
-                      local_rhs(i) -=
-                        (sdirk_coefs[1][0] * present_velocity_values[q] +
-                         sdirk_coefs[1][1] * p1_velocity_values[q] +
-                         sdirk_coefs[1][2] * p2_velocity_values[q]) *
-                        present_void_fraction_values[q] * phi_u[i] * JxW;
-
-                      local_rhs(i) -=
-                        (sdirk_coefs[1][0] * present_void_fraction_values[q] +
-                         sdirk_coefs[1][1] * p1_void_fraction_values[q] +
-                         sdirk_coefs[1][2] * p2_void_fraction_values[q]) *
-                        phi_p[i] * JxW;
-                    }
-
-                  if (is_sdirk_step3(scheme))
-                    {
-                      local_rhs(i) -=
-                        (sdirk_coefs[2][0] * present_velocity_values[q] +
-                         sdirk_coefs[2][1] * p1_velocity_values[q] +
-                         sdirk_coefs[2][2] * p2_velocity_values[q] +
-                         sdirk_coefs[2][3] * p3_velocity_values[q]) *
-                        present_void_fraction_values[q] * phi_u[i] * JxW;
-
-                      local_rhs(i) -=
-                        (sdirk_coefs[2][0] * present_void_fraction_values[q] +
-                         sdirk_coefs[2][1] * p1_void_fraction_values[q] +
-                         sdirk_coefs[2][2] * p2_void_fraction_values[q] +
-                         sdirk_coefs[2][3] * p3_void_fraction_values[q]) *
-                        phi_p[i] * JxW;
-                    }
-
                   if (velocity_source ==
                       Parameters::VelocitySource::VelocitySourceType::srf)
                     {
@@ -1026,31 +869,6 @@ GLSVANSSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
         assembleGLS<true,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
@@ -1074,31 +892,6 @@ GLSVANSSolver<dim>::assemble_matrix_and_rhs(
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
         assembleGLS<true,
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -1133,31 +926,6 @@ GLSVANSSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
                     Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
         assembleGLS<false,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
@@ -1180,31 +948,6 @@ GLSVANSSolver<dim>::assemble_rhs(
                Parameters::SimulationControl::TimeSteppingMethod::bdf3)
         assembleGLS<false,
                     Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
