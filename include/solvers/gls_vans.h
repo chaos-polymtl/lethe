@@ -58,7 +58,16 @@ public:
 
 private:
   void
-  calculate_void_fraction();
+  initialize_void_fraction();
+
+  void
+  calculate_void_fraction(const double time);
+
+  virtual void
+  iterate() override;
+
+  virtual void
+  first_iteration() override;
 
   /**
    * @brief asocciate the degrees of freedom to each vertex of the finite elements

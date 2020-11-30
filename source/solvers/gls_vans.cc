@@ -56,25 +56,31 @@ GLSVANSSolver<dim>::finish_time_step()
 {
   GLSNavierStokesSolver<dim>::finish_time_step();
 
-  // void_fraction_m3 = void_fraction_m2;
-  // void_fraction_m2 = void_fraction_m1;
-  // void_fraction_m1 = nodal_void_fraction_relevant;
+  void_fraction_m3 = void_fraction_m2;
+  void_fraction_m2 = void_fraction_m1;
+  void_fraction_m1 = nodal_void_fraction_relevant;
+}
+
+
+template <int dim>
+void
+GLSVANSSolver<dim>::initialize_void_fraction()
+{
+  calculate_void_fraction(this->simulation_control->get_current_time());
+  void_fraction_m3 = nodal_void_fraction_relevant;
+  void_fraction_m2 = nodal_void_fraction_relevant;
+  void_fraction_m1 = nodal_void_fraction_relevant;
 }
 
 template <int dim>
 void
-GLSVANSSolver<dim>::calculate_void_fraction()
+GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
-  void_fraction_m3 = void_fraction_m2;
-  void_fraction_m2 = void_fraction_m1;
-  void_fraction_m1 = nodal_void_fraction_relevant;
-
   const MappingQ<dim> mapping(this->velocity_fem_degree);
 
-  const double t = this->simulation_control->get_current_time();
-  this->nsparam.void_fraction->void_fraction.set_time(t);
+  this->nsparam.void_fraction->void_fraction.set_time(time);
 
-  this->forcing_function->set_time(t);
+  this->forcing_function->set_time(time);
 
   VectorTools::interpolate(mapping,
                            void_fraction_dof_handler,
@@ -83,6 +89,157 @@ GLSVANSSolver<dim>::calculate_void_fraction()
 
   nodal_void_fraction_relevant = nodal_void_fraction_owned;
 }
+
+// Do an iteration with the NavierStokes Solver
+// Handles the fact that we may or may not be at a first
+// iteration with the solver and sets the initial condition
+template <int dim>
+void
+GLSVANSSolver<dim>::first_iteration()
+{
+  // First step if the method is not a multi-step method
+  if (!is_bdf_high_order(this->nsparam.simulation_control.method))
+    {
+      iterate();
+    }
+
+  // Taking care of the multi-step methods
+  else if (this->nsparam.simulation_control.method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    {
+      Parameters::SimulationControl timeParameters =
+        this->nsparam.simulation_control;
+
+      // Start the BDF2 with a single Euler time step with a lower time step
+      double time_step =
+        timeParameters.dt * timeParameters.startup_timestep_scaling;
+      this->simulation_control->set_current_time_step(time_step);
+      calculate_void_fraction(this->simulation_control->get_current_time() +
+                              time_step);
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
+      void_fraction_m2  = void_fraction_m1;
+      void_fraction_m1  = nodal_void_fraction_relevant;
+
+      // Reset the time step and do a bdf 2 newton iteration using the two
+      // steps to complete the full step
+
+      time_step =
+        timeParameters.dt * (1. - timeParameters.startup_timestep_scaling);
+
+      this->simulation_control->set_current_time_step(time_step);
+      calculate_void_fraction(this->simulation_control->get_current_time() +
+                              timeParameters.dt);
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
+
+      this->simulation_control->set_suggested_time_step(timeParameters.dt);
+    }
+
+  else if (this->nsparam.simulation_control.method ==
+           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    {
+      Parameters::SimulationControl timeParameters =
+        this->nsparam.simulation_control;
+
+      // Start the BDF3 with a single Euler time step with a lower time step
+      double time_step =
+        timeParameters.dt * timeParameters.startup_timestep_scaling;
+
+      this->simulation_control->set_current_time_step(time_step);
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
+
+      // Reset the time step and do a bdf 2 newton iteration using the two
+      // steps
+
+      this->simulation_control->set_current_time_step(time_step);
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+      this->solution_m3 = this->solution_m2;
+      this->solution_m2 = this->solution_m1;
+      this->solution_m1 = this->present_solution;
+
+      // Reset the time step and do a bdf 3 newton iteration using the two
+      // steps to complete the full step
+      time_step =
+        timeParameters.dt * (1. - 2. * timeParameters.startup_timestep_scaling);
+      this->simulation_control->set_current_time_step(time_step);
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
+      this->simulation_control->set_suggested_time_step(timeParameters.dt);
+    }
+}
+
+// Do an iteration with the NavierStokes Solver
+// Handles the fact that we may or may not be at a first
+// iteration with the solver and sets the initial condition
+template <int dim>
+void
+GLSVANSSolver<dim>::iterate()
+{
+  if (this->nsparam.simulation_control.method ==
+      Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
+    {
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+        false,
+        false);
+      this->solution_m2 = this->present_solution;
+      void_fraction_m2  = nodal_void_fraction_relevant;
+      // BB TO FIX THIS IS WRONG
+      calculate_void_fraction(this->simulation_control->get_current_time());
+
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+        false,
+        false);
+    }
+
+  else if (this->nsparam.simulation_control.method ==
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
+    {
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+        false,
+        false);
+
+      this->solution_m2 = this->present_solution;
+      void_fraction_m2  = nodal_void_fraction_relevant;
+      // BB TO FIX THIS IS WRONG
+      calculate_void_fraction(this->simulation_control->get_current_time());
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+        false,
+        false);
+
+      this->solution_m3 = this->present_solution;
+      void_fraction_m3  = nodal_void_fraction_relevant;
+      // BB TO FIX THIS IS WRONG
+      calculate_void_fraction(this->simulation_control->get_current_time());
+
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+        false,
+        false);
+    }
+  else
+    {
+      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
+        this->nsparam.simulation_control.method, false, false);
+    }
+}
+
 
 template <int dim>
 template <bool                                              assemble_matrix,
@@ -1023,58 +1180,6 @@ GLSVANSSolver<dim>::assemble_rhs(
     }
 }
 
-/**
- * Set the initial condition using a L2 or a viscous solver
- **/
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::set_initial_condition(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
-{
-  if (restart)
-    {
-      this->pcout << "************************" << std::endl;
-      this->pcout << "---> Simulation Restart " << std::endl;
-      this->pcout << "************************" << std::endl;
-      this->read_checkpoint();
-    }
-  else if (initial_condition_type ==
-           Parameters::InitialConditionType::L2projection)
-    {
-      assemble_L2_projection();
-      solve_system_GMRES(true, 1e-15, 1e-15, true);
-      auto &present_solution = this->get_present_solution();
-      auto &newton_update    = this->get_newton_update();
-      present_solution       = newton_update;
-      this->finish_time_step();
-      this->postprocess(true);
-    }
-  else if (initial_condition_type == Parameters::InitialConditionType::nodal)
-    {
-      this->set_nodal_values();
-      this->finish_time_step();
-      this->postprocess(true);
-    }
-
-  else if (initial_condition_type == Parameters::InitialConditionType::viscous)
-    {
-      this->set_nodal_values();
-      double viscosity = this->nsparam.physical_properties.viscosity;
-      this->nsparam.physical_properties.viscosity =
-        this->nsparam.initial_condition->viscosity;
-      PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
-      this->finish_time_step();
-      this->postprocess(true);
-      this->nsparam.physical_properties.viscosity = viscosity;
-    }
-  else
-    {
-      throw std::runtime_error("GLSNS - Initial condition could not be set");
-    }
-}
-
 template <int dim>
 void
 GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
@@ -1094,7 +1199,7 @@ GLSVANSSolver<dim>::solve()
                           this->nsparam.boundary_conditions);
 
   setup_dofs();
-  calculate_void_fraction();
+  calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
@@ -1103,14 +1208,13 @@ GLSVANSSolver<dim>::solve()
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         {
-          calculate_void_fraction();
           this->first_iteration();
         }
       else
         {
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
-          calculate_void_fraction();
+          calculate_void_fraction(this->simulation_control->get_current_time());
           this->iterate();
         }
       this->postprocess(false);

@@ -200,7 +200,7 @@ protected:
    * @brief iterate
    * Do a regular CFD iteration
    */
-  void
+  virtual void
   iterate();
 
 
@@ -208,7 +208,7 @@ protected:
    * @brief First iteration
    * Do the first CFD iteration
    */
-  void
+  virtual void
   first_iteration();
 
   virtual void
