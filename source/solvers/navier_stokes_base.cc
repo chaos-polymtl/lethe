@@ -902,6 +902,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             this->fe.n_dofs_per_vertex(),
             this->mpi_communicator);
         }
+      // Calculate average velocities when the time reaches the initial time.
+      // time >= initial time with the epsilon as tolerance.
       else if (simulation_control->get_current_time() >
                (nsparam.post_processing.initial_time - 1e-6))
         {
@@ -1134,6 +1136,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
+
   DataOut<dim> data_out;
 
   // Additional flag to enable the output of high-order elements
@@ -1156,6 +1159,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // the average pressure. (<u>, <v>, <w>, <p>)
       std::vector<std::string> average_solution_names(dim, "average_velocity");
       average_solution_names.push_back("average_pressure");
+
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         average_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
