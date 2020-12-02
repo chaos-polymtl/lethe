@@ -922,7 +922,7 @@ void
 GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 {
   data_out.add_data_vector(void_fraction_dof_handler,
-                           nodal_void_fraction_owned,
+                           nodal_void_fraction_relevant,
                            "void_fraction");
 }
 
