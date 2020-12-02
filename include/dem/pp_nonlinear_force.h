@@ -47,8 +47,7 @@ template <int dim>
 class PPNonLinearForce : public PPContactForce<dim>
 {
 public:
-  PPNonLinearForce()
-  {}
+  PPNonLinearForce<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the calculation of the particle-particle contact force using
@@ -60,7 +59,6 @@ public:
    * @param ghost_adjacent_particles Required information for calculation of the
    * local-ghost particle-particle contact force, these information were
    * obtained in the fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
    * @param dt DEM time-step
    */
   virtual void
@@ -70,9 +68,8 @@ public:
       &adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      &                                               ghost_adjacent_particles,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) override;
+      &           ghost_adjacent_particles,
+    const double &dt) override;
 
 private:
   /**
@@ -87,8 +84,7 @@ private:
    */
   void
   calculate_nonlinear_contact_force_and_torque(
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    pp_contact_info_struct<dim> &                     contact_info,
+    pp_contact_info_struct<dim> &  contact_info,
     const double &                 normal_relative_velocity_value,
     const Tensor<1, dim> &         normal_unit_vector,
     const double &                 normal_overlap,
@@ -105,6 +101,8 @@ private:
   Tensor<1, dim> tangential_force;
   Tensor<1, dim> tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
+
+  std::map<int, std::map<int, double>> model_parameter_beta;
 };
 
 #endif

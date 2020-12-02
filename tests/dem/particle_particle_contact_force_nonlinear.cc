@@ -67,14 +67,16 @@ test()
   // Defining general simulation parameters
   const unsigned int n_properties = 21;
   Tensor<1, dim>     g{{0, 0, -9.81}};
-  double             dt                                      = 0.00001;
-  double             particle_diameter                       = 0.005;
-  int                particle_density                        = 2500;
-  dem_parameters.physical_properties.youngs_modulus_particle = 50000000;
-  dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
-  dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
-  dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
+  double             dt                                         = 0.00001;
+  double             particle_diameter                          = 0.005;
+  int                particle_density                           = 2500;
+  dem_parameters.physical_properties.particle_type_number       = 1;
+  dem_parameters.physical_properties.youngs_modulus_particle[0] = 50000000;
+  dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
+  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.5;
+  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.5;
+  dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
+    0.1;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleHandler<dim> particle_handler(triangulation,
@@ -107,7 +109,7 @@ test()
                                              particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
   pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0.01;
@@ -131,7 +133,7 @@ test()
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[DEM::PropertiesIndex::type]        = 1;
+  pit2->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit2->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
   pit2->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit2->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
@@ -183,12 +185,10 @@ test()
     neighborhood_threshold);
 
   // Calling linear force
-  PPNonLinearForce<dim> nonlinear_force_object;
-  nonlinear_force_object.calculate_pp_contact_force(
-    local_adjacent_particles,
-    ghost_adjacent_particles,
-    dem_parameters.physical_properties,
-    dt);
+  PPNonLinearForce<dim> nonlinear_force_object(dem_parameters);
+  nonlinear_force_object.calculate_pp_contact_force(local_adjacent_particles,
+                                                    ghost_adjacent_particles,
+                                                    dt);
 
   // Output
   auto particle = particle_handler.begin();

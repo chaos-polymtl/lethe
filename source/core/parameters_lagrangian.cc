@@ -4,8 +4,98 @@ namespace Parameters
 {
   namespace Lagrangian
   {
+    template <int dim>
     void
-    PhysicalProperties::declare_parameters(ParameterHandler &prm)
+    PhysicalProperties<dim>::declareDefaultEntry(ParameterHandler &prm)
+    {
+      prm.declare_entry("size distribution type",
+                        "uniform",
+                        Patterns::Selection("uniform|normal"),
+                        "Particle size distribution"
+                        "Choices are <uniform|normall>.");
+      prm.declare_entry("diameter",
+                        "0.001",
+                        Patterns::Double(),
+                        "Particle diameter");
+      prm.declare_entry("average diameter",
+                        "0.001",
+                        Patterns::Double(),
+                        "Average particle diameter");
+      prm.declare_entry("standard deviation",
+                        "0",
+                        Patterns::Double(),
+                        "Particle size standard deviation");
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of particles for this type");
+      prm.declare_entry("density",
+                        "1000",
+                        Patterns::Double(),
+                        "Particle density");
+      prm.declare_entry("young modulus particle",
+                        "1000000",
+                        Patterns::Double(),
+                        "Particle Young's modulus");
+      prm.declare_entry("poisson ratio particle",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle Poisson ratio");
+      prm.declare_entry("restitution coefficient particle",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle restitution coefficient");
+      prm.declare_entry("friction coefficient particle",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle friction coefficient");
+      prm.declare_entry("rolling friction particle",
+                        "0.1",
+                        Patterns::Double(),
+                        "Particle rolling friction");
+    }
+
+    template <int dim>
+    void
+    PhysicalProperties<dim>::parse_particle_properties(
+      const unsigned int &particle_type,
+      ParameterHandler &  prm)
+    {
+      const std::string size_distribution_type =
+        prm.get("size distribution type");
+      if (size_distribution_type == "uniform")
+        {
+          particle_average_diameter.at(particle_type) =
+            prm.get_double("diameter");
+        }
+      else if (size_distribution_type == "normal")
+        {
+          particle_average_diameter.at(particle_type) =
+            prm.get_double("average diameter");
+          particle_size_std.at(particle_type) =
+            prm.get_double("standard deviation");
+        }
+      else
+        {
+          std::runtime_error("Invalid size distribution type");
+        }
+      number.at(particle_type)  = prm.get_integer("number");
+      density.at(particle_type) = prm.get_double("density");
+      youngs_modulus_particle.at(particle_type) =
+        prm.get_double("young modulus particle");
+      poisson_ratio_particle.at(particle_type) =
+        prm.get_double("poisson ratio particle");
+      restitution_coefficient_particle.at(particle_type) =
+        prm.get_double("restitution coefficient particle");
+      friction_coefficient_particle.at(particle_type) =
+        prm.get_double("friction coefficient particle");
+      rolling_friction_coefficient_particle.at(particle_type) =
+        prm.get_double("rolling friction particle");
+    }
+
+    template <int dim>
+    void
+    PhysicalProperties<dim>::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("physical properties");
       {
@@ -17,87 +107,244 @@ namespace Parameters
                           "1.",
                           Patterns::Double(),
                           "Gravitational acceleration in y direction");
-        prm.declare_entry("gz",
-                          "1.",
-                          Patterns::Double(),
-                          "Gravitational acceleration in z direction");
-        prm.declare_entry("diameter",
-                          "1.",
-                          Patterns::Double(),
-                          "Particle diameter");
-        prm.declare_entry("density",
-                          "1.",
-                          Patterns::Double(),
-                          "Particle density");
-        prm.declare_entry("young modulus particle",
-                          "1.",
-                          Patterns::Double(),
-                          "Young's modulus of particle");
+        if (dim == 3)
+          {
+            prm.declare_entry("gz",
+                              "1.",
+                              Patterns::Double(),
+                              "Gravitational acceleration in z direction");
+          }
+
+        prm.declare_entry("number of particle types",
+                          "1",
+                          Patterns::Integer(),
+                          "Number of particle types");
+
+        prm.enter_subsection("particle type 0");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 1");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 2");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 3");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 4");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 5");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 6");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 7");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 8");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
+        prm.enter_subsection("particle type 9");
+        {
+          declareDefaultEntry(prm);
+        }
+        prm.leave_subsection();
+
         prm.declare_entry("young modulus wall",
-                          "1.",
+                          "1000000.",
                           Patterns::Double(),
                           "Young's modulus of wall");
-        prm.declare_entry("poisson ratio particle",
-                          "1.",
-                          Patterns::Double(),
-                          "Poisson's ratio of particle");
         prm.declare_entry("poisson ratio wall",
-                          "1.",
+                          "1000000.",
                           Patterns::Double(),
                           "Poisson's ratio of wall");
-        prm.declare_entry("restitution coefficient particle",
-                          "1.",
-                          Patterns::Double(),
-                          "Coefficient of restitution of particle");
         prm.declare_entry("restitution coefficient wall",
-                          "1.",
+                          "0.1",
                           Patterns::Double(),
                           "Coefficient of restitution of wall");
-        prm.declare_entry("friction coefficient particle",
-                          "1.",
-                          Patterns::Double(),
-                          "Friction coefficient of particle");
         prm.declare_entry("friction coefficient wall",
-                          "1.",
+                          "0.1",
                           Patterns::Double(),
                           "Friction coefficient of wall");
-        prm.declare_entry("rolling friction particle",
-                          "1.",
-                          Patterns::Double(),
-                          "Rolling friction coefficient of particle");
         prm.declare_entry("rolling friction wall",
-                          "1.",
+                          "0.1",
                           Patterns::Double(),
                           "Rolling friction coefficient of wall");
       }
       prm.leave_subsection();
     }
 
+    template <int dim>
     void
-    PhysicalProperties::parse_parameters(ParameterHandler &prm)
+    PhysicalProperties<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("physical properties");
+      initialize_containers(particle_average_diameter,
+                            particle_size_std,
+                            number,
+                            density,
+                            youngs_modulus_particle,
+                            poisson_ratio_particle,
+                            restitution_coefficient_particle,
+                            friction_coefficient_particle,
+                            rolling_friction_coefficient_particle);
       {
-        gx                      = prm.get_double("gx");
-        gy                      = prm.get_double("gy");
-        gz                      = prm.get_double("gz");
-        diameter                = prm.get_double("diameter");
-        density                 = prm.get_double("density");
-        youngs_modulus_particle = prm.get_integer("young modulus particle");
-        youngs_modulus_wall     = prm.get_integer("young modulus wall");
-        poisson_ratio_particle  = prm.get_double("poisson ratio particle");
-        poisson_ratio_wall      = prm.get_double("poisson ratio wall");
-        restitution_coefficient_particle =
-          prm.get_double("restitution coefficient particle");
+        gx = prm.get_double("gx");
+        gy = prm.get_double("gy");
+        if (dim == 3)
+          {
+            gz = prm.get_double("gz");
+          }
+
+        particle_type_number = prm.get_integer("number of particle types");
+
+        if (particle_type_number >= 1)
+          {
+            prm.enter_subsection("particle type 0");
+            {
+              parse_particle_properties(0, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 2)
+          {
+            prm.enter_subsection("particle type 1");
+            {
+              parse_particle_properties(1, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 3)
+          {
+            prm.enter_subsection("particle type 2");
+            {
+              parse_particle_properties(2, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 4)
+          {
+            prm.enter_subsection("particle type 3");
+            {
+              parse_particle_properties(3, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 5)
+          {
+            prm.enter_subsection("particle type 4");
+            {
+              parse_particle_properties(4, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 6)
+          {
+            prm.enter_subsection("particle type 5");
+            {
+              parse_particle_properties(5, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 7)
+          {
+            prm.enter_subsection("particle type 6");
+            {
+              parse_particle_properties(6, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 8)
+          {
+            prm.enter_subsection("particle type 7");
+            {
+              parse_particle_properties(7, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 9)
+          {
+            prm.enter_subsection("particle type 8");
+            {
+              parse_particle_properties(8, prm);
+            }
+            prm.leave_subsection();
+          }
+        if (particle_type_number >= 10)
+          {
+            prm.enter_subsection("particle type 9");
+            {
+              parse_particle_properties(9, prm);
+            }
+            prm.leave_subsection();
+          }
+
+        youngs_modulus_wall = prm.get_double("young modulus wall");
+        poisson_ratio_wall  = prm.get_double("poisson ratio wall");
         restitution_coefficient_wall =
           prm.get_double("restitution coefficient wall");
-        friction_coefficient_particle =
-          prm.get_double("friction coefficient particle");
         friction_coefficient_wall = prm.get_double("friction coefficient wall");
-        rolling_friction_particle = prm.get_double("rolling friction particle");
         rolling_friction_wall     = prm.get_double("rolling friction wall");
       }
       prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    PhysicalProperties<dim>::initialize_containers(
+      std::unordered_map<int, double> &particle_average_diameter,
+      std::unordered_map<int, double> &particle_size_std,
+      std::unordered_map<int, int> &   number,
+      std::unordered_map<int, double> &density,
+      std::unordered_map<int, double> &youngs_modulus_particle,
+      std::unordered_map<int, double> &poisson_ratio_particle,
+      std::unordered_map<int, double> &restitution_coefficient_particle,
+      std::unordered_map<int, double> &friction_coefficient_particle,
+      std::unordered_map<int, double> &rolling_friction_coefficient_particle)
+    {
+      for (unsigned int counter = 0; counter < particle_type_maximum_number;
+           ++counter)
+        {
+          particle_average_diameter.insert({counter, 0.});
+          particle_size_std.insert({counter, 0.});
+          number.insert({counter, 0.});
+          density.insert({counter, 0.});
+          youngs_modulus_particle.insert({counter, 0.});
+          poisson_ratio_particle.insert({counter, 0.});
+          restitution_coefficient_particle.insert({counter, 0.});
+          friction_coefficient_particle.insert({counter, 0.});
+          rolling_friction_coefficient_particle.insert({counter, 0.});
+        }
     }
 
     void
@@ -110,10 +357,6 @@ namespace Parameters
                           Patterns::Selection("uniform|non_uniform"),
                           "Choosing insertion method. "
                           "Choices are <uniform|non_uniform>.");
-        prm.declare_entry("n total",
-                          "1",
-                          Patterns::Integer(),
-                          "Total number of particles");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -176,7 +419,6 @@ namespace Parameters
           {
             std::runtime_error("Invalid insertion method");
           }
-        total_particle_number = prm.get_integer("n total");
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");
@@ -584,8 +826,7 @@ namespace Parameters
           this->boundary_translational_velocity.at(boundary_id) =
             translational_velocity;
         }
-
-      if (motion_type == "rotational")
+      else if (motion_type == "rotational")
         {
           double         rotational_speed = prm.get_double("rotational speed");
           Tensor<1, dim> rotational_vector;
@@ -598,6 +839,10 @@ namespace Parameters
 
           this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
+        }
+      else
+        {
+          std::runtime_error("Invalid boundary motion type");
         }
     }
 
@@ -742,6 +987,8 @@ namespace Parameters
         }
     }
 
+    template class PhysicalProperties<2>;
+    template class PhysicalProperties<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
     template class BoundaryMotion<2>;

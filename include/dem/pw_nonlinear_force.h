@@ -47,18 +47,13 @@ template <int dim>
 class PWNonLinearForce : public PWContactForce<dim>
 {
 public:
-  PWNonLinearForce(
+  PWNonLinearForce<dim>(
     const std::unordered_map<int, Tensor<1, dim>>
                                                   boundary_translational_velocity,
     const std::unordered_map<int, double>         boundary_rotational_speed,
     const std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector,
-    const double                                  triangulation_radius)
-  {
-    this->boundary_translational_velocity_map = boundary_translational_velocity;
-    this->boundary_rotational_speed_map       = boundary_rotational_speed;
-    this->boundary_rotational_vector          = boundary_rotational_vector;
-    this->triangulation_radius                = triangulation_radius;
-  }
+    const double                                  triangulation_radius,
+    const DEMSolverParameters<dim> &              dem_parameters);
 
   /**
    * Carries out the calculation of the particle-wall contact force using
@@ -67,16 +62,13 @@ public:
    * @param pw_pairs_in_contact Required information for calculation of
    * the particle-wall contact force, these information were obtained in
    * the fine search
-   * @param physical_properties DEM physical properties declared in the
-   * .prm file
    * @param dt DEM time step
    */
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                               pw_pairs_in_contact,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) override;
+      &           pw_pairs_in_contact,
+    const double &dt) override;
 
 private:
   /**
@@ -90,9 +82,8 @@ private:
    */
   std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
   calculate_nonlinear_contact_force_and_torque(
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    pw_contact_info_struct<dim> &                     contact_info,
-    const ArrayView<const double> &                   particle_properties);
+    pw_contact_info_struct<dim> &  contact_info,
+    const ArrayView<const double> &particle_properties);
 };
 
 #endif

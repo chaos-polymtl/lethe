@@ -37,6 +37,7 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/find_contact_detection_step.h>
+#include <dem/find_maximum_particle_size.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
@@ -304,11 +305,12 @@ private:
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
-  const double       neighborhood_threshold_squared;
+  double             neighborhood_threshold_squared;
+  double             maximum_particle_diameter;
   const unsigned int contact_detection_frequency;
   const unsigned int repartition_frequency;
   const unsigned int insertion_frequency;
-  const Parameters::Lagrangian::PhysicalProperties physical_properties;
+  const Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;
@@ -325,17 +327,6 @@ private:
   Visualization<dim>                   visualization_object;
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
-
-  std::chrono::duration<double> elapsed_seconds1;
-  std::chrono::duration<double> elapsed_seconds2;
-  std::chrono::duration<double> elapsed_seconds3;
-  std::chrono::duration<double> elapsed_seconds4;
-  std::chrono::duration<double> elapsed_seconds5;
-  std::chrono::duration<double> elapsed_seconds6;
-  std::chrono::duration<double> elapsed_seconds7;
-  std::chrono::duration<double> elapsed_seconds8;
-  std::chrono::duration<double> elapsed_seconds9;
-  std::chrono::duration<double> elapsed_seconds10;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

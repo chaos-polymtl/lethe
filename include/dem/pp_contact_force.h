@@ -53,7 +53,7 @@ public:
    * @param pairs_in_contact_info Required information for calculation of the
    * particle-particle contact force, these information were obtained in the
    * fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param dt DEM time step
    */
   virtual void
   calculate_pp_contact_force(
@@ -62,9 +62,8 @@ public:
       &local_adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      &                                               ghost_adjacent_particles,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) = 0;
+      &           ghost_adjacent_particles,
+    const double &dt) = 0;
 
 protected:
   /**
@@ -126,6 +125,21 @@ protected:
                                const Tensor<1, dim> &tangential_force,
                                const Tensor<1, dim> &tangential_torque,
                                const Tensor<1, dim> &rolling_resistance_torque);
+
+  double                               effective_radius;
+  double                               effective_mass;
+  std::map<int, std::map<int, double>> effective_youngs_modulus;
+  std::map<int, std::map<int, double>> effective_shear_modulus;
+  std::map<int, std::map<int, double>> effective_coefficient_of_restitution;
+  std::map<int, std::map<int, double>> effective_coefficient_of_friction;
+  std::map<int, std::map<int, double>>
+    effective_coefficient_of_rolling_friction;
+
+  // Description
+  void
+  find_effective_radius_and_mass(
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties);
 };
 
 #endif /* particle_particle_contact_force_h */

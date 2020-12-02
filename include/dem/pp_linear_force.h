@@ -47,20 +47,18 @@ template <int dim>
 class PPLinearForce : public PPContactForce<dim>
 {
 public:
-  PPLinearForce()
-  {}
+  PPLinearForce<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
-   * Carries out the calculation of the particle-particle contact force using
-   * linear (Hookean) model
+   * Carries out the calculation of the particle-particle contact force
+   * using linear (Hookean) model
    *
-   * @param local_adjacent_particles Required information for calculation of the
-   * local-local particle-particle contact force, these information were
-   * obtained in the fine search
-   * @param ghost_adjacent_particles Required information for calculation of the
-   * local-ghost particle-particle contact force, these information were
-   * obtained in the fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param local_adjacent_particles Required information for calculation
+   * of the local-local particle-particle contact force, these information
+   * were obtained in the fine search
+   * @param ghost_adjacent_particles Required information for calculation
+   * of the local-ghost particle-particle contact force, these information
+   * were obtained in the fine search
    * @param dt DEM time-step
    */
   virtual void
@@ -70,16 +68,14 @@ public:
       &local_adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      &                                               ghost_adjacent_particles,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) override;
+      &           ghost_adjacent_particles,
+    const double &dt) override;
 
 private:
   /**
    * Carries out the calculation of the particle-particle linear contact
    * force and torques based on the updated values in contact_info
    *
-   * @param physical_properties Physical properties of the system
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
    * @param particle_one_properties Properties of particle one in contact
@@ -87,8 +83,7 @@ private:
    */
   void
   calculate_linear_contact_force_and_torque(
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    pp_contact_info_struct<dim> &                     contact_info,
+    pp_contact_info_struct<dim> &  contact_info,
     const double &                 normal_relative_velocity_value,
     const Tensor<1, dim> &         normal_unit_vector,
     const double &                 normal_overlap,

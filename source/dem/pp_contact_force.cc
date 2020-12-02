@@ -181,5 +181,21 @@ PPContactForce<dim>::apply_force_and_torque_ghost(
     }
 }
 
+template <int dim>
+void
+PPContactForce<dim>::find_effective_radius_and_mass(
+  const ArrayView<const double> &particle_one_properties,
+  const ArrayView<const double> &particle_two_properties)
+{
+  effective_mass = (particle_one_properties[DEM::PropertiesIndex::mass] *
+                    particle_two_properties[DEM::PropertiesIndex::mass]) /
+                   (particle_one_properties[DEM::PropertiesIndex::mass] +
+                    particle_two_properties[DEM::PropertiesIndex::mass]);
+  effective_radius = (particle_one_properties[DEM::PropertiesIndex::dp] *
+                      particle_two_properties[DEM::PropertiesIndex::dp]) /
+                     (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
+                           particle_two_properties[DEM::PropertiesIndex::dp]));
+}
+
 template class PPContactForce<2>;
 template class PPContactForce<3>;

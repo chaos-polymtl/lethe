@@ -24,8 +24,6 @@
 #include <core/solutions_output.h>
 #include <dem/dem.h>
 
-#include <chrono>
-
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   : mpi_communicator(MPI_COMM_WORLD)
@@ -43,10 +41,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(0)
-  , neighborhood_threshold_squared(
-      std::pow(parameters.model_parameters.neighborhood_threshold *
-                 parameters.physical_properties.diameter,
-               2))
+  , neighborhood_threshold_squared(0)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , repartition_frequency(parameters.model_parameters.repartition_frequency)
@@ -110,7 +105,14 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     }
 
   // Calling input_parameter_inspection to evaluate input parameters in the
-  // parameter handler file
+  // parameter handler file, finding maximum particle diameter used in
+  // polydisperse systems
+  maximum_particle_diameter =
+    find_maximum_particle_size(parameters.physical_properties);
+  neighborhood_threshold_squared =
+    std::pow(parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
   if (this_mpi_process == 0)
     input_parameter_inspection(parameters);
 }
@@ -293,7 +295,10 @@ DEMSolver<dim>::insert_particles()
 {
   if ((simulation_control->get_step_number() % insertion_frequency) == 1)
     {
-      insertion_object->insert(particle_handler, triangulation, parameters);
+      insertion_object->insert(particle_handler,
+                               triangulation,
+                               parameters,
+                               maximum_particle_diameter);
       return true;
     }
   return false;
@@ -370,17 +375,13 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    pw_pairs_in_contact,
-    physical_properties,
-    simulation_control->get_time_step());
+    pw_pairs_in_contact, simulation_control->get_time_step());
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(
-        pfw_pairs_in_contact,
-        physical_properties,
-        simulation_control->get_time_step());
+        pfw_pairs_in_contact, simulation_control->get_time_step());
     }
 
   particle_point_line_contact_force_object
@@ -430,12 +431,16 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
   if (parameters.insertion_info.insertion_method ==
       Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
     {
-      insertion_object = std::make_shared<UniformInsertion<dim>>(parameters);
+      insertion_object =
+        std::make_shared<UniformInsertion<dim>>(parameters,
+                                                maximum_particle_diameter);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
     {
-      insertion_object = std::make_shared<NonUniformInsertion<dim>>(parameters);
+      insertion_object =
+        std::make_shared<NonUniformInsertion<dim>>(parameters,
+                                                   maximum_particle_diameter);
     }
   else
     {
@@ -474,13 +479,15 @@ DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
   if (parameters.model_parameters.pp_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
     {
-      pp_contact_force_object = std::make_shared<PPLinearForce<dim>>();
+      pp_contact_force_object =
+        std::make_shared<PPLinearForce<dim>>(parameters);
     }
   else if (parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
              pp_nonlinear)
     {
-      pp_contact_force_object = std::make_shared<PPNonLinearForce<dim>>();
+      pp_contact_force_object =
+        std::make_shared<PPNonLinearForce<dim>>(parameters);
     }
   else
     {
@@ -500,7 +507,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_cell_diameter);
+        triangulation_cell_diameter,
+        parameters);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -510,7 +518,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_cell_diameter);
+        triangulation_cell_diameter,
+        parameters);
     }
   else
     {
@@ -601,10 +610,10 @@ DEMSolver<dim>::solve()
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -
-              parameters.physical_properties.diameter * 0.5),
+              maximum_particle_diameter * 0.5),
              (parameters.model_parameters.dynamic_contact_search_factor *
               (parameters.model_parameters.neighborhood_threshold - 1) *
-              parameters.physical_properties.diameter * 0.5));
+              maximum_particle_diameter * 0.5));
 
   // Finding cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
@@ -624,18 +633,15 @@ DEMSolver<dim>::solve()
     {
       simulation_control->print_progression(pcout);
 
-      // Load balancing
-      bool load_balancing_step = load_balance();
-
-      auto start_dynamic = std::chrono::high_resolution_clock::now();
-      // Check to see if it is contact search step
-      bool contact_search_step = (this->*check_contact_search_step)();
-      auto end_dynamic         = std::chrono::high_resolution_clock::now();
-
       // Keep track if particles were inserted this step
       bool particles_insertion_step = insert_particles();
 
-      auto start_sort = std::chrono::high_resolution_clock::now();
+      // Load balancing
+      bool load_balancing_step = load_balance();
+
+      // Check to see if it is contact search step
+      bool contact_search_step = (this->*check_contact_search_step)();
+
       // Sort particles in cells
       if (particles_insertion_step || load_balancing_step ||
           contact_search_step)
@@ -662,24 +668,19 @@ DEMSolver<dim>::solve()
       if (particles_insertion_step || load_balancing_step ||
           contact_search_step)
         {
-          auto start_broad = std::chrono::high_resolution_clock::now();
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
             &cells_local_neighbor_list,
             &cells_ghost_neighbor_list,
             local_contact_pair_candidates,
             ghost_contact_pair_candidates);
-          auto end_broad = std::chrono::high_resolution_clock::now();
 
           // Updating number of contact builds
           contact_build_number++;
 
-          auto start_pwbroad = std::chrono::high_resolution_clock::now();
           // Particle-wall broad contact search
           particle_wall_broad_search();
-          auto end_pwbroad = std::chrono::high_resolution_clock::now();
 
-          auto start_localize = std::chrono::high_resolution_clock::now();
           localize_contacts<dim>(&local_adjacent_particles,
                                  &ghost_adjacent_particles,
                                  &pw_pairs_in_contact,
@@ -697,9 +698,7 @@ DEMSolver<dim>::solve()
                                                pfw_pairs_in_contact,
                                                particle_points_in_contact,
                                                particle_lines_in_contact);
-          auto end_localize = std::chrono::high_resolution_clock::now();
 
-          auto start_ppfine = std::chrono::high_resolution_clock::now();
           // Particle-particle fine search
           pp_fine_search_object.particle_particle_fine_search(
             local_contact_pair_candidates,
@@ -708,18 +707,9 @@ DEMSolver<dim>::solve()
             ghost_adjacent_particles,
             particle_container,
             neighborhood_threshold_squared);
-          auto end_ppfine = std::chrono::high_resolution_clock::now();
 
           // Particles-wall fine search
-          auto start_pwfine = std::chrono::high_resolution_clock::now();
           particle_wall_fine_search();
-          auto end_pwfine = std::chrono::high_resolution_clock::now();
-
-          elapsed_seconds3 += end_broad - start_broad;
-          elapsed_seconds4 += end_pwbroad - start_pwbroad;
-          elapsed_seconds5 += end_localize - start_localize;
-          elapsed_seconds6 += end_ppfine - start_ppfine;
-          elapsed_seconds7 += end_pwfine - start_pwfine;
         }
       else
         {
@@ -732,52 +722,28 @@ DEMSolver<dim>::solve()
 #endif
         }
 
-      auto start_ppforce = std::chrono::high_resolution_clock::now();
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
         local_adjacent_particles,
         ghost_adjacent_particles,
-        physical_properties,
         simulation_control->get_time_step());
-      auto end_ppforce = std::chrono::high_resolution_clock::now();
 
-      auto start_pwforce = std::chrono::high_resolution_clock::now();
       // Particles-walls contact force:
       particle_wall_contact_force();
-      auto end_pwforce = std::chrono::high_resolution_clock::now();
 
-      auto start_integration = std::chrono::high_resolution_clock::now();
       // Integration
       integrator_object->integrate(particle_handler,
                                    g,
                                    simulation_control->get_time_step());
-      auto end_integration = std::chrono::high_resolution_clock::now();
 
       // Visualization
       if (simulation_control->is_output_iteration())
         {
           write_output_results();
         }
-
-      elapsed_seconds1 += end_dynamic - start_dynamic;
-      elapsed_seconds2 += end_sort - start_sort;
-      elapsed_seconds8 += end_ppforce - start_ppforce;
-      elapsed_seconds9 += end_pwforce - start_pwforce;
-      elapsed_seconds10 += end_integration - start_integration;
     }
 
   finish_simulation();
-
-  std::cout << "dynamic: " << elapsed_seconds1.count() << std::endl;
-  std::cout << "sort: " << elapsed_seconds2.count() << std::endl;
-  std::cout << "pp broad: " << elapsed_seconds3.count() << std::endl;
-  std::cout << "pw broad: " << elapsed_seconds4.count() << std::endl;
-  std::cout << "localize: " << elapsed_seconds5.count() << std::endl;
-  std::cout << "pp fine: " << elapsed_seconds6.count() << std::endl;
-  std::cout << "pw fine: " << elapsed_seconds7.count() << std::endl;
-  std::cout << "pp force: " << elapsed_seconds8.count() << std::endl;
-  std::cout << "pw force: " << elapsed_seconds9.count() << std::endl;
-  std::cout << "integration: " << elapsed_seconds10.count() << std::endl;
 }
 
 template class DEMSolver<2>;

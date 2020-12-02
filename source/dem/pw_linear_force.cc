@@ -3,12 +3,71 @@
 using namespace dealii;
 
 template <int dim>
+PWLinearForce<dim>::PWLinearForce(
+  const std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity,
+  const std::unordered_map<int, double>         boundary_rotational_speed,
+  const std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector,
+  const double                                  triangulation_radius,
+  const DEMSolverParameters<dim> &              dem_parameters)
+{
+  this->boundary_translational_velocity_map = boundary_translational_velocity;
+  this->boundary_rotational_speed_map       = boundary_rotational_speed;
+  this->boundary_rotational_vector          = boundary_rotational_vector;
+  this->triangulation_radius                = triangulation_radius;
+
+  for (unsigned int i = 0;
+       i < dem_parameters.physical_properties.particle_type_number;
+       ++i)
+    {
+      this->effective_youngs_modulus[i] =
+        (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+         dem_parameters.physical_properties.youngs_modulus_wall) /
+        (dem_parameters.physical_properties.youngs_modulus_wall *
+           (1 -
+            dem_parameters.physical_properties.poisson_ratio_particle.at(i) *
+              dem_parameters.physical_properties.poisson_ratio_particle.at(i)) +
+         dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+           (1 - dem_parameters.physical_properties.poisson_ratio_wall *
+                  dem_parameters.physical_properties.poisson_ratio_wall));
+
+      this->effective_coefficient_of_restitution.insert(
+        {i,
+         2 *
+           dem_parameters.physical_properties.restitution_coefficient_particle
+             .at(i) *
+           dem_parameters.physical_properties.restitution_coefficient_wall /
+           (dem_parameters.physical_properties.restitution_coefficient_particle
+              .at(i) +
+            dem_parameters.physical_properties.restitution_coefficient_wall)});
+
+      this->effective_coefficient_of_friction.insert(
+        {i,
+         2 *
+           dem_parameters.physical_properties.friction_coefficient_particle.at(
+             i) *
+           dem_parameters.physical_properties.friction_coefficient_wall /
+           (dem_parameters.physical_properties.friction_coefficient_particle.at(
+              i) +
+            dem_parameters.physical_properties.friction_coefficient_wall)});
+
+      this->effective_coefficient_of_rolling_friction.insert(
+        {i,
+         2 *
+           dem_parameters.physical_properties
+             .rolling_friction_coefficient_particle.at(i) *
+           dem_parameters.physical_properties.rolling_friction_wall /
+           (dem_parameters.physical_properties
+              .rolling_friction_coefficient_particle.at(i) +
+            dem_parameters.physical_properties.rolling_friction_wall)});
+    }
+}
+
+template <int dim>
 void
 PWLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    &                                               pw_pairs_in_contact,
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-  const double &                                    dt)
+    &           pw_pairs_in_contact,
+  const double &dt)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -63,9 +122,7 @@ PWLinearForce<dim>::calculate_pw_contact_force(
                          Tensor<1, dim>>
                 forces_and_torques =
                   this->calculate_linear_contact_force_and_torque(
-                    physical_properties,
-                    contact_information,
-                    particle_properties);
+                    contact_information, particle_properties);
 
               // Apply the calculated forces and torques on the particle pair
               this->apply_force_and_torque(particle_properties,
@@ -86,48 +143,39 @@ PWLinearForce<dim>::calculate_pw_contact_force(
 template <int dim>
 std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
 PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-  pw_contact_info_struct<dim> &                     contact_info,
-  const ArrayView<const double> &                   particle_properties)
+  pw_contact_info_struct<dim> &  contact_info,
+  const ArrayView<const double> &particle_properties)
 {
-  // Calculation of effective Young's modulus of the
-  // contact
-  double effective_youngs_modulus =
-    (physical_properties.youngs_modulus_particle *
-     physical_properties.youngs_modulus_wall) /
-    (physical_properties.youngs_modulus_wall *
-       (1 - physical_properties.poisson_ratio_particle *
-              physical_properties.poisson_ratio_particle) +
-     physical_properties.youngs_modulus_particle *
-       (1 - physical_properties.poisson_ratio_wall *
-              physical_properties.poisson_ratio_wall));
+  const unsigned int particle_type =
+    particle_properties[DEM::PropertiesIndex::type];
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
   double normal_spring_constant =
     1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-    effective_youngs_modulus *
+    this->effective_youngs_modulus[particle_type] *
     pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
          contact_info.normal_relative_velocity *
          contact_info.normal_relative_velocity /
          (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-          effective_youngs_modulus)),
+          this->effective_youngs_modulus[particle_type])),
         0.2);
   double tangential_spring_constant =
     1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-      effective_youngs_modulus *
+      this->effective_youngs_modulus[particle_type] *
       pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
            (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-            effective_youngs_modulus)),
+            this->effective_youngs_modulus[particle_type])),
           0.2) +
     DBL_MIN;
   double normal_damping_constant = sqrt(
     (4 * particle_properties[DEM::PropertiesIndex::mass] *
      normal_spring_constant) /
-    (1 + pow((M_PI / (log(physical_properties.restitution_coefficient_wall) +
-                      DBL_MIN)),
+    (1 + pow((M_PI /
+              (log(this->effective_coefficient_of_restitution[particle_type]) +
+               DBL_MIN)),
              2)));
 
   // Calculation of normal force using spring and dashpot normal forces
@@ -146,7 +194,8 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   Tensor<1, dim> tangential_force = -spring_tangential_force;
 
   double coulomb_threshold =
-    physical_properties.friction_coefficient_wall * normal_force.norm();
+    this->effective_coefficient_of_friction[particle_type] *
+    normal_force.norm();
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
@@ -195,7 +244,7 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calcualation of rolling resistance torque
   Tensor<1, dim> rolling_resistance_torque =
-    -physical_properties.rolling_friction_wall *
+    -this->effective_coefficient_of_rolling_friction[particle_type] *
     ((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
     normal_force.norm() * pw_angular_velocity;
 

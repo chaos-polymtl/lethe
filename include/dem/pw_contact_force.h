@@ -49,16 +49,13 @@ public:
    *
    * @param pw_pairs_in_contact Required information for calculation of the
    * particle-wall contact force
-   * @param physical_properties DEM physical properties declared in the .prm
-   * file
    * @param dt DEM time step
    */
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                               pw_pairs_in_contact,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) = 0;
+      &           pw_pairs_in_contact,
+    const double &dt) = 0;
 
 protected:
   /**
@@ -108,6 +105,14 @@ protected:
   std::unordered_map<int, double>         boundary_rotational_speed_map;
   std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
   double                                  triangulation_radius;
+
+  double                effective_radius;
+  double                effective_mass;
+  std::map<int, double> effective_youngs_modulus;
+  std::map<int, double> effective_shear_modulus;
+  std::map<int, double> effective_coefficient_of_restitution;
+  std::map<int, double> effective_coefficient_of_friction;
+  std::map<int, double> effective_coefficient_of_rolling_friction;
 };
 
 #endif /* particle_wall_contact_force_h */

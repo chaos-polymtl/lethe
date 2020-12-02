@@ -48,8 +48,11 @@ public:
    * number_of_particles_y_direction and number_of_particles_z_direction).
    *
    * @param dem_parameters DEM parameters declared in the .prm file
+   * @param maximum_particle_diameter Maximum particle diameter based on values
+   * defined in the parameter handler
    */
-  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
+  NonUniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
+                           const double &maximum_particle_diameter);
 
   /**
    * Carries out the non-uniform insertion of particles.
@@ -59,14 +62,23 @@ public:
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
+   * @param maximum_particle_diameter Maximum particle diameter based on values
+   * defined in the parameter handler
    *
    */
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &dem_parameters) override;
+         const DEMSolverParameters<dim> &                 dem_parameters,
+         const double &maximum_particle_diameter) override;
 
 private:
+  unsigned int current_inserting_particle_type;
+
+  // Number of remained particles of each type that should be inserted in the
+  // upcoming insertion steps
+  unsigned int remained_particles_of_each_type;
+
   /**
    * Creates a vector of random numbers with size of particles which are going
    * to be inserted at each insertion step
@@ -84,24 +96,15 @@ private:
    * Creates a vector of insertion points for non-uniform insertion. The output
    * of this function is used as input argument in insert_global_particles
    *
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param insertion_information DEM insertion parameters declared in the .prm
+   * file
+   * @param maximum_particle_diameter Maximum particle diameter based on values
+   * defined in the parameter handler
    */
   virtual std::vector<Point<dim>>
   assign_insertion_points(
-    const DEMSolverParameters<dim> &dem_parameters) override;
-
-  // Number of remained particles that should be inserted in the upcoming
-  // insertion steps
-  unsigned int remained_particles;
-
-  // Number of particles that is going to be inserted at each insetion step.This
-  // value can change in the last insertion step to reach the desired number of
-  // particles
-  unsigned int inserted_this_step;
-
-  //  Number of insertion points in the x, y and z directions, respectively
-  unsigned int number_of_particles_x_direction, number_of_particles_y_direction,
-    number_of_particles_z_direction;
+    const Parameters::Lagrangian::InsertionInfo &insertion_information,
+    const double &maximum_particle_diameter) override;
 };
 
 #endif /* nonuniform_insertion_h */

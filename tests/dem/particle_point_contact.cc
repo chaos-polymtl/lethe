@@ -69,19 +69,21 @@ test()
   // Defining general simulation parameters
   const unsigned int n_properties = 21;
   Tensor<1, dim>     g{{0, -9.81}};
-  double             dt                                      = 0.0001;
-  double             particle_diameter                       = 0.1;
-  int                particle_density                        = 2000;
-  dem_parameters.physical_properties.youngs_modulus_particle = 200000000000;
-  dem_parameters.physical_properties.youngs_modulus_wall     = 200000000000;
-  dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
-  dem_parameters.physical_properties.poisson_ratio_wall      = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle = 0.95;
-  dem_parameters.physical_properties.restitution_coefficient_wall     = 0.95;
-  dem_parameters.physical_properties.friction_coefficient_particle    = 0.05;
-  dem_parameters.physical_properties.friction_coefficient_wall        = 0.05;
-  dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
-  dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
+  double             dt                                         = 0.0001;
+  double             particle_diameter                          = 0.1;
+  int                particle_density                           = 2000;
+  dem_parameters.physical_properties.particle_type_number       = 1;
+  dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
+  dem_parameters.physical_properties.youngs_modulus_wall        = 200000000000;
+  dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
+  dem_parameters.physical_properties.poisson_ratio_wall         = 0.3;
+  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.95;
+  dem_parameters.physical_properties.restitution_coefficient_wall        = 0.95;
+  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.05;
+  dem_parameters.physical_properties.friction_coefficient_wall           = 0.05;
+  dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
+    0.1;
+  dem_parameters.physical_properties.rolling_friction_wall = 0.1;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
@@ -95,7 +97,7 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
   pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;

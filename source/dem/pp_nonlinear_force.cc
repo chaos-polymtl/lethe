@@ -3,14 +3,109 @@
 using namespace DEM;
 
 template <int dim>
+PPNonLinearForce<dim>::PPNonLinearForce(
+  const DEMSolverParameters<dim> &dem_parameters)
+{
+  for (unsigned int i = 0;
+       i < dem_parameters.physical_properties.particle_type_number;
+       ++i)
+    for (unsigned int j = 0;
+         j < dem_parameters.physical_properties.particle_type_number;
+         ++j)
+      {
+        this->effective_youngs_modulus[i].insert(
+          {j,
+           (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+            dem_parameters.physical_properties.youngs_modulus_particle.at(j)) /
+             ((dem_parameters.physical_properties.youngs_modulus_particle.at(
+                 j) *
+               (1 -
+                dem_parameters.physical_properties.poisson_ratio_particle.at(
+                  i) *
+                  dem_parameters.physical_properties.poisson_ratio_particle.at(
+                    i))) +
+              (dem_parameters.physical_properties.youngs_modulus_particle.at(
+                 i) *
+               (1 -
+                dem_parameters.physical_properties.poisson_ratio_particle.at(
+                  j) *
+                  dem_parameters.physical_properties.poisson_ratio_particle.at(
+                    j))))});
+
+        this->effective_shear_modulus[i].insert(
+          {j,
+           (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+            dem_parameters.physical_properties.youngs_modulus_particle.at(j)) /
+             (2 *
+              ((dem_parameters.physical_properties.youngs_modulus_particle.at(
+                  j) *
+                (2 - dem_parameters.physical_properties.poisson_ratio_particle
+                       .at(i)) *
+                (1 + dem_parameters.physical_properties.poisson_ratio_particle
+                       .at(i))) +
+               (dem_parameters.physical_properties.youngs_modulus_particle.at(
+                  i) *
+                (2 - dem_parameters.physical_properties.poisson_ratio_particle
+                       .at(j)) *
+                (1 + dem_parameters.physical_properties.poisson_ratio_particle
+                       .at(j)))))});
+
+        this->effective_coefficient_of_restitution[i].insert(
+          {j,
+           2 *
+             dem_parameters.physical_properties.restitution_coefficient_particle
+               .at(i) *
+             dem_parameters.physical_properties.restitution_coefficient_particle
+               .at(j) /
+             (dem_parameters.physical_properties
+                .restitution_coefficient_particle.at(i) +
+              dem_parameters.physical_properties
+                .restitution_coefficient_particle.at(j))});
+
+        this->effective_coefficient_of_friction[i].insert(
+          {j,
+           2 *
+             dem_parameters.physical_properties.friction_coefficient_particle
+               .at(i) *
+             dem_parameters.physical_properties.friction_coefficient_particle
+               .at(j) /
+             (dem_parameters.physical_properties.friction_coefficient_particle
+                .at(i) +
+              dem_parameters.physical_properties.friction_coefficient_particle
+                .at(j))});
+
+        this->effective_coefficient_of_rolling_friction[i].insert(
+          {j,
+           2 *
+             dem_parameters.physical_properties
+               .rolling_friction_coefficient_particle.at(i) *
+             dem_parameters.physical_properties
+               .rolling_friction_coefficient_particle.at(j) /
+             (dem_parameters.physical_properties
+                .rolling_friction_coefficient_particle.at(i) +
+              dem_parameters.physical_properties
+                .rolling_friction_coefficient_particle.at(j))});
+
+        double restitution_coefficient_particle_log =
+          std::log(this->effective_coefficient_of_restitution[i][j]);
+
+        model_parameter_beta[i].insert(
+          {j,
+           restitution_coefficient_particle_log /
+             sqrt(restitution_coefficient_particle_log *
+                    restitution_coefficient_particle_log +
+                  9.8696)});
+      }
+}
+
+template <int dim>
 void
 PPNonLinearForce<dim>::calculate_pp_contact_force(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    &                                               ghost_adjacent_particles,
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-  const double &                                    dt)
+    &           ghost_adjacent_particles,
+  const double &dt)
 {
   // Updating contact force of particles in local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -60,7 +155,6 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     dt);
 
                   this->calculate_nonlinear_contact_force_and_torque(
-                    physical_properties,
                     contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
@@ -143,7 +237,6 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     dt);
 
                   this->calculate_nonlinear_contact_force_and_torque(
-                    physical_properties,
                     contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
@@ -182,8 +275,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
 template <int dim>
 void
 PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-  pp_contact_info_struct<dim> &                     contact_info,
+  pp_contact_info_struct<dim> &  contact_info,
   const double &                 normal_relative_velocity_value,
   const Tensor<1, dim> &         normal_unit_vector,
   const double &                 normal_overlap,
@@ -194,54 +286,36 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   Tensor<1, dim> &               tangential_torque,
   Tensor<1, dim> &               rolling_resistance_torque)
 {
-  // Calculation of effective mass, radius, Young's modulus and shear
-  // modulus of the contact
-  const double effective_mass =
-    (particle_one_properties[PropertiesIndex::mass] *
-     particle_two_properties[PropertiesIndex::mass]) /
-    (particle_one_properties[PropertiesIndex::mass] +
-     particle_two_properties[PropertiesIndex::mass]);
-  const double effective_radius =
-    (particle_one_properties[PropertiesIndex::dp] *
-     particle_two_properties[PropertiesIndex::dp]) /
-    (2 * (particle_one_properties[PropertiesIndex::dp] +
-          particle_two_properties[PropertiesIndex::dp]));
-  const double effective_youngs_modulus =
-    physical_properties.youngs_modulus_particle /
-    (2 * (1 - (physical_properties.poisson_ratio_particle *
-               physical_properties.poisson_ratio_particle)));
-  const double effective_shear_modulus =
-    physical_properties.youngs_modulus_particle /
-    (4 * (2 - physical_properties.poisson_ratio_particle) *
-     (1 + physical_properties.poisson_ratio_particle));
+  // Calculation of effective radius and mass
+  this->find_effective_radius_and_mass(particle_one_properties,
+                                       particle_two_properties);
 
-  // Calculation of model parameters (beta, sn and st). These values
-  // are used to consider non-linear relation of the contact force to
-  // the normal overlap
-  const double restitution_coefficient_particle_log =
-    std::log(physical_properties.restitution_coefficient_particle);
-  const double model_parameter_beta =
-    restitution_coefficient_particle_log /
-    sqrt(restitution_coefficient_particle_log *
-           restitution_coefficient_particle_log +
-         9.8696);
+  const unsigned int particle_one_type =
+    particle_one_properties[DEM::PropertiesIndex::type];
+  const unsigned int particle_two_type =
+    particle_two_properties[DEM::PropertiesIndex::type];
+
   const double radius_times_overlap_sqrt =
-    sqrt(effective_radius * normal_overlap);
+    sqrt(this->effective_radius * normal_overlap);
   const double model_parameter_sn =
-    2 * effective_youngs_modulus * radius_times_overlap_sqrt;
+    2 * this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+    radius_times_overlap_sqrt;
   double model_parameter_st =
-    8 * effective_shear_modulus * radius_times_overlap_sqrt;
+    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+    radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
-  double normal_spring_constant =
-    1.3333 * effective_youngs_modulus * radius_times_overlap_sqrt;
+  double normal_spring_constant = 0.66665 * model_parameter_sn;
   double normal_damping_constant =
-    -1.8257 * model_parameter_beta * sqrt(model_parameter_sn * effective_mass);
+    -1.8257 * model_parameter_beta[particle_one_type][particle_two_type] *
+    sqrt(model_parameter_sn * this->effective_mass);
   double tangential_spring_constant =
-    8 * effective_shear_modulus * radius_times_overlap_sqrt + DBL_MIN;
+    8 * this->effective_shear_modulus[particle_one_type][particle_two_type] *
+      radius_times_overlap_sqrt +
+    DBL_MIN;
   double tangential_damping_constant =
-    -1.8257 * model_parameter_beta * sqrt(model_parameter_st * effective_mass);
+    normal_damping_constant * sqrt(model_parameter_st / model_parameter_sn);
 
   // Calculation of normal force using spring and dashpot normal forces
   normal_force =
@@ -259,7 +333,9 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     dashpot_tangential_force;
 
   double coulomb_threshold =
-    physical_properties.friction_coefficient_particle * normal_force.norm();
+    this->effective_coefficient_of_friction[particle_one_type]
+                                           [particle_two_type] *
+    normal_force.norm();
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
@@ -278,7 +354,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   if (dim == 3)
     {
       tangential_torque =
-        cross_product_3d((effective_radius * normal_unit_vector),
+        cross_product_3d((this->effective_radius * normal_unit_vector),
                          tangential_force);
     }
 
@@ -299,9 +375,10 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
   // Calculation of rolling resistance torque
-  rolling_resistance_torque = -physical_properties.rolling_friction_particle *
-                              effective_radius * normal_force.norm() *
-                              omega_ij_direction;
+  rolling_resistance_torque =
+    -this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                    [particle_two_type] *
+    this->effective_radius * normal_force.norm() * omega_ij_direction;
 }
 
 template class PPNonLinearForce<2>;

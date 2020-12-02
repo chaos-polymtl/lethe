@@ -40,19 +40,24 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set gx            		 			= 9.81
+    set gx            		 			= 0.0
     set gy            		 			= -9.81
-    set diameter            	 			= 0.005
-    set density            	 			= 2000
-    set young modulus particle         			= 1000000
+    set number of particle types	                = 1
+    	subsection particle type 0
+		set size distribution type		= uniform
+    		set diameter            	 	= 0.005
+    		set number				= 10
+    		set density            	 		= 2000
+    		set young modulus particle         	= 1000000
+    		set poisson ratio particle          	= 0.3
+    		set restitution coefficient particle	= 0.3
+    		set friction coefficient particle       = 0.1
+    		set rolling friction particle         	= 0.05
+	end
     set young modulus wall            			= 1000000
-    set poisson ratio particle          		= 0.3
     set poisson ratio wall            			= 0.3
-    set restitution coefficient particle		= 0.3
     set restitution coefficient wall           		= 0.3
-    set friction coefficient particle         		= 0.1
     set friction coefficient wall         		= 0.1
-    set rolling friction particle         		= 0.05
     set rolling friction wall         	      	  	= 0.05
 end
 
@@ -61,7 +66,6 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 10
     set inserted number of particles at each time step  = 10
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= 0.01

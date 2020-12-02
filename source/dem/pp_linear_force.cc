@@ -3,14 +3,88 @@
 using namespace dealii;
 
 template <int dim>
+PPLinearForce<dim>::PPLinearForce(
+  const DEMSolverParameters<dim> &dem_parameters)
+{
+  for (unsigned int i = 0;
+       i < dem_parameters.physical_properties.particle_type_number;
+       ++i)
+    for (unsigned int j = 0;
+         j < dem_parameters.physical_properties.particle_type_number;
+         ++j)
+      {
+        this->effective_youngs_modulus[i][j] =
+          (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+           dem_parameters.physical_properties.youngs_modulus_particle.at(j)) /
+          ((dem_parameters.physical_properties.youngs_modulus_particle.at(j) *
+            (1 -
+             dem_parameters.physical_properties.poisson_ratio_particle.at(i) *
+               dem_parameters.physical_properties.poisson_ratio_particle.at(
+                 i))) +
+           (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+            (1 -
+             dem_parameters.physical_properties.poisson_ratio_particle.at(j) *
+               dem_parameters.physical_properties.poisson_ratio_particle.at(
+                 j))));
+
+        this->effective_shear_modulus[i][j] =
+          (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+           dem_parameters.physical_properties.youngs_modulus_particle.at(j)) /
+          (2 *
+           ((dem_parameters.physical_properties.youngs_modulus_particle.at(j) *
+             (2 -
+              dem_parameters.physical_properties.poisson_ratio_particle.at(i)) *
+             (1 + dem_parameters.physical_properties.poisson_ratio_particle.at(
+                    i))) +
+            (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
+             (2 -
+              dem_parameters.physical_properties.poisson_ratio_particle.at(j)) *
+             (1 + dem_parameters.physical_properties.poisson_ratio_particle.at(
+                    j)))));
+
+        this->effective_coefficient_of_restitution[i][j] =
+          2 *
+          dem_parameters.physical_properties.restitution_coefficient_particle
+            .at(i) *
+          dem_parameters.physical_properties.restitution_coefficient_particle
+            .at(j) /
+          (dem_parameters.physical_properties.restitution_coefficient_particle
+             .at(i) +
+           dem_parameters.physical_properties.restitution_coefficient_particle
+             .at(j));
+
+        this->effective_coefficient_of_friction[i][j] =
+          2 *
+          dem_parameters.physical_properties.friction_coefficient_particle.at(
+            i) *
+          dem_parameters.physical_properties.friction_coefficient_particle.at(
+            j) /
+          (dem_parameters.physical_properties.friction_coefficient_particle.at(
+             i) +
+           dem_parameters.physical_properties.friction_coefficient_particle.at(
+             j));
+
+        this->effective_coefficient_of_rolling_friction[i][j] =
+          2 *
+          dem_parameters.physical_properties
+            .rolling_friction_coefficient_particle.at(i) *
+          dem_parameters.physical_properties
+            .rolling_friction_coefficient_particle.at(j) /
+          (dem_parameters.physical_properties
+             .rolling_friction_coefficient_particle.at(i) +
+           dem_parameters.physical_properties
+             .rolling_friction_coefficient_particle.at(j));
+      }
+}
+
+template <int dim>
 void
 PPLinearForce<dim>::calculate_pp_contact_force(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    &                                               ghost_adjacent_particles,
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-  const double &                                    dt)
+    &           ghost_adjacent_particles,
+  const double &dt)
 {
   // Updating contact force of particles in local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -59,7 +133,6 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                     dt);
 
                   this->calculate_linear_contact_force_and_torque(
-                    physical_properties,
                     contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
@@ -139,7 +212,6 @@ PPLinearForce<dim>::calculate_pp_contact_force(
                     dt);
 
                   this->calculate_linear_contact_force_and_torque(
-                    physical_properties,
                     contact_info,
                     normal_relative_velocity_value,
                     normal_unit_vector,
@@ -178,8 +250,7 @@ PPLinearForce<dim>::calculate_pp_contact_force(
 template <int dim>
 void
 PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-  pp_contact_info_struct<dim> &                     contact_info,
+  pp_contact_info_struct<dim> &  contact_info,
   const double &                 normal_relative_velocity_value,
   const Tensor<1, dim> &         normal_unit_vector,
   const double &                 normal_overlap,
@@ -190,44 +261,48 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   Tensor<1, dim> &               tangential_torque,
   Tensor<1, dim> &               rolling_resistance_torque)
 {
-  // Calculation of effective mass, radius and Young's modulus of the
-  // contact
-  double effective_mass =
-    (particle_one_properties[DEM::PropertiesIndex::mass] *
-     particle_two_properties[DEM::PropertiesIndex::mass]) /
-    (particle_one_properties[DEM::PropertiesIndex::mass] +
-     particle_two_properties[DEM::PropertiesIndex::mass]);
-  double effective_radius =
-    (particle_one_properties[DEM::PropertiesIndex::dp] *
-     particle_two_properties[DEM::PropertiesIndex::dp]) /
-    (2 * (particle_one_properties[DEM::PropertiesIndex::dp] +
-          particle_two_properties[DEM::PropertiesIndex::dp]));
-  double effective_youngs_modulus =
-    physical_properties.youngs_modulus_particle /
-    (2 * (1 - physical_properties.poisson_ratio_particle *
-                physical_properties.poisson_ratio_particle));
+  // Calculation of effective radius and mass
+  this->find_effective_radius_and_mass(particle_one_properties,
+                                       particle_two_properties);
+  const unsigned int particle_one_type =
+    particle_one_properties[DEM::PropertiesIndex::type];
+  const unsigned int particle_two_type =
+    particle_two_properties[DEM::PropertiesIndex::type];
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
   double normal_spring_constant =
-    1.0667 * sqrt(effective_radius) * effective_youngs_modulus *
-    pow((1.0667 * effective_mass * normal_relative_velocity_value *
-         normal_relative_velocity_value /
-         (sqrt(effective_radius) * effective_youngs_modulus)),
-        0.2);
+    1.0667 * sqrt(this->effective_radius) *
+    this->effective_youngs_modulus
+      [particle_one_type][particle_two_properties[DEM::PropertiesIndex::type]] *
+    pow(
+      (1.0667 * this->effective_mass * normal_relative_velocity_value *
+       normal_relative_velocity_value /
+       (sqrt(this->effective_radius) *
+        this->effective_youngs_modulus[particle_one_type][particle_two_type])),
+      0.2);
   double tangential_spring_constant =
-    1.0667 * sqrt(effective_radius) * effective_youngs_modulus *
-      pow((1.0667 * effective_mass * contact_info.tangential_relative_velocity *
+    1.0667 * sqrt(this->effective_radius) *
+      this->effective_youngs_modulus[particle_one_type][particle_two_type] *
+      pow((1.0667 * this->effective_mass *
+           contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
-           (sqrt(effective_radius) * effective_youngs_modulus)),
+           (sqrt(this->effective_radius) *
+            this->effective_youngs_modulus[particle_one_type]
+                                          [particle_two_type])),
           0.2) +
     DBL_MIN;
   double normal_damping_constant = sqrt(
-    (4 * effective_mass * normal_spring_constant) /
-    (1 + (M_PI / (log(physical_properties.restitution_coefficient_particle) +
-                  DBL_MIN)) *
-           (M_PI / (log(physical_properties.restitution_coefficient_particle) +
-                    DBL_MIN))));
+    (4 * this->effective_mass * normal_spring_constant) /
+    (1 +
+     (M_PI /
+      (log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                     [particle_two_type]) +
+       DBL_MIN)) *
+       (M_PI /
+        (log(this->effective_coefficient_of_restitution[particle_one_type]
+                                                       [particle_two_type]) +
+         DBL_MIN))));
   double tangential_damping_constant =
     normal_damping_constant *
     sqrt(tangential_spring_constant / normal_spring_constant);
@@ -248,7 +323,9 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     dashpot_tangential_force;
 
   double coulomb_threshold =
-    physical_properties.friction_coefficient_particle * normal_force.norm();
+    this->effective_coefficient_of_friction[particle_one_type]
+                                           [particle_two_type] *
+    normal_force.norm();
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
@@ -291,9 +368,10 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   omega_ij_direction    = omega_ij / omega_ij_value;
 
   // Calculation of rolling resistance torque
-  rolling_resistance_torque = -physical_properties.rolling_friction_particle *
-                              effective_radius * normal_force.norm() *
-                              omega_ij_direction;
+  rolling_resistance_torque =
+    -this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                    [particle_two_type] *
+    this->effective_radius * normal_force.norm() * omega_ij_direction;
 }
 
 template class PPLinearForce<2>;

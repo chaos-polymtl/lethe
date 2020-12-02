@@ -5,9 +5,9 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 0.00001
-  set time end       					 = 0.5
-  set log frequency				         = 1000000
-  set output frequency            			 = 1000000
+  set time end       					 = 1
+  set log frequency				         = 10000000
+  set output frequency            			 = 10000000
 end
 
 #---------------------------------------------------
@@ -30,6 +30,7 @@ end
 subsection model parameters
   set contact detection method 		   		 = constant
   set contact detection frequency                 	 = 10
+  set repartition frequency 				 = 1000000
   set neighborhood threshold				 = 1.5
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
@@ -42,12 +43,23 @@ end
 subsection physical properties
     set gx            		 			= 0.0
     set gy            		 			= -9.81
-    set number of particle types	                = 1
+    set number of particle types	                = 2
     	subsection particle type 0
 		set size distribution type		= uniform
-    		set diameter            	 	= 0.005
-    		set number				= 50
+    		set diameter            		= 0.003
+    		set number				= 30
     		set density            	 		= 2000
+    		set young modulus particle         	= 1500000
+    		set poisson ratio particle          	= 0.4
+    		set restitution coefficient particle	= 0.3
+    		set friction coefficient particle       = 0.2
+    		set rolling friction particle         	= 0.03
+	end
+    	subsection particle type 1
+		set size distribution type		= uniform
+    		set diameter            	 	= 0.005
+    		set number				= 30
+    		set density            	 		= 3000
     		set young modulus particle         	= 1000000
     		set poisson ratio particle          	= 0.3
     		set restitution coefficient particle	= 0.3
@@ -71,8 +83,8 @@ subsection insertion info
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
     set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
-    set insertion distance threshold			= 2
+    set insertion box maximum y           	 	= 0.0
+    set insertion distance threshold			= 1.5
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
 end
@@ -82,7 +94,7 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 				= dealii
-    set grid type            				= hyper_cube
-    set grid arguments       				= -0.07 : 0.07 : true
+    set grid type      	     				= hyper_ball
+    set grid arguments      			 	= 0.0, 0.0 : 0.1 : false
     set initial refinement   				= 3
 end
