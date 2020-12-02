@@ -118,13 +118,10 @@ FlowControl<dim>::save(std::string prefix)
   std::string   filename = prefix + ".flowcontrol";
   std::ofstream output(filename.c_str());
   output << "Flow control" << std::endl;
-  output << "Beta parameter " << beta_0 << std::endl;
-  output << "Flow rate parameter " << flow_rate_0 << std::endl;
-  output << "Previous beta " << beta_n << std::endl;
-  output << "Previous flow rate " << flow_rate_1n << std::endl;
-  output << "Flow direction " << flow_direction << std::endl;
-  output << "No force " << no_force << std::endl;
-  output << "Threshold factor " << threshold_factor << std::endl;
+  output << "Previous_beta " << beta_n << std::endl;
+  output << "Previous_flow_rate " << flow_rate_1n << std::endl;
+  output << "No_force " << no_force << std::endl;
+  output << "Threshold_factor " << threshold_factor << std::endl;
 }
 
 template <int dim>
@@ -139,11 +136,8 @@ FlowControl<dim>::read(std::string prefix)
     }
   std::string buffer;
   std::getline(input, buffer);
-  input >> buffer >> beta_0;
-  input >> buffer >> flow_rate_0;
   input >> buffer >> beta_n;
   input >> buffer >> flow_rate_1n;
-  input >> buffer >> flow_direction;
   input >> buffer >> no_force;
   input >> buffer >> threshold_factor;
 }

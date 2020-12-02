@@ -1,6 +1,3 @@
-
-#include <deal.II/dofs/dof_tools.h>
-
 #include <solvers/postprocessing_velocities.h>
 
 template <int dim, typename VectorType, typename DofsType>
@@ -77,15 +74,14 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   else if constexpr (std::is_same_v<VectorType,
                                     TrilinosWrappers::MPI::BlockVector>)
     {
-      n_dofs_per_vertex = dim;
-      begin_index       = local_evaluation_point.block(0).local_range().first;
-      end_index         = local_evaluation_point.block(0).local_range().second;
-      local_solution    = &local_evaluation_point.block(0);
-      local_average     = &average_velocities.block(0);
-      rns_dt            = &reynolds_normal_stress_dt.block(0);
-      rss_dt            = &reynolds_shear_stress_dt.block(0);
-      k_dt              = &reynolds_normal_stress_dt.block(1);
-      k_index           = [](unsigned int i) { return i / dim; };
+      begin_index    = local_evaluation_point.block(0).local_range().first;
+      end_index      = local_evaluation_point.block(0).local_range().second;
+      local_solution = &local_evaluation_point.block(0);
+      local_average  = &average_velocities.block(0);
+      rns_dt         = &reynolds_normal_stress_dt.block(0);
+      rss_dt         = &reynolds_shear_stress_dt.block(0);
+      k_dt           = &reynolds_normal_stress_dt.block(1);
+      k_index        = [](unsigned int i) { return i / dim; };
     }
 
   for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
@@ -148,9 +144,8 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   const unsigned int &dofs_per_vertex,
   const MPI_Comm &    mpi_communicator)
 {
-  // Save the number of dofs per vertex. If solution vector is a block vector,
-  // the variable will be later set to dim because only dofs related to the
-  // velocity solution are desired in this particular case.
+  // Save the number of dofs per vertex. If solution is in block vectors,
+  // this is the number of dofs about velocity, dim.
   n_dofs_per_vertex = dofs_per_vertex;
 
   // Reinitialisation of the average velocity and reynolds stress vectors
@@ -171,6 +166,74 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   reynolds_shear_stresses.reinit(locally_owned_dofs, mpi_communicator);
   get_rss.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 }
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::initialize_checkpoint_vectors(
+  const DofsType &locally_owned_dofs,
+  const DofsType &locally_relevant_dofs,
+  const MPI_Comm &mpi_communicator)
+{
+  // Initializing vector with locally_relevant_dofs because writing checkpoint
+  // needs to read ghost cells.
+  sum_velocity_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                          locally_relevant_dofs,
+                                          mpi_communicator);
+  sum_rns_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
+  sum_rss_dt_with_ghost_cells.reinit(locally_owned_dofs,
+                                     locally_relevant_dofs,
+                                     mpi_communicator);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::vector<const VectorType *>
+AverageVelocities<dim, VectorType, DofsType>::save(std::string prefix)
+{
+  sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
+  sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
+  sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
+
+  std::vector<const VectorType *> av_set_transfer;
+  av_set_transfer.push_back(&sum_velocity_dt_with_ghost_cells);
+  av_set_transfer.push_back(&sum_rns_dt_with_ghost_cells);
+  av_set_transfer.push_back(&sum_rss_dt_with_ghost_cells);
+
+  std::string   filename = prefix + ".averagevelocities";
+  std::ofstream output(filename.c_str());
+  output << "Average velocities" << std::endl;
+  output << "dt_0 " << dt_0 << std::endl;
+  output << "Average_calculation_boolean " << average_calculation << std::endl;
+  output << "Real_initial_time " << real_initial_time << std::endl;
+
+  return av_set_transfer;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+std::vector<VectorType *>
+AverageVelocities<dim, VectorType, DofsType>::read(std::string prefix)
+{
+  std::vector<VectorType *> sum_vectors;
+  sum_vectors.push_back(&sum_velocity_dt);
+  sum_vectors.push_back(&sum_reynolds_normal_stress_dt);
+  sum_vectors.push_back(&sum_reynolds_shear_stress_dt);
+
+  std::string   filename = prefix + ".averagevelocities";
+  std::ifstream input(filename.c_str());
+  if (!input)
+    {
+      throw("Unable to open file");
+    }
+  std::string buffer;
+  std::getline(input, buffer);
+  input >> buffer >> dt_0;
+  input >> buffer >> average_calculation;
+  input >> buffer >> real_initial_time;
+
+  return sum_vectors;
+}
+
 
 template class AverageVelocities<2, TrilinosWrappers::MPI::Vector, IndexSet>;
 

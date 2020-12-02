@@ -72,6 +72,7 @@ read_mesh_and_manifolds(
                                                           triangulation,
   const Parameters::Mesh &                                mesh_parameters,
   const Parameters::Manifolds &                           manifolds_parameters,
+  const bool &                                            restart,
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions);
 
 

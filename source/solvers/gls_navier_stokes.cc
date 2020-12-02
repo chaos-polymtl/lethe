@@ -219,6 +219,28 @@ GLSNavierStokesSolver<dim>::setup_dofs()
                        dsp,
                        this->mpi_communicator);
 
+  if (this->nsparam.post_processing.calculate_average_velocities)
+    {
+      AssertThrow(this->nsparam.mesh_adaptation.type ==
+                    Parameters::MeshAdaptation::Type::none,
+                  ExcMessage(
+                    "Time-averaging velocities and calculating reynolds "
+                    "stresses are currently unavailable for mesh "
+                    "adaptation."));
+
+      this->average_velocities.initialize_vectors(this->locally_owned_dofs,
+                                                  this->locally_relevant_dofs,
+                                                  this->fe.n_dofs_per_vertex(),
+                                                  this->mpi_communicator);
+
+      if (this->nsparam.restart_parameters.checkpoint)
+        {
+          this->average_velocities.initialize_checkpoint_vectors(
+            this->locally_owned_dofs,
+            this->locally_relevant_dofs,
+            this->mpi_communicator);
+        }
+    }
 
   double global_volume = GridTools::volume(*this->triangulation);
 
@@ -861,7 +883,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -1530,6 +1552,7 @@ GLSNavierStokesSolver<dim>::solve()
   read_mesh_and_manifolds(this->triangulation,
                           this->nsparam.mesh,
                           this->nsparam.manifolds_parameters,
+                          this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
 
   this->setup_dofs();
