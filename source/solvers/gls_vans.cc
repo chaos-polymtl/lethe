@@ -1,7 +1,5 @@
 #include "solvers/gls_vans.h"
 
-
-
 // Constructor for class GLS_VANS
 template <int dim>
 GLSVANSSolver<dim>::GLSVANSSolver(NavierStokesSolverParameters<dim> &p_nsparam,
@@ -91,7 +89,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
-// iteration with the solver and sets the initial condition
+// iteration with the solver and sets the initial conditions
 template <int dim>
 void
 GLSVANSSolver<dim>::first_iteration()
@@ -199,7 +197,7 @@ GLSVANSSolver<dim>::first_iteration()
 
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
-// iteration with the solver and sets the initial condition
+// iteration with the solver and sets the initial conditions
 template <int dim>
 void
 GLSVANSSolver<dim>::iterate()
@@ -265,7 +263,6 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> present_void_fraction_gradients(n_q_points);
 
   Tensor<1, dim> force;
-
 
   // Velocity dependent source term
   //----------------------------------
@@ -408,7 +405,6 @@ GLSVANSSolver<dim>::assembleGLS()
             }
 
 
-
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -448,7 +444,6 @@ GLSVANSSolver<dim>::assembleGLS()
                     laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
                 }
 
-
               // Establish the force vector
               for (int i = 0; i < dim; ++i)
                 {
@@ -469,9 +464,8 @@ GLSVANSSolver<dim>::assembleGLS()
                 present_velocity_gradients[q] * present_velocity_values[q] *
                   present_void_fraction_values[q]
                 // Mass source term
-                + mass_source * present_velocity_values[q]
-                //..........................................
-                + present_pressure_gradients[q] -
+                + mass_source * present_velocity_values[q] +
+                present_pressure_gradients[q] -
                 viscosity * present_velocity_laplacians[q] -
                 force * present_void_fraction_values[q];
 
@@ -545,9 +539,8 @@ GLSVANSSolver<dim>::assembleGLS()
                          grad_phi_u[j] * present_velocity_values[q] *
                            present_void_fraction_values[q]
                          // Mass source term
-                         + mass_source * phi_u[j]
-                         //..........................................
-                         + grad_phi_p[j] - viscosity * laplacian_phi_u[j]);
+                         + mass_source * phi_u[j] + grad_phi_p[j] -
+                         viscosity * laplacian_phi_u[j]);
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
@@ -571,8 +564,7 @@ GLSVANSSolver<dim>::assembleGLS()
                               // Momentum terms
                               viscosity *
                                 scalar_product(grad_phi_u[j], grad_phi_u[i]) +
-                              // TODO VERIFY ADVECTION TERMS
-                              // Advection terms (eps.u.del(u))'
+                              // Advection terms
                               ((phi_u[j] * present_void_fraction_values[q] *
                                 present_velocity_gradients[q] * phi_u[i]) +
                                (grad_phi_u[j] *
@@ -580,7 +572,6 @@ GLSVANSSolver<dim>::assembleGLS()
                                 present_velocity_values[q] * phi_u[i]))
                               // Mass source term
                               + mass_source * phi_u[j] * phi_u[i]
-                              //.........................................
                               // Pressure
                               - (div_phi_u[i] * phi_p[j]) +
                               // Continuity
@@ -663,13 +654,12 @@ GLSVANSSolver<dim>::assembleGLS()
                       // Momentum
                       -viscosity * scalar_product(present_velocity_gradients[q],
                                                   grad_phi_u[i]) -
-                      // Advection terms eps.udel(u)
+                      // Advection terms
                       (present_velocity_gradients[q] *
                        present_velocity_values[q] *
                        present_void_fraction_values[q] * phi_u[i])
                       // Mass source term
                       - mass_source * present_velocity_values[q] * phi_u[i]
-                      //.............................................
                       // Pressure and force
                       + present_pressure_values[q] * div_phi_u[i] +
                       force * present_void_fraction_values[q] * phi_u[i] -
@@ -698,36 +688,6 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[1] * p1_void_fraction_values[q]) *
                         phi_p[i] * JxW;
                     }
-
-                  // std::cout << "mass source " << mass_source << std::endl;
-                  // std::cout << "mass derivative "
-                  //          << (bdf_coefs[0] * present_void_fraction_values[q]
-                  //          +
-                  //              bdf_coefs[1] * p1_void_fraction_values[q])
-                  //          << std::endl;
-                  // std::cout << "velocity divergence "
-                  //          << present_velocity_divergence *
-                  //               present_void_fraction_values[q]
-                  //          << std::endl;
-                  // std::cout << "void gradient "
-                  //          << present_velocity_values[q] *
-                  //               present_void_fraction_gradients[q]
-                  //          << std::endl;
-
-
-                  // std::cout << "first term : "
-                  //          << (bdf_coefs[0] *
-                  //          present_velocity_values[q] +
-                  //              bdf_coefs[1] *
-                  //              p1_velocity_values[q])
-                  //          << std::endl;
-                  // std::cout << "first term : "
-                  //          << (bdf_coefs[0] *
-                  //          present_void_fraction_values[q]
-                  //          +
-                  //              bdf_coefs[1] *
-                  //              p1_void_fraction_values[q])
-                  //          << std::endl;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
