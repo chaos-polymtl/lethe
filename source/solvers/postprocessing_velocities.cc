@@ -1,7 +1,5 @@
-#include <deal.II/dofs/dof_tools.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
+#include <deal.II/dofs/dof_tools.h>
 
 #include <solvers/postprocessing_velocities.h>
 
@@ -58,141 +56,120 @@ void
 AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
-  unsigned int begin_index, end_index, n_dofs_per_node, ij_factor;
+  unsigned int begin_index, end_index;
+  unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
+    return i + dim;
+  };
 
-  const TrilinosWrappers::MPI::Vector *local_solution;
-  const TrilinosWrappers::MPI::Vector *local_average;
+  const TrilinosWrappers::MPI::Vector *local_solution, *local_average;
+  TrilinosWrappers::MPI::Vector *      rns_dt, *rss_dt, *k_dt;
 
   if constexpr (std::is_same_v<VectorType, TrilinosWrappers::MPI::Vector>)
     {
-      begin_index     = local_evaluation_point.local_range().first;
-      end_index       = local_evaluation_point.local_range().second;
-      n_dofs_per_node = dim + 1;
-      ij_factor       = dim;
-      local_solution  = &local_evaluation_point;
-      local_average   = &average_velocities;
+      begin_index    = local_evaluation_point.local_range().first;
+      end_index      = local_evaluation_point.local_range().second;
+      local_solution = &local_evaluation_point;
+      local_average  = &average_velocities;
+      rns_dt         = &reynolds_normal_stress_dt;
+      rss_dt         = &reynolds_shear_stress_dt;
+      k_dt           = &reynolds_normal_stress_dt;
     }
   else if constexpr (std::is_same_v<VectorType,
                                     TrilinosWrappers::MPI::BlockVector>)
     {
-      begin_index     = local_evaluation_point.block(0).local_range().first;
-      end_index       = local_evaluation_point.block(0).local_range().second;
-      n_dofs_per_node = dim;
-      ij_factor       = dim + 1;
-      local_solution  = &local_evaluation_point.block(0);
-      local_average   = &average_velocities.block(0);
+      n_dofs_per_vertex = dim;
+      begin_index       = local_evaluation_point.block(0).local_range().first;
+      end_index         = local_evaluation_point.block(0).local_range().second;
+      local_solution    = &local_evaluation_point.block(0);
+      local_average     = &average_velocities.block(0);
+      rns_dt            = &reynolds_normal_stress_dt.block(0);
+      rss_dt            = &reynolds_shear_stress_dt.block(0);
+      k_dt              = &reynolds_normal_stress_dt.block(1);
+      k_index           = [](unsigned int i) { return i / dim; };
     }
 
-  for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_node)
+  for (unsigned int i = begin_index; i < end_index; i += n_dofs_per_vertex)
     {
-      // Set index from solution vector to reynolds stresses vector.
-      // ij_factor is not the same for vector and block vector because
-      // the number of solution in packages in the solution vector are not
-      // the same, as explained in the comment above this function.
-      unsigned int j = i * ij_factor / 2;
-
       // u'u'*dt
-      reynolds_stress_dt[j] = ((*local_solution)[i] - (*local_average)[i]) *
-                              ((*local_solution)[i] - (*local_average)[i]) * dt;
+      (*rns_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
+                     ((*local_solution)[i] - (*local_average)[i]) * dt;
 
       // v'v'*dt
-      reynolds_stress_dt[j + 1] =
-        ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
-        ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
+      (*rns_dt)[i + 1] = ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+                         ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
+                         dt;
 
       // u'v'*dt
-      reynolds_stress_dt[j + dim] =
-        ((*local_solution)[i] - (*local_average)[i]) *
-        ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
+      (*rss_dt)[i] = ((*local_solution)[i] - (*local_average)[i]) *
+                     ((*local_solution)[i + 1] - (*local_average)[i + 1]) * dt;
+
+      // k*dt = 1/2(u'u'+v'v')*dt (turbulence kinetic energy)
+      // Note : k_dt and rns_dt are both pointers of reynolds_normal_stress_dt
+      // for Trilinos vector (not block vectors)
+      (*k_dt)[k_index(i)] = ((*rns_dt)[i] + (*rns_dt)[i + 1]) / 2;
 
       if (dim == 3)
         {
           // w'w'*dt
-          reynolds_stress_dt[j + 2] =
+          (*rns_dt)[i + 2] =
             ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
             ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
 
           // v'w'*dt
-          reynolds_stress_dt[j + 4] =
+          (*rss_dt)[i + 1] =
             ((*local_solution)[i + 1] - (*local_average)[i + 1]) *
             ((*local_solution)[i + 2] - (*local_average)[i + 2]) * dt;
 
           // w'u'*dt
-          reynolds_stress_dt[j + 5] =
+          (*rss_dt)[i + 2] =
             ((*local_solution)[i + 2] - (*local_average)[i + 2]) *
             ((*local_solution)[i] - (*local_average)[i]) * dt;
+
+          // k*dt = 1/2(u'u'+v'v'+w'w')*dt
+          (*k_dt)[k_index(i)] = (*k_dt)[k_index(i)] + (*rns_dt)[i + 2] / 2;
         }
     }
 
   // Sum of all reynolds stresses during simulation.
-  sum_reynolds_stress_dt += reynolds_stress_dt;
+  sum_reynolds_normal_stress_dt += reynolds_normal_stress_dt;
+  sum_reynolds_shear_stress_dt += reynolds_shear_stress_dt;
 
   // Calculate the reynolds stresses.
-  reynolds_stresses.equ(inv_range_time, sum_reynolds_stress_dt);
+  reynolds_normal_stresses.equ(inv_range_time, sum_reynolds_normal_stress_dt);
+  reynolds_shear_stresses.equ(inv_range_time, sum_reynolds_shear_stress_dt);
 }
 
 
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
-  parallel::DistributedTriangulationBase<dim> &triangulation,
-  const unsigned int &                         velocity_fem_degree,
-  const DofsType &                             locally_owned_dofs,
-  const DofsType &                             locally_relevant_dofs,
-  const MPI_Comm &                             mpi_communicator)
+  const DofsType &    locally_owned_dofs,
+  const DofsType &    locally_relevant_dofs,
+  const unsigned int &dofs_per_vertex,
+  const MPI_Comm &    mpi_communicator)
 {
-  if (dim == 2)
-    {
-      FESystem<dim> fe_rs(FE_Q<dim>(velocity_fem_degree),
-                          dim,
-                          FE_Q<dim>(velocity_fem_degree),
-                          1);
-
-#if (DEAL_II_VERSION_MINOR <= 2)
-      this->handler_rs.initialize(triangulation, fe_rs);
-#else
-      this->handler_rs.reinit(triangulation);
-      this->handler_rs.distribute_dofs(fe_rs);
-#endif
-    }
-  else if (dim == 3)
-    {
-      FESystem<dim> fe_rs(FE_Q<dim>(velocity_fem_degree),
-                          dim,
-                          FE_Q<dim>(velocity_fem_degree),
-                          1,
-                          FE_Q<dim>(velocity_fem_degree),
-                          1,
-                          FE_Q<dim>(velocity_fem_degree),
-                          1);
-
-#if (DEAL_II_VERSION_MINOR <= 2)
-      this->handler_rs.initialize(triangulation, fe_rs);
-#else
-      this->handler_rs.reinit(triangulation);
-      this->handler_rs.distribute_dofs(fe_rs);
-#endif
-    }
-
-  IndexSet locally_owned_rs_components = handler_rs.locally_owned_dofs();
-  IndexSet locally_relevant_rs_components;
-  DoFTools::extract_locally_relevant_dofs(handler_rs,
-                                          locally_relevant_rs_components);
+  // Save the number of dofs per vertex. If solution vector is a block vector,
+  // the variable will be later set to dim because only dofs related to the
+  // velocity solution are desired in this particular case.
+  n_dofs_per_vertex = dofs_per_vertex;
 
   // Reinitialisation of the average velocity and reynolds stress vectors
   // to get the right length.
   velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
   sum_velocity_dt.reinit(locally_owned_dofs, mpi_communicator);
-  average_velocities.reinit(locally_owned_dofs,
-                            locally_relevant_dofs,
-                            mpi_communicator);
+  average_velocities.reinit(locally_owned_dofs, mpi_communicator);
+  get_av.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 
   // Reinitialize independent components of stress tensor vectors.
-  reynolds_stress_dt.reinit(locally_owned_rs_components, mpi_communicator);
-  sum_reynolds_stress_dt.reinit(locally_owned_rs_components, mpi_communicator);
-  reynolds_stresses.reinit(locally_owned_rs_components,
-                           locally_relevant_rs_components,
-                           mpi_communicator);
+  reynolds_normal_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
+  sum_reynolds_normal_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
+  reynolds_normal_stresses.reinit(locally_owned_dofs, mpi_communicator);
+  get_rns.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+
+  reynolds_shear_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
+  sum_reynolds_shear_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
+  reynolds_shear_stresses.reinit(locally_owned_dofs, mpi_communicator);
+  get_rss.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 }
 
 template class AverageVelocities<2, TrilinosWrappers::MPI::Vector, IndexSet>;

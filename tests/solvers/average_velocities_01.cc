@@ -61,21 +61,11 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  // Some variables to fake the triangulation and the dofs
-  parallel::distributed::Triangulation<3> triangulation(mpi_communicator);
-  GridGenerator::hyper_cube(triangulation);
+  IndexSet locally_owned_dofs(8);
+  IndexSet locally_relevant_dofs(8);
 
-  DoFHandler<3> dof_handler;
-  unsigned int  velocity_fem_degree = 1;
-  FESystem<3>   fe(FE_Q<3>(velocity_fem_degree),
-                 3,
-                 FE_Q<3>(velocity_fem_degree),
-                 1);
-  dof_handler.initialize(triangulation, fe);
-
-  IndexSet locally_owned_dofs = dof_handler.locally_owned_dofs();
-  IndexSet locally_relevant_dofs;
-  DoFTools::extract_locally_relevant_dofs(dof_handler, locally_relevant_dofs);
+  locally_owned_dofs.add_range(0, 8);
+  locally_relevant_dofs.add_range(0, 8);
 
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet> average;
 
@@ -94,10 +84,9 @@ test()
   double       epsilon      = 1e-6;
 
   // Initialize averaged vectors
-  average.initialize_vectors(triangulation,
-                             velocity_fem_degree,
-                             locally_owned_dofs,
+  average.initialize_vectors(locally_owned_dofs,
                              locally_relevant_dofs,
+                             4,
                              mpi_communicator);
 
   // Time loop

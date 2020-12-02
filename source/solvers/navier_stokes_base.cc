@@ -897,12 +897,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                         "adaptation."));
 
           this->average_velocities.initialize_vectors(
-            *this->triangulation,
-            this->velocity_fem_degree,
             this->locally_owned_dofs,
             this->locally_relevant_dofs,
+            this->fe.n_dofs_per_vertex(),
             this->mpi_communicator);
         }
+      // Calculate average velocities when the time reaches the initial time.
+      // time >= initial time with the epsilon as tolerance.
       else if (simulation_control->get_current_time() >
                (nsparam.post_processing.initial_time - 1e-6))
         {
@@ -1135,6 +1136,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
+
   DataOut<dim> data_out;
 
   // Additional flag to enable the output of high-order elements
@@ -1157,6 +1159,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // the average pressure. (<u>, <v>, <w>, <p>)
       std::vector<std::string> average_solution_names(dim, "average_velocity");
       average_solution_names.push_back("average_pressure");
+
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
         average_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
@@ -1172,30 +1175,46 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       // Add the interpretation of the reynolds stresses of solution.
       // The dim first components are the normal reynolds stress vectors and
       // the following ones are others resolved reynolds stresses.
-      std::vector<std::string> reynolds_stress_names(dim,
-                                                     "reynolds_stress_normal");
+      std::vector<std::string> reynolds_normal_stress_names(
+        dim, "reynolds_normal_stress");
+      reynolds_normal_stress_names.push_back("turbulent_kinetic_energy");
       std::vector<DataComponentInterpretation::DataComponentInterpretation>
-        reynolds_stress_data_component_interpretation(
+        reynolds_normal_stress_data_component_interpretation(
           dim, DataComponentInterpretation::component_is_part_of_vector);
-      reynolds_stress_names.push_back("reynolds_stress_uv");
-      reynolds_stress_data_component_interpretation.push_back(
+      reynolds_normal_stress_data_component_interpretation.push_back(
         DataComponentInterpretation::component_is_scalar);
 
+
+      std::vector<std::string> reynolds_shear_stress_names = {
+        "reynolds_shear_stress_uv"};
+      if (dim == 2)
+        {
+          reynolds_shear_stress_names.push_back("dummy_rss_2d");
+        }
       if (dim == 3)
         {
-          reynolds_stress_names.push_back("reynolds_stress_vw");
-          reynolds_stress_names.push_back("_reynolds_stress_uw");
-          reynolds_stress_data_component_interpretation.push_back(
-            DataComponentInterpretation::component_is_scalar);
-          reynolds_stress_data_component_interpretation.push_back(
-            DataComponentInterpretation::component_is_scalar);
+          reynolds_shear_stress_names.push_back("reynolds_shear_stress_vw");
+          reynolds_shear_stress_names.push_back("reynolds_shear_stress_uw");
         }
+      reynolds_shear_stress_names.push_back("dummy_rss");
+
+      std::vector<DataComponentInterpretation::DataComponentInterpretation>
+        reynolds_shear_stress_data_component_interpretation(
+          dim, DataComponentInterpretation::component_is_scalar);
+      reynolds_shear_stress_data_component_interpretation.push_back(
+        DataComponentInterpretation::component_is_scalar);
 
       data_out.add_data_vector(
-        this->average_velocities.get_reynolds_stress_handler(),
-        this->average_velocities.get_reynolds_stresses(),
-        reynolds_stress_names,
-        reynolds_stress_data_component_interpretation);
+        this->average_velocities.get_reynolds_normal_stresses(),
+        reynolds_normal_stress_names,
+        DataOut<dim>::type_dof_data,
+        reynolds_normal_stress_data_component_interpretation);
+
+      data_out.add_data_vector(
+        this->average_velocities.get_reynolds_shear_stresses(),
+        reynolds_shear_stress_names,
+        DataOut<dim>::type_dof_data,
+        reynolds_shear_stress_data_component_interpretation);
     }
 
   Vector<float> subdomain(this->triangulation->n_active_cells());

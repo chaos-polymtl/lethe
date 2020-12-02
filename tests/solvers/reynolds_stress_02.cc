@@ -64,30 +64,13 @@ test()
   auto simulation_control =
     std::make_shared<SimulationControlTransient>(simulation_control_parameters);
 
-  // Some variables to fake the triangulation and the dofs
-  parallel::distributed::Triangulation<2> triangulation(mpi_communicator);
-  GridGenerator::hyper_cube(triangulation);
-
-  DoFHandler<2> dof_handler;
-  unsigned int  velocity_fem_degree = 1;
-  FESystem<2>   fe(FE_Q<2>(velocity_fem_degree),
-                 2,
-                 FE_Q<2>(velocity_fem_degree),
-                 2);
-  dof_handler.initialize(triangulation, fe);
-
   std::vector<IndexSet> locally_owned_dofs(2);
   std::vector<IndexSet> locally_relevant_dofs(2);
 
-  locally_owned_dofs[0] = dof_handler.locally_owned_dofs().get_view(0, 8);
-  locally_owned_dofs[1] = dof_handler.locally_owned_dofs().get_view(8, 12);
-
-  IndexSet locally_relevant_dofs_acquisition;
-  DoFTools::extract_locally_relevant_dofs(dof_handler,
-                                          locally_relevant_dofs_acquisition);
-
-  locally_relevant_dofs[0] = locally_relevant_dofs_acquisition.get_view(0, 8);
-  locally_relevant_dofs[1] = locally_relevant_dofs_acquisition.get_view(8, 12);
+  locally_owned_dofs[0].set_size(12);
+  locally_owned_dofs[1].set_size(12);
+  locally_owned_dofs[0].add_range(0, 8);
+  locally_owned_dofs[1].add_range(0, 4);
 
   AverageVelocities<2,
                     TrilinosWrappers::MPI::BlockVector,
@@ -109,7 +92,8 @@ test()
   solution.block(1)[2] = 26;
   solution.block(1)[2] = 15;
 
-  LinearAlgebra::distributed::Vector<double> stress_solution;
+  TrilinosWrappers::MPI::BlockVector reynolds_normal_stresses;
+  TrilinosWrappers::MPI::BlockVector reynolds_shear_stresses;
 
   // Time info
   const double time_end     = simulation_control_parameters.timeEnd;
@@ -119,10 +103,9 @@ test()
   double       epsilon      = 1e-6;
 
   // Initialize averaged vectors
-  postprocessing_velocities.initialize_vectors(triangulation,
-                                               velocity_fem_degree,
-                                               locally_owned_dofs,
+  postprocessing_velocities.initialize_vectors(locally_owned_dofs,
                                                locally_relevant_dofs,
+                                               2,
                                                mpi_communicator);
 
   // Time loop
@@ -136,19 +119,29 @@ test()
             simulation_control->get_current_time(),
             simulation_control->get_time_step());
 
-          stress_solution = postprocessing_velocities.get_reynolds_stresses();
+          reynolds_normal_stresses =
+            postprocessing_velocities.get_reynolds_normal_stresses();
+          reynolds_shear_stresses =
+            postprocessing_velocities.get_reynolds_shear_stresses();
 
           deallog << " Time  :      " << time << std::endl;
           deallog << " Time step  : " << dt << std::endl;
-          deallog << " <u'u'> :     " << stress_solution[0] << " "
-                  << stress_solution[3] << " " << stress_solution[6] << " "
-                  << stress_solution[9] << std::endl;
-          deallog << " <v'v'> :     " << stress_solution[1] << " "
-                  << stress_solution[4] << " " << stress_solution[7] << " "
-                  << stress_solution[10] << std::endl;
-          deallog << " <u'v'> :     " << stress_solution[2] << " "
-                  << stress_solution[5] << " " << stress_solution[8] << " "
-                  << stress_solution[11] << std::endl;
+          deallog << " <u'u'> :     " << reynolds_normal_stresses.block(0)[0]
+                  << " " << reynolds_normal_stresses.block(0)[2] << " "
+                  << reynolds_normal_stresses.block(0)[4] << " "
+                  << reynolds_normal_stresses.block(0)[6] << std::endl;
+          deallog << " <v'v'> :     " << reynolds_normal_stresses.block(0)[1]
+                  << " " << reynolds_normal_stresses.block(0)[3] << " "
+                  << reynolds_normal_stresses.block(0)[5] << " "
+                  << reynolds_normal_stresses.block(0)[7] << std::endl;
+          deallog << " <u'v'> :     " << reynolds_shear_stresses.block(0)[0]
+                  << " " << reynolds_shear_stresses.block(0)[2] << " "
+                  << reynolds_shear_stresses.block(0)[4] << " "
+                  << reynolds_shear_stresses.block(0)[6] << std::endl;
+          deallog << " k :           " << reynolds_normal_stresses.block(1)[0]
+                  << " " << reynolds_normal_stresses.block(1)[1] << " "
+                  << reynolds_normal_stresses.block(1)[2] << " "
+                  << reynolds_normal_stresses.block(1)[3] << std::endl;
           deallog << "" << std::endl;
         }
 

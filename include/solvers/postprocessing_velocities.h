@@ -84,40 +84,55 @@ public:
   calculate_reynolds_stresses(const VectorType &local_evaluation_point);
 
   /**
-   * @brief get_average_velocities. Gives the average of solutions.
+   * @brief get_average_velocities. Gives the average of solutions with ghost
+   * cells.
    */
   const VectorType &
   get_average_velocities()
   {
-    return average_velocities;
+    return get_av = average_velocities;
   }
 
   /**
-   * @brief get_reynolds_stress. Gives the time-averaged Reynolds
-   * stresses.
+   * @brief get_reynolds_normal_stresses. Gives the time-averaged Reynolds
+   * normal stresses with ghost cells.
    */
-  const LinearAlgebra::distributed::Vector<double> &
-  get_reynolds_stresses()
+  const VectorType &
+  get_reynolds_normal_stresses()
   {
-    return reynolds_stresses;
+    return get_rns = reynolds_normal_stresses;
   }
 
+  /**
+   * @brief get_reynolds_shear_stress. Gives the time-averaged Reynolds
+   * shear stresses with ghost cells.
+   */
+  const VectorType &
+  get_reynolds_shear_stresses()
+  {
+    return get_rss = reynolds_shear_stresses;
+  }
+
+  /**
+   * @brief initialize_vectors. This function initializes all the important
+   * vectors for the average velocities and reynolds stresses calculation.
+   *
+   * @param triangulation. The triangulation info for the Reynolds stresses
+   *                       dof handler
+   *
+   * @param velocity_fem_degree. The velocity degree
+   *
+   * @param locally_owned_dofs. The owned dofs
+   *
+   * @param locally_owned_rs_components. The owned Reynolds stress components
+   *
+   * @param mpi_communicator. The mpi communicator information
+   */
   void
-  initialize_vectors(parallel::DistributedTriangulationBase<dim> &triangulation,
-                     const unsigned int &velocity_fem_degree,
-                     const DofsType &    locally_owned_dofs,
+  initialize_vectors(const DofsType &    locally_owned_dofs,
                      const DofsType &    locally_relevant_dofs,
+                     const unsigned int &dofs_per_vertex,
                      const MPI_Comm &    mpi_communicator);
-
-  /**
-   * @brief get_reynolds_stress. Gives the time-averaged Reynolds
-   * stresses.
-   */
-  DoFHandler<dim> &
-  get_reynolds_stress_handler()
-  {
-    return handler_rs;
-  }
 
 private:
   TrilinosScalar inv_range_time;
@@ -126,16 +141,23 @@ private:
   VectorType velocity_dt;
   VectorType sum_velocity_dt;
   VectorType average_velocities;
+  VectorType get_av;
 
-  LinearAlgebra::distributed::Vector<double> reynolds_stress_dt;
-  LinearAlgebra::distributed::Vector<double> sum_reynolds_stress_dt;
-  LinearAlgebra::distributed::Vector<double> reynolds_stresses;
+  VectorType reynolds_normal_stress_dt;
+  VectorType sum_reynolds_normal_stress_dt;
+  VectorType reynolds_normal_stresses;
+  VectorType get_rns;
+
+  VectorType reynolds_shear_stress_dt;
+  VectorType sum_reynolds_shear_stress_dt;
+  VectorType reynolds_shear_stresses;
+  VectorType get_rss;
 
   double dt;
   bool   average_calculation;
   double real_initial_time;
 
-  DoFHandler<dim> handler_rs;
+  unsigned int n_dofs_per_vertex;
 };
 
 #endif
