@@ -118,10 +118,11 @@ GLSVANSSolver<dim>::first_iteration()
       calculate_void_fraction(intermediate_time);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      void_fraction_m2  = void_fraction_m1;
-      void_fraction_m1  = nodal_void_fraction_relevant;
+      this->solution_m2      = this->solution_m1;
+      auto &present_solution = this->get_present_solution();
+      this->solution_m1      = present_solution;
+      void_fraction_m2       = void_fraction_m1;
+      void_fraction_m1       = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
@@ -158,10 +159,11 @@ GLSVANSSolver<dim>::first_iteration()
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      void_fraction_m2  = void_fraction_m1;
-      void_fraction_m1  = nodal_void_fraction_relevant;
+      this->solution_m2      = this->solution_m1;
+      auto &present_solution = this->get_present_solution();
+      this->solution_m1      = present_solution;
+      void_fraction_m2       = void_fraction_m1;
+      void_fraction_m1       = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
@@ -175,7 +177,7 @@ GLSVANSSolver<dim>::first_iteration()
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->solution_m3 = this->solution_m2;
       this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
+      this->solution_m1 = present_solution;
       void_fraction_m3  = void_fraction_m2;
       void_fraction_m2  = void_fraction_m1;
       void_fraction_m1  = nodal_void_fraction_relevant;
@@ -217,11 +219,10 @@ template <bool                                              assemble_matrix,
 void
 GLSVANSSolver<dim>::assembleGLS()
 {
-  auto &system_rhs = this->get_system_rhs();
-
   if (assemble_matrix)
     this->system_matrix = 0;
-  this->system_rhs = 0;
+  auto &system_rhs = this->get_system_rhs();
+  system_rhs       = 0;
 
   double         viscosity = this->nsparam.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
@@ -788,7 +789,7 @@ GLSVANSSolver<dim>::assembleGLS()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           this->system_matrix,
-                                                          this->system_rhs);
+                                                          system_rhs);
             }
           else
             {
@@ -800,7 +801,7 @@ GLSVANSSolver<dim>::assembleGLS()
     }
   if (assemble_matrix)
     this->system_matrix.compress(VectorOperation::add);
-  this->system_rhs.compress(VectorOperation::add);
+  system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
