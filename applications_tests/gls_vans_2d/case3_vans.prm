@@ -4,9 +4,22 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output name              = mms2d_
+  set method                  = bdf1
+  set number mesh adapt       = 0
+  set output name              = result_
+  set output frequency		= 2
+  set startup time scaling         = 0.6
+  set time end                     = 1
+  set time step                    = 0.1
+  set subdivision             = 1  
+end
+
+#---------------------------------------------------
+# FEM
+#---------------------------------------------------
+subsection FEM
+    set velocity order            = 1
+    set pressure order            = 1
 end
 
 #---------------------------------------------------
@@ -23,18 +36,38 @@ subsection mesh
     set type                 = dealii
     set grid type            = hyper_cube
     set grid arguments       = -1 : 1 : false
-    set initial refinement   = 3
+    set initial refinement   = 6
+end
+
+
+#---------------------------------------------------
+# Void Fraction
+#---------------------------------------------------
+subsection void fraction
+   set mode = function
+     subsection function
+     set Function expression = (1 - 0.1*cos(2*pi*t)*exp(-sin(pi*x)*sin(pi*y)))/exp(1)
+     end
+end
+
+#---------------------------------------------------
+# Initial condition
+#---------------------------------------------------
+subsection initial conditions
+    set type = L2projection
+    subsection uvwp
+            set Function expression = cos(pi*x)*cos(pi*y); cos(pi*x)*cos(pi*y);  0
+    end
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 1
-    subsection bc 0
-        set type              = noslip
-    end
+  set number                  = 0
+
 end
+
 
 # --------------------------------------------------
 # Source term
@@ -42,8 +75,12 @@ end
 subsection source term
   set enable                 = true
     subsection xyz
-            set Function expression = (2*pi*pi*(-sin(pi*x) * sin(pi*x) + cos(pi*x) * (cos(pi*x))) * sin(pi*y)*cos(pi*y) - 4*pi*pi*sin(pi*x)*sin(pi*x)*sin(pi*y)*cos(pi*y)-pi*cos(pi*x))*(-1.) + pi * (sin(pi * x)^3) * (sin(pi * y)^2) * cos(pi * x); (2*pi*pi*(sin(pi*y)*(sin(pi*y))-cos(pi*y)*cos(pi*y))*sin(pi*x)*cos(pi*x) + 4*pi*pi*sin(pi*x)*sin(pi*y)*sin(pi*y)*cos(pi*x) -  pi*cos(pi*y))*(-1) + pi*(sin(pi*x)^2)*(sin(pi*y)^3.)*cos(pi*y) ; 0
-    end
+            set Function expression = pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(2*pi*exp(sin(pi*x)*sin(pi*y) + 1)*cos(2*pi*t) - 2*(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(2*pi*t) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*x)*cos(2*pi*t)^2*cos(pi*y) - (exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x))*cos(pi*x)*cos(pi*y)/(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t)); pi*(-(exp(sin(pi*x)*sin(pi*y)) - 0.1*cos(2*pi*t))*sin(pi*(x + y))*cos(2*pi*t) + 0.2*sin(2*pi*t) + 0.1*sin(pi*x)*cos(2*pi*t)^2*cos(pi*x)*cos(pi*y)^2 + 0.1*sin(pi*y)*cos(2*pi*t)^2*cos(pi*x)^2*cos(pi*y))*exp(-sin(pi*x)*sin(pi*y) - 1)
+
+
+
+
+end
 end
 
 # --------------------------------------------------
@@ -52,14 +89,14 @@ end
 subsection analytical solution
   set enable                 = true
     subsection uvw
-            set Function expression = sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; -cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)+sin(pi*y)
-    end
+            set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y); cos(2*pi*t)*cos(pi*x)*cos(pi*y); 0
+end
 end
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-  set type                    = uniform
+  set type                    = none
 end
 
 
@@ -69,7 +106,6 @@ end
 subsection non-linear solver
   set tolerance               = 1e-8
   set max iterations          = 10
-  set residual precision      = 2
   set verbosity               = quiet
 end
 

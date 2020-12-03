@@ -28,7 +28,6 @@
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
-#include "core/sdirk.h"
 #include "core/time_integration_utilities.h"
 #include "gls_navier_stokes.h"
 
@@ -51,13 +50,23 @@ public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
                 const unsigned int                 degree_velocity,
                 const unsigned int                 degree_pressure);
+  ~GLSVANSSolver();
 
   virtual void
-  solve();
+  solve() override;
 
 private:
   void
-  calculate_void_fraction();
+  initialize_void_fraction();
+
+  void
+  calculate_void_fraction(const double time);
+
+  virtual void
+  iterate() override;
+
+  virtual void
+  first_iteration() override;
 
   /**
    * @brief asocciate the degrees of freedom to each vertex of the finite elements
@@ -66,12 +75,30 @@ private:
   virtual void
   setup_dofs() override;
 
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step
+   * Post-processing and time stepping
+   */
+  virtual void
+  finish_time_step();
+
 protected:
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
             Parameters::VelocitySource::VelocitySourceType    velocity_source>
   void
   assembleGLS();
+
+  virtual void
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override;
+
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override;
 
   /**
    * @brief a function for adding data vectors to the data_out object for
@@ -85,16 +112,22 @@ protected:
    */
 
 protected:
-  TrilinosWrappers::SparseMatrix system_matrix;
-
 private:
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
 
-  Vector<double>                cell_void_fraction;
+  Vector<double> cell_void_fraction;
+
+  // Solution of the void fraction at previous time steps
+
+  TrilinosWrappers::MPI::Vector void_fraction_m1;
+  TrilinosWrappers::MPI::Vector void_fraction_m2;
+  TrilinosWrappers::MPI::Vector void_fraction_m3;
+
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
 
+  const bool   PSPG        = true;
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
 };

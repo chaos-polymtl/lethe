@@ -112,7 +112,7 @@ NewtonNonLinearSolver<VectorType>::solve(
 
       solver->solve_linear_system(first_step);
 
-      for (double alpha = 1.0; alpha > 1e-3; alpha *= 0.5)
+      for (double alpha = 1.0; alpha > 1e-1; alpha *= 0.5)
         {
           auto &local_evaluation_point = solver->get_local_evaluation_point();
           auto &newton_update          = solver->get_newton_update();
