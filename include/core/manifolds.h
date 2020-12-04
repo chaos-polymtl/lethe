@@ -106,7 +106,12 @@ public:
     const DataPostprocessorInputs::Vector<dim> &input_data,
     std::vector<Vector<double>> &computed_quantities) const override
   {
+#if (DEAL_II_VERSION_MINOR <= 2)
+    const typename DoFHandler<dim>::cell_iterator current_cell =
+      input_data.template get_cell<DoFHandler<dim>>();
+#else
     auto current_cell = input_data.template get_cell<dim>();
+#endif
 
     for (unsigned int p = 0; p < input_data.evaluation_points.size(); ++p)
       {
