@@ -49,6 +49,8 @@ class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 public:
   GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam);
 
+  ~GLSVANSSolver();
+
   virtual void
   solve() override;
 

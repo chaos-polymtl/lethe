@@ -42,16 +42,3 @@ sdirk_coefficients(unsigned int order, double time_step)
 
   return sdirk_coefs;
 }
-
-double
-time_fraction_at_sdirk_stage(
-  const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1)
-    {
-      return 1. - 0.5 * std::sqrt(2);
-    }
-
-  else
-    return 0;
-}

@@ -58,8 +58,4 @@ using namespace dealii;
 FullMatrix<double>
 sdirk_coefficients(const unsigned int order, const double time_step);
 
-double
-time_fraction_at_sdirk_stage(
-  const Parameters::SimulationControl::TimeSteppingMethod method);
-
 #endif
