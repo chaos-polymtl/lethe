@@ -75,10 +75,12 @@ private:
    * Carries out the calculation of the particle-particle non-linear contact
    * force and torques based on the updated values in contact_info
    *
-   * @param physical_properties Physical properties of the system
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
    * @param particle_properties Properties of particle one in contact
+   * @return A tuple which contains: 1, normal force, 2,
+   * tangential force, 3, tangential torque and 4, rolling resistance torque of
+   * a contact pair
    */
   std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
   calculate_nonlinear_contact_force_and_torque(

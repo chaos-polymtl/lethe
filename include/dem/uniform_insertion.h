@@ -43,7 +43,6 @@ public:
   UniformInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
                         const double &maximum_particle_diameter);
 
-  // UPDATE
   /**
    * Carries out the insertion of particles by discretizing and looping over the
    * insertion box, finding the initial position of particles in the insertion
@@ -54,7 +53,6 @@ public:
    * inserted
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
-   * @param property_pool property pool of particles
    * @param dem_parameters DEM parameters declared in the .prm file
    * @param maximum_particle_diameter Maximum particle diameter inserted so far
    */
@@ -79,11 +77,11 @@ private:
     const Parameters::Lagrangian::InsertionInfo &insertion_information,
     const double &maximum_particle_diameter) override;
 
-  unsigned int current_inserting_particle_type;
-
   // Number of remained particles of each type that should be inserted in the
   // upcoming insertion steps
   unsigned int remained_particles_of_each_type;
+
+  unsigned int current_inserting_particle_type;
 };
 
 #endif /* uniform_insertion_h */

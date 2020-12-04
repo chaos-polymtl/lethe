@@ -78,8 +78,15 @@ private:
    *
    * @param contact_info A container that contains the required information for
    * calculation of the contact force for a particle pair in contact
+   * @param normal_relative_velocity_value Normal relative contact velocity
+   * @param normal_unit_vector Contact normal unit vector
+   * @param normal_overlap Contact normal overlap
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param tangential_torque Contact tangential torque
+   * @param rolling_friction_torque Contact rolling resistance torque
    */
   void
   calculate_linear_contact_force_and_torque(
@@ -94,12 +101,12 @@ private:
     Tensor<1, dim> &               tangential_torque,
     Tensor<1, dim> &               rolling_resistance_torque);
 
-  double         normal_relative_velocity_value;
   Tensor<1, dim> normal_unit_vector;
   Tensor<1, dim> normal_force;
   Tensor<1, dim> tangential_force;
   Tensor<1, dim> tangential_torque;
   Tensor<1, dim> rolling_resistance_torque;
+  double         normal_relative_velocity_value;
 };
 
 #endif

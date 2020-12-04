@@ -84,8 +84,8 @@ protected:
    * @param particle_type Inserted particle type
    */
   void
-  print_insertion_info(const unsigned int  inserted_this_step,
-                       const unsigned int  remained_particles,
+  print_insertion_info(const unsigned int &inserted_this_step,
+                       const unsigned int &remained_particles,
                        const unsigned int &particle_type);
 
   /**
@@ -116,7 +116,16 @@ protected:
     const Parameters::Lagrangian::InsertionInfo &insertion_information,
     const double &                               maximum_particle_diameter) = 0;
 
-  // Add discriptiontemplate <int dim>
+  /**
+   * Carries out finding the maximum number of inserted particles based on the
+   * insertion box size. If the requested number of particles for insertion in
+   * each insertion step is larger than this maximum, it is limited to this
+   * value and a warning is printed.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param maximum_particle_diameter Maximum particle diameter based on values
+   * defined in the parameter handler
+   */
   void
   calculate_insertion_domain_maximum_particle_number(
     const DEMSolverParameters<dim> &dem_parameters,
@@ -132,8 +141,6 @@ protected:
     number_of_particles_z_direction;
 
 private:
-  std::vector<double> particle_sizes;
-
   /**
    * Carries out sampling from specified distributions for particle size.
    *
@@ -148,6 +155,8 @@ private:
                          const double &       average,
                          const double &       standard_deviation,
                          const double &       particle_number);
+
+  std::vector<double> particle_sizes;
 };
 
 #endif /* insertion_h */

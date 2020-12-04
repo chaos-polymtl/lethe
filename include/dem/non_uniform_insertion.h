@@ -73,12 +73,6 @@ public:
          const double &maximum_particle_diameter) override;
 
 private:
-  unsigned int current_inserting_particle_type;
-
-  // Number of remained particles of each type that should be inserted in the
-  // upcoming insertion steps
-  unsigned int remained_particles_of_each_type;
-
   /**
    * Creates a vector of random numbers with size of particles which are going
    * to be inserted at each insertion step
@@ -105,6 +99,12 @@ private:
   assign_insertion_points(
     const Parameters::Lagrangian::InsertionInfo &insertion_information,
     const double &maximum_particle_diameter) override;
+
+  unsigned int current_inserting_particle_type;
+
+  // Number of remained particles of each type that should be inserted in the
+  // upcoming insertion steps
+  unsigned int remained_particles_of_each_type;
 };
 
 #endif /* nonuniform_insertion_h */

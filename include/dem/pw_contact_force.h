@@ -78,8 +78,7 @@ protected:
    * particle pair in contact, for both non-linear and linear contact force
    * calculations
    *
-   * @param particle_one_properties Properties of particle one in contact
-   * @param particle_two_properties Properties of particle two in contact
+   * @param particle_properties Properties of particle in contact with wall
    * @param forces_and_torques A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
@@ -101,17 +100,16 @@ protected:
   find_projection(const Tensor<1, dim> &vector_a,
                   const Tensor<1, dim> &vector_b);
 
+  double                                  triangulation_radius;
+  double                                  effective_radius;
+  double                                  effective_mass;
   std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity_map;
   std::unordered_map<int, double>         boundary_rotational_speed_map;
   std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
-  double                                  triangulation_radius;
-
-  double                effective_radius;
-  double                effective_mass;
-  std::map<int, double> effective_youngs_modulus;
-  std::map<int, double> effective_shear_modulus;
-  std::map<int, double> effective_coefficient_of_restitution;
-  std::map<int, double> effective_coefficient_of_friction;
+  std::map<int, double>                   effective_youngs_modulus;
+  std::map<int, double>                   effective_shear_modulus;
+  std::map<int, double>                   effective_coefficient_of_restitution;
+  std::map<int, double>                   effective_coefficient_of_friction;
   std::map<int, double> effective_coefficient_of_rolling_friction;
 };
 

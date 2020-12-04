@@ -90,7 +90,7 @@ namespace Parameters
                                 ParameterHandler &  prm);
 
     private:
-      unsigned int particle_type_maximum_number = 10;
+      unsigned int particle_type_maximum_number = 5;
       void
       initialize_containers(
         std::unordered_map<int, double> &particle_average_diameter,
@@ -221,6 +221,13 @@ namespace Parameters
     public:
       // Number of moving boundaries
       unsigned int moving_boundary_number;
+
+      // Choosing integration method
+      enum class motion_type
+      {
+        translational,
+        rotational
+      } motion_type;
 
       // Translational velocities of moving boundaries
       std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity;

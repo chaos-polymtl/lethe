@@ -22,8 +22,8 @@
 // Prints the insertion information
 template <int dim>
 void
-Insertion<dim>::print_insertion_info(const unsigned int  inserted_this_step,
-                                     const unsigned int  remained_particles,
+Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
+                                     const unsigned int &remained_particles,
                                      const unsigned int &particle_type)
 {
   MPI_Barrier(MPI_COMM_WORLD);
