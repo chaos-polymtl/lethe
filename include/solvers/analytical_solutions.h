@@ -23,10 +23,12 @@
 #ifndef LETHE_ANALYTICALSOLUTIONS_H
 #define LETHE_ANALYTICALSOLUTIONS_H
 
-#include <deal.II/base/function.h>
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
 
 #include <core/parameters.h>
+
+#include <vector>
 
 using namespace dealii;
 /**

@@ -20,16 +20,24 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include <core/grids.h>
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/index_set.h>
+
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/fe_q.h>
+
+#include <deal.II/lac/sparsity_pattern.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/numerics/data_out.h>
+
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
-#include <core/simulation_control.h>
+#include <solvers/gls_navier_stokes.h>
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
-#include "solvers/gls_navier_stokes.h"
 
 using namespace dealii;
 

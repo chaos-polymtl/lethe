@@ -17,13 +17,39 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/gls_navier_stokes.h"
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/sdirk.h"
-#include "core/time_integration_utilities.h"
+#include <deal.II/base/function.h>
+#include <deal.II/base/quadrature.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/base/timer.h>
+#include <deal.II/base/types.h>
+
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/sparsity_tools.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/vector.h>
+#include <deal.II/lac/vector_operation.h>
+
+#include <deal.II/numerics/vector_tools_boundary.h>
+
+#include <Epetra_MultiVector.h>
+#include <Teuchos_ParameterList.hpp>
+#include <core/bdf.h>
+#include <core/boundary_conditions.h>
+#include <core/grids.h>
+#include <core/physics_solver.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <solvers/gls_navier_stokes.h>
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -1654,7 +1680,6 @@ GLSNavierStokesSolver<dim>::solve()
       this->postprocess(false);
       this->finish_time_step();
     }
-
 
   this->finish_simulation();
 }

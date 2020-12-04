@@ -20,10 +20,23 @@
 #ifndef lethe_gd_navier_stokes_h
 #define lethe_gd_navier_stokes_h
 
-#include <deal.II/lac/trilinos_block_sparse_matrix.h>
+#include <deal.II/base/config.h>
 
-#include "core/bdf.h"
-#include "navier_stokes_base.h"
+#include <deal.II/base/index_set.h>
+#include <deal.II/base/subscriptor.h>
+
+#include <deal.II/lac/block_sparsity_pattern.h>
+#include <deal.II/lac/solver_control.h>
+#include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/trilinos_block_sparse_matrix.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
+
+#include <core/parameters.h>
+#include <solvers/initial_conditions.h>
+#include <solvers/navier_stokes_base.h>
+
+#include <vector>
 
 using namespace dealii;
 

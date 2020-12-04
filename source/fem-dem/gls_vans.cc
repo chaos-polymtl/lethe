@@ -1,4 +1,22 @@
 #include "fem-dem/gls_vans.h"
+#include <deal.II/base/index_set.h>
+
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/lac/vector.h>
+
+#include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/sdirk.h>
+#include <core/simulation_control.h>
+#include <core/time_integration_utilities.h>
+#include <solvers/gls_vans.h>
+#include <solvers/initial_conditions.h>
 
 // Constructor for class GLS_VANS
 template <int dim>

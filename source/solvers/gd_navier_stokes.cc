@@ -17,14 +17,41 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/gd_navier_stokes.h"
+// Deal.II includes
+#include <deal.II/base/function.h>
+#include <deal.II/base/quadrature.h>
+#include <deal.II/base/table.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/base/timer.h>
+#include <deal.II/base/types.h>
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/sdirk.h"
-#include "core/time_integration_utilities.h"
-#include "core/utilities.h"
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/lac/block_matrix_base.h>
+#include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/vector.h>
+#include <deal.II/lac/vector_operation.h>
+
+#include <deal.II/numerics/vector_tools_constraints.h>
+
+// Trilinos includes
+#include <Epetra_MultiVector.h>
+#include <Teuchos_ParameterList.hpp>
+
+// Lethe includes
+#include <core/bdf.h>
+#include <core/boundary_conditions.h>
+#include <core/grids.h>
+#include <core/physics_solver.h>
+#include <solvers/gd_navier_stokes.h>
+
 
 // Constructor for class GDNavierStokesSolver
 template <int dim>
@@ -354,7 +381,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>      local_rhs(dofs_per_cell);
   std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -863,7 +890,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   if (this->pressure_fem_degree > 1)
     higher_order_elements = true;
   TrilinosWrappers::PreconditionAMG::AdditionalData
-                                      pressure_preconditioner_options(elliptic_pressure,
+                         pressure_preconditioner_options(elliptic_pressure,
                                     higher_order_elements,
                                     n_cycles,
                                     w_cycle,
@@ -874,7 +901,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
                                     output_details,
                                     smoother_type,
                                     coarse_type);
-  Teuchos::ParameterList              pressure_parameter_ml;
+  Teuchos::ParameterList pressure_parameter_ml;
   std::unique_ptr<Epetra_MultiVector> pressure_distributed_constant_modes;
   velocity_preconditioner_options.set_parameters(
     pressure_parameter_ml,

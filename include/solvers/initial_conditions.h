@@ -20,11 +20,10 @@
 #ifndef lethe_initial_conditions_h
 #define lethe_initial_conditions_h
 
-#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/function.h>
-#include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+#include <deal.II/base/patterns.h>
 
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer
 //        to a function. This would be a lot more coherent...

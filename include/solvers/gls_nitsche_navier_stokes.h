@@ -21,11 +21,16 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/table_handler.h>
+
+#include <core/parameters.h>
+#include <core/pvd_handler.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <core/solid_base.h>
-
-#include "gls_navier_stokes.h"
+#include <solvers/gls_navier_stokes.h>
 
 using namespace dealii;
 
@@ -160,7 +165,6 @@ private:
   SolidBase<dim, spacedim> solid;
   PVDHandler               pvdhandler_solid_triangulation;
   PVDHandler               pvdhandler_solid_particles;
-
 
   TableHandler solid_forces_table;
 

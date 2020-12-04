@@ -20,8 +20,18 @@
 #ifndef LETHE_GLSSHARPNS_H
 #define LETHE_GLSSHARPNS_H
 
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/table_handler.h>
+
+#include <deal.II/dofs/dof_handler.h>
+
 #include <core/ib_particle.h>
+#include <core/parameters.h>
 #include <solvers/gls_navier_stokes.h>
+#include <solvers/navier_stokes_solver_parameters.h>
+
+#include <vector>
 
 using namespace dealii;
 

@@ -1,3 +1,5 @@
+#include <deal.II/grid/grid_generator.h>
+
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <solvers/gls_navier_stokes.h>

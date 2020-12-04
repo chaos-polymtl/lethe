@@ -17,15 +17,33 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
+// Deal.II includes
+#include <deal.II/base/data_out_base.h>
+#include <deal.II/base/exceptions.h>
+#include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/types.h>
+#include <deal.II/base/utilities.h>
+
+#include <deal.II/distributed/grid_refinement.h>
+#include <deal.II/distributed/solution_transfer.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_values_extractors.h>
+
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/tria.h>
 #include <deal.II/grid/tria_iterator.h>
 
+#include <deal.II/numerics/data_component_interpretation.h>
+#include <deal.II/numerics/data_out_dof_data.h>
 #include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/error_estimator.h>
+#include <deal.II/numerics/vector_tools_interpolate.h>
 
-#include <deal.II/opencascade/manifold_lib.h>
-#include <deal.II/opencascade/utilities.h>
-
-#include <core/grids.h>
+// Lethe includes
+#include <core/manifolds.h>
 #include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
@@ -33,8 +51,8 @@
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "core/time_integration_utilities.h"
-
+#include <fstream>
+#include <string>
 
 /*
  * Constructor for the Navier-Stokes base class
@@ -1011,7 +1029,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       dim, DataComponentInterpretation::component_is_part_of_vector);
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
-
 
   DataOut<dim> data_out;
 

@@ -17,13 +17,32 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/gls_sharp_navier_stokes.h"
+#include <deal.II/base/geometry_info.h>
+#include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/base/timer.h>
+#include <deal.II/base/types.h>
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/sdirk.h"
-#include "core/time_integration_utilities.h"
-#include "core/utilities.h"
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/trilinos_vector.h>
+#include <deal.II/lac/vector.h>
+#include <deal.II/lac/vector_operation.h>
+
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/gls_sharp_navier_stokes.h>
+
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -149,7 +168,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // The boundary is a circle in 2D or a sphere in 3D
 
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
-                                                              active_neighbors_set;
+    active_neighbors_set;
   std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
   MappingQ1<dim>                                              map;
   std::pair<unsigned int, unsigned int>                       cell_vertex_map;

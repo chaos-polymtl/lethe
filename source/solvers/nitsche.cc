@@ -17,7 +17,7 @@
  * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020 -
  */
 
-#include "solvers/nitsche.h"
+#include <solvers/nitsche.h>
 
 namespace Parameters
 {

@@ -17,21 +17,15 @@
  * Author: Audrey Collard-Daigneault, Polytechnique Montreal, 2020 -
  */
 
-// Base
-#include <deal.II/base/tensor.h>
-
-// Dofs
-#include <deal.II/dofs/dof_handler.h>
-
-// Fe
-#include <deal.II/fe/fe_values.h>
-#include <deal.II/fe/mapping_q.h>
-
-// Lethe includes
-#include <core/parameters.h>
 
 #ifndef lethe_flow_control_h
-#  define lethe_flow_control_h
+#define lethe_flow_control_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/tensor.h>
+
+#include <core/parameters.h>
 
 using namespace dealii;
 

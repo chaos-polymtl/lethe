@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "solvers/navier_stokes_solver_parameters.h"
+#include <solvers/navier_stokes_solver_parameters.h>
 
 template class NavierStokesSolverParameters<2>;
 template class NavierStokesSolverParameters<3>;

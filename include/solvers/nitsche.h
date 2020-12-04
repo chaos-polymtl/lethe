@@ -17,17 +17,18 @@
  * Author: Carole-Anne Daunais, Polytechnique Montreal, 2020 -
  */
 
+#ifndef nitsche_h
+#define nitsche_h
 
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/parameter_acceptor.h>
+#include <deal.II/base/config.h>
+
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
+#include <deal.II/base/patterns.h>
 
 #include <core/parameters.h>
 
-#ifndef nitsche_h
-#  define nitsche_h
+#include <string>
 
 using namespace dealii;
 

@@ -24,11 +24,10 @@
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
-
-#include "analytical_solutions.h"
-#include "initial_conditions.h"
-#include "nitsche.h"
-#include "source_terms.h"
+#include <solvers/analytical_solutions.h>
+#include <solvers/initial_conditions.h>
+#include <solvers/nitsche.h>
+#include <solvers/source_terms.h>
 
 template <int dim>
 class NavierStokesSolverParameters

@@ -20,28 +20,36 @@
 
 
 #ifndef lethe_postprocessing_cfd_h
+#define lethe_postprocessing_cfd_h
+
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/lac/trilinos_vector.h>
+
+#include <core/parameters.h>
+
 
 
 // Base
-#  include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/quadrature_lib.h>
 
 // Lac
-#  include <deal.II/lac/dynamic_sparsity_pattern.h>
-#  include <deal.II/lac/vector.h>
+#include <deal.II/lac/dynamic_sparsity_pattern.h>
+#include <deal.II/lac/vector.h>
 
 // Dofs
-#  include <deal.II/dofs/dof_accessor.h>
-#  include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_accessor.h>
+#include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#  include <deal.II/fe/fe_q.h>
-#  include <deal.II/fe/fe_system.h>
-#  include <deal.II/fe/fe_values.h>
-#  include <deal.II/fe/mapping_q.h>
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
-#  include <core/boundary_conditions.h>
-#  include <core/parameters.h>
+#include <core/boundary_conditions.h>
+#include <core/parameters.h>
 
 
 /**
@@ -218,9 +226,5 @@ calculate_flow_rate(const DoFHandler<dim> &dof_handler,
                     const unsigned int &   boundary_id,
                     const Parameters::FEM &fem_parameters,
                     const MPI_Comm &       mpi_communicator);
-
-
-
-#  define lethe_postprocessing_cfd_h
 
 #endif
