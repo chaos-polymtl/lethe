@@ -54,6 +54,12 @@ AverageVelocities<dim, VectorType, DofsType>::calculate_reynolds_stresses(
   const VectorType &local_evaluation_point)
 {
   unsigned int begin_index, end_index;
+
+  // As explained in the comment above, about the structure of Trilinos vectors,
+  // a function is required to get the index of the turbulence kinetic energy.
+  // Trilinos vector : rss = (<u'u'>,<v'v'>,<w'w'>,k) => k_index = i + dim
+  // Trilinos blocks : rss = [(<u'u'>,<v'v'>,<w'w'>)][k]) => k_index = i / dim
+  // The k_index lambda is later changed for block vectors.
   unsigned int (*k_index)(unsigned int) = [](unsigned int i) {
     return i + dim;
   };
@@ -221,10 +227,8 @@ AverageVelocities<dim, VectorType, DofsType>::read(std::string prefix)
 
   std::string   filename = prefix + ".averagevelocities";
   std::ifstream input(filename.c_str());
-  if (!input)
-    {
-      throw("Unable to open file");
-    }
+  AssertThrow(input, ExcFileNotOpen(filename));
+
   std::string buffer;
   std::getline(input, buffer);
   input >> buffer >> dt_0;

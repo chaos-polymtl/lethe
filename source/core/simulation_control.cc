@@ -72,10 +72,8 @@ SimulationControl::read(std::string prefix)
 {
   std::string   filename = prefix + ".simulationcontrol";
   std::ifstream input(filename.c_str());
-  if (!input)
-    {
-      throw("Unable to open file");
-    }
+  AssertThrow(input, ExcFileNotOpen(filename));
+
   std::string buffer;
   std::getline(input, buffer);
   for (unsigned int i = 0; i < time_step_vector.size(); ++i)

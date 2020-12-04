@@ -25,10 +25,8 @@ PVDHandler::read(std::string prefix)
   times_and_names.clear();
   std::string   filename = prefix + ".pvdhandler";
   std::ifstream input(filename.c_str());
-  if (!input)
-    {
-      throw("Unable to open file");
-    }
+  AssertThrow(input, ExcFileNotOpen(filename));
+
   std::string  buffer;
   unsigned int size;
   input >> size;

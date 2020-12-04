@@ -130,10 +130,8 @@ FlowControl<dim>::read(std::string prefix)
 {
   std::string   filename = prefix + ".flowcontrol";
   std::ifstream input(filename.c_str());
-  if (!input)
-    {
-      throw("Unable to open file");
-    }
+  AssertThrow(input, ExcFileNotOpen(filename));
+
   std::string buffer;
   std::getline(input, buffer);
   input >> buffer >> beta_n;
