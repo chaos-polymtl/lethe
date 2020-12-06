@@ -167,16 +167,29 @@ calculate_torques(
 
 
 /**
- * @brief calculate_L2_error
- * @return L2 norm of the error for velocity and pressure
+ * @brief Calculates the L2 norm of the error on velocity and pressure
+ * @return std::pair<double,double> containing the L2 norm of the error for velocity and pressure
  * Post-processing function
- * Calculates the L2 norm of the error
+ * This function calculates the L2 norm of the error on the velocity and
+ * pressure. Since the pressure in GLS is defined up to a given constant, the
+ * mean solution of the pressure is removed from both the analytical and the
+ * numerical solution to ensure that the convergence can be monitored correctly.
+ *
+ * @param dof_handler The dof_handler used for the calculation.
+ *
+ * @param evaluation_point The solution at which the torque is calculated.
+ *
+ * @param exact_solution The exact solution, a function of dim+1 component for velocity + pressure
+ *
+ * @param fem_parameters The fem_parameters of the simulation.
+ *
+ * @param mpi_communicator The mpi communicator. It is used to reduce the error calculation.
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
 calculate_L2_error(const DoFHandler<dim> &dof_handler,
                    const VectorType &     evaluation_point,
-                   const Function<dim> *  l_exact_solution,
+                   const Function<dim> *  exact_solution,
                    const Parameters::FEM &fem_parameters,
                    const MPI_Comm &       mpi_communicator);
 

@@ -553,7 +553,7 @@ template <int dim, typename VectorType>
 std::pair<double, double>
 calculate_L2_error(const DoFHandler<dim> &dof_handler,
                    const VectorType &     evaluation_point,
-                   const Function<dim> *  l_exact_solution,
+                   const Function<dim> *  exact_solution,
                    const Parameters::FEM &fem_parameters,
                    const MPI_Comm &       mpi_communicator)
 {
@@ -596,8 +596,8 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
           fe_values[pressure].get_function_values(evaluation_point,
                                                   local_pressure_values);
           // Get the exact solution at all gauss points
-          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
-                                              q_exactSol);
+          exact_solution->vector_value_list(fe_values.get_quadrature_points(),
+                                            q_exactSol);
 
 
           // Retrieve the effective "connectivity matrix" for this element
@@ -637,8 +637,8 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
           cell->get_dof_indices(local_dof_indices);
 
           // Get the exact solution at all gauss points
-          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
-                                              q_exactSol);
+          exact_solution->vector_value_list(fe_values.get_quadrature_points(),
+                                            q_exactSol);
 
           for (unsigned int q = 0; q < n_q_points; q++)
             {

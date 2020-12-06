@@ -43,8 +43,6 @@ template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   NavierStokesSolverParameters<dim> &p_nsparam)
   : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver)
-  //      new NewtonNonLinearSolver<VectorType>(this,
-  //      p_nsparam.nonLinearSolver))
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -951,11 +949,20 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(4);
 
-  auto &     newton_update = this->get_newton_update();
-  VectorType distributed_system(newton_update);
-  VectorType distributed_system_m1(newton_update);
-  VectorType distributed_system_m2(newton_update);
-  VectorType distributed_system_m3(newton_update);
+
+
+  /**
+   * The newton_update vector is used to initialize the x_system to which
+   * the serialized restart data is read. This is a necessary step since the
+   * serialized data must be read into a locally_owned vector. The
+   * present_solution, solution_m1, solution_m2 and solution_m3 vectors are
+   * locally_relevant vector. Consequently, they cannot be written directly to
+   * and these intermediary vectors must be used to store the data.
+   */
+  VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system_m1(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system_m2(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system_m3(locally_owned_dofs, this->mpi_communicator);
   x_system[0] = &(distributed_system);
   x_system[1] = &(distributed_system_m1);
   x_system[2] = &(distributed_system_m2);
