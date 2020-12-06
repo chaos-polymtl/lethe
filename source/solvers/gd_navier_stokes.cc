@@ -626,6 +626,29 @@ GDNavierStokesSolver<dim>::setup_dofs()
   system_matrix.reinit(sparsity_pattern);
   pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
 
+  if (this->nsparam.post_processing.calculate_average_velocities)
+    {
+      AssertThrow(this->nsparam.mesh_adaptation.type ==
+                    Parameters::MeshAdaptation::Type::none,
+                  ExcMessage(
+                    "Time-averaging velocities and calculating reynolds "
+                    "stresses are currently unavailable for mesh "
+                    "adaptation."));
+
+      this->average_velocities.initialize_vectors(this->locally_owned_dofs,
+                                                  this->locally_relevant_dofs,
+                                                  this->fe.n_dofs_per_vertex(),
+                                                  this->mpi_communicator);
+
+      if (this->nsparam.restart_parameters.checkpoint)
+        {
+          this->average_velocities.initialize_checkpoint_vectors(
+            this->locally_owned_dofs,
+            this->locally_relevant_dofs,
+            this->mpi_communicator);
+        }
+    }
+
 
   double global_volume = GridTools::volume(*this->triangulation);
 
@@ -1059,6 +1082,7 @@ GDNavierStokesSolver<dim>::solve()
   read_mesh_and_manifolds(this->triangulation,
                           this->nsparam.mesh,
                           this->nsparam.manifolds_parameters,
+                          this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
 
   this->setup_dofs();

@@ -117,14 +117,12 @@ public:
    * @brief initialize_vectors. This function initializes all the important
    * vectors for the average velocities and reynolds stresses calculation.
    *
-   * @param triangulation. The triangulation info for the Reynolds stresses
-   *                       dof handler
-   *
-   * @param velocity_fem_degree. The velocity degree
-   *
    * @param locally_owned_dofs. The owned dofs
    *
    * @param locally_owned_rs_components. The owned Reynolds stress components
+   *
+   * @param dofs_per_vertex. The number of dofs per vortex (dim for block
+   *                         vectors)
    *
    * @param mpi_communicator. The mpi communicator information
    */
@@ -133,6 +131,31 @@ public:
                      const DofsType &    locally_relevant_dofs,
                      const unsigned int &dofs_per_vertex,
                      const MPI_Comm &    mpi_communicator);
+
+  /**
+   * @brief initialize_checkpoint_vectors. This function initializes all the
+   * sum vectors for the average velocities and reynolds stresses storage.
+   *
+   * @param locally_owned_dofs. The owned dofs
+   *
+   * @param locally_owned_rs_components. The owned Reynolds stress components
+   *
+   * @param mpi_communicator. The mpi communicator information
+   */
+  void
+  initialize_checkpoint_vectors(const DofsType &locally_owned_dofs,
+                                const DofsType &locally_relevant_dofs,
+                                const MPI_Comm &mpi_communicator);
+
+  /**
+   * @brief save & read. Save or read checkpoints to continuing averaging after
+   * restart.
+   */
+  std::vector<const VectorType *>
+  save(std::string prefix);
+
+  std::vector<VectorType *>
+  read(std::string prefix);
 
 private:
   TrilinosScalar inv_range_time;
@@ -153,10 +176,13 @@ private:
   VectorType reynolds_shear_stresses;
   VectorType get_rss;
 
-  double dt;
-  bool   average_calculation;
-  double real_initial_time;
+  VectorType sum_velocity_dt_with_ghost_cells;
+  VectorType sum_rns_dt_with_ghost_cells;
+  VectorType sum_rss_dt_with_ghost_cells;
 
+  double       dt;
+  double       real_initial_time;
+  bool         average_calculation;
   unsigned int n_dofs_per_vertex;
 };
 

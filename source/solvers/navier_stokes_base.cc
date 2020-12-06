@@ -431,6 +431,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
   auto &present_solution = this->get_present_solution();
+
   // First step if the method is not a multi-step method
   if (!is_bdf_high_order(nsparam.simulation_control.method))
     {
@@ -736,42 +737,22 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
         }
     }
 
-  // The average_solution and reynolds_stresses vectors are reinitialized at the
-  // first iteration.
-  // Since the reynolds_stress (rs) vector doesn't have the same number of
-  // elements than the number of dofs, it requires its own dof_handler object
-  // even if data is not dofs. It allows to know locally owned elements and
-  // to output data.
   // The average velocities and reynolds stresses are calculated when the
   // time reaches the initial time. (time >= initial time) with 1e-6 as
   // tolerance.
   if (this->nsparam.post_processing.calculate_average_velocities)
     {
-      if (firstIter)
-        {
-          AssertThrow(nsparam.mesh_adaptation.type ==
-                        Parameters::MeshAdaptation::Type::none,
-                      ExcMessage(
-                        "Time-averaging velocities and calculating reynolds "
-                        "stresses are currently unavailable for mesh "
-                        "adaptation."));
-
-          this->average_velocities.initialize_vectors(
-            this->locally_owned_dofs,
-            this->locally_relevant_dofs,
-            this->fe.n_dofs_per_vertex(),
-            this->mpi_communicator);
-        }
       // Calculate average velocities when the time reaches the initial time.
       // time >= initial time with the epsilon as tolerance.
-      else if (simulation_control->get_current_time() >
-               (nsparam.post_processing.initial_time - 1e-6))
+      const double dt = simulation_control->get_time_step();
+      if (simulation_control->get_current_time() >
+          (nsparam.post_processing.initial_time - 1e-6 * dt))
         {
           this->average_velocities.calculate_average_velocities(
             this->get_local_evaluation_point(),
             nsparam.post_processing,
             simulation_control->get_current_time(),
-            simulation_control->get_time_step());
+            dt);
         }
     }
 
@@ -969,12 +950,33 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   x_system[3] = &(distributed_system_m3);
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
+
+  if (nsparam.post_processing.calculate_average_velocities)
+    {
+      std::vector<VectorType *> sum_vectors =
+        this->average_velocities.read(prefix);
+
+      x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
+    }
+
   system_trans_vectors.deserialize(x_system);
   auto &present_solution = this->get_present_solution();
   present_solution       = distributed_system;
   this->solution_m1      = distributed_system_m1;
   this->solution_m2      = distributed_system_m2;
   this->solution_m3      = distributed_system_m3;
+
+  if (nsparam.flow_control.enable_flow_control)
+    {
+      this->flow_control.read(prefix);
+
+      this->flow_rate =
+        calculate_flow_rate(this->dof_handler,
+                            present_solution,
+                            nsparam.flow_control.boundary_flow_id,
+                            nsparam.fem_parameters,
+                            mpi_communicator);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1183,9 +1185,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
   std::string        prefix = this->nsparam.restart_parameters.filename;
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    simulation_control->save(prefix);
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    this->pvdhandler.save(prefix);
+    {
+      simulation_control->save(prefix);
+      this->pvdhandler.save(prefix);
+
+      if (nsparam.flow_control.enable_flow_control)
+        this->flow_control.save(prefix);
+    }
 
   std::vector<const VectorType *> sol_set_transfer;
   auto &present_solution = this->get_present_solution();
@@ -1193,10 +1199,21 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   sol_set_transfer.push_back(&this->solution_m1);
   sol_set_transfer.push_back(&this->solution_m2);
   sol_set_transfer.push_back(&this->solution_m3);
+
+  if (nsparam.post_processing.calculate_average_velocities)
+    {
+      std::vector<const VectorType *> av_set_transfer =
+        this->average_velocities.save(prefix);
+
+      // Insert average velocities vectors into the set transfer vector
+      sol_set_transfer.insert(sol_set_transfer.end(),
+                              av_set_transfer.begin(),
+                              av_set_transfer.end());
+    }
+
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
-
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))
@@ -1205,8 +1222,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
       tria->save(prefix + ".triangulation");
     }
 }
-
-
 
 // Pre-compile the 2D and 3D version with the types that can occur
 template class NavierStokesBase<2, TrilinosWrappers::MPI::Vector, IndexSet>;
