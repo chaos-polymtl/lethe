@@ -3330,6 +3330,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   read_mesh_and_manifolds(this->triangulation,
                           this->nsparam.mesh,
                           this->nsparam.manifolds_parameters,
+                          this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
 
   define_particles();

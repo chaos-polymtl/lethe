@@ -4,6 +4,7 @@
 
 // Deal.II includes
 #include <deal.II/base/function.h>
+#include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/types.h>
 
 // Lethe

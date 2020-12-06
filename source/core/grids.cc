@@ -75,6 +75,7 @@ read_mesh_and_manifolds(
                                                           triangulation,
   const Parameters::Mesh &                                mesh_parameters,
   const Parameters::Manifolds &                           manifolds_parameters,
+  const bool &                                            restart,
   const BoundaryConditions::BoundaryConditions<spacedim> &boundary_conditions)
 {
   attach_grid_to_triangulation(triangulation,
@@ -91,38 +92,47 @@ read_mesh_and_manifolds(
         floor(std::log(minimal_cell_size / target_size) / std::log(2));
       triangulation->refine_global(number_refinement);
     }
-  else
+  else if (!restart)
     {
       const int initial_refinement = mesh_parameters.initial_refinement;
       triangulation->refine_global(initial_refinement);
     }
 }
 
-template void attach_grid_to_triangulation(
+template void
+attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
   const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
-template void attach_grid_to_triangulation(
+template void
+attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
-template void attach_grid_to_triangulation(
+template void
+attach_grid_to_triangulation(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   const Parameters::Mesh &                                      mesh_parameters,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
 
-template void read_mesh_and_manifolds(
+template void
+read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<2>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,
+  const bool &                                     restart,
   const BoundaryConditions::BoundaryConditions<2> &boundary_conditions);
-template void read_mesh_and_manifolds(
+template void
+read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<3>> triangulation,
   const Parameters::Mesh &                                   mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,
+  const bool &                                     restart,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);
-template void read_mesh_and_manifolds(
+template void
+read_mesh_and_manifolds(
   std::shared_ptr<parallel::DistributedTriangulationBase<2, 3>> triangulation,
   const Parameters::Mesh &                                      mesh_parameters,
   const Parameters::Manifolds &                    manifolds_parameters,
+  const bool &                                     restart,
   const BoundaryConditions::BoundaryConditions<3> &boundary_conditions);

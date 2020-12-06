@@ -67,7 +67,16 @@ public:
    * step time
    */
   Tensor<1, dim>
-  get_beta();
+  get_beta()
+  {
+    return beta;
+  }
+
+  void
+  save(std::string prefix);
+
+  void
+  read(std::string prefix);
 
 private:
   // The coefficients are stored in the following fashion :
