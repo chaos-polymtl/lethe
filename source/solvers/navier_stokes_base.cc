@@ -31,11 +31,6 @@
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_cfl.h>
-#include <solvers/postprocessing_enstrophy.h>
-#include <solvers/postprocessing_force.h>
-#include <solvers/postprocessing_kinetic_energy.h>
-#include <solvers/postprocessing_torque.h>
 #include <solvers/postprocessing_velocities.h>
 
 #include "core/time_integration_utilities.h"
@@ -46,12 +41,8 @@
  */
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
-  NavierStokesSolverParameters<dim> &p_nsparam,
-  const unsigned int                 p_degreeVelocity,
-  const unsigned int                 p_degreePressure)
+  NavierStokesSolverParameters<dim> &p_nsparam)
   : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver)
-  //      new NewtonNonLinearSolver<VectorType>(this,
-  //      p_nsparam.nonLinearSolver))
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -62,16 +53,19 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
           Triangulation<dim>::smoothing_on_refinement |
           Triangulation<dim>::smoothing_on_coarsening))))
   , dof_handler(*this->triangulation)
-  , fe(FE_Q<dim>(p_degreeVelocity), dim, FE_Q<dim>(p_degreePressure), 1)
+  , fe(FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
+       dim,
+       FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
+       1)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , nsparam(p_nsparam)
   , flow_control(nsparam.flow_control)
-  , velocity_fem_degree(p_degreeVelocity)
-  , pressure_fem_degree(p_degreePressure)
-  , number_quadrature_points(p_degreeVelocity + 1)
+  , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
+  , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
+  , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
 {
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
@@ -97,11 +91,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         simulation_control = std::make_shared<SimulationControlTransient>(
           nsparam.simulation_control);
     }
-
-
-  // Override default value of quadrature point if they are specified
-  if (nsparam.fem_parameters.number_quadrature_points > 0)
-    number_quadrature_points = nsparam.fem_parameters.number_quadrature_points;
 
   // Change the behavior of the timer for situations when you don't want outputs
   if (nsparam.timer.type == Parameters::Timer::Type::none)
@@ -184,7 +173,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
   this->forces_on_boundaries = calculate_forces(this->dof_handler,
                                                 evaluation_point,
                                                 nsparam.physical_properties,
-                                                nsparam.fem_parameters,
                                                 nsparam.boundary_conditions,
                                                 mpi_communicator);
 
@@ -305,134 +293,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
     }
 }
 
-// Find the l2 norm of the error between the finite element sol'n and the exact
-// sol'n
-template <int dim, typename VectorType, typename DofsType>
-std::pair<double, double>
-NavierStokesBase<dim, VectorType, DofsType>::calculate_L2_error(
-  const VectorType &evaluation_point)
-{
-  TimerOutput::Scope t(this->computing_timer, "error");
 
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points + 1);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              nsparam.fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
-                          update_values | update_gradients |
-                            update_quadrature_points | update_JxW_values);
-
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-
-  const unsigned int dofs_per_cell =
-    this->fe.dofs_per_cell; // This gives you dofs per cell
-  std::vector<types::global_dof_index> local_dof_indices(
-    dofs_per_cell); //  Local connectivity
-
-  const unsigned int n_q_points = quadrature_formula.size();
-
-  std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(dim + 1));
-
-  std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
-  std::vector<double>         local_pressure_values(n_q_points);
-
-  Function<dim> *l_exact_solution = this->exact_solution;
-
-  double pressure_integral       = 0;
-  double exact_pressure_integral = 0;
-
-  // loop over elements to calculate average pressure
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-
-          fe_values[pressure].get_function_values(evaluation_point,
-                                                  local_pressure_values);
-          // Get the exact solution at all gauss points
-          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
-                                              q_exactSol);
-
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              pressure_integral += local_pressure_values[q] * fe_values.JxW(q);
-              exact_pressure_integral += q_exactSol[q][dim] * fe_values.JxW(q);
-            }
-        }
-    }
-
-  pressure_integral =
-    Utilities::MPI::sum(pressure_integral, this->mpi_communicator);
-  exact_pressure_integral =
-    Utilities::MPI::sum(exact_pressure_integral, this->mpi_communicator);
-
-  double global_volume          = GridTools::volume(*this->triangulation);
-  double average_pressure       = pressure_integral / global_volume;
-  double average_exact_pressure = exact_pressure_integral / global_volume;
-
-
-  double l2errorU = 0.;
-  double l2errorP = 0.;
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          fe_values.reinit(cell);
-          fe_values[velocities].get_function_values(evaluation_point,
-                                                    local_velocity_values);
-          fe_values[pressure].get_function_values(evaluation_point,
-                                                  local_pressure_values);
-
-          // Retrieve the effective "connectivity matrix" for this element
-          cell->get_dof_indices(local_dof_indices);
-
-          // Get the exact solution at all gauss points
-          l_exact_solution->vector_value_list(fe_values.get_quadrature_points(),
-                                              q_exactSol);
-
-          for (unsigned int q = 0; q < n_q_points; q++)
-            {
-              // Find the values of x and u_h (the finite element solution) at
-              // the quadrature points
-              double ux_sim   = local_velocity_values[q][0];
-              double ux_exact = q_exactSol[q][0];
-
-              double uy_sim   = local_velocity_values[q][1];
-              double uy_exact = q_exactSol[q][1];
-
-              l2errorU +=
-                (ux_sim - ux_exact) * (ux_sim - ux_exact) * fe_values.JxW(q);
-              l2errorU +=
-                (uy_sim - uy_exact) * (uy_sim - uy_exact) * fe_values.JxW(q);
-
-              if (dim == 3)
-                {
-                  double uz_sim   = local_velocity_values[q][2];
-                  double uz_exact = q_exactSol[q][2];
-                  l2errorU += (uz_sim - uz_exact) * (uz_sim - uz_exact) *
-                              fe_values.JxW(q);
-                }
-
-              double p_sim   = local_pressure_values[q] - average_pressure;
-              double p_exact = q_exactSol[q][dim] - average_exact_pressure;
-              l2errorP +=
-                (p_sim - p_exact) * (p_sim - p_exact) * fe_values.JxW(q);
-            }
-        }
-    }
-  l2errorU = Utilities::MPI::sum(l2errorU, this->mpi_communicator);
-  l2errorP = Utilities::MPI::sum(l2errorP, this->mpi_communicator);
-
-  return std::make_pair(std::sqrt(l2errorU), std::sqrt(l2errorP));
-}
 
 template <int dim, typename VectorType, typename DofsType>
 void
@@ -491,7 +352,6 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
       this->solution_m1      = present_solution;
       const double CFL       = calculate_CFL(this->dof_handler,
                                        present_solution,
-                                       nsparam.fem_parameters,
                                        simulation_control->get_time_step(),
                                        mpi_communicator);
       this->simulation_control->set_CFL(CFL);
@@ -520,39 +380,39 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
   auto &present_solution = this->get_present_solution();
   if (nsparam.simulation_control.method ==
-      Parameters::SimulationControl::TimeSteppingMethod::sdirk2)
+      Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
         false,
         false);
       this->solution_m2 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
         false,
         false);
     }
 
   else if (nsparam.simulation_control.method ==
-           Parameters::SimulationControl::TimeSteppingMethod::sdirk3)
+           Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
         false,
         false);
 
       this->solution_m2 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
         false,
         false);
 
       this->solution_m3 = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3,
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
         false,
         false);
     }
@@ -987,7 +847,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
           this->exact_solution->set_time(
             simulation_control->get_current_time());
           const std::pair<double, double> errors =
-            this->calculate_L2_error(present_solution);
+            calculate_L2_error(dof_handler,
+                               present_solution,
+                               exact_solution,
+                               nsparam.fem_parameters,
+                               mpi_communicator);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
           if (nsparam.simulation_control.method ==
@@ -1085,11 +949,20 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   setup_dofs();
   std::vector<VectorType *> x_system(4);
 
-  auto &     newton_update = this->get_newton_update();
-  VectorType distributed_system(newton_update);
-  VectorType distributed_system_m1(newton_update);
-  VectorType distributed_system_m2(newton_update);
-  VectorType distributed_system_m3(newton_update);
+
+
+  /**
+   * The newton_update vector is used to initialize the x_system to which
+   * the serialized restart data is read. This is a necessary step since the
+   * serialized data must be read into a locally_owned vector. The
+   * present_solution, solution_m1, solution_m2 and solution_m3 vectors are
+   * locally_relevant vector. Consequently, they cannot be written directly to
+   * and these intermediary vectors must be used to store the data.
+   */
+  VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system_m1(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system_m2(locally_owned_dofs, this->mpi_communicator);
+  VectorType distributed_system_m3(locally_owned_dofs, this->mpi_communicator);
   x_system[0] = &(distributed_system);
   x_system[1] = &(distributed_system_m1);
   x_system[2] = &(distributed_system_m2);

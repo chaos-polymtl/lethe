@@ -116,9 +116,9 @@ namespace Parameters
       else if (sv == "bdf3")
         method = TimeSteppingMethod::bdf3;
       else if (sv == "sdirk2")
-        method = TimeSteppingMethod::sdirk2;
+        method = TimeSteppingMethod::sdirk22;
       else if (sv == "sdirk3")
-        method = TimeSteppingMethod::sdirk3;
+        method = TimeSteppingMethod::sdirk33;
       else
         {
           std::runtime_error("Invalid time stepping scheme");
@@ -222,10 +222,6 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order pressure");
-      prm.declare_entry("quadrature points",
-                        "0",
-                        Patterns::Integer(),
-                        "Number of quadrature points");
       prm.declare_entry("qmapping all",
                         "false",
                         Patterns::Bool(),
@@ -239,10 +235,9 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocity_order           = prm.get_integer("velocity order");
-      pressure_order           = prm.get_integer("pressure order");
-      number_quadrature_points = prm.get_integer("quadrature points");
-      qmapping_all             = prm.get_bool("qmapping all");
+      velocity_order = prm.get_integer("velocity order");
+      pressure_order = prm.get_integer("pressure order");
+      qmapping_all   = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
   }

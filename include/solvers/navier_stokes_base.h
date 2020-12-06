@@ -130,9 +130,7 @@ template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
-  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam,
-                   const unsigned int                 velocity_fem_degree,
-                   const unsigned int                 degreePressure);
+  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam);
 
   virtual ~NavierStokesBase()
   {}
@@ -144,15 +142,6 @@ protected:
    */
   void
   postprocessing_forces(const VectorType &evaluation_point);
-
-  /**
-   * @brief calculate_L2_error
-   * @return L2 norm of the error for velocity and pressure
-   * Post-processing function
-   * Calculates the L2 norm of the error
-   */
-  std::pair<double, double>
-  calculate_L2_error(const VectorType &evaluation_point);
 
   /**
    * @brief calculate_torques

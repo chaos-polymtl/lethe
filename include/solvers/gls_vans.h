@@ -47,9 +47,8 @@ template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam,
-                const unsigned int                 degree_velocity,
-                const unsigned int                 degree_pressure);
+  GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam);
+
   ~GLSVANSSolver();
 
   virtual void

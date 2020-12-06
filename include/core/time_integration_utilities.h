@@ -25,13 +25,13 @@ inline bool
 is_sdirk(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
 }
 
 /**
@@ -43,9 +43,9 @@ inline bool
 is_sdirk2(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
 }
 
 /**
@@ -57,10 +57,10 @@ inline bool
 is_sdirk3(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
 }
 
 /**
@@ -72,8 +72,8 @@ inline bool
 is_sdirk_step1(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1);
 }
 
 /**
@@ -85,8 +85,8 @@ inline bool
 is_sdirk_step2(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2);
 }
 
 /**
@@ -98,7 +98,7 @@ inline bool
 is_sdirk_step3(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (method ==
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3);
+          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3);
 }
 
 /**
@@ -154,13 +154,13 @@ time_stepping_method_has_two_stages(
   return (
     method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk2);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22);
 }
 
 /**
@@ -174,10 +174,10 @@ time_stepping_method_has_three_stages(
 {
   return (
     method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3_3 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk3);
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
 }
 
 #endif

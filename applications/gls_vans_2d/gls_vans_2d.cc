@@ -39,9 +39,7 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
-      GLSVANSSolver<2> problem_2d(NSparam,
-                                  NSparam.fem_parameters.velocity_order,
-                                  NSparam.fem_parameters.pressure_order);
+      GLSVANSSolver<2> problem_2d(NSparam);
       problem_2d.solve();
     }
   catch (std::exception &exc)

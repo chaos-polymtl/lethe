@@ -62,13 +62,13 @@ namespace Parameters
       bdf1,
       bdf2,
       bdf3,
-      sdirk2,
-      sdirk2_1,
-      sdirk2_2,
-      sdirk3,
-      sdirk3_1,
-      sdirk3_2,
-      sdirk3_3
+      sdirk22,
+      sdirk22_1,
+      sdirk22_2,
+      sdirk33,
+      sdirk33_1,
+      sdirk33_2,
+      sdirk33_3
     } method;
 
     // Method used for time progression (steady, unsteady)
@@ -273,11 +273,6 @@ namespace Parameters
     // Interpolation order pressure
     unsigned int pressure_order;
 
-    // Number of quadrature points per dimension
-    // The final number of quadrature point will be
-    // number_quadrature_points^dim
-    unsigned int number_quadrature_points;
-
     // Apply high order mapping everywhere
     bool qmapping_all;
 
@@ -298,8 +293,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
-      skip_newton,
-      adaptative_newton
+      skip_newton
     };
 
     Verbosity verbosity;
