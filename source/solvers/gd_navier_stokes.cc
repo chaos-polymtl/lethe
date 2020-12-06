@@ -39,6 +39,7 @@
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/vector_operation.h>
 
+#include <deal.II/numerics/vector_tools.h>
 #include <deal.II/numerics/vector_tools_constraints.h>
 
 // Trilinos includes

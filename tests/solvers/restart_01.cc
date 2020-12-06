@@ -7,10 +7,13 @@
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/types.h>
 
+#include <deal.II/grid/grid_generator.h>
+
 // Lethe
 #include <core/parameters.h>
 #include <solvers/gls_navier_stokes.h>
 #include <solvers/navier_stokes_solver_parameters.h>
+#include <solvers/postprocessing_cfd.h>
 
 // Tests
 #include <../tests/tests.h>

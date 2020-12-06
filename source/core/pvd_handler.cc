@@ -1,4 +1,6 @@
 
+#include <deal.II/base/exceptions.h>
+
 #include <core/pvd_handler.h>
 
 #include <fstream>

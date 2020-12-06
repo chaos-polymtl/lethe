@@ -1,3 +1,5 @@
+#include <deal.II/base/exceptions.h>
+
 #include <solvers/postprocessing_velocities.h>
 
 #include <fstream>

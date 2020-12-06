@@ -1,3 +1,5 @@
+#include <deal.II/base/exceptions.h>
+
 #include <solvers/flow_control.h>
 
 #include <fstream>

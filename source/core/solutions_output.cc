@@ -1,6 +1,8 @@
+#include <deal.II/base/exceptions.h>
+
 #include <core/solutions_output.h>
 
-#include <iostream>
+#include <fstream>
 
 
 template <int dim, int spacedim>
