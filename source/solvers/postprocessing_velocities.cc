@@ -1,5 +1,7 @@
 #include <solvers/postprocessing_velocities.h>
 
+#include <fstream>
+
 template <int dim, typename VectorType, typename DofsType>
 AverageVelocities<dim, VectorType, DofsType>::AverageVelocities()
   : average_calculation(false)
