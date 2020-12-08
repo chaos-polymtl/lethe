@@ -1,5 +1,7 @@
 #include <solvers/flow_control.h>
 
+#include <fstream>
+
 template <int dim>
 FlowControl<dim>::FlowControl(
   const Parameters::DynamicFlowControl &flow_control)
