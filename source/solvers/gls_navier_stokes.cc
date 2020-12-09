@@ -1579,10 +1579,7 @@ GLSNavierStokesSolver<dim>::solve_system_TFQMR(const bool   initial_step,
                                true,
                                true);
 
-  TrilinosWrappers::SolverTFQMR::AdditionalData solver_parameters(false);
-
-
-  TrilinosWrappers::SolverTFQMR solver(solver_control, solver_parameters);
+  TrilinosWrappers::SolverTFQMR solver(solver_control);
 
   if (renewed_matrix || !ilu_preconditioner)
     setup_ILU();
