@@ -73,18 +73,16 @@ NonUniformInsertion<dim>::insert(
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
-      std::vector<std::vector<double>> particle_properties;
-      particle_properties.resize(0);
       if (this_mpi_process == 0)
-        particle_properties =
-          this->assign_particle_properties(dem_parameters,
-                                           this->inserted_this_step,
-                                           current_inserting_particle_type);
+        this->assign_particle_properties(dem_parameters,
+                                         this->inserted_this_step,
+                                         current_inserting_particle_type,
+                                         this->particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points,
                                                global_bounding_boxes,
-                                               particle_properties);
+                                               this->particle_properties);
 
       // Updating remaining particles
       remained_particles_of_each_type -= this->inserted_this_step;

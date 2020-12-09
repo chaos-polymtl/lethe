@@ -5,7 +5,8 @@ using namespace dealii;
 template <int dim>
 double
 find_maximum_particle_size(
-  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties)
+  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties,
+  const double &standard_deviation_multiplier)
 {
   double maximum_particle_size = 0;
 
@@ -22,8 +23,10 @@ find_maximum_particle_size(
 
 template double
 find_maximum_particle_size(
-  const Parameters::Lagrangian::PhysicalProperties<2> &physical_properties);
+  const Parameters::Lagrangian::PhysicalProperties<2> &physical_properties,
+  const double &standard_deviation_multiplier);
 
 template double
 find_maximum_particle_size(
-  const Parameters::Lagrangian::PhysicalProperties<3> &physical_properties);
+  const Parameters::Lagrangian::PhysicalProperties<3> &physical_properties,
+  const double &standard_deviation_multiplier);

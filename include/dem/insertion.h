@@ -94,12 +94,14 @@ protected:
    * at each insertion step. This value can change in the last insertion step to
    * reach the desired number of particles
    * @param current_inserting_particle_type Type of inserting particles
+   * @param particle_propertis Properties of all inserted particles at each insertion step
    */
-  std::vector<std::vector<double>>
+  void
   assign_particle_properties(
-    const DEMSolverParameters<dim> &dem_parameters,
-    const unsigned int &            inserted_this_step,
-    const unsigned int &            current_inserting_particle_type);
+    const DEMSolverParameters<dim> &  dem_parameters,
+    const unsigned int &              inserted_this_step,
+    const unsigned int &              current_inserting_particle_type,
+    std::vector<std::vector<double>> &particle_properties);
 
   /**
    * Carries out finding the insertion points of inserted particles.
@@ -135,6 +137,10 @@ protected:
 
   // Maximum particle diameter
   double maximum_diameter;
+
+  // A vector of vectors, which contains all the properties of all inserted
+  // particles at each insertion step
+  std::vector<std::vector<double>> particle_properties;
 
 private:
   /**

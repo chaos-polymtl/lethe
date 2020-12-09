@@ -91,6 +91,7 @@ namespace Parameters
 
     private:
       unsigned int particle_type_maximum_number = 5;
+
       void
       initialize_containers(
         std::unordered_map<int, double> &particle_average_diameter,

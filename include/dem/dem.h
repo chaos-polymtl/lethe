@@ -304,7 +304,6 @@ private:
   const unsigned int contact_detection_frequency;
   const unsigned int repartition_frequency;
   const unsigned int insertion_frequency;
-  const Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
 
   // Initilization of classes and building objects
   PPBroadSearch<dim>                   pp_broad_search_object;
@@ -321,6 +320,7 @@ private:
   Visualization<dim>                   visualization_object;
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
+  const unsigned int                   standard_deviation_multiplier;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

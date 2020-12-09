@@ -37,6 +37,7 @@ using namespace dealii;
  *
  * @param physical_properties DEM physical properties declared in the
  * .prm file
+ * @param standard_deviation_multiplier Constant standard deviation multiplier. It is defined in the dem constructor and it is equal to 2.5 to cover 99% of the particle size distribution
  * @return Maximum particle size
  *
  */
@@ -44,8 +45,7 @@ using namespace dealii;
 template <int dim>
 double
 find_maximum_particle_size(
-  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties);
-
-const unsigned int standard_deviation_multiplier = 5;
+  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties,
+  const double &standard_deviation_multiplier);
 
 #endif

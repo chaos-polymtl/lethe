@@ -45,7 +45,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       parameters.model_parameters.contact_detection_frequency)
   , repartition_frequency(parameters.model_parameters.repartition_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
-  , physical_properties(parameters.physical_properties)
+  , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs
@@ -107,13 +107,16 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // parameter handler file, finding maximum particle diameter used in
   // polydisperse systems
   maximum_particle_diameter =
-    find_maximum_particle_size(parameters.physical_properties);
+    find_maximum_particle_size(parameters.physical_properties,
+                               standard_deviation_multiplier);
   neighborhood_threshold_squared =
     std::pow(parameters.model_parameters.neighborhood_threshold *
                maximum_particle_diameter,
              2);
   if (this_mpi_process == 0)
-    input_parameter_inspection(parameters, pcout);
+    input_parameter_inspection(parameters,
+                               pcout,
+                               standard_deviation_multiplier);
 }
 
 template <int dim>
@@ -370,13 +373,13 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            physical_properties);
+                                            parameters.physical_properties);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               physical_properties);
+                                               parameters.physical_properties);
     }
 }
 
@@ -714,7 +717,7 @@ DEMSolver<dim>::solve()
 
       // Integration
       integrator_object->integrate(particle_handler,
-                                   physical_properties.g,
+                                   parameters.physical_properties.g,
                                    simulation_control->get_time_step());
 
       // Visualization

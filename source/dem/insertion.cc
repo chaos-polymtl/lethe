@@ -45,14 +45,16 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
 // Carries out assigning the properties of inserted particles. The output vector
 // is used in insert_global_particles as input argument
 template <int dim>
-std::vector<std::vector<double>>
+void
 Insertion<dim>::assign_particle_properties(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const unsigned int &            inserted_this_step,
-  const unsigned int &            current_inserting_particle_type)
+  const DEMSolverParameters<dim> &  dem_parameters,
+  const unsigned int &              inserted_this_step,
+  const unsigned int &              current_inserting_particle_type,
+  std::vector<std::vector<double>> &particle_properties)
 {
-  // Defining output vector
-  std::vector<std::vector<double>> properties;
+  // Clearing and resizing particle_properties
+  particle_properties.clear();
+  particle_properties.reserve(inserted_this_step);
 
   // Getting properties as local parameters
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
@@ -102,10 +104,9 @@ Insertion<dim>::assign_particle_properties(
         acc_y, acc_z,    f_x,     f_y,   f_z,   w_x,   w_y,
         w_z,   mass,     MOI,     T_x,   T_y,   T_z,   displacement};
 
-      properties.push_back(properties_of_one_particle);
+      particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
-  return properties;
 }
 
 template <int dim>
