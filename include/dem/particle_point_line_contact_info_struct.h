@@ -16,13 +16,16 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <deal.II/base/point.h>
-#include <deal.II/base/tensor.h>
 
-#include <deal.II/particles/particle_iterator.h>
 
 #ifndef particle_point_line_contact_info_struct_h
-#  define particle_point_line_contact_info_struct_h
+#define particle_point_line_contact_info_struct_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/point.h>
+
+#include <deal.II/particles/particle_iterator.h>
 
 /**
  * This struct handles the information related to the calculation of the

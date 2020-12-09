@@ -17,12 +17,14 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <deal.II/base/config.h>
+
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/tria.h>
 
-#include <iostream>
 #include <vector>
+
 
 using namespace dealii;
 

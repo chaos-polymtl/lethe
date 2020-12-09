@@ -1,3 +1,7 @@
+#include <deal.II/grid/filtered_iterator.h>
+#include <deal.II/grid/grid_tools.h>
+
+#include <dem/dem_properties.h>
 #include <dem/uniform_insertion.h>
 
 using namespace DEM;

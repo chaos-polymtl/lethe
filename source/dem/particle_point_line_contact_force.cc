@@ -1,3 +1,6 @@
+#include <deal.II/base/tensor.h>
+
+#include <dem/dem_properties.h>
 #include <dem/particle_point_line_contact_force.h>
 
 using namespace dealii;

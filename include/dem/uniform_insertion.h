@@ -17,16 +17,19 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+
+#ifndef uniform_insertion_h
+#define uniform_insertion_h
+
+#include <deal.II/base/config.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
 
-#include <dem/dem_properties.h>
+#include <core/parameters_lagrangian.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
-
-#ifndef uniform_insertion_h
-#  define uniform_insertion_h
 
 /**
  * Uniform insertion of particles in a rectangular box

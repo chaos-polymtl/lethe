@@ -1,3 +1,6 @@
+#include <deal.II/base/tensor.h>
+
+#include <dem/dem_properties.h>
 #include <dem/particle_point_line_fine_search.h>
 
 using namespace dealii;

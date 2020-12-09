@@ -17,22 +17,24 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/distributed/tria.h>
 
-#include <deal.II/particles/particle.h>
+#ifndef particle_wall_broad_search_h
+#define particle_wall_broad_search_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/grid/tria.h>
+
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
+#include <core/parameters_lagrangian.h>
 #include <dem/boundary_cells_info_struct.h>
-#include <dem/dem_solver_parameters.h>
 
-#include <iostream>
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
-
-#ifndef particle_wall_broad_search_h
-#  define particle_wall_broad_search_h
 
 /**
  * This class is used for broad particle-wall contact search. Broad search

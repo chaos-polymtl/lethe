@@ -17,6 +17,14 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019
  */
 
+
+#ifndef explicit_Euler_integrator_h
+#define explicit_Euler_integrator_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/tensor.h>
+
 #include <deal.II/particles/particle_handler.h>
 
 #include <dem/dem_solver_parameters.h>
@@ -24,8 +32,6 @@
 
 using namespace dealii;
 
-#ifndef explicit_Euler_integrator_h
-#  define explicit_Euler_integrator_h
 
 /**
  * Implementation of a classical explicit euler scheme for the integration

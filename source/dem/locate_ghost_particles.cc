@@ -1,6 +1,7 @@
 #include <dem/locate_ghost_particles.h>
+#include <dem/update_ghost_iterator_pp_contact_container.h>
+#include <dem/update_ghost_particle_container.h>
 
-using namespace dealii;
 
 template <int dim>
 void

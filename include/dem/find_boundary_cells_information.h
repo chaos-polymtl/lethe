@@ -17,26 +17,25 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/base/quadrature_lib.h>
+#ifndef find_boundary_cells_information_h
+#define find_boundary_cells_information_h
+
+#include <deal.II/base/config.h>
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_values.h>
+#include <deal.II/grid/tria.h>
 
-#include <deal.II/grid/grid_tools.h>
-
+#include <core/parameters_lagrangian.h>
 #include <dem/boundary_cells_info_struct.h>
-#include <dem/dem_solver_parameters.h>
 
-#include <iostream>
+#include <string>
 #include <unordered_set>
 #include <vector>
 
+
 using namespace dealii;
 
-#ifndef find_boundary_cells_information_h
-#  define find_boundary_cells_information_h
 
 /**
  * Finds all the boundary cells and faces in the triangulation, for each cell

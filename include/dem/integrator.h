@@ -17,14 +17,19 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+
+#ifndef integration_h
+#define integration_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/tensor.h>
+
 #include <deal.II/particles/particle_handler.h>
 
 #include <dem/dem_solver_parameters.h>
 
 using namespace dealii;
-
-#ifndef integration_h
-#  define integration_h
 
 /**
  * Base interface for classes that carry out the integration of the velocity and

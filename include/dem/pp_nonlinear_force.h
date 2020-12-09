@@ -17,21 +17,22 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_iterator.h>
+
+#ifndef particle_particle_nonlinear_force_h
+#define particle_particle_nonlinear_force_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/array_view.h>
+#include <deal.II/base/tensor.h>
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
-#include <math.h>
 
-#include <iostream>
-#include <vector>
+#include <unordered_map>
 
 using namespace dealii;
-
-#ifndef particle_particle_nonlinear_force_h
-#  define particle_particle_nonlinear_force_h
 
 /**
  * Calculation of the non-linear particle-particle contact force using the

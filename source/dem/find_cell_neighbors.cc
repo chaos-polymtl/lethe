@@ -1,4 +1,7 @@
+#include <deal.II/grid/grid_tools.h>
+
 #include <dem/find_cell_neighbors.h>
+
 
 using namespace dealii;
 

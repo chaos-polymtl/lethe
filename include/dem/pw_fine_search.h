@@ -17,21 +17,24 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
-
-#include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/pw_contact_info_struct.h>
-
-#include <iostream>
-#include <vector>
-
-using namespace dealii;
 
 #ifndef particle_wall_fine_search_h
-#  define particle_wall_fine_search_h
+#define particle_wall_fine_search_h
+
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/array_view.h>
+#include <deal.II/base/tensor.h>
+
+#include <deal.II/particles/particle_iterator.h>
+
+#include <core/parameters_lagrangian.h>
+#include <dem/pw_contact_info_struct.h>
+
+#include <unordered_map>
+
+using namespace dealii;
 
 /**
  * This class is used for fine particle-wall contact search. Fine search

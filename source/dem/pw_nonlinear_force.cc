@@ -1,4 +1,8 @@
+#include <boost/range/adaptor/map.hpp>
+
+#include <dem/dem_properties.h>
 #include <dem/pw_nonlinear_force.h>
+
 
 using namespace dealii;
 

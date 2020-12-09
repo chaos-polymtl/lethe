@@ -17,13 +17,13 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
 
-#include <iostream>
-#include <string>
-#include <tuple>
-#include <vector>
+
 
 #ifndef Lethe_DEM_properties_h
-#  define Lethe_DEM_properties_h
+#define Lethe_DEM_properties_h
+
+#include <string>
+#include <vector>
 
 namespace DEM
 {

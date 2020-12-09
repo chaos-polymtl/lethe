@@ -16,12 +16,17 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <dem/pw_contact_info_struct.h>
-
-using namespace dealii;
 
 #ifndef update_particle_wall_contact_container_h
 #  define update_particle_wall_contact_container_h
+
+#include <deal.II/base/config.h>
+#include <dem/pw_contact_info_struct.h>
+#include <unordered_map>
+#include <bits/stl_map.h>
+#include <deal.II/particles/particle_iterator.h>
+
+using namespace dealii;
 
 /**
  * Updates the iterators to particles in pw_contact_container (output of pw

@@ -17,6 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+
+#ifndef nonuniform_insertion_h
+#define nonuniform_insertion_h
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
@@ -24,8 +28,7 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
 
-#ifndef nonuniform_insertion_h
-#  define nonuniform_insertion_h
+#include <vector>
 
 /**
  * Non-uniform insertion of particles in a rectangular box

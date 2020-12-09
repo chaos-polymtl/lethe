@@ -1,4 +1,6 @@
+#include <dem/dem_properties.h>
 #include <dem/find_contact_detection_step.h>
+
 
 using namespace dealii;
 

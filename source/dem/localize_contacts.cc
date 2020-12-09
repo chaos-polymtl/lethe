@@ -1,3 +1,5 @@
+#include <deal.II/particles/particle_iterator.h>
+
 #include <dem/localize_contacts.h>
 
 using namespace dealii;

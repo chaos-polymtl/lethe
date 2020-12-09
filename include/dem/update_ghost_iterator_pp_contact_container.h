@@ -16,7 +16,13 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <deal.II/base/config.h>
+
+#include <deal.II/particles/particle_iterator.h>
+
 #include <dem/pp_contact_info_struct.h>
+
+#include <unordered_map>
 
 using namespace dealii;
 

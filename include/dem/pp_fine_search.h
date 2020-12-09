@@ -17,23 +17,19 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/base/tensor.h>
+#ifndef particle_particle_fine_search_h
+#define particle_particle_fine_search_h
 
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
+#include <deal.II/base/config.h>
 
-#include <boost/range/adaptor/map.hpp>
+#include <deal.II/particles/particle_iterator.h>
 
-#include <dem/dem_properties.h>
 #include <dem/pp_contact_info_struct.h>
 
-#include <iostream>
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
-
-#ifndef particle_particle_fine_search_h
-#  define particle_particle_fine_search_h
 
 /**
  * This class is used for local-local and local-ghost fine particle-particle

@@ -1,7 +1,5 @@
 #include <dem/pp_broad_search.h>
 
-using namespace dealii;
-
 template <int dim>
 PPBroadSearch<dim>::PPBroadSearch()
 {}
@@ -9,7 +7,7 @@ PPBroadSearch<dim>::PPBroadSearch()
 template <int dim>
 void
 PPBroadSearch<dim>::find_particle_particle_contact_pairs(
-  dealii::Particles::ParticleHandler<dim> &particle_handler,
+  Particles::ParticleHandler<dim> &particle_handler,
   const std::vector<
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
     *cells_local_neighbor_list,

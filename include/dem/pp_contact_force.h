@@ -17,18 +17,20 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
-#include <boost/range/adaptor/map.hpp>
-
-#include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/pp_contact_info_struct.h>
-
-using namespace dealii;
 
 #ifndef particle_particle_contact_force_h
-#  define particle_particle_contact_force_h
+#define particle_particle_contact_force_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/array_view.h>
+#include <deal.II/base/tensor.h>
+
+#include <dem/pp_contact_info_struct.h>
+
+#include <unordered_map>
+
+using namespace dealii;
 
 /**
  * Base interface for classes that carry out the calculation of particle-paricle

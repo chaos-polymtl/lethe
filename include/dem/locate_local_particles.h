@@ -17,17 +17,24 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/particle_point_line_contact_info_struct.h>
-#include <dem/update_ghost_pp_contact_container.h>
-#include <dem/update_local_pp_contact_container.h>
-#include <dem/update_particle_container.h>
-#include <dem/update_particle_point_line_contact_container.h>
-#include <dem/update_pw_contact_container.h>
-
-using namespace dealii;
 
 #ifndef locate_local_particles_h
-#  define locate_local_particles_h
+#define locate_local_particles_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/particle_iterator.h>
+
+#include <dem/particle_point_line_contact_info_struct.h>
+#include <dem/pp_contact_info_struct.h>
+#include <dem/pw_contact_info_struct.h>
+
+#include <unordered_map>
+
+
+
+using namespace dealii;
 
 /**
  * Updates the iterators to particles in local-local contact containers. This is

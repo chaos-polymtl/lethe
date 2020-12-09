@@ -16,13 +16,17 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+
+#ifndef boundary_cells_info_struct_h
+#define boundary_cells_info_struct_h
+
+#include <deal.II/base/config.h>
+
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 
-#include <deal.II/distributed/tria.h>
+#include <deal.II/grid/tria.h>
 
-#ifndef boundary_cells_info_struct_h
-#  define boundary_cells_info_struct_h
 
 /**
  * This struct handles the information related to the boundary cells which will

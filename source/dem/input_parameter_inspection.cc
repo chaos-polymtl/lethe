@@ -1,6 +1,8 @@
 #include <dem/find_maximum_particle_size.h>
 #include <dem/input_parameter_inspection.h>
 
+#include <iostream>
+
 using namespace dealii;
 
 template <int dim>

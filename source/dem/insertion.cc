@@ -17,7 +17,12 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/parameters_lagrangian.h>
 #include <dem/insertion.h>
+
+#include <cmath>
+#include <iostream>
+
 
 // Prints the insertion information
 template <int dim>

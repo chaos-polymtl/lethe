@@ -16,23 +16,20 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <deal.II/base/timer.h>
 
-#include <deal.II/distributed/tria.h>
+#ifndef particle_particle_broad_search_h
+#define particle_particle_broad_search_h
 
-#include <deal.II/particles/particle.h>
+#include <deal.II/base/config.h>
+
+#include <deal.II/grid/tria.h>
+
 #include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
 
-#include <dem/pp_contact_info_struct.h>
-
-#include <iostream>
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
-
-#ifndef particle_particle_broad_search_h
-#  define particle_particle_broad_search_h
 
 /**
  * This class is used for broad particle-particle contact search. Broad search
@@ -75,7 +72,7 @@ public:
 
   void
   find_particle_particle_contact_pairs(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
+    Particles::ParticleHandler<dim> &particle_handler,
     const std::vector<
       std::vector<typename Triangulation<dim>::active_cell_iterator>>
       *cells_local_neighbor_list,

@@ -16,16 +16,49 @@
  *
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
+
+
+#include <deal.II/base/exceptions.h>
+#include <deal.II/base/geometry_info.h>
+
+#include <deal.II/distributed/tria_base.h>
+
+#include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/mapping_q_generic.h>
 
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/numerics/data_out.h>
+#include <deal.II/numerics/data_out_faces.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#include <core/parameters.h>
+#include <core/periodic_hills_grid.h>
 #include <core/solutions_output.h>
 #include <dem/dem.h>
+#include <dem/explicit_euler_integrator.h>
+#include <dem/find_contact_detection_step.h>
+#include <dem/find_maximum_particle_size.h>
+#include <dem/input_parameter_inspection.h>
+#include <dem/localize_contacts.h>
+#include <dem/locate_local_particles.h>
+#include <dem/non_uniform_insertion.h>
+#include <dem/pp_linear_force.h>
+#include <dem/pp_nonlinear_force.h>
+#include <dem/pw_linear_force.h>
+#include <dem/pw_nonlinear_force.h>
+#include <dem/uniform_insertion.h>
+#include <dem/velocity_verlet_integrator.h>
+
+#include <cmath>
+#include <fstream>
+#include <functional>
+#include <string>
+
+
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)

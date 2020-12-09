@@ -1,6 +1,8 @@
-#include <dem/pp_linear_force.h>
+#include <boost/range/adaptor/map.hpp>
 
-using namespace dealii;
+#include <core/parameters_lagrangian.h>
+#include <dem/dem_properties.h>
+#include <dem/pp_linear_force.h>
 
 template <int dim>
 PPLinearForce<dim>::PPLinearForce(

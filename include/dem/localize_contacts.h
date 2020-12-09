@@ -17,13 +17,19 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+
+#ifndef localize_contacts_h
+#define localize_contacts_h
+
+#include <deal.II/base/config.h>
+
 #include <dem/pp_contact_info_struct.h>
 #include <dem/pw_contact_info_struct.h>
 
-using namespace std;
+#include <unordered_map>
+#include <vector>
 
-#ifndef localize_contacts_h
-#  define localize_contacts_h
+using namespace dealii;
 
 /**
  * Manages clearing the contact containers when particles are exchanged

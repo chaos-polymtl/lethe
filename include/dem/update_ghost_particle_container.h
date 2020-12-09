@@ -16,12 +16,18 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <deal.II/particles/particle_handler.h>
-
-using namespace dealii;
 
 #ifndef update_ghost_particle_container_h
-#  define update_ghost_particle_container_h
+#define update_ghost_particle_container_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/particle_iterator.h>
+
+#include <unordered_map>
+
+using namespace dealii;
 
 /**
  * Updates the iterators to local particles in a map of particles

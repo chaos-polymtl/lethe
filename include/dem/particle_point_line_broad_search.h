@@ -17,18 +17,24 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/distributed/tria.h>
+
+#ifndef particle_point_line_broad_search_h
+#define particle_point_line_broad_search_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/point.h>
+
+#include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
 
-#include <iostream>
+#include <string>
+#include <unordered_map>
 #include <vector>
 
 using namespace dealii;
-
-#ifndef particle_point_line_broad_search_h
-#  define particle_point_line_broad_search_h
 
 /**
  * This class is used for broad particle-line and particle-point contact

@@ -1,4 +1,15 @@
+#include <deal.II/base/geometry_info.h>
+#include <deal.II/base/quadrature_lib.h>
+#include <deal.II/base/tensor.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_values.h>
+
+#include <deal.II/grid/grid_tools.h>
+
 #include <dem/find_boundary_cells_information.h>
+
+#include <iostream>
 
 using namespace dealii;
 

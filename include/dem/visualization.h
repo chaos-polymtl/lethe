@@ -17,20 +17,22 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/base/data_out_base.h>
-
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_handler.h>
-
-#include <dem/dem_properties.h>
-
-#include <tuple>
-#include <vector>
-
-using namespace dealii;
 
 #ifndef visualization_h
 #  define visualization_h
+
+#include <deal.II/base/config.h>
+#include <deal.II/base/data_out_base.h>
+#include <deal.II/base/tensor.h>
+#include <deal.II/numerics/data_component_interpretation.h>
+
+#include <deal.II/particles/particle_handler.h>
+
+#include <tuple>
+#include <vector>
+#include <string>
+
+using namespace dealii;
 
 /**
  * Building patches of particle properties for visualization

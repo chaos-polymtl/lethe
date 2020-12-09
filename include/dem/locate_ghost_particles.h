@@ -17,13 +17,21 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/update_ghost_iterator_pp_contact_container.h>
-#include <dem/update_ghost_particle_container.h>
-
-using namespace dealii;
 
 #ifndef locate_ghost_particles_h
-#  define locate_ghost_particles_h
+#define locate_ghost_particles_h
+
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/particle_iterator.h>
+
+#include <dem/pp_contact_info_struct.h>
+
+#include <unordered_map>
+
+using namespace dealii;
 
 /**
  * Updates the iterators to particles in local-ghost contact containers. This is

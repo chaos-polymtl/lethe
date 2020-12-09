@@ -17,16 +17,16 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#ifndef find_contact_detection_step_h
+#define find_contact_detection_step_h
+
+#include <deal.II/base/config.h>
+
 #include <deal.II/particles/particle_handler.h>
 
-#include <dem/dem_properties.h>
-
-#include <vector>
 
 using namespace dealii;
 
-#ifndef find_contact_detection_step_h
-#  define find_contact_detection_step_h
 
 /**
  * Carries out finding steps for dynamic contact search

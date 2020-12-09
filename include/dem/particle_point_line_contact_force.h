@@ -17,17 +17,20 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/particle_point_line_contact_info_struct.h>
-
-#include <iostream>
-#include <vector>
-
-using namespace dealii;
 
 #ifndef particle_point_line_force_h
-#  define particle_point_line_force_h
+#define particle_point_line_force_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/point.h>
+
+#include <core/parameters_lagrangian.h>
+#include <dem/particle_point_line_contact_info_struct.h>
+
+#include <unordered_map>
+
+using namespace dealii;
 
 /**
  * Calculation of the non-linear particle-point and particle-line contact force

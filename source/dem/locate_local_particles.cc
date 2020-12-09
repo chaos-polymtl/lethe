@@ -1,4 +1,9 @@
 #include <dem/locate_local_particles.h>
+#include <dem/update_ghost_pp_contact_container.h>
+#include <dem/update_local_pp_contact_container.h>
+#include <dem/update_particle_container.h>
+#include <dem/update_particle_point_line_contact_container.h>
+#include <dem/update_pw_contact_container.h>
 
 using namespace dealii;
 

@@ -17,58 +17,50 @@
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
+
+#ifndef Lethe_DEM_h
+#define Lethe_DEM_h
+
+#include <deal.II/base/config.h>
+
+#include <deal.II/base/conditional_ostream.h>
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/fe/mapping_q.h>
+#include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
+#include <deal.II/fe/mapping_q_generic.h>
+
+#include <deal.II/grid/tria.h>
 
 #include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/property_pool.h>
 
+#include <core/parameters_lagrangian.h>
 #include <core/pvd_handler.h>
-#include <dem/dem_properties.h>
+#include <core/simulation_control.h>
 #include <dem/dem_solver_parameters.h>
-#include <dem/explicit_euler_integrator.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/find_contact_detection_step.h>
-#include <dem/find_maximum_particle_size.h>
-#include <dem/input_parameter_inspection.h>
+#include <dem/insertion.h>
 #include <dem/integrator.h>
-#include <dem/localize_contacts.h>
-#include <dem/locate_ghost_particles.h>
-#include <dem/locate_local_particles.h>
-#include <dem/non_uniform_insertion.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_point_line_fine_search.h>
 #include <dem/pp_broad_search.h>
 #include <dem/pp_contact_force.h>
-#include <dem/pp_contact_info_struct.h>
 #include <dem/pp_fine_search.h>
-#include <dem/pp_linear_force.h>
-#include <dem/pp_nonlinear_force.h>
 #include <dem/pw_broad_search.h>
 #include <dem/pw_contact_force.h>
-#include <dem/pw_contact_info_struct.h>
 #include <dem/pw_fine_search.h>
-#include <dem/pw_linear_force.h>
-#include <dem/pw_nonlinear_force.h>
-#include <dem/uniform_insertion.h>
-#include <dem/velocity_verlet_integrator.h>
 #include <dem/visualization.h>
+#include <dem/dem_properties.h>
 
-#include <fstream>
-#include <iostream>
 #include <unordered_set>
-
-#ifndef Lethe_DEM_h
-#  define Lethe_DEM_h
+#include <vector>
 
 /**
  * The DEM class which initializes all the required parameters and iterates over

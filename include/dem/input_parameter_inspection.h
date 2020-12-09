@@ -17,12 +17,15 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#ifndef input_parameter_inspection_h
+#define input_parameter_inspection_h
+
+#include <deal.II/base/config.h>
+
 #include <dem/dem_solver_parameters.h>
 
 using namespace std;
 
-#ifndef input_parameter_inspection_h
-#  define input_parameter_inspection_h
 
 /**
  * Manages checking input parameters in the parameter handler to be in the

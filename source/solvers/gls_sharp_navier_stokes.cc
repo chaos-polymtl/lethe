@@ -168,7 +168,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // The boundary is a circle in 2D or a sphere in 3D
 
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    active_neighbors_set;
+                                                              active_neighbors_set;
   std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
   MappingQ1<dim>                                              map;
   std::pair<unsigned int, unsigned int>                       cell_vertex_map;

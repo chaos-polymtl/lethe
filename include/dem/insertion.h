@@ -17,35 +17,26 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/base/array_view.h>
-#include <deal.II/base/data_out_base.h>
+#ifndef insertion_h
+#define insertion_h
+
+
+#include <deal.II/base/config.h>
 
 #include <deal.II/distributed/tria.h>
 
-#include <deal.II/fe/mapping_q.h>
-
-#include <deal.II/grid/filtered_iterator.h>
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_tools.h>
-
-#include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/particle_iterator.h>
-#include <deal.II/particles/property_pool.h>
 
-#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
-#include <math.h>
 
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <string>
+#include <vector>
 
 using namespace dealii;
 
-#ifndef insertion_h
-#  define insertion_h
 
 /**
  * Base interface for classes that carry out the insertion of particles in the

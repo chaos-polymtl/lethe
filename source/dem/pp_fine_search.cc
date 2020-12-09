@@ -1,6 +1,7 @@
+#include <boost/range/adaptor/map.hpp>
+
 #include <dem/pp_fine_search.h>
 
-using namespace dealii;
 
 template <int dim>
 PPFineSearch<dim>::PPFineSearch()

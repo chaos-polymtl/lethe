@@ -16,12 +16,16 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+
+
+#ifndef parameters_DEM_h
+#define parameters_DEM_h
+
+#include <deal.II/base/parameter_handler.h>
+
 #include <core/parameters.h>
 #include <core/parameters_lagrangian.h>
 #include <core/simulation_control.h>
-
-#ifndef parameters_DEM_h
-#  define parameters_DEM_h
 
 /**
  * Handles all the parameters declared in the parameter handler file

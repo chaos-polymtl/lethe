@@ -17,7 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/dem_properties.h>
 #include <dem/pw_contact_force.h>
+
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step

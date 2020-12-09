@@ -17,15 +17,16 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
-#include <dem/dem_solver_parameters.h>
-#include <dem/integrator.h>
-
-using namespace dealii;
 
 #ifndef velocity_verlet_integrator_h
 #  define velocity_verlet_integrator_h
+
+#include <deal.II/base/config.h>
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/base/tensor.h>
+#include <dem/integrator.h>
+
+using namespace dealii;
 
 /**
  * Implementation of a classical velocity verlet scheme for the integration

@@ -17,18 +17,20 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
-#include <dem/dem_properties.h>
-#include <dem/particle_point_line_contact_info_struct.h>
-
-#include <iostream>
-#include <vector>
-
-using namespace dealii;
 
 #ifndef particle_point_line_fine_search_h
-#  define particle_point_line_fine_search_h
+#define particle_point_line_fine_search_h
+
+
+#include <deal.II/base/point.h>
+
+#include <deal.II/particles/particle_iterator.h>
+
+#include <dem/particle_point_line_contact_info_struct.h>
+
+#include <unordered_map>
+
+using namespace dealii;
 
 /**
  * This class is used for fine particle-point and particle-line contact search.
