@@ -65,11 +65,10 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
-  const unsigned int n_properties = 21;
-  Tensor<1, dim>     g{{0, 0, -9.81}};
-  double             dt                                         = 0.00001;
-  double             particle_diameter                          = 0.005;
-  int                particle_density                           = 2500;
+  Tensor<1, dim> g{{0, 0, -9.81}};
+  double         dt                                             = 0.00001;
+  double         particle_diameter                              = 0.005;
+  int            particle_density                               = 2500;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 50000000;
   dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
@@ -79,9 +78,8 @@ test()
     0.1;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
-  Particles::ParticleHandler<dim> particle_handler(triangulation,
-                                                   mapping,
-                                                   n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    triangulation, mapping, DEM::get_number_properties());
 
   // Finding cell neighbors
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>

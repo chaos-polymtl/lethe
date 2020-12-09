@@ -60,7 +60,7 @@ public:
    * linear (Hookean) model
    *
    * @param pw_pairs_in_contact Required information for calculation of
-   * the particle-wall contact force, these information were obtained in
+   * the particle-wall contact force. These information were obtained in
    * the fine search
    * @param dt DEM time step
    */

@@ -67,11 +67,10 @@ test()
   const int                writing_frequency = 100;
 
   // Defining general simulation parameters
-  const unsigned int n_properties = 21;
-  Tensor<1, dim>     g{{0, -9.81}};
-  double             dt                                         = 0.0001;
-  double             particle_diameter                          = 0.1;
-  int                particle_density                           = 2000;
+  Tensor<1, dim> g{{0, -9.81}};
+  double         dt                                             = 0.0001;
+  double         particle_diameter                              = 0.1;
+  int            particle_density                               = 2000;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
   dem_parameters.physical_properties.youngs_modulus_wall        = 200000000000;
@@ -87,7 +86,8 @@ test()
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
-  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
 
   // Inserting one particle in contact with wall
   Point<dim>               position1 = {0.97, 2.05};

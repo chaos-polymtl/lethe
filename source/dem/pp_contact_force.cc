@@ -182,7 +182,7 @@ PPContactForce<dim>::apply_force_and_torque_ghost(
 }
 
 template <int dim>
-void
+inline void
 PPContactForce<dim>::find_effective_radius_and_mass(
   const ArrayView<const double> &particle_one_properties,
   const ArrayView<const double> &particle_two_properties)

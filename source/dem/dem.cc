@@ -41,7 +41,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(0)
-  , neighborhood_threshold_squared(0)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , repartition_frequency(parameters.model_parameters.repartition_frequency)
@@ -114,7 +113,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                maximum_particle_diameter,
              2);
   if (this_mpi_process == 0)
-    input_parameter_inspection(parameters);
+    input_parameter_inspection(parameters, pcout);
 }
 
 template <int dim>
@@ -228,18 +227,6 @@ DEMSolver<dim>::read_mesh()
 
 template <int dim>
 void
-DEMSolver<dim>::set_body_force()
-{
-  g[0] = physical_properties.gx;
-  g[1] = physical_properties.gy;
-  if (dim == 3)
-    {
-      g[2] = physical_properties.gz;
-    }
-}
-
-template <int dim>
-void
 DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
@@ -295,10 +282,7 @@ DEMSolver<dim>::insert_particles()
 {
   if ((simulation_control->get_step_number() % insertion_frequency) == 1)
     {
-      insertion_object->insert(particle_handler,
-                               triangulation,
-                               parameters,
-                               maximum_particle_diameter);
+      insertion_object->insert(particle_handler, triangulation, parameters);
       return true;
     }
   return false;
@@ -600,9 +584,6 @@ DEMSolver<dim>::solve()
   // Reading mesh
   read_mesh();
 
-  // Initialize DEM body force
-  set_body_force();
-
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
   // diamater
@@ -733,7 +714,7 @@ DEMSolver<dim>::solve()
 
       // Integration
       integrator_object->integrate(particle_handler,
-                                   g,
+                                   physical_properties.g,
                                    simulation_control->get_time_step());
 
       // Visualization

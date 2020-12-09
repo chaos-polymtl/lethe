@@ -19,7 +19,7 @@ PWFineSearch<dim>::particle_wall_fine_search(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact)
 {
-  // Iterating over contact candidates from broad search and add the pairs to
+  // Iterating over contact candidates from broad search and adding the pairs to
   // the pw_pairs_in_contact
   for (auto const &[particle_id, particle_pair_candidates] :
        pw_contact_pair_candidates)
@@ -78,7 +78,7 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
   std::vector<Tensor<1, dim>> wall_normal_vector =
     floating_wall_properties.floating_walls_normal_vectors;
 
-  // Iterating over contact candidates from broad search and add the pairs to
+  // Iterating over contact candidates from broad search and adding the pairs to
   // the pfw_pairs_in_contact
   for (auto const &[particle_id, particle_pair_candidates] :
        pfw_contact_candidates)

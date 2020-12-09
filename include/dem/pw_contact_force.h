@@ -47,7 +47,7 @@ public:
    * contact pair information obtained from the particle-wall fine search and
    * physical properties of particles and walls
    *
-   * @param pw_pairs_in_contact Required information for calculation of the
+   * @param pw_pairs_in_contact Required information for the calculation of the
    * particle-wall contact force
    * @param dt DEM time step
    */

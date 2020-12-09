@@ -54,13 +54,11 @@ public:
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param maximum_particle_diameter Maximum particle diameter inserted so far
    */
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &                 dem_parameters,
-         const double &maximum_particle_diameter) override;
+         const DEMSolverParameters<dim> &dem_parameters) override;
 
 private:
   /**
@@ -69,13 +67,10 @@ private:
    *
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
-   * @param maximum_particle_diameter Maximum particle diameter based on values
-   * defined in the parameter handler
    */
   virtual std::vector<Point<dim>>
-  assign_insertion_points(
-    const Parameters::Lagrangian::InsertionInfo &insertion_information,
-    const double &maximum_particle_diameter) override;
+  assign_insertion_points(const Parameters::Lagrangian::InsertionInfo
+                            &insertion_information) override;
 
   // Number of remained particles of each type that should be inserted in the
   // upcoming insertion steps

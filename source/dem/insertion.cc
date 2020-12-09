@@ -32,9 +32,10 @@ Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
       std::cout
         << "***************************************************************** "
            "\n";
-      std::cout << inserted_this_step << " particles were inserted of type "
-                << particle_type << " ," << remained_particles
-                << " particles remaining" << std::endl;
+      std::cout << inserted_this_step << " particles of type " << particle_type
+                << " were inserted, " << remained_particles
+                << " particles of type " << particle_type << " remaining"
+                << std::endl;
       std::cout
         << "***************************************************************** "
            "\n";
@@ -128,8 +129,7 @@ Insertion<dim>::particle_size_sampling(std::vector<double> &particle_sizes,
 template <int dim>
 void
 Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const double &                  maximum_particle_diameter)
+  const DEMSolverParameters<dim> &dem_parameters)
 {
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;
@@ -141,18 +141,17 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   // distance_threshold shows the ratio of the distance between the centers of
   // two adjacent particles to the diameter of particles
   maximum_particle_number =
-    int(
-      (insertion_information.x_max - insertion_information.x_min) /
-      (insertion_information.distance_threshold * maximum_particle_diameter)) *
+    int((insertion_information.x_max - insertion_information.x_min) /
+        (insertion_information.distance_threshold * this->maximum_diameter)) *
     int((insertion_information.y_max - insertion_information.y_min) /
-        (insertion_information.distance_threshold * maximum_particle_diameter));
+        (insertion_information.distance_threshold * this->maximum_diameter));
   if (dim == 3)
     {
       maximum_particle_number =
         maximum_particle_number *
-        int((insertion_information.z_max - insertion_information.z_min) /
-            (insertion_information.distance_threshold *
-             maximum_particle_diameter));
+        int(
+          (insertion_information.z_max - insertion_information.z_min) /
+          (insertion_information.distance_threshold * this->maximum_diameter));
     }
 
   // If the inserted number of particles at this step exceeds the maximum
@@ -177,15 +176,15 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   // insertion domain in x, y and z directions
   number_of_particles_x_direction =
     int((insertion_information.x_max - insertion_information.x_min) /
-        (insertion_information.distance_threshold * maximum_particle_diameter));
+        (insertion_information.distance_threshold * this->maximum_diameter));
   number_of_particles_y_direction =
     int((insertion_information.y_max - insertion_information.y_min) /
-        (insertion_information.distance_threshold * maximum_particle_diameter));
+        (insertion_information.distance_threshold * this->maximum_diameter));
   if (dim == 3)
     {
       number_of_particles_z_direction = int(
         (insertion_information.z_max - insertion_information.z_min) /
-        (insertion_information.distance_threshold * maximum_particle_diameter));
+        (insertion_information.distance_threshold * this->maximum_diameter));
     }
 }
 

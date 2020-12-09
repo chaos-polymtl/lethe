@@ -30,11 +30,13 @@ using namespace std;
  * their acceptable range.
  *
  * @param dem_parameters Input DEM parameters in the parameter handler file
+ * @param pcout Printing in parallel
  *
  */
 
 template <int dim>
 void
-input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters);
+input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
+                           const ConditionalOStream &      pcout);
 
 #endif /* input_parameter_inspection_h */

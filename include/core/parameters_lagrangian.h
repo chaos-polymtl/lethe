@@ -25,7 +25,7 @@ namespace Parameters
     {
     public:
       // Gravitational acceleration
-      double gx, gy, gz;
+      Tensor<1, dim> g;
 
       // Choosing integration method
       enum class size_distribution_type

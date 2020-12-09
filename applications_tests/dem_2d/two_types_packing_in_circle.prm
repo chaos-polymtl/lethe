@@ -62,7 +62,7 @@ subsection physical properties
     		set density            	 		= 3000
     		set young modulus particle         	= 1000000
     		set poisson ratio particle          	= 0.3
-    		set restitution coefficient particle	= 0.3
+    		set restitution coefficient particle	= 0.5
     		set friction coefficient particle       = 0.1
     		set rolling friction particle         	= 0.05
 	end

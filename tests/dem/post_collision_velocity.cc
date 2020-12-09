@@ -68,12 +68,11 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining general simulation parameters
-  const unsigned int n_properties = 21;
-  Tensor<1, dim>     g{{0, 0, 0}};
-  double             dt                                         = 0.00000001;
-  double             particle_diameter                          = 0.002;
-  int                particle_density                           = 2000;
-  unsigned int       rotating_wall_maximum_number               = 6;
+  Tensor<1, dim> g{{0, 0, 0}};
+  double         dt                                             = 0.00000001;
+  double         particle_diameter                              = 0.002;
+  int            particle_density                               = 2000;
+  unsigned int   rotating_wall_maximum_number                   = 6;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 800000000;
   dem_parameters.physical_properties.youngs_modulus_wall        = 800000000;
@@ -105,7 +104,8 @@ test()
     }
 
   // Defining particle handler
-  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
 
   // Inserting one particle in contact with wall
   Point<dim>               position = {-0.999, 0, 0};

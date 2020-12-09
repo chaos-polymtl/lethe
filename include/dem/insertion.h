@@ -65,13 +65,11 @@ public:
    * @param triangulation Triangulation to access the cells in which the
    * particles are inserted
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param maximum_particle_diameter Maximum particle diameter inserted so far
    */
   virtual void
   insert(Particles::ParticleHandler<dim> &                particle_handler,
          const parallel::distributed::Triangulation<dim> &triangulation,
-         const DEMSolverParameters<dim> &                 dem_parameters,
-         const double &maximum_particle_diameter) = 0;
+         const DEMSolverParameters<dim> &                 dem_parameters) = 0;
 
 protected:
   /**
@@ -108,28 +106,22 @@ protected:
    *
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
-   * @param maximum_particle_diameter Maximum particle diameter based on values
-   * defined in the parameter handler
    */
   virtual std::vector<Point<dim>>
   assign_insertion_points(
-    const Parameters::Lagrangian::InsertionInfo &insertion_information,
-    const double &                               maximum_particle_diameter) = 0;
+    const Parameters::Lagrangian::InsertionInfo &insertion_information) = 0;
 
   /**
-   * Carries out finding the maximum number of inserted particles based on the
+   * @brief Carries out finding the maximum number of inserted particles based on the
    * insertion box size. If the requested number of particles for insertion in
    * each insertion step is larger than this maximum, it is limited to this
    * value and a warning is printed.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param maximum_particle_diameter Maximum particle diameter based on values
-   * defined in the parameter handler
    */
   void
   calculate_insertion_domain_maximum_particle_number(
-    const DEMSolverParameters<dim> &dem_parameters,
-    const double &                  maximum_particle_diameter);
+    const DEMSolverParameters<dim> &dem_parameters);
 
   // Number of particles that is going to be inserted at each insetion step.This
   // value can change in the last insertion step to reach the desired number of
@@ -137,8 +129,12 @@ protected:
   unsigned int inserted_this_step;
 
   //  Number of insertion points in the x, y and z directions, respectively
-  unsigned int number_of_particles_x_direction, number_of_particles_y_direction,
-    number_of_particles_z_direction;
+  unsigned int number_of_particles_x_direction;
+  unsigned int number_of_particles_y_direction;
+  unsigned int number_of_particles_z_direction;
+
+  // Maximum particle diameter
+  double maximum_diameter;
 
 private:
   /**

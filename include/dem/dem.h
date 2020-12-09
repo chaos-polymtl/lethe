@@ -130,12 +130,6 @@ private:
   read_mesh();
 
   /**
-   * Sets the body force from the values defined in the parameter handler file
-   */
-  void
-  set_body_force();
-
-  /**
    * Finds contact search steps for constant contact search method
    */
 

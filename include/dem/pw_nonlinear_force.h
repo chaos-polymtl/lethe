@@ -59,8 +59,8 @@ public:
    * Carries out the calculation of the particle-wall contact force using
    * non-linear (Hertzian) model
    *
-   * @param pw_pairs_in_contact Required information for calculation of
-   * the particle-wall contact force, these information were obtained in
+   * @param pw_pairs_in_contact Required information for the calculation of
+   * the particle-wall contact force. These information were obtained in
    * the fine search
    * @param dt DEM time step
    */

@@ -9,93 +9,79 @@ PPNonLinearForce<dim>::PPNonLinearForce(
   for (unsigned int i = 0;
        i < dem_parameters.physical_properties.particle_type_number;
        ++i)
-    for (unsigned int j = 0;
-         j < dem_parameters.physical_properties.particle_type_number;
-         ++j)
-      {
-        this->effective_youngs_modulus[i].insert(
-          {j,
-           (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
-            dem_parameters.physical_properties.youngs_modulus_particle.at(j)) /
-             ((dem_parameters.physical_properties.youngs_modulus_particle.at(
-                 j) *
-               (1 -
-                dem_parameters.physical_properties.poisson_ratio_particle.at(
-                  i) *
-                  dem_parameters.physical_properties.poisson_ratio_particle.at(
-                    i))) +
-              (dem_parameters.physical_properties.youngs_modulus_particle.at(
-                 i) *
-               (1 -
-                dem_parameters.physical_properties.poisson_ratio_particle.at(
-                  j) *
-                  dem_parameters.physical_properties.poisson_ratio_particle.at(
-                    j))))});
+    {
+      const double youngs_modulus_i =
+        dem_parameters.physical_properties.youngs_modulus_particle.at(i);
+      const double poisson_ratio_i =
+        dem_parameters.physical_properties.poisson_ratio_particle.at(i);
+      const double restitution_coefficient_i =
+        dem_parameters.physical_properties.restitution_coefficient_particle.at(
+          i);
+      const double friction_coefficient_i =
+        dem_parameters.physical_properties.friction_coefficient_particle.at(i);
+      const double rolling_friction_coefficient_i =
+        dem_parameters.physical_properties.rolling_friction_coefficient_particle
+          .at(i);
 
-        this->effective_shear_modulus[i].insert(
-          {j,
-           (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
-            dem_parameters.physical_properties.youngs_modulus_particle.at(j)) /
-             (2 *
-              ((dem_parameters.physical_properties.youngs_modulus_particle.at(
-                  j) *
-                (2 - dem_parameters.physical_properties.poisson_ratio_particle
-                       .at(i)) *
-                (1 + dem_parameters.physical_properties.poisson_ratio_particle
-                       .at(i))) +
-               (dem_parameters.physical_properties.youngs_modulus_particle.at(
-                  i) *
-                (2 - dem_parameters.physical_properties.poisson_ratio_particle
-                       .at(j)) *
-                (1 + dem_parameters.physical_properties.poisson_ratio_particle
-                       .at(j)))))});
+      for (unsigned int j = 0;
+           j < dem_parameters.physical_properties.particle_type_number;
+           ++j)
+        {
+          const double youngs_modulus_j =
+            dem_parameters.physical_properties.youngs_modulus_particle.at(j);
+          const double poisson_ratio_j =
+            dem_parameters.physical_properties.poisson_ratio_particle.at(j);
+          const double restitution_coefficient_j =
+            dem_parameters.physical_properties.restitution_coefficient_particle
+              .at(j);
+          const double friction_coefficient_j =
+            dem_parameters.physical_properties.friction_coefficient_particle.at(
+              j);
+          const double rolling_friction_coefficient_j =
+            dem_parameters.physical_properties
+              .rolling_friction_coefficient_particle.at(j);
 
-        this->effective_coefficient_of_restitution[i].insert(
-          {j,
-           2 *
-             dem_parameters.physical_properties.restitution_coefficient_particle
-               .at(i) *
-             dem_parameters.physical_properties.restitution_coefficient_particle
-               .at(j) /
-             (dem_parameters.physical_properties
-                .restitution_coefficient_particle.at(i) +
-              dem_parameters.physical_properties
-                .restitution_coefficient_particle.at(j))});
+          this->effective_youngs_modulus[i][j] =
+            (youngs_modulus_i * youngs_modulus_j) /
+            ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
+             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)));
 
-        this->effective_coefficient_of_friction[i].insert(
-          {j,
-           2 *
-             dem_parameters.physical_properties.friction_coefficient_particle
-               .at(i) *
-             dem_parameters.physical_properties.friction_coefficient_particle
-               .at(j) /
-             (dem_parameters.physical_properties.friction_coefficient_particle
-                .at(i) +
-              dem_parameters.physical_properties.friction_coefficient_particle
-                .at(j))});
+          this->effective_shear_modulus[i].insert(
+            {j,
+             (youngs_modulus_i * youngs_modulus_j) /
+               (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
+                      (1 + poisson_ratio_i)) +
+                     (youngs_modulus_i * (2 - poisson_ratio_j) *
+                      (1 + poisson_ratio_j))))});
 
-        this->effective_coefficient_of_rolling_friction[i].insert(
-          {j,
-           2 *
-             dem_parameters.physical_properties
-               .rolling_friction_coefficient_particle.at(i) *
-             dem_parameters.physical_properties
-               .rolling_friction_coefficient_particle.at(j) /
-             (dem_parameters.physical_properties
-                .rolling_friction_coefficient_particle.at(i) +
-              dem_parameters.physical_properties
-                .rolling_friction_coefficient_particle.at(j))});
+          this->effective_coefficient_of_restitution[i].insert(
+            {j,
+             2 * restitution_coefficient_i * restitution_coefficient_j /
+               (restitution_coefficient_i + restitution_coefficient_j)});
 
-        double restitution_coefficient_particle_log =
-          std::log(this->effective_coefficient_of_restitution[i][j]);
+          this->effective_coefficient_of_friction[i].insert(
+            {j,
+             2 * friction_coefficient_i * friction_coefficient_j /
+               (friction_coefficient_i + friction_coefficient_j)});
 
-        model_parameter_beta[i].insert(
-          {j,
-           restitution_coefficient_particle_log /
-             sqrt(restitution_coefficient_particle_log *
-                    restitution_coefficient_particle_log +
-                  9.8696)});
-      }
+          this->effective_coefficient_of_rolling_friction[i].insert(
+            {j,
+             2 * rolling_friction_coefficient_i *
+               rolling_friction_coefficient_j /
+               (rolling_friction_coefficient_i +
+                rolling_friction_coefficient_j)});
+
+          double restitution_coefficient_particle_log =
+            std::log(this->effective_coefficient_of_restitution[i][j]);
+
+          model_parameter_beta[i].insert(
+            {j,
+             restitution_coefficient_particle_log /
+               sqrt(restitution_coefficient_particle_log *
+                      restitution_coefficient_particle_log +
+                    9.8696)});
+        }
+    }
 }
 
 template <int dim>
@@ -107,7 +93,7 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
     &           ghost_adjacent_particles,
   const double &dt)
 {
-  // Updating contact force of particles in local-local and local-ghost contact
+  // Updating contact force of particles for local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
   // local-ghost particle pairs are performed in separate loops
 

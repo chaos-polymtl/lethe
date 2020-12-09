@@ -28,7 +28,7 @@ using namespace dealii;
 #  define find_maximum_particle_size_h
 
 /**
- * Finding maximum particle size based on defined size values in the parameter
+ * Find maximum particle size based on defined size values in the parameter
  * handler file. This value is extremely important in polydisperse systems. Note
  * that this value is calculated here using average value + 5 * standard
  * deviation of the diameter, since more than 99.999% of values in a normal

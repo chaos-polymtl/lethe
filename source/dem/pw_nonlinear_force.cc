@@ -15,66 +15,66 @@ PWNonLinearForce<dim>::PWNonLinearForce(
   this->boundary_rotational_vector          = boundary_rotational_vector;
   this->triangulation_radius                = triangulation_radius;
 
+  const double wall_youngs_modulus =
+    dem_parameters.physical_properties.youngs_modulus_wall;
+  const double wall_poisson_ratio =
+    dem_parameters.physical_properties.poisson_ratio_wall;
+  const double wall_restitution_coefficient =
+    dem_parameters.physical_properties.restitution_coefficient_wall;
+  const double wall_friction_coefficient =
+    dem_parameters.physical_properties.friction_coefficient_wall;
+  const double wall_rolling_friction_coefficient =
+    dem_parameters.physical_properties.rolling_friction_wall;
+
   for (unsigned int i = 0;
        i < dem_parameters.physical_properties.particle_type_number;
        ++i)
     {
+      const double particle_youngs_modulus =
+        dem_parameters.physical_properties.youngs_modulus_particle.at(i);
+      const double particle_poisson_ratio =
+        dem_parameters.physical_properties.poisson_ratio_particle.at(i);
+      const double particle_restitution_coefficient =
+        dem_parameters.physical_properties.restitution_coefficient_particle.at(
+          i);
+      const double particle_friction_coefficient =
+        dem_parameters.physical_properties.friction_coefficient_particle.at(i);
+      const double particle_rolling_friction_coefficient =
+        dem_parameters.physical_properties.rolling_friction_coefficient_particle
+          .at(i);
+
       this->effective_youngs_modulus.insert(
         {i,
-         (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
-          dem_parameters.physical_properties.youngs_modulus_wall) /
-           (dem_parameters.physical_properties.youngs_modulus_wall *
-              (1 -
-               dem_parameters.physical_properties.poisson_ratio_particle.at(i) *
-                 dem_parameters.physical_properties.poisson_ratio_particle.at(
-                   i)) +
-            dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
-              (1 - dem_parameters.physical_properties.poisson_ratio_wall *
-                     dem_parameters.physical_properties.poisson_ratio_wall))});
+         (particle_youngs_modulus * wall_youngs_modulus) /
+           (wall_youngs_modulus *
+              (1 - particle_poisson_ratio * particle_poisson_ratio) +
+            particle_youngs_modulus *
+              (1 - wall_poisson_ratio * wall_poisson_ratio))});
 
       this->effective_shear_modulus.insert(
         {i,
-         (dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
-          dem_parameters.physical_properties.youngs_modulus_wall) /
-           ((2 * dem_parameters.physical_properties.youngs_modulus_wall *
-             (2 -
-              dem_parameters.physical_properties.poisson_ratio_particle.at(i)) *
-             (1 + dem_parameters.physical_properties.poisson_ratio_particle.at(
-                    i))) +
-            (2 *
-             dem_parameters.physical_properties.youngs_modulus_particle.at(i) *
-             (2 - dem_parameters.physical_properties.poisson_ratio_wall) *
-             (1 + dem_parameters.physical_properties.poisson_ratio_wall)))});
+         (particle_youngs_modulus * wall_youngs_modulus) /
+           ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
+             (1 + particle_poisson_ratio)) +
+            (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
+             (1 + wall_poisson_ratio)))});
 
       this->effective_coefficient_of_restitution.insert(
         {i,
-         2 *
-           dem_parameters.physical_properties.restitution_coefficient_particle
-             .at(i) *
-           dem_parameters.physical_properties.restitution_coefficient_wall /
-           (dem_parameters.physical_properties.restitution_coefficient_particle
-              .at(i) +
-            dem_parameters.physical_properties.restitution_coefficient_wall)});
+         2 * particle_restitution_coefficient * wall_restitution_coefficient /
+           (particle_restitution_coefficient + wall_restitution_coefficient)});
 
       this->effective_coefficient_of_friction.insert(
         {i,
-         2 *
-           dem_parameters.physical_properties.friction_coefficient_particle.at(
-             i) *
-           dem_parameters.physical_properties.friction_coefficient_wall /
-           (dem_parameters.physical_properties.friction_coefficient_particle.at(
-              i) +
-            dem_parameters.physical_properties.friction_coefficient_wall)});
+         2 * particle_friction_coefficient * wall_friction_coefficient /
+           (particle_friction_coefficient + wall_friction_coefficient)});
 
       this->effective_coefficient_of_rolling_friction.insert(
         {i,
-         2 *
-           dem_parameters.physical_properties
-             .rolling_friction_coefficient_particle.at(i) *
-           dem_parameters.physical_properties.rolling_friction_wall /
-           (dem_parameters.physical_properties
-              .rolling_friction_coefficient_particle.at(i) +
-            dem_parameters.physical_properties.rolling_friction_wall)});
+         2 * particle_rolling_friction_coefficient *
+           wall_rolling_friction_coefficient /
+           (particle_rolling_friction_coefficient +
+            wall_rolling_friction_coefficient)});
     }
 }
 
@@ -97,7 +97,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
       for (auto &&contact_information :
            pairs_in_contact_content | boost::adaptors::map_values)
         {
-          // Defining total force of the contact, properties of particle as
+          // Defining the total force of contact, properties of particle as
           // local parameters
           auto particle            = contact_information.particle;
           auto particle_properties = particle->get_properties();

@@ -53,11 +53,11 @@ public:
    * Carries out the calculation of the particle-particle contact force
    * using linear (Hookean) model
    *
-   * @param local_adjacent_particles Required information for calculation
-   * of the local-local particle-particle contact force, these information
+   * @param local_adjacent_particles Required information for the calculation
+   * of the local-local particle-particle contact force. These information
    * were obtained in the fine search
-   * @param ghost_adjacent_particles Required information for calculation
-   * of the local-ghost particle-particle contact force, these information
+   * @param ghost_adjacent_particles Required information for the calculation
+   * of the local-ghost particle-particle contact force. These information
    * were obtained in the fine search
    * @param dt DEM time-step
    */
@@ -101,6 +101,9 @@ private:
     Tensor<1, dim> &               tangential_torque,
     Tensor<1, dim> &               rolling_resistance_torque);
 
+  // Normal and tangential contact forces, tangential and rolling torques,
+  // normal unit vector of the contact and contact relative velocity in the
+  // normal direction
   Tensor<1, dim> normal_unit_vector;
   Tensor<1, dim> normal_force;
   Tensor<1, dim> tangential_force;

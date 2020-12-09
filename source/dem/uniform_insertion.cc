@@ -19,19 +19,19 @@ UniformInsertion<dim>::UniformInsertion(
 
   this->inserted_this_step = 0;
 
-  this->calculate_insertion_domain_maximum_particle_number(
-    dem_parameters, maximum_particle_diameter);
+  this->maximum_diameter = maximum_particle_diameter;
+
+  this->calculate_insertion_domain_maximum_particle_number(dem_parameters);
 }
 
-// The main insertion function. Insert_global_function is utilized to insert the
+// The main insertion function. Insert_global_function is used to insert the
 // particles
 template <int dim>
 void
 UniformInsertion<dim>::insert(
   Particles::ParticleHandler<dim> &                particle_handler,
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const DEMSolverParameters<dim> &                 dem_parameters,
-  const double &                                   maximum_particle_diameter)
+  const DEMSolverParameters<dim> &                 dem_parameters)
 {
   if (remained_particles_of_each_type == 0 &&
       current_inserting_particle_type !=
@@ -45,8 +45,7 @@ UniformInsertion<dim>::insert(
   // Check to see if the remained uninserted particles is equal to zero or not
   if (remained_particles_of_each_type != 0)
     {
-      this->calculate_insertion_domain_maximum_particle_number(
-        dem_parameters, maximum_particle_diameter);
+      this->calculate_insertion_domain_maximum_particle_number(dem_parameters);
 
       // The inserted_this_step value is the mimnum of remained_particles and
       // inserted_this_step
@@ -70,8 +69,7 @@ UniformInsertion<dim>::insert(
       insertion_points.resize(0);
       if (this_mpi_process == 0)
         insertion_points =
-          this->assign_insertion_points(dem_parameters.insertion_info,
-                                        maximum_particle_diameter);
+          this->assign_insertion_points(dem_parameters.insertion_info);
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
@@ -99,8 +97,7 @@ UniformInsertion<dim>::insert(
 template <int dim>
 std::vector<Point<dim>>
 UniformInsertion<dim>::assign_insertion_points(
-  const Parameters::Lagrangian::InsertionInfo &insertion_information,
-  const double &                               maximum_particle_diameter)
+  const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<Point<dim>> insertion_positions;
 
@@ -115,7 +112,7 @@ UniformInsertion<dim>::assign_insertion_points(
           (dim == 3) ? this->number_of_particles_z_direction : 1;
         for (unsigned int k = 0; k < dim_nz; ++k)
           {
-            // We need to check if the number of inserted particles so far at
+            // Check if the number of inserted particles so far at
             // this step reached the total desired number of inserted particles
             // at this step
             if (particle_counter < this->inserted_this_step)
@@ -123,28 +120,26 @@ UniformInsertion<dim>::assign_insertion_points(
                 Point<dim> position;
                 // Obtaning position of the inserted particle
                 position[0] = insertion_information.x_min +
-                              (maximum_particle_diameter / 2) +
+                              (this->maximum_diameter / 2) +
                               (i * insertion_information.distance_threshold *
-                               maximum_particle_diameter);
+                               this->maximum_diameter);
                 position[1] = insertion_information.y_min +
-                              (maximum_particle_diameter / 2) +
+                              (this->maximum_diameter / 2) +
                               (j * insertion_information.distance_threshold *
-                               maximum_particle_diameter);
+                               this->maximum_diameter);
                 // Adding a threshold distance to even rows of insertion
                 if (k % 2 == 0)
                   {
-                    position[0] =
-                      position[0] + (maximum_particle_diameter) / 2.0;
-                    position[1] =
-                      position[1] + (maximum_particle_diameter) / 2.0;
+                    position[0] = position[0] + (this->maximum_diameter) / 2.0;
+                    position[1] = position[1] + (this->maximum_diameter) / 2.0;
                   }
                 if (dim == 3)
                   {
                     position[2] =
                       insertion_information.z_min +
-                      (maximum_particle_diameter / 2) +
+                      (this->maximum_diameter / 2) +
                       (k * insertion_information.distance_threshold *
-                       maximum_particle_diameter);
+                       this->maximum_diameter);
                   }
 
                 insertion_positions.push_back(position);

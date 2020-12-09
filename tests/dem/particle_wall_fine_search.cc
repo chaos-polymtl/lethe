@@ -63,12 +63,12 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining general simulation parameters
-  double             particle_diameter = 0.005;
-  int                particle_density  = 2500;
-  const unsigned int n_properties      = 21;
-  double             dt                = 0.00001;
+  double particle_diameter = 0.005;
+  int    particle_density  = 2500;
+  double dt                = 0.00001;
 
-  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
 
   // Inserting one particle in contact with a wall
   Point<dim>               position1 = {-0.998, 0, 0};

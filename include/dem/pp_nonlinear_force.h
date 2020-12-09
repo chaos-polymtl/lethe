@@ -53,11 +53,11 @@ public:
    * Carries out the calculation of the particle-particle contact force using
    * non-linear (Hertzian) model
    *
-   * @param adjacent_particles Required information for calculation of the
-   * local-local particle-particle contact force, these information were
+   * @param adjacent_particles Required information for the calculation of the
+   * local-local particle-particle contact force. These information were
    * obtained in the fine search
-   * @param ghost_adjacent_particles Required information for calculation of the
-   * local-ghost particle-particle contact force, these information were
+   * @param ghost_adjacent_particles Required information for the calculation of the
+   * local-ghost particle-particle contact force. These information were
    * obtained in the fine search
    * @param dt DEM time-step
    */
@@ -73,7 +73,7 @@ public:
 
 private:
   /**
-   * Carries out the calculation of the particle-particle non-linear contact
+   * @brief Carries out the calculation of the particle-particle non-linear contact
    * force and torques based on the updated values in contact_info
    *
    * @param contact_info A container that contains the required information for
@@ -101,13 +101,19 @@ private:
     Tensor<1, dim> &               tangential_torque,
     Tensor<1, dim> &               rolling_resistance_torque);
 
+  // Contact model parameter. It is calculated in the constructor for different
+  // combinations of particle types. For different combinations, a map of map is
+  // used to store this variable
   std::map<int, std::map<int, double>> model_parameter_beta;
-  Tensor<1, dim>                       normal_unit_vector;
-  Tensor<1, dim>                       normal_force;
-  Tensor<1, dim>                       tangential_force;
-  Tensor<1, dim>                       tangential_torque;
-  Tensor<1, dim>                       rolling_resistance_torque;
-  double                               normal_relative_velocity_value;
+
+  // Normal and tangential contact forces, tangential and rolling torques and
+  // normal unit vector of the contact
+  Tensor<1, dim> normal_unit_vector;
+  Tensor<1, dim> normal_force;
+  Tensor<1, dim> tangential_force;
+  Tensor<1, dim> tangential_torque;
+  Tensor<1, dim> rolling_resistance_torque;
+  double         normal_relative_velocity_value;
 };
 
 #endif

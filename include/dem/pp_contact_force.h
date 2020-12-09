@@ -50,10 +50,10 @@ public:
    * obtained in the fine search and physical properties of particles
    *
    * @param local_adjacent_particles Required information for calculation of the
-   * loacl-local particle-particle contact force, these information were
+   * loacl-local particle-particle contact force. These information were
    * obtained in the fine search
    * @param ghost_adjacent_particles Required information for calculation of the
-   * loacl-ghost particle-particle contact force, these information were
+   * loacl-ghost particle-particle contact force. These information were
    * obtained in the fine search
    * @param dt DEM time step
    */
@@ -69,7 +69,7 @@ public:
 
 protected:
   /**
-   * Carries out updating the contact pair information for both non-linear and
+   * @brief Carries out updating the contact pair information for both non-linear and
    * linear contact force calculations
    *
    * @param adjacent_pair_information Contact information of a particle pair in
@@ -92,7 +92,7 @@ protected:
     const double &                 dt);
 
   /**
-   * Carries out applying the calculated force and torque on the local-local
+   * @brief Carries out applying the calculated force and torque on the local-local
    * particle pair in contact, for both non-linear and linear contact force
    * calculations
    *
@@ -131,8 +131,8 @@ protected:
                                const Tensor<1, dim> &rolling_resistance_torque);
 
   /**
-   * Carries out calculating effective mass and radius of particles i and j in
-   * contact.
+   * Carries out the calculation of effective mass and radius of particles i and
+   * j in contact.
    *
    * @param particle_one_properties Properties of particle one in
    * contact

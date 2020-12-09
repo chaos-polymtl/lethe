@@ -28,7 +28,7 @@ namespace Parameters
       prm.declare_entry("number",
                         "0",
                         Patterns::Integer(),
-                        "Number of particles for this type");
+                        "Number of particles of this type");
       prm.declare_entry("density",
                         "1000",
                         Patterns::Double(),
@@ -77,7 +77,7 @@ namespace Parameters
         }
       else
         {
-          std::runtime_error("Invalid size distribution type");
+          throw(std::runtime_error("Invalid size distribution type "));
         }
       number.at(particle_type)  = prm.get_integer("number");
       density.at(particle_type) = prm.get_double("density");
@@ -219,12 +219,10 @@ namespace Parameters
                             friction_coefficient_particle,
                             rolling_friction_coefficient_particle);
       {
-        gx = prm.get_double("gx");
-        gy = prm.get_double("gy");
+        g[0] = prm.get_double("gx");
+        g[1] = prm.get_double("gy");
         if (dim == 3)
-          {
-            gz = prm.get_double("gz");
-          }
+          g[2] = prm.get_double("gz");
 
         particle_type_number = prm.get_integer("number of particle types");
 
@@ -268,46 +266,7 @@ namespace Parameters
             }
             prm.leave_subsection();
           }
-        if (particle_type_number >= 6)
-          {
-            prm.enter_subsection("particle type 5");
-            {
-              parse_particle_properties(5, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 7)
-          {
-            prm.enter_subsection("particle type 6");
-            {
-              parse_particle_properties(6, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 8)
-          {
-            prm.enter_subsection("particle type 7");
-            {
-              parse_particle_properties(7, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 9)
-          {
-            prm.enter_subsection("particle type 8");
-            {
-              parse_particle_properties(8, prm);
-            }
-            prm.leave_subsection();
-          }
-        if (particle_type_number >= 10)
-          {
-            prm.enter_subsection("particle type 9");
-            {
-              parse_particle_properties(9, prm);
-            }
-            prm.leave_subsection();
-          }
+
 
         youngs_modulus_wall = prm.get_double("young modulus wall");
         poisson_ratio_wall  = prm.get_double("poisson ratio wall");
@@ -417,7 +376,7 @@ namespace Parameters
           insertion_method = InsertionMethod::non_uniform;
         else
           {
-            std::runtime_error("Invalid insertion method");
+            throw(std::runtime_error("Invalid insertion method "));
           }
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
@@ -512,7 +471,7 @@ namespace Parameters
           }
         else
           {
-            std::runtime_error("Invalid insertion method");
+            throw(std::runtime_error("Invalid insertion method "));
           }
         neighborhood_threshold = prm.get_double("neighborhood threshold");
 
@@ -524,7 +483,8 @@ namespace Parameters
           pp_contact_force_method = PPContactForceModel::pp_nonlinear;
         else
           {
-            std::runtime_error("Invalid particle-particle contact force model");
+            throw(std::runtime_error(
+              "Invalid particle-particle contact force model "));
           }
 
         const std::string pwcf = prm.get("particle wall contact force method");
@@ -534,7 +494,8 @@ namespace Parameters
           pw_contact_force_method = PWContactForceModel::pw_nonlinear;
         else
           {
-            std::runtime_error("Invalid particle-wall contact force model");
+            throw(
+              std::runtime_error("Invalid particle-wall contact force model "));
           }
 
         const std::string integration = prm.get("integration method");
@@ -544,7 +505,7 @@ namespace Parameters
           integration_method = IntegrationMethod::explicit_euler;
         else
           {
-            std::runtime_error("Invalid integration method");
+            throw(std::runtime_error("Invalid integration method "));
           }
       }
       prm.leave_subsection();
@@ -842,7 +803,7 @@ namespace Parameters
         }
       else
         {
-          std::runtime_error("Invalid boundary motion type");
+          throw(std::runtime_error("Invalid boundary motion type "));
         }
     }
 
