@@ -121,6 +121,15 @@ private:
                       const bool   renewed_matrix);
 
   /**
+   * TFQMR solver with ILU preconditioner
+   */
+  void
+  solve_system_TFQMR(const bool   initial_step,
+                     const double absolute_residual,
+                     const double relative_residual,
+                     const bool   renewed_matrix);
+
+  /**
    * Set-up AMG preconditioner
    */
   void
