@@ -533,7 +533,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
               if (is_sdirk_step1(scheme))
                 strong_residual += sdirk_coefs[0][0] * velocity +
-                                   sdirk_coefs[0][1] * p1_velocity_values[q];
+                                   sdirk_coefs[0][1] * p1_velocity;
 
               if (is_sdirk_step2(scheme))
                 {
