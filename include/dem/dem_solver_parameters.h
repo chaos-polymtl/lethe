@@ -31,21 +31,23 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                                mesh;
-  Parameters::Testing                             test;
-  Parameters::Timer                               timer;
-  Parameters::SimulationControl                   simulation_control;
-  Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
-  Parameters::Lagrangian::InsertionInfo           insertion_info;
-  Parameters::Lagrangian::ModelParameters         model_parameters;
-  Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
-  Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
+  Parameters::Mesh                            mesh;
+  Parameters::Testing                         test;
+  Parameters::Restart                         restart;
+  Parameters::Timer                           timer;
+  Parameters::SimulationControl               simulation_control;
+  Parameters::Lagrangian::PhysicalProperties  physical_properties;
+  Parameters::Lagrangian::InsertionInfo       insertion_info;
+  Parameters::Lagrangian::ModelParameters     model_parameters;
+  Parameters::Lagrangian::FloatingWalls<dim>  floating_walls;
+  Parameters::Lagrangian::BoundaryMotion<dim> boundary_motion;
 
   void
   declare(ParameterHandler &prm)
   {
     Parameters::SimulationControl::declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
+    Parameters::Restart::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
     physical_properties.declare_parameters(prm);
@@ -60,6 +62,7 @@ public:
   {
     mesh.parse_parameters(prm);
     test.parse_parameters(prm);
+    restart.parse_parameters(prm);
     timer.parse_parameters(prm);
     physical_properties.parse_parameters(prm);
     insertion_info.parse_parameters(prm);
