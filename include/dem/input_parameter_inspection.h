@@ -31,7 +31,9 @@ using namespace std;
  *
  * @param dem_parameters Input DEM parameters in the parameter handler file
  * @param pcout Printing in parallel
- * @param standard_deviation_multiplier Constant standard deviation multiplier. It is defined in the dem constructor and it is equal to 2.5 to cover 99% of the particle size distribution
+ * @param standard_deviation_multiplier Constant standard deviation multiplier.
+ * It is defined in the dem constructor and it is equal to 2.5 to cover 99% of
+ * the particle size distribution
  *
  */
 

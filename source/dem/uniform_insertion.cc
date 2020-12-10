@@ -20,8 +20,6 @@ UniformInsertion<dim>::UniformInsertion(
   this->inserted_this_step = 0;
 
   this->maximum_diameter = maximum_particle_diameter;
-
-  this->calculate_insertion_domain_maximum_particle_number(dem_parameters);
 }
 
 // The main insertion function. Insert_global_function is used to insert the

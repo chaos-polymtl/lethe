@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 1e-5
-  set time end       					 = 0.2
+  set time end       					 = 0.1
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -48,7 +48,7 @@ subsection physical properties
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
     		set number				= 200
-    		set density            	 		= 2000
+    		set density            	 		= 1000
     		set young modulus particle         	= 1000000
     		set poisson ratio particle          	= 0.3
     		set restitution coefficient particle	= 0.3
@@ -68,13 +68,13 @@ end
 subsection insertion info
     set insertion method				= non_uniform
     set inserted number of particles at each time step  = 200
-    set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= -0.05
-    set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.06
-    set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = -0.02
+    set insertion frequency            		 	= 2000000
+    set insertion box minimum x            	 	= -0.034
+    set insertion box minimum y            	        = -0.034
+    set insertion box minimum z            	        = -0.034
+    set insertion box maximum x            	        = 0.034
+    set insertion box maximum y           	 	= 0.034
+    set insertion box maximum z            	        = -0.01
     set insertion distance threshold			= 1.5
     set insertion random number range			= 0.75
     set insertion random number seed			= 19
@@ -86,6 +86,6 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type            				= hyper_cube
-    set grid arguments       				= -0.07 : 0.07 : false
+    set grid arguments       				= -0.04 : 0.04 : false
     set initial refinement   				= 3
 end

@@ -15,8 +15,8 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		 = dynamic
-  set dynamic contact search size coefficient	 	 = 0.8
-  set neighborhood threshold				 = 2
+  set dynamic contact search size coefficient	 	 = 0.75
+  set neighborhood threshold				 = 1.5
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
   set integration method				 = velocity_verlet
@@ -29,18 +29,23 @@ subsection physical properties
     set gx            		 			= 0.0
     set gy            		 			= 0.0
     set gz            		 			= -9.81
-    set diameter            	 			= 0.003
-    set density            	 			= 2000
-    set young modulus particle         			= 1000000
+    set number of particle types	                = 1
+    	subsection particle type 0
+		set size distribution type		= uniform
+    		set diameter            	 	= 0.003
+		set number				= 10000
+    		set density            	 		= 2000
+    		set young modulus particle         	= 1000000
+    		set poisson ratio particle          	= 0.3
+    		set restitution coefficient particle	= 0.7
+    		set friction coefficient particle       = 0.2
+    		set rolling friction particle         	= 0.02
+	end
     set young modulus wall            			= 1000000
-    set poisson ratio particle          		= 0.3
     set poisson ratio wall            			= 0.3
-    set restitution coefficient particle		= 0.95
-    set restitution coefficient wall           		= 0.95
-    set friction coefficient particle         		= 0.05
-    set friction coefficient wall         		= 0.05
-    set rolling friction particle         		= 0.1
-    set rolling friction wall         	      	  	= 0.1
+    set restitution coefficient wall           		= 0.7
+    set friction coefficient wall         		= 0.2
+    set rolling friction wall         	      	  	= 0.02
 end
 
 #---------------------------------------------------
@@ -48,17 +53,16 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 10000
     set inserted number of particles at each time step  = 10000
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.01
     set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.03
+    set insertion box minimum z            	        = -0.04
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
     set insertion box maximum z            	        = 0.07
-    set insertion distance threshold			= 1.4
-    set insertion random number range			= 0.75
+    set insertion distance threshold			= 1.6
+    set insertion random number range			= 0.2
     set insertion random number seed			= 19
 end
 
@@ -80,7 +84,7 @@ subsection boundary motion
     subsection moving boundary 0
         set boundary id					= 4
         set type              				= rotational
-        set rotational speed				= 5
+        set rotational speed				= 10
         set rotational vector x				= 1
         set rotational vector y				= 0
         set rotational vector z				= 0
