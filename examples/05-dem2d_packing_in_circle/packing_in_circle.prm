@@ -4,10 +4,10 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 			 = 1e-5
+  set time step                 			 = 1e-6
   set time end       					 = 1
-  set log frequency				         = 1000
-  set output frequency            			 = 1000
+  set log frequency				         = 10000
+  set output frequency            			 = 10000
 end
 
 # --------------------------------------------------
@@ -28,17 +28,22 @@ end
 subsection physical properties
     set gx            		 			= 0.0
     set gy            		 			= -9.81
-    set diameter            	 			= 0.005
-    set density            	 			= 2000
-    set young modulus particle         			= 1000000
-    set young modulus wall            			= 1000000
-    set poisson ratio particle          		= 0.3
+    set number of particle types	                = 1
+    	subsection particle type 0
+		set size distribution type		= uniform
+    		set diameter            	 	= 0.005
+		set number				= 150
+    		set density            	 		= 2000
+    		set young modulus particle         	= 100000000
+    		set poisson ratio particle          	= 0.3
+    		set restitution coefficient particle	= 0.9
+    		set friction coefficient particle       = 0.05
+    		set rolling friction particle         	= 0.1
+	end
+    set young modulus wall            			= 100000000
     set poisson ratio wall            			= 0.3
-    set restitution coefficient particle		= 0.95
-    set restitution coefficient wall           		= 0.95
-    set friction coefficient particle         		= 0.05
+    set restitution coefficient wall           		= 0.9
     set friction coefficient wall         		= 0.05
-    set rolling friction particle         		= 0.1
     set rolling friction wall         	      	  	= 0.1
 end
 
@@ -47,9 +52,8 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set n total              				= 150
     set inserted number of particles at each time step  = 50
-    set insertion frequency            		 	= 20000
+    set insertion frequency            		 	= 200000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
     set insertion box maximum x            	        = 0.05
