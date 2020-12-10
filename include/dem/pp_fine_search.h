@@ -22,6 +22,8 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 
+#include <boost/range/adaptor/map.hpp>
+
 #include <dem/dem_properties.h>
 #include <dem/pp_contact_info_struct.h>
 

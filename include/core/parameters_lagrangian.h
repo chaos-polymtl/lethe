@@ -20,39 +20,89 @@ namespace Parameters
 {
   namespace Lagrangian
   {
-    struct PhysicalProperties
+    template <int dim>
+    class PhysicalProperties
     {
+    public:
       // Gravitational acceleration
-      double gx, gy, gz;
+      Tensor<1, dim> g;
 
-      // Particle diameter and density
-      double diameter;
-      double density;
+      // Choosing integration method
+      enum class size_distribution_type
+      {
+        uniform,
+        normal
+      } size_distribution_type;
 
-      // Young's modulus of particle and wall
-      double youngs_modulus_particle;
+      // Number of particle types
+      unsigned int particle_type_number;
+
+      // Average diameter of each particle type
+      std::unordered_map<int, double> particle_average_diameter;
+
+      // Size standard deviation of each particle type
+      std::unordered_map<int, double> particle_size_std;
+
+      // Number of each particle type
+      std::unordered_map<int, int> number;
+
+      // Density of each particle type
+      std::unordered_map<int, double> density;
+
+      // Young's modulus of each particle type
+      std::unordered_map<int, double> youngs_modulus_particle;
+
+      // Poisson's ratio of each particle type
+      std::unordered_map<int, double> poisson_ratio_particle;
+
+      // Coefficients of restituion of each particle type
+      std::unordered_map<int, double> restitution_coefficient_particle;
+
+      // Friction coefficient of each particle type
+      std::unordered_map<int, double> friction_coefficient_particle;
+
+      // Rolling friction coefficient of each particle type
+      std::unordered_map<int, double> rolling_friction_coefficient_particle;
+
+      // Young's modulus of wall
       double youngs_modulus_wall;
 
-      // Poisson's ratios of particle and wall
-      double poisson_ratio_particle;
+      // Poisson's ratio of wall
       double poisson_ratio_wall;
 
-      // Coefficients of restituion of particle and wall
-      double restitution_coefficient_particle;
+      // Coefficient of restituion of wall
       double restitution_coefficient_wall;
 
-      // Friction coefficients of particle and wall
-      double friction_coefficient_particle;
+      // Friction coefficient of wall
       double friction_coefficient_wall;
 
-      // Rollinrg friction coefficients of particle and wall
-      double rolling_friction_particle;
+      // Rolling friction coefficient wall
       double rolling_friction_wall;
 
-      static void
+      void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);
+      void
+      declareDefaultEntry(ParameterHandler &prm);
+      void
+      parse_particle_properties(const unsigned int &particle_type,
+                                ParameterHandler &  prm);
+
+    private:
+      unsigned int particle_type_maximum_number = 5;
+
+      void
+      initialize_containers(
+        std::unordered_map<int, double> &particle_average_diameter,
+        std::unordered_map<int, double> &particle_size_std,
+        std::unordered_map<int, int> &   number,
+        std::unordered_map<int, double> &density,
+        std::unordered_map<int, double> &youngs_modulus_particle,
+        std::unordered_map<int, double> &poisson_ratio_particle,
+        std::unordered_map<int, double> &restitution_coefficient_particle,
+        std::unordered_map<int, double> &friction_coefficient_particle,
+        std::unordered_map<int, double> &rolling_friction_coefficient_particle);
     };
 
     struct InsertionInfo
@@ -63,9 +113,6 @@ namespace Parameters
         uniform,
         non_uniform
       } insertion_method;
-
-      // Total number of particles
-      unsigned int total_particle_number;
 
       // Inserted number of particles at each time step
       int inserted_this_step;
@@ -175,6 +222,13 @@ namespace Parameters
     public:
       // Number of moving boundaries
       unsigned int moving_boundary_number;
+
+      // Choosing integration method
+      enum class motion_type
+      {
+        translational,
+        rotational
+      } motion_type;
 
       // Translational velocities of moving boundaries
       std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity;

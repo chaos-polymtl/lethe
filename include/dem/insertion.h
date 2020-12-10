@@ -39,6 +39,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <string>
 
 using namespace dealii;
@@ -78,10 +79,12 @@ protected:
    * at each insertion step.
    * @param remained_particles Number of remained particles going to be inserted
    * in future insertions
+   * @param particle_type Inserted particle type
    */
   void
-  print_insertion_info(const unsigned int inserted_this_step,
-                       const unsigned int remained_particles);
+  print_insertion_info(const unsigned int &inserted_this_step,
+                       const unsigned int &remained_particles,
+                       const unsigned int &particle_type);
 
   /**
    * Carries out assigning the properties of inserted particles.
@@ -90,18 +93,72 @@ protected:
    * @param inserted_this_step Number of particles that are inserted
    * at each insertion step. This value can change in the last insertion step to
    * reach the desired number of particles
+   * @param current_inserting_particle_type Type of inserting particles
+   * @param particle_propertis Properties of all inserted particles at each insertion step
    */
-  std::vector<std::vector<double>>
-  assign_particle_properties(const DEMSolverParameters<dim> &dem_parameters,
-                             const unsigned int &inserted_this_step);
+  void
+  assign_particle_properties(
+    const DEMSolverParameters<dim> &  dem_parameters,
+    const unsigned int &              inserted_this_step,
+    const unsigned int &              current_inserting_particle_type,
+    std::vector<std::vector<double>> &particle_properties);
 
   /**
    * Carries out finding the insertion points of inserted particles.
    *
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param insertion_information DEM insertion parameters declared in the .prm
+   * file
    */
   virtual std::vector<Point<dim>>
-  assign_insertion_points(const DEMSolverParameters<dim> &dem_parameters) = 0;
+  assign_insertion_points(
+    const Parameters::Lagrangian::InsertionInfo &insertion_information) = 0;
+
+  /**
+   * @brief Carries out finding the maximum number of inserted particles based on the
+   * insertion box size. If the requested number of particles for insertion in
+   * each insertion step is larger than this maximum, it is limited to this
+   * value and a warning is printed.
+   *
+   * @param dem_parameters DEM parameters declared in the .prm file
+   */
+  void
+  calculate_insertion_domain_maximum_particle_number(
+    const DEMSolverParameters<dim> &dem_parameters);
+
+  // Number of particles that is going to be inserted at each insetion step.This
+  // value can change in the last insertion step to reach the desired number of
+  // particles
+  unsigned int inserted_this_step;
+
+  //  Number of insertion points in the x, y and z directions, respectively
+  unsigned int number_of_particles_x_direction;
+  unsigned int number_of_particles_y_direction;
+  unsigned int number_of_particles_z_direction;
+
+  // Maximum particle diameter
+  double maximum_diameter;
+
+  // A vector of vectors, which contains all the properties of all inserted
+  // particles at each insertion step
+  std::vector<std::vector<double>> particle_properties;
+
+private:
+  /**
+   * Carries out sampling from specified distributions for particle size.
+   *
+   * @param particle_sizes A vector containing size of particles sampled from
+   * specified size distribution
+   * @param average Average diameter of particles
+   * @param standard_deviation Standard deviation of particle diameter
+   * @param particle_number Number of particles
+   */
+  void
+  particle_size_sampling(std::vector<double> &particle_sizes,
+                         const double &       average,
+                         const double &       standard_deviation,
+                         const double &       particle_number);
+
+  std::vector<double> particle_sizes;
 };
 
 #endif /* insertion_h */

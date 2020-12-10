@@ -66,24 +66,24 @@ test()
   MappingQ<dim>            mapping(1);
   DEMSolverParameters<dim> dem_parameters;
 
-  const unsigned int n_properties = 21;
-
   // Defining general simulation parameters
   Tensor<1, dim> g{{0, 0, -9.81}};
-  double         dt                                          = 0.00001;
-  double         particle_diameter                           = 0.005;
-  int            particle_density                            = 2500;
-  unsigned int   rotating_wall_maximum_number                = 6;
-  dem_parameters.physical_properties.youngs_modulus_particle = 50000000;
-  dem_parameters.physical_properties.youngs_modulus_wall     = 50000000;
-  dem_parameters.physical_properties.poisson_ratio_particle  = 0.3;
-  dem_parameters.physical_properties.poisson_ratio_wall      = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle = 0.5;
-  dem_parameters.physical_properties.restitution_coefficient_wall     = 0.5;
-  dem_parameters.physical_properties.friction_coefficient_particle    = 0.5;
-  dem_parameters.physical_properties.friction_coefficient_wall        = 0.5;
-  dem_parameters.physical_properties.rolling_friction_particle        = 0.1;
-  dem_parameters.physical_properties.rolling_friction_wall            = 0.1;
+  double         dt                                             = 0.00001;
+  double         particle_diameter                              = 0.005;
+  int            particle_density                               = 2500;
+  unsigned int   rotating_wall_maximum_number                   = 6;
+  dem_parameters.physical_properties.particle_type_number       = 1;
+  dem_parameters.physical_properties.youngs_modulus_particle[0] = 50000000;
+  dem_parameters.physical_properties.youngs_modulus_wall        = 50000000;
+  dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
+  dem_parameters.physical_properties.poisson_ratio_wall         = 0.3;
+  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.5;
+  dem_parameters.physical_properties.restitution_coefficient_wall        = 0.5;
+  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.5;
+  dem_parameters.physical_properties.friction_coefficient_wall           = 0.5;
+  dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
+    0.1;
+  dem_parameters.physical_properties.rolling_friction_wall = 0.1;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;
@@ -102,7 +102,8 @@ test()
         {counter, translational_and_rotational_veclocity});
     }
 
-  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
 
   // Inserting one particle in contact with a wall
   Point<dim>               position1 = {-0.998, 0, 0};
@@ -112,7 +113,7 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
   pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0.01;
@@ -161,10 +162,9 @@ test()
     dem_parameters.boundary_motion.boundary_translational_velocity,
     dem_parameters.boundary_motion.boundary_rotational_speed,
     dem_parameters.boundary_motion.boundary_rotational_vector,
-    grid_radius);
-  force_object.calculate_pw_contact_force(&pw_contact_information,
-                                          dem_parameters.physical_properties,
-                                          dt);
+    grid_radius,
+    dem_parameters);
+  force_object.calculate_pw_contact_force(pw_contact_information, dt);
 
   // Output
   auto particle = particle_handler.begin();

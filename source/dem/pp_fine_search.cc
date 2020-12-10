@@ -21,18 +21,15 @@ PPFineSearch<dim>::particle_particle_fine_search(
   const double neighborhood_threshold)
 {
   // First iterating over local adjacent_particles
-  for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
-       adjacent_particles_iterator != local_adjacent_particles.end();
-       ++adjacent_particles_iterator)
-    {
-      // Each element of adjacent_particles is a map:
-      auto adjacent_particles_list = &adjacent_particles_iterator->second;
+  for (auto &&adjacent_particles_list :
+       local_adjacent_particles | boost::adaptors::map_values)
 
+    {
       // Iterating over each map which contains the contact information
       // including particles I and II
       for (auto adjacent_particles_list_iterator =
-             adjacent_particles_list->begin();
-           adjacent_particles_list_iterator != adjacent_particles_list->end();)
+             adjacent_particles_list.begin();
+           adjacent_particles_list_iterator != adjacent_particles_list.end();)
         {
           // Getting contact information and particles I and II as local
           // variables
@@ -52,8 +49,7 @@ PPFineSearch<dim>::particle_particle_fine_search(
             particle_one_location.distance_square(particle_two_location);
           if (square_distance > neighborhood_threshold)
             {
-              adjacent_particles_list->erase(
-                adjacent_particles_list_iterator++);
+              adjacent_particles_list.erase(adjacent_particles_list_iterator++);
             }
           else
             {
@@ -65,20 +61,13 @@ PPFineSearch<dim>::particle_particle_fine_search(
   // Now iterating over local_contact_pair_candidates (maps of pairs), which
   // is the output of broad search. If a pair is in vicinity (distance <
   // threshold), it is added to the local_adjacent_particles
-  for (auto candidate_iterator = local_contact_pair_candidates.begin();
-       candidate_iterator != local_contact_pair_candidates.end();
-       ++candidate_iterator)
+  for (auto const &[particle_one_id, second_particle_container] :
+       local_contact_pair_candidates)
     {
-      unsigned int particle_one_id           = candidate_iterator->first;
-      auto         second_particle_container = &candidate_iterator->second;
-      auto         particle_one = particle_container[particle_one_id];
+      auto particle_one = particle_container[particle_one_id];
 
-      for (auto second_particle_iterator = second_particle_container->begin();
-           second_particle_iterator != second_particle_container->end();
-           ++second_particle_iterator)
+      for (const unsigned int &particle_two_id : second_particle_container)
         {
-          unsigned int particle_two_id = *second_particle_iterator;
-
           auto particle_two = particle_container[particle_two_id];
 
           // Obtaining locations of particles one and two:
@@ -117,18 +106,14 @@ PPFineSearch<dim>::particle_particle_fine_search(
     }
 
   // Second iterating over local-ghost adjacent_particles
-  for (auto adjacent_particles_iterator = ghost_adjacent_particles.begin();
-       adjacent_particles_iterator != ghost_adjacent_particles.end();
-       ++adjacent_particles_iterator)
+  for (auto &&adjacent_particles_list :
+       ghost_adjacent_particles | boost::adaptors::map_values)
     {
-      // Each element of adjacent_particles is a map:
-      auto adjacent_particles_list = &adjacent_particles_iterator->second;
-
       // Iterating over each map which contains the contact information
       // including particles I and II
       for (auto adjacent_particles_list_iterator =
-             adjacent_particles_list->begin();
-           adjacent_particles_list_iterator != adjacent_particles_list->end();)
+             adjacent_particles_list.begin();
+           adjacent_particles_list_iterator != adjacent_particles_list.end();)
         {
           // Getting contact information and particles I and II as local
           // variables
@@ -148,8 +133,7 @@ PPFineSearch<dim>::particle_particle_fine_search(
             particle_one_location.distance_square(particle_two_location);
           if (square_distance > neighborhood_threshold)
             {
-              adjacent_particles_list->erase(
-                adjacent_particles_list_iterator++);
+              adjacent_particles_list.erase(adjacent_particles_list_iterator++);
             }
           else
             {
@@ -161,21 +145,13 @@ PPFineSearch<dim>::particle_particle_fine_search(
   // Now iterating over ghost_contact_pair_candidates (map of pairs), which
   // is the output of broad search. If a pair is in vicinity (distance <
   // threshold), it is added to the ghost_adjacent_particles
-  for (auto candidate_iterator = ghost_contact_pair_candidates.begin();
-       candidate_iterator != ghost_contact_pair_candidates.end();
-       ++candidate_iterator)
+  for (auto const &[particle_one_id, second_particle_container] :
+       ghost_contact_pair_candidates)
     {
-      unsigned int particle_one_id           = candidate_iterator->first;
-      auto         second_particle_container = &candidate_iterator->second;
-
       auto particle_one = particle_container[particle_one_id];
 
-      for (auto second_particle_iterator = second_particle_container->begin();
-           second_particle_iterator != second_particle_container->end();
-           ++second_particle_iterator)
+      for (const unsigned int &particle_two_id : second_particle_container)
         {
-          unsigned int particle_two_id = *second_particle_iterator;
-
           auto particle_two = particle_container[particle_two_id];
 
           // Obtaining locations of particles one and two:
@@ -195,7 +171,6 @@ PPFineSearch<dim>::particle_particle_fine_search(
               auto particle_one_contact_list =
                 &ghost_adjacent_particles[particle_one->get_id()];
               unsigned int particle_two_id = particle_two->get_id();
-              ;
 
               Tensor<1, dim> tangential_overlap;
               for (int d = 0; d < dim; ++d)

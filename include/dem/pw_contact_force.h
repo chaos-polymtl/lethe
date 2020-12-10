@@ -16,6 +16,7 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
+#include <boost/range/adaptor/map.hpp>
 
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
@@ -46,18 +47,15 @@ public:
    * contact pair information obtained from the particle-wall fine search and
    * physical properties of particles and walls
    *
-   * @param pw_pairs_in_contact Required information for calculation of the
+   * @param pw_pairs_in_contact Required information for the calculation of the
    * particle-wall contact force
-   * @param physical_properties DEM physical properties declared in the .prm
-   * file
    * @param dt DEM time step
    */
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      *                                               pw_pairs_in_contact,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) = 0;
+      &           pw_pairs_in_contact,
+    const double &dt) = 0;
 
 protected:
   /**
@@ -80,8 +78,7 @@ protected:
    * particle pair in contact, for both non-linear and linear contact force
    * calculations
    *
-   * @param particle_one_properties Properties of particle one in contact
-   * @param particle_two_properties Properties of particle two in contact
+   * @param particle_properties Properties of particle in contact with wall
    * @param forces_and_torques A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
@@ -103,10 +100,17 @@ protected:
   find_projection(const Tensor<1, dim> &vector_a,
                   const Tensor<1, dim> &vector_b);
 
+  double                                  triangulation_radius;
+  double                                  effective_radius;
+  double                                  effective_mass;
   std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity_map;
   std::unordered_map<int, double>         boundary_rotational_speed_map;
   std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
-  double                                  triangulation_radius;
+  std::map<int, double>                   effective_youngs_modulus;
+  std::map<int, double>                   effective_shear_modulus;
+  std::map<int, double>                   effective_coefficient_of_restitution;
+  std::map<int, double>                   effective_coefficient_of_friction;
+  std::map<int, double> effective_coefficient_of_rolling_friction;
 };
 
 #endif /* particle_wall_contact_force_h */
