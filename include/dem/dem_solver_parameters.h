@@ -31,16 +31,16 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                            mesh;
-  Parameters::Testing                         test;
-  Parameters::Restart                         restart;
-  Parameters::Timer                           timer;
-  Parameters::SimulationControl               simulation_control;
-  Parameters::Lagrangian::PhysicalProperties  physical_properties;
-  Parameters::Lagrangian::InsertionInfo       insertion_info;
-  Parameters::Lagrangian::ModelParameters     model_parameters;
-  Parameters::Lagrangian::FloatingWalls<dim>  floating_walls;
-  Parameters::Lagrangian::BoundaryMotion<dim> boundary_motion;
+  Parameters::Mesh                                mesh;
+  Parameters::Testing                             test;
+  Parameters::Restart                             restart;
+  Parameters::Timer                               timer;
+  Parameters::SimulationControl                   simulation_control;
+  Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
+  Parameters::Lagrangian::InsertionInfo           insertion_info;
+  Parameters::Lagrangian::ModelParameters         model_parameters;
+  Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
+  Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
 
   void
   declare(ParameterHandler &prm)

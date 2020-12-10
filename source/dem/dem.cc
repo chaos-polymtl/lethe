@@ -318,18 +318,6 @@ DEMSolver<dim>::read_checkpoint()
 
 template <int dim>
 void
-DEMSolver<dim>::set_body_force()
-{
-  g[0] = physical_properties.gx;
-  g[1] = physical_properties.gy;
-  if (dim == 3)
-    {
-      g[2] = physical_properties.gz;
-    }
-}
-
-template <int dim>
-void
 DEMSolver<dim>::setup_background_dofs()
 {
   FE_Q<dim> background_fe(1);
@@ -689,9 +677,6 @@ DEMSolver<dim>::solve()
 
   if (parameters.restart.restart == true)
     read_checkpoint();
-
-  // Initialize DEM body force
-  set_body_force();
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
