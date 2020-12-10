@@ -16,7 +16,6 @@
  *
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
-
 #include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -42,15 +41,11 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(0)
-  , neighborhood_threshold_squared(
-      std::pow(parameters.model_parameters.neighborhood_threshold *
-                 parameters.physical_properties.diameter,
-               2))
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , repartition_frequency(parameters.model_parameters.repartition_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
-  , physical_properties(parameters.physical_properties)
+  , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
 {
   // Change the behavior of the timer for situations when you don't want outputs
@@ -109,9 +104,19 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     }
 
   // Calling input_parameter_inspection to evaluate input parameters in the
-  // parameter handler file
+  // parameter handler file, finding maximum particle diameter used in
+  // polydisperse systems
+  maximum_particle_diameter =
+    find_maximum_particle_size(parameters.physical_properties,
+                               standard_deviation_multiplier);
+  neighborhood_threshold_squared =
+    std::pow(parameters.model_parameters.neighborhood_threshold *
+               maximum_particle_diameter,
+             2);
   if (this_mpi_process == 0)
-    input_parameter_inspection(parameters);
+    input_parameter_inspection(parameters,
+                               pcout,
+                               standard_deviation_multiplier);
 }
 
 template <int dim>
@@ -220,18 +225,6 @@ DEMSolver<dim>::read_mesh()
     {
       const int initial_refinement = parameters.mesh.initial_refinement;
       triangulation.refine_global(initial_refinement);
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::set_body_force()
-{
-  g[0] = physical_properties.gx;
-  g[1] = physical_properties.gy;
-  if (dim == 3)
-    {
-      g[2] = physical_properties.gz;
     }
 }
 
@@ -369,28 +362,24 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    &pw_pairs_in_contact,
-    physical_properties,
-    simulation_control->get_time_step());
+    pw_pairs_in_contact, simulation_control->get_time_step());
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(
-        &pfw_pairs_in_contact,
-        physical_properties,
-        simulation_control->get_time_step());
+        pfw_pairs_in_contact, simulation_control->get_time_step());
     }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            physical_properties);
+                                            parameters.physical_properties);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               physical_properties);
+                                               parameters.physical_properties);
     }
 }
 
@@ -429,12 +418,16 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
   if (parameters.insertion_info.insertion_method ==
       Parameters::Lagrangian::InsertionInfo::InsertionMethod::uniform)
     {
-      insertion_object = std::make_shared<UniformInsertion<dim>>(parameters);
+      insertion_object =
+        std::make_shared<UniformInsertion<dim>>(parameters,
+                                                maximum_particle_diameter);
     }
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform)
     {
-      insertion_object = std::make_shared<NonUniformInsertion<dim>>(parameters);
+      insertion_object =
+        std::make_shared<NonUniformInsertion<dim>>(parameters,
+                                                   maximum_particle_diameter);
     }
   else
     {
@@ -473,13 +466,15 @@ DEMSolver<dim>::set_pp_contact_force(const DEMSolverParameters<dim> &parameters)
   if (parameters.model_parameters.pp_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PPContactForceModel::pp_linear)
     {
-      pp_contact_force_object = std::make_shared<PPLinearForce<dim>>();
+      pp_contact_force_object =
+        std::make_shared<PPLinearForce<dim>>(parameters);
     }
   else if (parameters.model_parameters.pp_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PPContactForceModel::
              pp_nonlinear)
     {
-      pp_contact_force_object = std::make_shared<PPNonLinearForce<dim>>();
+      pp_contact_force_object =
+        std::make_shared<PPNonLinearForce<dim>>(parameters);
     }
   else
     {
@@ -499,7 +494,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_cell_diameter);
+        triangulation_cell_diameter,
+        parameters);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -509,7 +505,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_translational_velocity,
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
-        triangulation_cell_diameter);
+        triangulation_cell_diameter,
+        parameters);
     }
   else
     {
@@ -590,9 +587,6 @@ DEMSolver<dim>::solve()
   // Reading mesh
   read_mesh();
 
-  // Initialize DEM body force
-  set_body_force();
-
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
   // diamater
@@ -600,10 +594,10 @@ DEMSolver<dim>::solve()
   // find_contact_detection_frequency function
   smallest_contact_search_criterion =
     std::min((GridTools::minimal_cell_diameter(triangulation) -
-              parameters.physical_properties.diameter * 0.5),
+              maximum_particle_diameter * 0.5),
              (parameters.model_parameters.dynamic_contact_search_factor *
               (parameters.model_parameters.neighborhood_threshold - 1) *
-              parameters.physical_properties.diameter * 0.5));
+              maximum_particle_diameter * 0.5));
 
   // Finding cell neighbors
   cell_neighbors_object.find_cell_neighbors(triangulation,
@@ -623,14 +617,14 @@ DEMSolver<dim>::solve()
     {
       simulation_control->print_progression(pcout);
 
+      // Keep track if particles were inserted this step
+      bool particles_insertion_step = insert_particles();
+
       // Load balancing
       bool load_balancing_step = load_balance();
 
       // Check to see if it is contact search step
       bool contact_search_step = (this->*check_contact_search_step)();
-
-      // Keep track if particles were inserted this step
-      bool particles_insertion_step = insert_particles();
 
       // Sort particles in cells
       if (particles_insertion_step || load_balancing_step ||
@@ -714,9 +708,8 @@ DEMSolver<dim>::solve()
 
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
-        &local_adjacent_particles,
-        &ghost_adjacent_particles,
-        physical_properties,
+        local_adjacent_particles,
+        ghost_adjacent_particles,
         simulation_control->get_time_step());
 
       // Particles-walls contact force:
@@ -724,7 +717,7 @@ DEMSolver<dim>::solve()
 
       // Integration
       integrator_object->integrate(particle_handler,
-                                   g,
+                                   parameters.physical_properties.g,
                                    simulation_control->get_time_step());
 
       // Visualization

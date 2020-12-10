@@ -58,24 +58,28 @@ test()
   DEMSolverParameters<dim> dem_parameters;
 
   // Defining simulation general parameters
-  const unsigned int n_properties                     = 21;
-  dem_parameters.insertion_info.x_min                 = -0.05;
-  dem_parameters.insertion_info.y_min                 = -0.05;
-  dem_parameters.insertion_info.z_min                 = -0.05;
-  dem_parameters.insertion_info.x_max                 = 0.05;
-  dem_parameters.insertion_info.y_max                 = 0.05;
-  dem_parameters.insertion_info.z_max                 = 0.05;
-  dem_parameters.insertion_info.inserted_this_step    = 10;
-  dem_parameters.insertion_info.distance_threshold    = 2;
-  dem_parameters.physical_properties.diameter         = 0.005;
-  dem_parameters.physical_properties.density          = 2500;
-  dem_parameters.insertion_info.total_particle_number = 10;
+  dem_parameters.insertion_info.x_min                             = -0.05;
+  dem_parameters.insertion_info.y_min                             = -0.05;
+  dem_parameters.insertion_info.z_min                             = -0.05;
+  dem_parameters.insertion_info.x_max                             = 0.05;
+  dem_parameters.insertion_info.y_max                             = 0.05;
+  dem_parameters.insertion_info.z_max                             = 0.05;
+  dem_parameters.insertion_info.inserted_this_step                = 10;
+  dem_parameters.insertion_info.distance_threshold                = 2;
+  dem_parameters.physical_properties.particle_type_number         = 1;
+  dem_parameters.physical_properties.particle_average_diameter[0] = 0.005;
+  dem_parameters.physical_properties.particle_size_std[0]         = 0;
+  dem_parameters.physical_properties.density[0]                   = 2500;
+  dem_parameters.physical_properties.number[0]                    = 10;
 
   // Defining particle handler
-  Particles::ParticleHandler<dim> particle_handler(tr, mapping, n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    tr, mapping, DEM::get_number_properties());
 
   // Calling uniform insertion
-  UniformInsertion<dim> insertion_object(dem_parameters);
+  UniformInsertion<dim> insertion_object(
+    dem_parameters,
+    dem_parameters.physical_properties.particle_average_diameter[0]);
   insertion_object.insert(particle_handler, tr, dem_parameters);
 
   // Output

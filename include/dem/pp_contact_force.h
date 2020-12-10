@@ -19,6 +19,8 @@
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <boost/range/adaptor/map.hpp>
+
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_info_struct.h>
@@ -32,7 +34,6 @@ using namespace dealii;
  * Base interface for classes that carry out the calculation of particle-paricle
  * contact force
  */
-
 template <int dim>
 class PPContactForce
 {
@@ -48,25 +49,27 @@ public:
    * information
    * obtained in the fine search and physical properties of particles
    *
-   * @param pairs_in_contact_info Required information for calculation of the
-   * particle-particle contact force, these information were obtained in the
-   * fine search
-   * @param dem_parameters DEM parameters declared in the .prm file
+   * @param local_adjacent_particles Required information for calculation of the
+   * loacl-local particle-particle contact force. These information were
+   * obtained in the fine search
+   * @param ghost_adjacent_particles Required information for calculation of the
+   * loacl-ghost particle-particle contact force. These information were
+   * obtained in the fine search
+   * @param dt DEM time step
    */
   virtual void
   calculate_pp_contact_force(
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      *local_adjacent_particles,
+      &local_adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      *                                               ghost_adjacent_particles,
-    const Parameters::Lagrangian::PhysicalProperties &physical_properties,
-    const double &                                    dt) = 0;
+      &           ghost_adjacent_particles,
+    const double &dt) = 0;
 
 protected:
   /**
-   * Carries out updating the contact pair information for both non-linear and
+   * @brief Carries out updating the contact pair information for both non-linear and
    * linear contact force calculations
    *
    * @param adjacent_pair_information Contact information of a particle pair in
@@ -89,15 +92,16 @@ protected:
     const double &                 dt);
 
   /**
-   * Carries out applying the calculated force and torque on the local-local
+   * @brief Carries out applying the calculated force and torque on the local-local
    * particle pair in contact, for both non-linear and linear contact force
    * calculations
    *
    * @param particle_one_properties Properties of particle one in contact
    * @param particle_two_properties Properties of particle two in contact
-   * @param forces_and_torques A tuple which contains: 1, normal force, 2,
-   * tangential force, 3, tangential torque and 4, rolling resistance torque of
-   * a contact pair
+   * @param normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param tangential_torque Contact tangential torque
+   * @param rolling_friction_torque Contact rolling resistance torque
    */
   void
   apply_force_and_torque_real(ArrayView<double> &   particle_one_properties,
@@ -114,9 +118,10 @@ protected:
    *
    * @param particle_one_properties Properties of particle one (local) in
    * contact
-   * @param forces_and_torques A tuple which contains: 1, normal force, 2,
-   * tangential force, 3, tangential torque and 4, rolling resistance torque of
-   * a contact pair
+   * @param normal_force normal_force Contact normal force
+   * @param tangential_force Contact tangential force
+   * @param tangential_torque Contact tangential torque
+   * @param rolling_friction_torque Contact rolling resistance torque
    */
   void
   apply_force_and_torque_ghost(ArrayView<double> &   particle_one_properties,
@@ -124,6 +129,29 @@ protected:
                                const Tensor<1, dim> &tangential_force,
                                const Tensor<1, dim> &tangential_torque,
                                const Tensor<1, dim> &rolling_resistance_torque);
+
+  /**
+   * Carries out the calculation of effective mass and radius of particles i and
+   * j in contact.
+   *
+   * @param particle_one_properties Properties of particle one in
+   * contact
+   * @param particle_two_properties Properties of particle two in
+   * contact
+   */
+  void
+  find_effective_radius_and_mass(
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties);
+
+  std::map<int, std::map<int, double>> effective_youngs_modulus;
+  std::map<int, std::map<int, double>> effective_shear_modulus;
+  std::map<int, std::map<int, double>> effective_coefficient_of_restitution;
+  std::map<int, std::map<int, double>> effective_coefficient_of_friction;
+  std::map<int, std::map<int, double>>
+         effective_coefficient_of_rolling_friction;
+  double effective_radius;
+  double effective_mass;
 };
 
 #endif /* particle_particle_contact_force_h */

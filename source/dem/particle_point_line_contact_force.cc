@@ -14,7 +14,7 @@ void
 ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
   const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     *particle_point_pairs_in_contact,
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties)
+  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties)
 
 {
   // Looping over particle_point_line_pairs_in_contact
@@ -145,7 +145,7 @@ void
 ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
   const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     *particle_line_pairs_in_contact,
-  const Parameters::Lagrangian::PhysicalProperties &physical_properties)
+  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties)
 {
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator = particle_line_pairs_in_contact->begin();

@@ -9,71 +9,19 @@ using namespace DEM;
 // and number_of_particles_z_direction) are also obtained
 template <int dim>
 NonUniformInsertion<dim>::NonUniformInsertion(
-  const DEMSolverParameters<dim> &dem_parameters)
-  : remained_particles(dem_parameters.insertion_info.total_particle_number)
-  , inserted_this_step(0)
+  const DEMSolverParameters<dim> &dem_parameters,
+  const double &                  maximum_particle_diameter)
+  : remained_particles_of_each_type(
+      dem_parameters.physical_properties.number.at(0))
 {
-  // Getting properties as local parameters
-  const auto physical_properties   = dem_parameters.physical_properties;
-  const auto insertion_information = dem_parameters.insertion_info;
+  // Inializing current inserting particle type
+  current_inserting_particle_type = 0;
 
-  // This variable is used for calculation of the maximum number of particles
-  // that can fit in the chosen insertion box
-  int maximum_particle_number;
+  this->inserted_this_step = 0;
 
-  // distance_threshold shows the ratio of the distance between the centers of
-  // two adjacent particles to the diameter of particles
-  maximum_particle_number =
-    int((insertion_information.x_max - insertion_information.x_min) /
-        (insertion_information.distance_threshold *
-         physical_properties.diameter)) *
-    int((insertion_information.y_max - insertion_information.y_min) /
-        (insertion_information.distance_threshold *
-         physical_properties.diameter));
-  if (dim == 3)
-    {
-      maximum_particle_number =
-        maximum_particle_number *
-        int((insertion_information.z_max - insertion_information.z_min) /
-            (insertion_information.distance_threshold *
-             physical_properties.diameter));
-    }
+  this->maximum_diameter = maximum_particle_diameter;
 
-  // If the inserted number of particles at this step exceeds the maximum
-  // number, a warning is printed
-  if (insertion_information.inserted_this_step > maximum_particle_number)
-    {
-      std::cout << "The inserted number of particles ("
-                << insertion_information.inserted_this_step
-                << ") is higher than maximum expected number of particles ("
-                << maximum_particle_number << ")" << std::endl;
-      std::cout << "Inserting " << maximum_particle_number << " at this step"
-                << std::endl;
-
-      // Updating the number of inserted particles at each step
-      inserted_this_step = maximum_particle_number;
-    }
-  else
-    {
-      inserted_this_step = insertion_information.inserted_this_step;
-    }
-
-  // number_of_particles_x_direction, number_of_particles_y_direction and
-  // number_of_particles_z_direction are the results of discretization of the
-  // insertion domain in x, y and z directions
-  number_of_particles_x_direction = int(
-    (insertion_information.x_max - insertion_information.x_min) /
-    (insertion_information.distance_threshold * physical_properties.diameter));
-  number_of_particles_y_direction = int(
-    (insertion_information.y_max - insertion_information.y_min) /
-    (insertion_information.distance_threshold * physical_properties.diameter));
-  if (dim == 3)
-    {
-      number_of_particles_z_direction =
-        int((insertion_information.z_max - insertion_information.z_min) /
-            (insertion_information.distance_threshold *
-             physical_properties.diameter));
-    }
+  this->calculate_insertion_domain_maximum_particle_number(dem_parameters);
 }
 
 // The main insertion function. Insert_global_function is utilized to insert the
@@ -85,12 +33,24 @@ NonUniformInsertion<dim>::insert(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim> &                 dem_parameters)
 {
-  // Check to see if the remained uninserted particles is equal to zero or not
-  if (remained_particles != 0)
+  if (remained_particles_of_each_type == 0 &&
+      current_inserting_particle_type !=
+        dem_parameters.physical_properties.particle_type_number - 1)
     {
-      // The inserted_this_step value is the mimnum of remained_particles and
-      // inserted_this_step
-      inserted_this_step = std::min(remained_particles, inserted_this_step);
+      remained_particles_of_each_type =
+        dem_parameters.physical_properties.number.at(
+          ++current_inserting_particle_type);
+    }
+
+  // Check to see if the remained uninserted particles is equal to zero or not
+  if (remained_particles_of_each_type != 0)
+    {
+      this->calculate_insertion_domain_maximum_particle_number(dem_parameters);
+
+      // The inserted_this_step value is the mimnum of
+      // remained_particles_of_each_type and inserted_this_step
+      this->inserted_this_step =
+        std::min(remained_particles_of_each_type, this->inserted_this_step);
 
       MPI_Comm communicator = triangulation.get_communicator();
 
@@ -108,25 +68,28 @@ NonUniformInsertion<dim>::insert(
       std::vector<Point<dim>> insertion_points;
       insertion_points.resize(0);
       if (this_mpi_process == 0)
-        insertion_points = this->assign_insertion_points(dem_parameters);
+        insertion_points =
+          this->assign_insertion_points(dem_parameters.insertion_info);
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
-      std::vector<std::vector<double>> particle_properties;
-      particle_properties.resize(0);
       if (this_mpi_process == 0)
-        particle_properties =
-          this->assign_particle_properties(dem_parameters, inserted_this_step);
+        this->assign_particle_properties(dem_parameters,
+                                         this->inserted_this_step,
+                                         current_inserting_particle_type,
+                                         this->particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points,
                                                global_bounding_boxes,
-                                               particle_properties);
+                                               this->particle_properties);
 
       // Updating remaining particles
-      remained_particles -= inserted_this_step;
+      remained_particles_of_each_type -= this->inserted_this_step;
 
-      this->print_insertion_info(inserted_this_step, remained_particles);
+      this->print_insertion_info(this->inserted_this_step,
+                                 remained_particles_of_each_type,
+                                 current_inserting_particle_type);
     }
 }
 
@@ -139,7 +102,7 @@ NonUniformInsertion<dim>::create_random_number_container(
   const int &   random_number_seed)
 {
   std::vector<double> random_container;
-  for (unsigned int i = 0; i < inserted_this_step; ++i)
+  for (unsigned int i = 0; i < this->inserted_this_step; ++i)
     {
       srand(random_number_seed * (i + 1));
       random_container.push_back((((double)rand()) / ((double)RAND_MAX)) *
@@ -152,14 +115,10 @@ NonUniformInsertion<dim>::create_random_number_container(
 template <int dim>
 std::vector<Point<dim>>
 NonUniformInsertion<dim>::assign_insertion_points(
-  const DEMSolverParameters<dim> &dem_parameters)
+  const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   // Initilizing the output vector
   std::vector<Point<dim>> insertion_positions;
-
-  // Getting properties as local parameters
-  const auto physical_properties   = dem_parameters.physical_properties;
-  const auto insertion_information = dem_parameters.insertion_info;
 
   // Calling random number generator
   std::vector<double> random_number_vector;
@@ -170,17 +129,18 @@ NonUniformInsertion<dim>::assign_insertion_points(
   // Creating a particle counter
   unsigned int particle_counter = 0;
 
-  for (unsigned int i = 0; i < number_of_particles_x_direction; ++i)
-    for (unsigned int j = 0; j < number_of_particles_y_direction; ++j)
+  for (unsigned int i = 0; i < this->number_of_particles_x_direction; ++i)
+    for (unsigned int j = 0; j < this->number_of_particles_y_direction; ++j)
       {
         // Adapt the last index to the dimensionality of the problem
-        unsigned int dim_nz = (dim == 3) ? number_of_particles_z_direction : 1;
+        unsigned int dim_nz =
+          (dim == 3) ? this->number_of_particles_z_direction : 1;
         for (unsigned int k = 0; k < dim_nz; ++k)
           {
             // We need to check if the number of inserted particles so far at
             // this step (particle_counter) reached the total desired number of
             // inserted particles at this step
-            if (particle_counter < inserted_this_step)
+            if (particle_counter < this->inserted_this_step)
               {
                 Point<dim> position;
                 // Obtaning position of the inserted particle
@@ -189,25 +149,25 @@ NonUniformInsertion<dim>::assign_insertion_points(
                 // randomness, the random vector is read once from the beginning
                 // and once from the end to be used in positions [0] and [1]
                 position[0] = insertion_information.x_min +
-                              (physical_properties.diameter / 2) +
+                              (this->maximum_diameter / 2) +
                               (i * insertion_information.distance_threshold *
-                               physical_properties.diameter) +
+                               this->maximum_diameter) +
                               random_number_vector[particle_counter] *
-                                physical_properties.diameter;
+                                this->maximum_diameter;
                 position[1] = insertion_information.y_min +
-                              (physical_properties.diameter / 2) +
+                              (this->maximum_diameter / 2) +
                               (j * insertion_information.distance_threshold *
-                               physical_properties.diameter) +
-                              random_number_vector[inserted_this_step -
+                               this->maximum_diameter) +
+                              random_number_vector[this->inserted_this_step -
                                                    particle_counter - 1] *
-                                physical_properties.diameter;
+                                this->maximum_diameter;
                 if (dim == 3)
                   {
                     position[2] =
                       insertion_information.z_min +
-                      (physical_properties.diameter / 2) +
+                      (this->maximum_diameter / 2) +
                       (k * insertion_information.distance_threshold *
-                       physical_properties.diameter);
+                       this->maximum_diameter);
                   }
                 insertion_positions.push_back(position);
                 particle_counter++;

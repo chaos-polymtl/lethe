@@ -62,10 +62,8 @@ test()
   MappingQ<dim> mapping(1);
 
   // Defining general simulation parameters
-  const unsigned int              n_properties = 21;
-  Particles::ParticleHandler<dim> particle_handler(triangulation,
-                                                   mapping,
-                                                   n_properties);
+  Particles::ParticleHandler<dim> particle_handler(
+    triangulation, mapping, DEM::get_number_properties());
 
   // Finding cell neighbors
   std::vector<std::vector<typename Triangulation<dim>::active_cell_iterator>>

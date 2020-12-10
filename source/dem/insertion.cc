@@ -22,8 +22,9 @@
 // Prints the insertion information
 template <int dim>
 void
-Insertion<dim>::print_insertion_info(const unsigned int inserted_this_step,
-                                     const unsigned int remained_particles)
+Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
+                                     const unsigned int &remained_particles,
+                                     const unsigned int &particle_type)
 {
   MPI_Barrier(MPI_COMM_WORLD);
   if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
@@ -31,8 +32,10 @@ Insertion<dim>::print_insertion_info(const unsigned int inserted_this_step,
       std::cout
         << "***************************************************************** "
            "\n";
-      std::cout << inserted_this_step << " particles were inserted, "
-                << remained_particles << " particles remaining" << std::endl;
+      std::cout << inserted_this_step << " particles of type " << particle_type
+                << " were inserted, " << remained_particles
+                << " particles of type " << particle_type << " remaining"
+                << std::endl;
       std::cout
         << "***************************************************************** "
            "\n";
@@ -42,41 +45,55 @@ Insertion<dim>::print_insertion_info(const unsigned int inserted_this_step,
 // Carries out assigning the properties of inserted particles. The output vector
 // is used in insert_global_particles as input argument
 template <int dim>
-std::vector<std::vector<double>>
+void
 Insertion<dim>::assign_particle_properties(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const unsigned int &            inserted_this_step)
+  const DEMSolverParameters<dim> &  dem_parameters,
+  const unsigned int &              inserted_this_step,
+  const unsigned int &              current_inserting_particle_type,
+  std::vector<std::vector<double>> &particle_properties)
 {
-  // Defining output vector
-  std::vector<std::vector<double>> properties;
+  // Clearing and resizing particle_properties
+  particle_properties.clear();
+  particle_properties.reserve(inserted_this_step);
 
   // Getting properties as local parameters
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
-  const auto physical_properties = dem_parameters.physical_properties;
+  auto physical_properties = dem_parameters.physical_properties;
+
+  particle_size_sampling(
+    particle_sizes,
+    physical_properties
+      .particle_average_diameter[current_inserting_particle_type],
+    physical_properties.particle_size_std[current_inserting_particle_type],
+    inserted_this_step);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
   for (unsigned int particle_counter = 0; particle_counter < inserted_this_step;
        ++particle_counter)
     {
-      double type     = 1.0;
-      double diameter = physical_properties.diameter;
-      double density  = physical_properties.density;
-      double vel_x    = 0.0;
-      double vel_y    = 0.0;
-      double vel_z    = 0.0;
-      double acc_x    = 0.0;
-      double acc_y    = 0.0;
-      double acc_z    = 0.0;
-      double f_x      = 0.0;
-      double f_y      = 0.0;
-      double f_z      = 0.0;
-      double w_x      = 0.0;
-      double w_y      = 0.0;
-      double w_z      = 0.0;
-      double mass     = physical_properties.density *
-                    ((4.0 / 3.0) * 3.1415 * pow((diameter / 2.0), 3));
-      double MOI          = (2.0 / 5.0) * (mass)*pow((diameter / 2.0), 2);
+      double type     = current_inserting_particle_type;
+      double diameter = 0.;
+      (particle_sizes[particle_counter] >= 0) ?
+        diameter = particle_sizes[particle_counter] :
+        -particle_sizes[particle_counter];
+      double density =
+        physical_properties.density[current_inserting_particle_type];
+      double vel_x        = 0.;
+      double vel_y        = 0.;
+      double vel_z        = 0.;
+      double acc_x        = 0.;
+      double acc_y        = 0.;
+      double acc_z        = 0.;
+      double f_x          = 0.;
+      double f_y          = 0.;
+      double f_z          = 0.;
+      double w_x          = 0.;
+      double w_y          = 0.;
+      double w_z          = 0.;
+      double mass         = density * (1.3333 * M_PI * (diameter * 0.5) *
+                               (diameter * 0.5) * (diameter * 0.5));
+      double MOI          = 0.4 * mass * (diameter * 0.5) * (diameter * 0.5);
       double T_x          = 0;
       double T_y          = 0;
       double T_z          = 0;
@@ -87,10 +104,89 @@ Insertion<dim>::assign_particle_properties(
         acc_y, acc_z,    f_x,     f_y,   f_z,   w_x,   w_y,
         w_z,   mass,     MOI,     T_x,   T_y,   T_z,   displacement};
 
-      properties.push_back(properties_of_one_particle);
+      particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();
     }
-  return properties;
+}
+
+template <int dim>
+void
+Insertion<dim>::particle_size_sampling(std::vector<double> &particle_sizes,
+                                       const double &       average,
+                                       const double &       standard_deviation,
+                                       const double &       particle_number)
+{
+  particle_sizes.clear();
+  particle_sizes.reserve(particle_number);
+
+  std::random_device         rd{};
+  std::mt19937               gen{rd()};
+  std::normal_distribution<> distribution{average, standard_deviation};
+
+  for (unsigned int n = 0; n < particle_number; ++n)
+    particle_sizes.push_back(distribution(gen));
+}
+
+template <int dim>
+void
+Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
+  const DEMSolverParameters<dim> &dem_parameters)
+{
+  // Getting properties as local parameters
+  const auto insertion_information = dem_parameters.insertion_info;
+
+  // This variable is used for calculation of the maximum number of particles
+  // that can fit in the chosen insertion box
+  int maximum_particle_number;
+
+  // distance_threshold shows the ratio of the distance between the centers of
+  // two adjacent particles to the diameter of particles
+  maximum_particle_number =
+    int((insertion_information.x_max - insertion_information.x_min) /
+        (insertion_information.distance_threshold * this->maximum_diameter)) *
+    int((insertion_information.y_max - insertion_information.y_min) /
+        (insertion_information.distance_threshold * this->maximum_diameter));
+  if (dim == 3)
+    {
+      maximum_particle_number =
+        maximum_particle_number *
+        int(
+          (insertion_information.z_max - insertion_information.z_min) /
+          (insertion_information.distance_threshold * this->maximum_diameter));
+    }
+
+  // If the inserted number of particles at this step exceeds the maximum
+  // number, a warning is printed
+  if (insertion_information.inserted_this_step > maximum_particle_number)
+    {
+      std::cout << "Warning: the requested number of particles for insertion ("
+                << insertion_information.inserted_this_step
+                << ") is higher than maximum expected number of particles ("
+                << maximum_particle_number << ")" << std::endl;
+
+      // Updating the number of inserted particles at each step
+      inserted_this_step = maximum_particle_number;
+    }
+  else
+    {
+      inserted_this_step = insertion_information.inserted_this_step;
+    }
+
+  // number_of_particles_x_direction, number_of_particles_y_direction and
+  // number_of_particles_z_direction are the results of discretization of the
+  // insertion domain in x, y and z directions
+  number_of_particles_x_direction =
+    int((insertion_information.x_max - insertion_information.x_min) /
+        (insertion_information.distance_threshold * this->maximum_diameter));
+  number_of_particles_y_direction =
+    int((insertion_information.y_max - insertion_information.y_min) /
+        (insertion_information.distance_threshold * this->maximum_diameter));
+  if (dim == 3)
+    {
+      number_of_particles_z_direction = int(
+        (insertion_information.z_max - insertion_information.z_min) /
+        (insertion_information.distance_threshold * this->maximum_diameter));
+    }
 }
 
 template class Insertion<2>;
