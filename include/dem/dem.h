@@ -236,6 +236,20 @@ private:
   void
   write_output_results();
 
+  /**
+   * @brief read_checkpoint Read a DEM simulation checkpoint, allowing the simulation to restart from where it stopped.
+   *
+   */
+  virtual void
+  read_checkpoint();
+
+  /**
+   * @brief write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.
+   */
+  virtual void
+  write_checkpoint();
+
+
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
   const unsigned int                        this_mpi_process;
