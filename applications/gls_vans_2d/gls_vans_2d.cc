@@ -17,7 +17,7 @@
 * Author: Bruno Blais, Polytechnique Montreal, 2019-
 */
 
-#include "solvers/gls_vans.h"
+#include "fem-dem/gls_vans.h"
 
 int
 main(int argc, char *argv[])
