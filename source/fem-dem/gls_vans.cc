@@ -1,4 +1,4 @@
-#include "solvers/gls_vans.h"
+#include "fem-dem/gls_vans.h"
 
 // Constructor for class GLS_VANS
 template <int dim>
