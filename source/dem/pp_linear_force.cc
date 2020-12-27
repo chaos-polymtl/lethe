@@ -268,7 +268,7 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     this->effective_youngs_modulus
       [particle_one_type][particle_two_properties[DEM::PropertiesIndex::type]] *
     pow(
-      (1.0667 * this->effective_mass * normal_relative_velocity_value *
+      (0.9375 * this->effective_mass * normal_relative_velocity_value *
        normal_relative_velocity_value /
        (sqrt(this->effective_radius) *
         this->effective_youngs_modulus[particle_one_type][particle_two_type])),
@@ -276,7 +276,7 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   double tangential_spring_constant =
     1.0667 * sqrt(this->effective_radius) *
       this->effective_youngs_modulus[particle_one_type][particle_two_type] *
-      pow((1.0667 * this->effective_mass *
+      pow((0.9375 * this->effective_mass *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
            (sqrt(this->effective_radius) *
