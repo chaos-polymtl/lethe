@@ -162,7 +162,7 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   double normal_spring_constant =
     1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
     this->effective_youngs_modulus[particle_type] *
-    pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
+    pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
          contact_info.normal_relative_velocity *
          contact_info.normal_relative_velocity /
          (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
@@ -171,7 +171,7 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   double tangential_spring_constant =
     1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
       this->effective_youngs_modulus[particle_type] *
-      pow((1.0667 * particle_properties[DEM::PropertiesIndex::mass] *
+      pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
            (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
