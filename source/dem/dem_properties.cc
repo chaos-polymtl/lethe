@@ -46,7 +46,7 @@ namespace DEM
     properties[PropertiesIndex::mom_inertia] = std::make_pair("MOI", 1);
     properties[PropertiesIndex::M_x]         = std::make_pair("M", dim);
     properties[PropertiesIndex::M_y]         = std::make_pair("M", 1);
-    properties[PropertiesIndex::M_z]     = std::make_pair("M", 1);
+    properties[PropertiesIndex::M_z]         = std::make_pair("M", 1);
     properties[PropertiesIndex::displacement] =
       std::make_pair("Displacement", dim);
 
