@@ -16,11 +16,17 @@ VelocityVerletIntegrator<dim>::integrate(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-      auto particle_properties = particle->get_properties();
+      auto           particle_properties = particle->get_properties();
+      Tensor<1, dim> half_step_velocity;
 
-      // Calculate the acceleration of a particle
       for (int d = 0; d < dim; ++d)
         {
+          // Calculate the half step particle velocity
+          half_step_velocity[d] =
+            particle_properties[PropertiesIndex::v_x + d] +
+            0.5 * dt * particle_properties[PropertiesIndex::acc_x + d];
+
+          // Calculate the acceleration
           particle_properties[PropertiesIndex::acc_x + d] =
             g[d] + particle_properties[PropertiesIndex::force_x + d] /
                      particle_properties[PropertiesIndex::mass];
@@ -29,32 +35,20 @@ VelocityVerletIntegrator<dim>::integrate(
           particle_properties[PropertiesIndex::force_x + d] = 0;
         }
 
-      // Store particle velocity and acceleration in Tensors
-      Tensor<1, dim> particle_velocity;
-      Tensor<1, dim> particle_acceleration;
-      for (int d = 0; d < dim; ++d)
-        {
-          particle_velocity[d] = particle_properties[PropertiesIndex::v_x + d];
-          particle_acceleration[d] =
-            particle_properties[PropertiesIndex::acc_x + d];
-        }
-
-      // Calculate the half step particle velocity
-      Tensor<1, dim> vStar =
-        particle_velocity + (particle_acceleration * 0.5 * dt);
-
       // Calculate the particle position
       auto particle_position = particle->get_location();
-      particle_position      = particle_position + (particle_velocity * dt);
+      particle_position      = particle_position + (half_step_velocity * dt);
       particle->set_location(particle_position);
 
-      // Calculate the particle full step velocity
-      vStar = vStar + particle_acceleration * 0.5 * dt;
 
       // Update particle velocity
       for (int d = 0; d < dim; ++d)
         {
-          particle_properties[PropertiesIndex::v_x + d] = vStar[d];
+          // Calculate the particle full step velocity
+          half_step_velocity[d] +=
+            particle_properties[PropertiesIndex::acc_x + d] * 0.5 * dt;
+
+          particle_properties[PropertiesIndex::v_x + d] = half_step_velocity[d];
         }
 
       // Store particle angular velocity and torque in Tensors
