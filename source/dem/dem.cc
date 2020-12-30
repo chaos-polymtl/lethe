@@ -540,6 +540,11 @@ DEMSolver<dim>::set_integrator_type(const DEMSolverParameters<dim> &parameters)
     {
       integrator_object = std::make_shared<ExplicitEulerIntegrator<dim>>();
     }
+  else if (parameters.model_parameters.integration_method ==
+           Parameters::Lagrangian::ModelParameters::IntegrationMethod::gear3)
+    {
+      integrator_object = std::make_shared<Gear3Integrator<dim>>();
+    }
   else
     {
       throw "The chosen integration method is invalid";

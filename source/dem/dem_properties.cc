@@ -42,13 +42,20 @@ namespace DEM
     properties[PropertiesIndex::omega_x] = std::make_pair("Omega", dim);
     properties[PropertiesIndex::omega_y] = std::make_pair("Omega", 1);
     properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
-    properties[PropertiesIndex::mass]    = std::make_pair("mass", 1);
+    properties[PropertiesIndex::mass]    = std::make_pair("Mass", 1);
     properties[PropertiesIndex::mom_inertia] = std::make_pair("MOI", 1);
     properties[PropertiesIndex::M_x]         = std::make_pair("M", dim);
     properties[PropertiesIndex::M_y]         = std::make_pair("M", 1);
     properties[PropertiesIndex::M_z]         = std::make_pair("M", 1);
     properties[PropertiesIndex::displacement] =
       std::make_pair("Displacement", dim);
+    properties[PropertiesIndex::acc_derivative_x] =
+      std::make_pair("Acceleration_derivative", dim);
+    properties[PropertiesIndex::acc_derivative_y] =
+      std::make_pair("Acceleration_derivative", 1);
+    properties[PropertiesIndex::acc_derivative_z] =
+      std::make_pair("Acceleration_derivative", 1);
+
 
     return properties;
   }

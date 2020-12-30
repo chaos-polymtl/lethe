@@ -38,6 +38,7 @@
 #include <dem/find_cell_neighbors.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
+#include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
