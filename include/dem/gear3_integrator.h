@@ -28,7 +28,7 @@ using namespace dealii;
 #  define gear3_integrator_h
 
 /**
- * Implementation of a classical explicit euler scheme for the integration
+ * Implementation of a gear3 scheme for the integration
  * of the particle motion. Note that reinitilization of force and torque is also
  * integrated into integration class
  *
@@ -46,7 +46,7 @@ public:
 
   /**
    * Carries out the integration of the motion of all particles by using
-   * the acceleration with the Adams-Bashforth method
+   * the acceleration with the gear3 method
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
