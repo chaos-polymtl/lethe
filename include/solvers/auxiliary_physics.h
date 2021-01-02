@@ -17,14 +17,15 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020
  */
 
-#ifndef LETHE_AUXILIARYPHYSICS
-#define LETHE_AUXILIARYPHYSICS
+#ifndef lethe_auxiliary_physics_h
+#define lethe_auxiliary_physics_h
 
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/numerics/data_out.h>
 
 #include <core/parameters.h>
+#include <solvers/navier_stokes_solver_parameters.h>
 
 
 /**
@@ -57,7 +58,7 @@
  *implemented / expected
  **/
 
-template <int dim, typename VectorType, typename DofsType>
+template <int dim>
 class AuxiliaryPhysics
 {
 public:
@@ -69,11 +70,14 @@ public:
    * @param p_pcout A conditional OS stream used by the rest of the simulation.
 
    */
-  AuxiliaryPhysics(std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                       p_triangulation,
-                   ConditionalOStream &p_pcout)
+  AuxiliaryPhysics(
+    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                             p_triangulation,
+    ConditionalOStream &                     p_pcout,
+    const NavierStokesSolverParameters<dim> &p_simulation_parameters)
     : triangulation(p_triangulation)
-    , pcout(pcout){};
+    , pcout(pcout)
+    , simulation_parameters(p_simulation_parameters){};
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
@@ -141,7 +145,8 @@ public:
 
 private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  ConditionalOStream                                           pcout;
+  const NavierStokesSolverParameters<dim> simulation_parameters;
+  ConditionalOStream                      pcout;
 };
 
 
