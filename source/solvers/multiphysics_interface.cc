@@ -12,12 +12,15 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
 {
   if (multiphysics_parameters.fluid_dynamics)
     {
-      enabled_physics.push_back(PhysicsID::fluid_dynamics);
+      active_physics.push_back(PhysicsID::fluid_dynamics);
     }
   if (multiphysics_parameters.heat_transfer)
     {
-      enabled_physics.push_back(PhysicsID::heat_transfer);
+      active_physics.push_back(PhysicsID::heat_transfer);
       physics[PhysicsID::heat_transfer] =
-        std::make_shared(HeatTransfer<dim>(nsparam, p_triangulation, p_pcout));
+        std::make_shared<HeatTransfer<dim>>(nsparam, p_triangulation, p_pcout);
     }
 }
+
+template class MultiphysicsInterface<2>;
+template class MultiphysicsInterface<3>;

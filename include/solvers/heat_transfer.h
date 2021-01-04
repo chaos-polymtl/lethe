@@ -93,6 +93,12 @@ public:
   postprocess() override;
 
   /**
+   * @brief Returns the dof_handler of the heat transfer physics
+   */
+  virtual const DoFHandler<dim> &
+  get_dof_handler() override{};
+
+  /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   virtual void
@@ -117,7 +123,7 @@ public:
    */
   virtual void
   solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true) = 0;
+                      const bool renewed_matrix = true);
 
 
 

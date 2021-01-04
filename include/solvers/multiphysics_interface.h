@@ -39,6 +39,7 @@ using namespace dealii;
 template <int dim>
 class MultiphysicsInterface
 {
+public:
   /** @brief Construct the Multiphysics interface from the simulation parameters.
    * Depending on which multiphysics element is enabled, the appropraite
    * auxiliary physics is instantiated.
@@ -49,6 +50,12 @@ class MultiphysicsInterface
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                         p_triangulation,
     ConditionalOStream &p_pcout);
+
+  std::vector<PhysicsID>
+  get_active_physics()
+  {
+    return active_physics;
+  }
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side for the appropiate
@@ -64,10 +71,10 @@ class MultiphysicsInterface
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method)
   {
-    AssertThrow(
-      std::find(enabled_physics.begin(), enabled_physics.end(), physics_id) !=
-        enabled_physics.end(),
-      "This physics has not been constructed by the multiphysics interface.");
+    AssertThrow(std::find(active_physics.begin(),
+                          active_physics.end(),
+                          physics_id) != active_physics.end(),
+                ExcInternalError());
 
     physics[physics_id]->assemble_matrix_and_rhs(time_stepping_method);
   }
@@ -84,10 +91,10 @@ class MultiphysicsInterface
                const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method)
   {
-    AssertThrow(
-      std::find(enabled_physics.begin(), enabled_physics.end(), physics_id) !=
-        enabled_physics.end(),
-      "This physics has not been constructed by the multiphysics interface.");
+    AssertThrow(std::find(active_physics.begin(),
+                          active_physics.end(),
+                          physics_id) != active_physics.end(),
+                ExcInternalError());
 
     physics[physics_id]->assemble_rhs(time_stepping_method);
   }
@@ -153,7 +160,7 @@ class MultiphysicsInterface
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
-  virtual void
+  void
   setup_dofs()
   {
     for (auto &iphys : physics)
@@ -167,7 +174,7 @@ class MultiphysicsInterface
    * only support imposing nodal values, but some physics additionnaly support
    * the use of L2 projection or steady-state solutions.
    */
-  virtual void
+  void
   set_initial_conditions()
   {
     for (auto &iphys : physics)
@@ -184,18 +191,17 @@ class MultiphysicsInterface
    *
    * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not.
    */
-  virtual void
+  void
   solve_linear_system(const PhysicsID physics_id,
                       const bool      initial_step,
                       const bool      renewed_matrix = true)
   {
-    AssertThrow(
-      std::find(enabled_physics.begin(), enabled_physics.end(), physics_id) !=
-        enabled_physics.end(),
-      "This physics has not been constructed by the multiphysics interface.")
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
 
-      physics[physics_id]
-        ->solver_linear_system(initial_step, renewed_matrix);
+    physics[physics_id]->solve_linear_system(initial_step, renewed_matrix);
   };
 
 
@@ -204,11 +210,10 @@ private:
   const Parameters::Multiphysics multiphysics_parameters;
 
   // Data structure to store all physics which were enabled
-  std::vector<PhysicsID> enabled_physics;
+  std::vector<PhysicsID> active_physics;
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper deallocation.
-  // std::shared_ptr<AuxiliaryPhysics<dim>>
   std::map<PhysicsID, std::shared_ptr<AuxiliaryPhysics<dim>>> physics;
 };
 
