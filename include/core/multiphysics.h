@@ -18,32 +18,18 @@
  */
 
 /*
- * This file defines the parameters in the parameter namespace
- * that pertain to multiphysics simulations
+ * This file defines a small enum which is used to identify
+ * the various physics solverd within Lethe
  */
 
 
-#ifndef lethe_parameters_multiphysics_h
-#define lethe_parameters_multiphysics_h
+#ifndef lethe_multiphysics_h
+#define lethe_multiphysics_h
 
-#include <deal.II/base/parameter_handler.h>
-
-#include <core/multiphysics.h>
-
-using namespace dealii;
-
-namespace Parameters
+enum class PhysicsID : int
 {
-  struct Multiphysics
-  {
-    bool fluid_dynamics;
-    bool heat_transfer;
+  fluid_dynamics = 0,
+  heat_transfer  = 1
+};
 
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  }; // namespace Parameters
-
-} // namespace Parameters
 #endif
