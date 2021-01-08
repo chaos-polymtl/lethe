@@ -467,8 +467,9 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
 {
-  // implementation similar to deal.ii step-6
   this->dof_handler_ht.initialize(*(this->triangulation), this->fe_ht);
+  DoFRenumbering::Cuthill_McKee(this->dof_handler_ht);
+
 
   locally_owned_dofs_ht = dof_handler_ht.locally_owned_dofs();
   DoFTools::extract_locally_relevant_dofs(dof_handler_ht,
@@ -480,18 +481,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                      locally_relevant_dofs_ht,
                      this->mpi_communicator);
 
-  auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
-  system_rhs_ht.reinit(locally_owned_dofs_ht);
-
-  auto &newton_update_ht =
-    this->get_newton_update(Parameters::Multiphysics::heat);
-  newton_update_ht.reinit(locally_owned_dofs_ht);
-
-  TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
-    this->get_local_evaluation_point(Parameters::Multiphysics::heat);
-  local_evaluation_point_ht.reinit(this->locally_owned_dofs,
-                                   this->mpi_communicator);
-
   // Previous solutions for transient schemes
   solution_ht_m1.reinit(locally_owned_dofs_ht,
                         locally_relevant_dofs_ht,
@@ -502,6 +491,20 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
   solution_ht_m3.reinit(locally_owned_dofs_ht,
                         locally_relevant_dofs_ht,
                         this->mpi_communicator);
+
+  auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
+  system_rhs_ht.reinit(locally_owned_dofs_ht,
+                       this->mpi_communicator);
+
+  auto &newton_update_ht =
+    this->get_newton_update(Parameters::Multiphysics::heat);
+  newton_update_ht.reinit(locally_owned_dofs_ht,
+                          this->mpi_communicator);
+
+  TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
+    this->get_local_evaluation_point(Parameters::Multiphysics::heat);
+  local_evaluation_point_ht.reinit(this->locally_owned_dofs,
+                                   this->mpi_communicator);
 
   // Non-zero constraints
   auto &nonzero_constraints_ht =
@@ -560,8 +563,16 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                                   dsp_ht,
                                   nonzero_constraints_ht,
                                   /*keep_constrained_dofs = */ true);
-  sparsity_pattern_ht.copy_from(dsp_ht);
-  system_matrix_ht.reinit(sparsity_pattern_ht);
+
+  SparsityTools::distribute_sparsity_pattern(
+    dsp_ht,
+    this->locally_owned_dofs_ht,
+    this->mpi_communicator,
+    this->locally_relevant_dofs_ht);
+  system_matrix_ht.reinit(this->locally_owned_dofs_ht,
+                       this->locally_owned_dofs_ht,
+                       dsp_ht,
+                       this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
@@ -665,181 +676,195 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_ht(
 
   for (const auto &cell : dof_handler_ht.active_cell_iterators())
     {
-      cell_matrix = 0;
-      cell_rhs    = 0;
-      fe_values_ht.reinit(cell);
-
-      fe_values_ht.get_function_gradients(evaluation_point,
-                                          temperature_gradients);
-
-
-      typename DoFHandler<spacedim>::active_cell_iterator velocity_cell(
-        &(*this->triangulation),
-        cell->level(),
-        cell->index(),
-        &this->dof_handler);
-      fe_values_flow.reinit(velocity_cell);
-      fe_values_flow[velocities].get_function_values(velocity_evaluation_point,
-                                                     velocity_values);
-      fe_values_flow[velocities].get_function_gradients(
-        velocity_evaluation_point, velocity_gradient_values);
-
-      // Gather present value
-      fe_values_ht.get_function_values(solution_ht, present_temperature_values);
-
-      // Gather the previous time steps for heat transfer depending on
-      // the number of stages of the time integration method
-      if (time_stepping_method !=
-          Parameters::SimulationControl::TimeSteppingMethod::steady)
-        fe_values_ht.get_function_values(this->solution_ht_m1,
-                                         p1_temperature_values);
-
-      if (time_stepping_method_has_two_stages(time_stepping_method))
-        fe_values_ht.get_function_values(this->solution_ht_m2,
-                                         p2_temperature_values);
-
-      if (time_stepping_method_has_three_stages(time_stepping_method))
-        fe_values_ht.get_function_values(this->solution_ht_m3,
-                                         p3_temperature_values);
-
-      source_term.value_list(fe_values_ht.get_quadrature_points(),
-                             source_term_values);
-
-
-      // assembling local matrix and right hand side
-      for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+      if (cell->is_locally_owned())
         {
-          for (const unsigned int i : fe_values_ht.dof_indices())
+          cell_matrix = 0;
+          cell_rhs    = 0;
+          fe_values_ht.reinit(cell);
+
+          fe_values_ht.get_function_gradients(evaluation_point,
+                                              temperature_gradients);
+
+
+          typename DoFHandler<spacedim>::active_cell_iterator velocity_cell(
+            &(*this->triangulation),
+            cell->level(),
+            cell->index(),
+            &this->dof_handler);
+          fe_values_flow.reinit(velocity_cell);
+          fe_values_flow[velocities].get_function_values(
+            velocity_evaluation_point, velocity_values);
+          fe_values_flow[velocities].get_function_gradients(
+            velocity_evaluation_point, velocity_gradient_values);
+
+          // Gather present value
+          fe_values_ht.get_function_values(solution_ht,
+                                           present_temperature_values);
+
+          // Gather the previous time steps for heat transfer depending on
+          // the number of stages of the time integration method
+          if (time_stepping_method !=
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
+            fe_values_ht.get_function_values(this->solution_ht_m1,
+                                             p1_temperature_values);
+
+          if (time_stepping_method_has_two_stages(time_stepping_method))
+            fe_values_ht.get_function_values(this->solution_ht_m2,
+                                             p2_temperature_values);
+
+          if (time_stepping_method_has_three_stages(time_stepping_method))
+            fe_values_ht.get_function_values(this->solution_ht_m3,
+                                             p3_temperature_values);
+
+          source_term.value_list(fe_values_ht.get_quadrature_points(),
+                                 source_term_values);
+
+
+          // assembling local matrix and right hand side
+          for (const unsigned int q : fe_values_ht.quadrature_point_indices())
             {
-              for (const unsigned int j : fe_values_ht.dof_indices())
+              for (const unsigned int i : fe_values_ht.dof_indices())
                 {
-                  // Weak form for : - k * laplacian T + rho * cp * u * grad T -
-                  // f - grad(u)*grad(u) =0
-                  cell_matrix(i, j) +=
+                  for (const unsigned int j : fe_values_ht.dof_indices())
+                    {
+                      // Weak form for : - k * laplacian T + rho * cp * u * grad
+                      // T - f - grad(u)*grad(u) =0
+                      cell_matrix(i, j) +=
+                        (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
+                           fe_values_ht.shape_grad(j, q) +
+                         density * specific_heat *
+                           fe_values_ht.shape_value(i, q) * velocity_values[q] *
+                           fe_values_ht.shape_grad(j, q)) *
+                        fe_values_ht.JxW(q); // JxW
+
+                      // Mass matrix for transient simulation
+                      if (is_bdf(time_stepping_method))
+                        cell_matrix(i, j) += density * specific_heat *
+                                             fe_values_ht.shape_value(j, q) *
+                                             fe_values_ht.shape_value(i, q) *
+                                             bdf_coefs[0] * fe_values_ht.JxW(q);
+                    }
+
+                  // rhs for : - k * laplacian T + rho * cp * u * grad T - f -
+                  // grad(u)*grad(u) = 0
+                  cell_rhs(i) -=
                     (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                       fe_values_ht.shape_grad(j, q) +
+                       temperature_gradients[q] +
                      density * specific_heat * fe_values_ht.shape_value(i, q) *
-                       velocity_values[q] * fe_values_ht.shape_grad(j, q)) *
+                       velocity_values[q] * temperature_gradients[q] -
+                     source_term_values[q] * fe_values_ht.shape_value(i, q) -
+                     fe_values_ht.shape_value(i, q) *
+                       scalar_product(velocity_gradient_values[q] +
+                                        transpose(velocity_gradient_values[q]),
+                                      transpose(velocity_gradient_values[q]))) *
                     fe_values_ht.JxW(q); // JxW
 
-                  // Mass matrix for transient simulation
-                  if (is_bdf(time_stepping_method))
-                    cell_matrix(i, j) += density * specific_heat *
-                                         fe_values_ht.shape_value(j, q) *
-                                         fe_values_ht.shape_value(i, q) *
-                                         bdf_coefs[0] * fe_values_ht.JxW(q);
+                  // Residual associated with BDF schemes
+                  if (time_stepping_method == Parameters::SimulationControl::
+                                                TimeSteppingMethod::bdf1 ||
+                      time_stepping_method == Parameters::SimulationControl::
+                                                TimeSteppingMethod::steady_bdf)
+                    cell_rhs(i) -=
+                      (bdf_coefs[0] * present_temperature_values[q] +
+                       bdf_coefs[1] * p1_temperature_values[q]) *
+                      fe_values_ht.shape_value(i, q) *
+                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+
+                  if (time_stepping_method ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+                    cell_rhs(i) -=
+                      (bdf_coefs[0] * present_temperature_values[q] +
+                       bdf_coefs[1] * p1_temperature_values[q] +
+                       bdf_coefs[2] * p2_temperature_values[q]) *
+                      fe_values_ht.shape_value(i, q) *
+                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+
+                  if (time_stepping_method ==
+                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+                    cell_rhs(i) -=
+                      (bdf_coefs[0] * present_temperature_values[q] +
+                       bdf_coefs[1] * p1_temperature_values[q] +
+                       bdf_coefs[2] * p2_temperature_values[q] +
+                       bdf_coefs[3] * p3_temperature_values[q]) *
+                      fe_values_ht.shape_value(i, q) *
+                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
                 }
 
-              // rhs for : - k * laplacian T + rho * cp * u * grad T - f -
-              // grad(u)*grad(u) = 0
-              cell_rhs(i) -=
-                (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                   temperature_gradients[q] +
-                 density * specific_heat * fe_values_ht.shape_value(i, q) *
-                   velocity_values[q] * temperature_gradients[q] -
-                 source_term_values[q] * fe_values_ht.shape_value(i, q) -
-                 fe_values_ht.shape_value(i, q) *
-                   scalar_product(velocity_gradient_values[q] +
-                                    transpose(velocity_gradient_values[q]),
-                                  transpose(velocity_gradient_values[q]))) *
-                fe_values_ht.JxW(q); // JxW
+            } // end loop on quadrature points
 
-              // Residual associated with BDF schemes
-              if (time_stepping_method ==
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-                  time_stepping_method == Parameters::SimulationControl::
-                                            TimeSteppingMethod::steady_bdf)
-                cell_rhs(i) -= (bdf_coefs[0] * present_temperature_values[q] +
-                                bdf_coefs[1] * p1_temperature_values[q]) *
-                               fe_values_ht.shape_value(i, q) *
-                               fe_values_ht.JxW(q); // *phi_u[i]*JxW
-
-              if (time_stepping_method ==
-                  Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                cell_rhs(i) -= (bdf_coefs[0] * present_temperature_values[q] +
-                                bdf_coefs[1] * p1_temperature_values[q] +
-                                bdf_coefs[2] * p2_temperature_values[q]) *
-                               fe_values_ht.shape_value(i, q) *
-                               fe_values_ht.JxW(q); // *phi_u[i]*JxW
-
-              if (time_stepping_method ==
-                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                cell_rhs(i) -= (bdf_coefs[0] * present_temperature_values[q] +
-                                bdf_coefs[1] * p1_temperature_values[q] +
-                                bdf_coefs[2] * p2_temperature_values[q] +
-                                bdf_coefs[3] * p3_temperature_values[q]) *
-                               fe_values_ht.shape_value(i, q) *
-                               fe_values_ht.JxW(q); // *phi_u[i]*JxW
-            }
-
-        } // end loop on quadrature points
-
-      // Robin boundary condition, loop on faces (Newton's cooling law)
-      // implementation similar to deal.ii step-7
-      for (unsigned int i_bc = 0;
-           i_bc < this->nsparam.boundary_conditions_ht.size;
-           ++i_bc)
-        {
-          if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
-              BoundaryConditions::BoundaryType::convection)
+          // Robin boundary condition, loop on faces (Newton's cooling law)
+          // implementation similar to deal.ii step-7
+          for (unsigned int i_bc = 0;
+               i_bc < this->nsparam.boundary_conditions_ht.size;
+               ++i_bc)
             {
-              if (cell->is_locally_owned())
+              if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
+                  BoundaryConditions::BoundaryType::convection)
                 {
-                  for (unsigned int face = 0;
-                       face < GeometryInfo<dim>::faces_per_cell;
-                       face++)
+                  if (cell->is_locally_owned())
                     {
-                      if (cell->face(face)->at_boundary() &&
-                          (cell->face(face)->boundary_id() ==
-                           this->nsparam.boundary_conditions_ht.id[i_bc]))
+                      for (unsigned int face = 0;
+                           face < GeometryInfo<dim>::faces_per_cell;
+                           face++)
                         {
-                          fe_face_values_ht.reinit(cell, face);
-                          fe_face_values_ht.get_function_values(
-                            solution_ht, present_face_temperature_values);
-                          {
-                            for (const unsigned int q :
-                                 fe_face_values_ht.quadrature_point_indices())
+                          if (cell->face(face)->at_boundary() &&
+                              (cell->face(face)->boundary_id() ==
+                               this->nsparam.boundary_conditions_ht.id[i_bc]))
+                            {
+                              fe_face_values_ht.reinit(cell, face);
+                              fe_face_values_ht.get_function_values(
+                                solution_ht, present_face_temperature_values);
                               {
-                                for (const unsigned int i :
-                                     fe_values_ht.dof_indices())
+                                for (const unsigned int q :
+                                     fe_face_values_ht
+                                       .quadrature_point_indices())
                                   {
-                                    for (const unsigned int j :
+                                    for (const unsigned int i :
                                          fe_values_ht.dof_indices())
                                       {
-                                        // Weak form modification
-                                        cell_matrix(i, j) +=
-                                          fe_face_values_ht.shape_value(j, q) *
+                                        for (const unsigned int j :
+                                             fe_values_ht.dof_indices())
+                                          {
+                                            // Weak form modification
+                                            cell_matrix(i, j) +=
+                                              fe_face_values_ht.shape_value(j,
+                                                                            q) *
+                                              fe_face_values_ht.shape_value(i,
+                                                                            q) *
+                                              this->nsparam
+                                                .boundary_conditions_ht
+                                                .value[i_bc] *
+                                              fe_face_values_ht.JxW(q);
+                                          }
+                                        // Residual
+                                        cell_rhs(i) -=
                                           fe_face_values_ht.shape_value(i, q) *
                                           this->nsparam.boundary_conditions_ht
                                             .value[i_bc] *
+                                          (present_face_temperature_values[q] -
+                                           this->nsparam.boundary_conditions_ht
+                                             .Tenv[i_bc]) *
                                           fe_face_values_ht.JxW(q);
                                       }
-                                    // Residual
-                                    cell_rhs(i) -=
-                                      fe_face_values_ht.shape_value(i, q) *
-                                      this->nsparam.boundary_conditions_ht
-                                        .value[i_bc] *
-                                      (present_face_temperature_values[q] -
-                                       this->nsparam.boundary_conditions_ht
-                                         .Tenv[i_bc]) *
-                                      fe_face_values_ht.JxW(q);
                                   }
                               }
-                          }
+                            }
                         }
                     }
                 }
-            }
-        } // end loop for Robin condition
+            } // end loop for Robin condition
 
-      // transfer cell contribution into global objects
-      cell->get_dof_indices(local_dof_indices);
-      zero_constraints_ht.distribute_local_to_global(cell_matrix,
-                                                     cell_rhs,
-                                                     local_dof_indices,
-                                                     system_matrix_ht,
-                                                     system_rhs_ht);
-    } // end loop active cell
+          // transfer cell contribution into global objects
+          cell->get_dof_indices(local_dof_indices);
+          zero_constraints_ht.distribute_local_to_global(cell_matrix,
+                                                         cell_rhs,
+                                                         local_dof_indices,
+                                                         system_matrix_ht,
+                                                         system_rhs_ht);
+        } // end loop active cell
+    }
+  system_matrix_ht.compress(VectorOperation::add);
+  system_rhs_ht.compress(VectorOperation::add);
 }
 
 template <int dim, int spacedim>
