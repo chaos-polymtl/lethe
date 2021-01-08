@@ -41,19 +41,9 @@
  */
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
-<<<<<<< HEAD
   NavierStokesSolverParameters<dim> &p_nsparam)
   : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver,
-  p_nsparam.multiphysics.number_physic_total)
-=======
-  NavierStokesSolverParameters<dim> &p_nsparam,
-  const unsigned int                 p_degreeVelocity,
-  const unsigned int                 p_degreePressure)
-  : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver,
                               p_nsparam.multiphysics.number_physic_total)
-  //      new NewtonNonLinearSolver<VectorType>(this,
-  //      p_nsparam.nonLinearSolver))
->>>>>>> Add heat transfer transient equation
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))

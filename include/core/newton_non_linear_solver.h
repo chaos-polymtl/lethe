@@ -113,11 +113,7 @@ NewtonNonLinearSolver<VectorType>::solve(
 
       solver->solve_linear_system(first_step);
 
-<<<<<<< HEAD
       for (double alpha = 1.0; alpha > 1e-1; alpha *= 0.5)
-=======
-      for (double alpha = 1.0; alpha >= 1; alpha *= 0.5)
->>>>>>> Add heat transfer transient equation
         {
           auto &local_evaluation_point =
             solver->get_local_evaluation_point(current_physics);
