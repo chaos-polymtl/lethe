@@ -43,6 +43,23 @@ namespace AnalyticalSolutions
       "L2Error",
       Patterns::FileName(),
       "File name for the output for the L2Error table with respect to time or mesh ");
+
+
+    {
+      prm.enter_subsection("uvw");
+      velocity.declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0; 0;");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0; 0;");
+      prm.leave_subsection();
+    }
+    {
+      prm.enter_subsection("temperature");
+      temperature.declare_parameters(prm);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
+    }
     prm.leave_subsection();
   }
 
@@ -58,37 +75,24 @@ namespace AnalyticalSolutions
       verbosity = Parameters::Verbosity::verbose;
     if (op == "quiet")
       verbosity = Parameters::Verbosity::quiet;
+
+    {
+      prm.enter_subsection("uvw");
+      velocity.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+
+    {
+      prm.enter_subsection("temperature");
+      temperature.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+
     prm.leave_subsection();
   }
 
-  template <int dim>
-  void
-  NSAnalyticalSolution<dim>::declare_parameters(ParameterHandler &prm)
-  {
-    this->AnalyticalSolution<dim>::declare_parameters(prm);
-    prm.enter_subsection("analytical solution");
-    prm.enter_subsection("uvw");
-    velocity.declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0; 0;");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0; 0;");
-    prm.leave_subsection();
-    prm.leave_subsection();
-  }
 
-  template <int dim>
-  void
-  NSAnalyticalSolution<dim>::parse_parameters(ParameterHandler &prm)
-  {
-    this->AnalyticalSolution<dim>::parse_parameters(prm);
-    prm.enter_subsection("analytical solution");
-    prm.enter_subsection("uvw");
-    velocity.parse_parameters(prm);
-    prm.leave_subsection();
-    prm.leave_subsection();
-  }
 } // namespace AnalyticalSolutions
 // Pre-compile the 2D and 3D
-template class AnalyticalSolutions::NSAnalyticalSolution<2>;
-template class AnalyticalSolutions::NSAnalyticalSolution<3>;
+template class AnalyticalSolutions::AnalyticalSolution<2>;
+template class AnalyticalSolutions::AnalyticalSolution<3>;

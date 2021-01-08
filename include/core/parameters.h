@@ -148,8 +148,14 @@ namespace Parameters
    */
   struct PhysicalProperties
   {
-    // Kinematic viscosity (mu/rho) in units of L^2/s
+    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double viscosity;
+    // volumetric mass density (rho) in units of kg/m^3
+    double density;
+    // specific heat capacity (cp) in J/K/kg
+    double specific_heat;
+    // thermal conductivity (k) in W/m/K
+    double thermal_conductivity;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -157,6 +163,29 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief Multiphysics - Define the possible multiphysic simulations.
+   * All entries are boolean (true if the given physic is activated) except for
+   * number_physic_total
+   */
+  struct Multiphysics
+  {
+    enum ID : int
+    {
+      fluid = 0,
+      heat  = 1
+    };
+
+    bool         fluid_flow;
+    bool         heat_transfer;
+    bool         free_surface;
+    unsigned int number_physic_total;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  }; // namespace Parameters
 
   /**
    * @brief Timer - Defines the parameters that control the timing of the simulation.

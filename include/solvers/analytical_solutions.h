@@ -31,7 +31,7 @@
 using namespace dealii;
 /**
  * The analytical solution class provides an interface for all common
- * dlement required for the calculation of analytical solution
+ * element required for the calculation of analytical solution
  * All equation-specific analytical solution should derive
  * from the base class but also call it's declare_parameters and
  *parse_parameters routine. This allows specialize class to focus on their
@@ -44,9 +44,16 @@ namespace AnalyticalSolutions
   template <int dim>
   class AnalyticalSolution
   {
+  protected:
+    bool        enable;
+    std::string filename;
+
   public:
     AnalyticalSolution()
       : enable(false)
+      , velocity(dim + 1)
+      , temperature(1)
+
     {}
 
     virtual void
@@ -67,30 +74,11 @@ namespace AnalyticalSolutions
     }
 
     Parameters::Verbosity verbosity;
-
-  protected:
-    bool        enable;
-    std::string filename;
-  };
-
-
-  template <int dim>
-  class NSAnalyticalSolution : public AnalyticalSolution<dim>
-  {
-  public:
-    NSAnalyticalSolution()
-      : velocity(dim + 1)
-    {}
-
     // Velocity components
     Functions::ParsedFunction<dim> velocity;
 
-    virtual void
-    declare_parameters(ParameterHandler &prm);
-    virtual void
-    parse_parameters(ParameterHandler &prm);
+    Functions::ParsedFunction<dim> temperature;
   };
-
 } // namespace AnalyticalSolutions
 
 #endif

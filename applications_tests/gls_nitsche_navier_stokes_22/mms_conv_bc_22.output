@@ -1,0 +1,74 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       16
+   Number of degrees of freedom: 187
+   Volume of triangulation:      1
+
+*****************************************************************
+Steady iteration :        1/3
+*****************************************************************
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-13
+  -Iterative solver took : 0 steps 
+		alpha =      1 res = 0
+Newton iteration: 0  - Residual:  43.3
+  -Tolerance of iterative solver is : 0.00433
+  -Iterative solver took : 1 steps 
+		alpha =      1 res = 32.19
+Newton iteration: 1  - Residual:  32.19
+  -Tolerance of iterative solver is : 1e-13
+  -Iterative solver took : 0 steps 
+		alpha =      1 res = 6.691e-14
+
+*****************************************************************
+Steady iteration :        2/3
+*****************************************************************
+   Number of active cells:       64
+   Number of degrees of freedom: 659
+   Volume of triangulation:      1
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-13
+  -Iterative solver took : 0 steps 
+		alpha =      1 res = 0
+Newton iteration: 0  - Residual:  33.07
+  -Tolerance of iterative solver is : 0.003307
+  -Iterative solver took : 3 steps 
+		alpha =      1 res = 24.28
+Newton iteration: 1  - Residual:  24.28
+  -Tolerance of iterative solver is : 3.03e-08
+  -Iterative solver took : 3 steps 
+		alpha =      1 res = 3.712e-05
+Newton iteration: 2  - Residual:  3.712e-05
+  -Tolerance of iterative solver is : 3.679e-13
+  -Iterative solver took : 3 steps 
+		alpha =      1 res = 2.446e-09
+Newton iteration: 3  - Residual:  2.446e-09
+  -Tolerance of iterative solver is : 1e-13
+  -Iterative solver took : 0 steps 
+		alpha =      1 res = 5.521e-14
+
+*****************************************************************
+Steady iteration :        3/3
+*****************************************************************
+   Number of active cells:       256
+   Number of degrees of freedom: 2467
+   Volume of triangulation:      1
+Newton iteration: 0  - Residual:  0
+  -Tolerance of iterative solver is : 1e-13
+  -Iterative solver took : 0 steps 
+		alpha =      1 res = 0
+Newton iteration: 0  - Residual:  24.21
+  -Tolerance of iterative solver is : 0.002421
+  -Iterative solver took : 5 steps 
+		alpha =      1 res = 17.53
+Newton iteration: 1  - Residual:  17.53
+  -Tolerance of iterative solver is : 2.904e-08
+  -Iterative solver took : 5 steps 
+		alpha =      1 res = 5.588e-05
+Newton iteration: 2  - Residual:  5.588e-05
+  -Tolerance of iterative solver is : 3.254e-13
+  -Iterative solver took : 5 steps 
+		alpha =      1 res = 1.511e-09
+Newton iteration: 3  - Residual:  1.511e-09
+  -Tolerance of iterative solver is : 1e-13
+  -Iterative solver took : 0 steps 
+		alpha =      1 res = 6.078e-14

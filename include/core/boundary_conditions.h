@@ -29,10 +29,14 @@ namespace BoundaryConditions
 {
   enum class BoundaryType
   {
+    // for fluid
     noslip,
     slip,
     function,
-    periodic
+    periodic,
+    // for heat transfer
+    temperature, // Dirichlet
+    convection,  // Robin
   };
 
   /**
@@ -250,88 +254,14 @@ namespace BoundaryConditions
       this->type.resize(this->max_size);
       bcFunctions = new NSBoundaryFunctions<dim>[this->max_size];
 
-      prm.enter_subsection("bc 0");
-      {
-        declareDefaultEntry(prm, 0);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 1");
-      {
-        declareDefaultEntry(prm, 1);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 2");
-      {
-        declareDefaultEntry(prm, 2);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 3");
-      {
-        declareDefaultEntry(prm, 3);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 4");
-      {
-        declareDefaultEntry(prm, 4);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 5");
-      {
-        declareDefaultEntry(prm, 5);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 6");
-      {
-        declareDefaultEntry(prm, 6);
-      }
-      prm.leave_subsection();
-      prm.enter_subsection("bc 7");
-      {
-        declareDefaultEntry(prm, 7);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 8");
-      {
-        declareDefaultEntry(prm, 8);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 9");
-      {
-        declareDefaultEntry(prm, 9);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 10");
-      {
-        declareDefaultEntry(prm, 10);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 11");
-      {
-        declareDefaultEntry(prm, 11);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 12");
-      {
-        declareDefaultEntry(prm, 12);
-      }
-      prm.leave_subsection();
-
-      prm.enter_subsection("bc 13");
-      {
-        declareDefaultEntry(prm, 13);
-      }
-      prm.leave_subsection();
+      for (unsigned int n = 0; n < this->max_size; n++)
+        {
+          prm.enter_subsection("bc " + std::to_string(n));
+          {
+            declareDefaultEntry(prm, n);
+          }
+          prm.leave_subsection();
+        }
     }
     prm.leave_subsection();
   }
@@ -354,123 +284,182 @@ namespace BoundaryConditions
       this->periodic_direction.resize(this->size);
       this->periodic_id.resize(this->size);
 
-      if (this->size >= 1)
+      for (unsigned int n = 0; n < this->max_size; n++)
         {
-          prm.enter_subsection("bc 0");
-          {
-            parse_boundary(prm, 0);
-          }
-          prm.leave_subsection();
+          if (this->size >= n + 1)
+            {
+              prm.enter_subsection("bc " + std::to_string(n));
+              {
+                parse_boundary(prm, n);
+              }
+              prm.leave_subsection();
+            }
         }
-      if (this->size >= 2)
-        {
-          prm.enter_subsection("bc 1");
-          {
-            parse_boundary(prm, 1);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 3)
-        {
-          prm.enter_subsection("bc 2");
-          {
-            parse_boundary(prm, 2);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 4)
-        {
-          prm.enter_subsection("bc 3");
-          {
-            parse_boundary(prm, 3);
-          }
-          prm.leave_subsection();
-        }
+    }
+    prm.leave_subsection();
+  }
 
-      if (this->size >= 5)
-        {
-          prm.enter_subsection("bc 4");
-          {
-            parse_boundary(prm, 4);
-          }
-          prm.leave_subsection();
-        }
+  /**
+   * @brief This class manages the boundary conditions for Heat-Transfer solver
+   * It introduces the boundary functions and declares the boundary conditions
+   * coherently.
+   * The members "value" and "Tenv" contain double used for bc calculation :
+   *  - if bc type is "temperature" (Dirichlet condition), "value" is the
+   * double passed to the deal.ii ConstantFunction
+   *  - if bc type is "convection" (Robin condition), "value" is the
+   * convective heat transfer coefficient (h) and "Tenv" is the
+   * environment temperature at the boundary
+   */
 
-      if (this->size >= 6)
+  template <int dim>
+  class HTBoundaryConditions : public BoundaryConditions<dim>
+  {
+  public:
+    std::vector<double> value;
+    std::vector<double> Tenv;
+
+    void
+    declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_boundary(ParameterHandler &prm, unsigned int i_bc);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  /**
+   * @brief Declares the default parameters for a boundary condition id i_bc
+   * i.e. Dirichlet condition (ConstantFunction) with value 0
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition id.
+   */
+  template <int dim>
+  void
+  HTBoundaryConditions<dim>::declareDefaultEntry(ParameterHandler &prm,
+                                                 unsigned int      i_bc)
+  {
+    prm.declare_entry("type",
+                      "temperature",
+                      Patterns::Selection("temperature|convection"),
+                      "Type of boundary condition for heat transfer"
+                      "Choices are <temperature|convection>.");
+
+    prm.declare_entry("id",
+                      Utilities::int_to_string(i_bc, 2),
+                      Patterns::Integer(),
+                      "Mesh id for boundary conditions");
+
+    prm.declare_entry("value",
+                      "0",
+                      Patterns::Double(),
+                      "Value (Double) for constant temperature at bc");
+
+    prm.declare_entry("Tenv",
+                      "0",
+                      Patterns::Double(),
+                      "Temperature (Double) of environment for convection bc");
+  }
+
+  /**
+   * @brief Declare the boundary conditions default parameters
+   * Calls declareDefaultEntry method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+  template <int dim>
+  void
+  HTBoundaryConditions<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    this->max_size = 14;
+
+    prm.enter_subsection("boundary conditions heat transfer");
+    {
+      prm.declare_entry("number",
+                        "0",
+                        Patterns::Integer(),
+                        "Number of boundary conditions");
+      this->id.resize(this->max_size);
+      this->type.resize(this->max_size);
+
+      for (unsigned int n = 0; n < this->max_size; n++)
         {
-          prm.enter_subsection("bc 5");
+          prm.enter_subsection("bc " + std::to_string(n));
           {
-            parse_boundary(prm, 5);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 7)
-        {
-          prm.enter_subsection("bc 6");
-          {
-            parse_boundary(prm, 6);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 8)
-        {
-          prm.enter_subsection("bc 7");
-          {
-            parse_boundary(prm, 7);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 9)
-        {
-          prm.enter_subsection("bc 8");
-          {
-            parse_boundary(prm, 8);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 10)
-        {
-          prm.enter_subsection("bc 9");
-          {
-            parse_boundary(prm, 9);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 11)
-        {
-          prm.enter_subsection("bc 10");
-          {
-            parse_boundary(prm, 10);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 12)
-        {
-          prm.enter_subsection("bc 11");
-          {
-            parse_boundary(prm, 11);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 13)
-        {
-          prm.enter_subsection("bc 12");
-          {
-            parse_boundary(prm, 12);
-          }
-          prm.leave_subsection();
-        }
-      if (this->size >= 14)
-        {
-          prm.enter_subsection("bc 13");
-          {
-            parse_boundary(prm, 13);
+            declareDefaultEntry(prm, n);
           }
           prm.leave_subsection();
         }
     }
     prm.leave_subsection();
   }
+
+  /**
+   * @brief Parse the information for a boundary condition
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   *
+   * @param i_bc The boundary condition number (and not necessarily it's id).
+   */
+
+  template <int dim>
+  void
+  HTBoundaryConditions<dim>::parse_boundary(ParameterHandler &prm,
+                                            unsigned int      i_bc)
+  {
+    const std::string op = prm.get("type");
+    if (op == "temperature")
+      {
+        this->type[i_bc]  = BoundaryType::temperature;
+        this->value[i_bc] = prm.get_double("value");
+      }
+    else if (op == "convection")
+      {
+        this->type[i_bc]  = BoundaryType::convection;
+        this->value[i_bc] = prm.get_double("value");
+        this->Tenv[i_bc]  = prm.get_double("Tenv");
+      }
+
+    this->id[i_bc] = prm.get_integer("id");
+  }
+
+  /**
+   * @brief Parse the boundary conditions
+   * Calls parse_boundary method for each boundary (max 14 boundaries)
+   *
+   * @param prm A parameter handler which is currently used to parse the simulation information
+   */
+
+  template <int dim>
+  void
+  HTBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
+  {
+    prm.enter_subsection("boundary conditions heat transfer");
+    {
+      this->size = prm.get_integer("number");
+
+      this->type.resize(this->size);
+      this->id.resize(this->size);
+      this->value.resize(this->size);
+      this->Tenv.resize(this->size);
+
+      for (unsigned int n = 0; n < this->max_size; n++)
+        {
+          if (this->size >= n + 1)
+            {
+              prm.enter_subsection("bc " + std::to_string(n));
+              {
+                parse_boundary(prm, n);
+              }
+              prm.leave_subsection();
+            }
+        }
+    }
+    prm.leave_subsection();
+  }
+
 } // namespace BoundaryConditions
 
 
@@ -529,6 +518,5 @@ NavierStokesFunctionDefined<dim>::value(const Point<dim> & p,
     }
   return 0.;
 }
-
 
 #endif

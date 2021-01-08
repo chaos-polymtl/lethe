@@ -43,8 +43,9 @@ public:
    * @brief PhysicsSolver - Constructor that takes an existing non-linear solver
    * @param non_linear_solver Non-linear solver that will be used to drive the physics solver
    * @param p_number_physic_total Indicates the number of physics solved
-   * default value = 1, meaning only a signle physics is solved
+   * default value = 1, meaning only a single physics is solved
    */
+  // TODO delete the first constructor?
   PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver,
                 unsigned int                 p_number_physic_total = 1);
 
@@ -52,7 +53,7 @@ public:
    * @brief PhysicsSolver
    * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
    * @param p_number_physic_total Indicates the number of physics solved
-   * default value = 1, meaning only a signle physics is solved
+   * default value = 1, meaning only a single physics is solved
    */
   PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters,
                 unsigned int                p_number_physic_total = 1);
@@ -108,6 +109,12 @@ public:
       local_evaluation_point[number_physic_current]);
   }
 
+  int
+  get_current_physics()
+  {
+    return number_physic_current;
+  }
+
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
    *
@@ -146,6 +153,7 @@ private:
 };
 
 // constructors
+// TODO delete the first constructor?
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
   NonLinearSolver<VectorType> *non_linear_solver,

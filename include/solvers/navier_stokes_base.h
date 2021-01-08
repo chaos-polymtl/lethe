@@ -238,13 +238,25 @@ protected:
   void
   set_nodal_values();
 
+
   /**
-   * @brief set_periodicity
+   * @brief setup_dofs
    *
-   * Initialize the periodic boundary conditions
+   * Initialize the dofs
    */
   virtual void
-  setup_dofs() = 0;
+  setup_dofs()
+  {
+    setup_dofs_cfd();
+  };
+
+  /**
+   * @brief setup_dofs
+   *
+   * Initialize the dofs
+   */
+  virtual void
+  setup_dofs_cfd() = 0;
 
   /**
    * @brief write_checkpoint
