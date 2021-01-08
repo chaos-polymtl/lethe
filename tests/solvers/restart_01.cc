@@ -91,7 +91,7 @@ RestartNavierStokes<dim>::run()
   const int initialSize = 4;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
-  this->setup_dofs();
+  this->setup_dofs_cfd();
   this->exact_solution                        = new ExactSolutionMMS<dim>;
   this->forcing_function                      = new MMSSineForcingFunction<dim>;
   this->nsparam.physical_properties.viscosity = 1.;

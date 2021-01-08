@@ -21,6 +21,8 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
+#include <deal.II/lac/trilinos_vector.h>
+
 #include <core/solid_base.h>
 
 #include "gls_navier_stokes.h"
@@ -47,7 +49,59 @@ public:
   virtual void
   solve() override;
 
+
+protected:
+  virtual void
+  setup_dofs() override;
+
+
+  virtual void
+  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
+                        bool restart = false) override;
+
+  virtual void
+  solve_linear_system(
+    const bool initial_step,
+    const bool renewed_matrix = true) override; // Interface function
+
+
 private:
+  /**
+   * @brief Temporary - Adds heat transfer solving - test in subfunction before global multiphysics implementation
+   */
+  virtual void
+  setup_dofs_ht();
+
+  virtual void
+  assemble_matrix_and_rhs_ht(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method);
+
+  virtual void
+  solve_linear_system_ht();
+
+  virtual void
+  finish_time_step_ht();
+
+  virtual void
+  set_initial_condition_ht();
+
+  void
+  postprocess_ht();
+
+  void
+  finish_ht();
+
+  double
+  calculate_l2_error_ht(const DoFHandler<spacedim> &         dof_handler,
+                        const TrilinosWrappers::MPI::Vector &evaluation_point,
+                        const Function<spacedim> &           exact_solution,
+                        const Parameters::FEM &              fem_parameters,
+                        const MPI_Comm &                     mpi_communicator);
+
+  ConvergenceTable error_table_ht;
+
+
   /**
    * @brief Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid
    */
@@ -95,6 +149,13 @@ private:
   void
   output_solid_triangulation();
 
+  /**
+   * @brief a function for adding data vectors to the data_out object for
+   * post_processing additional results
+   */
+  virtual void
+  output_field_hook(DataOut<spacedim> &data_out) override;
+
 
   SolidBase<dim, spacedim> solid;
   PVDHandler               pvdhandler_solid_triangulation;
@@ -102,6 +163,22 @@ private:
 
 
   TableHandler solid_forces_table;
+
+  /**
+   * @brief Temporary - Addition for Heat Transfer solving - test in subfunction before global multiphysics implementation
+   */
+  IndexSet                       locally_owned_dofs_ht;
+  IndexSet                       locally_relevant_dofs_ht;
+  FE_Q<spacedim>                 fe_ht;
+  DoFHandler<spacedim>           dof_handler_ht;
+  TrilinosWrappers::SparseMatrix system_matrix_ht;
+  SparsityPattern                sparsity_pattern_ht;
+  AffineConstraints<double>      zero_constraints_ht;
+
+
+  TrilinosWrappers::MPI::Vector solution_ht_m1; // minus 1
+  TrilinosWrappers::MPI::Vector solution_ht_m2; // minus 2
+  TrilinosWrappers::MPI::Vector solution_ht_m3; // minus 3
 };
 
 

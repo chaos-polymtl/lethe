@@ -426,7 +426,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::setup_dofs()
+GDNavierStokesSolver<dim>::setup_dofs_cfd()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_dofs");
 
@@ -1085,7 +1085,7 @@ GDNavierStokesSolver<dim>::solve()
                           this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
 
-  this->setup_dofs();
+  this->setup_dofs_cfd();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 

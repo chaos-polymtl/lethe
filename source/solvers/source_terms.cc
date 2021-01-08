@@ -21,7 +21,7 @@
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging
-template class SourceTerms::NSSourceTerm<2>;
-template class SourceTerms::NSSourceTerm<3>;
+template class SourceTerms::SourceTerm<2>;
+template class SourceTerms::SourceTerm<3>;
 template class NoForce<2>;
 template class NoForce<3>;

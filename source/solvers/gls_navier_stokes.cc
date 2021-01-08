@@ -50,7 +50,7 @@ GLSNavierStokesSolver<dim>::set_solution_vector(double value)
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_dofs()
+GLSNavierStokesSolver<dim>::setup_dofs_cfd()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_dofs");
 
@@ -74,7 +74,8 @@ GLSNavierStokesSolver<dim>::setup_dofs()
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &nonzero_constraints =
+    this->get_nonzero_constraints(Parameters::Multiphysics::ID::fluid);
   {
     nonzero_constraints.clear();
 
@@ -819,6 +820,18 @@ GLSNavierStokesSolver<dim>::set_initial_condition(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
+  set_initial_condition_cfd(initial_condition_type, restart);
+}
+
+/**
+ * Set the initial condition using a L2 or a viscous solver
+ **/
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::set_initial_condition_cfd(
+  Parameters::InitialConditionType initial_condition_type,
+  bool                             restart)
+{
   if (restart)
     {
       this->pcout << "************************" << std::endl;
@@ -1228,11 +1241,19 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
     }
 }
 
-
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                 const bool renewed_matrix)
+{
+  solve_linear_system_cfd(initial_step, renewed_matrix);
+}
+
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::solve_linear_system_cfd(const bool initial_step,
+                                                    const bool renewed_matrix)
 {
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
   const double relative_residual =

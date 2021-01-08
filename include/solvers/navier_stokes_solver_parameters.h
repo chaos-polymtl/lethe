@@ -34,28 +34,30 @@ template <int dim>
 class NavierStokesSolverParameters
 {
 public:
-  Parameters::Testing                             test;
-  Parameters::LinearSolver                        linear_solver;
-  Parameters::NonLinearSolver                     non_linear_solver;
-  Parameters::MeshAdaptation                      mesh_adaptation;
-  Parameters::Mesh                                mesh;
-  std::shared_ptr<Parameters::Nitsche<dim>>       nitsche;
-  Parameters::PhysicalProperties                  physical_properties;
-  Parameters::SimulationControl                   simulation_control;
-  Parameters::Timer                               timer;
-  Parameters::FEM                                 fem_parameters;
-  Parameters::Forces                              forces_parameters;
-  Parameters::PostProcessing                      post_processing;
-  Parameters::Restart                             restart_parameters;
-  Parameters::Manifolds                           manifolds_parameters;
-  BoundaryConditions::NSBoundaryConditions<dim>   boundary_conditions;
-  Parameters::InitialConditions<dim> *            initial_condition;
-  AnalyticalSolutions::NSAnalyticalSolution<dim> *analytical_solution;
-  SourceTerms::NSSourceTerm<dim> *                sourceTerm;
-  Parameters::VelocitySource                      velocitySource;
-  Parameters::IBParticles<dim>                    particlesParameters;
-  std::shared_ptr<Parameters::VoidFraction<dim>>  void_fraction;
-  Parameters::DynamicFlowControl                  flow_control;
+  Parameters::Testing                            test;
+  Parameters::LinearSolver                       linear_solver;
+  Parameters::NonLinearSolver                    non_linear_solver;
+  Parameters::MeshAdaptation                     mesh_adaptation;
+  Parameters::Mesh                               mesh;
+  std::shared_ptr<Parameters::Nitsche<dim>>      nitsche;
+  Parameters::PhysicalProperties                 physical_properties;
+  Parameters::SimulationControl                  simulation_control;
+  Parameters::Multiphysics                       multiphysics;
+  Parameters::Timer                              timer;
+  Parameters::FEM                                fem_parameters;
+  Parameters::Forces                             forces_parameters;
+  Parameters::PostProcessing                     post_processing;
+  Parameters::Restart                            restart_parameters;
+  Parameters::Manifolds                          manifolds_parameters;
+  BoundaryConditions::NSBoundaryConditions<dim>  boundary_conditions;
+  BoundaryConditions::HTBoundaryConditions<dim>  boundary_conditions_ht;
+  Parameters::InitialConditions<dim> *           initial_condition;
+  AnalyticalSolutions::AnalyticalSolution<dim> * analytical_solution;
+  SourceTerms::SourceTerm<dim> *                 sourceTerm;
+  Parameters::VelocitySource                     velocitySource;
+  Parameters::IBParticles<dim>                   particlesParameters;
+  std::shared_ptr<Parameters::VoidFraction<dim>> void_fraction;
+  Parameters::DynamicFlowControl                 flow_control;
 
   void
   declare(ParameterHandler &prm)
@@ -67,11 +69,13 @@ public:
     nitsche->declare_parameters(prm);
     Parameters::Restart::declare_parameters(prm);
     boundary_conditions.declare_parameters(prm);
+    boundary_conditions_ht.declare_parameters(prm);
 
     initial_condition = new Parameters::InitialConditions<dim>;
     initial_condition->declare_parameters(prm);
 
     Parameters::FEM::declare_parameters(prm);
+    Parameters::Multiphysics::declare_parameters(prm);
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
@@ -82,10 +86,9 @@ public:
     particlesParameters.declare_parameters(prm);
     manifolds_parameters.declare_parameters(prm);
 
-    analytical_solution = new AnalyticalSolutions::NSAnalyticalSolution<dim>;
+    analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);
-
-    sourceTerm = new SourceTerms::NSSourceTerm<dim>;
+    sourceTerm = new SourceTerms::SourceTerm<dim>;
     sourceTerm->declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
 
@@ -105,6 +108,7 @@ public:
     mesh.parse_parameters(prm);
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm);
+    multiphysics.parse_parameters(prm);
     timer.parse_parameters(prm);
     fem_parameters.parse_parameters(prm);
     forces_parameters.parse_parameters(prm);
@@ -112,6 +116,7 @@ public:
     flow_control.parse_parameters(prm);
     restart_parameters.parse_parameters(prm);
     boundary_conditions.parse_parameters(prm);
+    boundary_conditions_ht.parse_parameters(prm);
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);

@@ -96,7 +96,7 @@ private:
   assemble_L2_projection();
 
   virtual void
-  setup_dofs();
+  setup_dofs_cfd();
 
   void
   set_initial_condition(Parameters::InitialConditionType initial_condition_type,

@@ -46,6 +46,8 @@ namespace SourceTerms
   {
   public:
     SourceTerm()
+      : navier_stokes_source(dim + 1)
+      , heat_transfer_source(1)
     {}
 
     virtual void
@@ -59,6 +61,12 @@ namespace SourceTerms
     {
       return enable;
     }
+
+    // Velocity-pressure components
+    Functions::ParsedFunction<dim> navier_stokes_source;
+
+    // Heat transfer source
+    Functions::ParsedFunction<dim> heat_transfer_source;
 
   protected:
     bool enable;
@@ -74,6 +82,22 @@ namespace SourceTerms
       "true",
       Patterns::Bool(),
       "Enable the calculation of the analytical solution and L2 error");
+
+    prm.enter_subsection("xyz");
+    navier_stokes_source.declare_parameters(prm, dim);
+    if (dim == 2)
+      prm.set("Function expression", "0; 0; 0");
+    if (dim == 3)
+      prm.set("Function expression", "0; 0; 0; 0;");
+    prm.leave_subsection();
+
+
+    prm.enter_subsection("heat transfer");
+    heat_transfer_source.declare_parameters(prm, dim);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
+
+
     prm.leave_subsection();
   }
 
@@ -83,53 +107,13 @@ namespace SourceTerms
   {
     prm.enter_subsection("source term");
     enable = prm.get_bool("enable");
-    prm.leave_subsection();
-  }
 
-
-
-  template <int dim>
-  class NSSourceTerm : public SourceTerm<dim>
-  {
-  public:
-    NSSourceTerm()
-      : source(dim + 1)
-    {}
-
-    // Velocity components
-    Functions::ParsedFunction<dim> source;
-
-    virtual void
-    declare_parameters(ParameterHandler &prm);
-    virtual void
-    parse_parameters(ParameterHandler &prm);
-  };
-
-  template <int dim>
-  void
-  NSSourceTerm<dim>::declare_parameters(ParameterHandler &prm)
-  {
-    this->SourceTerm<dim>::declare_parameters(prm);
-    prm.enter_subsection("source term");
     prm.enter_subsection("xyz");
-    source.declare_parameters(prm, dim);
-    if (dim == 2)
-      prm.set("Function expression", "0; 0; 0");
-    if (dim == 3)
-      prm.set("Function expression", "0; 0; 0; 0;");
+    navier_stokes_source.parse_parameters(prm);
     prm.leave_subsection();
-    prm.leave_subsection();
-    //    if (this->enable=false) source=NULL;
-  }
 
-  template <int dim>
-  void
-  NSSourceTerm<dim>::parse_parameters(ParameterHandler &prm)
-  {
-    this->SourceTerm<dim>::parse_parameters(prm);
-    prm.enter_subsection("source term");
-    prm.enter_subsection("xyz");
-    source.parse_parameters(prm);
+    prm.enter_subsection("heat transfer");
+    heat_transfer_source.parse_parameters(prm);
     prm.leave_subsection();
     prm.leave_subsection();
   }
