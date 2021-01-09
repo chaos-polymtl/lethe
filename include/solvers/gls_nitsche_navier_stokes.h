@@ -126,7 +126,7 @@ private:
    * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
    */
   virtual void
-  assemble_matrix_and_rhs(
+  assemble_matrix_and_rhs_fd(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 
@@ -134,8 +134,8 @@ private:
    * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
    */
   virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
+  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
+                    time_stepping_method) override;
 
   /**
    * @brief Outputs a vtu file for each output frequency of the particles

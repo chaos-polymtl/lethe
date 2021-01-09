@@ -3084,7 +3084,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
+GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs_fd(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");

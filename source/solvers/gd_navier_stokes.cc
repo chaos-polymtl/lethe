@@ -43,7 +43,7 @@ GDNavierStokesSolver<dim>::~GDNavierStokesSolver()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_matrix_and_rhs(
+GDNavierStokesSolver<dim>::assemble_matrix_and_rhs_fd(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
@@ -65,7 +65,7 @@ GDNavierStokesSolver<dim>::assemble_matrix_and_rhs(
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_rhs(
+GDNavierStokesSolver<dim>::assemble_rhs_fd(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");

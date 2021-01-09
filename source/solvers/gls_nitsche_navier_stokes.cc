@@ -290,47 +290,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
-{
-  if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      PhysicsID::fluid_dynamics)
-    {
-      this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs(
-        time_stepping_method);
-
-      assemble_nitsche_restriction<true>();
-    }
-
-  if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      PhysicsID::heat_transfer)
-    {
-      assemble_matrix_and_rhs_ht(time_stepping_method);
-    }
-}
-
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
-{
-  if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      PhysicsID::fluid_dynamics)
-    {
-      this->GLSNavierStokesSolver<spacedim>::assemble_rhs(time_stepping_method);
-
-      assemble_nitsche_restriction<false>();
-    }
-
-  if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      PhysicsID::heat_transfer)
-    {
-      assemble_matrix_and_rhs_ht(time_stepping_method);
-    }
-}
-
-template <int dim, int spacedim>
-void
 GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 {
   read_mesh_and_manifolds(this->triangulation,
@@ -460,6 +419,28 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs()
     {
       this->setup_dofs_ht();
     }
+}
+
+
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_fd(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+{
+  this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs_fd(
+    time_stepping_method);
+
+  assemble_nitsche_restriction<true>();
+}
+
+template <int dim, int spacedim>
+void
+GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs_fd(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+{
+  this->GLSNavierStokesSolver<spacedim>::assemble_rhs_fd(time_stepping_method);
+
+  assemble_nitsche_restriction<false>();
 }
 
 template <int dim, int spacedim>

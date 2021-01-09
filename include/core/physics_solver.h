@@ -106,9 +106,9 @@ public:
   virtual void
   apply_constraints()
   {
-    auto &nonzero_constraints = get_nonzero_constraints(current_physics_Id);
+    auto &nonzero_constraints = get_nonzero_constraints(current_physics_id);
     auto &local_evaluation_point =
-      get_local_evaluation_point(current_physics_Id);
+      get_local_evaluation_point(current_physics_id);
 
 
     nonzero_constraints.distribute(local_evaluation_point);
@@ -117,7 +117,7 @@ public:
   PhysicsID
   get_current_physics()
   {
-    return current_physics_Id;
+    return current_physics_id;
   }
 
   /**
@@ -145,7 +145,7 @@ public:
   ConditionalOStream pcout;
 
 private:
-  PhysicsID    current_physics_Id;
+  PhysicsID    current_physics_id;
   unsigned int number_physic_total;
 
   NonLinearSolver<VectorType> *non_linear_solver;
@@ -194,7 +194,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   // BB IMPORTANT
   // for (unsigned int iphys = 0; iphys < 1; iphys++)
   {
-    this->current_physics_Id = fluid_dynamics;
+    this->current_physics_id = fluid_dynamics;
     this->non_linear_solver->solve(time_stepping_method,
                                    first_iteration,
                                    force_matrix_renewal);

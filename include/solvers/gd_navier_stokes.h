@@ -79,13 +79,13 @@ public:
 
 private:
   void
-  assemble_matrix_and_rhs(
+  assemble_matrix_and_rhs_fd(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 
   void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
+  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
+                    time_stepping_method) override;
 
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>

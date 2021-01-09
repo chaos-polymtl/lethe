@@ -91,7 +91,7 @@ protected:
   assembleGLS();
 
   virtual void
-  assemble_matrix_and_rhs(
+  assemble_matrix_and_rhs_fd(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 

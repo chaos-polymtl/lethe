@@ -261,11 +261,33 @@ protected:
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) = 0;
+      time_stepping_method) override
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      assemble_matrix_and_rhs_fd(time_stepping_method);
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  };
 
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) = 0;
+                 time_stepping_method) override
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      assemble_rhs_fd(time_stepping_method);
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  };
+
+
+  virtual void
+  assemble_matrix_and_rhs_fd(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) = 0;
+
+  virtual void
+  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
+                    time_stepping_method) = 0;
 
   void
   refine_mesh();
