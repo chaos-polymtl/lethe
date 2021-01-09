@@ -165,30 +165,6 @@ namespace Parameters
   };
 
   /**
-   * @brief Multiphysics - Define the possible multiphysic simulations.
-   * All entries are boolean (true if the given physic is activated) except for
-   * number_physic_total
-   */
-  struct Multiphysics
-  {
-    enum ID : int
-    {
-      fluid = 0,
-      heat  = 1
-    };
-
-    bool         fluid_flow;
-    bool         heat_transfer;
-    bool         free_surface;
-    unsigned int number_physic_total;
-
-    static void
-    declare_parameters(ParameterHandler &prm);
-    void
-    parse_parameters(ParameterHandler &prm);
-  }; // namespace Parameters
-
-  /**
    * @brief Timer - Defines the parameters that control the timing of the simulation.
    * Lethe supports advanced timing features which supports the monitoring of
    * specific sub-sections of the software to evaluate the relative

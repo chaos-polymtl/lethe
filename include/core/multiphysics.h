@@ -26,7 +26,7 @@
 #ifndef lethe_multiphysics_h
 #define lethe_multiphysics_h
 
-enum class PhysicsID : int
+enum PhysicsID : unsigned int
 {
   fluid_dynamics = 0,
   heat_transfer  = 1

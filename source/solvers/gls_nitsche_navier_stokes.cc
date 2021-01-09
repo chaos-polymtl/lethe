@@ -295,7 +295,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      Parameters::Multiphysics::fluid)
+      PhysicsID::fluid_dynamics)
     {
       this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs(
         time_stepping_method);
@@ -304,7 +304,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
     }
 
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      Parameters::Multiphysics::heat)
+      PhysicsID::heat_transfer)
     {
       assemble_matrix_and_rhs_ht(time_stepping_method);
     }
@@ -316,7 +316,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      Parameters::Multiphysics::fluid)
+      PhysicsID::fluid_dynamics)
     {
       this->GLSNavierStokesSolver<spacedim>::assemble_rhs(time_stepping_method);
 
@@ -324,7 +324,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
     }
 
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      Parameters::Multiphysics::heat)
+      PhysicsID::heat_transfer)
     {
       assemble_matrix_and_rhs_ht(time_stepping_method);
     }
@@ -475,8 +475,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
   DoFTools::extract_locally_relevant_dofs(dof_handler_ht,
                                           locally_relevant_dofs_ht);
 
-  auto &solution_ht =
-    this->get_present_solution(Parameters::Multiphysics::heat);
+  auto &solution_ht = this->get_present_solution(PhysicsID::heat_transfer);
   solution_ht.reinit(locally_owned_dofs_ht,
                      locally_relevant_dofs_ht,
                      this->mpi_communicator);
@@ -492,21 +491,20 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                         locally_relevant_dofs_ht,
                         this->mpi_communicator);
 
-  auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
+  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
   system_rhs_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
-  auto &newton_update_ht =
-    this->get_newton_update(Parameters::Multiphysics::heat);
+  auto &newton_update_ht = this->get_newton_update(PhysicsID::heat_transfer);
   newton_update_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
   TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
-    this->get_local_evaluation_point(Parameters::Multiphysics::heat);
+    this->get_local_evaluation_point(PhysicsID::heat_transfer);
   local_evaluation_point_ht.reinit(this->locally_owned_dofs,
                                    this->mpi_communicator);
 
   // Non-zero constraints
   auto &nonzero_constraints_ht =
-    this->get_nonzero_constraints(Parameters::Multiphysics::ID::heat);
+    this->get_nonzero_constraints(PhysicsID::heat_transfer);
 
   {
     nonzero_constraints_ht.clear();
@@ -582,10 +580,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_ht(
   const double thermal_conductivity =
     this->nsparam.physical_properties.thermal_conductivity;
 
-  auto &solution_ht =
-    this->get_present_solution(Parameters::Multiphysics::heat);
+  auto &solution_ht   = this->get_present_solution(PhysicsID::heat_transfer);
   system_matrix_ht    = 0;
-  auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
+  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
   system_rhs_ht       = 0;
 
   // Vector for the BDF coefficients
@@ -622,11 +619,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_ht(
                                     update_quadrature_points |
                                     update_JxW_values);
 
-  auto &evaluation_point =
-    this->get_evaluation_point(Parameters::Multiphysics::heat);
+  auto &evaluation_point = this->get_evaluation_point(PhysicsID::heat_transfer);
 
   auto &velocity_evaluation_point =
-    this->get_evaluation_point(Parameters::Multiphysics::fluid);
+    this->get_evaluation_point(PhysicsID::fluid_dynamics);
 
 
   const unsigned int dofs_per_cell_ht = fe_ht.dofs_per_cell;
@@ -873,8 +869,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::finish_time_step_ht()
     {
       this->solution_ht_m3 = this->solution_ht_m2;
       this->solution_ht_m2 = this->solution_ht_m1;
-      auto &solution_ht =
-        this->get_present_solution(Parameters::Multiphysics::heat);
+      auto &solution_ht = this->get_present_solution(PhysicsID::heat_transfer);
       this->solution_ht_m1 = solution_ht;
     }
 }
@@ -887,7 +882,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_field_hook(
   if (this->nsparam.multiphysics.heat_transfer)
     {
       auto &present_temperature =
-        this->get_present_solution(Parameters::Multiphysics::heat);
+        this->get_present_solution(PhysicsID::heat_transfer);
       data_out.add_data_vector(dof_handler_ht,
                                present_temperature,
                                "temperature");
@@ -914,13 +909,13 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system(
   const bool renewed_matrix)
 {
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      Parameters::Multiphysics::fluid)
+      PhysicsID::fluid_dynamics)
     {
       this->solve_linear_system_cfd(initial_step, renewed_matrix);
     }
 
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      Parameters::Multiphysics::heat)
+      PhysicsID::heat_transfer)
     {
       solve_linear_system_ht();
     }
@@ -931,17 +926,16 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::set_initial_condition_ht()
 {
   MappingQ<spacedim> mapping(fe_ht.degree);
-  auto &newton_update = this->get_newton_update(Parameters::Multiphysics::heat);
+  auto &newton_update = this->get_newton_update(PhysicsID::heat_transfer);
   VectorTools::interpolate(mapping,
                            this->dof_handler_ht,
                            Functions::ZeroFunction<spacedim>(),
                            newton_update);
   auto &nonzero_constraints =
-    this->get_nonzero_constraints(Parameters::Multiphysics::heat);
+    this->get_nonzero_constraints(PhysicsID::heat_transfer);
   nonzero_constraints.distribute(newton_update);
-  auto &present_solution =
-    this->get_present_solution(Parameters::Multiphysics::heat);
-  present_solution = newton_update;
+  auto &present_solution = this->get_present_solution(PhysicsID::heat_transfer);
+  present_solution       = newton_update;
 
   this->finish_time_step();
   if (this->nsparam.multiphysics.heat_transfer)
@@ -955,7 +949,7 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system_ht()
 {
-  auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
+  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
 
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
   const double relative_residual =
@@ -1012,9 +1006,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system_ht()
     zero_constraints_ht.distribute(completely_distributed_solution);
 
 
-    auto &newton_update =
-      this->get_newton_update(Parameters::Multiphysics::heat);
-    newton_update = completely_distributed_solution;
+    auto &newton_update = this->get_newton_update(PhysicsID::heat_transfer);
+    newton_update       = completely_distributed_solution;
   }
 }
 
@@ -1089,7 +1082,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_ht()
       double temperature_error =
         calculate_l2_error_ht(dof_handler_ht,
                               this->get_evaluation_point(
-                                Parameters::Multiphysics::heat),
+                                PhysicsID::heat_transfer),
                               this->nsparam.analytical_solution->temperature,
                               this->nsparam.fem_parameters,
                               this->mpi_communicator);

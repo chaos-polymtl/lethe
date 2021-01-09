@@ -22,6 +22,7 @@
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
+#include "core/multiphysics.h"
 #include "core/sdirk.h"
 #include "core/time_integration_utilities.h"
 
@@ -75,7 +76,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_cfd()
 
   // Non-zero constraints
   auto &nonzero_constraints =
-    this->get_nonzero_constraints(Parameters::Multiphysics::ID::fluid);
+    this->get_nonzero_constraints(PhysicsID::fluid_dynamics);
   {
     nonzero_constraints.clear();
 

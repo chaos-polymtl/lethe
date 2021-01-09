@@ -36,8 +36,9 @@ namespace Parameters
 {
   struct Multiphysics
   {
-    bool fluid_dynamics;
-    bool heat_transfer;
+    bool               fluid_dynamics;
+    bool               heat_transfer;
+    const unsigned int number_physics_total = 1;
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -222,43 +222,6 @@ namespace Parameters
   }
 
   void
-  Multiphysics::declare_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("multiphysics");
-    {
-      prm.declare_entry("fluid flow",
-                        "true",
-                        Patterns::Bool(),
-                        "Fluid flow calculation <true|false>");
-
-      prm.declare_entry("heat transfer",
-                        "false",
-                        Patterns::Bool(),
-                        "Thermic calculation <true|false>");
-
-      prm.declare_entry("free surface",
-                        "false",
-                        Patterns::Bool(),
-                        "Free surface considered <true|false>");
-    }
-    prm.leave_subsection();
-  }
-
-  void
-  Multiphysics::parse_parameters(ParameterHandler &prm)
-  {
-    prm.enter_subsection("multiphysics");
-    {
-      fluid_flow    = prm.get_bool("fluid flow");
-      heat_transfer = prm.get_bool("heat transfer");
-      free_surface  = prm.get_bool("free surface");
-      number_physic_total =
-        int(fluid_flow) + int(heat_transfer) + int(free_surface);
-    }
-    prm.leave_subsection();
-  }
-
-  void
   FEM::declare_parameters(ParameterHandler &prm)
   {
     prm.enter_subsection("FEM");
