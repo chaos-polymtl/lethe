@@ -52,14 +52,6 @@ public:
 
 protected:
   virtual void
-  setup_dofs() override;
-
-
-  virtual void
-  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
-                        bool restart = false) override;
-
-  virtual void
   solve_linear_system(
     const bool initial_step,
     const bool renewed_matrix = true) override; // Interface function

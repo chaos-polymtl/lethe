@@ -192,6 +192,213 @@ protected:
       throw(std::runtime_error("Physics not implemented"));
   };
 
+  /**
+   *  Generic interface routine to allow the CFD solver
+   *  to cooperate with the multiphysics modules
+   **/
+
+  /**
+   * @brief assemble_matrix_and_rhs Assembles the matrix
+   * and the rhs of the physics currently being solved for
+   *
+   * @param time_stepping_method The time stepping scheme
+   * currently being used.
+   */
+  virtual void
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      assemble_matrix_and_rhs_fd(time_stepping_method);
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  };
+
+  /**
+   * @brief assemble_rhs Assembles the rhs of the physics currently being solver for
+   *
+   * @param time_stepping_method The time stepping scheme
+   * currently being used.
+   */
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      assemble_rhs_fd(time_stepping_method);
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  };
+
+  /**
+   * @brief finish_simulation
+   * Finishes the simulation by calling all
+   * the post-processing elements that are required
+   */
+  void
+  finish_simulation()
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      finish_simulation_fd();
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  }
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step of the fluid dynamics
+   * Post-processing and time stepping
+   */
+  virtual void
+  finish_time_step()
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      finish_time_step_fd();
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  };
+
+  /**
+   * @brief postprocess
+   * Post-process simulation after an iteration
+   *
+   * @param first_iteration Indicator if the simulation is at it's first simulation or not.
+   */
+  virtual void
+  postprocess(bool first_iteration)
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      postprocess_fd(first_iteration);
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  };
+
+  /**
+   * @brief setup_dofs
+   *
+   * Initialize the degree of freedom and the memory
+   * associated with them for fluid dynamics and enabled auxiliary physics.
+   */
+  virtual void
+  setup_dofs()
+  {
+    setup_dofs_fd();
+  };
+
+  /**
+   * @brief set_initial_conditions
+   *
+   * @param initial_condition_type Type of method  use to impose initial condition.
+   *
+   * @param restart Indicator if the simulation is being restarted or not.
+   *
+   **/
+
+  virtual void
+  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
+                        bool                             restart = false)
+  {
+    set_initial_condition_fd(initial_condition_type, restart);
+  }
+
+  /**
+   * @brief solve linear system of equation
+   *
+   * @param initial_step Indicator if this is a first linear solution.
+   *
+   * @param renewed_matrix Indicates if the matrix has been changed since last solution.
+   * This is use to identify if the preconditioner must be rebuilt or not.
+   *
+   **/
+  void
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix = true) override
+  {
+    if (this->get_current_physics() == fluid_dynamics)
+      solve_linear_system_fd(initial_step, renewed_matrix);
+    else
+      throw(std::runtime_error("Multiphysics error"));
+  }; // Interface function
+
+
+  /**
+   * End of generic interface
+   **/
+
+  /**
+   * Key physics component for fluid dynamics
+   **/
+
+  /**
+   * @brief assemble_matrix_and_rhs Assembles the matrix
+   * and the rhs of fluid dynamics
+   *
+   * @param time_stepping_method The time stepping scheme
+   * currently being used.
+   */
+  virtual void
+  assemble_matrix_and_rhs_fd(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) = 0;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs for fluid dynamics
+   *
+   * @param time_stepping_method The time stepping scheme
+   * currently being used.
+   */
+
+  virtual void
+  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
+                    time_stepping_method) = 0;
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step of the fluid dynamics
+   * Post-processing and time stepping
+   */
+  virtual void
+  finish_time_step_fd();
+
+  /**
+   * @brief finish_simulation
+   * Finishes the simulation for fluid dynamics by calling
+   * the post-processing elements that are required
+   */
+  void
+  finish_simulation_fd();
+
+  /**
+   * @brief postprocess
+   * Post-process fluid dynamics after an iteration
+   */
+  virtual void
+  postprocess_fd(bool first_iteration);
+
+
+
+  /**
+   * @brief setup_dofs
+   *
+   * Initialize the dofs for fluid dynamics
+   */
+  virtual void
+  setup_dofs_fd() = 0;
+
+  virtual void
+  set_initial_condition_fd(
+    Parameters::InitialConditionType initial_condition_type,
+    bool                             restart = false) = 0;
+
+  virtual void
+  solve_linear_system_fd(const bool initial_step,
+                         const bool renewed_matrix) = 0;
+
+  /**
+   * End of key physics components for fluid dynamics
+   **/
 
   /**
    * @brief calculate_forces
@@ -227,21 +434,7 @@ protected:
   void
   dynamic_flow_control();
 
-  /**
-   * @brief finish_time_step
-   * Finishes the time step
-   * Post-processing and time stepping
-   */
-  virtual void
-  finish_time_step();
 
-  /**
-   * @brief finish_simulation
-   * Finishes the simulation by calling all
-   * the post-processing elements that are required
-   */
-  void
-  finish_simulation();
 
   /**
    * @brief iterate
@@ -258,37 +451,6 @@ protected:
   virtual void
   first_iteration();
 
-  virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override
-  {
-    if (this->get_current_physics() == fluid_dynamics)
-      assemble_matrix_and_rhs_fd(time_stepping_method);
-    else
-      throw(std::runtime_error("Multiphysics error"));
-  };
-
-  virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override
-  {
-    if (this->get_current_physics() == fluid_dynamics)
-      assemble_rhs_fd(time_stepping_method);
-    else
-      throw(std::runtime_error("Multiphysics error"));
-  };
-
-
-  virtual void
-  assemble_matrix_and_rhs_fd(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) = 0;
-
-  virtual void
-  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method) = 0;
-
   void
   refine_mesh();
 
@@ -297,13 +459,6 @@ protected:
 
   void
   refine_mesh_uniform();
-
-  /**
-   * @brief postprocess
-   * Post-process after an iteration
-   */
-  virtual void
-  postprocess(bool firstIter);
 
   /**
    * @brief read_checkpoint
@@ -317,26 +472,6 @@ protected:
    */
   void
   set_nodal_values();
-
-
-  /**
-   * @brief setup_dofs
-   *
-   * Initialize the dofs
-   */
-  virtual void
-  setup_dofs()
-  {
-    setup_dofs_fd();
-  };
-
-  /**
-   * @brief setup_dofs
-   *
-   * Initialize the dofs
-   */
-  virtual void
-  setup_dofs_fd() = 0;
 
   /**
    * @brief write_checkpoint

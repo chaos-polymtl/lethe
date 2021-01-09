@@ -98,9 +98,11 @@ private:
   virtual void
   setup_dofs_fd();
 
-  void
-  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
-                        bool                             restart = false);
+  virtual void
+  set_initial_condition_fd(
+    Parameters::InitialConditionType initial_condition_type,
+    bool                             restart = false) override;
+
   void
   set_solution_vector(double value);
 
@@ -118,8 +120,8 @@ private:
    */
 
   void
-  solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true) override;
+  solve_linear_system_fd(const bool initial_step,
+                         const bool renewed_matrix) override;
 
   /**
    * GMRES solver with ILU preconditioning

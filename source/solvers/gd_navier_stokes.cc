@@ -665,7 +665,7 @@ GDNavierStokesSolver<dim>::set_solution_vector(double value)
  **/
 template <int dim>
 void
-GDNavierStokesSolver<dim>::set_initial_condition(
+GDNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
@@ -682,14 +682,14 @@ GDNavierStokesSolver<dim>::set_initial_condition(
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
       this->present_solution = this->newton_update;
-      this->finish_time_step();
-      this->postprocess(true);
+      this->finish_time_step_fd();
+      this->postprocess_fd(true);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
       this->set_nodal_values();
-      this->finish_time_step();
-      this->postprocess(true);
+      this->finish_time_step_fd();
+      this->postprocess_fd(true);
     }
 
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
@@ -703,8 +703,8 @@ GDNavierStokesSolver<dim>::set_initial_condition(
           Parameters::SimulationControl::TimeSteppingMethod::steady,
           false,
           true);
-      this->finish_time_step();
-      this->postprocess(true);
+      this->finish_time_step_fd();
+      this->postprocess_fd(true);
       this->nsparam.physical_properties.viscosity = viscosity;
     }
   else
@@ -715,8 +715,8 @@ GDNavierStokesSolver<dim>::set_initial_condition(
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                               const bool renewed_matrix)
+GDNavierStokesSolver<dim>::solve_linear_system_fd(const bool initial_step,
+                                                  const bool renewed_matrix)
 {
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
   const double relative_residual =
@@ -1085,11 +1085,11 @@ GDNavierStokesSolver<dim>::solve()
                            std::vector<IndexSet>>::refine_mesh();
           this->iterate();
         }
-      this->postprocess(false);
-      this->finish_time_step();
+      this->postprocess_fd(false);
+      this->finish_time_step_fd();
     }
 
-  this->finish_simulation();
+  this->finish_simulation_fd();
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is

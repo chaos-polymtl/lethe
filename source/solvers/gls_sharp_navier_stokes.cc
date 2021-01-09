@@ -1143,7 +1143,7 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::postprocess(bool firstIter)
+GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 {
   auto &present_solution = this->present_solution;
   if (this->simulation_control->is_output_iteration())
@@ -3368,9 +3368,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
           this->iterate();
         }
 
-      this->postprocess(false);
+      this->postprocess_fd(false);
 
-      this->finish_time_step();
+      this->finish_time_step_fd();
 
       if (this->nsparam.particlesParameters.calculate_force_ib)
         force_on_ib();
@@ -3381,7 +3381,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   if (this->nsparam.particlesParameters.calculate_force_ib)
 
 
-    this->finish_simulation();
+    this->finish_simulation_fd();
 }
 
 

@@ -85,7 +85,7 @@ private:
   calculate_L2_error_particles();
 
   virtual void
-  postprocess(bool firstIter) override;
+  postprocess_fd(bool firstIter) override;
 
   void
   refine_ib();

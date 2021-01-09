@@ -48,9 +48,9 @@ GLSVANSSolver<dim>::setup_dofs()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::finish_time_step()
+GLSVANSSolver<dim>::finish_time_step_fd()
 {
-  GLSNavierStokesSolver<dim>::finish_time_step();
+  GLSNavierStokesSolver<dim>::finish_time_step_fd();
 
   void_fraction_m3 = void_fraction_m2;
   void_fraction_m2 = void_fraction_m1;
@@ -951,11 +951,11 @@ GLSVANSSolver<dim>::solve()
             refine_mesh();
           this->iterate();
         }
-      this->postprocess(false);
-      this->finish_time_step();
+      this->postprocess_fd(false);
+      this->finish_time_step_fd();
     }
 
-  this->finish_simulation();
+  this->finish_simulation_fd();
 }
 
 

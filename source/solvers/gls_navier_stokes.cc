@@ -809,19 +809,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
  **/
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::set_initial_condition(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
-{
-  set_initial_condition_cfd(initial_condition_type, restart);
-}
-
-/**
- * Set the initial condition using a L2 or a viscous solver
- **/
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::set_initial_condition_cfd(
+GLSNavierStokesSolver<dim>::set_initial_condition_fd(
   Parameters::InitialConditionType initial_condition_type,
   bool                             restart)
 {
@@ -838,14 +826,14 @@ GLSNavierStokesSolver<dim>::set_initial_condition_cfd(
       assemble_L2_projection();
       solve_system_GMRES(true, 1e-15, 1e-15, true);
       this->present_solution = this->newton_update;
-      this->finish_time_step();
-      this->postprocess(true);
+      this->finish_time_step_fd();
+      this->postprocess_fd(true);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
       this->set_nodal_values();
-      this->finish_time_step();
-      this->postprocess(true);
+      this->finish_time_step_fd();
+      this->postprocess_fd(true);
     }
 
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
@@ -856,8 +844,8 @@ GLSNavierStokesSolver<dim>::set_initial_condition_cfd(
         this->nsparam.initial_condition->viscosity;
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::steady, false, true);
-      this->finish_time_step();
-      this->postprocess(true);
+      this->finish_time_step_fd();
+      this->postprocess_fd(true);
       this->nsparam.physical_properties.viscosity = viscosity;
     }
   else
@@ -1230,17 +1218,8 @@ GLSNavierStokesSolver<dim>::assemble_rhs_fd(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                const bool renewed_matrix)
-{
-  solve_linear_system_cfd(initial_step, renewed_matrix);
-}
-
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::solve_linear_system_cfd(const bool initial_step,
-                                                    const bool renewed_matrix)
+GLSNavierStokesSolver<dim>::solve_linear_system_fd(const bool initial_step,
+                                                   const bool renewed_matrix)
 {
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
   const double relative_residual =
@@ -1635,12 +1614,12 @@ GLSNavierStokesSolver<dim>::solve()
             refine_mesh();
           this->iterate();
         }
-      this->postprocess(false);
-      this->finish_time_step();
+      this->postprocess_fd(false);
+      this->finish_time_step_fd();
     }
 
 
-  this->finish_simulation();
+  this->finish_simulation_fd();
 }
 
 

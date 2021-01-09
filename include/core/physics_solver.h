@@ -145,8 +145,7 @@ public:
   ConditionalOStream pcout;
 
 private:
-  PhysicsID    current_physics_id;
-  unsigned int number_physic_total;
+  PhysicsID current_physics_id;
 
   NonLinearSolver<VectorType> *non_linear_solver;
 };

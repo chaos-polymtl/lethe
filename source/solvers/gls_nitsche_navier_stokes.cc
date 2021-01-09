@@ -327,7 +327,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           this->iterate();
         }
 
-      this->postprocess(false);
+      this->postprocess_fd(false);
       postprocess_ht();
       if (this->nsparam.nitsche->calculate_force_on_solid && dim == 2 &&
           spacedim == 3)
@@ -343,7 +343,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           output_solid_triangulation();
         }
 
-      this->finish_time_step();
+      this->finish_time_step_fd();
       if (this->nsparam.multiphysics.heat_transfer)
         {
           finish_time_step_ht();
@@ -351,7 +351,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
     }
   if (this->nsparam.test.enabled)
     solid.print_particle_positions();
-  this->finish_simulation();
+  this->finish_simulation_fd();
   if (this->nsparam.multiphysics.heat_transfer)
     {
       finish_ht();
@@ -409,18 +409,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
                          group_files,
                          this->mpi_communicator);
 }
-
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs()
-{
-  this->setup_dofs_fd();
-  if (this->nsparam.multiphysics.heat_transfer)
-    {
-      this->setup_dofs_ht();
-    }
-}
-
 
 template <int dim, int spacedim>
 void
@@ -869,18 +857,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_field_hook(
     }
 }
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::set_initial_condition(
-  Parameters::InitialConditionType initial_condition_type,
-  bool                             restart)
-{
-  this->set_initial_condition_cfd(initial_condition_type, restart);
-  if (this->nsparam.multiphysics.heat_transfer)
-    {
-      set_initial_condition_ht();
-    }
-}
 
 template <int dim, int spacedim>
 void
@@ -891,7 +867,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system(
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
       PhysicsID::fluid_dynamics)
     {
-      this->solve_linear_system_cfd(initial_step, renewed_matrix);
+      this->solve_linear_system_fd(initial_step, renewed_matrix);
     }
 
   if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
@@ -917,12 +893,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::set_initial_condition_ht()
   auto &present_solution = this->get_present_solution(PhysicsID::heat_transfer);
   present_solution       = newton_update;
 
-  this->finish_time_step();
+  this->finish_time_step_fd();
   if (this->nsparam.multiphysics.heat_transfer)
     {
       finish_time_step_ht();
     }
-  this->postprocess(true);
+  this->postprocess_fd(true);
 }
 
 template <int dim, int spacedim>

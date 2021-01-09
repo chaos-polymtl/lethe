@@ -298,7 +298,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
+NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
 {
   if (nsparam.forces_parameters.calculate_force)
     this->write_output_forces();
@@ -342,7 +342,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
+NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
 {
   if (nsparam.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -700,7 +700,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
+NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
   auto &present_solution = this->present_solution;
 
