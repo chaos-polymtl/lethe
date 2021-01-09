@@ -32,7 +32,17 @@ using namespace dealii;
  * of the particle motion. Note that reinitilization of force and torque is also
  * integrated into integration class
  *
- * @note
+ * @note Velocity Verlet is a second-order integration scheme. Calculation precedure:
+ *
+ * Calculation of half-step velocity
+ * v(n+1/2) = v(n)     + 1/2 * a(n)   * dt
+ *
+ * Updating particle position
+ * x(n+1)   = x(n)     + v(n+1/2)     * dt
+ *
+ * Updating acceleration and velocity of particle
+ * a(n+1)   = F(n+1) / m
+ * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */

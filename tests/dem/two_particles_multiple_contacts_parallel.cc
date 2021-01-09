@@ -18,8 +18,7 @@
  */
 
 /**
- * @brief In this test, the performance of non-linear (Hertzian)
- * particle-particle contact force is checked.
+ * @brief In this test, two particles collide on two processors
  */
 
 // Deal.II

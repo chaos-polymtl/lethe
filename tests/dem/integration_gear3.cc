@@ -18,7 +18,7 @@
  */
 
 /**
- * @brief This test checks the performance of the velocity verlet integrator
+ * @brief This test checks the performance of the gear3 integrator
  * class.
  */
 
@@ -103,7 +103,7 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::acc_derivative_y] = 0;
   pit->get_properties()[DEM::PropertiesIndex::acc_derivative_z] = 0;
 
-  // Calling velocity verlet integrator
+  // Calling gear3 integrator
   Gear3Integrator<dim> integration_object;
   integration_object.integrate(particle_handler, g, dt);
 

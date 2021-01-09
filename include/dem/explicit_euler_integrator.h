@@ -32,7 +32,11 @@ using namespace dealii;
  * of the particle motion. Note that reinitilization of force and torque is also
  * integrated into integration class
  *
- * @note
+ * @note Euler is a first-order integration scheme. Calculation proceudre:
+ *
+ * x(n+1) = x(n) + v(n) * dt
+ * v(n+1) = v(n) + a(n) * dt
+ * a(n+1) = F(n+1) / m
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */

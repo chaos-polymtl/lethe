@@ -32,7 +32,29 @@ using namespace dealii;
  * of the particle motion. Note that reinitilization of force and torque is also
  * integrated into integration class
  *
- * @note
+ * @note Gear3 is a third-order predictor-correcton integration scheme. In gear3,
+ * acceleration, velocity and position of particles are updated using the following
+ * method. b is the first derivative of acceleration
+ *
+ * Prediction:
+ * b(n+1,prediction) = b(n)
+ * a(n+1,prediction) = a(n) + b(n) * dt
+ * v(n+1,prediction) = v(n) + a(n) * dt + 1/2 * b(n) * dt ^ 2
+ * x(n+1,prediction) = x(n) + v(n) * dt + 1/2 * a(n) * dt ^ 2 + 1/6 * b(n) * dt
+ * ^ 3
+ *
+ * a(n+1,correction) = F(n+1) / m
+ * delata_a(n+1) = a(n+1,correction) - a(n+1,prediction)
+ *
+ * Correction:
+ * ┌                   ┐   ┌                   ┐   ┌                ┐
+ * | x(n+1,correction) |   | x(n+1,prediction) |   | eta1 * dt ^ 2  |
+ * | v(n+1,correction) | = | v(n+1,prediction) | + | eta2 * dt      | * delata_a(n+1)
+ * | a(n+1,correction) |   | a(n+1,prediction) |   | eta3           |
+ * | b(n+1,correction) |   | b(n+1,prediction) |   | eta4 * dt ^ -1 |
+ * └                   ┘   └                   ┘   └                ┘
+ * where eta1 - eta4 are gear3 method coefficients, eta1 = 1/12, eta2 = 5/12,
+ * eta3 = 1, eta4 = 1
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */

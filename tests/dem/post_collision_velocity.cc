@@ -17,9 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test reports the normal overlap and corresponding normal force during a
-// complete particle-wall contact. Interested reader may be interested in
-// plotting normal force against normal overlap
+/**
+ * @brief In this test, post-collision velocity of a particle
+ * is calculated after a particle-wall collision
+ */
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
