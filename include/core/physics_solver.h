@@ -22,6 +22,7 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
+#include "multiphysics.h"
 #include "newton_non_linear_solver.h"
 #include "non_linear_solver.h"
 #include "parameters.h"
@@ -105,14 +106,18 @@ public:
   virtual void
   apply_constraints()
   {
-    nonzero_constraints[number_physic_current].distribute(
-      local_evaluation_point[number_physic_current]);
+    auto &nonzero_constraints = get_nonzero_constraints(current_physics_Id);
+    auto &local_evaluation_point =
+      get_local_evaluation_point(current_physics_Id);
+
+
+    nonzero_constraints.distribute(local_evaluation_point);
   }
 
-  int
+  PhysicsID
   get_current_physics()
   {
-    return number_physic_current;
+    return current_physics_Id;
   }
 
   /**
@@ -122,34 +127,28 @@ public:
    * default value = 0, meaning only one physic, generally associated with the
    * flow equations, is solved by default
    */
-  VectorType &
-  get_evaluation_point(unsigned int number_physic_current = 0);
-  VectorType &
-  get_local_evaluation_point(unsigned int number_physic_current = 0);
-  VectorType &
-  get_newton_update(unsigned int number_physic_current = 0);
-  VectorType &
-  get_present_solution(unsigned int number_physic_current = 0);
-  VectorType &
-  get_system_rhs(unsigned int number_physic_current = 0);
-  AffineConstraints<double> &
-  get_nonzero_constraints(unsigned int number_physic_current = 0);
+  virtual VectorType &
+  get_evaluation_point(const PhysicsID number_physic_current) = 0;
+  virtual VectorType &
+  get_local_evaluation_point(const PhysicsID number_physic_current) = 0;
+  virtual VectorType &
+  get_newton_update(const PhysicsID number_physic_current) = 0;
+  virtual VectorType &
+  get_present_solution(const PhysicsID number_physic_current) = 0;
+  virtual VectorType &
+  get_system_rhs(const PhysicsID number_physic_current) = 0;
+  virtual AffineConstraints<double> &
+  get_nonzero_constraints(const PhysicsID number_physic_current) = 0;
 
   // attributes
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
 
 private:
-  unsigned int number_physic_current;
+  PhysicsID    current_physics_Id;
   unsigned int number_physic_total;
 
-  std::vector<VectorType>                evaluation_point;
-  std::vector<VectorType>                local_evaluation_point;
-  std::vector<VectorType>                newton_update;
-  std::vector<VectorType>                present_solution;
-  std::vector<VectorType>                system_rhs;
-  std::vector<AffineConstraints<double>> nonzero_constraints;
-  NonLinearSolver<VectorType> *          non_linear_solver;
+  NonLinearSolver<VectorType> *non_linear_solver;
 };
 
 // constructors
@@ -160,13 +159,6 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   unsigned int                 p_number_physic_total)
   : non_linear_solver(non_linear_solver) // Default copy ctor
   , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_total(p_number_physic_total)
-  , evaluation_point(number_physic_total)
-  , local_evaluation_point(number_physic_total)
-  , newton_update(number_physic_total)
-  , present_solution(number_physic_total)
-  , system_rhs(number_physic_total)
-  , nonzero_constraints(number_physic_total)
 {}
 
 template <typename VectorType>
@@ -174,13 +166,6 @@ PhysicsSolver<VectorType>::PhysicsSolver(
   Parameters::NonLinearSolver non_linear_solver_parameters,
   unsigned int                p_number_physic_total)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_total(p_number_physic_total)
-  , evaluation_point(number_physic_total)
-  , local_evaluation_point(number_physic_total)
-  , newton_update(number_physic_total)
-  , present_solution(number_physic_total)
-  , system_rhs(number_physic_total)
-  , nonzero_constraints(number_physic_total)
 {
   switch (non_linear_solver_parameters.solver)
     {
@@ -206,61 +191,13 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const bool                                              first_iteration,
   const bool                                              force_matrix_renewal)
 {
-  for (unsigned int iphys = 0; iphys < this->number_physic_total; iphys++)
-    {
-      this->number_physic_current = iphys;
-      this->non_linear_solver->solve(time_stepping_method,
-                                     first_iteration,
-                                     force_matrix_renewal);
-    }
+  // BB IMPORTANT
+  // for (unsigned int iphys = 0; iphys < 1; iphys++)
+  {
+    this->current_physics_Id = fluid_dynamics;
+    this->non_linear_solver->solve(time_stepping_method,
+                                   first_iteration,
+                                   force_matrix_renewal);
+  }
 }
-
-// getters
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_evaluation_point(
-  unsigned int number_physic_current)
-{
-  return evaluation_point[number_physic_current];
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_local_evaluation_point(
-  unsigned int number_physic_current)
-{
-  return local_evaluation_point[number_physic_current];
-  //  return local_evaluation_point;
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_newton_update(unsigned int number_physic_current)
-{
-  return newton_update[number_physic_current];
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_present_solution(
-  unsigned int number_physic_current)
-{
-  return present_solution[number_physic_current];
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_system_rhs(unsigned int number_physic_current)
-{
-  return system_rhs[number_physic_current];
-}
-
-template <typename VectorType>
-AffineConstraints<double> &
-PhysicsSolver<VectorType>::get_nonzero_constraints(
-  unsigned int number_physic_current)
-{
-  return nonzero_constraints[number_physic_current];
-}
-
 #endif

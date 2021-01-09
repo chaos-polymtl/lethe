@@ -46,12 +46,7 @@ public:
     : PhysicsSolver(params)
   {
     // Initialize the vectors needed for the Physics Solver
-    auto &evaluation_point = this->get_evaluation_point();
     evaluation_point.reinit(2);
-    auto &system_rhs             = this->get_system_rhs();
-    auto &local_evaluation_point = this->get_local_evaluation_point();
-    auto &present_solution       = this->get_present_solution();
-    auto &newton_update          = this->get_newton_update();
     system_rhs.reinit(2);
     local_evaluation_point.reinit(2);
     present_solution.reinit(2);
@@ -60,9 +55,6 @@ public:
     // Set the initial value of the solution
     present_solution[0] = 1;
     present_solution[1] = 0;
-
-    auto &nonzero_constraints = this->get_nonzero_constraints();
-    nonzero_constraints.close();
   }
 
 
@@ -70,7 +62,7 @@ public:
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override
+    /*time_stepping_method*/) override
   {
     system_matrix.reinit(2);
     // System
@@ -80,14 +72,12 @@ public:
     // Jacobian
     // 2x_0     1
     // 0        2
-    auto & evaluation_point = this->get_evaluation_point();
-    double x_0              = evaluation_point[0];
-    double x_1              = evaluation_point[1];
+    double x_0 = evaluation_point[0];
+    double x_1 = evaluation_point[1];
     system_matrix.set(0, 0, 2 * x_0);
     system_matrix.set(0, 1, 1);
     system_matrix.set(1, 0, 0);
     system_matrix.set(1, 1, 2);
-    auto &system_rhs = this->get_system_rhs();
 
     system_rhs[0] = -(x_0 * x_0 + x_1);
     system_rhs[1] = -(2 * x_1 + 3);
@@ -98,12 +88,10 @@ public:
 
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override
+               /*time_stepping_method*/) override
   {
-    auto & evaluation_point = this->get_evaluation_point();
-    auto & system_rhs       = this->get_system_rhs();
-    double x_0              = evaluation_point[0];
-    double x_1              = evaluation_point[1];
+    double x_0 = evaluation_point[0];
+    double x_1 = evaluation_point[1];
 
     system_rhs[0] = -(x_0 * x_0 + x_1);
     system_rhs[1] = -(2 * x_1 + 3);
@@ -118,8 +106,6 @@ public:
   void
   solve_linear_system(const bool, const bool) override
   {
-    auto &system_rhs    = this->get_system_rhs();
-    auto &newton_update = this->get_newton_update();
     system_matrix.solve(system_rhs);
     newton_update = system_rhs;
   }
@@ -128,7 +114,44 @@ public:
   apply_constraints()
   {}
 
+  virtual Vector<double> &
+  get_evaluation_point(const PhysicsID) override
+  {
+    return evaluation_point;
+  };
+  virtual Vector<double> &
+  get_local_evaluation_point(const PhysicsID) override
+  {
+    return local_evaluation_point;
+  };
+  virtual Vector<double> &
+  get_newton_update(const PhysicsID) override
+  {
+    return newton_update;
+  };
+  virtual Vector<double> &
+  get_present_solution(const PhysicsID) override
+  {
+    return present_solution;
+  };
+  virtual Vector<double> &
+  get_system_rhs(const PhysicsID) override
+  {
+    return system_rhs;
+  };
+  virtual AffineConstraints<double> &
+  get_nonzero_constraints(const PhysicsID) override
+  {
+    return dummy_constraints;
+  };
+
+
 private:
-  LAPACKFullMatrix<double> system_matrix;
-  Vector<double>           rhs;
+  LAPACKFullMatrix<double>  system_matrix;
+  AffineConstraints<double> dummy_constraints;
+  Vector<double>            system_rhs;
+  Vector<double>            newton_update;
+  Vector<double>            evaluation_point;
+  Vector<double>            local_evaluation_point;
+  Vector<double>            present_solution;
 };

@@ -20,7 +20,8 @@
 #ifndef lethe_newton_non_linear_solver_h
 #define lethe_newton_non_linear_solver_h
 
-#include "non_linear_solver.h"
+#include <core/multiphysics.h>
+#include <core/non_linear_solver.h>
 
 /**
  * @brief NewtonNonlinearSolver. Non-linear solver for non-linear systems of equations which uses a Newton
@@ -87,9 +88,9 @@ NewtonNonLinearSolver<VectorType>::solve(
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  const int current_physics  = solver->get_current_physics();
-  auto &    evaluation_point = solver->get_evaluation_point(current_physics);
-  auto &    present_solution = solver->get_present_solution(current_physics);
+  const PhysicsID current_physics = solver->get_current_physics();
+  auto &evaluation_point = solver->get_evaluation_point(current_physics);
+  auto &present_solution = solver->get_present_solution(current_physics);
 
   while ((current_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)

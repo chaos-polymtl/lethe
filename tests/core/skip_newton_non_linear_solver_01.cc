@@ -34,7 +34,8 @@ test()
   solver->solve_non_linear_system(
     Parameters::SimulationControl::TimeSteppingMethod::steady, true, true);
 
-  auto &present_solution = solver->get_present_solution();
+  auto &present_solution =
+    solver->get_present_solution(PhysicsID::fluid_dynamics);
   deallog << "The final solution is : " << present_solution[0] << " "
           << present_solution[1] << std::endl;
 }

@@ -47,7 +47,7 @@ public:
 
 protected:
   virtual void
-  setup_dofs_cfd();
+  setup_dofs_fd();
 
   virtual void
   set_initial_condition(Parameters::InitialConditionType initial_condition_type,

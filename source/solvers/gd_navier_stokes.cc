@@ -101,8 +101,7 @@ GDNavierStokesSolver<dim>::assembleGD()
   if (assemble_matrix)
     system_matrix = 0;
 
-  auto &system_rhs = this->get_system_rhs();
-  system_rhs       = 0;
+  this->system_rhs = 0;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
@@ -168,7 +167,7 @@ GDNavierStokesSolver<dim>::assembleGD()
     {
       if (cell->is_locally_owned())
         {
-          auto &evaluation_point = this->get_evaluation_point();
+          auto &evaluation_point = this->evaluation_point;
           fe_values.reinit(cell);
 
           local_matrix = 0;
@@ -304,13 +303,13 @@ GDNavierStokesSolver<dim>::assembleGD()
                                                           local_rhs,
                                                           local_dof_indices,
                                                           system_matrix,
-                                                          system_rhs);
+                                                          this->system_rhs);
             }
           else
             {
               constraints_used.distribute_local_to_global(local_rhs,
                                                           local_dof_indices,
-                                                          system_rhs);
+                                                          this->system_rhs);
             }
         }
     }
@@ -331,7 +330,7 @@ GDNavierStokesSolver<dim>::assembleGD()
       // zero. Luckily, FGMRES handles these rows without any problem.
       system_matrix.block(1, 1) = 0;
     }
-  system_rhs.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim>
@@ -339,7 +338,7 @@ void
 GDNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
-  auto &system_rhs = this->get_system_rhs();
+  auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
@@ -409,14 +408,12 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
             }
 
           cell->get_dof_indices(local_dof_indices);
-          auto &nonzero_constraints = this->get_nonzero_constraints();
-          const AffineConstraints<double> &constraints_used =
-            nonzero_constraints;
-          constraints_used.distribute_local_to_global(local_matrix,
-                                                      local_rhs,
-                                                      local_dof_indices,
-                                                      system_matrix,
-                                                      system_rhs);
+          this->nonzero_constraints.distribute_local_to_global(
+            local_matrix,
+            local_rhs,
+            local_dof_indices,
+            system_matrix,
+            system_rhs);
         }
     }
   system_matrix.compress(VectorOperation::add);
@@ -426,7 +423,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::setup_dofs_cfd()
+GDNavierStokesSolver<dim>::setup_dofs_fd()
 {
   TimerOutput::Scope t(this->computing_timer, "setup_dofs");
 
@@ -469,7 +466,7 @@ GDNavierStokesSolver<dim>::setup_dofs_cfd()
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &nonzero_constraints = this->nonzero_constraints;
   {
     nonzero_constraints.clear();
 
@@ -575,11 +572,9 @@ GDNavierStokesSolver<dim>::setup_dofs_cfd()
   }
   this->zero_constraints.close();
 
-  TrilinosWrappers::MPI::BlockVector &present_solution =
-    this->get_present_solution();
-  present_solution.reinit(this->locally_owned_dofs,
-                          this->locally_relevant_dofs,
-                          this->mpi_communicator);
+  this->present_solution.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
 
   this->solution_m1.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
@@ -590,14 +585,10 @@ GDNavierStokesSolver<dim>::setup_dofs_cfd()
   this->solution_m3.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector &newton_update = this->get_newton_update();
-  newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector &system_rhs = this->get_system_rhs();
-  system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
-  TrilinosWrappers::MPI::BlockVector &local_evaluation_point =
-    this->get_local_evaluation_point();
-  local_evaluation_point.reinit(this->locally_owned_dofs,
-                                this->mpi_communicator);
+  this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
+  this->local_evaluation_point.reinit(this->locally_owned_dofs,
+                                      this->mpi_communicator);
 
 
   sparsity_pattern.reinit(this->locally_owned_dofs,
@@ -665,8 +656,7 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::set_solution_vector(double value)
 {
-  auto &present_solution = this->get_present_solution();
-  present_solution       = value;
+  this->present_solution = value;
 }
 
 
@@ -691,9 +681,7 @@ GDNavierStokesSolver<dim>::set_initial_condition(
     {
       assemble_L2_projection();
       solve_L2_system(true, 1e-15, 1e-15);
-      auto &present_solution = this->get_present_solution();
-      auto &newton_update    = this->get_newton_update();
-      present_solution       = newton_update;
+      this->present_solution = this->newton_update;
       this->finish_time_step();
       this->postprocess(true);
     }
@@ -909,13 +897,10 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                               const double relative_residual,
                                               const bool   renewed_matrix)
 {
-  auto &system_rhs          = this->get_system_rhs();
-  auto &nonzero_constraints = this->get_nonzero_constraints();
-
   const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+    initial_step ? this->nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
   if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
     {
@@ -940,10 +925,9 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 
   {
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-    auto &             newton_update = this->get_newton_update();
-    solver.solve(system_matrix,
-                 newton_update,
-                 system_rhs,
+    solver.solve(this->system_matrix,
+                 this->newton_update,
+                 this->system_rhs,
                  *system_ilu_preconditioner);
     if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
@@ -951,7 +935,7 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                     << solver_control.last_step() << " steps " << std::endl;
       }
 
-    constraints_used.distribute(newton_update);
+    constraints_used.distribute(this->newton_update);
   }
 }
 
@@ -964,8 +948,8 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                             const double relative_residual,
                                             const bool   renewed_matrix)
 {
-  auto &system_rhs          = this->get_system_rhs();
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
 
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
@@ -992,11 +976,10 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
   {
     TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-    auto &             newton_update = this->get_newton_update();
 
-    solver.solve(system_matrix,
-                 newton_update,
-                 system_rhs,
+    solver.solve(this->system_matrix,
+                 this->newton_update,
+                 this->system_rhs,
                  *system_amg_preconditioner);
     if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
       {
@@ -1004,7 +987,7 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                     << solver_control.last_step() << " steps " << std::endl;
       }
 
-    constraints_used.distribute(newton_update);
+    constraints_used.distribute(this->newton_update);
   }
 }
 
@@ -1014,8 +997,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                                            double     absolute_residual,
                                            double     relative_residual)
 {
-  auto &system_rhs          = this->get_system_rhs();
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &system_rhs          = this->system_rhs;
+  auto &nonzero_constraints = this->nonzero_constraints;
 
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
   const AffineConstraints<double> &constraints_used =
@@ -1066,8 +1049,7 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
     }
 
   constraints_used.distribute(completely_distributed_solution);
-  auto &newton_update = this->get_newton_update();
-  newton_update       = completely_distributed_solution;
+  this->newton_update = completely_distributed_solution;
 }
 
 
@@ -1085,7 +1067,7 @@ GDNavierStokesSolver<dim>::solve()
                           this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
 
-  this->setup_dofs_cfd();
+  this->setup_dofs_fd();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 

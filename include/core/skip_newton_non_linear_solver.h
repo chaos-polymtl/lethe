@@ -69,8 +69,8 @@ SkipNewtonNonLinearSolver<VectorType>::solve(
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  const int current_physics = solver->get_current_physics();
-  auto &    system_rhs      = solver->get_system_rhs(current_physics);
+  const PhysicsID current_physics = solver->get_current_physics();
+  auto &          system_rhs      = solver->get_system_rhs(current_physics);
 
   while ((current_res > this->params.tolerance) &&
          outer_iteration < this->params.max_iterations)

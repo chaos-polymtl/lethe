@@ -98,7 +98,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                 {
                   // Get the velocity at non-quadrature point (particle in
                   // fluid)
-                  auto &evaluation_point = this->get_evaluation_point();
+                  auto &evaluation_point = this->evaluation_point;
                   velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
                                       this->fe.shape_value(k, ref_q);
                 }
@@ -131,7 +131,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
         }
       const AffineConstraints<double> &constraints_used =
         this->zero_constraints;
-      auto &system_rhs = this->get_system_rhs();
+      auto &system_rhs = this->system_rhs;
       constraints_used.distribute_local_to_global(local_matrix,
                                                   local_rhs,
                                                   fluid_dof_indices,
@@ -140,8 +140,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       particle = pic.end();
     }
   this->system_matrix.compress(VectorOperation::add);
-  auto &system_rhs = this->get_system_rhs();
-  system_rhs.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::add);
 }
 
 template <int dim, int spacedim>
@@ -178,7 +177,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
 
       // Generate FEField functoin to evaluate values and gradients
       // at the particle location
-      auto &evaluation_point = this->get_evaluation_point();
+      auto &evaluation_point = this->evaluation_point;
       Functions::FEFieldFunction<spacedim,
                                  DoFHandler<spacedim>,
                                  TrilinosWrappers::MPI::Vector>
@@ -456,7 +455,7 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs()
 {
-  this->setup_dofs_cfd();
+  this->setup_dofs_fd();
   if (this->nsparam.multiphysics.heat_transfer)
     {
       this->setup_dofs_ht();

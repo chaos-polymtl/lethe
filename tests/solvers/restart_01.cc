@@ -91,7 +91,7 @@ RestartNavierStokes<dim>::run()
   const int initialSize = 4;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
-  this->setup_dofs_cfd();
+  this->setup_dofs_fd();
   this->exact_solution                        = new ExactSolutionMMS<dim>;
   this->forcing_function                      = new MMSSineForcingFunction<dim>;
   this->nsparam.physical_properties.viscosity = 1.;
@@ -99,19 +99,18 @@ RestartNavierStokes<dim>::run()
   this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
   this->postprocess(false);
-  auto & present_solution = this->get_present_solution();
-  auto   errors_p1        = calculate_L2_error(this->dof_handler,
-                                      present_solution,
+  auto   errors_p1 = calculate_L2_error(this->dof_handler,
+                                      this->present_solution,
                                       this->exact_solution,
                                       this->nsparam.fem_parameters,
                                       this->mpi_communicator);
-  double error1           = errors_p1.first;
+  double error1    = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step();
 
   this->set_solution_vector(0.);
   auto errors_p2 = calculate_L2_error(this->dof_handler,
-                                      present_solution,
+                                      this->present_solution,
                                       this->exact_solution,
                                       this->nsparam.fem_parameters,
                                       this->mpi_communicator);
@@ -127,7 +126,7 @@ RestartNavierStokes<dim>::run()
 
   this->set_initial_condition(this->nsparam.initial_condition->type, true);
   auto errors_p3 = calculate_L2_error(this->dof_handler,
-                                      present_solution,
+                                      this->present_solution,
                                       this->exact_solution,
                                       this->nsparam.fem_parameters,
                                       this->mpi_communicator);

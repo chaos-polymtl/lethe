@@ -47,7 +47,7 @@ InitialConditionsNavierStokes<dim>::run()
                           this->nsparam.manifolds_parameters,
                           this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
-  this->setup_dofs_cfd();
+  this->setup_dofs_fd();
   this->forcing_function = new NoForce<dim>;
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
@@ -61,13 +61,12 @@ InitialConditionsNavierStokes<dim>::runTest()
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
 
-  this->setup_dofs_cfd();
+  this->setup_dofs_fd();
   this->exact_solution = new ExactInitialSolution<dim>;
   this->set_initial_condition(Parameters::InitialConditionType::L2projection);
-  auto &present_solution = this->get_present_solution();
   const std::pair<double, double> errors =
     calculate_L2_error(this->dof_handler,
-                       present_solution,
+                       this->present_solution,
                        this->exact_solution,
                        this->nsparam.fem_parameters,
                        this->mpi_communicator);
@@ -84,7 +83,7 @@ InitialConditionsNavierStokes<dim>::runTest()
   this->set_initial_condition(Parameters::InitialConditionType::nodal);
   const std::pair<double, double> errors_nodal =
     calculate_L2_error(this->dof_handler,
-                       present_solution,
+                       this->present_solution,
                        this->exact_solution,
                        this->nsparam.fem_parameters,
                        this->mpi_communicator);

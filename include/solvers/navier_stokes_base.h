@@ -136,6 +136,64 @@ protected:
   {}
 
   /**
+   * @brief Getter methods to get the private attributes for the physic currently solved
+   *
+   * @param current_physics_id Indicates the number associated with the physic currently solved.
+   * If the solver is only solving for a fluid dynamics problem, then the value
+   * will always be PhysicsID::fluid_dynamics.
+   *
+   */
+  virtual VectorType &
+  get_evaluation_point(const PhysicsID current_physics_id) override
+  {
+    if (current_physics_id == PhysicsID::fluid_dynamics)
+      return evaluation_point;
+    else
+      throw(std::runtime_error("Physics not implemented"));
+  };
+  virtual VectorType &
+  get_local_evaluation_point(const PhysicsID current_physics_id) override
+  {
+    if (current_physics_id == PhysicsID::fluid_dynamics)
+      return local_evaluation_point;
+    else
+      throw(std::runtime_error("Physics not implemented"));
+  };
+  virtual VectorType &
+  get_newton_update(const PhysicsID current_physics_id) override
+  {
+    if (current_physics_id == PhysicsID::fluid_dynamics)
+      return newton_update;
+    else
+      throw(std::runtime_error("Physics not implemented"));
+  };
+  virtual VectorType &
+  get_present_solution(const PhysicsID current_physics_id) override
+  {
+    if (current_physics_id == PhysicsID::fluid_dynamics)
+      return present_solution;
+    else
+      throw(std::runtime_error("Physics not implemented"));
+  };
+  virtual VectorType &
+  get_system_rhs(const PhysicsID current_physics_id) override
+  {
+    if (current_physics_id == PhysicsID::fluid_dynamics)
+      return system_rhs;
+    else
+      throw(std::runtime_error("Physics not implemented"));
+  };
+  virtual AffineConstraints<double> &
+  get_nonzero_constraints(const PhysicsID current_physics_id) override
+  {
+    if (current_physics_id == PhysicsID::fluid_dynamics)
+      return nonzero_constraints;
+    else
+      throw(std::runtime_error("Physics not implemented"));
+  };
+
+
+  /**
    * @brief calculate_forces
    * Post-processing function
    * Calculate forces acting on each boundary condition
@@ -247,7 +305,7 @@ protected:
   virtual void
   setup_dofs()
   {
-    setup_dofs_cfd();
+    setup_dofs_fd();
   };
 
   /**
@@ -256,7 +314,7 @@ protected:
    * Initialize the dofs
    */
   virtual void
-  setup_dofs_cfd() = 0;
+  setup_dofs_fd() = 0;
 
   /**
    * @brief write_checkpoint
@@ -318,7 +376,15 @@ protected:
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
 
-  // Solution vectors
+  // Present solution and non-linear solution components
+  VectorType                evaluation_point;
+  VectorType                local_evaluation_point;
+  VectorType                newton_update;
+  VectorType                present_solution;
+  VectorType                system_rhs;
+  AffineConstraints<double> nonzero_constraints;
+
+  // Past solution vectors
   VectorType solution_m1;
   VectorType solution_m2;
   VectorType solution_m3;
