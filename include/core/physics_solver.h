@@ -41,16 +41,6 @@ class PhysicsSolver
 {
 public:
   /**
-   * @brief PhysicsSolver - Constructor that takes an existing non-linear solver
-   * @param non_linear_solver Non-linear solver that will be used to drive the physics solver
-   * @param p_number_physic_total Indicates the number of physics solved
-   * default value = 1, meaning only a single physics is solved
-   */
-  // TODO delete the first constructor?
-  PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver,
-                unsigned int                 p_number_physic_total = 1);
-
-  /**
    * @brief PhysicsSolver
    * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
    * @param p_number_physic_total Indicates the number of physics solved
@@ -149,16 +139,6 @@ private:
 
   NonLinearSolver<VectorType> *non_linear_solver;
 };
-
-// constructors
-// TODO delete the first constructor?
-template <typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(
-  NonLinearSolver<VectorType> *non_linear_solver,
-  unsigned int                 p_number_physic_total)
-  : non_linear_solver(non_linear_solver) // Default copy ctor
-  , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-{}
 
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
