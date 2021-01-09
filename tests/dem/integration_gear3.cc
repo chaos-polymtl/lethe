@@ -18,8 +18,9 @@
  */
 
 /**
- * @brief This test checks the performance of the gear3 integrator
- * class.
+ * @brief This test checks that the Gear3 integrator can accurately
+ * integrate the trajectory of a particle with a constant force
+ * such that d^2 x / dt^2 = - g
  */
 
 // Deal.II includes
