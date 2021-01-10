@@ -18,30 +18,40 @@
  Montreal, 2020-
  */
 
-#include <deal.II/base/function.h>
-#include <deal.II/base/tensor.h>
+
+#include <deal.II/base/quadrature_lib.h>
 #include <deal.II/base/timer.h>
 #include <deal.II/base/types.h>
 
 #include <deal.II/dofs/dof_handler.h>
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/fe/fe.h>
+#include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/fe_values_extractors.h>
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/trilinos_precondition.h>
+#include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_vector.h>
 #include <deal.II/lac/vector.h>
 #include <deal.II/lac/vector_operation.h>
 
 #include <deal.II/numerics/fe_field_function.h>
+#include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/particles/data_out.h>
-#include <deal.II/particles/particle_handler.h>
 
+#include <core/bdf.h>
 #include <core/grids.h>
 #include <core/physics_solver.h>
 #include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 #include <solvers/gls_nitsche_navier_stokes.h>
 #include <solvers/navier_stokes_solver_parameters.h>
@@ -511,13 +521,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                         this->mpi_communicator);
 
   auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
-  system_rhs_ht.reinit(locally_owned_dofs_ht,
-                       this->mpi_communicator);
+  system_rhs_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
   auto &newton_update_ht =
     this->get_newton_update(Parameters::Multiphysics::heat);
-  newton_update_ht.reinit(locally_owned_dofs_ht,
-                          this->mpi_communicator);
+  newton_update_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
   TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
     this->get_local_evaluation_point(Parameters::Multiphysics::heat);
@@ -582,15 +590,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                                   nonzero_constraints_ht,
                                   /*keep_constrained_dofs = */ true);
 
-  SparsityTools::distribute_sparsity_pattern(
-    dsp_ht,
-    this->locally_owned_dofs_ht,
-    this->mpi_communicator,
-    this->locally_relevant_dofs_ht);
+  SparsityTools::distribute_sparsity_pattern(dsp_ht,
+                                             this->locally_owned_dofs_ht,
+                                             this->mpi_communicator,
+                                             this->locally_relevant_dofs_ht);
   system_matrix_ht.reinit(this->locally_owned_dofs_ht,
-                       this->locally_owned_dofs_ht,
-                       dsp_ht,
-                       this->mpi_communicator);
+                          this->locally_owned_dofs_ht,
+                          dsp_ht,
+                          this->mpi_communicator);
 }
 
 template <int dim, int spacedim>

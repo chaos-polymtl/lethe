@@ -18,13 +18,16 @@
  */
 
 #ifndef update_particle_wall_contact_container_h
-#  define update_particle_wall_contact_container_h
+#define update_particle_wall_contact_container_h
 
 #include <deal.II/base/config.h>
-#include <dem/pw_contact_info_struct.h>
-#include <unordered_map>
-#include <bits/stl_map.h>
+
 #include <deal.II/particles/particle_iterator.h>
+
+#include <bits/stl_map.h>
+#include <dem/pw_contact_info_struct.h>
+
+#include <unordered_map>
 
 using namespace dealii;
 

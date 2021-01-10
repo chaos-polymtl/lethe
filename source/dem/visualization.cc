@@ -1,6 +1,7 @@
-#include <dem/visualization.h>
-#include <dem/dem_properties.h>
 #include <deal.II/particles/particle_iterator.h>
+
+#include <dem/dem_properties.h>
+#include <dem/visualization.h>
 
 using namespace dealii;
 

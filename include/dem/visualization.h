@@ -19,18 +19,20 @@
 
 
 #ifndef visualization_h
-#  define visualization_h
+#define visualization_h
 
 #include <deal.II/base/config.h>
+
 #include <deal.II/base/data_out_base.h>
 #include <deal.II/base/tensor.h>
+
 #include <deal.II/numerics/data_component_interpretation.h>
 
 #include <deal.II/particles/particle_handler.h>
 
+#include <string>
 #include <tuple>
 #include <vector>
-#include <string>
 
 using namespace dealii;
 
@@ -91,17 +93,17 @@ private:
   virtual std::vector<std::string>
   get_dataset_names() const;
 
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
   virtual std::vector<
     std::tuple<unsigned int,
                unsigned int,
                std::string,
                DataComponentInterpretation::DataComponentInterpretation>>
   get_nonscalar_data_ranges() const;
-#  else
+#else
   virtual std::vector<std::tuple<unsigned int, unsigned int, std::string>>
   get_vector_data_ranges() const;
-#  endif
+#endif
 
   /**
    * Output information that is filled by build_patches() and
@@ -117,17 +119,17 @@ private:
   /**
    * Store which of the data fields are vectors.
    */
-#  if DEAL_II_VERSION_GTE(9, 1, 0)
+#if DEAL_II_VERSION_GTE(9, 1, 0)
   std::vector<
     std::tuple<unsigned int,
                unsigned int,
                std::string,
                DataComponentInterpretation::DataComponentInterpretation>>
     vector_datasets;
-#  else
+#else
   std::vector<std::tuple<unsigned int, unsigned int, std::string>>
     vector_datasets;
-#  endif
+#endif
 
   /**
    * Number of properties that are written in output files

@@ -23,14 +23,28 @@
 
 #include <deal.II/base/config.h>
 
+#include <deal.II/base/convergence_table.h>
+#include <deal.II/base/function.h>
+#include <deal.II/base/index_set.h>
 #include <deal.II/base/table_handler.h>
+#include <deal.II/base/tensor.h>
+
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/fe/fe_q.h>
+
+#include <deal.II/lac/affine_constraints.h>
+#include <deal.II/lac/sparsity_pattern.h>
+#include <deal.II/lac/trilinos_sparse_matrix.h>
+#include <deal.II/lac/trilinos_vector.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 #include <core/parameters.h>
 #include <core/pvd_handler.h>
-#include <deal.II/lac/trilinos_vector.h>
-
 #include <core/solid_base.h>
 #include <solvers/gls_navier_stokes.h>
+#include <solvers/navier_stokes_solver_parameters.h>
 
 using namespace dealii;
 

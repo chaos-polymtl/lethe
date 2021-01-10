@@ -18,12 +18,15 @@
  */
 
 #ifndef update_particle_point_line_contact_container_h
-#  define update_particle_point_line_contact_container_h
+#define update_particle_point_line_contact_container_h
 
 #include <deal.II/base/config.h>
-#include <dem/particle_point_line_contact_info_struct.h>
-#include <unordered_map>
+
 #include <deal.II/particles/particle_iterator.h>
+
+#include <dem/particle_point_line_contact_info_struct.h>
+
+#include <unordered_map>
 
 using namespace dealii;
 

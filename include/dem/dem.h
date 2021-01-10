@@ -42,6 +42,7 @@
 #include <core/parameters_lagrangian.h>
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
+#include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
@@ -57,7 +58,6 @@
 #include <dem/pw_contact_force.h>
 #include <dem/pw_fine_search.h>
 #include <dem/visualization.h>
-#include <dem/dem_properties.h>
 
 #include <unordered_set>
 #include <vector>

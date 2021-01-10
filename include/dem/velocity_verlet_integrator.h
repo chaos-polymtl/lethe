@@ -19,11 +19,14 @@
 
 
 #ifndef velocity_verlet_integrator_h
-#  define velocity_verlet_integrator_h
+#define velocity_verlet_integrator_h
 
 #include <deal.II/base/config.h>
-#include <deal.II/particles/particle_handler.h>
+
 #include <deal.II/base/tensor.h>
+
+#include <deal.II/particles/particle_handler.h>
+
 #include <dem/integrator.h>
 
 using namespace dealii;

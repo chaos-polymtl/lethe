@@ -1,4 +1,5 @@
 #include "fem-dem/gls_vans.h"
+
 #include <deal.II/base/index_set.h>
 
 #include <deal.II/dofs/dof_tools.h>
@@ -15,7 +16,7 @@
 #include <core/sdirk.h>
 #include <core/simulation_control.h>
 #include <core/time_integration_utilities.h>
-#include <solvers/gls_vans.h>
+#include <fem-dem/gls_vans.h>
 #include <solvers/initial_conditions.h>
 
 // Constructor for class GLS_VANS
