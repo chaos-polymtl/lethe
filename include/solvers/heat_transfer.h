@@ -29,6 +29,7 @@
 
 #include <deal.II/fe/fe_q.h>
 
+#include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <solvers/auxiliary_physics.h>
@@ -46,6 +47,7 @@ public:
         p_simulation_parameters.non_linear_solver)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
+    , dof_handler(*triangulation)
     , fe(1)
   {}
 
@@ -196,12 +198,15 @@ private:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
-  TrilinosWrappers::MPI::Vector evaluation_point;
-  TrilinosWrappers::MPI::Vector local_evaluation_point;
-  TrilinosWrappers::MPI::Vector newton_update;
-  TrilinosWrappers::MPI::Vector present_solution;
-  TrilinosWrappers::MPI::Vector system_rhs;
-  AffineConstraints<double>     nonzero_constraints;
+  TrilinosWrappers::MPI::Vector  evaluation_point;
+  TrilinosWrappers::MPI::Vector  local_evaluation_point;
+  TrilinosWrappers::MPI::Vector  newton_update;
+  TrilinosWrappers::MPI::Vector  present_solution;
+  TrilinosWrappers::MPI::Vector  system_rhs;
+  AffineConstraints<double>      nonzero_constraints;
+  AffineConstraints<double>      zero_constraints;
+  TrilinosWrappers::SparseMatrix system_matrix;
+
 
   // Past solution vectors
   TrilinosWrappers::MPI::Vector solution_m1;
