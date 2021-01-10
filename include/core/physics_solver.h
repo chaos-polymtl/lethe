@@ -46,8 +46,7 @@ public:
    * @param p_number_physic_total Indicates the number of physics solved
    * default value = 1, meaning only a single physics is solved
    */
-  PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters,
-                unsigned int                p_number_physic_total = 1);
+  PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
 
   ~PhysicsSolver()
   {
@@ -75,12 +74,13 @@ public:
 
 
   /**
-   * @brief Call for the solution of the linear system of equation
+   * @brief Call for the solution of the linear system of equation using a strategy appropriate
+   * to the physics
    *
    * @param initial_step Provides the linear solver with indication if this solution is the first
    * one for the system of equation or not
    *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated
+   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not
    */
   virtual void
   solve_linear_system(const bool initial_step,
@@ -132,8 +132,7 @@ private:
 
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
-  Parameters::NonLinearSolver non_linear_solver_parameters,
-  unsigned int                p_number_physic_total)
+  const Parameters::NonLinearSolver non_linear_solver_parameters)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
 {
   switch (non_linear_solver_parameters.solver)

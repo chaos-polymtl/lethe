@@ -115,32 +115,32 @@ public:
   {}
 
   virtual Vector<double> &
-  get_evaluation_point(const PhysicsID) override
+  get_evaluation_point() override
   {
     return evaluation_point;
   };
   virtual Vector<double> &
-  get_local_evaluation_point(const PhysicsID) override
+  get_local_evaluation_point() override
   {
     return local_evaluation_point;
   };
   virtual Vector<double> &
-  get_newton_update(const PhysicsID) override
+  get_newton_update() override
   {
     return newton_update;
   };
   virtual Vector<double> &
-  get_present_solution(const PhysicsID) override
+  get_present_solution() override
   {
     return present_solution;
   };
   virtual Vector<double> &
-  get_system_rhs(const PhysicsID) override
+  get_system_rhs() override
   {
     return system_rhs;
   };
   virtual AffineConstraints<double> &
-  get_nonzero_constraints(const PhysicsID) override
+  get_nonzero_constraints() override
   {
     return dummy_constraints;
   };

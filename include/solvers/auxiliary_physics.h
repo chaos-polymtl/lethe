@@ -25,6 +25,7 @@
 #include <deal.II/numerics/data_out.h>
 
 #include <core/parameters.h>
+#include <core/physics_solver.h>
 #include <solvers/navier_stokes_solver_parameters.h>
 
 
@@ -57,9 +58,8 @@
  * - Support for interaction between auxiliary physics is currently not
  *implemented / expected
  **/
-
-template <int dim>
-class AuxiliaryPhysics
+template <int dim, typename VectorType>
+class AuxiliaryPhysics : public PhysicsSolver<VectorType>
 {
 public:
   /**
@@ -67,27 +67,10 @@ public:
    * moment this is an interface with nothing. The auxliary physics has no
    * member since it cannot accomplish anything.
    */
-  AuxiliaryPhysics()
+  AuxiliaryPhysics(
+    const Parameters::NonLinearSolver non_linear_solver_parameters)
+    : PhysicsSolver<VectorType>(non_linear_solver_parameters)
   {}
-
-  /**
-   * @brief Call for the assembly of the matrix and the right-hand side.
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   */
-  virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) = 0;
-
-  /**
-   * @brief Call for the assembly of right-hand side only.
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   */
-  virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) = 0;
 
   /**
    * @brief Attach the solution vector to the data out provided. This function
@@ -140,19 +123,6 @@ public:
    */
   virtual void
   set_initial_conditions() = 0;
-
-  /**
-   * @brief Call for the solution of the linear system of equation using a strategy appropriate
-   * to the auxiliary physics
-   *
-   * @param initial_step Provides the linear solver with indication if this solution is the first
-   * one for the system of equation or not
-   *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not
-   */
-  virtual void
-  solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true) = 0;
 };
 
 

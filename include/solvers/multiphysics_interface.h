@@ -214,7 +214,10 @@ private:
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
   // proper deallocation.
-  std::map<PhysicsID, std::shared_ptr<AuxiliaryPhysics<dim>>> physics;
+  std::map<
+    PhysicsID,
+    std::shared_ptr<AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>>>
+    physics;
 };
 
 

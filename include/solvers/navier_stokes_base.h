@@ -202,7 +202,7 @@ protected:
    */
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override
+                 time_stepping_method)
   {
     assemble_rhs_fd(time_stepping_method);
   };

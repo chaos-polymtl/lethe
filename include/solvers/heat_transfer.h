@@ -25,11 +25,13 @@
 #ifndef lethe_heat_transfer_h
 #define lethe_heat_transfer_h
 
+#include <deal.II/lac/trilinos_vector.h>
+
 #include <solvers/auxiliary_physics.h>
 
 
 template <int dim>
-class HeatTransfer : public AuxiliaryPhysics<dim>
+class HeatTransfer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   HeatTransfer<dim>(
@@ -37,7 +39,9 @@ public:
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                         p_triangulation,
     ConditionalOStream &p_pcout)
-    : simulation_parameters(p_simulation_parameters)
+    : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
+        p_simulation_parameters.non_linear_solver)
+    , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , pcout(p_pcout)
   {}
@@ -126,6 +130,44 @@ public:
                       const bool renewed_matrix = true);
 
 
+  /**
+   * @brief Getter methods to get the private attributes for the physic currently solved
+   *
+   * @param number_physic_current Indicates the number associated with the physic currently solved
+   * default value = 0, meaning only one physic, generally associated with the
+   * flow equations, is solved by default
+   */
+  virtual TrilinosWrappers::MPI::Vector &
+  get_evaluation_point() override
+  {
+    return evaluation_point;
+  }
+  virtual TrilinosWrappers::MPI::Vector &
+  get_local_evaluation_point() override
+  {
+    return local_evaluation_point;
+  }
+  virtual TrilinosWrappers::MPI::Vector &
+  get_newton_update() override
+  {
+    return newton_update;
+  }
+  virtual TrilinosWrappers::MPI::Vector &
+  get_present_solution() override
+  {
+    return present_solution;
+  }
+  virtual TrilinosWrappers::MPI::Vector &
+  get_system_rhs() override
+  {
+    return system_rhs;
+  }
+  virtual AffineConstraints<double> &
+  get_nonzero_constraints() override
+  {
+    return nonzero_constraints;
+  }
+
 
 private:
   template <bool assemble_matrix>
@@ -136,6 +178,16 @@ private:
   // Simulation parameters
   // TODO : Refactor to a more neutral name
   const NavierStokesSolverParameters<dim> &simulation_parameters;
+
+
+  // Solution storage:
+  TrilinosWrappers::MPI::Vector evaluation_point;
+  TrilinosWrappers::MPI::Vector local_evaluation_point;
+  TrilinosWrappers::MPI::Vector newton_update;
+  TrilinosWrappers::MPI::Vector present_solution;
+  TrilinosWrappers::MPI::Vector system_rhs;
+  AffineConstraints<double>     nonzero_constraints;
+
 
 
   // Triangulation. Stored as a shared_ptr since it is shared with the core
