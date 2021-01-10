@@ -40,9 +40,6 @@ test()
 {
   MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-  ConditionalOStream pcout(
-    {std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0});
-
   std::shared_ptr<parallel::distributed::Triangulation<dim>> tria =
     std::make_shared<parallel::distributed::Triangulation<dim>>(
       mpi_communicator,
@@ -60,7 +57,7 @@ test()
   solver_parameters.multiphysics.heat_transfer  = true;
 
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria, pcout);
+    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: fluid, heat)" << std::endl;
@@ -72,7 +69,7 @@ test()
 
   solver_parameters.multiphysics.heat_transfer = false;
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria, pcout);
+    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: fluid)" << std::endl;
@@ -84,7 +81,7 @@ test()
 
   solver_parameters.multiphysics.fluid_dynamics = false;
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria, pcout);
+    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: none)" << std::endl;

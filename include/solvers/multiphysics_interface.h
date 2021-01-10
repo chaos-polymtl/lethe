@@ -26,6 +26,11 @@
 
 #include <deal.II/base/exceptions.h>
 
+#include <deal.II/distributed/tria_base.h>
+
+#include <deal.II/lac/trilinos_parallel_block_vector.h>
+#include <deal.II/lac/trilinos_vector.h>
+
 #include <core/multiphysics.h>
 #include <core/parameters_multiphysics.h>
 #include <solvers/auxiliary_physics.h>
@@ -48,8 +53,7 @@ public:
   MultiphysicsInterface(
     const NavierStokesSolverParameters<dim> &nsparam,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                        p_triangulation,
-    ConditionalOStream &p_pcout);
+      p_triangulation);
 
   std::vector<PhysicsID>
   get_active_physics()
@@ -218,6 +222,11 @@ private:
     PhysicsID,
     std::shared_ptr<AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>>>
     physics;
+
+  std::map<
+    PhysicsID,
+    std::shared_ptr<AuxiliaryPhysics<dim, TrilinosWrappers::MPI::BlockVector>>>
+    block_physics;
 };
 
 

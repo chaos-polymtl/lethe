@@ -25,6 +25,10 @@
 #ifndef lethe_heat_transfer_h
 #define lethe_heat_transfer_h
 
+#include <deal.II/distributed/tria_base.h>
+
+#include <deal.II/fe/fe_q.h>
+
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <solvers/auxiliary_physics.h>
@@ -37,13 +41,12 @@ public:
   HeatTransfer<dim>(
     const NavierStokesSolverParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                        p_triangulation,
-    ConditionalOStream &p_pcout)
+      p_triangulation)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
-    , pcout(p_pcout)
+    , fe(1)
   {}
 
   /**
@@ -100,7 +103,10 @@ public:
    * @brief Returns the dof_handler of the heat transfer physics
    */
   virtual const DoFHandler<dim> &
-  get_dof_handler() override{};
+  get_dof_handler() override
+  {
+    return dof_handler;
+  };
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
@@ -180,7 +186,16 @@ private:
   const NavierStokesSolverParameters<dim> &simulation_parameters;
 
 
+  // Core elements for the heat transfer simulation
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
+  DoFHandler<dim>                                              dof_handler;
+  FE_Q<dim>                                                    fe;
+
+
   // Solution storage:
+  IndexSet locally_owned_dofs;
+  IndexSet locally_relevant_dofs;
+
   TrilinosWrappers::MPI::Vector evaluation_point;
   TrilinosWrappers::MPI::Vector local_evaluation_point;
   TrilinosWrappers::MPI::Vector newton_update;
@@ -188,14 +203,10 @@ private:
   TrilinosWrappers::MPI::Vector system_rhs;
   AffineConstraints<double>     nonzero_constraints;
 
-
-
-  // Triangulation. Stored as a shared_ptr since it is shared with the core
-  // solver
-  std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-
-  // Condition Output Stream. Constructed from the one of the core solver.
-  ConditionalOStream pcout;
+  // Past solution vectors
+  TrilinosWrappers::MPI::Vector solution_m1;
+  TrilinosWrappers::MPI::Vector solution_m2;
+  TrilinosWrappers::MPI::Vector solution_m3;
 };
 
 
