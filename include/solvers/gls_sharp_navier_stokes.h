@@ -91,7 +91,7 @@ private:
   refine_ib();
 
   void
-  assemble_matrix_and_rhs_fd(
+  assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 

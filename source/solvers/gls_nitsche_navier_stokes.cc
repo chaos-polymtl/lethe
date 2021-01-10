@@ -412,10 +412,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_fd(
+GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs_fd(
+  this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs(
     time_stepping_method);
 
   assemble_nitsche_restriction<true>();
@@ -423,10 +423,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_fd(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs_fd(
+GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_rhs_fd(time_stepping_method);
+  this->GLSNavierStokesSolver<spacedim>::assemble_rhs(time_stepping_method);
 
   assemble_nitsche_restriction<false>();
 }
@@ -853,22 +853,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs_fd(
 //      this->solution_ht_m1 = solution_ht;
 //    }
 //}
-
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_field_hook(
-  DataOut<spacedim> &data_out)
-{}
-
-
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system(
-  const bool initial_step,
-  const bool renewed_matrix)
-{
-  this->solve_linear_system_fd(initial_step, renewed_matrix);
-}
 
 // template <int dim, int spacedim>
 // void

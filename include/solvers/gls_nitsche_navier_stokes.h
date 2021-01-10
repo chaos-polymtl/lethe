@@ -49,14 +49,6 @@ public:
   virtual void
   solve() override;
 
-
-protected:
-  virtual void
-  solve_linear_system(
-    const bool initial_step,
-    const bool renewed_matrix = true) override; // Interface function
-
-
 private:
   /**
    * @brief Temporary - Adds heat transfer solving - test in subfunction before global multiphysics implementation
@@ -118,7 +110,7 @@ private:
    * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
    */
   virtual void
-  assemble_matrix_and_rhs_fd(
+  assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 
@@ -126,8 +118,8 @@ private:
    * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
    */
   virtual void
-  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method) override;
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override;
 
   /**
    * @brief Outputs a vtu file for each output frequency of the particles
@@ -140,14 +132,6 @@ private:
    */
   void
   output_solid_triangulation();
-
-  /**
-   * @brief a function for adding data vectors to the data_out object for
-   * post_processing additional results
-   */
-  virtual void
-  output_field_hook(DataOut<spacedim> &data_out) override;
-
 
   SolidBase<dim, spacedim> solid;
   PVDHandler               pvdhandler_solid_triangulation;

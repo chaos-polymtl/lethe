@@ -941,7 +941,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs_fd(
+GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
@@ -1082,7 +1082,7 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs_fd(
 }
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_rhs_fd(
+GLSNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
@@ -1217,8 +1217,8 @@ GLSNavierStokesSolver<dim>::assemble_rhs_fd(
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::solve_linear_system_fd(const bool initial_step,
-                                                   const bool renewed_matrix)
+GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
+                                                const bool renewed_matrix)
 {
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
   const double relative_residual =

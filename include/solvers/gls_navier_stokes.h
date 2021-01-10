@@ -67,17 +67,17 @@ protected:
   assembleGLS();
 
   virtual void
-  assemble_matrix_and_rhs_fd(
+  assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 
   virtual void
-  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method) override;
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override;
 
   void
-  solve_linear_system_fd(const bool initial_step,
-                         const bool renewed_matrix = true);
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix = true);
 
 private:
   void

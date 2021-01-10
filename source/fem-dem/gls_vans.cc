@@ -802,7 +802,7 @@ GLSVANSSolver<dim>::assembleGLS()
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_matrix_and_rhs_fd(
+GLSVANSSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");

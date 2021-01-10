@@ -180,34 +180,6 @@ protected:
    **/
 
   /**
-   * @brief assemble_matrix_and_rhs Assembles the matrix
-   * and the rhs of the physics currently being solved for
-   *
-   * @param time_stepping_method The time stepping scheme
-   * currently being used.
-   */
-  virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override
-  {
-    assemble_matrix_and_rhs_fd(time_stepping_method);
-  };
-
-  /**
-   * @brief assemble_rhs Assembles the rhs of the physics currently being solver for
-   *
-   * @param time_stepping_method The time stepping scheme
-   * currently being used.
-   */
-  virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method)
-  {
-    assemble_rhs_fd(time_stepping_method);
-  };
-
-  /**
    * @brief finish_simulation
    * Finishes the simulation by calling all
    * the post-processing elements that are required
@@ -270,53 +242,9 @@ protected:
   }
 
   /**
-   * @brief solve linear system of equation
-   *
-   * @param initial_step Indicator if this is a first linear solution.
-   *
-   * @param renewed_matrix Indicates if the matrix has been changed since last solution.
-   * This is use to identify if the preconditioner must be rebuilt or not.
-   *
-   **/
-  void
-  solve_linear_system(const bool initial_step,
-                      const bool renewed_matrix = true) override
-  {
-    solve_linear_system_fd(initial_step, renewed_matrix);
-  }; // Interface function
-
-
-  /**
-   * End of generic interface
-   **/
-
-  /**
    * Key physics component for fluid dynamics
    **/
 
-  /**
-   * @brief assemble_matrix_and_rhs Assembles the matrix
-   * and the rhs of fluid dynamics
-   *
-   * @param time_stepping_method The time stepping scheme
-   * currently being used.
-   */
-  virtual void
-  assemble_matrix_and_rhs_fd(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) = 0;
-
-
-  /**
-   * @brief assemble_rhs Assembles the rhs for fluid dynamics
-   *
-   * @param time_stepping_method The time stepping scheme
-   * currently being used.
-   */
-
-  virtual void
-  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method) = 0;
 
   /**
    * @brief finish_time_step
@@ -355,10 +283,6 @@ protected:
   set_initial_condition_fd(
     Parameters::InitialConditionType initial_condition_type,
     bool                             restart = false) = 0;
-
-  virtual void
-  solve_linear_system_fd(const bool initial_step,
-                         const bool renewed_matrix) = 0;
 
   /**
    * End of key physics components for fluid dynamics

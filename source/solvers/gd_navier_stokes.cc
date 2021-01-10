@@ -43,7 +43,7 @@ GDNavierStokesSolver<dim>::~GDNavierStokesSolver()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_matrix_and_rhs_fd(
+GDNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
@@ -65,7 +65,7 @@ GDNavierStokesSolver<dim>::assemble_matrix_and_rhs_fd(
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_rhs_fd(
+GDNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
@@ -715,8 +715,8 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::solve_linear_system_fd(const bool initial_step,
-                                                  const bool renewed_matrix)
+GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
+                                               const bool renewed_matrix)
 {
   const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
   const double relative_residual =

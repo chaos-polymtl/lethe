@@ -79,13 +79,13 @@ public:
 
 private:
   void
-  assemble_matrix_and_rhs_fd(
+  assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
 
   void
-  assemble_rhs_fd(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method) override;
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override;
 
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>
@@ -120,8 +120,8 @@ private:
    */
 
   void
-  solve_linear_system_fd(const bool initial_step,
-                         const bool renewed_matrix) override;
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix) override;
 
   /**
    * GMRES solver with ILU preconditioning
