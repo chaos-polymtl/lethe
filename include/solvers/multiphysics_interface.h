@@ -62,26 +62,70 @@ public:
   }
 
   /**
-   * @brief Call for the assembly of the matrix and the right-hand side for the appropiate
-   * physics.
-   *
-   * @param physics_id Identifier of the physics being currently solver
+   * @brief Call for the solution of all physics
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   void
-  assemble_matrix_and_rhs(
-    const PhysicsID physics_id,
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method)
+  solve(const Parameters::SimulationControl::TimeSteppingMethod
+                   time_stepping_method,
+        const bool force_matrix_renewal)
+  {
+    for (auto &iphys : physics)
+      {
+        solve_physics(iphys.first, time_stepping_method, force_matrix_renewal);
+      }
+    for (auto &iphys : block_physics)
+      {
+        solve_block_physics(iphys.first,
+                            time_stepping_method,
+                            force_matrix_renewal);
+      }
+  }
+
+
+  /**
+   * @brief Call for the solution of a single physics
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
+  void
+  solve_physics(const PhysicsID physics_id,
+                const Parameters::SimulationControl::TimeSteppingMethod
+                           time_stepping_method,
+                const bool force_matrix_renewal)
   {
     AssertThrow(std::find(active_physics.begin(),
                           active_physics.end(),
                           physics_id) != active_physics.end(),
                 ExcInternalError());
 
-    physics[physics_id]->assemble_matrix_and_rhs(time_stepping_method);
+    physics[physics_id]->solve_non_linear_system(time_stepping_method,
+                                                 false,
+                                                 force_matrix_renewal);
   }
+
+  /**
+   * @brief Call for the solution of a single block physics
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
+  void
+  solve_block_physics(const PhysicsID physics_id,
+                      const Parameters::SimulationControl::TimeSteppingMethod
+                                 time_stepping_method,
+                      const bool force_matrix_renewal)
+  {
+    AssertThrow(std::find(active_physics.begin(),
+                          active_physics.end(),
+                          physics_id) != active_physics.end(),
+                ExcInternalError());
+
+    block_physics[physics_id]->solve_non_linear_system(time_stepping_method,
+                                                       false,
+                                                       force_matrix_renewal);
+  }
+
 
   /**
    * @brief Call for the assembly of right-hand side for the appropriate physics.
@@ -115,6 +159,10 @@ public:
       {
         iphys.second->attach_solution_to_output(data_out);
       }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->attach_solution_to_output(data_out);
+      }
   }
 
   /**
@@ -128,6 +176,10 @@ public:
       {
         iphys.second->finish_simulation();
       }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->finish_simulation();
+      }
   }
 
   /**
@@ -138,6 +190,10 @@ public:
   finish_time_step()
   {
     for (auto &iphys : physics)
+      {
+        iphys.second->finish_time_step();
+      }
+    for (auto &iphys : block_physics)
       {
         iphys.second->finish_time_step();
       }
@@ -157,6 +213,10 @@ public:
       {
         iphys.second->postprocess();
       }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->postprocess();
+      }
   }
 
 
@@ -171,6 +231,10 @@ public:
       {
         iphys.second->setup_dofs();
       }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->setup_dofs();
+      }
   };
 
   /**
@@ -182,6 +246,11 @@ public:
   set_initial_conditions()
   {
     for (auto &iphys : physics)
+      {
+        iphys.second->set_initial_conditions();
+      }
+
+    for (auto &iphys : block_physics)
       {
         iphys.second->set_initial_conditions();
       }
@@ -227,6 +296,12 @@ private:
     PhysicsID,
     std::shared_ptr<AuxiliaryPhysics<dim, TrilinosWrappers::MPI::BlockVector>>>
     block_physics;
+
+
+  std::map<PhysicsID, DoFHandler<dim> &>             physics_dof_handler;
+  std::map<PhysicsID, TrilinosWrappers::MPI::Vector> physics_solutions;
+  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector>
+    block_physics_solutions;
 };
 
 
