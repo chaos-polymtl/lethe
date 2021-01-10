@@ -96,19 +96,11 @@ public:
   virtual void
   apply_constraints()
   {
-    auto &nonzero_constraints = get_nonzero_constraints(current_physics_id);
-    auto &local_evaluation_point =
-      get_local_evaluation_point(current_physics_id);
-
-
+    auto &nonzero_constraints    = get_nonzero_constraints();
+    auto &local_evaluation_point = get_local_evaluation_point();
     nonzero_constraints.distribute(local_evaluation_point);
   }
 
-  PhysicsID
-  get_current_physics()
-  {
-    return current_physics_id;
-  }
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
@@ -118,25 +110,23 @@ public:
    * flow equations, is solved by default
    */
   virtual VectorType &
-  get_evaluation_point(const PhysicsID number_physic_current) = 0;
+  get_evaluation_point() = 0;
   virtual VectorType &
-  get_local_evaluation_point(const PhysicsID number_physic_current) = 0;
+  get_local_evaluation_point() = 0;
   virtual VectorType &
-  get_newton_update(const PhysicsID number_physic_current) = 0;
+  get_newton_update() = 0;
   virtual VectorType &
-  get_present_solution(const PhysicsID number_physic_current) = 0;
+  get_present_solution() = 0;
   virtual VectorType &
-  get_system_rhs(const PhysicsID number_physic_current) = 0;
+  get_system_rhs() = 0;
   virtual AffineConstraints<double> &
-  get_nonzero_constraints(const PhysicsID number_physic_current) = 0;
+  get_nonzero_constraints() = 0;
 
   // attributes
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
 
 private:
-  PhysicsID current_physics_id;
-
   NonLinearSolver<VectorType> *non_linear_solver;
 };
 
@@ -173,7 +163,6 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   // BB IMPORTANT
   // for (unsigned int iphys = 0; iphys < 1; iphys++)
   {
-    this->current_physics_id = fluid_dynamics;
     this->non_linear_solver->solve(time_stepping_method,
                                    first_iteration,
                                    force_matrix_renewal);

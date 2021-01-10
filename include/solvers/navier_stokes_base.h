@@ -144,52 +144,34 @@ protected:
    *
    */
   virtual VectorType &
-  get_evaluation_point(const PhysicsID current_physics_id) override
+  get_evaluation_point() override
   {
-    if (current_physics_id == PhysicsID::fluid_dynamics)
-      return evaluation_point;
-    else
-      throw(std::runtime_error("Physics not implemented"));
+    return evaluation_point;
   };
   virtual VectorType &
-  get_local_evaluation_point(const PhysicsID current_physics_id) override
+  get_local_evaluation_point() override
   {
-    if (current_physics_id == PhysicsID::fluid_dynamics)
-      return local_evaluation_point;
-    else
-      throw(std::runtime_error("Physics not implemented"));
+    return local_evaluation_point;
   };
   virtual VectorType &
-  get_newton_update(const PhysicsID current_physics_id) override
+  get_newton_update() override
   {
-    if (current_physics_id == PhysicsID::fluid_dynamics)
-      return newton_update;
-    else
-      throw(std::runtime_error("Physics not implemented"));
+    return newton_update;
   };
   virtual VectorType &
-  get_present_solution(const PhysicsID current_physics_id) override
+  get_present_solution() override
   {
-    if (current_physics_id == PhysicsID::fluid_dynamics)
-      return present_solution;
-    else
-      throw(std::runtime_error("Physics not implemented"));
+    return present_solution;
   };
   virtual VectorType &
-  get_system_rhs(const PhysicsID current_physics_id) override
+  get_system_rhs() override
   {
-    if (current_physics_id == PhysicsID::fluid_dynamics)
-      return system_rhs;
-    else
-      throw(std::runtime_error("Physics not implemented"));
+    return system_rhs;
   };
   virtual AffineConstraints<double> &
-  get_nonzero_constraints(const PhysicsID current_physics_id) override
+  get_nonzero_constraints() override
   {
-    if (current_physics_id == PhysicsID::fluid_dynamics)
-      return nonzero_constraints;
-    else
-      throw(std::runtime_error("Physics not implemented"));
+    return nonzero_constraints;
   };
 
   /**
@@ -209,10 +191,7 @@ protected:
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override
   {
-    if (this->get_current_physics() == fluid_dynamics)
-      assemble_matrix_and_rhs_fd(time_stepping_method);
-    else
-      throw(std::runtime_error("Multiphysics error"));
+    assemble_matrix_and_rhs_fd(time_stepping_method);
   };
 
   /**
@@ -225,10 +204,7 @@ protected:
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override
   {
-    if (this->get_current_physics() == fluid_dynamics)
-      assemble_rhs_fd(time_stepping_method);
-    else
-      throw(std::runtime_error("Multiphysics error"));
+    assemble_rhs_fd(time_stepping_method);
   };
 
   /**
@@ -239,10 +215,7 @@ protected:
   void
   finish_simulation()
   {
-    if (this->get_current_physics() == fluid_dynamics)
-      finish_simulation_fd();
-    else
-      throw(std::runtime_error("Multiphysics error"));
+    finish_simulation_fd();
   }
 
   /**
@@ -253,10 +226,7 @@ protected:
   virtual void
   finish_time_step()
   {
-    if (this->get_current_physics() == fluid_dynamics)
-      finish_time_step_fd();
-    else
-      throw(std::runtime_error("Multiphysics error"));
+    finish_time_step_fd();
   };
 
   /**
@@ -268,10 +238,7 @@ protected:
   virtual void
   postprocess(bool first_iteration)
   {
-    if (this->get_current_physics() == fluid_dynamics)
-      postprocess_fd(first_iteration);
-    else
-      throw(std::runtime_error("Multiphysics error"));
+    postprocess_fd(first_iteration);
   };
 
   /**
@@ -315,10 +282,7 @@ protected:
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true) override
   {
-    if (this->get_current_physics() == fluid_dynamics)
-      solve_linear_system_fd(initial_step, renewed_matrix);
-    else
-      throw(std::runtime_error("Multiphysics error"));
+    solve_linear_system_fd(initial_step, renewed_matrix);
   }; // Interface function
 
 

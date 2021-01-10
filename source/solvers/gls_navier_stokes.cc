@@ -74,8 +74,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
-  auto &nonzero_constraints =
-    this->get_nonzero_constraints(PhysicsID::fluid_dynamics);
+  auto &nonzero_constraints = this->get_nonzero_constraints();
   {
     nonzero_constraints.clear();
 

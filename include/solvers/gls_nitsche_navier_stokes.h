@@ -61,25 +61,25 @@ private:
   /**
    * @brief Temporary - Adds heat transfer solving - test in subfunction before global multiphysics implementation
    */
-  virtual void
-  setup_dofs_ht();
+  //  virtual void
+  //  setup_dofs_ht();
 
-  virtual void
-  assemble_matrix_and_rhs_ht(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method);
+  //  virtual void
+  //  assemble_matrix_and_rhs_ht(
+  //    const Parameters::SimulationControl::TimeSteppingMethod
+  //      time_stepping_method);
 
-  virtual void
-  solve_linear_system_ht();
+  //  virtual void
+  //  solve_linear_system_ht();
 
-  virtual void
-  finish_time_step_ht();
+  //  virtual void
+  //  finish_time_step_ht();
 
-  virtual void
-  set_initial_condition_ht();
+  //  virtual void
+  //  set_initial_condition_ht();
 
-  void
-  postprocess_ht();
+  //  void
+  //  postprocess_ht();
 
   void
   finish_ht();
@@ -166,6 +166,7 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix_ht;
   SparsityPattern                sparsity_pattern_ht;
   AffineConstraints<double>      zero_constraints_ht;
+
 
 
   TrilinosWrappers::MPI::Vector solution_ht_m1; // minus 1

@@ -328,7 +328,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->postprocess_fd(false);
-      postprocess_ht();
+      // postprocess_ht();
       if (this->nsparam.nitsche->calculate_force_on_solid && dim == 2 &&
           spacedim == 3)
         {
@@ -346,7 +346,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
       this->finish_time_step_fd();
       if (this->nsparam.multiphysics.heat_transfer)
         {
-          finish_time_step_ht();
+          //          finish_time_step_ht();
         }
     }
   if (this->nsparam.test.enabled)
@@ -354,7 +354,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
   this->finish_simulation_fd();
   if (this->nsparam.multiphysics.heat_transfer)
     {
-      finish_ht();
+      //      finish_ht();
     }
 }
 
@@ -431,431 +431,434 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs_fd(
   assemble_nitsche_restriction<false>();
 }
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
-{
-  this->dof_handler_ht.initialize(*(this->triangulation), this->fe_ht);
-  DoFRenumbering::Cuthill_McKee(this->dof_handler_ht);
+// template <int dim, int spacedim>
+// void
+// GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
+//{
+//  this->dof_handler_ht.initialize(*(this->triangulation), this->fe_ht);
+//  DoFRenumbering::Cuthill_McKee(this->dof_handler_ht);
 
 
-  locally_owned_dofs_ht = dof_handler_ht.locally_owned_dofs();
-  DoFTools::extract_locally_relevant_dofs(dof_handler_ht,
-                                          locally_relevant_dofs_ht);
+//  locally_owned_dofs_ht = dof_handler_ht.locally_owned_dofs();
+//  DoFTools::extract_locally_relevant_dofs(dof_handler_ht,
+//                                          locally_relevant_dofs_ht);
 
-  auto &solution_ht = this->get_present_solution(PhysicsID::heat_transfer);
-  solution_ht.reinit(locally_owned_dofs_ht,
-                     locally_relevant_dofs_ht,
-                     this->mpi_communicator);
+//  auto &solution_ht = this->get_present_solution(PhysicsID::heat_transfer);
+//  solution_ht.reinit(locally_owned_dofs_ht,
+//                     locally_relevant_dofs_ht,
+//                     this->mpi_communicator);
 
-  // Previous solutions for transient schemes
-  solution_ht_m1.reinit(locally_owned_dofs_ht,
-                        locally_relevant_dofs_ht,
-                        this->mpi_communicator);
-  solution_ht_m2.reinit(locally_owned_dofs_ht,
-                        locally_relevant_dofs_ht,
-                        this->mpi_communicator);
-  solution_ht_m3.reinit(locally_owned_dofs_ht,
-                        locally_relevant_dofs_ht,
-                        this->mpi_communicator);
+//  // Previous solutions for transient schemes
+//  solution_ht_m1.reinit(locally_owned_dofs_ht,
+//                        locally_relevant_dofs_ht,
+//                        this->mpi_communicator);
+//  solution_ht_m2.reinit(locally_owned_dofs_ht,
+//                        locally_relevant_dofs_ht,
+//                        this->mpi_communicator);
+//  solution_ht_m3.reinit(locally_owned_dofs_ht,
+//                        locally_relevant_dofs_ht,
+//                        this->mpi_communicator);
 
-  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
-  system_rhs_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
+//  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
+//  system_rhs_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
-  auto &newton_update_ht = this->get_newton_update(PhysicsID::heat_transfer);
-  newton_update_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
+//  auto &newton_update_ht = this->get_newton_update(PhysicsID::heat_transfer);
+//  newton_update_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
-  TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
-    this->get_local_evaluation_point(PhysicsID::heat_transfer);
-  local_evaluation_point_ht.reinit(this->locally_owned_dofs,
-                                   this->mpi_communicator);
+//  TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
+//    this->get_local_evaluation_point(PhysicsID::heat_transfer);
+//  local_evaluation_point_ht.reinit(this->locally_owned_dofs,
+//                                   this->mpi_communicator);
 
-  // Non-zero constraints
-  auto &nonzero_constraints_ht =
-    this->get_nonzero_constraints(PhysicsID::heat_transfer);
+//  // Non-zero constraints
+//  auto &nonzero_constraints_ht =
+//    this->get_nonzero_constraints(PhysicsID::heat_transfer);
 
-  {
-    nonzero_constraints_ht.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler_ht,
-                                            nonzero_constraints_ht);
+//  {
+//    nonzero_constraints_ht.clear();
+//    DoFTools::make_hanging_node_constraints(this->dof_handler_ht,
+//                                            nonzero_constraints_ht);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->nsparam.boundary_conditions_ht.size;
-         ++i_bc)
-      {
-        // Dirichlet condition : imposed temperature at i_bc
-        if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
-          {
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler_ht,
-              this->nsparam.boundary_conditions_ht.id[i_bc],
-              dealii::Functions::ConstantFunction<spacedim>(
-                this->nsparam.boundary_conditions_ht.value[i_bc]),
-              nonzero_constraints_ht);
-          }
-      }
-  }
-  nonzero_constraints_ht.close();
+//    for (unsigned int i_bc = 0;
+//         i_bc < this->nsparam.boundary_conditions_ht.size;
+//         ++i_bc)
+//      {
+//        // Dirichlet condition : imposed temperature at i_bc
+//        if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
+//            BoundaryConditions::BoundaryType::temperature)
+//          {
+//            VectorTools::interpolate_boundary_values(
+//              this->dof_handler_ht,
+//              this->nsparam.boundary_conditions_ht.id[i_bc],
+//              dealii::Functions::ConstantFunction<spacedim>(
+//                this->nsparam.boundary_conditions_ht.value[i_bc]),
+//              nonzero_constraints_ht);
+//          }
+//      }
+//  }
+//  nonzero_constraints_ht.close();
 
-  // Boundary conditions for Newton correction
-  {
-    zero_constraints_ht.clear();
-    DoFTools::make_hanging_node_constraints(this->dof_handler_ht,
-                                            zero_constraints_ht);
+//  // Boundary conditions for Newton correction
+//  {
+//    zero_constraints_ht.clear();
+//    DoFTools::make_hanging_node_constraints(this->dof_handler_ht,
+//                                            zero_constraints_ht);
 
-    for (unsigned int i_bc = 0;
-         i_bc < this->nsparam.boundary_conditions_ht.size;
-         ++i_bc)
-      {
-        if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
-          {
-            VectorTools::interpolate_boundary_values(
-              this->dof_handler_ht,
-              this->nsparam.boundary_conditions_ht.id[i_bc],
-              Functions::ZeroFunction<spacedim>(),
-              zero_constraints_ht);
-          }
-      }
-  }
-  zero_constraints_ht.close();
+//    for (unsigned int i_bc = 0;
+//         i_bc < this->nsparam.boundary_conditions_ht.size;
+//         ++i_bc)
+//      {
+//        if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
+//            BoundaryConditions::BoundaryType::temperature)
+//          {
+//            VectorTools::interpolate_boundary_values(
+//              this->dof_handler_ht,
+//              this->nsparam.boundary_conditions_ht.id[i_bc],
+//              Functions::ZeroFunction<spacedim>(),
+//              zero_constraints_ht);
+//          }
+//      }
+//  }
+//  zero_constraints_ht.close();
 
-  // Sparse matrices initialization
-  DynamicSparsityPattern dsp_ht(this->dof_handler_ht.n_dofs());
-  DoFTools::make_sparsity_pattern(this->dof_handler_ht,
-                                  dsp_ht,
-                                  nonzero_constraints_ht,
-                                  /*keep_constrained_dofs = */ true);
+//  // Sparse matrices initialization
+//  DynamicSparsityPattern dsp_ht(this->dof_handler_ht.n_dofs());
+//  DoFTools::make_sparsity_pattern(this->dof_handler_ht,
+//                                  dsp_ht,
+//                                  nonzero_constraints_ht,
+//                                  /*keep_constrained_dofs = */ true);
 
-  SparsityTools::distribute_sparsity_pattern(dsp_ht,
-                                             this->locally_owned_dofs_ht,
-                                             this->mpi_communicator,
-                                             this->locally_relevant_dofs_ht);
-  system_matrix_ht.reinit(this->locally_owned_dofs_ht,
-                          this->locally_owned_dofs_ht,
-                          dsp_ht,
-                          this->mpi_communicator);
-}
+//  SparsityTools::distribute_sparsity_pattern(dsp_ht,
+//                                             this->locally_owned_dofs_ht,
+//                                             this->mpi_communicator,
+//                                             this->locally_relevant_dofs_ht);
+//  system_matrix_ht.reinit(this->locally_owned_dofs_ht,
+//                          this->locally_owned_dofs_ht,
+//                          dsp_ht,
+//                          this->mpi_communicator);
+//}
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_ht(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
-{
-  const double density       = this->nsparam.physical_properties.density;
-  const double specific_heat = this->nsparam.physical_properties.specific_heat;
-  const double thermal_conductivity =
-    this->nsparam.physical_properties.thermal_conductivity;
+// template <int dim, int spacedim>
+// void
+// GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs_ht(
+//  const Parameters::SimulationControl::TimeSteppingMethod
+//  time_stepping_method)
+//{
+//  const double density       = this->nsparam.physical_properties.density;
+//  const double specific_heat =
+//  this->nsparam.physical_properties.specific_heat; const double
+//  thermal_conductivity =
+//    this->nsparam.physical_properties.thermal_conductivity;
 
-  auto &solution_ht   = this->get_present_solution(PhysicsID::heat_transfer);
-  system_matrix_ht    = 0;
-  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
-  system_rhs_ht       = 0;
+//  auto &solution_ht   = this->get_present_solution(PhysicsID::heat_transfer);
+//  system_matrix_ht    = 0;
+//  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
+//  system_rhs_ht       = 0;
 
-  // Vector for the BDF coefficients
-  // The coefficients are stored in the following fashion :
-  // 0 - n+1
-  // 1 - n
-  // 2 - n-1
-  // 3 - n-2
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
+//  // Vector for the BDF coefficients
+//  // The coefficients are stored in the following fashion :
+//  // 0 - n+1
+//  // 1 - n
+//  // 2 - n-1
+//  // 3 - n-2
+//  std::vector<double> time_steps_vector =
+//    this->simulation_control->get_time_steps_vector();
 
-  Vector<double> bdf_coefs;
+//  Vector<double> bdf_coefs;
 
-  if (time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-      time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-    bdf_coefs = bdf_coefficients(1, time_steps_vector);
+//  if (time_stepping_method ==
+//        Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+//      time_stepping_method ==
+//        Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+//    bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
-  if (time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    bdf_coefs = bdf_coefficients(2, time_steps_vector);
+//  if (time_stepping_method ==
+//      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+//    bdf_coefs = bdf_coefficients(2, time_steps_vector);
 
-  if (time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    bdf_coefs = bdf_coefficients(3, time_steps_vector);
+//  if (time_stepping_method ==
+//      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+//    bdf_coefs = bdf_coefficients(3, time_steps_vector);
 
-  auto &source_term = this->nsparam.sourceTerm->heat_transfer_source;
+//  auto &source_term = this->nsparam.sourceTerm->heat_transfer_source;
 
-  const QGauss<spacedim> quadrature_formula(fe_ht.degree + 1);
-  FEValues<spacedim>     fe_values_ht(fe_ht,
-                                  quadrature_formula,
-                                  update_values | update_gradients |
-                                    update_quadrature_points |
-                                    update_JxW_values);
+//  const QGauss<spacedim> quadrature_formula(fe_ht.degree + 1);
+//  FEValues<spacedim>     fe_values_ht(fe_ht,
+//                                  quadrature_formula,
+//                                  update_values | update_gradients |
+//                                    update_quadrature_points |
+//                                    update_JxW_values);
 
-  auto &evaluation_point = this->get_evaluation_point(PhysicsID::heat_transfer);
+//  auto &evaluation_point =
+//  this->get_evaluation_point(PhysicsID::heat_transfer);
 
-  auto &velocity_evaluation_point =
-    this->get_evaluation_point(PhysicsID::fluid_dynamics);
-
-
-  const unsigned int dofs_per_cell_ht = fe_ht.dofs_per_cell;
-
-  FullMatrix<double> cell_matrix(dofs_per_cell_ht, dofs_per_cell_ht);
-  Vector<double>     cell_rhs(dofs_per_cell_ht);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell_ht);
-  const unsigned int                   n_q_points = quadrature_formula.size();
-  std::vector<Tensor<1, spacedim>>     temperature_gradients(n_q_points);
-  std::vector<double>                  source_term_values(n_q_points);
+//  auto &velocity_evaluation_point = this->get_evaluation_point();
 
 
-  //  const MappingQ<spacedim> mapping(this->velocity_fem_degree,
-  //                                   this->nsparam.fem_parameters.qmapping_all);
-  FEValues<spacedim> fe_values_flow(this->fe,
-                                    quadrature_formula,
-                                    update_values | update_quadrature_points |
-                                      update_gradients);
+//  const unsigned int dofs_per_cell_ht = fe_ht.dofs_per_cell;
 
-  // FaceValues for Robin boundary condition
-  QGauss<spacedim - 1>   face_quadrature_formula_ht(this->fe_ht.degree + 1);
-  FEFaceValues<spacedim> fe_face_values_ht(fe_ht,
-                                           face_quadrature_formula_ht,
-                                           update_values |
-                                             update_quadrature_points |
-                                             update_JxW_values);
-
-  // Velocity values
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-
-  std::vector<Tensor<1, spacedim>> velocity_values(n_q_points);
-  std::vector<Tensor<2, spacedim>> velocity_gradient_values(n_q_points);
-
-  // Values for backward Euler scheme
-  std::vector<double> present_temperature_values(n_q_points);
-  std::vector<double> present_face_temperature_values(
-    face_quadrature_formula_ht.size());
-
-  std::vector<double> p1_temperature_values(n_q_points);
-  std::vector<double> p2_temperature_values(n_q_points);
-  std::vector<double> p3_temperature_values(n_q_points);
-  std::vector<double> p4_temperature_values(n_q_points);
-
-  for (const auto &cell : dof_handler_ht.active_cell_iterators())
-    {
-      if (cell->is_locally_owned())
-        {
-          cell_matrix = 0;
-          cell_rhs    = 0;
-          fe_values_ht.reinit(cell);
-
-          fe_values_ht.get_function_gradients(evaluation_point,
-                                              temperature_gradients);
+//  FullMatrix<double> cell_matrix(dofs_per_cell_ht, dofs_per_cell_ht);
+//  Vector<double>     cell_rhs(dofs_per_cell_ht);
+//  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell_ht);
+//  const unsigned int                   n_q_points = quadrature_formula.size();
+//  std::vector<Tensor<1, spacedim>>     temperature_gradients(n_q_points);
+//  std::vector<double>                  source_term_values(n_q_points);
 
 
-          typename DoFHandler<spacedim>::active_cell_iterator velocity_cell(
-            &(*this->triangulation),
-            cell->level(),
-            cell->index(),
-            &this->dof_handler);
-          fe_values_flow.reinit(velocity_cell);
-          fe_values_flow[velocities].get_function_values(
-            velocity_evaluation_point, velocity_values);
-          fe_values_flow[velocities].get_function_gradients(
-            velocity_evaluation_point, velocity_gradient_values);
+//  //  const MappingQ<spacedim> mapping(this->velocity_fem_degree,
+//  // this->nsparam.fem_parameters.qmapping_all); FEValues<spacedim>
+//  fe_values_flow(this->fe,
+//                                    quadrature_formula,
+//                                    update_values | update_quadrature_points |
+//                                      update_gradients);
 
-          // Gather present value
-          fe_values_ht.get_function_values(solution_ht,
-                                           present_temperature_values);
+//  // FaceValues for Robin boundary condition
+//  QGauss<spacedim - 1>   face_quadrature_formula_ht(this->fe_ht.degree + 1);
+//  FEFaceValues<spacedim> fe_face_values_ht(fe_ht,
+//                                           face_quadrature_formula_ht,
+//                                           update_values |
+//                                             update_quadrature_points |
+//                                             update_JxW_values);
 
-          // Gather the previous time steps for heat transfer depending on
-          // the number of stages of the time integration method
-          if (time_stepping_method !=
-              Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values_ht.get_function_values(this->solution_ht_m1,
-                                             p1_temperature_values);
+//  // Velocity values
+//  const FEValuesExtractors::Vector velocities(0);
+//  const FEValuesExtractors::Scalar pressure(dim);
 
-          if (time_stepping_method_has_two_stages(time_stepping_method))
-            fe_values_ht.get_function_values(this->solution_ht_m2,
-                                             p2_temperature_values);
+//  std::vector<Tensor<1, spacedim>> velocity_values(n_q_points);
+//  std::vector<Tensor<2, spacedim>> velocity_gradient_values(n_q_points);
 
-          if (time_stepping_method_has_three_stages(time_stepping_method))
-            fe_values_ht.get_function_values(this->solution_ht_m3,
-                                             p3_temperature_values);
+//  // Values for backward Euler scheme
+//  std::vector<double> present_temperature_values(n_q_points);
+//  std::vector<double> present_face_temperature_values(
+//    face_quadrature_formula_ht.size());
 
-          source_term.value_list(fe_values_ht.get_quadrature_points(),
-                                 source_term_values);
+//  std::vector<double> p1_temperature_values(n_q_points);
+//  std::vector<double> p2_temperature_values(n_q_points);
+//  std::vector<double> p3_temperature_values(n_q_points);
+//  std::vector<double> p4_temperature_values(n_q_points);
+
+//  for (const auto &cell : dof_handler_ht.active_cell_iterators())
+//    {
+//      if (cell->is_locally_owned())
+//        {
+//          cell_matrix = 0;
+//          cell_rhs    = 0;
+//          fe_values_ht.reinit(cell);
+
+//          fe_values_ht.get_function_gradients(evaluation_point,
+//                                              temperature_gradients);
 
 
-          // assembling local matrix and right hand side
-          for (const unsigned int q : fe_values_ht.quadrature_point_indices())
-            {
-              for (const unsigned int i : fe_values_ht.dof_indices())
-                {
-                  for (const unsigned int j : fe_values_ht.dof_indices())
-                    {
-                      // Weak form for : - k * laplacian T + rho * cp * u * grad
-                      // T - f - grad(u)*grad(u) =0
-                      cell_matrix(i, j) +=
-                        (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                           fe_values_ht.shape_grad(j, q) +
-                         density * specific_heat *
-                           fe_values_ht.shape_value(i, q) * velocity_values[q] *
-                           fe_values_ht.shape_grad(j, q)) *
-                        fe_values_ht.JxW(q); // JxW
+//          typename DoFHandler<spacedim>::active_cell_iterator velocity_cell(
+//            &(*this->triangulation),
+//            cell->level(),
+//            cell->index(),
+//            &this->dof_handler);
+//          fe_values_flow.reinit(velocity_cell);
+//          fe_values_flow[velocities].get_function_values(
+//            velocity_evaluation_point, velocity_values);
+//          fe_values_flow[velocities].get_function_gradients(
+//            velocity_evaluation_point, velocity_gradient_values);
 
-                      // Mass matrix for transient simulation
-                      if (is_bdf(time_stepping_method))
-                        cell_matrix(i, j) += density * specific_heat *
-                                             fe_values_ht.shape_value(j, q) *
-                                             fe_values_ht.shape_value(i, q) *
-                                             bdf_coefs[0] * fe_values_ht.JxW(q);
-                    }
+//          // Gather present value
+//          fe_values_ht.get_function_values(solution_ht,
+//                                           present_temperature_values);
 
-                  // rhs for : - k * laplacian T + rho * cp * u * grad T - f -
-                  // grad(u)*grad(u) = 0
-                  cell_rhs(i) -=
-                    (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                       temperature_gradients[q] +
-                     density * specific_heat * fe_values_ht.shape_value(i, q) *
-                       velocity_values[q] * temperature_gradients[q] -
-                     source_term_values[q] * fe_values_ht.shape_value(i, q) -
-                     fe_values_ht.shape_value(i, q) *
-                       scalar_product(velocity_gradient_values[q] +
-                                        transpose(velocity_gradient_values[q]),
-                                      transpose(velocity_gradient_values[q]))) *
-                    fe_values_ht.JxW(q); // JxW
+//          // Gather the previous time steps for heat transfer depending on
+//          // the number of stages of the time integration method
+//          if (time_stepping_method !=
+//              Parameters::SimulationControl::TimeSteppingMethod::steady)
+//            fe_values_ht.get_function_values(this->solution_ht_m1,
+//                                             p1_temperature_values);
 
-                  // Residual associated with BDF schemes
-                  if (time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::bdf1 ||
-                      time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::steady_bdf)
-                    cell_rhs(i) -=
-                      (bdf_coefs[0] * present_temperature_values[q] +
-                       bdf_coefs[1] * p1_temperature_values[q]) *
-                      fe_values_ht.shape_value(i, q) *
-                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+//          if (time_stepping_method_has_two_stages(time_stepping_method))
+//            fe_values_ht.get_function_values(this->solution_ht_m2,
+//                                             p2_temperature_values);
 
-                  if (time_stepping_method ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    cell_rhs(i) -=
-                      (bdf_coefs[0] * present_temperature_values[q] +
-                       bdf_coefs[1] * p1_temperature_values[q] +
-                       bdf_coefs[2] * p2_temperature_values[q]) *
-                      fe_values_ht.shape_value(i, q) *
-                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+//          if (time_stepping_method_has_three_stages(time_stepping_method))
+//            fe_values_ht.get_function_values(this->solution_ht_m3,
+//                                             p3_temperature_values);
 
-                  if (time_stepping_method ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                    cell_rhs(i) -=
-                      (bdf_coefs[0] * present_temperature_values[q] +
-                       bdf_coefs[1] * p1_temperature_values[q] +
-                       bdf_coefs[2] * p2_temperature_values[q] +
-                       bdf_coefs[3] * p3_temperature_values[q]) *
-                      fe_values_ht.shape_value(i, q) *
-                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
-                }
+//          source_term.value_list(fe_values_ht.get_quadrature_points(),
+//                                 source_term_values);
 
-            } // end loop on quadrature points
 
-          // Robin boundary condition, loop on faces (Newton's cooling law)
-          // implementation similar to deal.ii step-7
-          for (unsigned int i_bc = 0;
-               i_bc < this->nsparam.boundary_conditions_ht.size;
-               ++i_bc)
-            {
-              if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
-                  BoundaryConditions::BoundaryType::convection)
-                {
-                  if (cell->is_locally_owned())
-                    {
-                      for (unsigned int face = 0;
-                           face < GeometryInfo<dim>::faces_per_cell;
-                           face++)
-                        {
-                          if (cell->face(face)->at_boundary() &&
-                              (cell->face(face)->boundary_id() ==
-                               this->nsparam.boundary_conditions_ht.id[i_bc]))
-                            {
-                              fe_face_values_ht.reinit(cell, face);
-                              fe_face_values_ht.get_function_values(
-                                solution_ht, present_face_temperature_values);
-                              {
-                                for (const unsigned int q :
-                                     fe_face_values_ht
-                                       .quadrature_point_indices())
-                                  {
-                                    for (const unsigned int i :
-                                         fe_values_ht.dof_indices())
-                                      {
-                                        for (const unsigned int j :
-                                             fe_values_ht.dof_indices())
-                                          {
-                                            // Weak form modification
-                                            cell_matrix(i, j) +=
-                                              fe_face_values_ht.shape_value(j,
-                                                                            q) *
-                                              fe_face_values_ht.shape_value(i,
-                                                                            q) *
-                                              this->nsparam
-                                                .boundary_conditions_ht
-                                                .value[i_bc] *
-                                              fe_face_values_ht.JxW(q);
-                                          }
-                                        // Residual
-                                        cell_rhs(i) -=
-                                          fe_face_values_ht.shape_value(i, q) *
-                                          this->nsparam.boundary_conditions_ht
-                                            .value[i_bc] *
-                                          (present_face_temperature_values[q] -
-                                           this->nsparam.boundary_conditions_ht
-                                             .Tenv[i_bc]) *
-                                          fe_face_values_ht.JxW(q);
-                                      }
-                                  }
-                              }
-                            }
-                        }
-                    }
-                }
-            } // end loop for Robin condition
+//          // assembling local matrix and right hand side
+//          for (const unsigned int q : fe_values_ht.quadrature_point_indices())
+//            {
+//              for (const unsigned int i : fe_values_ht.dof_indices())
+//                {
+//                  for (const unsigned int j : fe_values_ht.dof_indices())
+//                    {
+//                      // Weak form for : - k * laplacian T + rho * cp * u *
+//                      grad
+//                      // T - f - grad(u)*grad(u) =0
+//                      cell_matrix(i, j) +=
+//                        (thermal_conductivity * fe_values_ht.shape_grad(i, q)
+//                        *
+//                           fe_values_ht.shape_grad(j, q) +
+//                         density * specific_heat *
+//                           fe_values_ht.shape_value(i, q) * velocity_values[q]
+//                           * fe_values_ht.shape_grad(j, q)) *
+//                        fe_values_ht.JxW(q); // JxW
 
-          // transfer cell contribution into global objects
-          cell->get_dof_indices(local_dof_indices);
-          zero_constraints_ht.distribute_local_to_global(cell_matrix,
-                                                         cell_rhs,
-                                                         local_dof_indices,
-                                                         system_matrix_ht,
-                                                         system_rhs_ht);
-        } // end loop active cell
-    }
-  system_matrix_ht.compress(VectorOperation::add);
-  system_rhs_ht.compress(VectorOperation::add);
-}
+//                      // Mass matrix for transient simulation
+//                      if (is_bdf(time_stepping_method))
+//                        cell_matrix(i, j) += density * specific_heat *
+//                                             fe_values_ht.shape_value(j, q) *
+//                                             fe_values_ht.shape_value(i, q) *
+//                                             bdf_coefs[0] *
+//                                             fe_values_ht.JxW(q);
+//                    }
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::finish_time_step_ht()
-{
-  if (this->nsparam.simulation_control.method !=
-      Parameters::SimulationControl::TimeSteppingMethod::steady)
-    {
-      this->solution_ht_m3 = this->solution_ht_m2;
-      this->solution_ht_m2 = this->solution_ht_m1;
-      auto &solution_ht = this->get_present_solution(PhysicsID::heat_transfer);
-      this->solution_ht_m1 = solution_ht;
-    }
-}
+//                  // rhs for : - k * laplacian T + rho * cp * u * grad T - f -
+//                  // grad(u)*grad(u) = 0
+//                  cell_rhs(i) -=
+//                    (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
+//                       temperature_gradients[q] +
+//                     density * specific_heat * fe_values_ht.shape_value(i, q)
+//                     *
+//                       velocity_values[q] * temperature_gradients[q] -
+//                     source_term_values[q] * fe_values_ht.shape_value(i, q) -
+//                     fe_values_ht.shape_value(i, q) *
+//                       scalar_product(velocity_gradient_values[q] +
+//                                        transpose(velocity_gradient_values[q]),
+//                                      transpose(velocity_gradient_values[q])))
+//                                      *
+//                    fe_values_ht.JxW(q); // JxW
+
+//                  // Residual associated with BDF schemes
+//                  if (time_stepping_method == Parameters::SimulationControl::
+//                                                TimeSteppingMethod::bdf1 ||
+//                      time_stepping_method == Parameters::SimulationControl::
+//                                                TimeSteppingMethod::steady_bdf)
+//                    cell_rhs(i) -=
+//                      (bdf_coefs[0] * present_temperature_values[q] +
+//                       bdf_coefs[1] * p1_temperature_values[q]) *
+//                      fe_values_ht.shape_value(i, q) *
+//                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+
+//                  if (time_stepping_method ==
+//                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+//                    cell_rhs(i) -=
+//                      (bdf_coefs[0] * present_temperature_values[q] +
+//                       bdf_coefs[1] * p1_temperature_values[q] +
+//                       bdf_coefs[2] * p2_temperature_values[q]) *
+//                      fe_values_ht.shape_value(i, q) *
+//                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+
+//                  if (time_stepping_method ==
+//                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+//                    cell_rhs(i) -=
+//                      (bdf_coefs[0] * present_temperature_values[q] +
+//                       bdf_coefs[1] * p1_temperature_values[q] +
+//                       bdf_coefs[2] * p2_temperature_values[q] +
+//                       bdf_coefs[3] * p3_temperature_values[q]) *
+//                      fe_values_ht.shape_value(i, q) *
+//                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+//                }
+
+//            } // end loop on quadrature points
+
+//          // Robin boundary condition, loop on faces (Newton's cooling law)
+//          // implementation similar to deal.ii step-7
+//          for (unsigned int i_bc = 0;
+//               i_bc < this->nsparam.boundary_conditions_ht.size;
+//               ++i_bc)
+//            {
+//              if (this->nsparam.boundary_conditions_ht.type[i_bc] ==
+//                  BoundaryConditions::BoundaryType::convection)
+//                {
+//                  if (cell->is_locally_owned())
+//                    {
+//                      for (unsigned int face = 0;
+//                           face < GeometryInfo<dim>::faces_per_cell;
+//                           face++)
+//                        {
+//                          if (cell->face(face)->at_boundary() &&
+//                              (cell->face(face)->boundary_id() ==
+//                               this->nsparam.boundary_conditions_ht.id[i_bc]))
+//                            {
+//                              fe_face_values_ht.reinit(cell, face);
+//                              fe_face_values_ht.get_function_values(
+//                                solution_ht, present_face_temperature_values);
+//                              {
+//                                for (const unsigned int q :
+//                                     fe_face_values_ht
+//                                       .quadrature_point_indices())
+//                                  {
+//                                    for (const unsigned int i :
+//                                         fe_values_ht.dof_indices())
+//                                      {
+//                                        for (const unsigned int j :
+//                                             fe_values_ht.dof_indices())
+//                                          {
+//                                            // Weak form modification
+//                                            cell_matrix(i, j) +=
+//                                              fe_face_values_ht.shape_value(j,
+//                                                                            q)
+//                                                                            *
+//                                              fe_face_values_ht.shape_value(i,
+//                                                                            q)
+//                                                                            *
+//                                              this->nsparam
+//                                                .boundary_conditions_ht
+//                                                .value[i_bc] *
+//                                              fe_face_values_ht.JxW(q);
+//                                          }
+//                                        // Residual
+//                                        cell_rhs(i) -=
+//                                          fe_face_values_ht.shape_value(i, q)
+//                                          *
+//                                          this->nsparam.boundary_conditions_ht
+//                                            .value[i_bc] *
+//                                          (present_face_temperature_values[q]
+//                                          -
+//                                           this->nsparam.boundary_conditions_ht
+//                                             .Tenv[i_bc]) *
+//                                          fe_face_values_ht.JxW(q);
+//                                      }
+//                                  }
+//                              }
+//                            }
+//                        }
+//                    }
+//                }
+//            } // end loop for Robin condition
+
+//          // transfer cell contribution into global objects
+//          cell->get_dof_indices(local_dof_indices);
+//          zero_constraints_ht.distribute_local_to_global(cell_matrix,
+//                                                         cell_rhs,
+//                                                         local_dof_indices,
+//                                                         system_matrix_ht,
+//                                                         system_rhs_ht);
+//        } // end loop active cell
+//    }
+//  system_matrix_ht.compress(VectorOperation::add);
+//  system_rhs_ht.compress(VectorOperation::add);
+//}
+
+// template <int dim, int spacedim>
+// void
+// GLSNitscheNavierStokesSolver<dim, spacedim>::finish_time_step_ht()
+//{
+//  if (this->nsparam.simulation_control.method !=
+//      Parameters::SimulationControl::TimeSteppingMethod::steady)
+//    {
+//      this->solution_ht_m3 = this->solution_ht_m2;
+//      this->solution_ht_m2 = this->solution_ht_m1;
+//      auto &solution_ht =
+//      this->get_present_solution(PhysicsID::heat_transfer);
+//      this->solution_ht_m1 = solution_ht;
+//    }
+//}
 
 template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::output_field_hook(
   DataOut<spacedim> &data_out)
-{
-  if (this->nsparam.multiphysics.heat_transfer)
-    {
-      auto &present_temperature =
-        this->get_present_solution(PhysicsID::heat_transfer);
-      data_out.add_data_vector(dof_handler_ht,
-                               present_temperature,
-                               "temperature");
-    }
-}
+{}
 
 
 template <int dim, int spacedim>
@@ -864,108 +867,100 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system(
   const bool initial_step,
   const bool renewed_matrix)
 {
-  if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      PhysicsID::fluid_dynamics)
-    {
-      this->solve_linear_system_fd(initial_step, renewed_matrix);
-    }
-
-  if (PhysicsSolver<TrilinosWrappers::MPI::Vector>::get_current_physics() ==
-      PhysicsID::heat_transfer)
-    {
-      solve_linear_system_ht();
-    }
+  this->solve_linear_system_fd(initial_step, renewed_matrix);
 }
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::set_initial_condition_ht()
-{
-  MappingQ<spacedim> mapping(fe_ht.degree);
-  auto &newton_update = this->get_newton_update(PhysicsID::heat_transfer);
-  VectorTools::interpolate(mapping,
-                           this->dof_handler_ht,
-                           Functions::ZeroFunction<spacedim>(),
-                           newton_update);
-  auto &nonzero_constraints =
-    this->get_nonzero_constraints(PhysicsID::heat_transfer);
-  nonzero_constraints.distribute(newton_update);
-  auto &present_solution = this->get_present_solution(PhysicsID::heat_transfer);
-  present_solution       = newton_update;
+// template <int dim, int spacedim>
+// void
+// GLSNitscheNavierStokesSolver<dim, spacedim>::set_initial_condition_ht()
+//{
+//  MappingQ<spacedim> mapping(fe_ht.degree);
+//  // auto &newton_update = this->get_newton_update(PhysicsID::heat_transfer);
+//  VectorTools::interpolate(mapping,
+//                           this->dof_handler_ht,
+//                           Functions::ZeroFunction<spacedim>(),
+//                           newton_update);
+//  // auto &nonzero_constraints =
+//  //   this->get_nonzero_constraints(PhysicsID::heat_transfer);
+//  nonzero_constraints.distribute(newton_update);
+//  // auto &present_solution =
+//  // this->get_present_solution(PhysicsID::heat_transfer);
+//  present_solution = newton_update;
 
-  this->finish_time_step_fd();
-  if (this->nsparam.multiphysics.heat_transfer)
-    {
-      finish_time_step_ht();
-    }
-  this->postprocess_fd(true);
-}
+//  this->finish_time_step_fd();
+//  if (this->nsparam.multiphysics.heat_transfer)
+//    {
+//      finish_time_step_ht();
+//    }
+//  this->postprocess_fd(true);
+//}
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system_ht()
-{
-  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
+// template <int dim, int spacedim>
+// void
+// GLSNitscheNavierStokesSolver<dim, spacedim>::solve_linear_system_ht()
+//{
+//  auto &system_rhs_ht = this->get_system_rhs(PhysicsID::heat_transfer);
 
-  const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
-  const double relative_residual =
-    this->nsparam.linear_solver.relative_residual;
+//  const double absolute_residual =
+//  this->nsparam.linear_solver.minimum_residual; const double relative_residual
+//  =
+//    this->nsparam.linear_solver.relative_residual;
 
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs_ht.l2_norm(), absolute_residual);
+//  const double linear_solver_tolerance =
+//    std::max(relative_residual * system_rhs_ht.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
-    }
+//  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+//    {
+//      this->pcout << "  -Tolerance of iterative solver is : "
+//                  << linear_solver_tolerance << std::endl;
+//    }
 
-  const double ilu_fill = this->nsparam.linear_solver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linear_solver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linear_solver.ilu_precond_rtol;
-  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
+//  const double ilu_fill = this->nsparam.linear_solver.ilu_precond_fill;
+//  const double ilu_atol = this->nsparam.linear_solver.ilu_precond_atol;
+//  const double ilu_rtol = this->nsparam.linear_solver.ilu_precond_rtol;
+//  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+//    ilu_fill, ilu_atol, ilu_rtol, 0);
 
-  TrilinosWrappers::PreconditionILU ilu_preconditioner;
+//  TrilinosWrappers::PreconditionILU ilu_preconditioner;
 
-  ilu_preconditioner.initialize(system_matrix_ht, preconditionerOptions);
+//  ilu_preconditioner.initialize(system_matrix_ht, preconditionerOptions);
 
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    locally_owned_dofs_ht, this->mpi_communicator);
+//  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+//    locally_owned_dofs_ht, this->mpi_communicator);
 
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
+//  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
+//                               linear_solver_tolerance,
+//                               true,
+//                               true);
 
-  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-    false, this->nsparam.linear_solver.max_krylov_vectors);
-
-
-  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
-
-
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-    solver.solve(system_matrix_ht,
-                 completely_distributed_solution,
-                 system_rhs_ht,
-                 ilu_preconditioner);
-
-    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-
-    zero_constraints_ht.distribute(completely_distributed_solution);
+//  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+//    false, this->nsparam.linear_solver.max_krylov_vectors);
 
 
-    auto &newton_update = this->get_newton_update(PhysicsID::heat_transfer);
-    newton_update       = completely_distributed_solution;
-  }
-}
+//  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
+
+
+//  {
+//    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+
+//    solver.solve(system_matrix_ht,
+//                 completely_distributed_solution,
+//                 system_rhs_ht,
+//                 ilu_preconditioner);
+
+//    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+//      {
+//        this->pcout << "  -Iterative solver took : "
+//                    << solver_control.last_step() << " steps " << std::endl;
+//      }
+
+//    zero_constraints_ht.distribute(completely_distributed_solution);
+
+
+//    auto &newton_update = this->get_newton_update(PhysicsID::heat_transfer);
+//    newton_update       = completely_distributed_solution;
+//  }
+//}
 
 
 template <int dim, int spacedim>
@@ -1028,33 +1023,33 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_l2_error_ht(
   return l2error;
 }
 
-template <int dim, int spacedim>
-void
-GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_ht()
-{
-  if (this->nsparam.analytical_solution->calculate_error() == true &&
-      this->nsparam.multiphysics.heat_transfer)
-    {
-      double temperature_error =
-        calculate_l2_error_ht(dof_handler_ht,
-                              this->get_evaluation_point(
-                                PhysicsID::heat_transfer),
-                              this->nsparam.analytical_solution->temperature,
-                              this->nsparam.fem_parameters,
-                              this->mpi_communicator);
+// template <int dim, int spacedim>
+// void
+// GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_ht()
+//{
+//  if (this->nsparam.analytical_solution->calculate_error() == true &&
+//      this->nsparam.multiphysics.heat_transfer)
+//    {
+//      double temperature_error =
+//        calculate_l2_error_ht(dof_handler_ht,
+//                              this->get_evaluation_point(
+//                                PhysicsID::heat_transfer),
+//                              this->nsparam.analytical_solution->temperature,
+//                              this->nsparam.fem_parameters,
+//                              this->mpi_communicator);
 
-      this->error_table_ht.add_value(
-        "cells", this->triangulation->n_global_active_cells());
-      this->error_table_ht.add_value("error_temperature", temperature_error);
+//      this->error_table_ht.add_value(
+//        "cells", this->triangulation->n_global_active_cells());
+//      this->error_table_ht.add_value("error_temperature", temperature_error);
 
-      if (this->nsparam.analytical_solution->verbosity ==
-          Parameters::Verbosity::verbose)
-        {
-          this->pcout << "L2 error temperature : " << temperature_error
-                      << std::endl;
-        }
-    }
-}
+//      if (this->nsparam.analytical_solution->verbosity ==
+//          Parameters::Verbosity::verbose)
+//        {
+//          this->pcout << "L2 error temperature : " << temperature_error
+//                      << std::endl;
+//        }
+//    }
+//}
 
 
 template <int dim, int spacedim>
