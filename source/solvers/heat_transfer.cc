@@ -555,6 +555,9 @@ HeatTransfer<dim>::setup_dofs()
                        locally_owned_dofs,
                        dsp,
                        mpi_communicator);
+
+  this->pcout << "   Number of thermal degrees of freedom: "
+              << dof_handler.n_dofs() << std::endl;
 }
 
 template <int dim>

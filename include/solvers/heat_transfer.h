@@ -53,7 +53,7 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , fe(1)
+    , fe(simulation_parameters.fem_parameters.temperature_order)
   {}
 
   /**

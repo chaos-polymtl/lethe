@@ -279,6 +279,9 @@ namespace Parameters
     // Interpolation order pressure
     unsigned int pressure_order;
 
+    // Interpolation order temperature
+    unsigned int temperature_order;
+
     // Apply high order mapping everywhere
     bool qmapping_all;
 
