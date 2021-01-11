@@ -86,7 +86,18 @@ HeatTransfer<dim>::assemble_system(
       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     bdf_coefs = bdf_coefficients(3, time_steps_vector);
 
+  if (time_stepping_method ==
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+      time_stepping_method ==
+        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+    {
+      throw std::runtime_error(
+        "SDIRK schemes are not supported by heat transfer physics");
+    }
+
+
   auto &source_term = simulation_parameters.sourceTerm->heat_transfer_source;
+  source_term.set_time(simulation_control->get_current_time());
 
   const QGauss<dim> quadrature_formula(fe.degree + 1);
   FEValues<dim>     fe_values_ht(fe,
@@ -440,11 +451,18 @@ HeatTransfer<dim>::finish_simulation()
 
 template <int dim>
 void
-HeatTransfer<dim>::finish_time_step()
+HeatTransfer<dim>::percolate_time_vectors()
 {
   solution_m3 = solution_m2;
   solution_m2 = solution_m1;
   solution_m1 = present_solution;
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::finish_time_step()
+{
+  percolate_time_vectors();
 }
 
 template <int dim>

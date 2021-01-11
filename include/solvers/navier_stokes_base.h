@@ -205,6 +205,17 @@ protected:
   };
 
   /**
+   * @brief percolate_time_vectors
+   * Rearranges the time vector due to the end of an iteration
+   */
+  virtual void
+  percolate_time_vectors()
+  {
+    percolate_time_vectors_fd();
+    multiphysics->percolate_time_vectors();
+  };
+
+  /**
    * @brief postprocess
    * Post-process simulation after an iteration
    *
@@ -259,6 +270,15 @@ protected:
    */
   virtual void
   finish_time_step_fd();
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step of the fluid dynamics
+   * Post-processing and time stepping
+   */
+  virtual void
+  percolate_time_vectors_fd();
+
 
   /**
    * @brief finish_simulation

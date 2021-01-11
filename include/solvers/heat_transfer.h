@@ -106,6 +106,12 @@ public:
   finish_time_step() override;
 
   /**
+   * @brief Rearrange vector solution correctly for transient simulations
+   */
+  virtual void
+  percolate_time_vectors() override;
+
+  /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
    * the calculation of all derived quantities using the solution vector of the
    * physics. It does not concern the output of the solution using the

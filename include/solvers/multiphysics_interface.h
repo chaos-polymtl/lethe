@@ -184,6 +184,23 @@ public:
   }
 
   /**
+   * @brief Carry out the operations require to percolate the time vectors
+   * corectly at the end of a simulation
+   */
+  void
+  percolate_time_vectors()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->percolate_time_vectors();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->percolate_time_vectors();
+      }
+  }
+
+  /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
    * the calculation of all derived quantities using the solution vector of the
    * physics. It does not concern the output of the solution using the

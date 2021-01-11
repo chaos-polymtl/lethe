@@ -347,15 +347,22 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
 
 template <int dim, typename VectorType, typename DofsType>
 void
+NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
+{
+  this->solution_m3 = this->solution_m2;
+  this->solution_m2 = this->solution_m1;
+  this->solution_m1 = this->present_solution;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
 NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
 {
   if (nsparam.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->solution_m3 = this->solution_m2;
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      const double CFL  = calculate_CFL(this->dof_handler,
+      percolate_time_vectors_fd();
+      const double CFL = calculate_CFL(this->dof_handler,
                                        this->present_solution,
                                        simulation_control->get_time_step(),
                                        mpi_communicator);
@@ -436,8 +443,6 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
-  auto &present_solution = this->present_solution;
-
   // First step if the method is not a multi-step method
   if (!is_bdf_high_order(nsparam.simulation_control.method))
     {
@@ -456,8 +461,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       simulation_control->set_current_time_step(time_step);
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = present_solution;
+      percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
@@ -486,8 +490,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = present_solution;
+      percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
@@ -496,9 +499,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m3 = this->solution_m2;
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = present_solution;
+      percolate_time_vectors();
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step

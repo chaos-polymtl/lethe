@@ -86,11 +86,18 @@ public:
   finish_simulation() = 0;
 
   /**
-   * @brief Carry out the operations require to finish a time step correctly. This
-   * includes setting the previous values
+   * @brief Carry out the operations require to finish a time step correctly.
    */
   virtual void
   finish_time_step() = 0;
+
+
+  /**
+   * @brief Carry out the operations required to rearange the values of the
+   * previous solution at the end of a time step
+   */
+  virtual void
+  percolate_time_vectors() = 0;
 
   /**
    * @brief Provide the dof handler associated with an auxiliary physics
