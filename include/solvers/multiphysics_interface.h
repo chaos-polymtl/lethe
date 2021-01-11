@@ -189,7 +189,7 @@ public:
    * function
    */
   void
-  postprocess(bool first_iteration)
+  postprocess(bool /*first_iteration*/)
   {
     for (auto &iphys : physics)
       {

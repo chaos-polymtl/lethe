@@ -1067,7 +1067,7 @@ GDNavierStokesSolver<dim>::solve()
                           this->nsparam.restart_parameters.restart,
                           this->nsparam.boundary_conditions);
 
-  this->setup_dofs_fd();
+  this->setup_dofs();
   this->set_initial_condition(this->nsparam.initial_condition->type,
                               this->nsparam.restart_parameters.restart);
 
@@ -1085,11 +1085,11 @@ GDNavierStokesSolver<dim>::solve()
                            std::vector<IndexSet>>::refine_mesh();
           this->iterate();
         }
-      this->postprocess_fd(false);
-      this->finish_time_step_fd();
+      this->postprocess(false);
+      this->finish_time_step();
     }
 
-  this->finish_simulation_fd();
+  this->finish_simulation();
 }
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is

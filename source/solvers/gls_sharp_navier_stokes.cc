@@ -3370,7 +3370,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       this->postprocess_fd(false);
 
-      this->finish_time_step_fd();
+      this->finish_time_step();
 
       if (this->nsparam.particlesParameters.calculate_force_ib)
         force_on_ib();
@@ -3381,7 +3381,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   if (this->nsparam.particlesParameters.calculate_force_ib)
 
 
-    this->finish_simulation_fd();
+    this->finish_simulation();
 }
 
 

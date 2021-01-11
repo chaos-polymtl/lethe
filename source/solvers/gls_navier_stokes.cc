@@ -1613,12 +1613,12 @@ GLSNavierStokesSolver<dim>::solve()
             refine_mesh();
           this->iterate();
         }
-      this->postprocess_fd(false);
-      this->finish_time_step_fd();
+      this->postprocess(false);
+      this->finish_time_step();
     }
 
 
-  this->finish_simulation_fd();
+  this->finish_simulation();
 }
 
 

@@ -351,7 +351,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
     }
   if (this->nsparam.test.enabled)
     solid.print_particle_positions();
-  this->finish_simulation_fd();
+  this->finish_simulation();
   if (this->nsparam.multiphysics.heat_transfer)
     {
       //      finish_ht();

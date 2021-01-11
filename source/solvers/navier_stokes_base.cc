@@ -425,6 +425,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
         nsparam.simulation_control.method, false, false);
+      multiphysics->solve(nsparam.simulation_control.method, false);
     }
 }
 

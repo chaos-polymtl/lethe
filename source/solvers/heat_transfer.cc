@@ -415,6 +415,7 @@ HeatTransfer<dim>::finish_simulation()
   auto         mpi_communicator = triangulation->get_communicator();
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(mpi_communicator));
+
   if (this_mpi_process == 0 &&
       simulation_parameters.analytical_solution->verbosity ==
         Parameters::Verbosity::verbose)
