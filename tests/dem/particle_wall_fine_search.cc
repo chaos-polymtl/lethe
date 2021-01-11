@@ -41,6 +41,7 @@
 #include <dem/pw_broad_search.h>
 #include <dem/pw_contact_info_struct.h>
 #include <dem/pw_fine_search.h>
+#include <dem/dem_properties.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>

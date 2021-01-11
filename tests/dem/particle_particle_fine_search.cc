@@ -40,6 +40,7 @@
 #include <dem/pp_broad_search.h>
 #include <dem/pp_contact_info_struct.h>
 #include <dem/pp_fine_search.h>
+#include <dem/dem_properties.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>

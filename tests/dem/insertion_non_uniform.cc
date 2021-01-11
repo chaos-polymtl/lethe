@@ -32,6 +32,7 @@
 // Lethe
 #include <dem/dem_solver_parameters.h>
 #include <dem/non_uniform_insertion.h>
+#include <dem/dem_properties.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
