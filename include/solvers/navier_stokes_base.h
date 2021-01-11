@@ -98,6 +98,7 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
@@ -188,6 +189,7 @@ protected:
   finish_simulation()
   {
     finish_simulation_fd();
+    multiphysics->finish_simulation();
   }
 
   /**
@@ -199,6 +201,7 @@ protected:
   finish_time_step()
   {
     finish_time_step_fd();
+    multiphysics->finish_time_step();
   };
 
   /**
@@ -211,6 +214,7 @@ protected:
   postprocess(bool first_iteration)
   {
     postprocess_fd(first_iteration);
+    multiphysics->postprocess(first_iteration);
   };
 
   /**
@@ -223,6 +227,7 @@ protected:
   setup_dofs()
   {
     setup_dofs_fd();
+    multiphysics->setup_dofs();
   };
 
   /**
@@ -239,6 +244,7 @@ protected:
                         bool                             restart = false)
   {
     set_initial_condition_fd(initial_condition_type, restart);
+    multiphysics->set_initial_conditions();
   }
 
   /**
@@ -438,6 +444,9 @@ protected:
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
+
+  // Multiphysics interface
+  std::shared_ptr<MultiphysicsInterface<dim>> multiphysics;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;

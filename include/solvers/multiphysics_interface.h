@@ -130,26 +130,6 @@ public:
 
 
   /**
-   * @brief Call for the assembly of right-hand side for the appropriate physics.
-   *
-   * @param physics_id Identifier of the physics being currently solver
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   */
-  void
-  assemble_rhs(const PhysicsID physics_id,
-               const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method)
-  {
-    AssertThrow(std::find(active_physics.begin(),
-                          active_physics.end(),
-                          physics_id) != active_physics.end(),
-                ExcInternalError());
-
-    physics[physics_id]->assemble_rhs(time_stepping_method);
-  }
-
-  /**
    * @brief Call the attachment of the solution vector to the data out for enabled
    * auxiliary physics.
    */
@@ -209,7 +189,7 @@ public:
    * function
    */
   void
-  postprocess()
+  postprocess(bool first_iteration)
   {
     for (auto &iphys : physics)
       {

@@ -92,7 +92,13 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
           nsparam.simulation_control);
     }
 
-  // Change the behavior of the timer for situations when you don't want outputs
+  multiphysics =
+    std::make_shared<MultiphysicsInterface<dim>>(nsparam,
+                                                 triangulation,
+                                                 simulation_control);
+
+  // Change the behavior of the timer for situations when you don't want
+  // outputs
   if (nsparam.timer.type == Parameters::Timer::Type::none)
     this->computing_timer.disable_output();
 
