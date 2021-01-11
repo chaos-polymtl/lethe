@@ -50,6 +50,12 @@ HeatTransfer<dim>::assemble_system(
   const double thermal_conductivity =
     simulation_parameters.physical_properties.thermal_conductivity;
 
+  const double viscosity = simulation_parameters.physical_properties.viscosity;
+
+  const double dynamic_viscosity = viscosity * density;
+
+  const double rho_cp = density * specific_heat;
+
   auto &solution = present_solution;
   if (assemble_matrix)
     system_matrix = 0;
@@ -204,15 +210,15 @@ HeatTransfer<dim>::assemble_system(
                       cell_matrix(i, j) +=
                         (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
                            fe_values_ht.shape_grad(j, q) +
-                         density * specific_heat *
-                           fe_values_ht.shape_value(i, q) * velocity_values[q] *
+                         rho_cp * fe_values_ht.shape_value(i, q) *
+                           velocity_values[q] *
                            fe_values_ht.shape_grad(j,
                                                    q)) *
                         fe_values_ht.JxW(q); // JxW
 
                       // Mass matrix for transient simulation
                       if (is_bdf(time_stepping_method))
-                        cell_matrix(i, j) += density * specific_heat *
+                        cell_matrix(i, j) += rho_cp *
                                              fe_values_ht.shape_value(j, q) *
                                              fe_values_ht.shape_value(i, q) *
                                              bdf_coefs[0] * fe_values_ht.JxW(q);
@@ -226,19 +232,11 @@ HeatTransfer<dim>::assemble_system(
                      +density * specific_heat * fe_values_ht.shape_value(i, q) *
                        velocity_values[q] * temperature_gradients[q] -
                      source_term_values[q] * fe_values_ht.shape_value(i, q) -
-                     fe_values_ht.shape_value(i, q) *
+                     dynamic_viscosity * fe_values_ht.shape_value(i, q) *
                        scalar_product(velocity_gradient_values[q] +
                                         transpose(velocity_gradient_values[q]),
                                       transpose(velocity_gradient_values[q]))) *
                     fe_values_ht.JxW(q); // JxW
-
-                  //                  cell_rhs(i) -=
-                  //                    (thermal_conductivity *
-                  //                    fe_values_ht.shape_grad(i, q) *
-                  //                       temperature_gradients[q] -
-                  //                     source_term_values[q] *
-                  //                     fe_values_ht.shape_value(i, q)) *
-                  //                    fe_values_ht.JxW(q); // JxW
 
                   // Residual associated with BDF schemes
                   if (time_stepping_method == Parameters::SimulationControl::
@@ -246,6 +244,7 @@ HeatTransfer<dim>::assemble_system(
                       time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::steady_bdf)
                     cell_rhs(i) -=
+                      rho_cp *
                       (bdf_coefs[0] * present_temperature_values[q] +
                        bdf_coefs[1] * p1_temperature_values[q]) *
                       fe_values_ht.shape_value(i, q) *
@@ -254,6 +253,7 @@ HeatTransfer<dim>::assemble_system(
                   if (time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     cell_rhs(i) -=
+                      rho_cp *
                       (bdf_coefs[0] * present_temperature_values[q] +
                        bdf_coefs[1] * p1_temperature_values[q] +
                        bdf_coefs[2] * p2_temperature_values[q]) *
@@ -263,6 +263,7 @@ HeatTransfer<dim>::assemble_system(
                   if (time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     cell_rhs(i) -=
+                      rho_cp *
                       (bdf_coefs[0] * present_temperature_values[q] +
                        bdf_coefs[1] * p1_temperature_values[q] +
                        bdf_coefs[2] * p2_temperature_values[q] +
