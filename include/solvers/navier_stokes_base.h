@@ -256,6 +256,11 @@ protected:
   {
     set_initial_condition_fd(initial_condition_type, restart);
     multiphysics->set_initial_conditions();
+    if (!restart)
+      {
+        this->postprocess_fd(true);
+        multiphysics->postprocess(true);
+      }
   }
 
   /**

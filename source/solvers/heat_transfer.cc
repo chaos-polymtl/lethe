@@ -607,14 +607,10 @@ HeatTransfer<dim>::set_initial_conditions()
 {
   MappingQ<dim> mapping(fe.degree);
   VectorTools::interpolate(mapping,
-                           this->dof_handler,
-                           Functions::ZeroFunction<dim>(),
+                           dof_handler,
+                           simulation_parameters.initial_condition->temperature,
                            newton_update);
-  // auto &nonzero_constraints =
-  //   this->get_nonzero_constraints(PhysicsID::heat_transfer);
   nonzero_constraints.distribute(newton_update);
-  // auto &present_solution =
-  // this->get_present_solution(PhysicsID::heat_transfer);
   present_solution = newton_update;
   finish_time_step();
 }

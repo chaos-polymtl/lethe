@@ -688,13 +688,11 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
       solve_L2_system(true, 1e-15, 1e-15);
       this->present_solution = this->newton_update;
       this->finish_time_step_fd();
-      this->postprocess_fd(true);
     }
   else if (initial_condition_type == Parameters::InitialConditionType::nodal)
     {
       this->set_nodal_values();
       this->finish_time_step_fd();
-      this->postprocess_fd(true);
     }
 
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
@@ -709,7 +707,6 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
           false,
           true);
       this->finish_time_step_fd();
-      this->postprocess_fd(true);
       this->nsparam.physical_properties.viscosity = viscosity;
     }
   else
