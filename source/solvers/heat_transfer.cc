@@ -214,25 +214,29 @@ HeatTransfer<dim>::assemble_system(
             {
               for (const unsigned int i : fe_values_ht.dof_indices())
                 {
-                  for (const unsigned int j : fe_values_ht.dof_indices())
+                  if (assemble_matrix)
                     {
-                      // Weak form for : - k * laplacian T + rho * cp * u *
-                      //                      gradT - f - grad(u)*grad(u) =0
-                      cell_matrix(i, j) +=
-                        (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                           fe_values_ht.shape_grad(j, q) +
-                         rho_cp * fe_values_ht.shape_value(i, q) *
-                           velocity_values[q] *
-                           fe_values_ht.shape_grad(j,
-                                                   q)) *
-                        fe_values_ht.JxW(q); // JxW
+                      for (const unsigned int j : fe_values_ht.dof_indices())
+                        {
+                          // Weak form for : - k * laplacian T + rho * cp * u *
+                          //                      gradT - f - grad(u)*grad(u) =0
+                          cell_matrix(i, j) +=
+                            (thermal_conductivity *
+                               fe_values_ht.shape_grad(i, q) *
+                               fe_values_ht.shape_grad(j, q) +
+                             rho_cp * fe_values_ht.shape_value(i, q) *
+                               velocity_values[q] *
+                               fe_values_ht.shape_grad(j,
+                                                       q)) *
+                            fe_values_ht.JxW(q); // JxW
 
-                      // Mass matrix for transient simulation
-                      if (is_bdf(time_stepping_method))
-                        cell_matrix(i, j) += rho_cp *
-                                             fe_values_ht.shape_value(j, q) *
-                                             fe_values_ht.shape_value(i, q) *
-                                             bdf_coefs[0] * fe_values_ht.JxW(q);
+                          // Mass matrix for transient simulation
+                          if (is_bdf(time_stepping_method))
+                            cell_matrix(i, j) +=
+                              rho_cp * fe_values_ht.shape_value(j, q) *
+                              fe_values_ht.shape_value(i, q) * bdf_coefs[0] *
+                              fe_values_ht.JxW(q);
+                        }
                     }
 
                   // rhs for : - k * laplacian T + rho * cp * u * grad T - f
@@ -294,6 +298,10 @@ HeatTransfer<dim>::assemble_system(
               if (this->simulation_parameters.boundary_conditions_ht
                     .type[i_bc] == BoundaryConditions::BoundaryType::convection)
                 {
+                  const double h =
+                    simulation_parameters.boundary_conditions_ht.value[i_bc];
+                  const double T_inf =
+                    simulation_parameters.boundary_conditions_ht.Tenv[i_bc];
                   if (cell->is_locally_owned())
                     {
                       for (unsigned int face = 0;
@@ -313,34 +321,31 @@ HeatTransfer<dim>::assemble_system(
                                      fe_face_values_ht
                                        .quadrature_point_indices())
                                   {
+                                    const double JxW = fe_face_values_ht.JxW(q);
                                     for (const unsigned int i :
                                          fe_values_ht.dof_indices())
                                       {
-                                        for (const unsigned int j :
-                                             fe_values_ht.dof_indices())
+                                        if (assemble_matrix)
                                           {
-                                            // Weak form modification
-                                            cell_matrix(i, j) +=
-                                              fe_face_values_ht.shape_value(j,
-                                                                            q) *
-                                              fe_face_values_ht.shape_value(i,
-                                                                            q) *
-                                              simulation_parameters
-                                                .boundary_conditions_ht
-                                                .value[i_bc] *
-                                              fe_face_values_ht.JxW(q);
+                                            for (const unsigned int j :
+                                                 fe_values_ht.dof_indices())
+                                              {
+                                                // Weak form modification
+                                                cell_matrix(i, j) +=
+                                                  fe_face_values_ht.shape_value(
+                                                    i, q) *
+                                                  fe_face_values_ht.shape_value(
+                                                    j, q) *
+                                                  h * JxW;
+                                              }
                                           }
                                         // Residual
                                         cell_rhs(i) -=
                                           fe_face_values_ht.shape_value(i, q) *
-                                          simulation_parameters
-                                            .boundary_conditions_ht
-                                            .value[i_bc] *
+                                          h *
                                           (present_face_temperature_values[q] -
-                                           simulation_parameters
-                                             .boundary_conditions_ht
-                                             .Tenv[i_bc]) *
-                                          fe_face_values_ht.JxW(q);
+                                           T_inf) *
+                                          JxW;
                                       }
                                   }
                               }
@@ -377,6 +382,7 @@ HeatTransfer<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
+
   QGauss<dim>         quadrature_formula(fe.degree + 2);
   const MappingQ<dim> mapping(
     fe.degree, simulation_parameters.fem_parameters.qmapping_all);
@@ -399,6 +405,7 @@ HeatTransfer<dim>::calculate_L2_error()
   std::vector<double> q_scalar_values(n_q_points);
 
   auto &exact_solution = simulation_parameters.analytical_solution->temperature;
+  exact_solution.set_time(simulation_control->get_current_time());
 
   double l2error = 0.;
 
@@ -441,10 +448,15 @@ HeatTransfer<dim>::finish_simulation()
         Parameters::Verbosity::verbose)
     {
       error_table.omit_column_from_convergence_rate_evaluation("cells");
-      error_table.evaluate_all_convergence_rates(
-        ConvergenceTable::reduction_rate_log2);
-      error_table.set_scientific("error_temperature", true);
 
+
+      if (simulation_parameters.simulation_control.method ==
+          Parameters::SimulationControl::TimeSteppingMethod::steady)
+        {
+          error_table.evaluate_all_convergence_rates(
+            ConvergenceTable::reduction_rate_log2);
+        }
+      error_table.set_scientific("error_temperature", true);
       error_table.write_text(std::cout);
     }
 }
