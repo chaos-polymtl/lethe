@@ -1117,6 +1117,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   output_field_hook(data_out);
 
+  multiphysics->attach_solution_to_output(data_out);
+
   // Build the patches and write the output
 
   data_out.build_patches(mapping,
