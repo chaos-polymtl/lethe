@@ -17,10 +17,8 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   if (multiphysics_parameters.heat_transfer)
     {
       active_physics.push_back(PhysicsID::heat_transfer);
-      physics[PhysicsID::heat_transfer] =
-        std::make_shared<HeatTransfer<dim>>(nsparam,
-                                            p_triangulation,
-                                            p_simulation_control);
+      physics[PhysicsID::heat_transfer] = std::make_shared<HeatTransfer<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
     }
 }
 

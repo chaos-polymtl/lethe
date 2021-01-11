@@ -36,6 +36,7 @@
 
 #include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
+#include <solvers/multiphysics_interface.h>
 
 
 template <int dim>
@@ -43,12 +44,14 @@ class HeatTransfer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
   HeatTransfer<dim>(
+    MultiphysicsInterface<dim> *             multiphysics_interface,
     const NavierStokesSolverParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
+    , multiphysics(multiphysics_interface)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
@@ -196,6 +199,8 @@ private:
                     time_stepping_method);
 
   // Simulation parameters
+  MultiphysicsInterface<dim> *multiphysics;
+
   // TODO : Refactor to a more neutral name
   const NavierStokesSolverParameters<dim> &simulation_parameters;
 

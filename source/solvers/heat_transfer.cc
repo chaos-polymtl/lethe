@@ -90,9 +90,6 @@ HeatTransfer<dim>::assemble_system(
 
   auto &evaluation_point = this->get_evaluation_point();
 
-  // auto &velocity_evaluation_point = this->get_evaluation_point();
-
-
   const unsigned int dofs_per_cell = fe.dofs_per_cell;
 
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
@@ -103,12 +100,15 @@ HeatTransfer<dim>::assemble_system(
   std::vector<double>                  source_term_values(n_q_points);
 
 
-  //  //  const MappingQ<spacedim> mapping(this->velocity_fem_degree,
-  //  // this->nsparam.fem_parameters.qmapping_all); FEValues<spacedim>
-  //  fe_values_flow(this->fe,
-  //                                    quadrature_formula,
-  //                                    update_values | update_quadrature_points |
-  //                                      update_gradients);
+  const MappingQ<dim> mapping(
+    fe.degree, simulation_parameters.fem_parameters.qmapping_all);
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+  FEValues<dim> fe_values_flow(dof_handler_fluid->get_fe(),
+                               quadrature_formula,
+                               update_values | update_quadrature_points |
+                                 update_gradients);
 
   // FaceValues for Robin boundary condition
   QGauss<dim - 1>   face_quadrature_formula(fe.degree + 1);
@@ -117,12 +117,12 @@ HeatTransfer<dim>::assemble_system(
                                       update_values | update_quadrature_points |
                                         update_JxW_values);
 
-  //  // Velocity values
-  //  const FEValuesExtractors::Vector velocities(0);
-  //  const FEValuesExtractors::Scalar pressure(dim);
+  // Velocity values
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
 
-  //  std::vector<Tensor<1, spacedim>> velocity_values(n_q_points);
-  //  std::vector<Tensor<2, spacedim>> velocity_gradient_values(n_q_points);
+  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
+  std::vector<Tensor<2, dim>> velocity_gradient_values(n_q_points);
 
   std::vector<double> present_temperature_values(n_q_points);
   std::vector<double> present_face_temperature_values(
@@ -146,15 +146,28 @@ HeatTransfer<dim>::assemble_system(
 
 
           typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-            &(*this->triangulation),
-            cell->level(),
-            cell->index(),
-            &this->dof_handler);
-          //          fe_values_flow.reinit(velocity_cell);
-          //          fe_values_flow[velocities].get_function_values(
-          //            velocity_evaluation_point, velocity_values);
-          //          fe_values_flow[velocities].get_function_gradients(
-          //            velocity_evaluation_point, velocity_gradient_values);
+            &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+          fe_values_flow.reinit(velocity_cell);
+
+          if (multiphysics->fluid_dynamics_is_block())
+            {
+              fe_values_flow[velocities].get_function_values(
+                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+                velocity_values);
+              fe_values_flow[velocities].get_function_gradients(
+                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
+                velocity_gradient_values);
+            }
+          else
+            {
+              fe_values_flow[velocities].get_function_values(
+                *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+                velocity_values);
+              fe_values_flow[velocities].get_function_gradients(
+                *multiphysics->get_solution(PhysicsID::fluid_dynamics),
+                velocity_gradient_values);
+            }
 
           // Gather present value
           fe_values_ht.get_function_values(solution,
@@ -190,12 +203,11 @@ HeatTransfer<dim>::assemble_system(
                       //                      gradT - f - grad(u)*grad(u) =0
                       cell_matrix(i, j) +=
                         (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                         fe_values_ht.shape_grad(j, q)) *
-                        //                         + density * specific_heat *
-                        //                           fe_values_ht.shape_value(i,
-                        //                           q) * velocity_values[q] *
-                        //                           fe_values_ht.shape_grad(j,
-                        //                           q)) *
+                           fe_values_ht.shape_grad(j, q) +
+                         density * specific_heat *
+                           fe_values_ht.shape_value(i, q) * velocity_values[q] *
+                           fe_values_ht.shape_grad(j,
+                                                   q)) *
                         fe_values_ht.JxW(q); // JxW
 
                       // Mass matrix for transient simulation
@@ -208,29 +220,25 @@ HeatTransfer<dim>::assemble_system(
 
                   // rhs for : - k * laplacian T + rho * cp * u * grad T - f
                   // -grad(u)*grad(u) = 0
+                  cell_rhs(i) -=
+                    (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
+                       temperature_gradients[q] +
+                     +density * specific_heat * fe_values_ht.shape_value(i, q) *
+                       velocity_values[q] * temperature_gradients[q] -
+                     source_term_values[q] * fe_values_ht.shape_value(i, q) -
+                     fe_values_ht.shape_value(i, q) *
+                       scalar_product(velocity_gradient_values[q] +
+                                        transpose(velocity_gradient_values[q]),
+                                      transpose(velocity_gradient_values[q]))) *
+                    fe_values_ht.JxW(q); // JxW
+
                   //                  cell_rhs(i) -=
                   //                    (thermal_conductivity *
                   //                    fe_values_ht.shape_grad(i, q) *
-                  //                       temperature_gradients[q] +
-                  //                     + density * specific_heat *
-                  //                     fe_values_ht.shape_value(i, q) *
-                  //                       velocity_values[q] *
                   //                       temperature_gradients[q] -
                   //                     source_term_values[q] *
-                  //                     fe_values_ht.shape_value(i, q) -
-                  //                     fe_values_ht.shape_value(i, q) *
-                  //                       scalar_product(velocity_gradient_values[q]
-                  //                       +
-                  //                                        transpose(velocity_gradient_values[q]),
-                  //                                      transpose(velocity_gradient_values[q])))
-                  //                                      *
+                  //                     fe_values_ht.shape_value(i, q)) *
                   //                    fe_values_ht.JxW(q); // JxW
-
-                  cell_rhs(i) -=
-                    (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
-                       temperature_gradients[q] -
-                     source_term_values[q] * fe_values_ht.shape_value(i, q)) *
-                    fe_values_ht.JxW(q); // JxW
 
                   // Residual associated with BDF schemes
                   if (time_stepping_method == Parameters::SimulationControl::

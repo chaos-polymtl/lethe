@@ -244,6 +244,12 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
               << this->dof_handler.n_dofs() << std::endl;
   this->pcout << "   Volume of triangulation:      " << global_volume
               << std::endl;
+
+
+  this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
+                                      &this->dof_handler);
+  this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
+                                   &this->present_solution);
 }
 
 template <int dim>

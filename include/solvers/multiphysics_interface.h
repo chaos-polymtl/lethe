@@ -28,6 +28,8 @@
 
 #include <deal.II/distributed/tria_base.h>
 
+#include <deal.II/dofs/dof_handler.h>
+
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
 
@@ -259,6 +261,123 @@ public:
     physics[physics_id]->solve_linear_system(initial_step, renewed_matrix);
   };
 
+  /**
+   * @brief fluid_dynamics_is_block Verifies if the fluid dynamics solution
+   * is stored as a block vector or not.
+   *
+   * @return boolean value indicating the fluid dynamics is stored as a block vector
+   */
+
+  bool
+  fluid_dynamics_is_block() const
+  {
+    return block_physics_solutions.find(PhysicsID::fluid_dynamics) !=
+           block_physics_solutions.end();
+  }
+
+
+
+  /**
+   * @brief Request a DOF handler for a given physics ID
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   */
+  DoFHandler<dim> *
+  get_dof_handler(PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return physics_dof_handler[physics_id];
+  }
+
+
+
+  /**
+   * @brief Request the present solution of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_solution(PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return physics_solutions[physics_id];
+  }
+
+
+  /**
+   * @brief Request the present block solution of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::BlockVector *
+  get_block_solution(PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return block_physics_solutions[physics_id];
+  }
+
+
+  /**
+   * @brief Sets the reference to the DOFHandler of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param dof_handler The dof handler for which the reference is stored
+   */
+  void
+  set_dof_handler(PhysicsID physics_id, DoFHandler<dim> *dof_handler)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_dof_handler[physics_id] = dof_handler;
+  }
+
+  /**
+   * @brief Sets the reference to the solution of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param solution_vector The reference to the solution vector of the physics
+   */
+  void
+  set_solution(PhysicsID                      physics_id,
+               TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_solutions[physics_id] = solution_vector;
+  }
+
+  /**
+   * @brief Sets the reference to the solution of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param solution_vector The reference to the solution vector of the physics
+   */
+  void
+  set_block_solution(PhysicsID                           physics_id,
+                     TrilinosWrappers::MPI::BlockVector *solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    block_physics_solutions[physics_id] = solution_vector;
+  }
 
 
 private:
@@ -280,9 +399,9 @@ private:
     block_physics;
 
 
-  std::map<PhysicsID, DoFHandler<dim> &>             physics_dof_handler;
-  std::map<PhysicsID, TrilinosWrappers::MPI::Vector> physics_solutions;
-  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector>
+  std::map<PhysicsID, DoFHandler<dim> *>               physics_dof_handler;
+  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;
+  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions;
 };
 
