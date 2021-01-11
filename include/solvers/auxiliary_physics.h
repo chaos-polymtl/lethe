@@ -113,7 +113,7 @@ public:
    * function
    */
   virtual void
-  postprocess() = 0;
+  postprocess(bool first_iteration) = 0;
 
 
 

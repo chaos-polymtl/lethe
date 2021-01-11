@@ -208,15 +208,15 @@ public:
    * function
    */
   void
-  postprocess(bool /*first_iteration*/)
+  postprocess(bool first_iteration)
   {
     for (auto &iphys : physics)
       {
-        iphys.second->postprocess();
+        iphys.second->postprocess(first_iteration);
       }
     for (auto &iphys : block_physics)
       {
-        iphys.second->postprocess();
+        iphys.second->postprocess(first_iteration);
       }
   }
 

@@ -396,6 +396,7 @@ HeatTransfer<dim>::calculate_L2_error()
 
   const unsigned int dofs_per_cell =
     fe.dofs_per_cell; // This gives you dofs per cell
+
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell); //  Local connectivity
 
@@ -414,7 +415,7 @@ HeatTransfer<dim>::calculate_L2_error()
       if (cell->is_locally_owned())
         {
           fe_values.reinit(cell);
-          fe_values.get_function_values(evaluation_point, q_scalar_values);
+          fe_values.get_function_values(present_solution, q_scalar_values);
 
           // Retrieve the effective "connectivity matrix" for this element
           cell->get_dof_indices(local_dof_indices);
@@ -479,9 +480,10 @@ HeatTransfer<dim>::finish_time_step()
 
 template <int dim>
 void
-HeatTransfer<dim>::postprocess()
+HeatTransfer<dim>::postprocess(bool first_iteration)
 {
-  if (simulation_parameters.analytical_solution->calculate_error() == true)
+  if (simulation_parameters.analytical_solution->calculate_error() == true &&
+      !first_iteration)
     {
       double temperature_error = calculate_L2_error();
 

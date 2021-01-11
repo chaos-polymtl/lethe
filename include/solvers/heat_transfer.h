@@ -119,7 +119,7 @@ public:
    * function
    */
   virtual void
-  postprocess() override;
+  postprocess(bool first_iteration) override;
 
   /**
    * @brief Returns the dof_handler of the heat transfer physics
