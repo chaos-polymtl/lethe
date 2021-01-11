@@ -29,7 +29,7 @@ template <int dim>
 class InitialConditionsNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  InitialConditionsNavierStokes(NavierStokesSolverParameters<dim> nsparam)
+  InitialConditionsNavierStokes(SimulationParameters<dim> nsparam)
     : GLSNavierStokesSolver<dim>(nsparam)
   {}
   void
@@ -110,8 +110,8 @@ main(int argc, char *argv[])
         }
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
-      ParameterHandler                prm;
-      NavierStokesSolverParameters<2> nsparam;
+      ParameterHandler        prm;
+      SimulationParameters<2> nsparam;
       nsparam.declare(prm);
       // Parsing of the file
       prm.parse_input(argv[1]);

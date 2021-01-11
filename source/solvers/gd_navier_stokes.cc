@@ -29,7 +29,7 @@
 // Constructor for class GDNavierStokesSolver
 template <int dim>
 GDNavierStokesSolver<dim>::GDNavierStokesSolver(
-  NavierStokesSolverParameters<dim> &p_nsparam)
+  SimulationParameters<dim> &p_nsparam)
   : NavierStokesBase<dim,
                      TrilinosWrappers::MPI::BlockVector,
                      std::vector<IndexSet>>(p_nsparam)

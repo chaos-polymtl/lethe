@@ -44,7 +44,7 @@ template <int dim, int spacedim = dim>
 class GLSNitscheNavierStokesSolver : public GLSNavierStokesSolver<spacedim>
 {
 public:
-  GLSNitscheNavierStokesSolver(NavierStokesSolverParameters<spacedim> &nsparam);
+  GLSNitscheNavierStokesSolver(SimulationParameters<spacedim> &nsparam);
 
   virtual void
   solve() override;

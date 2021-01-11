@@ -32,7 +32,7 @@
 #include "source_terms.h"
 
 template <int dim>
-class NavierStokesSolverParameters
+class SimulationParameters
 {
 public:
   Parameters::Testing                            test;

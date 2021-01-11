@@ -26,7 +26,7 @@
 
 #include <core/parameters.h>
 #include <core/physics_solver.h>
-#include <solvers/navier_stokes_solver_parameters.h>
+#include <solvers/simulation_parameters.h>
 
 
 /**

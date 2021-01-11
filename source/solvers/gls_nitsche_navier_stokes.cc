@@ -36,7 +36,7 @@
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>
 GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
-  NavierStokesSolverParameters<spacedim> &p_nsparam)
+  SimulationParameters<spacedim> &p_nsparam)
   : GLSNavierStokesSolver<spacedim>(p_nsparam)
   , solid(this->nsparam.nitsche,
           this->triangulation,

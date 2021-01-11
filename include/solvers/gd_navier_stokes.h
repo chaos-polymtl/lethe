@@ -71,7 +71,7 @@ class GDNavierStokesSolver
                             std::vector<IndexSet>>
 {
 public:
-  GDNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam);
+  GDNavierStokesSolver(SimulationParameters<dim> &nsparam);
   ~GDNavierStokesSolver();
 
   void

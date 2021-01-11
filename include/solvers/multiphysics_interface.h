@@ -37,7 +37,7 @@
 #include <core/parameters_multiphysics.h>
 #include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
-#include <solvers/navier_stokes_solver_parameters.h>
+#include <solvers/simulation_parameters.h>
 
 #include <map>
 #include <memory>
@@ -54,7 +54,7 @@ public:
    *
    */
   MultiphysicsInterface(
-    const NavierStokesSolverParameters<dim> &nsparam,
+    const SimulationParameters<dim> &nsparam,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
     std::shared_ptr<SimulationControl> p_simulation_control);

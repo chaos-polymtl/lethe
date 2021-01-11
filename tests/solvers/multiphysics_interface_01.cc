@@ -27,7 +27,7 @@
 #include <core/parameters.h>
 #include <core/simulation_control.h>
 #include <solvers/multiphysics_interface.h>
-#include <solvers/navier_stokes_solver_parameters.h>
+#include <solvers/simulation_parameters.h>
 
 
 // Tests
@@ -48,8 +48,8 @@ test()
         Triangulation<dim>::smoothing_on_refinement |
         Triangulation<dim>::smoothing_on_coarsening));
 
-  NavierStokesSolverParameters<dim> solver_parameters;
-  ParameterHandler                  dummy_handler;
+  SimulationParameters<dim> solver_parameters;
+  ParameterHandler          dummy_handler;
 
   solver_parameters.declare(dummy_handler);
   solver_parameters.parse(dummy_handler);

@@ -10,7 +10,7 @@
 // Lethe
 #include <core/parameters.h>
 #include <solvers/gls_navier_stokes.h>
-#include <solvers/navier_stokes_solver_parameters.h>
+#include <solvers/simulation_parameters.h>
 
 // Tests
 #include <../tests/tests.h>
@@ -77,7 +77,7 @@ template <int dim>
 class RestartNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  RestartNavierStokes(NavierStokesSolverParameters<dim> nsparam)
+  RestartNavierStokes(SimulationParameters<dim> nsparam)
     : GLSNavierStokesSolver<dim>(nsparam)
   {}
   void
@@ -138,8 +138,8 @@ RestartNavierStokes<dim>::run()
 void
 test()
 {
-  ParameterHandler                prm;
-  NavierStokesSolverParameters<2> NSparam;
+  ParameterHandler        prm;
+  SimulationParameters<2> NSparam;
   NSparam.declare(prm);
   NSparam.parse(prm);
 

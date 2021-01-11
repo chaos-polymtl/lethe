@@ -102,8 +102,8 @@
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
+#include "simulation_parameters.h"
 
 // Std
 #include <fstream>
@@ -131,7 +131,7 @@ template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
-  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam);
+  NavierStokesBase(SimulationParameters<dim> &nsparam);
 
   virtual ~NavierStokesBase()
   {}
@@ -411,8 +411,8 @@ protected:
 
   TimerOutput computing_timer;
 
-  NavierStokesSolverParameters<dim> nsparam;
-  PVDHandler                        pvdhandler;
+  SimulationParameters<dim> nsparam;
+  PVDHandler                pvdhandler;
 
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;

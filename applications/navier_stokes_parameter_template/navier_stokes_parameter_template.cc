@@ -2,7 +2,7 @@
 
 #include <fstream>
 
-#include "solvers/navier_stokes_solver_parameters.h"
+#include "solvers/simulation_parameters.h"
 
 int
 main()
@@ -10,8 +10,8 @@ main()
   try
     {
       {
-        ParameterHandler                prm;
-        NavierStokesSolverParameters<2> nsparam;
+        ParameterHandler        prm;
+        SimulationParameters<2> nsparam;
         nsparam.declare(prm);
         std::ofstream output_prm("template-2d.prm");
         prm.print_parameters(output_prm, prm.Text);
@@ -21,8 +21,8 @@ main()
         prm.print_parameters(output_xml, prm.XML);
       }
       {
-        ParameterHandler                prm;
-        NavierStokesSolverParameters<3> nsparam;
+        ParameterHandler        prm;
+        SimulationParameters<3> nsparam;
         nsparam.declare(prm);
         std::ofstream output_prm("template-3d.prm");
         prm.print_parameters(output_prm, prm.Text);
