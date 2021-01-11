@@ -25,6 +25,8 @@
 #ifndef lethe_heat_transfer_h
 #define lethe_heat_transfer_h
 
+#include <deal.II/base/convergence_table.h>
+
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -32,6 +34,7 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
 
 
@@ -42,11 +45,13 @@ public:
   HeatTransfer<dim>(
     const NavierStokesSolverParameters<dim> &p_simulation_parameters,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-      p_triangulation)
+                                       p_triangulation,
+    std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , simulation_parameters(p_simulation_parameters)
     , triangulation(p_triangulation)
+    , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
     , fe(1)
   {}
@@ -76,6 +81,13 @@ public:
    */
   virtual void
   attach_solution_to_output(DataOut<dim> &data_out) override;
+
+
+  /**
+   * @brief Calculates the L2 error of the solution
+   */
+  double
+  calculate_L2_error();
 
 
   /**
@@ -190,8 +202,11 @@ private:
 
   // Core elements for the heat transfer simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
-  DoFHandler<dim>                                              dof_handler;
-  FE_Q<dim>                                                    fe;
+  std::shared_ptr<SimulationControl> simulation_control;
+  DoFHandler<dim>                    dof_handler;
+  FE_Q<dim>                          fe;
+  ConvergenceTable                   error_table;
+
 
 
   // Solution storage:

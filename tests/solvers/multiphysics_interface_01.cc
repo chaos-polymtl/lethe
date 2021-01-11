@@ -25,6 +25,7 @@
 // Lethe
 #include <core/multiphysics.h>
 #include <core/parameters.h>
+#include <core/simulation_control.h>
 #include <solvers/multiphysics_interface.h>
 #include <solvers/navier_stokes_solver_parameters.h>
 
@@ -56,8 +57,14 @@ test()
   solver_parameters.multiphysics.fluid_dynamics = true;
   solver_parameters.multiphysics.heat_transfer  = true;
 
+  std::shared_ptr<SimulationControl> simulation_control =
+    std::make_shared<SimulationControlTransient>(
+      solver_parameters.simulation_control);
+
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria);
+    MultiphysicsInterface<dim> multiphysics(solver_parameters,
+                                            tria,
+                                            simulation_control);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: fluid, heat)" << std::endl;
@@ -69,7 +76,9 @@ test()
 
   solver_parameters.multiphysics.heat_transfer = false;
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria);
+    MultiphysicsInterface<dim> multiphysics(solver_parameters,
+                                            tria,
+                                            simulation_control);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: fluid)" << std::endl;
@@ -81,7 +90,9 @@ test()
 
   solver_parameters.multiphysics.fluid_dynamics = false;
   {
-    MultiphysicsInterface<dim> multiphysics(solver_parameters, tria);
+    MultiphysicsInterface<dim> multiphysics(solver_parameters,
+                                            tria,
+                                            simulation_control);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: none)" << std::endl;

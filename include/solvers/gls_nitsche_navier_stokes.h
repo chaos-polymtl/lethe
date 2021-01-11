@@ -51,42 +51,6 @@ public:
 
 private:
   /**
-   * @brief Temporary - Adds heat transfer solving - test in subfunction before global multiphysics implementation
-   */
-  //  virtual void
-  //  setup_dofs_ht();
-
-  //  virtual void
-  //  assemble_matrix_and_rhs_ht(
-  //    const Parameters::SimulationControl::TimeSteppingMethod
-  //      time_stepping_method);
-
-  //  virtual void
-  //  solve_linear_system_ht();
-
-  //  virtual void
-  //  finish_time_step_ht();
-
-  //  virtual void
-  //  set_initial_condition_ht();
-
-  //  void
-  //  postprocess_ht();
-
-  void
-  finish_ht();
-
-  double
-  calculate_l2_error_ht(const DoFHandler<spacedim> &         dof_handler,
-                        const TrilinosWrappers::MPI::Vector &evaluation_point,
-                        const Function<spacedim> &           exact_solution,
-                        const Parameters::FEM &              fem_parameters,
-                        const MPI_Comm &                     mpi_communicator);
-
-  ConvergenceTable error_table_ht;
-
-
-  /**
    * @brief Adds the nitsche restriction to the global matrix and global rhs on the cells surrounding the immersed solid
    */
   template <bool assemble_matrix>
