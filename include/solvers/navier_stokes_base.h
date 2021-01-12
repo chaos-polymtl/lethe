@@ -436,7 +436,7 @@ protected:
 
   TimerOutput computing_timer;
 
-  SimulationParameters<dim> nsparam;
+  SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
 
   Function<dim> *exact_solution;

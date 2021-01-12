@@ -38,7 +38,7 @@ template <int dim, int spacedim>
 GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
   SimulationParameters<spacedim> &p_nsparam)
   : GLSNavierStokesSolver<spacedim>(p_nsparam)
-  , solid(this->nsparam.nitsche,
+  , solid(this->simulation_parameters.nitsche,
           this->triangulation,
           p_nsparam.fem_parameters.velocity_order)
   , fe_ht(1)
@@ -67,7 +67,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   // Penalization terms
   const auto penalty_parameter =
     1.0 / GridTools::minimal_cell_diameter(*this->triangulation);
-  double beta = this->nsparam.nitsche->beta;
+  double beta = this->simulation_parameters.nitsche->beta;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -161,7 +161,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
   Tensor<2, spacedim> fluid_pressure;
   Tensor<1, spacedim> force; // to be changed for a vector of tensors when
                              // allowing multiple solids
-  const double viscosity = this->nsparam.physical_properties.viscosity;
+  const double viscosity = this->simulation_parameters.physical_properties.viscosity;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -233,7 +233,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
                                            // when allowing more than 1 solid
 
 
-  if (this->nsparam.nitsche->verbosity == Parameters::Verbosity::verbose &&
+  if (this->simulation_parameters.nitsche->verbosity == Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
@@ -254,7 +254,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
         independent_column_names,
         force,
         dependent_column_names,
-        this->nsparam.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force on solid summary                  |" << std::endl;
@@ -262,7 +262,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
       table.write_text(std::cout);
     }
 
-  std::string   filename = this->nsparam.nitsche->force_output_name + ".dat";
+  std::string   filename = this->simulation_parameters.nitsche->force_output_name + ".dat";
   std::ofstream output(filename.c_str());
 
 
@@ -277,13 +277,13 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
 
   // Precision
   solid_forces_table.set_precision(
-    "f_x", this->nsparam.forces_parameters.output_precision);
+    "f_x", this->simulation_parameters.forces_parameters.output_precision);
   solid_forces_table.set_precision(
-    "f_y", this->nsparam.forces_parameters.output_precision);
+    "f_y", this->simulation_parameters.forces_parameters.output_precision);
   solid_forces_table.set_precision(
-    "f_z", this->nsparam.forces_parameters.output_precision);
+    "f_z", this->simulation_parameters.forces_parameters.output_precision);
   solid_forces_table.set_precision(
-    "time", this->nsparam.forces_parameters.output_precision);
+    "time", this->simulation_parameters.forces_parameters.output_precision);
 
   solid_forces_table.write_text(output);
 }
@@ -293,18 +293,18 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 {
   read_mesh_and_manifolds(this->triangulation,
-                          this->nsparam.mesh,
-                          this->nsparam.manifolds_parameters,
-                          this->nsparam.restart_parameters.restart,
-                          this->nsparam.boundary_conditions);
+                          this->simulation_parameters.mesh,
+                          this->simulation_parameters.manifolds_parameters,
+                          this->simulation_parameters.restart_parameters.restart,
+                          this->simulation_parameters.boundary_conditions);
 
   this->setup_dofs();
-  this->set_initial_condition(this->nsparam.initial_condition->type,
-                              this->nsparam.restart_parameters.restart);
+  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
+                              this->simulation_parameters.restart_parameters.restart);
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
-      if (this->nsparam.nitsche->enable_particles_motion)
+      if (this->simulation_parameters.nitsche->enable_particles_motion)
         {
           if (this->simulation_control->is_at_start())
             {
@@ -329,7 +329,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
       this->postprocess_fd(false);
       // postprocess_ht();
-      if (this->nsparam.nitsche->calculate_force_on_solid && dim == 2 &&
+      if (this->simulation_parameters.nitsche->calculate_force_on_solid && dim == 2 &&
           spacedim == 3)
         {
           postprocess_solid_forces();
@@ -344,15 +344,15 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->finish_time_step_fd();
-      if (this->nsparam.multiphysics.heat_transfer)
+      if (this->simulation_parameters.multiphysics.heat_transfer)
         {
           //          finish_time_step_ht();
         }
     }
-  if (this->nsparam.test.enabled)
+  if (this->simulation_parameters.test.enabled)
     solid.print_particle_positions();
   this->finish_simulation();
-  if (this->nsparam.multiphysics.heat_transfer)
+  if (this->simulation_parameters.multiphysics.heat_transfer)
     {
       //      finish_ht();
     }

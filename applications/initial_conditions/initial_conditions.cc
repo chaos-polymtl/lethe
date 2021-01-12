@@ -43,21 +43,21 @@ void
 InitialConditionsNavierStokes<dim>::run()
 {
   read_mesh_and_manifolds(this->triangulation,
-                          this->nsparam.mesh,
-                          this->nsparam.manifolds_parameters,
-                          this->nsparam.restart_parameters.restart,
-                          this->nsparam.boundary_conditions);
+                          this->simulation_parameters.mesh,
+                          this->simulation_parameters.manifolds_parameters,
+                          this->simulation_parameters.restart_parameters.restart,
+                          this->simulation_parameters.boundary_conditions);
   this->setup_dofs_fd();
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->nsparam.initial_condition->type,
-                              this->nsparam.restart_parameters.restart);
+  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
+                              this->simulation_parameters.restart_parameters.restart);
 }
 
 template <int dim>
 void
 InitialConditionsNavierStokes<dim>::runTest()
 {
-  const int initialSize = this->nsparam.mesh.initial_refinement;
+  const int initialSize = this->simulation_parameters.mesh.initial_refinement;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
 
@@ -68,7 +68,7 @@ InitialConditionsNavierStokes<dim>::runTest()
     calculate_L2_error(this->dof_handler,
                        this->present_solution,
                        this->exact_solution,
-                       this->nsparam.fem_parameters,
+                       this->simulation_parameters.fem_parameters,
                        this->mpi_communicator);
   double error_L2projection = errors.first;
   if (error_L2projection < 1e-9)
@@ -85,7 +85,7 @@ InitialConditionsNavierStokes<dim>::runTest()
     calculate_L2_error(this->dof_handler,
                        this->present_solution,
                        this->exact_solution,
-                       this->nsparam.fem_parameters,
+                       this->simulation_parameters.fem_parameters,
                        this->mpi_communicator);
   double error_nodal = errors_nodal.first;
   if (error_nodal < 1e-9)

@@ -74,12 +74,12 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
   const MappingQ<dim> mapping(this->velocity_fem_degree);
 
-  this->nsparam.void_fraction->void_fraction.set_time(time);
+  this->simulation_parameters.void_fraction->void_fraction.set_time(time);
 
 
   VectorTools::interpolate(mapping,
                            void_fraction_dof_handler,
-                           this->nsparam.void_fraction->void_fraction,
+                           this->simulation_parameters.void_fraction->void_fraction,
                            nodal_void_fraction_owned);
 
   nodal_void_fraction_relevant = nodal_void_fraction_owned;
@@ -93,17 +93,17 @@ void
 GLSVANSSolver<dim>::first_iteration()
 {
   // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(this->nsparam.simulation_control.method))
+  if (!is_bdf_high_order(this->simulation_parameters.simulation_control.method))
     {
       iterate();
     }
 
   // Taking care of the multi-step methods
-  else if (this->nsparam.simulation_control.method ==
+  else if (this->simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     {
       Parameters::SimulationControl timeParameters =
-        this->nsparam.simulation_control;
+        this->simulation_parameters.simulation_control;
 
       // Start the BDF2 with a single Euler time step with a lower time step
       double time_step =
@@ -138,11 +138,11 @@ GLSVANSSolver<dim>::first_iteration()
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 
-  else if (this->nsparam.simulation_control.method ==
+  else if (this->simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     {
       Parameters::SimulationControl timeParameters =
-        this->nsparam.simulation_control;
+        this->simulation_parameters.simulation_control;
 
       // Start the BDF3 with a single Euler time step with a lower time step
       double time_step =
@@ -204,7 +204,7 @@ GLSVANSSolver<dim>::iterate()
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
   PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-    this->nsparam.simulation_control.method, false, false);
+    this->simulation_parameters.simulation_control.method, false, false);
 }
 
 
@@ -220,12 +220,12 @@ GLSVANSSolver<dim>::assembleGLS()
   auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
 
-  double         viscosity = this->nsparam.physical_properties.viscosity;
+  double         viscosity = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
+                              this->simulation_parameters.fem_parameters.qmapping_all);
   FEValues<dim>       fe_values(mapping,
                           this->fe,
                           quadrature_formula,
@@ -267,11 +267,11 @@ GLSVANSSolver<dim>::assembleGLS()
   // in 2D.
   Tensor<1, dim> omega_vector;
 
-  double omega_z  = this->nsparam.velocitySource.omega_z;
-  omega_vector[0] = this->nsparam.velocitySource.omega_x;
-  omega_vector[1] = this->nsparam.velocitySource.omega_y;
+  double omega_z  = this->simulation_parameters.velocitySource.omega_z;
+  omega_vector[0] = this->simulation_parameters.velocitySource.omega_x;
+  omega_vector[1] = this->simulation_parameters.velocitySource.omega_y;
   if (dim == 3)
-    omega_vector[2] = this->nsparam.velocitySource.omega_z;
+    omega_vector[2] = this->simulation_parameters.velocitySource.omega_z;
 
   std::vector<double>         div_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
@@ -807,7 +807,7 @@ GLSVANSSolver<dim>::assemble_matrix_and_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
 
-  if (this->nsparam.velocitySource.type ==
+  if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
       if (time_stepping_method ==
@@ -832,7 +832,7 @@ GLSVANSSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::VelocitySource::VelocitySourceType::none>();
     }
 
-  else if (this->nsparam.velocitySource.type ==
+  else if (this->simulation_parameters.velocitySource.type ==
            Parameters::VelocitySource::VelocitySourceType::srf)
     {
       if (time_stepping_method ==
@@ -864,7 +864,7 @@ GLSVANSSolver<dim>::assemble_rhs(
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
 
-  if (this->nsparam.velocitySource.type ==
+  if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
       if (time_stepping_method ==
@@ -888,7 +888,7 @@ GLSVANSSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::none>();
     }
-  if (this->nsparam.velocitySource.type ==
+  if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     {
       if (time_stepping_method ==
@@ -928,15 +928,15 @@ void
 GLSVANSSolver<dim>::solve()
 {
   read_mesh_and_manifolds(this->triangulation,
-                          this->nsparam.mesh,
-                          this->nsparam.manifolds_parameters,
-                          this->nsparam.restart_parameters.restart,
-                          this->nsparam.boundary_conditions);
+                          this->simulation_parameters.mesh,
+                          this->simulation_parameters.manifolds_parameters,
+                          this->simulation_parameters.restart_parameters.restart,
+                          this->simulation_parameters.boundary_conditions);
 
   setup_dofs();
   calculate_void_fraction(this->simulation_control->get_current_time());
-  this->set_initial_condition(this->nsparam.initial_condition->type,
-                              this->nsparam.restart_parameters.restart);
+  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
+                              this->simulation_parameters.restart_parameters.restart);
 
   while (this->simulation_control->integrate())
     {

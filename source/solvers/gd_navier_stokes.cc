@@ -94,7 +94,7 @@ template <bool                                              assemble_matrix,
 void
 GDNavierStokesSolver<dim>::assembleGD()
 {
-  double viscosity = this->nsparam.physical_properties.viscosity;
+  double viscosity = this->simulation_parameters.physical_properties.viscosity;
 
   Function<dim> *l_forcing_function = this->forcing_function;
 
@@ -104,8 +104,9 @@ GDNavierStokesSolver<dim>::assembleGD()
   this->system_rhs = 0;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
 
   FEValues<dim> fe_values(mapping,
                           this->fe,
@@ -341,19 +342,20 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
+  FEValues<dim>               fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values);
-  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int  n_q_points    = quadrature_formula.size();
-  FullMatrix<double>  local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>      local_rhs(dofs_per_cell);
-  std::vector<Vector<double>>          initial_velocity(n_q_points,
-                                                        Vector<double>(dim + 1));
+  const unsigned int          dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int          n_q_points    = quadrature_formula.size();
+  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>              local_rhs(dofs_per_cell);
+  std::vector<Vector<double>> initial_velocity(n_q_points,
+                                               Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const FEValuesExtractors::Vector     velocities(0);
   const FEValuesExtractors::Scalar     pressure(dim);
@@ -371,7 +373,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
           fe_values.reinit(cell);
           local_matrix = 0;
           local_rhs    = 0;
-          this->nsparam.initial_condition->uvwp.vector_value_list(
+          this->simulation_parameters.initial_condition->uvwp.vector_value_list(
             fe_values.get_quadrature_points(), initial_velocity);
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -461,8 +463,9 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
   this->locally_relevant_dofs[1] =
     locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
 
-  const MappingQ<dim>        mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
@@ -472,55 +475,63 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
 
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             nonzero_constraints);
-    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions.size;
          ++i_bc)
       {
-        if (this->nsparam.boundary_conditions.type[i_bc] ==
+        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
             BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
               this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
               nonzero_constraints,
               this->fe.component_mask(velocities));
           }
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
-              this->nsparam.boundary_conditions.id[i_bc]);
+              this->simulation_parameters.boundary_conditions.id[i_bc]);
             VectorTools::compute_no_normal_flux_constraints(
               this->dof_handler,
               0,
               no_normal_flux_boundaries,
               nonzero_constraints);
           }
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
               mapping,
               this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.id[i_bc],
               NavierStokesFunctionDefined<dim>(
-                &this->nsparam.boundary_conditions.bcFunctions[i_bc].u,
-                &this->nsparam.boundary_conditions.bcFunctions[i_bc].v,
-                &this->nsparam.boundary_conditions.bcFunctions[i_bc].w),
+                &this->simulation_parameters.boundary_conditions
+                   .bcFunctions[i_bc]
+                   .u,
+                &this->simulation_parameters.boundary_conditions
+                   .bcFunctions[i_bc]
+                   .v,
+                &this->simulation_parameters.boundary_conditions
+                   .bcFunctions[i_bc]
+                   .w),
               nonzero_constraints,
               this->fe.component_mask(velocities));
           }
 
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              this->nsparam.boundary_conditions.periodic_id[i_bc],
-              this->nsparam.boundary_conditions.periodic_direction[i_bc],
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+              this->simulation_parameters.boundary_conditions
+                .periodic_direction[i_bc],
               nonzero_constraints);
           }
       }
@@ -532,29 +543,31 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
     DoFTools::make_hanging_node_constraints(this->dof_handler,
                                             this->zero_constraints);
 
-    for (unsigned int i_bc = 0; i_bc < this->nsparam.boundary_conditions.size;
+    for (unsigned int i_bc = 0;
+         i_bc < this->simulation_parameters.boundary_conditions.size;
          ++i_bc)
       {
-        if (this->nsparam.boundary_conditions.type[i_bc] ==
+        if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
             BoundaryConditions::BoundaryType::slip)
           {
             std::set<types::boundary_id> no_normal_flux_boundaries;
             no_normal_flux_boundaries.insert(
-              this->nsparam.boundary_conditions.id[i_bc]);
+              this->simulation_parameters.boundary_conditions.id[i_bc]);
             VectorTools::compute_no_normal_flux_constraints(
               this->dof_handler,
               0,
               no_normal_flux_boundaries,
               this->zero_constraints);
           }
-        else if (this->nsparam.boundary_conditions.type[i_bc] ==
+        else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
           {
             DoFTools::make_periodicity_constraints(
               this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
-              this->nsparam.boundary_conditions.periodic_id[i_bc],
-              this->nsparam.boundary_conditions.periodic_direction[i_bc],
+              this->simulation_parameters.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.periodic_id[i_bc],
+              this->simulation_parameters.boundary_conditions
+                .periodic_direction[i_bc],
               this->zero_constraints);
           }
         else // if(nsparam.boundaryConditions.boundaries[i_bc].type==Parameters::noslip
@@ -563,7 +576,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
             VectorTools::interpolate_boundary_values(
               mapping,
               this->dof_handler,
-              this->nsparam.boundary_conditions.id[i_bc],
+              this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
               this->zero_constraints,
               this->fe.component_mask(velocities));
@@ -617,9 +630,9 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
   system_matrix.reinit(sparsity_pattern);
   pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
 
-  if (this->nsparam.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      AssertThrow(this->nsparam.mesh_adaptation.type ==
+      AssertThrow(this->simulation_parameters.mesh_adaptation.type ==
                     Parameters::MeshAdaptation::Type::none,
                   ExcMessage(
                     "Time-averaging velocities and calculating reynolds "
@@ -631,7 +644,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                                                   this->fe.n_dofs_per_vertex(),
                                                   this->mpi_communicator);
 
-      if (this->nsparam.restart_parameters.checkpoint)
+      if (this->simulation_parameters.restart_parameters.checkpoint)
         {
           this->average_velocities.initialize_checkpoint_vectors(
             this->locally_owned_dofs,
@@ -698,16 +711,17 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
   else if (initial_condition_type == Parameters::InitialConditionType::viscous)
     {
       this->set_nodal_values();
-      double viscosity = this->nsparam.physical_properties.viscosity;
-      this->nsparam.physical_properties.viscosity =
-        this->nsparam.initial_condition->viscosity;
+      double viscosity =
+        this->simulation_parameters.physical_properties.viscosity;
+      this->simulation_parameters.physical_properties.viscosity =
+        this->simulation_parameters.initial_condition->viscosity;
       PhysicsSolver<TrilinosWrappers::MPI::BlockVector>::
         solve_non_linear_system(
           Parameters::SimulationControl::TimeSteppingMethod::steady,
           false,
           true);
       this->finish_time_step_fd();
-      this->nsparam.physical_properties.viscosity = viscosity;
+      this->simulation_parameters.physical_properties.viscosity = viscosity;
     }
   else
     {
@@ -720,17 +734,18 @@ void
 GDNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                const bool renewed_matrix)
 {
-  const double absolute_residual = this->nsparam.linear_solver.minimum_residual;
+  const double absolute_residual =
+    this->simulation_parameters.linear_solver.minimum_residual;
   const double relative_residual =
-    this->nsparam.linear_solver.relative_residual;
+    this->simulation_parameters.linear_solver.relative_residual;
 
-  if (this->nsparam.linear_solver.solver ==
+  if (this->simulation_parameters.linear_solver.solver ==
       Parameters::LinearSolver::SolverType::gmres)
     solve_system_GMRES(initial_step,
                        absolute_residual,
                        relative_residual,
                        renewed_matrix);
-  else if (this->nsparam.linear_solver.solver ==
+  else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::amg)
     solve_system_AMG(initial_step,
                      absolute_residual,
@@ -749,9 +764,12 @@ GDNavierStokesSolver<dim>::setup_ILU()
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = this->nsparam.linear_solver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linear_solver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linear_solver.ilu_precond_rtol;
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.ilu_precond_rtol;
 
   velocity_ilu_preconditioner =
     std::make_shared<TrilinosWrappers::PreconditionILU>();
@@ -768,12 +786,12 @@ GDNavierStokesSolver<dim>::setup_ILU()
   system_ilu_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionILU>>(
     gamma,
-    this->nsparam.physical_properties.viscosity,
+    this->simulation_parameters.physical_properties.viscosity,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_ilu_preconditioner),
     &(*pressure_ilu_preconditioner),
-    this->nsparam.linear_solver);
+    this->simulation_parameters.linear_solver);
 }
 
 template <int dim>
@@ -807,14 +825,15 @@ GDNavierStokesSolver<dim>::setup_AMG()
   bool       higher_order_elements = false;
   if (this->fe.degree > 1)
     higher_order_elements = true;
-  const unsigned int n_cycles = this->nsparam.linear_solver.amg_n_cycles;
-  const bool         w_cycle  = this->nsparam.linear_solver.amg_w_cycles;
-  const double       aggregation_threshold =
-    this->nsparam.linear_solver.amg_aggregation_threshold;
+  const unsigned int n_cycles =
+    this->simulation_parameters.linear_solver.amg_n_cycles;
+  const bool   w_cycle = this->simulation_parameters.linear_solver.amg_w_cycles;
+  const double aggregation_threshold =
+    this->simulation_parameters.linear_solver.amg_aggregation_threshold;
   const unsigned int smoother_sweeps =
-    this->nsparam.linear_solver.amg_smoother_sweeps;
+    this->simulation_parameters.linear_solver.amg_smoother_sweeps;
   const unsigned int smoother_overlap =
-    this->nsparam.linear_solver.amg_smoother_overlap;
+    this->simulation_parameters.linear_solver.amg_smoother_overlap;
   const bool  output_details = false;
   const char *smoother_type  = "Chebyshev";  //"ILU";
   const char *coarse_type    = "Amesos-KLU"; //"ILU";
@@ -882,12 +901,12 @@ GDNavierStokesSolver<dim>::setup_AMG()
   system_amg_preconditioner = std::make_shared<
     BlockSchurPreconditioner<TrilinosWrappers::PreconditionAMG>>(
     gamma,
-    this->nsparam.physical_properties.viscosity,
+    this->simulation_parameters.physical_properties.viscosity,
     system_matrix,
     pressure_mass_matrix,
     &(*velocity_amg_preconditioner),
     &(*pressure_amg_preconditioner),
-    this->nsparam.linear_solver);
+    this->simulation_parameters.linear_solver);
 }
 
 
@@ -904,7 +923,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * this->system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -914,10 +934,11 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
 
@@ -931,7 +952,8 @@ GDNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                  this->newton_update,
                  this->system_rhs,
                  *system_ilu_preconditioner);
-    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+    if (this->simulation_parameters.linear_solver.verbosity !=
+        Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -958,7 +980,8 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -969,10 +992,11 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
     setup_AMG();
 
 
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
 
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
 
@@ -983,7 +1007,8 @@ GDNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                  this->newton_update,
                  this->system_rhs,
                  *system_amg_preconditioner);
-    if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+    if (this->simulation_parameters.linear_solver.verbosity !=
+        Parameters::Verbosity::quiet)
       {
         this->pcout << "  -Iterative solver took : "
                     << solver_control.last_step() << " steps " << std::endl;
@@ -1008,7 +1033,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
@@ -1016,19 +1042,23 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
   TrilinosWrappers::MPI::BlockVector completely_distributed_solution(
     this->locally_owned_dofs, this->mpi_communicator);
 
-  SolverControl solver_control(this->nsparam.linear_solver.max_iterations,
-                               linear_solver_tolerance,
-                               true,
-                               true);
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
   SolverFGMRES<TrilinosWrappers::MPI::BlockVector> solver(solver_control);
   TrilinosWrappers::PreconditionILU                pmass_preconditioner;
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
   //*********************************************
-  const double ilu_fill = this->nsparam.linear_solver.ilu_precond_fill;
-  const double ilu_atol = this->nsparam.linear_solver.ilu_precond_atol;
-  const double ilu_rtol = this->nsparam.linear_solver.ilu_precond_rtol;
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
   pmass_preconditioner.initialize(pressure_mass_matrix, preconditionerOptions);
@@ -1044,7 +1074,8 @@ GDNavierStokesSolver<dim>::solve_L2_system(const bool initial_step,
                system_rhs,
                preconditioner);
 
-  if (this->nsparam.linear_solver.verbosity != Parameters::Verbosity::quiet)
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
     {
       this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
@@ -1063,15 +1094,17 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::solve()
 {
-  read_mesh_and_manifolds(this->triangulation,
-                          this->nsparam.mesh,
-                          this->nsparam.manifolds_parameters,
-                          this->nsparam.restart_parameters.restart,
-                          this->nsparam.boundary_conditions);
+  read_mesh_and_manifolds(
+    this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
 
   this->setup_dofs();
-  this->set_initial_condition(this->nsparam.initial_condition->type,
-                              this->nsparam.restart_parameters.restart);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
 
   while (this->simulation_control->integrate())
     {

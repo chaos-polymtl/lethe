@@ -94,7 +94,7 @@ RestartNavierStokes<dim>::run()
   this->setup_dofs_fd();
   this->exact_solution                        = new ExactSolutionMMS<dim>;
   this->forcing_function                      = new MMSSineForcingFunction<dim>;
-  this->nsparam.physical_properties.viscosity = 1.;
+  this->simulation_parameters.physical_properties.viscosity = 1.;
 
   this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
@@ -102,7 +102,7 @@ RestartNavierStokes<dim>::run()
   auto   errors_p1 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
-                                      this->nsparam.fem_parameters,
+                                      this->simulation_parameters.fem_parameters,
                                       this->mpi_communicator);
   double error1    = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
@@ -112,7 +112,7 @@ RestartNavierStokes<dim>::run()
   auto errors_p2 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
-                                      this->nsparam.fem_parameters,
+                                      this->simulation_parameters.fem_parameters,
                                       this->mpi_communicator);
 
   double error2 = errors_p2.first;
@@ -124,11 +124,11 @@ RestartNavierStokes<dim>::run()
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(0);
 
-  this->set_initial_condition(this->nsparam.initial_condition->type, true);
+  this->set_initial_condition(this->simulation_parameters.initial_condition->type, true);
   auto errors_p3 = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
-                                      this->nsparam.fem_parameters,
+                                      this->simulation_parameters.fem_parameters,
                                       this->mpi_communicator);
 
   double error3 = errors_p3.first;
