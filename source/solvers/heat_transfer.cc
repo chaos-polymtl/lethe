@@ -56,7 +56,6 @@ HeatTransfer<dim>::assemble_system(
 
   const double rho_cp = density * specific_heat;
 
-  auto &solution = present_solution;
   if (assemble_matrix)
     system_matrix = 0;
   system_rhs = 0;
@@ -187,7 +186,7 @@ HeatTransfer<dim>::assemble_system(
             }
 
           // Gather present value
-          fe_values_ht.get_function_values(solution,
+          fe_values_ht.get_function_values(evaluation_point,
                                            present_temperature_values);
 
           // Gather the previous time steps for heat transfer depending on
@@ -315,7 +314,8 @@ HeatTransfer<dim>::assemble_system(
                             {
                               fe_face_values_ht.reinit(cell, face);
                               fe_face_values_ht.get_function_values(
-                                solution, present_face_temperature_values);
+                                evaluation_point,
+                                present_face_temperature_values);
                               {
                                 for (const unsigned int q :
                                      fe_face_values_ht
