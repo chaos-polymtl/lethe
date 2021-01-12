@@ -299,9 +299,9 @@ HeatTransfer<dim>::assemble_system(
                     .type[i_bc] == BoundaryConditions::BoundaryType::convection)
                 {
                   const double h =
-                    simulation_parameters.boundary_conditions_ht.value[i_bc];
+                    simulation_parameters.boundary_conditions_ht.h[i_bc];
                   const double T_inf =
-                    simulation_parameters.boundary_conditions_ht.Tenv[i_bc];
+                    simulation_parameters.boundary_conditions_ht.Tinf[i_bc];
                   if (cell->is_locally_owned())
                     {
                       for (unsigned int face = 0;

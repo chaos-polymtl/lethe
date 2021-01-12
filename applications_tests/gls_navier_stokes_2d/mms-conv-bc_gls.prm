@@ -95,8 +95,8 @@ subsection boundary conditions heat transfer
     subsection bc 1
     set id = 1
 	set type	      = convection
-        set value	      = 1
-        set Tenv	      = 10
+        set h	      = 1
+        set Tinf	      = 10
     end
 end
 # --------------------------------------------------
