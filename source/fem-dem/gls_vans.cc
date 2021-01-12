@@ -77,10 +77,11 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
   this->simulation_parameters.void_fraction->void_fraction.set_time(time);
 
 
-  VectorTools::interpolate(mapping,
-                           void_fraction_dof_handler,
-                           this->simulation_parameters.void_fraction->void_fraction,
-                           nodal_void_fraction_owned);
+  VectorTools::interpolate(
+    mapping,
+    void_fraction_dof_handler,
+    this->simulation_parameters.void_fraction->void_fraction,
+    nodal_void_fraction_owned);
 
   nodal_void_fraction_relevant = nodal_void_fraction_owned;
 }
@@ -220,13 +221,14 @@ GLSVANSSolver<dim>::assembleGLS()
   auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
 
-  double         viscosity = this->simulation_parameters.physical_properties.viscosity;
+  double viscosity = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
+  FEValues<dim> fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
@@ -927,16 +929,18 @@ template <int dim>
 void
 GLSVANSSolver<dim>::solve()
 {
-  read_mesh_and_manifolds(this->triangulation,
-                          this->simulation_parameters.mesh,
-                          this->simulation_parameters.manifolds_parameters,
-                          this->simulation_parameters.restart_parameters.restart,
-                          this->simulation_parameters.boundary_conditions);
+  read_mesh_and_manifolds(
+    this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
 
   setup_dofs();
   calculate_void_fraction(this->simulation_control->get_current_time());
-  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
-                              this->simulation_parameters.restart_parameters.restart);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
 
   while (this->simulation_control->integrate())
     {

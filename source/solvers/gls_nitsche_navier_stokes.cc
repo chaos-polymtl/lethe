@@ -161,7 +161,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
   Tensor<2, spacedim> fluid_pressure;
   Tensor<1, spacedim> force; // to be changed for a vector of tensors when
                              // allowing multiple solids
-  const double viscosity = this->simulation_parameters.physical_properties.viscosity;
+  const double viscosity =
+    this->simulation_parameters.physical_properties.viscosity;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -233,7 +234,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
                                            // when allowing more than 1 solid
 
 
-  if (this->simulation_parameters.nitsche->verbosity == Parameters::Verbosity::verbose &&
+  if (this->simulation_parameters.nitsche->verbosity ==
+        Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
@@ -262,7 +264,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
       table.write_text(std::cout);
     }
 
-  std::string   filename = this->simulation_parameters.nitsche->force_output_name + ".dat";
+  std::string filename =
+    this->simulation_parameters.nitsche->force_output_name + ".dat";
   std::ofstream output(filename.c_str());
 
 
@@ -292,15 +295,17 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 {
-  read_mesh_and_manifolds(this->triangulation,
-                          this->simulation_parameters.mesh,
-                          this->simulation_parameters.manifolds_parameters,
-                          this->simulation_parameters.restart_parameters.restart,
-                          this->simulation_parameters.boundary_conditions);
+  read_mesh_and_manifolds(
+    this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
 
   this->setup_dofs();
-  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
-                              this->simulation_parameters.restart_parameters.restart);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
@@ -329,8 +334,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
       this->postprocess_fd(false);
       // postprocess_ht();
-      if (this->simulation_parameters.nitsche->calculate_force_on_solid && dim == 2 &&
-          spacedim == 3)
+      if (this->simulation_parameters.nitsche->calculate_force_on_solid &&
+          dim == 2 && spacedim == 3)
         {
           postprocess_solid_forces();
         }

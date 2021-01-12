@@ -42,15 +42,17 @@ template <int dim>
 void
 InitialConditionsNavierStokes<dim>::run()
 {
-  read_mesh_and_manifolds(this->triangulation,
-                          this->simulation_parameters.mesh,
-                          this->simulation_parameters.manifolds_parameters,
-                          this->simulation_parameters.restart_parameters.restart,
-                          this->simulation_parameters.boundary_conditions);
+  read_mesh_and_manifolds(
+    this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
   this->setup_dofs_fd();
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
-                              this->simulation_parameters.restart_parameters.restart);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
 }
 
 template <int dim>

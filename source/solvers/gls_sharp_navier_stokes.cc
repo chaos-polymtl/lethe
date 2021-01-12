@@ -119,13 +119,13 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                   // cell is not cut by the boundary meaning we dont have to do
                   // anything
                   if ((support_points[local_dof_indices[j]] - center_immersed)
-                          .norm() <=
-                        particles[p].radius *
-                          this->simulation_parameters.particlesParameters.outside_radius &&
+                          .norm() <= particles[p].radius *
+                                       this->simulation_parameters
+                                         .particlesParameters.outside_radius &&
                       (support_points[local_dof_indices[j]] - center_immersed)
-                          .norm() >=
-                        particles[p].radius *
-                          this->simulation_parameters.particlesParameters.inside_radius)
+                          .norm() >= particles[p].radius *
+                                       this->simulation_parameters
+                                         .particlesParameters.inside_radius)
                     {
                       ++count_small;
                     }
@@ -559,8 +559,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     table_t[p].add_value(
                       "time", this->simulation_control->get_current_time());
                   table_t[p].add_value("T_z", t_torque_);
-                  table_t[p].set_precision(
-                    "T_z", this->simulation_parameters.simulation_control.log_precision);
+                  table_t[p].set_precision("T_z",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
 
 
 
@@ -572,10 +573,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
                   table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
 
-                  table_f[p].set_precision(
-                    "f_x", this->simulation_parameters.simulation_control.log_precision);
-                  table_f[p].set_precision(
-                    "f_y", this->simulation_parameters.simulation_control.log_precision);
+                  table_f[p].set_precision("f_x",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
+                  table_f[p].set_precision("f_y",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
                 }
             }
         }
@@ -608,8 +611,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       QGauss<dim>   q_formula(this->fe.degree + 1);
       FEValues<dim> fe_values(this->fe, q_formula, update_quadrature_points);
 
-      double         mu = this->simulation_parameters.physical_properties.viscosity;
-      MappingQ1<dim> immersed_map;
+      double mu = this->simulation_parameters.physical_properties.viscosity;
+      MappingQ1<dim>                                immersed_map;
       std::map<types::global_dof_index, Point<dim>> support_points;
       DoFTools::map_dofs_to_support_points(immersed_map,
                                            this->dof_handler,
@@ -1065,14 +1068,17 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     table_t[p].add_value(
                       "time", this->simulation_control->get_current_time());
                   table_t[p].add_value("T_x", t_torque_x);
-                  table_t[p].set_precision(
-                    "T_x", this->simulation_parameters.simulation_control.log_precision);
+                  table_t[p].set_precision("T_x",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
                   table_t[p].add_value("T_y", t_torque_x);
-                  table_t[p].set_precision(
-                    "T_y", this->simulation_parameters.simulation_control.log_precision);
+                  table_t[p].set_precision("T_y",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
                   table_t[p].add_value("T_z", t_torque_x);
-                  table_t[p].set_precision(
-                    "T_z", this->simulation_parameters.simulation_control.log_precision);
+                  table_t[p].set_precision("T_z",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
 
 
 
@@ -1085,14 +1091,17 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
                   table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
 
-                  table_f[p].set_precision(
-                    "f_x", this->simulation_parameters.simulation_control.log_precision);
-                  table_f[p].set_precision(
-                    "f_y", this->simulation_parameters.simulation_control.log_precision);
+                  table_f[p].set_precision("f_x",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
+                  table_f[p].set_precision("f_y",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
 
                   table_f[p].add_value("f_z", fz_p_2_ + fz_v_);
-                  table_f[p].set_precision(
-                    "f_z", this->simulation_parameters.simulation_control.log_precision);
+                  table_f[p].set_precision("f_z",
+                                           this->simulation_parameters
+                                             .simulation_control.log_precision);
                 }
             }
         }
@@ -1127,9 +1136,10 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
       {
         if (this->this_mpi_process == 0)
           {
-            std::string filename =
-              this->simulation_parameters.particlesParameters.ib_force_output_file + "." +
-              Utilities::int_to_string(p, 2) + ".dat";
+            std::string filename = this->simulation_parameters
+                                     .particlesParameters.ib_force_output_file +
+                                   "." + Utilities::int_to_string(p, 2) +
+                                   ".dat";
             std::ofstream output(filename.c_str());
 
             table_f[p].write_text(output);
@@ -1150,7 +1160,8 @@ GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
     this->write_output_results(present_solution);
 
   // Calculate error with respect to analytical solution
-  if (!firstIter && this->simulation_parameters.analytical_solution->calculate_error())
+  if (!firstIter &&
+      this->simulation_parameters.analytical_solution->calculate_error())
     {
       // Update the time of the exact solution to the actual time
       this->exact_solution->set_time(
@@ -1195,9 +1206,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   TimerOutput::Scope t(this->computing_timer, "error");
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points + 1);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
+  FEValues<dim> fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
@@ -1535,7 +1547,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           double       tp_ratio        = 1. / 2.;
                           double       fp_ratio        = 3. / 4.;
 
-                          if (this->simulation_parameters.particlesParameters.order == 3)
+                          if (this->simulation_parameters.particlesParameters
+                                .order == 3)
                             {
                               tp_ratio = 1. / 3.;
                               fp_ratio = 2. / 3.;
@@ -1839,8 +1852,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                           auto &evaluation_point =
                                             this->evaluation_point;
 
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 1)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 1)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -1859,8 +1872,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                   local_dof_indices_2[j]);
                                             }
 
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 2)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 2)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -1890,8 +1903,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                             }
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 3)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 3)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -1932,8 +1945,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                             }
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order > 4)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order > 4)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -1949,8 +1962,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                   local_dof_indices_2[j]);
                                             }
 
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 4)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 4)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -2011,8 +2024,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                         {
                                           auto &evaluation_point =
                                             this->evaluation_point;
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 1)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 1)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -2030,8 +2043,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                   local_dof_indices_2[j]);
                                             }
 
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 2)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 2)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -2060,8 +2073,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                             }
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 3)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 3)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -2101,8 +2114,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                             }
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order > 4)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order > 4)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -2117,8 +2130,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                             }
-                                          if (this->simulation_parameters.particlesParameters
-                                                .order == 4)
+                                          if (this->simulation_parameters
+                                                .particlesParameters.order == 4)
                                             {
                                               this->system_matrix.set(
                                                 global_index_overwrite,
@@ -2225,16 +2238,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                                   auto &evaluation_point =
                                     this->evaluation_point;
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      1)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 1)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
                                                   sum_line * dof_2 -
                                                 local_interp_sol * sp_2;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      2)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 2)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2242,8 +2255,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol * sp_3 -
                                                 local_interp_sol_2 * tp_3;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      3)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 3)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2252,12 +2265,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol_2 * tp_4 -
                                                 local_interp_sol_3 * fp_4;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order >
-                                      4)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order > 4)
                                     rhs_add = -local_interp_sol;
 
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      4)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 4)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2319,16 +2332,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                                   auto &evaluation_point =
                                     this->evaluation_point;
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      1)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 1)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
                                                   sum_line * dof_2 -
                                                 local_interp_sol * sp_2;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      2)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 2)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2336,8 +2349,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol * sp_3 -
                                                 local_interp_sol_2 * tp_3;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      3)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 3)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2346,11 +2359,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol_2 * tp_4 -
                                                 local_interp_sol_3 * fp_4;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order >
-                                      4)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order > 4)
                                     rhs_add = -local_interp_sol;
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      4)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 4)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2392,16 +2405,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   double rhs_add = 0;
                                   auto & evaluation_point =
                                     this->evaluation_point;
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      1)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 1)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
                                                   sum_line * dof_2 -
                                                 local_interp_sol * sp_2;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      2)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 2)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2409,8 +2422,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol * sp_3 -
                                                 local_interp_sol_2 * tp_3;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      3)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 3)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2419,11 +2432,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_interp_sol_2 * tp_4 -
                                                 local_interp_sol_3 * fp_4;
                                     }
-                                  if (this->simulation_parameters.particlesParameters.order >
-                                      4)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order > 4)
                                     rhs_add = -local_interp_sol;
-                                  if (this->simulation_parameters.particlesParameters.order ==
-                                      4)
+                                  if (this->simulation_parameters
+                                        .particlesParameters.order == 4)
                                     {
                                       rhs_add = -evaluation_point(
                                                   global_index_overwrite) *
@@ -2545,20 +2558,21 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
     this->system_matrix = 0;
   system_rhs = 0;
   // erase_inertia();
-  double         viscosity_ = this->simulation_parameters.physical_properties.viscosity;
+  double viscosity_ = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim>       fe_values(mapping,
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
+  FEValues<dim>                    fe_values(mapping,
                           this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  const unsigned int  dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int  n_q_points    = quadrature_formula.size();
+  const unsigned int               dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int               n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
@@ -3324,18 +3338,21 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::solve()
 {
-  read_mesh_and_manifolds(this->triangulation,
-                          this->simulation_parameters.mesh,
-                          this->simulation_parameters.manifolds_parameters,
-                          this->simulation_parameters.restart_parameters.restart,
-                          this->simulation_parameters.boundary_conditions);
+  read_mesh_and_manifolds(
+    this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
 
   define_particles();
   this->setup_dofs();
 
   // To change once refinement is split into two function
-  double temp_refine = this->simulation_parameters.mesh_adaptation.refinement_fraction;
-  double temp_coarse = this->simulation_parameters.mesh_adaptation.coarsening_fraction;
+  double temp_refine =
+    this->simulation_parameters.mesh_adaptation.refinement_fraction;
+  double temp_coarse =
+    this->simulation_parameters.mesh_adaptation.coarsening_fraction;
   this->simulation_parameters.mesh_adaptation.refinement_fraction = 0;
   this->simulation_parameters.mesh_adaptation.coarsening_fraction = 0;
 
@@ -3352,8 +3369,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
 
 
-  this->set_initial_condition(this->simulation_parameters.initial_condition->type,
-                              this->simulation_parameters.restart_parameters.restart);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
 
   while (this->simulation_control->integrate())
     {
