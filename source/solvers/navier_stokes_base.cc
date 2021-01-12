@@ -639,6 +639,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
+  multiphysics->prepare_for_mesh_adaptation();
+
+
   tria.execute_coarsening_and_refinement();
   this->setup_dofs();
 
@@ -666,6 +669,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
+
+  multiphysics->post_mesh_adaptation();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -688,6 +693,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
+
+  multiphysics->prepare_for_mesh_adaptation();
 
   // Refine
   this->triangulation->refine_global(1);
@@ -718,6 +725,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
+
+  multiphysics->post_mesh_adaptation();
 }
 
 template <int dim, typename VectorType, typename DofsType>

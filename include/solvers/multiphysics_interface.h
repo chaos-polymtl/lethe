@@ -221,6 +221,39 @@ public:
   }
 
 
+  /**
+   * @brief Prepares the auxiliary physics for mesh adaptation
+   */
+  void
+  prepare_for_mesh_adaptation()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->pre_mesh_adaptation();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->pre_mesh_adaptation();
+      }
+  }
+
+  /**
+   * @brief Interpolate solution onto new mesh
+   */
+  void
+  post_mesh_adaptation()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->post_mesh_adaptation();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->post_mesh_adaptation();
+      }
+  }
+
+
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
@@ -237,6 +270,8 @@ public:
         iphys.second->setup_dofs();
       }
   };
+
+
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics

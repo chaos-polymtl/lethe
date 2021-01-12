@@ -27,6 +27,7 @@
 
 #include <deal.II/base/convergence_table.h>
 
+#include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -56,6 +57,10 @@ public:
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
     , fe(simulation_parameters.fem_parameters.temperature_order)
+    , solution_transfer(dof_handler)
+    , solution_transfer_m1(dof_handler)
+    , solution_transfer_m2(dof_handler)
+    , solution_transfer_m3(dof_handler)
   {}
 
   /**
@@ -120,6 +125,21 @@ public:
    */
   virtual void
   postprocess(bool first_iteration) override;
+
+
+  /**
+   * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
+   * mesh refinement/coarsening
+   */
+  virtual void
+  pre_mesh_adaptation();
+
+  /**
+   * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
+   */
+  virtual void
+  post_mesh_adaptation();
+
 
   /**
    * @brief Returns the dof_handler of the heat transfer physics
@@ -237,6 +257,16 @@ private:
   TrilinosWrappers::MPI::Vector solution_m1;
   TrilinosWrappers::MPI::Vector solution_m2;
   TrilinosWrappers::MPI::Vector solution_m3;
+
+  // Solution transfer classes
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    solution_transfer;
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    solution_transfer_m1;
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    solution_transfer_m2;
+  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
+    solution_transfer_m3;
 };
 
 

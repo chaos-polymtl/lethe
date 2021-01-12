@@ -116,6 +116,18 @@ public:
   postprocess(bool first_iteration) = 0;
 
 
+  /**
+   * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
+   * mesh refinement/coarsening
+   */
+  virtual void
+  pre_mesh_adaptation() = 0;
+
+  /**
+   * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
+   */
+  virtual void
+  post_mesh_adaptation() = 0;
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
