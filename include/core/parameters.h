@@ -75,7 +75,8 @@ namespace Parameters
     enum class LagrangianTimeSteppingMethod
     {
       explicit_euler,
-      velocity_verlet
+      velocity_verlet,
+      gear3
     } lagrangian_method;
 
     // Initial time step

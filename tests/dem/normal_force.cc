@@ -183,7 +183,8 @@ test()
         {
           // If particle and wall are not in contact, only the integration class
           // is called
-          integrator_object.integrate(particle_handler, g, dt);
+          integrator_object.integrate_pre_force(particle_handler, g, dt);
+          integrator_object.integrate_post_force(particle_handler, g, dt);
         }
       else
         {
@@ -212,9 +213,12 @@ test()
                 .tangential_relative_velocity[2] = 0.0;
             }
 
+          integrator_object.integrate_pre_force(particle_handler, g, dt);
+
           pw_force_object.calculate_pw_contact_force(pw_contact_information,
                                                      dt);
-          integrator_object.integrate(particle_handler, g, dt);
+
+          integrator_object.integrate_post_force(particle_handler, g, dt);
 
           // Recalculating force
           auto particle_properties = particle->get_properties();

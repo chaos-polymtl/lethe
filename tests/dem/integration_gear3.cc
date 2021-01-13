@@ -18,8 +18,9 @@
  */
 
 /**
- * @brief This test checks the performance of the explicit Euler integrator
- * class.
+ * @brief This test checks that the Gear3 integrator can accurately
+ * integrate the trajectory of a particle with a constant force
+ * such that d^2 x / dt^2 = - g
  */
 
 // Deal.II includes
@@ -38,7 +39,7 @@
 
 // Lethe
 #include <dem/dem_properties.h>
-#include <dem/explicit_euler_integrator.h>
+#include <dem/gear3_integrator.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -60,11 +61,11 @@ test()
   tr.refine_global(refinement_number);
   MappingQ<dim> mapping(1);
 
-  // Defining general simulation parameters
+  // Defining simulation general parameters
   Tensor<1, dim> g{{0, 0, -9.81}};
   double         dt = 0.00001;
 
-  // Defining particle handler
+  // Defning particle handler
   Particles::ParticleHandler<dim> particle_handler(
     tr, mapping, DEM::get_number_properties());
 
@@ -75,39 +76,40 @@ test()
   int      id        = 0;
 
   Particles::Particle<dim> particle1(position1, position1, id);
-
   typename Triangulation<dim>::active_cell_iterator particle_cell =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
+
+  // Inserting one particle and defining its properties
   Particles::ParticleIterator<dim> pit =
     particle_handler.insert_particle(particle1, particle_cell);
 
-  pit->get_properties()[DEM::PropertiesIndex::type] = 1;
-  pit->get_properties()[DEM::PropertiesIndex::dp]   = 0.005;
-  pit->get_properties()[DEM::PropertiesIndex::rho]  = 2500;
-  // Velocity
-  pit->get_properties()[DEM::PropertiesIndex::v_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::v_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::v_z] = 0;
-  // Acceleration
-  pit->get_properties()[DEM::PropertiesIndex::acc_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::acc_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::acc_z] = -9.81;
-  // Force
-  pit->get_properties()[DEM::PropertiesIndex::force_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::force_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::force_z] = 0;
-  // Angular velocity
-  pit->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  // mass and moment of inertia
-  pit->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit->get_properties()[DEM::PropertiesIndex::type]             = 1;
+  pit->get_properties()[DEM::PropertiesIndex::dp]               = 0.005;
+  pit->get_properties()[DEM::PropertiesIndex::rho]              = 2500;
+  pit->get_properties()[DEM::PropertiesIndex::v_x]              = 0;
+  pit->get_properties()[DEM::PropertiesIndex::v_y]              = 0;
+  pit->get_properties()[DEM::PropertiesIndex::v_z]              = 0;
+  pit->get_properties()[DEM::PropertiesIndex::acc_x]            = 0;
+  pit->get_properties()[DEM::PropertiesIndex::acc_y]            = 0;
+  pit->get_properties()[DEM::PropertiesIndex::acc_z]            = -9.81;
+  pit->get_properties()[DEM::PropertiesIndex::force_x]          = 0;
+  pit->get_properties()[DEM::PropertiesIndex::force_y]          = 0;
+  pit->get_properties()[DEM::PropertiesIndex::force_z]          = 0;
+  pit->get_properties()[DEM::PropertiesIndex::omega_x]          = 0;
+  pit->get_properties()[DEM::PropertiesIndex::omega_y]          = 0;
+  pit->get_properties()[DEM::PropertiesIndex::omega_z]          = 0;
+  pit->get_properties()[DEM::PropertiesIndex::mass]             = 1;
+  pit->get_properties()[DEM::PropertiesIndex::mom_inertia]      = 1;
+  pit->get_properties()[DEM::PropertiesIndex::acc_derivative_x] = 0;
+  pit->get_properties()[DEM::PropertiesIndex::acc_derivative_y] = 0;
+  pit->get_properties()[DEM::PropertiesIndex::acc_derivative_z] = 0;
 
-  ExplicitEulerIntegrator<dim> integrator_object;
-  integrator_object.integrate_pre_force(particle_handler, g, dt);
-  integrator_object.integrate_post_force(particle_handler, g, dt);
+  // Calling gear3 integrator
+  Gear3Integrator<dim> integration_object;
+  integration_object.integrate_pre_force(particle_handler, g, dt);
+  integration_object.integrate_post_force(particle_handler, g, dt);
 
+  // Output
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
        ++particle_iterator)

@@ -493,13 +493,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                         this->mpi_communicator);
 
   auto &system_rhs_ht = this->get_system_rhs(Parameters::Multiphysics::heat);
-  system_rhs_ht.reinit(locally_owned_dofs_ht,
-                       this->mpi_communicator);
+  system_rhs_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
   auto &newton_update_ht =
     this->get_newton_update(Parameters::Multiphysics::heat);
-  newton_update_ht.reinit(locally_owned_dofs_ht,
-                          this->mpi_communicator);
+  newton_update_ht.reinit(locally_owned_dofs_ht, this->mpi_communicator);
 
   TrilinosWrappers::MPI::Vector &local_evaluation_point_ht =
     this->get_local_evaluation_point(Parameters::Multiphysics::heat);
@@ -564,15 +562,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::setup_dofs_ht()
                                   nonzero_constraints_ht,
                                   /*keep_constrained_dofs = */ true);
 
-  SparsityTools::distribute_sparsity_pattern(
-    dsp_ht,
-    this->locally_owned_dofs_ht,
-    this->mpi_communicator,
-    this->locally_relevant_dofs_ht);
+  SparsityTools::distribute_sparsity_pattern(dsp_ht,
+                                             this->locally_owned_dofs_ht,
+                                             this->mpi_communicator,
+                                             this->locally_relevant_dofs_ht);
   system_matrix_ht.reinit(this->locally_owned_dofs_ht,
-                       this->locally_owned_dofs_ht,
-                       dsp_ht,
-                       this->mpi_communicator);
+                          this->locally_owned_dofs_ht,
+                          dsp_ht,
+                          this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
