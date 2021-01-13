@@ -185,7 +185,7 @@ test()
         particle_iterator->get_location()[2] - x_analytical;
     }
   deallog << "Explicit Euler is a "
-          << int((particle_axial_position_error_Euler_dt1 /
+          << int(std::round(particle_axial_position_error_Euler_dt1 /
                   particle_axial_position_error_Euler_dt2) /
                  time_step_ratio)
           << " order integration scheme" << std::endl;
@@ -276,7 +276,7 @@ test()
     }
 
   deallog << "Velocity Verlet is a "
-          << int((particle_axial_position_error_Verlet_dt1 /
+          << int(std::round(particle_axial_position_error_Verlet_dt1 /
                   particle_axial_position_error_Verlet_dt2) /
                  time_step_ratio)
           << " order integration scheme" << std::endl;
@@ -371,7 +371,7 @@ test()
     }
 
   deallog << "Gear3 is a "
-          << int((particle_axial_position_error_Gear3_dt1 /
+          << int(std::round(particle_axial_position_error_Gear3_dt1 /
                   particle_axial_position_error_Gear3_dt2) /
                  time_step_ratio)
           << " order integration scheme" << std::endl;
