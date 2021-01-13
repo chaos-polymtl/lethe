@@ -32,7 +32,17 @@ using namespace dealii;
  * of the particle motion. Note that reinitilization of force and torque is also
  * integrated into integration class
  *
- * @note
+ * @note Velocity Verlet is a second-order integration scheme. Calculation precedure:
+ *
+ * Calculation of half-step velocity
+ * v(n+1/2) = v(n)     + 1/2 * a(n)   * dt
+ *
+ * Updating particle position
+ * x(n+1)   = x(n)     + v(n+1/2)     * dt
+ *
+ * Updating acceleration and velocity of particle
+ * a(n+1)   = F(n+1) / m
+ * v(n+1)   = v(n+1/2) + 1/2 * a(n+1) * dt
  *
  * @author Shahab Golshan, Bruno Blais, Polytechnique Montreal 2019-
  */
@@ -45,8 +55,20 @@ public:
   {}
 
   /**
-   * Carries out the integration of the motion of all particles by using
-   * the acceleration with the velocity verlet method
+   * Carries out the prediction (pre_force) integration calculations.
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
+   * @param body_force A constant volumetric body force applied to all particles
+   * @param time_step The value of the time step used for the integration
+   */
+  virtual void
+  integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
+                      Tensor<1, dim>                   body_force,
+                      double                           time_step) override;
+
+  /**
+   * Carries out the correction (post-force) integration of the motion of all
+   * particles by using the acceleration with the explicit Euler method.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -54,9 +76,9 @@ public:
    * @param time_step The value of the time step used for the integration
    */
   virtual void
-  integrate(Particles::ParticleHandler<dim> &particle_handler,
-            Tensor<1, dim>                   body_force,
-            double                           time_step) override;
+  integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
+                       Tensor<1, dim>                   body_force,
+                       double                           time_step) override;
 };
 
 #endif

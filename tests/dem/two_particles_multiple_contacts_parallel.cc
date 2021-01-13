@@ -18,8 +18,7 @@
  */
 
 /**
- * @brief In this test, the performance of non-linear (Hertzian)
- * particle-particle contact force is checked.
+ * @brief In this test, two particles collide on two processors
  */
 
 // Deal.II
@@ -356,12 +355,15 @@ test()
         local_particle_container,
         neighborhood_threshold);
 
+      // Integration
+      integrator_object.integrate_pre_force(particle_handler, g, dt);
+
       // Calling non-linear force
       nonlinear_force_object.calculate_pp_contact_force(
         cleared_local_adjacent_particles, cleared_ghost_adjacent_particles, dt);
 
       // Integration
-      integrator_object.integrate(particle_handler, g, dt);
+      integrator_object.integrate_post_force(particle_handler, g, dt);
 
       update_contact_containers(local_adjacent_particles,
                                 ghost_adjacent_particles,

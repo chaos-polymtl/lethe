@@ -178,7 +178,8 @@ namespace Parameters
       enum class IntegrationMethod
       {
         velocity_verlet,
-        explicit_euler
+        explicit_euler,
+        gear3
       } integration_method;
 
       static void
@@ -223,7 +224,7 @@ namespace Parameters
       // Number of moving boundaries
       unsigned int moving_boundary_number;
 
-      // Choosing integration method
+      // Choosing motion type
       enum class motion_type
       {
         translational,

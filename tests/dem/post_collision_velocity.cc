@@ -17,9 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019-
  */
 
-// This test reports the normal overlap and corresponding normal force during a
-// complete particle-wall contact. Interested reader may be interested in
-// plotting normal force against normal overlap
+/**
+ * @brief In this test, post-collision velocity of a particle
+ * is calculated after a particle-wall collision
+ */
 
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
@@ -52,7 +53,7 @@ using namespace dealii;
 
 template <int dim>
 void
-test()
+test(double coefficient_of_restitution)
 {
   // Creating the mesh and refinement
   parallel::distributed::Triangulation<dim> tr(MPI_COMM_WORLD);
@@ -78,8 +79,8 @@ test()
   dem_parameters.physical_properties.youngs_modulus_wall        = 800000000;
   dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
   dem_parameters.physical_properties.poisson_ratio_wall         = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle[0] = 0.9;
-  dem_parameters.physical_properties.restitution_coefficient_wall        = 0.9;
+  dem_parameters.physical_properties.restitution_coefficient_particle[0] = coefficient_of_restitution;
+  dem_parameters.physical_properties.restitution_coefficient_wall        = coefficient_of_restitution;
   dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.3;
   dem_parameters.physical_properties.friction_coefficient_wall           = 0.3;
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
@@ -174,11 +175,12 @@ test()
       pw_fine_search_object.particle_wall_fine_search(pw_contact_list,
                                                       pw_contact_information);
 
+      integrator_object.integrate_pre_force(particle_handler, g, dt);
       pw_force_object.calculate_pw_contact_force(pw_contact_information, dt);
-      integrator_object.integrate(particle_handler, g, dt);
+      integrator_object.integrate_post_force(particle_handler, g, dt);
     }
 
-  deallog << "Coefficient of restitution is 0.9 and the velocity of particle "
+  deallog << "Coefficient of restitution is " << coefficient_of_restitution << " and the velocity of particle "
              "before collision is 0.1, the velocity of particle after "
              "collision is: "
           << particle1->get_properties()[DEM::PropertiesIndex::v_x]
@@ -191,5 +193,6 @@ main(int argc, char **argv)
   Utilities::MPI::MPI_InitFinalize mpi_initialization(argc, argv, 1);
 
   initlog();
-  test<3>();
+  test<3>(0.9);
+  test<3>(1);
 }
