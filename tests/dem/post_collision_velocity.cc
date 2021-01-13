@@ -175,8 +175,9 @@ test()
       pw_fine_search_object.particle_wall_fine_search(pw_contact_list,
                                                       pw_contact_information);
 
+      integrator_object.integrate_pre_force(particle_handler, dt);
       pw_force_object.calculate_pw_contact_force(pw_contact_information, dt);
-      integrator_object.integrate(particle_handler, g, dt);
+      integrator_object.integrate_post_force(particle_handler, g, dt);
     }
 
   deallog << "Coefficient of restitution is 0.9 and the velocity of particle "

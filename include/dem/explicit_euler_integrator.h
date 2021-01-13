@@ -49,8 +49,19 @@ public:
   {}
 
   /**
-   * Carries out the integration of the motion of all particles by using
-   * the acceleration with the explicit Euler method
+   * Carries out the prediction (pre_force) integration calculations.
+   *
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
+   * @param time_step The value of the time step used for the integration
+   */
+  virtual void
+  integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
+                      double                           time_step) override;
+
+  /**
+   * Carries out the correction (post-force) integration of the motion of all
+   * particles by using the acceleration with the explicit Euler method.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -58,9 +69,9 @@ public:
    * @param time_step The value of the time step used for the integration
    */
   virtual void
-  integrate(Particles::ParticleHandler<dim> &particle_handler,
-            Tensor<1, dim>                   body_force,
-            double                           time_step) override;
+  integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
+                       Tensor<1, dim>                   body_force,
+                       double                           time_step) override;
 };
 
 #endif

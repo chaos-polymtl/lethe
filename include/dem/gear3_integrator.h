@@ -33,8 +33,8 @@ using namespace dealii;
  * integrated into integration class
  *
  * @note Gear3 is a third-order predictor-correcton integration scheme. In gear3,
- * acceleration, velocity and position of particles are updated using the following
- * method. b is the first derivative of acceleration
+ * acceleration, velocity and position of particles are updated using the
+ * following method. b is the first derivative of acceleration
  *
  * Prediction:
  * b(n+1,prediction) = b(n)
@@ -67,8 +67,19 @@ public:
   {}
 
   /**
-   * Carries out the integration of the motion of all particles by using
-   * the acceleration with the gear3 method
+   * Carries out the prediction (pre_force) integration calculations.
+   *
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
+   * @param time_step The value of the time step used for the integration
+   */
+  virtual void
+  integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
+                      double                           time_step) override;
+
+  /**
+   * Carries out the correction (post-force) integration of the motion of all
+   * particles by using the acceleration with the explicit Euler method.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -76,14 +87,12 @@ public:
    * @param time_step The value of the time step used for the integration
    */
   virtual void
-  integrate(Particles::ParticleHandler<dim> &particle_handler,
-            Tensor<1, dim>                   body_force,
-            double                           time_step) override;
+  integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
+                       Tensor<1, dim>                   body_force,
+                       double                           time_step) override;
 
 private:
   Point<dim>     predicted_location;
-  Tensor<1, dim> predicted_velocity;
-  Tensor<1, dim> predicted_acceleration;
   Tensor<1, dim> corrected_accereration;
   Tensor<1, dim> acceleration_deviation;
   Point<dim>     corrected_location;

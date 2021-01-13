@@ -5,9 +5,8 @@ using namespace DEM;
 
 template <int dim>
 void
-Gear3Integrator<dim>::integrate(
+Gear3Integrator<dim>::integrate_pre_force(
   Particles::ParticleHandler<dim> &particle_handler,
-  Tensor<1, dim>                   g,
   double                           dt)
 {
   for (auto particle = particle_handler.begin();
@@ -30,15 +29,38 @@ Gear3Integrator<dim>::integrate(
             (particle_properties[PropertiesIndex::acc_x + d] * dt * dt * 0.5) +
             (particle_properties[PropertiesIndex::acc_derivative_x + d] * dt *
              dt * dt * 0.1667);
-          predicted_velocity[d] =
+          particle_properties[PropertiesIndex::v_x + d] =
             particle_properties[PropertiesIndex::v_x + d] +
             (particle_properties[PropertiesIndex::acc_x + d] * dt) +
             (particle_properties[PropertiesIndex::acc_derivative_x + d] * dt *
              dt * 0.5);
-          predicted_acceleration[d] =
+          particle_properties[PropertiesIndex::acc_x + d] =
             particle_properties[PropertiesIndex::acc_x + d] +
             (particle_properties[PropertiesIndex::acc_derivative_x + d] * dt);
+        }
+      particle->set_location(predicted_location);
+    }
+}
 
+template <int dim>
+void
+Gear3Integrator<dim>::integrate_post_force(
+  Particles::ParticleHandler<dim> &particle_handler,
+  Tensor<1, dim>                   g,
+  double                           dt)
+{
+  for (auto particle = particle_handler.begin();
+       particle != particle_handler.end();
+       ++particle)
+    {
+      // Get the total array view to the particle properties once to improve
+      // efficiency
+      auto particle_properties = particle->get_properties();
+
+      // Updating particle location, velocity, acceleration and derivative of
+      // acceleration:
+      for (int d = 0; d < dim; ++d)
+        {
           // Finding corrected acceleration
           corrected_accereration[d] =
             g[d] + particle_properties[PropertiesIndex::force_x + d] /
@@ -49,16 +71,19 @@ Gear3Integrator<dim>::integrate(
 
           // Calculation of acceleration deviation
           acceleration_deviation[d] =
-            corrected_accereration[d] - predicted_acceleration[d];
+            corrected_accereration[d] -
+            particle_properties[PropertiesIndex::acc_x + d];
 
           // Corrector
           corrected_location[d] =
             predicted_location[d] +
             acceleration_deviation[d] * (0.0833 * dt * dt);
           particle_properties[PropertiesIndex::v_x + d] =
-            predicted_velocity[d] + acceleration_deviation[d] * (0.4167 * dt);
+            particle_properties[PropertiesIndex::v_x + d] +
+            acceleration_deviation[d] * (0.4167 * dt);
           particle_properties[PropertiesIndex::acc_x + d] =
-            predicted_acceleration[d] + acceleration_deviation[d];
+            particle_properties[PropertiesIndex::v_x + d] +
+            acceleration_deviation[d];
           particle_properties[PropertiesIndex::acc_derivative_x + d] +=
             acceleration_deviation[d] / dt;
 

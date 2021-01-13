@@ -802,6 +802,10 @@ DEMSolver<dim>::solve()
 #endif
         }
 
+      // Integration prediction step (before force calculation)
+      integrator_object->integrate_pre_force(
+        particle_handler, simulation_control->get_time_step());
+
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
         local_adjacent_particles,
@@ -811,10 +815,11 @@ DEMSolver<dim>::solve()
       // Particles-walls contact force:
       particle_wall_contact_force();
 
-      // Integration
-      integrator_object->integrate(particle_handler,
-                                   parameters.physical_properties.g,
-                                   simulation_control->get_time_step());
+      // Integration correction step (after force calculation)
+      integrator_object->integrate_post_force(
+        particle_handler,
+        parameters.physical_properties.g,
+        simulation_control->get_time_step());
 
       // Visualization
       if (simulation_control->is_output_iteration())

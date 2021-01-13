@@ -48,10 +48,21 @@ public:
   {}
 
   /**
-   * Carries out the integration of the motion of all particles by using
-   * the acceleration that is internally stored within the property handler
-   * This virtual function that serves as a template for all integrator
-   * functions.
+   * Carries out the integration calculations before updating particle force.
+   * After calculation of new acting forces on particles, integrate_post_force
+   * updates the integrate_pre_force results.
+   *
+   * @param particle_handler The particle handler whose particle motion we wish
+   * to integrate
+   * @param time_step The value of the time step used for the integration
+   */
+  virtual void
+  integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
+                      double                           time_step) = 0;
+
+  /**
+   * Carries out updating integrate_pre_force information after contact force
+   * calculations.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -59,9 +70,9 @@ public:
    * @param time_step The value of the time step used for the integration
    */
   virtual void
-  integrate(Particles::ParticleHandler<dim> &particle_handler,
-            Tensor<1, dim>                   body_force,
-            double                           time_step) = 0;
+  integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
+                       Tensor<1, dim>                   body_force,
+                       double                           time_step) = 0;
 };
 
 #endif /* integration_h */
