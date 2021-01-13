@@ -71,10 +71,12 @@ public:
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
+   * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
    */
   virtual void
   integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
+                      Tensor<1, dim>                   body_force,
                       double                           time_step) override;
 
   /**

@@ -356,7 +356,7 @@ test()
         neighborhood_threshold);
 
       // Integration
-      integrator_object.integrate_pre_force(particle_handler, dt);
+      integrator_object.integrate_pre_force(particle_handler, g, dt);
 
       // Calling non-linear force
       nonlinear_force_object.calculate_pp_contact_force(

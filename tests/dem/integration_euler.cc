@@ -105,7 +105,7 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
 
   ExplicitEulerIntegrator<dim> integrator_object;
-  integrator_object.integrate_pre_force(particle_handler, dt);
+  integrator_object.integrate_pre_force(particle_handler, g, dt);
   integrator_object.integrate_post_force(particle_handler, g, dt);
 
   for (auto particle_iterator = particle_handler.begin();

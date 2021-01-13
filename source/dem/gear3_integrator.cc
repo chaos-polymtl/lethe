@@ -7,6 +7,7 @@ template <int dim>
 void
 Gear3Integrator<dim>::integrate_pre_force(
   Particles::ParticleHandler<dim> &particle_handler,
+  Tensor<1, dim>                   g,
   double                           dt)
 {
   for (auto particle = particle_handler.begin();

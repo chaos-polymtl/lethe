@@ -804,7 +804,9 @@ DEMSolver<dim>::solve()
 
       // Integration prediction step (before force calculation)
       integrator_object->integrate_pre_force(
-        particle_handler, simulation_control->get_time_step());
+        particle_handler,
+        parameters.physical_properties.g,
+        simulation_control->get_time_step());
 
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(

@@ -148,7 +148,7 @@ test()
         fine_search_object.particle_point_fine_search(contact_candidates,
                                                       neighborhood_threshold);
 
-      integrator_object.integrate_pre_force(particle_handler, dt);
+      integrator_object.integrate_pre_force(particle_handler, g, dt);
       force_object.calculate_particle_point_contact_force(
         &contact_information, dem_parameters.physical_properties);
       integrator_object.integrate_post_force(particle_handler, g, dt);

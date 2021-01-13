@@ -106,7 +106,7 @@ test()
 
   // Calling gear3 integrator
   Gear3Integrator<dim> integration_object;
-  integration_object.integrate_pre_force(particle_handler, dt);
+  integration_object.integrate_pre_force(particle_handler, g, dt);
   integration_object.integrate_post_force(particle_handler, g, dt);
 
   // Output
