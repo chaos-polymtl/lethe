@@ -14,5 +14,12 @@ file(COPY mms-transient-conduction-restart_files/restart.triangulation DESTINATI
 file(COPY mms-transient-conduction-restart_files/restart.triangulation_fixed.data DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${CMAKE_LOWER_BUILD_TYPE})
 file(COPY mms-transient-conduction-restart_files/restart.triangulation.info DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/mms-transient-conduction-restart_gls.${CMAKE_LOWER_BUILD_TYPE})
 
+
+file(COPY taylor-green-vortex-restart_gls_bdf1/restart.pvdhandler DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${CMAKE_LOWER_BUILD_TYPE})
+file(COPY taylor-green-vortex-restart_gls_bdf1/restart.simulationcontrol DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${CMAKE_LOWER_BUILD_TYPE})
+file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${CMAKE_LOWER_BUILD_TYPE})
+file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation_fixed.data DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${CMAKE_LOWER_BUILD_TYPE})
+file(COPY taylor-green-vortex-restart_gls_bdf1/restart.triangulation.info DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/taylor-green-vortex-restart_gls_bdf1.${CMAKE_LOWER_BUILD_TYPE})
+
 DEAL_II_PICKUP_TESTS()
 
