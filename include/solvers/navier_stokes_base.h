@@ -200,8 +200,10 @@ protected:
   virtual void
   finish_time_step()
   {
-    finish_time_step_fd();
+    // Dear future Bruno, this shifted order is necessary because of the
+    // checkpointing mechanism You spent an evening debugging this, trust me.
     multiphysics->finish_time_step();
+    finish_time_step_fd();
   };
 
   /**
@@ -255,9 +257,9 @@ protected:
                         bool                             restart = false)
   {
     set_initial_condition_fd(initial_condition_type, restart);
-    multiphysics->set_initial_conditions();
     if (!restart)
       {
+        multiphysics->set_initial_conditions();
         this->postprocess_fd(true);
         multiphysics->postprocess(true);
       }

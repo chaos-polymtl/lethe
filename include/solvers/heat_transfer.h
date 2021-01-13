@@ -140,6 +140,18 @@ public:
   virtual void
   post_mesh_adaptation();
 
+  /**
+   * @brief Prepares Heat Transfer to write checkpoint
+   */
+  virtual void
+  write_checkpoint() override;
+
+  /**
+   * @brief Allows Heat Transfer to set-up solution vector from checkpoint file;
+   */
+  virtual void
+  read_checkpoint() override;
+
 
   /**
    * @brief Returns the dof_handler of the heat transfer physics

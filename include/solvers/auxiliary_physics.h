@@ -130,6 +130,19 @@ public:
   post_mesh_adaptation() = 0;
 
   /**
+   * @brief Prepares auxiliary physics to write checkpoint
+   */
+  virtual void
+  write_checkpoint() = 0;
+
+
+  /**
+   * @brief Set solution vector of Auxiliary Physics using checkpoint
+   */
+  virtual void
+  read_checkpoint() = 0;
+
+  /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   virtual void

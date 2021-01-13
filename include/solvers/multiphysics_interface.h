@@ -432,6 +432,41 @@ public:
   }
 
 
+  /**
+   * @brief Prepares auxiliary physics to write simulation checkpoint
+   */
+  virtual void
+  write_checkpoint()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->write_checkpoint();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->write_checkpoint();
+      }
+  };
+
+  /**
+   * @brief Read solution from checkpoint from auxiliary physics
+   *
+   */
+  virtual void
+  read_checkpoint()
+  {
+    for (auto &iphys : physics)
+      {
+        iphys.second->read_checkpoint();
+      }
+    for (auto &iphys : block_physics)
+      {
+        iphys.second->read_checkpoint();
+      }
+  };
+
+
+
 private:
   const Parameters::Multiphysics multiphysics_parameters;
 

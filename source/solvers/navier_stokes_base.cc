@@ -1012,6 +1012,9 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                             simulation_parameters.fem_parameters,
                             mpi_communicator);
     }
+
+
+  multiphysics->read_checkpoint();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -1249,9 +1252,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                               av_set_transfer.end());
     }
 
+
+
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  multiphysics->write_checkpoint();
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))

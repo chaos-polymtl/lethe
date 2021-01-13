@@ -542,6 +542,52 @@ HeatTransfer<dim>::post_mesh_adaptation()
   solution_m3      = tmp_m3;
 }
 
+template <int dim>
+void
+HeatTransfer<dim>::write_checkpoint()
+{
+  std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
+
+  sol_set_transfer.push_back(&present_solution);
+  sol_set_transfer.push_back(&solution_m1);
+  sol_set_transfer.push_back(&solution_m2);
+  sol_set_transfer.push_back(&solution_m3);
+  solution_transfer.prepare_for_serialization(sol_set_transfer);
+}
+
+template <int dim>
+void
+HeatTransfer<dim>::read_checkpoint()
+{
+  auto mpi_communicator = triangulation->get_communicator();
+  this->pcout << "Reading heat transfer checkpoint" << std::endl;
+
+  std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(4);
+  TrilinosWrappers::MPI::Vector distributed_system(locally_owned_dofs,
+                                                   mpi_communicator);
+  TrilinosWrappers::MPI::Vector distributed_system_m1(locally_owned_dofs,
+                                                      mpi_communicator);
+  TrilinosWrappers::MPI::Vector distributed_system_m2(locally_owned_dofs,
+                                                      mpi_communicator);
+  TrilinosWrappers::MPI::Vector distributed_system_m3(locally_owned_dofs,
+                                                      mpi_communicator);
+
+  input_vectors[0] = &distributed_system;
+  input_vectors[1] = &distributed_system_m1;
+  input_vectors[2] = &distributed_system_m2;
+  input_vectors[3] = &distributed_system_m3;
+
+  solution_transfer.deserialize(input_vectors);
+
+  present_solution = distributed_system;
+  solution_m1      = distributed_system_m1;
+  solution_m2      = distributed_system_m2;
+  solution_m3      = distributed_system_m3;
+
+  this->pcout << "Max value " << present_solution.max() << std::endl;
+  this->pcout << "Max solution_m1 " << solution_m1.max() << std::endl;
+  this->pcout << "Max solution_m2 " << solution_m2.max() << std::endl;
+}
 
 
 template <int dim>
