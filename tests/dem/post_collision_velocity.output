@@ -1,2 +1,3 @@
 
-DEAL::Coefficient of restitution is 0.9 and the velocity of particle before collision is 0.1, the velocity of particle after collision is: 0.0882268
+DEAL::Coefficient of restitution is 0.900000 and the velocity of particle before collision is 0.1, the velocity of particle after collision is: 0.0882268
+DEAL::Coefficient of restitution is 1.00000 and the velocity of particle before collision is 0.1, the velocity of particle after collision is: 0.100000
