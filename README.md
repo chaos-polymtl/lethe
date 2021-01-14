@@ -31,6 +31,7 @@ Contributors (in alphabetical order):
 - Toni El Geitani
 - Simon Gauvin
 - Shahab Golshan
+- Jeanne Joachim
 - Rajeshwari Kamble
 - Ghazaleh Mirakhori
 
