@@ -32,7 +32,6 @@
 #include <core/parameters.h>
 #include <core/solid_base.h>
 #include <memory.h>
-#include <solvers/navier_stokes_solver_parameters.h>
 
 
 

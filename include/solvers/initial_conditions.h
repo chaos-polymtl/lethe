@@ -58,6 +58,9 @@ namespace Parameters
     // Artificial viscosity
     double viscosity;
 
+    // Temperature
+    Functions::ParsedFunction<dim> temperature;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -87,6 +90,12 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "viscosity for viscous initial conditions");
+
+
+      prm.enter_subsection("temperature");
+      uvwp.declare_parameters(prm, dim);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -108,6 +117,10 @@ namespace Parameters
       viscosity = prm.get_double("viscosity");
       prm.enter_subsection("uvwp");
       uvwp.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("temperature");
+      temperature.parse_parameters(prm);
       prm.leave_subsection();
     }
     prm.leave_subsection();

@@ -98,11 +98,12 @@
 #include <core/pvd_handler.h>
 #include <core/simulation_control.h>
 #include <solvers/flow_control.h>
+#include <solvers/multiphysics_interface.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "navier_stokes_solver_parameters.h"
 #include "post_processors.h"
+#include "simulation_parameters.h"
 
 // Std
 #include <fstream>
@@ -130,10 +131,196 @@ template <int dim, typename VectorType, typename DofsType>
 class NavierStokesBase : public PhysicsSolver<VectorType>
 {
 protected:
-  NavierStokesBase(NavierStokesSolverParameters<dim> &nsparam);
+  NavierStokesBase(SimulationParameters<dim> &nsparam);
 
   virtual ~NavierStokesBase()
   {}
+
+  /**
+   * @brief Getter methods to get the private attributes for the physic currently solved
+   *
+   * @param current_physics_id Indicates the number associated with the physic currently solved.
+   * If the solver is only solving for a fluid dynamics problem, then the value
+   * will always be PhysicsID::fluid_dynamics.
+   *
+   */
+  virtual VectorType &
+  get_evaluation_point() override
+  {
+    return evaluation_point;
+  };
+  virtual VectorType &
+  get_local_evaluation_point() override
+  {
+    return local_evaluation_point;
+  };
+  virtual VectorType &
+  get_newton_update() override
+  {
+    return newton_update;
+  };
+  virtual VectorType &
+  get_present_solution() override
+  {
+    return present_solution;
+  };
+  virtual VectorType &
+  get_system_rhs() override
+  {
+    return system_rhs;
+  };
+  virtual AffineConstraints<double> &
+  get_nonzero_constraints() override
+  {
+    return nonzero_constraints;
+  };
+
+  /**
+   *  Generic interface routine to allow the CFD solver
+   *  to cooperate with the multiphysics modules
+   **/
+
+  /**
+   * @brief finish_simulation
+   * Finish the simulation by calling all
+   * the post-processing elements that are required
+   */
+  void
+  finish_simulation()
+  {
+    finish_simulation_fd();
+    multiphysics->finish_simulation();
+  }
+
+  /**
+   * @brief finish_time_step
+   * Finish the time step of the fluid dynamics physic
+   * Post-processing and time stepping
+   */
+  virtual void
+  finish_time_step()
+  {
+    // Dear future Bruno, this shifted order is necessary because of the
+    // checkpointing mechanism You spent an evening debugging this, trust me.
+    multiphysics->finish_time_step();
+    finish_time_step_fd();
+  };
+
+  /**
+   * @brief percolate_time_vectors
+   * Rearranges the time vector due to the end of an iteration of the fd (fluid
+   * dynamics) physic and calls the associated methods for all subphysics
+   */
+  virtual void
+  percolate_time_vectors()
+  {
+    percolate_time_vectors_fd();
+    multiphysics->percolate_time_vectors();
+  };
+
+  /**
+   * @brief postprocess
+   * Post-process simulation after an iteration
+   *
+   * @param first_iteration Indicator if the simulation is at it's first simulation or not.
+   */
+  virtual void
+  postprocess(bool first_iteration)
+  {
+    postprocess_fd(first_iteration);
+    multiphysics->postprocess(first_iteration);
+  };
+
+  /**
+   * @brief setup_dofs
+   *
+   * Initialize the degree of freedom and the memory
+   * associated with them for fluid dynamics and enabled auxiliary physics.
+   */
+  virtual void
+  setup_dofs()
+  {
+    setup_dofs_fd();
+    multiphysics->setup_dofs();
+  };
+
+  /**
+   * @brief set_initial_conditions
+   *
+   * @param initial_condition_type Type of method  use to impose initial condition.
+   *
+   * @param restart Indicator if the simulation is being restarted or not.
+   *
+   **/
+
+  virtual void
+  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
+                        bool                             restart = false)
+  {
+    set_initial_condition_fd(initial_condition_type, restart);
+    if (!restart)
+      {
+        multiphysics->set_initial_conditions();
+        this->postprocess_fd(true);
+        multiphysics->postprocess(true);
+      }
+  }
+
+  /**
+   * Key physics component for fluid dynamics
+   **/
+
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step of the fluid dynamics
+   * Post-processing and time stepping
+   */
+  virtual void
+  finish_time_step_fd();
+
+  /**
+   * @brief finish_time_step
+   * Finishes the time step of the fluid dynamics
+   * Post-processing and time stepping
+   */
+  virtual void
+  percolate_time_vectors_fd();
+
+
+  /**
+   * @brief finish_simulation
+   * Finishes the simulation for fluid dynamics by calling
+   * the post-processing elements that are required
+   */
+  void
+  finish_simulation_fd();
+
+  /**
+   * @brief postprocess
+   * Post-process fluid dynamics after an iteration
+   */
+  virtual void
+  postprocess_fd(bool first_iteration);
+
+
+
+  /**
+   * @brief setup_dofs
+   *
+   * Initialize the dofs for fluid dynamics
+   */
+  virtual void
+  setup_dofs_fd() = 0;
+
+  virtual void
+  set_initial_condition_fd(
+    Parameters::InitialConditionType initial_condition_type,
+    bool                             restart = false) = 0;
+
+  /**
+   * End of key physics components for fluid dynamics
+   **/
 
   /**
    * @brief calculate_forces
@@ -169,21 +356,7 @@ protected:
   void
   dynamic_flow_control();
 
-  /**
-   * @brief finish_time_step
-   * Finishes the time step
-   * Post-processing and time stepping
-   */
-  virtual void
-  finish_time_step();
 
-  /**
-   * @brief finish_simulation
-   * Finishes the simulation by calling all
-   * the post-processing elements that are required
-   */
-  void
-  finish_simulation();
 
   /**
    * @brief iterate
@@ -200,15 +373,6 @@ protected:
   virtual void
   first_iteration();
 
-  virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) = 0;
-
-  virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) = 0;
-
   void
   refine_mesh();
 
@@ -217,13 +381,6 @@ protected:
 
   void
   refine_mesh_uniform();
-
-  /**
-   * @brief postprocess
-   * Post-process after an iteration
-   */
-  virtual void
-  postprocess(bool firstIter);
 
   /**
    * @brief read_checkpoint
@@ -237,26 +394,6 @@ protected:
    */
   void
   set_nodal_values();
-
-
-  /**
-   * @brief setup_dofs
-   *
-   * Initialize the dofs
-   */
-  virtual void
-  setup_dofs()
-  {
-    setup_dofs_cfd();
-  };
-
-  /**
-   * @brief setup_dofs
-   *
-   * Initialize the dofs
-   */
-  virtual void
-  setup_dofs_cfd() = 0;
 
   /**
    * @brief write_checkpoint
@@ -289,6 +426,7 @@ protected:
   write_output_torques();
 
   // Member variables
+protected:
   DofsType locally_owned_dofs;
   DofsType locally_relevant_dofs;
 
@@ -302,8 +440,8 @@ protected:
 
   TimerOutput computing_timer;
 
-  NavierStokesSolverParameters<dim> nsparam;
-  PVDHandler                        pvdhandler;
+  SimulationParameters<dim> simulation_parameters;
+  PVDHandler                pvdhandler;
 
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
@@ -318,7 +456,15 @@ protected:
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
 
-  // Solution vectors
+  // Present solution and non-linear solution components
+  VectorType                evaluation_point;
+  VectorType                local_evaluation_point;
+  VectorType                newton_update;
+  VectorType                present_solution;
+  VectorType                system_rhs;
+  AffineConstraints<double> nonzero_constraints;
+
+  // Past solution vectors
   VectorType solution_m1;
   VectorType solution_m2;
   VectorType solution_m3;
@@ -327,6 +473,9 @@ protected:
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
+
+  // Multiphysics interface
+  std::shared_ptr<MultiphysicsInterface<dim>> multiphysics;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;

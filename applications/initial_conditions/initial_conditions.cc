@@ -29,7 +29,7 @@ template <int dim>
 class InitialConditionsNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  InitialConditionsNavierStokes(NavierStokesSolverParameters<dim> nsparam)
+  InitialConditionsNavierStokes(SimulationParameters<dim> nsparam)
     : GLSNavierStokesSolver<dim>(nsparam)
   {}
   void
@@ -42,34 +42,35 @@ template <int dim>
 void
 InitialConditionsNavierStokes<dim>::run()
 {
-  read_mesh_and_manifolds(this->triangulation,
-                          this->nsparam.mesh,
-                          this->nsparam.manifolds_parameters,
-                          this->nsparam.restart_parameters.restart,
-                          this->nsparam.boundary_conditions);
-  this->setup_dofs_cfd();
+  read_mesh_and_manifolds(
+    this->triangulation,
+    this->simulation_parameters.mesh,
+    this->simulation_parameters.manifolds_parameters,
+    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.boundary_conditions);
+  this->setup_dofs_fd();
   this->forcing_function = new NoForce<dim>;
-  this->set_initial_condition(this->nsparam.initial_condition->type,
-                              this->nsparam.restart_parameters.restart);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type,
+    this->simulation_parameters.restart_parameters.restart);
 }
 
 template <int dim>
 void
 InitialConditionsNavierStokes<dim>::runTest()
 {
-  const int initialSize = this->nsparam.mesh.initial_refinement;
+  const int initialSize = this->simulation_parameters.mesh.initial_refinement;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
 
-  this->setup_dofs_cfd();
+  this->setup_dofs_fd();
   this->exact_solution = new ExactInitialSolution<dim>;
   this->set_initial_condition(Parameters::InitialConditionType::L2projection);
-  auto &present_solution = this->get_present_solution();
   const std::pair<double, double> errors =
     calculate_L2_error(this->dof_handler,
-                       present_solution,
+                       this->present_solution,
                        this->exact_solution,
-                       this->nsparam.fem_parameters,
+                       this->simulation_parameters.fem_parameters,
                        this->mpi_communicator);
   double error_L2projection = errors.first;
   if (error_L2projection < 1e-9)
@@ -84,9 +85,9 @@ InitialConditionsNavierStokes<dim>::runTest()
   this->set_initial_condition(Parameters::InitialConditionType::nodal);
   const std::pair<double, double> errors_nodal =
     calculate_L2_error(this->dof_handler,
-                       present_solution,
+                       this->present_solution,
                        this->exact_solution,
-                       this->nsparam.fem_parameters,
+                       this->simulation_parameters.fem_parameters,
                        this->mpi_communicator);
   double error_nodal = errors_nodal.first;
   if (error_nodal < 1e-9)
@@ -111,8 +112,8 @@ main(int argc, char *argv[])
         }
       Utilities::MPI::MPI_InitFinalize mpi_initialization(
         argc, argv, numbers::invalid_unsigned_int);
-      ParameterHandler                prm;
-      NavierStokesSolverParameters<2> nsparam;
+      ParameterHandler        prm;
+      SimulationParameters<2> nsparam;
       nsparam.declare(prm);
       // Parsing of the file
       prm.parse_input(argv[1]);

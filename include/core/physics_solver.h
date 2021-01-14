@@ -22,6 +22,7 @@
 
 #include <deal.II/lac/affine_constraints.h>
 
+#include "multiphysics.h"
 #include "newton_non_linear_solver.h"
 #include "non_linear_solver.h"
 #include "parameters.h"
@@ -32,7 +33,7 @@
  * solver. A physics solver is an implementation of a linear or non-linear set
  * of physical equations. This interface is here to provide the families of
  * non-linear solvers with the necessary elements to allow for the solution of
- * the problems associated with a set of physics.
+ * the problems associated with a physics (block or not).
  */
 
 template <typename VectorType>
@@ -40,25 +41,14 @@ class PhysicsSolver
 {
 public:
   /**
-   * @brief PhysicsSolver - Constructor that takes an existing non-linear solver
-   * @param non_linear_solver Non-linear solver that will be used to drive the physics solver
-   * @param p_number_physic_total Indicates the number of physics solved
-   * default value = 1, meaning only a single physics is solved
-   */
-  // TODO delete the first constructor?
-  PhysicsSolver(NonLinearSolver<VectorType> *non_linear_solver,
-                unsigned int                 p_number_physic_total = 1);
-
-  /**
    * @brief PhysicsSolver
    * @param non_linear_solver_parameters A set of parameters that will be used to construct the non-linear solver
    * @param p_number_physic_total Indicates the number of physics solved
    * default value = 1, meaning only a single physics is solved
    */
-  PhysicsSolver(Parameters::NonLinearSolver non_linear_solver_parameters,
-                unsigned int                p_number_physic_total = 1);
+  PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
 
-  ~PhysicsSolver()
+  virtual ~PhysicsSolver()
   {
     delete non_linear_solver;
   }
@@ -84,12 +74,13 @@ public:
 
 
   /**
-   * @brief Call for the solution of the linear system of equation
+   * @brief Call for the solution of the linear system of equation using a strategy appropriate
+   * to the physics
    *
    * @param initial_step Provides the linear solver with indication if this solution is the first
    * one for the system of equation or not
    *
-   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated
+   * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not
    */
   virtual void
   solve_linear_system(const bool initial_step,
@@ -105,82 +96,42 @@ public:
   virtual void
   apply_constraints()
   {
-    nonzero_constraints[number_physic_current].distribute(
-      local_evaluation_point[number_physic_current]);
+    auto &nonzero_constraints    = get_nonzero_constraints();
+    auto &local_evaluation_point = get_local_evaluation_point();
+    nonzero_constraints.distribute(local_evaluation_point);
   }
 
-  int
-  get_current_physics()
-  {
-    return number_physic_current;
-  }
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   *
-   * @param number_physic_current Indicates the number associated with the physic currently solved
-   * default value = 0, meaning only one physic, generally associated with the
-   * flow equations, is solved by default
+   * All methods derived from this physics must provide these elements. These
+   * are the key ingredients which enable Lethe to solve a physics
    */
-  VectorType &
-  get_evaluation_point(unsigned int number_physic_current = 0);
-  VectorType &
-  get_local_evaluation_point(unsigned int number_physic_current = 0);
-  VectorType &
-  get_newton_update(unsigned int number_physic_current = 0);
-  VectorType &
-  get_present_solution(unsigned int number_physic_current = 0);
-  VectorType &
-  get_system_rhs(unsigned int number_physic_current = 0);
-  AffineConstraints<double> &
-  get_nonzero_constraints(unsigned int number_physic_current = 0);
+  virtual VectorType &
+  get_evaluation_point() = 0;
+  virtual VectorType &
+  get_local_evaluation_point() = 0;
+  virtual VectorType &
+  get_newton_update() = 0;
+  virtual VectorType &
+  get_present_solution() = 0;
+  virtual VectorType &
+  get_system_rhs() = 0;
+  virtual AffineConstraints<double> &
+  get_nonzero_constraints() = 0;
 
   // attributes
   // TODO std::unique or std::shared pointer
   ConditionalOStream pcout;
 
 private:
-  unsigned int number_physic_current;
-  unsigned int number_physic_total;
-
-  std::vector<VectorType>                evaluation_point;
-  std::vector<VectorType>                local_evaluation_point;
-  std::vector<VectorType>                newton_update;
-  std::vector<VectorType>                present_solution;
-  std::vector<VectorType>                system_rhs;
-  std::vector<AffineConstraints<double>> nonzero_constraints;
-  NonLinearSolver<VectorType> *          non_linear_solver;
+  NonLinearSolver<VectorType> *non_linear_solver;
 };
 
-// constructors
-// TODO delete the first constructor?
 template <typename VectorType>
 PhysicsSolver<VectorType>::PhysicsSolver(
-  NonLinearSolver<VectorType> *non_linear_solver,
-  unsigned int                 p_number_physic_total)
-  : non_linear_solver(non_linear_solver) // Default copy ctor
-  , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_total(p_number_physic_total)
-  , evaluation_point(number_physic_total)
-  , local_evaluation_point(number_physic_total)
-  , newton_update(number_physic_total)
-  , present_solution(number_physic_total)
-  , system_rhs(number_physic_total)
-  , nonzero_constraints(number_physic_total)
-{}
-
-template <typename VectorType>
-PhysicsSolver<VectorType>::PhysicsSolver(
-  Parameters::NonLinearSolver non_linear_solver_parameters,
-  unsigned int                p_number_physic_total)
+  const Parameters::NonLinearSolver non_linear_solver_parameters)
   : pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
-  , number_physic_total(p_number_physic_total)
-  , evaluation_point(number_physic_total)
-  , local_evaluation_point(number_physic_total)
-  , newton_update(number_physic_total)
-  , present_solution(number_physic_total)
-  , system_rhs(number_physic_total)
-  , nonzero_constraints(number_physic_total)
 {
   switch (non_linear_solver_parameters.solver)
     {
@@ -206,61 +157,12 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   const bool                                              first_iteration,
   const bool                                              force_matrix_renewal)
 {
-  for (unsigned int iphys = 0; iphys < this->number_physic_total; iphys++)
-    {
-      this->number_physic_current = iphys;
-      this->non_linear_solver->solve(time_stepping_method,
-                                     first_iteration,
-                                     force_matrix_renewal);
-    }
+  // BB IMPORTANT
+  // for (unsigned int iphys = 0; iphys < 1; iphys++)
+  {
+    this->non_linear_solver->solve(time_stepping_method,
+                                   first_iteration,
+                                   force_matrix_renewal);
+  }
 }
-
-// getters
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_evaluation_point(
-  unsigned int number_physic_current)
-{
-  return evaluation_point[number_physic_current];
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_local_evaluation_point(
-  unsigned int number_physic_current)
-{
-  return local_evaluation_point[number_physic_current];
-  //  return local_evaluation_point;
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_newton_update(unsigned int number_physic_current)
-{
-  return newton_update[number_physic_current];
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_present_solution(
-  unsigned int number_physic_current)
-{
-  return present_solution[number_physic_current];
-}
-
-template <typename VectorType>
-VectorType &
-PhysicsSolver<VectorType>::get_system_rhs(unsigned int number_physic_current)
-{
-  return system_rhs[number_physic_current];
-}
-
-template <typename VectorType>
-AffineConstraints<double> &
-PhysicsSolver<VectorType>::get_nonzero_constraints(
-  unsigned int number_physic_current)
-{
-  return nonzero_constraints[number_physic_current];
-}
-
 #endif

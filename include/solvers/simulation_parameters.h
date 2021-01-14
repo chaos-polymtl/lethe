@@ -24,6 +24,7 @@
 #include <core/manifolds.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
+#include <core/parameters_multiphysics.h>
 
 #include "analytical_solutions.h"
 #include "initial_conditions.h"
@@ -31,7 +32,7 @@
 #include "source_terms.h"
 
 template <int dim>
-class NavierStokesSolverParameters
+class SimulationParameters
 {
 public:
   Parameters::Testing                            test;
@@ -42,7 +43,6 @@ public:
   std::shared_ptr<Parameters::Nitsche<dim>>      nitsche;
   Parameters::PhysicalProperties                 physical_properties;
   Parameters::SimulationControl                  simulation_control;
-  Parameters::Multiphysics                       multiphysics;
   Parameters::Timer                              timer;
   Parameters::FEM                                fem_parameters;
   Parameters::Forces                             forces_parameters;
@@ -58,6 +58,9 @@ public:
   Parameters::IBParticles<dim>                   particlesParameters;
   std::shared_ptr<Parameters::VoidFraction<dim>> void_fraction;
   Parameters::DynamicFlowControl                 flow_control;
+  Parameters::Multiphysics                       multiphysics;
+
+
 
   void
   declare(ParameterHandler &prm)
@@ -96,6 +99,8 @@ public:
 
     void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
     void_fraction->declare_parameters(prm);
+
+    multiphysics.declare_parameters(prm);
   }
 
   void
@@ -125,6 +130,7 @@ public:
     velocitySource.parse_parameters(prm);
     particlesParameters.parse_parameters(prm);
     void_fraction->parse_parameters(prm);
+    multiphysics.parse_parameters(prm);
   }
 };
 

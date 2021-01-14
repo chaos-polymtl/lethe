@@ -316,7 +316,8 @@ namespace BoundaryConditions
   {
   public:
     std::vector<double> value;
-    std::vector<double> Tenv;
+    std::vector<double> h;
+    std::vector<double> Tinf;
 
     void
     declareDefaultEntry(ParameterHandler &prm, unsigned int i_bc);
@@ -357,7 +358,12 @@ namespace BoundaryConditions
                       Patterns::Double(),
                       "Value (Double) for constant temperature at bc");
 
-    prm.declare_entry("Tenv",
+    prm.declare_entry("h",
+                      "0",
+                      Patterns::Double(),
+                      "Value (Double) for the h coefficient of convection bc");
+
+    prm.declare_entry("Tinf",
                       "0",
                       Patterns::Double(),
                       "Temperature (Double) of environment for convection bc");
@@ -417,9 +423,9 @@ namespace BoundaryConditions
       }
     else if (op == "convection")
       {
-        this->type[i_bc]  = BoundaryType::convection;
-        this->value[i_bc] = prm.get_double("value");
-        this->Tenv[i_bc]  = prm.get_double("Tenv");
+        this->type[i_bc] = BoundaryType::convection;
+        this->h[i_bc]    = prm.get_double("h");
+        this->Tinf[i_bc] = prm.get_double("Tinf");
       }
 
     this->id[i_bc] = prm.get_integer("id");
@@ -443,7 +449,9 @@ namespace BoundaryConditions
       this->type.resize(this->size);
       this->id.resize(this->size);
       this->value.resize(this->size);
-      this->Tenv.resize(this->size);
+      this->h.resize(this->size);
+
+      this->Tinf.resize(this->size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {

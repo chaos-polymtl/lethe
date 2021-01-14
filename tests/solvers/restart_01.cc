@@ -10,7 +10,7 @@
 // Lethe
 #include <core/parameters.h>
 #include <solvers/gls_navier_stokes.h>
-#include <solvers/navier_stokes_solver_parameters.h>
+#include <solvers/simulation_parameters.h>
 
 // Tests
 #include <../tests/tests.h>
@@ -77,7 +77,7 @@ template <int dim>
 class RestartNavierStokes : public GLSNavierStokesSolver<dim>
 {
 public:
-  RestartNavierStokes(NavierStokesSolverParameters<dim> nsparam)
+  RestartNavierStokes(SimulationParameters<dim> nsparam)
     : GLSNavierStokesSolver<dim>(nsparam)
   {}
   void
@@ -91,30 +91,31 @@ RestartNavierStokes<dim>::run()
   const int initialSize = 4;
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(initialSize);
-  this->setup_dofs_cfd();
-  this->exact_solution                        = new ExactSolutionMMS<dim>;
-  this->forcing_function                      = new MMSSineForcingFunction<dim>;
-  this->nsparam.physical_properties.viscosity = 1.;
+  this->setup_dofs_fd();
+  this->exact_solution   = new ExactSolutionMMS<dim>;
+  this->forcing_function = new MMSSineForcingFunction<dim>;
+  this->simulation_parameters.physical_properties.viscosity = 1.;
 
   this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
-  this->postprocess(false);
-  auto & present_solution = this->get_present_solution();
-  auto   errors_p1        = calculate_L2_error(this->dof_handler,
-                                      present_solution,
-                                      this->exact_solution,
-                                      this->nsparam.fem_parameters,
-                                      this->mpi_communicator);
-  double error1           = errors_p1.first;
+  this->postprocess_fd(false);
+  auto errors_p1 =
+    calculate_L2_error(this->dof_handler,
+                       this->present_solution,
+                       this->exact_solution,
+                       this->simulation_parameters.fem_parameters,
+                       this->mpi_communicator);
+  double error1 = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
-  this->finish_time_step();
+  this->finish_time_step_fd();
 
   this->set_solution_vector(0.);
-  auto errors_p2 = calculate_L2_error(this->dof_handler,
-                                      present_solution,
-                                      this->exact_solution,
-                                      this->nsparam.fem_parameters,
-                                      this->mpi_communicator);
+  auto errors_p2 =
+    calculate_L2_error(this->dof_handler,
+                       this->present_solution,
+                       this->exact_solution,
+                       this->simulation_parameters.fem_parameters,
+                       this->mpi_communicator);
 
   double error2 = errors_p2.first;
 
@@ -125,12 +126,14 @@ RestartNavierStokes<dim>::run()
   GridGenerator::hyper_cube(*this->triangulation, -1, 1);
   this->triangulation->refine_global(0);
 
-  this->set_initial_condition(this->nsparam.initial_condition->type, true);
-  auto errors_p3 = calculate_L2_error(this->dof_handler,
-                                      present_solution,
-                                      this->exact_solution,
-                                      this->nsparam.fem_parameters,
-                                      this->mpi_communicator);
+  this->set_initial_condition(
+    this->simulation_parameters.initial_condition->type, true);
+  auto errors_p3 =
+    calculate_L2_error(this->dof_handler,
+                       this->present_solution,
+                       this->exact_solution,
+                       this->simulation_parameters.fem_parameters,
+                       this->mpi_communicator);
 
   double error3 = errors_p3.first;
   deallog << "Error after restarting the simulation: " << error3 << std::endl;
@@ -139,8 +142,8 @@ RestartNavierStokes<dim>::run()
 void
 test()
 {
-  ParameterHandler                prm;
-  NavierStokesSolverParameters<2> NSparam;
+  ParameterHandler        prm;
+  SimulationParameters<2> NSparam;
   NSparam.declare(prm);
   NSparam.parse(prm);
 

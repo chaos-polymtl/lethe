@@ -39,7 +39,7 @@ class GLSNavierStokesSolver
   : public NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>
 {
 public:
-  GLSNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam);
+  GLSNavierStokesSolver(SimulationParameters<dim> &nsparam);
   ~GLSNavierStokesSolver();
 
   virtual void
@@ -47,16 +47,14 @@ public:
 
 protected:
   virtual void
-  setup_dofs_cfd();
+  setup_dofs_fd();
+
+
 
   virtual void
-  set_initial_condition(Parameters::InitialConditionType initial_condition_type,
-                        bool                             restart = false);
-
-  void
-  set_initial_condition_cfd(
+  set_initial_condition_fd(
     Parameters::InitialConditionType initial_condition_type,
-    bool                             restart = false);
+    bool                             restart = false) override;
 
   void
   set_solution_vector(double value);
@@ -78,21 +76,14 @@ protected:
                  time_stepping_method) override;
 
   void
-  solve_linear_system_cfd(const bool initial_step,
-                          const bool renewed_matrix = true);
+  solve_linear_system(const bool initial_step,
+                      const bool renewed_matrix = true);
 
 private:
   void
   assemble_L2_projection();
 
-  /**
-   * Interface for the solver for the linear system of equations
-   */
 
-  void
-  solve_linear_system(
-    const bool initial_step,
-    const bool renewed_matrix = true) override; // Interface function
 
   /**
    * GMRES solver with ILU(N) preconditioning

@@ -7,8 +7,8 @@ template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_pre_force(
   Particles::ParticleHandler<dim> &particle_handler,
-  Tensor<1, dim>                   g,
-  double                           dt)
+  Tensor<1, dim> /*g*/,
+  double dt)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
