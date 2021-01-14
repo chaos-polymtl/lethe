@@ -18,7 +18,7 @@
  * fluid dynamics simulation. The auxiliary physics are stored in a map
  * whose key are the Parameters::PhysicsID int enum.
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2020
+ * Author: Bruno Blais, Polytechnique Montreal, 2021-
  */
 
 #ifndef lethe_multiphysics_interface_h
@@ -75,6 +75,10 @@ public:
                    time_stepping_method,
         const bool force_matrix_renewal)
   {
+    // Loop through all the elements in the physics map. Consequently, iphys is
+    // an std::pair where iphys.first is the PhysicsID and iphys.second is the
+    // AuxiliaryPhysics pointer. This is how the map can be traversed
+    // sequentially.
     for (auto &iphys : physics)
       {
         solve_physics(iphys.first, time_stepping_method, force_matrix_renewal);
@@ -89,7 +93,7 @@ public:
 
 
   /**
-   * @brief Call for the solution of a single physics
+   * @brief Call for the solution of a single physic
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
@@ -110,7 +114,7 @@ public:
   }
 
   /**
-   * @brief Call for the solution of a single block physics
+   * @brief Call for the solution of a single block physic
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
@@ -167,7 +171,7 @@ public:
   }
 
   /**
-   * @brief Carry out the operations require to finish a time step correctly for
+   * @brief Carry out the operations required to finish a time step correctly for
    * all auxiliary physics.
    */
   void
@@ -184,8 +188,8 @@ public:
   }
 
   /**
-   * @brief Carry out the operations require to percolate the time vectors
-   * corectly at the end of a simulation
+   * @brief Carry out the operations required to percolate the time vectors
+   * correctly at the end of a simulation
    */
   void
   percolate_time_vectors()
@@ -222,7 +226,7 @@ public:
 
 
   /**
-   * @brief Prepares the auxiliary physics for mesh adaptation
+   * @brief Prepare the auxiliary physics for mesh adaptation
    */
   void
   prepare_for_mesh_adaptation()
@@ -256,7 +260,7 @@ public:
 
 
   /**
-   * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
+   * @brief Set-up the DofHandler and the degree of freedom associated with the physics.
    */
   void
   setup_dofs()
@@ -314,7 +318,7 @@ public:
   };
 
   /**
-   * @brief fluid_dynamics_is_block Verifies if the fluid dynamics solution
+   * @brief fluid_dynamics_is_block Verify if the fluid dynamics solution
    * is stored as a block vector or not.
    *
    * @return boolean value indicating the fluid dynamics is stored as a block vector
@@ -474,7 +478,7 @@ private:
   std::vector<PhysicsID> active_physics;
 
   // Auxiliary physics are stored within a map of shared pointer to ensure
-  // proper deallocation.
+  // proper memory management.
   std::map<
     PhysicsID,
     std::shared_ptr<AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>>>

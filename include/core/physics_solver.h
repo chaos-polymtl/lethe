@@ -33,7 +33,7 @@
  * solver. A physics solver is an implementation of a linear or non-linear set
  * of physical equations. This interface is here to provide the families of
  * non-linear solvers with the necessary elements to allow for the solution of
- * the problems associated with a set of physics.
+ * the problems associated with a physics (block or not).
  */
 
 template <typename VectorType>
@@ -48,7 +48,7 @@ public:
    */
   PhysicsSolver(const Parameters::NonLinearSolver non_linear_solver_parameters);
 
-  ~PhysicsSolver()
+  virtual ~PhysicsSolver()
   {
     delete non_linear_solver;
   }
@@ -104,10 +104,8 @@ public:
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   *
-   * @param number_physic_current Indicates the number associated with the physic currently solved
-   * default value = 0, meaning only one physic, generally associated with the
-   * flow equations, is solved by default
+   * All methods derived from this physics must provide these elements. These
+   * are the key ingredients which enable Lethe to solve a physics
    */
   virtual VectorType &
   get_evaluation_point() = 0;

@@ -182,7 +182,7 @@ protected:
 
   /**
    * @brief finish_simulation
-   * Finishes the simulation by calling all
+   * Finish the simulation by calling all
    * the post-processing elements that are required
    */
   void
@@ -194,7 +194,7 @@ protected:
 
   /**
    * @brief finish_time_step
-   * Finishes the time step of the fluid dynamics
+   * Finish the time step of the fluid dynamics physic
    * Post-processing and time stepping
    */
   virtual void
@@ -208,7 +208,8 @@ protected:
 
   /**
    * @brief percolate_time_vectors
-   * Rearranges the time vector due to the end of an iteration
+   * Rearranges the time vector due to the end of an iteration of the fd (fluid
+   * dynamics) physic and calls the associated methods for all subphysics
    */
   virtual void
   percolate_time_vectors()
@@ -425,6 +426,7 @@ protected:
   write_output_torques();
 
   // Member variables
+protected:
   DofsType locally_owned_dofs;
   DofsType locally_relevant_dofs;
 

@@ -32,12 +32,11 @@
 /**
  * Au auxiliary physics is defined as a physics that is solved on top of
  * a core physics, the latter being the Navier-Stokes
- * equations. Auxiliary physics are simpler
- * physics around which the entire simulation process does not need to be
- * tailored. Examples of auxiliary physics are temperature and concentration.
- * Generally, the auxiliary physics does not affect the core physics. For
- * example, temperature is advected by the fluid flow, but buoyancy effects are
- * not taken into account.
+ * equations. Auxiliary physics are simpler physics around which the entire
+ * simulation process does not need to be tailored. Examples of auxiliary
+ * physics are temperature and concentration. Generally, the auxiliary physics
+ * does not affect the core physics. For example, temperature is advected by the
+ * fluid flow, but buoyancy effects are not taken into account.
  *
  * The auxiliary physics are managed by the multiphysics interface of Lethe.
  *
@@ -46,17 +45,17 @@
  * are then called at specific moments of a simulation.
  *
  * Auxiliary physics are templated by the dimension of the problem and the
- * vector type and DofsType that is  used to manage their data.
+ * vector type that is used to manage their data.
  *
  *
- * Current limitations:
+ * Current limitatitations:
  *
  * - Auxiliary physics are currently expected to be used in conjuction with a
- *flow solver which can provide a velocity field.
- * - Support for feedback from the auxiliary physics to the core physics is, at
- *best, very limited
- * - Support for interaction between auxiliary physics is currently not
- *implemented / expected
+ * flow solver which can provide a velocity field.
+ * - Support for feedback from the auxiliary physics to the core physics is
+ * there but presently not used anywhere
+ * - Support for interaction between auxiliary physics is supported but has not
+ * been tested
  **/
 template <int dim, typename VectorType>
 class AuxiliaryPhysics : public PhysicsSolver<VectorType>
@@ -64,8 +63,8 @@ class AuxiliaryPhysics : public PhysicsSolver<VectorType>
 public:
   /**
    * @brief AuxiliaryPhysics - Base constructor for Auxiliary physics. At the present
-   * moment this is an interface with nothing. The auxliary physics has no
-   * member since it cannot accomplish anything.
+   * moment this is an interface with nothing. The auxiliary physics is a pure
+   * virtual class.
    */
   AuxiliaryPhysics(
     const Parameters::NonLinearSolver non_linear_solver_parameters)
@@ -73,7 +72,14 @@ public:
   {}
 
   /**
-   * @brief Attach the solution vector to the data out provided. This function
+   * @brief AuxiliaryPhysics - Base destructor. At the present
+   * moment this is an interface with nothing.
+   */
+  virtual ~AuxiliaryPhysics()
+  {}
+
+  /**
+   * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
    */
   virtual void
@@ -86,14 +92,13 @@ public:
   finish_simulation() = 0;
 
   /**
-   * @brief Carry out the operations require to finish a time step correctly.
+   * @brief Carry out the operations required to finish a time step correctly.
    */
   virtual void
   finish_time_step() = 0;
 
-
   /**
-   * @brief Carry out the operations required to rearange the values of the
+   * @brief Carry out the operations required to rearrange the values of the
    * previous solution at the end of a time step
    */
   virtual void

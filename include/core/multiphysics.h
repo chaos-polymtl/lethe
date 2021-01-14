@@ -14,12 +14,12 @@
  * ---------------------------------------------------------------------
 
  *
- * Author: Bruno Blais, Polytechnique Montreal, 2019-
+ * Author: Bruno Blais, Polytechnique Montreal, 2021-
  */
 
 /*
  * This file defines a small enum which is used to identify
- * the various physics solverd within Lethe
+ * the various physics solved within Lethe
  */
 
 

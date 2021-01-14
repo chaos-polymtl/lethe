@@ -30,7 +30,7 @@ end
 
 subsection restart
   # Enable checkpointing
-  set checkpoint = true
+  set checkpoint = false
 
   # Prefix for the filename of checkpoints
   set filename   = restart

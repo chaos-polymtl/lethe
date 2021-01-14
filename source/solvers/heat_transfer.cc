@@ -583,10 +583,6 @@ HeatTransfer<dim>::read_checkpoint()
   solution_m1      = distributed_system_m1;
   solution_m2      = distributed_system_m2;
   solution_m3      = distributed_system_m3;
-
-  this->pcout << "Max value " << present_solution.max() << std::endl;
-  this->pcout << "Max solution_m1 " << solution_m1.max() << std::endl;
-  this->pcout << "Max solution_m2 " << solution_m2.max() << std::endl;
 }
 
 

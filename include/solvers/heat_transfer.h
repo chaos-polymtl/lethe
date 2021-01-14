@@ -83,7 +83,7 @@ public:
                  time_stepping_method) override;
 
   /**
-   * @brief Attach the solution vector to the data out provided. This function
+   * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
    */
   virtual void
@@ -235,10 +235,7 @@ private:
   assemble_system(const Parameters::SimulationControl::TimeSteppingMethod
                     time_stepping_method);
 
-  // Simulation parameters
-  MultiphysicsInterface<dim> *multiphysics;
-
-  // TODO : Refactor to a more neutral name
+  MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
 
