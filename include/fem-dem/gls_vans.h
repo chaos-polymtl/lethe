@@ -47,7 +47,7 @@ template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSVANSSolver(NavierStokesSolverParameters<dim> &nsparam);
+  GLSVANSSolver(SimulationParameters<dim> &nsparam);
 
   ~GLSVANSSolver();
 
@@ -81,7 +81,7 @@ private:
    * Post-processing and time stepping
    */
   virtual void
-  finish_time_step();
+  finish_time_step_fd();
 
 protected:
   template <bool                                              assemble_matrix,

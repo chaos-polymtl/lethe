@@ -41,9 +41,8 @@
  */
 template <int dim, typename VectorType, typename DofsType>
 NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
-  NavierStokesSolverParameters<dim> &p_nsparam)
-  : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver,
-                              p_nsparam.multiphysics.number_physic_total)
+  SimulationParameters<dim> &p_nsparam)
+  : PhysicsSolver<VectorType>(p_nsparam.non_linear_solver)
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -62,8 +61,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                     this->pcout,
                     TimerOutput::summary,
                     TimerOutput::wall_times)
-  , nsparam(p_nsparam)
-  , flow_control(nsparam.flow_control)
+  , simulation_parameters(p_nsparam)
+  , flow_control(simulation_parameters.flow_control)
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
@@ -71,44 +70,50 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
 
-  if (nsparam.simulation_control.method ==
+  if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::steady)
-    simulation_control =
-      std::make_shared<SimulationControlSteady>(nsparam.simulation_control);
-  else if (nsparam.simulation_control.method ==
+    simulation_control = std::make_shared<SimulationControlSteady>(
+      simulation_parameters.simulation_control);
+  else if (simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     {
       simulation_control = std::make_shared<SimulationControlAdjointSteady>(
-        nsparam.simulation_control);
+        simulation_parameters.simulation_control);
     }
   else
     {
-      if (nsparam.simulation_control.output_control ==
+      if (simulation_parameters.simulation_control.output_control ==
           Parameters::SimulationControl::OutputControl::time)
         simulation_control =
           std::make_shared<SimulationControlTransientDynamicOutput>(
-            nsparam.simulation_control);
+            simulation_parameters.simulation_control);
       else
         simulation_control = std::make_shared<SimulationControlTransient>(
-          nsparam.simulation_control);
+          simulation_parameters.simulation_control);
     }
 
-  // Change the behavior of the timer for situations when you don't want outputs
-  if (nsparam.timer.type == Parameters::Timer::Type::none)
+  multiphysics =
+    std::make_shared<MultiphysicsInterface<dim>>(simulation_parameters,
+                                                 triangulation,
+                                                 simulation_control);
+
+  // Change the behavior of the timer for situations when you don't want
+  // outputs
+  if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
     this->computing_timer.disable_output();
 
   // Pre-allocate the force tables to match the number of boundary conditions
-  forces_on_boundaries.resize(nsparam.boundary_conditions.size);
-  torques_on_boundaries.resize(nsparam.boundary_conditions.size);
-  forces_tables.resize(nsparam.boundary_conditions.size);
-  torques_tables.resize(nsparam.boundary_conditions.size);
+  forces_on_boundaries.resize(simulation_parameters.boundary_conditions.size);
+  torques_on_boundaries.resize(simulation_parameters.boundary_conditions.size);
+  forces_tables.resize(simulation_parameters.boundary_conditions.size);
+  torques_tables.resize(simulation_parameters.boundary_conditions.size);
 
   // Get the exact solution from the parser
-  exact_solution = &nsparam.analytical_solution->velocity;
+  exact_solution = &simulation_parameters.analytical_solution->velocity;
 
   // If there is a forcing function, get it from the parser
-  if (nsparam.sourceTerm->source_term())
-    forcing_function = &nsparam.sourceTerm->navier_stokes_source;
+  if (simulation_parameters.sourceTerm->source_term())
+    forcing_function = &simulation_parameters.sourceTerm->navier_stokes_source;
   else
     forcing_function = new NoForce<dim>;
 
@@ -116,7 +121,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
 
-  this->pcout << std::setprecision(nsparam.simulation_control.log_precision);
+  this->pcout << std::setprecision(
+    simulation_parameters.simulation_control.log_precision);
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -124,14 +130,16 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
   const VectorType &evaluation_point)
 {
-  this->flow_rate = calculate_flow_rate(this->dof_handler,
-                                        evaluation_point,
-                                        nsparam.flow_control.boundary_flow_id,
-                                        nsparam.fem_parameters,
-                                        mpi_communicator);
+  this->flow_rate =
+    calculate_flow_rate(this->dof_handler,
+                        evaluation_point,
+                        simulation_parameters.flow_control.boundary_flow_id,
+                        simulation_parameters.fem_parameters,
+                        mpi_communicator);
 
   // Showing results (area and flow rate)
-  if (nsparam.flow_control.verbosity == Parameters::Verbosity::verbose &&
+  if (simulation_parameters.flow_control.verbosity ==
+        Parameters::Verbosity::verbose &&
       simulation_control->get_step_number() > 0 && this->this_mpi_process == 0)
     {
       std::cout << "+------------------------------------------+" << std::endl;
@@ -140,7 +148,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
       this->pcout << "Inlet area : " << flow_rate.second << std::endl;
       this->pcout << "Flow rate : " << flow_rate.first << std::endl;
       this->pcout << "Beta applied : "
-                  << beta[nsparam.flow_control.flow_direction] << std::endl;
+                  << beta[simulation_parameters.flow_control.flow_direction]
+                  << std::endl;
     }
 }
 
@@ -149,8 +158,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::dynamic_flow_control()
 {
-  if (nsparam.flow_control.enable_flow_control &&
-      nsparam.simulation_control.method !=
+  if (simulation_parameters.flow_control.enable_flow_control &&
+      simulation_parameters.simulation_control.method !=
         Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
       this->flow_control.calculate_beta(flow_rate,
@@ -171,13 +180,15 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_forces");
 
-  this->forces_on_boundaries = calculate_forces(this->dof_handler,
-                                                evaluation_point,
-                                                nsparam.physical_properties,
-                                                nsparam.boundary_conditions,
-                                                mpi_communicator);
+  this->forces_on_boundaries =
+    calculate_forces(this->dof_handler,
+                     evaluation_point,
+                     simulation_parameters.physical_properties,
+                     simulation_parameters.boundary_conditions,
+                     mpi_communicator);
 
-  if (nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
+  if (simulation_parameters.forces_parameters.verbosity ==
+        Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
@@ -190,11 +201,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         dependent_column_names.push_back("f_z");
 
       TableHandler table = make_table_scalars_tensors(
-        nsparam.boundary_conditions.id,
+        simulation_parameters.boundary_conditions.id,
         independent_column_names,
         this->forces_on_boundaries,
         dependent_column_names,
-        this->nsparam.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Force  summary                          |" << std::endl;
@@ -203,7 +214,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
     }
 
   for (unsigned int i_boundary = 0;
-       i_boundary < nsparam.boundary_conditions.size;
+       i_boundary < simulation_parameters.boundary_conditions.size;
        ++i_boundary)
     {
       this->forces_tables[i_boundary].add_value(
@@ -220,13 +231,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
 
       // Precision
       this->forces_tables[i_boundary].set_precision(
-        "f_x", nsparam.forces_parameters.output_precision);
+        "f_x", simulation_parameters.forces_parameters.output_precision);
       this->forces_tables[i_boundary].set_precision(
-        "f_y", nsparam.forces_parameters.output_precision);
+        "f_y", simulation_parameters.forces_parameters.output_precision);
       this->forces_tables[i_boundary].set_precision(
-        "f_z", nsparam.forces_parameters.output_precision);
+        "f_z", simulation_parameters.forces_parameters.output_precision);
       this->forces_tables[i_boundary].set_precision(
-        "time", nsparam.forces_parameters.output_precision);
+        "time", simulation_parameters.forces_parameters.output_precision);
     }
 }
 
@@ -238,14 +249,16 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_torques");
 
-  this->torques_on_boundaries = calculate_torques(this->dof_handler,
-                                                  evaluation_point,
-                                                  nsparam.physical_properties,
-                                                  nsparam.fem_parameters,
-                                                  nsparam.boundary_conditions,
-                                                  mpi_communicator);
+  this->torques_on_boundaries =
+    calculate_torques(this->dof_handler,
+                      evaluation_point,
+                      simulation_parameters.physical_properties,
+                      simulation_parameters.fem_parameters,
+                      simulation_parameters.boundary_conditions,
+                      mpi_communicator);
 
-  if (nsparam.forces_parameters.verbosity == Parameters::Verbosity::verbose &&
+  if (simulation_parameters.forces_parameters.verbosity ==
+        Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       this->pcout << std::endl;
@@ -257,11 +270,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
       dependent_column_names.push_back("T_z");
 
       TableHandler table = make_table_scalars_tensors(
-        nsparam.boundary_conditions.id,
+        simulation_parameters.boundary_conditions.id,
         independent_column_names,
         this->torques_on_boundaries,
         dependent_column_names,
-        this->nsparam.simulation_control.log_precision);
+        this->simulation_parameters.simulation_control.log_precision);
 
       std::cout << "+------------------------------------------+" << std::endl;
       std::cout << "|  Torque summary                          |" << std::endl;
@@ -270,7 +283,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
     }
 
   for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundary_conditions.size;
+       boundary_id < simulation_parameters.boundary_conditions.size;
        ++boundary_id)
     {
       this->torques_tables[boundary_id].add_value(
@@ -284,13 +297,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 
       // Precision
       this->torques_tables[boundary_id].set_precision(
-        "T_x", nsparam.forces_parameters.output_precision);
+        "T_x", simulation_parameters.forces_parameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
-        "T_y", nsparam.forces_parameters.output_precision);
+        "T_y", simulation_parameters.forces_parameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
-        "T_z", nsparam.forces_parameters.output_precision);
+        "T_z", simulation_parameters.forces_parameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
-        "time", nsparam.forces_parameters.output_precision);
+        "time", simulation_parameters.forces_parameters.output_precision);
     }
 }
 
@@ -298,17 +311,17 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
+NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
 {
-  if (nsparam.forces_parameters.calculate_force)
+  if (simulation_parameters.forces_parameters.calculate_force)
     this->write_output_forces();
 
-  if (nsparam.forces_parameters.calculate_torque)
+  if (simulation_parameters.forces_parameters.calculate_torque)
     this->write_output_torques();
 
-  if (nsparam.analytical_solution->calculate_error())
+  if (simulation_parameters.analytical_solution->calculate_error())
     {
-      if (nsparam.simulation_control.method ==
+      if (simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)
         {
           error_table.set_scientific("error_pressure", true);
@@ -323,11 +336,11 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
       if (this->this_mpi_process == 0)
         {
           std::string filename =
-            nsparam.analytical_solution->get_filename() + ".dat";
+            simulation_parameters.analytical_solution->get_filename() + ".dat";
           std::ofstream output(filename.c_str());
           error_table.write_text(output);
           std::vector<std::string> sub_columns;
-          if (nsparam.simulation_control.method ==
+          if (simulation_parameters.simulation_control.method ==
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               sub_columns.push_back("cells");
@@ -342,30 +355,37 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation()
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::finish_time_step()
+NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
 {
-  if (nsparam.simulation_control.method !=
+  this->solution_m3 = this->solution_m2;
+  this->solution_m2 = this->solution_m1;
+  this->solution_m1 = this->present_solution;
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
+{
+  if (simulation_parameters.simulation_control.method !=
       Parameters::SimulationControl::TimeSteppingMethod::steady)
     {
-      this->solution_m3      = this->solution_m2;
-      this->solution_m2      = this->solution_m1;
-      auto &present_solution = this->get_present_solution();
-      this->solution_m1      = present_solution;
-      const double CFL       = calculate_CFL(this->dof_handler,
-                                       present_solution,
+      percolate_time_vectors_fd();
+      const double CFL = calculate_CFL(this->dof_handler,
+                                       this->present_solution,
                                        simulation_control->get_time_step(),
                                        mpi_communicator);
       this->simulation_control->set_CFL(CFL);
     }
-  if (this->nsparam.restart_parameters.checkpoint &&
+  if (this->simulation_parameters.restart_parameters.checkpoint &&
       simulation_control->get_step_number() %
-          this->nsparam.restart_parameters.frequency ==
+          this->simulation_parameters.restart_parameters.frequency ==
         0)
     {
       this->write_checkpoint();
     }
 
-  if (this->nsparam.timer.type == Parameters::Timer::Type::iteration)
+  if (this->simulation_parameters.timer.type ==
+      Parameters::Timer::Type::iteration)
     {
       this->computing_timer.print_summary();
       this->computing_timer.reset();
@@ -379,8 +399,8 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::iterate()
 {
-  auto &present_solution = this->get_present_solution();
-  if (nsparam.simulation_control.method ==
+  auto &present_solution = this->present_solution;
+  if (simulation_parameters.simulation_control.method ==
       Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -395,7 +415,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         false);
     }
 
-  else if (nsparam.simulation_control.method ==
+  else if (simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
@@ -420,7 +440,9 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
   else
     {
       PhysicsSolver<VectorType>::solve_non_linear_system(
-        nsparam.simulation_control.method, false, false);
+        simulation_parameters.simulation_control.method, false, false);
+      multiphysics->solve(simulation_parameters.simulation_control.method,
+                          false);
     }
 }
 
@@ -431,19 +453,18 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 {
-  auto &present_solution = this->get_present_solution();
-
   // First step if the method is not a multi-step method
-  if (!is_bdf_high_order(nsparam.simulation_control.method))
+  if (!is_bdf_high_order(simulation_parameters.simulation_control.method))
     {
       iterate();
     }
 
   // Taking care of the multi-step methods
-  else if (nsparam.simulation_control.method ==
+  else if (simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     {
-      Parameters::SimulationControl timeParameters = nsparam.simulation_control;
+      Parameters::SimulationControl timeParameters =
+        simulation_parameters.simulation_control;
 
       // Start the BDF2 with a single Euler time step with a lower time step
       double time_step =
@@ -451,8 +472,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       simulation_control->set_current_time_step(time_step);
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = present_solution;
+      percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
@@ -468,10 +488,11 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 
-  else if (nsparam.simulation_control.method ==
+  else if (simulation_parameters.simulation_control.method ==
            Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     {
-      Parameters::SimulationControl timeParameters = nsparam.simulation_control;
+      Parameters::SimulationControl timeParameters =
+        simulation_parameters.simulation_control;
 
       // Start the BDF3 with a single Euler time step with a lower time step
       double time_step =
@@ -481,8 +502,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = present_solution;
+      percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
@@ -491,9 +511,7 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m3 = this->solution_m2;
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = present_solution;
+      percolate_time_vectors();
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step
@@ -512,14 +530,14 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
 {
   if (simulation_control->get_step_number() %
-        this->nsparam.mesh_adaptation.frequency ==
+        this->simulation_parameters.mesh_adaptation.frequency ==
       0)
     {
-      if (this->nsparam.mesh_adaptation.type ==
+      if (this->simulation_parameters.mesh_adaptation.type ==
           Parameters::MeshAdaptation::Type::kelly)
         refine_mesh_kelly();
 
-      else if (this->nsparam.mesh_adaptation.type ==
+      else if (this->simulation_parameters.mesh_adaptation.type ==
                Parameters::MeshAdaptation::Type::uniform)
         refine_mesh_uniform();
     }
@@ -540,12 +558,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   TimerOutput::Scope t(this->computing_timer, "refine");
 
   Vector<float>       estimated_error_per_cell(tria.n_active_cells());
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  auto &present_solution = this->get_present_solution();
-  if (this->nsparam.mesh_adaptation.variable ==
+  auto &                           present_solution = this->present_solution;
+  if (this->simulation_parameters.mesh_adaptation.variable ==
       Parameters::MeshAdaptation::Variable::pressure)
     {
       KellyErrorEstimator<dim>::estimate(
@@ -557,7 +576,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         estimated_error_per_cell,
         this->fe.component_mask(pressure));
     }
-  else if (this->nsparam.mesh_adaptation.variable ==
+  else if (this->simulation_parameters.mesh_adaptation.variable ==
            Parameters::MeshAdaptation::Variable::velocity)
     {
       KellyErrorEstimator<dim>::estimate(
@@ -570,35 +589,37 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         this->fe.component_mask(velocity));
     }
 
-  if (this->nsparam.mesh_adaptation.fractionType ==
+  if (this->simulation_parameters.mesh_adaptation.fractionType ==
       Parameters::MeshAdaptation::FractionType::number)
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_number(
       tria,
       estimated_error_per_cell,
-      this->nsparam.mesh_adaptation.refinement_fraction,
-      this->nsparam.mesh_adaptation.coarsening_fraction,
-      this->nsparam.mesh_adaptation.maximum_number_elements);
+      this->simulation_parameters.mesh_adaptation.refinement_fraction,
+      this->simulation_parameters.mesh_adaptation.coarsening_fraction,
+      this->simulation_parameters.mesh_adaptation.maximum_number_elements);
 
-  else if (this->nsparam.mesh_adaptation.fractionType ==
+  else if (this->simulation_parameters.mesh_adaptation.fractionType ==
            Parameters::MeshAdaptation::FractionType::fraction)
     parallel::distributed::GridRefinement::refine_and_coarsen_fixed_fraction(
       tria,
       estimated_error_per_cell,
-      this->nsparam.mesh_adaptation.refinement_fraction,
-      this->nsparam.mesh_adaptation.coarsening_fraction);
+      this->simulation_parameters.mesh_adaptation.refinement_fraction,
+      this->simulation_parameters.mesh_adaptation.coarsening_fraction);
 
-  if (tria.n_levels() > this->nsparam.mesh_adaptation.maximum_refinement_level)
+  if (tria.n_levels() >
+      this->simulation_parameters.mesh_adaptation.maximum_refinement_level)
     for (typename Triangulation<dim>::active_cell_iterator cell =
-           tria.begin_active(
-             this->nsparam.mesh_adaptation.maximum_refinement_level);
+           tria.begin_active(this->simulation_parameters.mesh_adaptation
+                               .maximum_refinement_level);
          cell != tria.end();
          ++cell)
       cell->clear_refine_flag();
   for (typename Triangulation<dim>::active_cell_iterator cell =
-         tria.begin_active(
-           this->nsparam.mesh_adaptation.minimum_refinement_level);
+         tria.begin_active(this->simulation_parameters.mesh_adaptation
+                             .minimum_refinement_level);
        cell !=
-       tria.end_active(this->nsparam.mesh_adaptation.minimum_refinement_level);
+       tria.end_active(
+         this->simulation_parameters.mesh_adaptation.minimum_refinement_level);
        ++cell)
     cell->clear_coarsen_flag();
 
@@ -618,6 +639,9 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
+  multiphysics->prepare_for_mesh_adaptation();
+
+
   tria.execute_coarsening_and_refinement();
   this->setup_dofs();
 
@@ -634,7 +658,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
   nonzero_constraints.distribute(tmp_m1);
   nonzero_constraints.distribute(tmp_m2);
@@ -645,6 +669,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
+
+  multiphysics->post_mesh_adaptation();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -662,11 +688,13 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
-  auto &present_solution = this->get_present_solution();
-  solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
+  solution_transfer.prepare_for_coarsening_and_refinement(
+    this->present_solution);
   solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
+
+  multiphysics->prepare_for_mesh_adaptation();
 
   // Refine
   this->triangulation->refine_global(1);
@@ -686,7 +714,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
-  auto &nonzero_constraints = this->get_nonzero_constraints();
+  auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
   nonzero_constraints.distribute(tmp_m1);
   nonzero_constraints.distribute(tmp_m2);
@@ -697,27 +725,30 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
+
+  multiphysics->post_mesh_adaptation();
 }
 
 template <int dim, typename VectorType, typename DofsType>
 void
-NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
+NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 {
-  auto &present_solution = this->get_present_solution();
+  auto &present_solution = this->present_solution;
 
-  if (this->nsparam.post_processing.calculate_enstrophy)
+  if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
-      double enstrophy = calculate_enstrophy(this->dof_handler,
-                                             present_solution,
-                                             nsparam.fem_parameters,
-                                             mpi_communicator);
+      double enstrophy =
+        calculate_enstrophy(this->dof_handler,
+                            present_solution,
+                            simulation_parameters.fem_parameters,
+                            mpi_communicator);
 
       this->enstrophy_table.add_value("time",
                                       simulation_control->get_current_time());
       this->enstrophy_table.add_value("enstrophy", enstrophy);
 
       // Display Enstrophy to screen if verbosity is enabled
-      if (this->nsparam.post_processing.verbosity ==
+      if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Enstrophy  : " << enstrophy << std::endl;
@@ -725,12 +756,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
       // Output Enstrophy to a text file from processor 0
       if (simulation_control->get_step_number() %
-              this->nsparam.post_processing.output_frequency ==
+              this->simulation_parameters.post_processing.output_frequency ==
             0 &&
           this->this_mpi_process == 0)
         {
           std::string filename =
-            nsparam.post_processing.enstrophy_output_name + ".dat";
+            simulation_parameters.post_processing.enstrophy_output_name +
+            ".dat";
           std::ofstream output(filename.c_str());
           enstrophy_table.set_precision("time", 12);
           enstrophy_table.set_precision("enstrophy", 12);
@@ -741,33 +773,33 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
   // The average velocities and reynolds stresses are calculated when the
   // time reaches the initial time. (time >= initial time) with 1e-6 as
   // tolerance.
-  if (this->nsparam.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
       // Calculate average velocities when the time reaches the initial time.
       // time >= initial time with the epsilon as tolerance.
       const double dt = simulation_control->get_time_step();
       if (simulation_control->get_current_time() >
-          (nsparam.post_processing.initial_time - 1e-6 * dt))
+          (simulation_parameters.post_processing.initial_time - 1e-6 * dt))
         {
           this->average_velocities.calculate_average_velocities(
-            this->get_local_evaluation_point(),
-            nsparam.post_processing,
+            this->local_evaluation_point,
+            simulation_parameters.post_processing,
             simulation_control->get_current_time(),
             dt);
         }
     }
 
-  if (this->nsparam.post_processing.calculate_kinetic_energy)
+  if (this->simulation_parameters.post_processing.calculate_kinetic_energy)
     {
       TimerOutput::Scope t(this->computing_timer, "kinetic_energy_calculation");
       double             kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
-                                           nsparam.fem_parameters,
+                                           simulation_parameters.fem_parameters,
                                            mpi_communicator);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
-      if (this->nsparam.post_processing.verbosity ==
+      if (this->simulation_parameters.post_processing.verbosity ==
           Parameters::Verbosity::verbose)
         {
           this->pcout << "Kinetic energy : " << kE << std::endl;
@@ -775,12 +807,13 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
 
       // Output Kinetic Energy to a text file from processor 0
       if ((simulation_control->get_step_number() %
-             this->nsparam.post_processing.output_frequency ==
+             this->simulation_parameters.post_processing.output_frequency ==
            0) &&
           this->this_mpi_process == 0)
         {
           std::string filename =
-            nsparam.post_processing.kinetic_energy_output_name + ".dat";
+            simulation_parameters.post_processing.kinetic_energy_output_name +
+            ".dat";
           std::ofstream output(filename.c_str());
           kinetic_energy_table.set_precision("time", 12);
           kinetic_energy_table.set_precision("kinetic-energy", 12);
@@ -789,41 +822,45 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
     }
 
   // Calculate inlet flow rate and area
-  if (this->nsparam.flow_control.enable_flow_control)
+  if (this->simulation_parameters.flow_control.enable_flow_control)
     {
-      this->postprocessing_flow_rate(this->get_present_solution());
+      this->postprocessing_flow_rate(this->present_solution);
     }
 
   if (!firstIter)
     {
       // Calculate forces on the boundary conditions
-      if (this->nsparam.forces_parameters.calculate_force)
+      if (this->simulation_parameters.forces_parameters.calculate_force)
         {
           if (simulation_control->get_step_number() %
-                this->nsparam.forces_parameters.calculation_frequency ==
+                this->simulation_parameters.forces_parameters
+                  .calculation_frequency ==
               0)
             this->postprocessing_forces(present_solution);
           if (simulation_control->get_step_number() %
-                this->nsparam.forces_parameters.output_frequency ==
+                this->simulation_parameters.forces_parameters
+                  .output_frequency ==
               0)
             this->write_output_forces();
         }
 
       // Calculate torques on the boundary conditions
-      if (this->nsparam.forces_parameters.calculate_torque)
+      if (this->simulation_parameters.forces_parameters.calculate_torque)
         {
           if (simulation_control->get_step_number() %
-                this->nsparam.forces_parameters.calculation_frequency ==
+                this->simulation_parameters.forces_parameters
+                  .calculation_frequency ==
               0)
             this->postprocessing_torques(present_solution);
           if (simulation_control->get_step_number() %
-                this->nsparam.forces_parameters.output_frequency ==
+                this->simulation_parameters.forces_parameters
+                  .output_frequency ==
               0)
             this->write_output_torques();
         }
 
       // Calculate error with respect to analytical solution
-      if (this->nsparam.analytical_solution->calculate_error())
+      if (this->simulation_parameters.analytical_solution->calculate_error())
         {
           // Update the time of the exact solution to the actual time
           this->exact_solution->set_time(
@@ -832,11 +869,11 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
             calculate_L2_error(dof_handler,
                                present_solution,
                                exact_solution,
-                               nsparam.fem_parameters,
+                               simulation_parameters.fem_parameters,
                                mpi_communicator);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
-          if (nsparam.simulation_control.method ==
+          if (simulation_parameters.simulation_control.method ==
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               this->error_table.add_value(
@@ -859,7 +896,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess(bool firstIter)
                 "time", simulation_control->get_current_time());
               this->error_table.add_value("error_velocity", error_velocity);
             }
-          if (this->nsparam.analytical_solution->verbosity ==
+          if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
             {
               this->pcout << "L2 error velocity : " << error_velocity
@@ -877,23 +914,21 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  const MappingQ<dim>              mapping(this->velocity_fem_degree,
-                              this->nsparam.fem_parameters.qmapping_all);
-  auto &                           newton_update = this->get_newton_update();
+  const MappingQ<dim>              mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
   VectorTools::interpolate(mapping,
                            this->dof_handler,
-                           this->nsparam.initial_condition->uvwp,
-                           newton_update,
+                           this->simulation_parameters.initial_condition->uvwp,
+                           this->newton_update,
                            this->fe.component_mask(velocities));
   VectorTools::interpolate(mapping,
                            this->dof_handler,
-                           this->nsparam.initial_condition->uvwp,
-                           newton_update,
+                           this->simulation_parameters.initial_condition->uvwp,
+                           this->newton_update,
                            this->fe.component_mask(pressure));
-  auto &nonzero_constraints = this->get_nonzero_constraints();
-  nonzero_constraints.distribute(newton_update);
-  auto &present_solution = this->get_present_solution();
-  present_solution       = newton_update;
+  this->nonzero_constraints.distribute(this->newton_update);
+  this->present_solution = this->newton_update;
 }
 
 
@@ -902,7 +937,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
-  std::string        prefix = this->nsparam.restart_parameters.filename;
+  std::string prefix = this->simulation_parameters.restart_parameters.filename;
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
@@ -952,7 +987,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
 
-  if (nsparam.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_velocities)
     {
       std::vector<VectorType *> sum_vectors =
         this->average_velocities.read(prefix);
@@ -961,23 +996,25 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
     }
 
   system_trans_vectors.deserialize(x_system);
-  auto &present_solution = this->get_present_solution();
-  present_solution       = distributed_system;
+  this->present_solution = distributed_system;
   this->solution_m1      = distributed_system_m1;
   this->solution_m2      = distributed_system_m2;
   this->solution_m3      = distributed_system_m3;
 
-  if (nsparam.flow_control.enable_flow_control)
+  if (simulation_parameters.flow_control.enable_flow_control)
     {
       this->flow_control.read(prefix);
 
       this->flow_rate =
         calculate_flow_rate(this->dof_handler,
                             present_solution,
-                            nsparam.flow_control.boundary_flow_id,
-                            nsparam.fem_parameters,
+                            simulation_parameters.flow_control.boundary_flow_id,
+                            simulation_parameters.fem_parameters,
                             mpi_communicator);
     }
+
+
+  multiphysics->read_checkpoint();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -992,8 +1029,9 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const VectorType &solution)
 {
   TimerOutput::Scope  t(this->computing_timer, "output");
-  const MappingQ<dim> mapping(this->velocity_fem_degree,
-                              nsparam.fem_parameters.qmapping_all);
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    simulation_parameters.fem_parameters.qmapping_all);
 
   const std::string  folder        = simulation_control->get_output_path();
   const std::string  solution_name = simulation_control->get_output_name();
@@ -1028,7 +1066,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
 
-  if (this->nsparam.post_processing.calculate_average_velocities)
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
       // Add the interpretation of the average solution. The dim first
       // components are the average velocity vectors and the following one is
@@ -1106,15 +1144,17 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   QCriterionPostprocessor<dim> qcriterion;
   data_out.add_data_vector(solution, qcriterion);
 
-  SRFPostprocessor<dim> srf(nsparam.velocitySource.omega_x,
-                            nsparam.velocitySource.omega_y,
-                            nsparam.velocitySource.omega_z);
+  SRFPostprocessor<dim> srf(simulation_parameters.velocitySource.omega_x,
+                            simulation_parameters.velocitySource.omega_y,
+                            simulation_parameters.velocitySource.omega_z);
 
-  if (nsparam.velocitySource.type ==
+  if (simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     data_out.add_data_vector(solution, srf);
 
   output_field_hook(data_out);
+
+  multiphysics->attach_solution_to_output(data_out);
 
   // Build the patches and write the output
 
@@ -1150,11 +1190,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "output_forces");
   for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundary_conditions.size;
+       boundary_id < simulation_parameters.boundary_conditions.size;
        ++boundary_id)
     {
-      std::string filename = nsparam.forces_parameters.force_output_name + "." +
-                             Utilities::int_to_string(boundary_id, 2) + ".dat";
+      std::string filename =
+        simulation_parameters.forces_parameters.force_output_name + "." +
+        Utilities::int_to_string(boundary_id, 2) + ".dat";
       std::ofstream output(filename.c_str());
 
       forces_tables[boundary_id].write_text(output);
@@ -1167,12 +1208,12 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "output_torques");
   for (unsigned int boundary_id = 0;
-       boundary_id < nsparam.boundary_conditions.size;
+       boundary_id < simulation_parameters.boundary_conditions.size;
        ++boundary_id)
     {
-      std::string filename = nsparam.forces_parameters.torque_output_name +
-                             "." + Utilities::int_to_string(boundary_id, 2) +
-                             ".dat";
+      std::string filename =
+        simulation_parameters.forces_parameters.torque_output_name + "." +
+        Utilities::int_to_string(boundary_id, 2) + ".dat";
       std::ofstream output(filename.c_str());
 
       this->torques_tables[boundary_id].write_text(output);
@@ -1184,24 +1225,23 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
-  std::string        prefix = this->nsparam.restart_parameters.filename;
+  std::string prefix = this->simulation_parameters.restart_parameters.filename;
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);
       this->pvdhandler.save(prefix);
 
-      if (nsparam.flow_control.enable_flow_control)
+      if (simulation_parameters.flow_control.enable_flow_control)
         this->flow_control.save(prefix);
     }
 
   std::vector<const VectorType *> sol_set_transfer;
-  auto &present_solution = this->get_present_solution();
-  sol_set_transfer.push_back(&present_solution);
+  sol_set_transfer.push_back(&this->present_solution);
   sol_set_transfer.push_back(&this->solution_m1);
   sol_set_transfer.push_back(&this->solution_m2);
   sol_set_transfer.push_back(&this->solution_m3);
 
-  if (nsparam.post_processing.calculate_average_velocities)
+  if (simulation_parameters.post_processing.calculate_average_velocities)
     {
       std::vector<const VectorType *> av_set_transfer =
         this->average_velocities.save(prefix);
@@ -1212,9 +1252,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
                               av_set_transfer.end());
     }
 
+
+
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
   system_trans_vectors.prepare_for_serialization(sol_set_transfer);
+
+  multiphysics->write_checkpoint();
 
   if (auto tria = dynamic_cast<parallel::distributed::Triangulation<dim> *>(
         this->triangulation.get()))

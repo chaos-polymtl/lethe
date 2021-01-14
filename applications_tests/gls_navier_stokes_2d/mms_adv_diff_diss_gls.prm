@@ -7,7 +7,7 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 3
+  set number mesh adapt       = 2
   set output name             = mms_22
   set output frequency        = 1
   set subdivision             = 1
@@ -17,8 +17,9 @@ end
 # FEM
 #---------------------------------------------------
 subsection FEM
-    set velocity order        = 2
+    set velocity order        = 1
     set pressure order        = 1
+    set temperature order        = 1
 end
 
 #---------------------------------------------------
@@ -51,28 +52,18 @@ end
 subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle
-		set grid arguments = 0, 0 : 1, 1.0 : false
-		set initial refinement = 2
+		set grid arguments = 0, 0 : 1, 1.0 : true
+		set initial refinement = 3
 end
 
+#---------------------------------------------------
+# Multiphysics
+#---------------------------------------------------
 subsection multiphysics
 	set heat transfer = true
 
 end
 
-#---------------------------------------------------
-# Nitsche
-#---------------------------------------------------
-subsection nitsche
-	subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = 0.1, 0.1 : 0.9, 0.9 : true
-		set initial refinement = 0
-	end
-	
-	set beta = 0
-end
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
@@ -87,10 +78,10 @@ subsection analytical solution
   set enable                 = true
   set verbosity = verbose
     subsection uvw
-            set Function expression =  0 ; 0 ; 0
+            set Function expression = y*y ; x*x ; 0 
     end
 subsection temperature
-            set Function expression =  sin(pi*x)*sin(pi*y)
+            set Function expression =  x*(x-1)*y*(y-1)
 end
 end
 
@@ -98,19 +89,71 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 1
+  set number                  = 4
     subsection bc 0
     set id = 0
-        set type              = noslip
+        set type              = function
+        subsection u
+            set Function expression = y*y
+        end
+        subsection v
+            set Function expression = x*x
+        end
+    end
+    subsection bc 1
+    set id = 1
+        set type              = function
+        subsection u
+            set Function expression = y*y
+        end
+        subsection v
+            set Function expression = x*x
+        end
+    end
+    subsection bc 2
+    set id = 2
+        set type              = function
+        subsection u
+            set Function expression = y*y
+        end
+        subsection v
+            set Function expression = x*x
+        end
+    end
+    subsection bc 3
+    set id = 3
+        set type              = function
+        subsection u
+            set Function expression = y*y
+        end
+        subsection v
+            set Function expression = x*x
+        end
     end
 end
 
+
 subsection boundary conditions heat transfer
-  set number                  = 1
+  set number                  = 4
     subsection bc 0
     set id = 0
         set type              = temperature
-	set value             = 0
+        set value             = 0 
+    end
+    subsection bc 1
+    set id = 1
+        set type              = temperature
+        set value             = 0
+    end
+    subsection bc 2
+    set id = 2
+        set type              = temperature
+        set value             = 0
+    end
+    subsection bc 3
+    set id = 3
+        set type              = temperature
+        set value             = 0
     end
 end
 
@@ -120,11 +163,12 @@ end
 subsection source term
   set enable                 = true
     subsection xyz
-            set Function expression = 0 ; 0 ; 0
+            set Function expression =  2*x*x*y-2; 2*x*y*y-2 ; 0
     end
 
     subsection heat transfer
-	    set Function expression = 2*pi*pi*sin(pi*x)*sin(pi*y)	
+	    set Function expression = x^3*(x - 1)*(2*y - 1) - 2*x*(x - 1) + y^3*(2*x - 1)*(y - 1) - 2*y*(y - 1) - 4*(x + y)^2
+
     end
 end
 
@@ -132,7 +176,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set verbosity               = verbose
+  set verbosity               = quiet
   set tolerance               = 1e-10
   set max iterations          = 10
 end
@@ -141,12 +185,12 @@ end
 # Linear Solver Control
 #---------------------------------------------------
 subsection linear solver
-  set verbosity               = verbose
+  set verbosity               = quiet
   set method                  = gmres
   set max iters               = 5000
-  set relative residual       = 1e-13
+  set relative residual       = 1e-4
   set minimum residual        = 1e-14
-  set ilu preconditioner fill = 2
+  set ilu preconditioner fill = 1
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end

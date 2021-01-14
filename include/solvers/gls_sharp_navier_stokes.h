@@ -40,7 +40,7 @@ template <int dim>
 class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
 {
 public:
-  GLSSharpNavierStokesSolver(NavierStokesSolverParameters<dim> &nsparam);
+  GLSSharpNavierStokesSolver(SimulationParameters<dim> &nsparam);
   ~GLSSharpNavierStokesSolver();
 
   void
@@ -85,7 +85,7 @@ private:
   calculate_L2_error_particles();
 
   virtual void
-  postprocess(bool firstIter) override;
+  postprocess_fd(bool firstIter) override;
 
   void
   refine_ib();

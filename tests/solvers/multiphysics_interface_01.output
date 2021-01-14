@@ -1,0 +1,13 @@
+
+DEAL::Active physics (expected: fluid, heat)
+DEAL::0
+DEAL::1
+DEAL::Active physics (expected: fluid)
+DEAL::0
+DEAL::Active physics (expected: none)
+DEAL::Active physics (expected: fluid, heat)
+DEAL::0
+DEAL::1
+DEAL::Active physics (expected: fluid)
+DEAL::0
+DEAL::Active physics (expected: none)
