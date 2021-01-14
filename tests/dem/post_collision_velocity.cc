@@ -79,10 +79,12 @@ test(double coefficient_of_restitution)
   dem_parameters.physical_properties.youngs_modulus_wall        = 800000000;
   dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
   dem_parameters.physical_properties.poisson_ratio_wall         = 0.3;
-  dem_parameters.physical_properties.restitution_coefficient_particle[0] = coefficient_of_restitution;
-  dem_parameters.physical_properties.restitution_coefficient_wall        = coefficient_of_restitution;
-  dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.3;
-  dem_parameters.physical_properties.friction_coefficient_wall           = 0.3;
+  dem_parameters.physical_properties.restitution_coefficient_particle[0] =
+    coefficient_of_restitution;
+  dem_parameters.physical_properties.restitution_coefficient_wall =
+    coefficient_of_restitution;
+  dem_parameters.physical_properties.friction_coefficient_particle[0] = 0.3;
+  dem_parameters.physical_properties.friction_coefficient_wall        = 0.3;
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall = 0.1;
@@ -180,7 +182,8 @@ test(double coefficient_of_restitution)
       integrator_object.integrate_post_force(particle_handler, g, dt);
     }
 
-  deallog << "Coefficient of restitution is " << coefficient_of_restitution << " and the velocity of particle "
+  deallog << "Coefficient of restitution is " << coefficient_of_restitution
+          << " and the velocity of particle "
              "before collision is 0.1, the velocity of particle after "
              "collision is: "
           << particle1->get_properties()[DEM::PropertiesIndex::v_x]
