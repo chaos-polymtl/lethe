@@ -996,6 +996,8 @@ GLSVANSSolver<dim>::solve()
     this->simulation_parameters.boundary_conditions);
 
   setup_dofs();
+  if (parameters.restart.restart == true)
+    read_dem();
   calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
