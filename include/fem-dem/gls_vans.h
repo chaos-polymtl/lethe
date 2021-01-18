@@ -20,10 +20,22 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/property_pool.h>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
+#include <core/pvd_handler.h>
 #include <core/simulation_control.h>
+#include <dem/dem.h>
 
 #include "core/bdf.h"
 #include "core/grids.h"
@@ -57,6 +69,9 @@ public:
 private:
   void
   initialize_void_fraction();
+
+  void
+  read_dem();
 
   void
   calculate_void_fraction(const double time);
