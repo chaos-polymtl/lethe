@@ -133,6 +133,10 @@ HeatTransfer<dim>::assemble_system(
                                       update_values | update_quadrature_points |
                                         update_JxW_values);
 
+  // Shape functions and gradients
+  std::vector<double>         phi_T(dofs_per_cell);
+  std::vector<Tensor<1, dim>> grad_phi_T(dofs_per_cell);
+
   // Velocity values
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -211,46 +215,56 @@ HeatTransfer<dim>::assemble_system(
           // assembling local matrix and right hand side
           for (const unsigned int q : fe_values_ht.quadrature_point_indices())
             {
+              // Store JxW in local variable for faster access
+              const double JxW = fe_values_ht.JxW(q);
+              // Gather the shape functions and their gradient
+              for (unsigned int k : fe_values_ht.dof_indices())
+                {
+                  phi_T[k]      = fe_values_ht.shape_value(k, q);
+                  grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
+                }
+
               for (const unsigned int i : fe_values_ht.dof_indices())
                 {
+                  const auto phi_T_i      = phi_T[i];
+                  const auto grad_phi_T_i = grad_phi_T[i];
+
                   if (assemble_matrix)
                     {
                       for (const unsigned int j : fe_values_ht.dof_indices())
                         {
+                          const auto phi_T_j      = phi_T[j];
+                          const auto grad_phi_T_j = grad_phi_T[j];
+
                           // Weak form for : - k * laplacian T + rho * cp * u *
                           //                      gradT - f - grad(u)*grad(u) =0
                           cell_matrix(i, j) +=
-                            (thermal_conductivity *
-                               fe_values_ht.shape_grad(i, q) *
-                               fe_values_ht.shape_grad(j, q) +
-                             rho_cp * fe_values_ht.shape_value(i, q) *
-                               velocity_values[q] *
-                               fe_values_ht.shape_grad(j,
-                                                       q)) *
-                            fe_values_ht.JxW(q); // JxW
+                            (thermal_conductivity * grad_phi_T_i *
+                               grad_phi_T_j +
+                             rho_cp * phi_T_i * velocity_values[q] *
+                               grad_phi_T_j) *
+                            JxW;
 
                           // Mass matrix for transient simulation
                           if (is_bdf(time_stepping_method))
                             cell_matrix(i, j) +=
-                              rho_cp * fe_values_ht.shape_value(j, q) *
-                              fe_values_ht.shape_value(i, q) * bdf_coefs[0] *
-                              fe_values_ht.JxW(q);
+                              rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
                         }
                     }
 
                   // rhs for : - k * laplacian T + rho * cp * u * grad T - f
                   // -grad(u)*grad(u) = 0
                   cell_rhs(i) -=
-                    (thermal_conductivity * fe_values_ht.shape_grad(i, q) *
+                    (thermal_conductivity * grad_phi_T_i *
                        temperature_gradients[q] +
-                     +density * specific_heat * fe_values_ht.shape_value(i, q) *
-                       velocity_values[q] * temperature_gradients[q] -
-                     source_term_values[q] * fe_values_ht.shape_value(i, q) -
-                     dynamic_viscosity * fe_values_ht.shape_value(i, q) *
+                     density * specific_heat * phi_T_i * velocity_values[q] *
+                       temperature_gradients[q] -
+                     source_term_values[q] * phi_T_i -
+                     dynamic_viscosity * phi_T_i *
                        scalar_product(velocity_gradient_values[q] +
                                         transpose(velocity_gradient_values[q]),
                                       transpose(velocity_gradient_values[q]))) *
-                    fe_values_ht.JxW(q); // JxW
+                    JxW;
 
                   // Residual associated with BDF schemes
                   if (time_stepping_method == Parameters::SimulationControl::
@@ -261,8 +275,7 @@ HeatTransfer<dim>::assemble_system(
                       rho_cp *
                       (bdf_coefs[0] * present_temperature_values[q] +
                        bdf_coefs[1] * p1_temperature_values[q]) *
-                      fe_values_ht.shape_value(i, q) *
-                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+                      phi_T_i * JxW;
 
                   if (time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -271,8 +284,7 @@ HeatTransfer<dim>::assemble_system(
                       (bdf_coefs[0] * present_temperature_values[q] +
                        bdf_coefs[1] * p1_temperature_values[q] +
                        bdf_coefs[2] * p2_temperature_values[q]) *
-                      fe_values_ht.shape_value(i, q) *
-                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+                      phi_T_i * JxW;
 
                   if (time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
@@ -282,8 +294,7 @@ HeatTransfer<dim>::assemble_system(
                        bdf_coefs[1] * p1_temperature_values[q] +
                        bdf_coefs[2] * p2_temperature_values[q] +
                        bdf_coefs[3] * p3_temperature_values[q]) *
-                      fe_values_ht.shape_value(i, q) *
-                      fe_values_ht.JxW(q); // *phi_u[i]*JxW
+                      phi_T_i * JxW;
                 }
 
             } // end loop on quadrature points
@@ -301,6 +312,8 @@ HeatTransfer<dim>::assemble_system(
                     simulation_parameters.boundary_conditions_ht.h[i_bc];
                   const double T_inf =
                     simulation_parameters.boundary_conditions_ht.Tinf[i_bc];
+                  std::vector<double> phi_face_T(dofs_per_cell);
+
                   if (cell->is_locally_owned())
                     {
                       for (unsigned int face = 0;
@@ -322,6 +335,11 @@ HeatTransfer<dim>::assemble_system(
                                        .quadrature_point_indices())
                                   {
                                     const double JxW = fe_face_values_ht.JxW(q);
+                                    for (unsigned int k :
+                                         fe_values_ht.dof_indices())
+                                      phi_face_T[k] =
+                                        fe_face_values_ht.shape_value(k, q);
+
                                     for (const unsigned int i :
                                          fe_values_ht.dof_indices())
                                       {
@@ -332,17 +350,13 @@ HeatTransfer<dim>::assemble_system(
                                               {
                                                 // Weak form modification
                                                 cell_matrix(i, j) +=
-                                                  fe_face_values_ht.shape_value(
-                                                    i, q) *
-                                                  fe_face_values_ht.shape_value(
-                                                    j, q) *
-                                                  h * JxW;
+                                                  phi_face_T[i] *
+                                                  phi_face_T[j] * h * JxW;
                                               }
                                           }
                                         // Residual
                                         cell_rhs(i) -=
-                                          fe_face_values_ht.shape_value(i, q) *
-                                          h *
+                                          phi_face_T[i] * h *
                                           (present_face_temperature_values[q] -
                                            T_inf) *
                                           JxW;
