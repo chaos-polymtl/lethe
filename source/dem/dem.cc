@@ -35,7 +35,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
   , parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
-  , property_pool(DEM::get_number_properties())
+  //, property_pool(DEM::get_number_properties())
   , mapping(1)
   , contact_build_number(0)
   , computing_timer(this->mpi_communicator,
@@ -54,8 +54,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
     computing_timer.disable_output();
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
   simulation_control = std::make_shared<SimulationControlTransientDEM>(
     parameters.simulation_control);
 
