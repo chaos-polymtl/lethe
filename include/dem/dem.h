@@ -257,7 +257,6 @@ private:
   ConditionalOStream                        pcout;
   DEMSolverParameters<dim>                  parameters;
   parallel::distributed::Triangulation<dim> triangulation;
-  Particles::PropertyPool                   property_pool;
   MappingQGeneric<dim>                      mapping;
   unsigned int                              contact_build_number;
   TimerOutput                               computing_timer;
