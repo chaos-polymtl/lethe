@@ -23,6 +23,7 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
 
 #include <tuple>
 #include <vector>
@@ -69,10 +70,12 @@ public:
    *
    * @param particle_handler The particle handler of active particles
    * @param g Body force for calculation of the exerted force on particles
+   * @param pcout Printing in parallel
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
-            const Tensor<1, dim> &                   g);
+            const Tensor<1, dim> &                   g,
+            const ConditionalOStream &               pcout);
 
   ~Visualization();
 

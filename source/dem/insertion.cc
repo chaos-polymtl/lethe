@@ -24,22 +24,16 @@ template <int dim>
 void
 Insertion<dim>::print_insertion_info(const unsigned int &inserted_this_step,
                                      const unsigned int &remained_particles,
-                                     const unsigned int &particle_type)
+                                     const unsigned int &particle_type,
+                                     const ConditionalOStream &pcout)
 {
-  MPI_Barrier(MPI_COMM_WORLD);
-  if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-    {
-      std::cout
-        << "***************************************************************** "
+  pcout << "***************************************************************** "
            "\n";
-      std::cout << inserted_this_step << " particles of type " << particle_type
-                << " were inserted, " << remained_particles
-                << " particles of type " << particle_type << " remaining"
-                << std::endl;
-      std::cout
-        << "***************************************************************** "
+  pcout << inserted_this_step << " particles of type " << particle_type
+        << " were inserted, " << remained_particles << " particles of type "
+        << particle_type << " remaining" << std::endl;
+  pcout << "***************************************************************** "
            "\n";
-    }
 }
 
 // Carries out assigning the properties of inserted particles. The output vector
@@ -50,8 +44,22 @@ Insertion<dim>::assign_particle_properties(
   const DEMSolverParameters<dim> &  dem_parameters,
   const unsigned int &              inserted_this_step,
   const unsigned int &              current_inserting_particle_type,
-  std::vector<std::vector<double>> &particle_properties)
+  std::vector<std::vector<double>> &particle_properties,
+  const MPI_Comm &                  communicator)
 {
+  // Distbuting particles between processors
+  if (Utilities::MPI::this_mpi_process(communicator) !=
+      (Utilities::MPI::n_mpi_processes(communicator) - 1))
+    inserted_this_step_this_proc =
+      floor(inserted_this_step / Utilities::MPI::n_mpi_processes(communicator));
+  else
+    inserted_this_step_this_proc =
+      inserted_this_step -
+      (Utilities::MPI::n_mpi_processes(communicator) - 1) *
+        floor(inserted_this_step /
+              Utilities::MPI::n_mpi_processes(communicator));
+
+
   // Clearing and resizing particle_properties
   particle_properties.clear();
   particle_properties.reserve(inserted_this_step);
@@ -65,11 +73,12 @@ Insertion<dim>::assign_particle_properties(
     physical_properties
       .particle_average_diameter[current_inserting_particle_type],
     physical_properties.particle_size_std[current_inserting_particle_type],
-    inserted_this_step);
+    inserted_this_step_this_proc);
 
   // A loop is defined over the number of particles which are going to be
   // inserted at this step
-  for (unsigned int particle_counter = 0; particle_counter < inserted_this_step;
+  for (unsigned int particle_counter = 0;
+       particle_counter < inserted_this_step_this_proc;
        ++particle_counter)
     {
       double type     = current_inserting_particle_type;
@@ -153,7 +162,8 @@ Insertion<dim>::particle_size_sampling(std::vector<double> &particle_sizes,
 template <int dim>
 void
 Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
-  const DEMSolverParameters<dim> &dem_parameters)
+  const DEMSolverParameters<dim> &dem_parameters,
+  const ConditionalOStream &      pcout)
 {
   // Getting properties as local parameters
   const auto insertion_information = dem_parameters.insertion_info;
@@ -182,10 +192,10 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   // number, a warning is printed
   if (insertion_information.inserted_this_step > maximum_particle_number)
     {
-      std::cout << "Warning: the requested number of particles for insertion ("
-                << insertion_information.inserted_this_step
-                << ") is higher than maximum expected number of particles ("
-                << maximum_particle_number << ")" << std::endl;
+      pcout << "Warning: the requested number of particles for insertion ("
+            << insertion_information.inserted_this_step
+            << ") is higher than maximum expected number of particles ("
+            << maximum_particle_number << ")" << std::endl;
 
       // Updating the number of inserted particles at each step
       inserted_this_step = maximum_particle_number;
@@ -210,6 +220,34 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
         (insertion_information.z_max - insertion_information.z_min) /
         (insertion_information.distance_threshold * this->maximum_diameter));
     }
+}
+
+template <>
+bool
+Insertion<3>::particle_on_processor(const unsigned int &i,
+                                    const unsigned int &j,
+                                    const unsigned int &k,
+                                    const unsigned int &this_mpi_process,
+                                    const unsigned int &number_of_processors)
+{
+  return (std::floor((i * this->number_of_particles_y_direction *
+                        this->number_of_particles_z_direction +
+                      j * this->number_of_particles_z_direction + k) /
+                     (std::ceil(this->inserted_this_step /
+                                number_of_processors))) == this_mpi_process);
+}
+
+template <>
+bool
+Insertion<2>::particle_on_processor(const unsigned int &i,
+                                    const unsigned int &j,
+                                    const unsigned int &k,
+                                    const unsigned int &this_mpi_process,
+                                    const unsigned int &number_of_processors)
+{
+  return (std::floor((i * this->number_of_particles_y_direction + j) /
+                     (std::ceil(this->inserted_this_step /
+                                number_of_processors))) == this_mpi_process);
 }
 
 template class Insertion<2>;

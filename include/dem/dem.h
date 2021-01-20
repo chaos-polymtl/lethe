@@ -28,7 +28,6 @@
 #include <deal.II/grid/grid_in.h>
 
 #include <deal.II/particles/particle_handler.h>
-#include <deal.II/particles/property_pool.h>
 
 #include <core/pvd_handler.h>
 #include <dem/dem_properties.h>
@@ -257,6 +256,7 @@ private:
   ConditionalOStream                        pcout;
   DEMSolverParameters<dim>                  parameters;
   parallel::distributed::Triangulation<dim> triangulation;
+
   MappingQGeneric<dim>                      mapping;
   unsigned int                              contact_build_number;
   TimerOutput                               computing_timer;

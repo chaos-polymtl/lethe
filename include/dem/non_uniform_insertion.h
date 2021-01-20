@@ -74,25 +74,30 @@ private:
    * Creates a vector of random numbers with size of particles which are going
    * to be inserted at each insertion step
    *
+   * @param random_container A vector of random numbers
    * @param random_number_range The range in which the random numbers will be
    * generated
    * @param random_number_seed random number seed
-   * @return A vector of random numbers)
    */
-  std::vector<double>
-  create_random_number_container(const double &random_number_range,
-                                 const int &   random_number_seed);
+  void
+  create_random_number_container(std::vector<double> &random_container,
+                                 const double &       random_number_range,
+                                 const int &          random_number_seed);
 
   /**
    * Creates a vector of insertion points for non-uniform insertion. The output
    * of this function is used as input argument in insert_global_particles
    *
+   * @param insertion_points A vector containing insertion locations of particles
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
+   * @param communicator MPI communicator
    */
-  virtual std::vector<Point<dim>>
-  assign_insertion_points(const Parameters::Lagrangian::InsertionInfo
-                            &insertion_information) override;
+  virtual void
+  assign_insertion_points(
+    std::vector<Point<dim>> &                    insertion_points,
+    const Parameters::Lagrangian::InsertionInfo &insertion_information,
+    const MPI_Comm &                             communicator) override;
 
   unsigned int current_inserting_particle_type;
 
