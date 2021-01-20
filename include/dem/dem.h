@@ -257,20 +257,14 @@ private:
   ConditionalOStream                        pcout;
   DEMSolverParameters<dim>                  parameters;
   parallel::distributed::Triangulation<dim> triangulation;
-  //#  if (DEAL_II_VERSION_MINOR <= 2)
-  //  Particles::PropertyPool property_pool;
-  //#  else
-  //  Particles::PropertyPool<dim> property_pool;
-  //#  endif
-
-  MappingQGeneric<dim>                 mapping;
-  unsigned int                         contact_build_number;
-  TimerOutput                          computing_timer;
-  double                               smallest_contact_search_criterion;
-  Particles::ParticleHandler<dim, dim> particle_handler;
-  unsigned int                         contact_detection_step;
-  Tensor<1, dim>                       g;
-  double                               triangulation_cell_diameter;
+  MappingQGeneric<dim>                      mapping;
+  unsigned int                              contact_build_number;
+  TimerOutput                               computing_timer;
+  double                                    smallest_contact_search_criterion;
+  Particles::ParticleHandler<dim, dim>      particle_handler;
+  unsigned int                              contact_detection_step;
+  Tensor<1, dim>                            g;
+  double                                    triangulation_cell_diameter;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;
