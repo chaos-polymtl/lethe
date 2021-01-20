@@ -35,7 +35,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , pcout({std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0})
   , parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
-  //, property_pool(DEM::get_number_properties())
   , mapping(1)
   , contact_build_number(0)
   , computing_timer(this->mpi_communicator,
