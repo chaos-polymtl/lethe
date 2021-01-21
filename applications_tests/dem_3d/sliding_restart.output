@@ -1,5 +1,4 @@
 DEM time-step is 1.46845% of Rayleigh time step
-Warning: Particles may have collision at the insertion step. This can lead to high initial velocities (due to initial overlap) or errors when using less stable integration schemes. It is recommended to decrease the random number range or to increase the insertion distance threshold.
 ***************************************************************** 
 Starting simulation with Lethe/DEM on 1 processors
 ***************************************************************** 

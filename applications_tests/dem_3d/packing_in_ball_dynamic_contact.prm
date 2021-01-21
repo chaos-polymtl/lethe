@@ -76,7 +76,7 @@ subsection insertion info
     set insertion box maximum y           	 	= 0.05
     set insertion box maximum z            	        = 0.07
     set insertion distance threshold			= 2
-    set insertion random number range			= 0.75
+    set insertion random number range			= 0.2
     set insertion random number seed			= 19
 end
 

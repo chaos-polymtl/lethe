@@ -257,14 +257,14 @@ private:
   DEMSolverParameters<dim>                  parameters;
   parallel::distributed::Triangulation<dim> triangulation;
 
-  MappingQGeneric<dim>                      mapping;
-  unsigned int                              contact_build_number;
-  TimerOutput                               computing_timer;
-  double                                    smallest_contact_search_criterion;
-  Particles::ParticleHandler<dim, dim>      particle_handler;
-  unsigned int                              contact_detection_step;
-  Tensor<1, dim>                            g;
-  double                                    triangulation_cell_diameter;
+  MappingQGeneric<dim>                 mapping;
+  unsigned int                         contact_build_number;
+  TimerOutput                          computing_timer;
+  double                               smallest_contact_search_criterion;
+  Particles::ParticleHandler<dim, dim> particle_handler;
+  unsigned int                         contact_detection_step;
+  Tensor<1, dim>                       g;
+  double                               triangulation_cell_diameter;
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;
