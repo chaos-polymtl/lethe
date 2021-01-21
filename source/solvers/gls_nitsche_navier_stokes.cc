@@ -332,7 +332,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           this->iterate();
         }
 
-      this->postprocess_fd(false);
+      this->postprocess(false);
       // postprocess_ht();
       if (this->simulation_parameters.nitsche->calculate_force_on_solid &&
           dim == 2 && spacedim == 3)
@@ -348,7 +348,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
           output_solid_triangulation();
         }
 
-      this->finish_time_step_fd();
+      this->finish_time_step();
       if (this->simulation_parameters.multiphysics.heat_transfer)
         {
           //          finish_time_step_ht();
