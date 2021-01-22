@@ -56,6 +56,8 @@ HeatTransfer<dim>::assemble_system(
 
   const double rho_cp = density * specific_heat;
 
+  const double alpha = thermal_conductivity / rho_cp;
+
   if (assemble_matrix)
     system_matrix = 0;
   system_rhs = 0;
@@ -68,6 +70,11 @@ HeatTransfer<dim>::assemble_system(
   // 3 - n-2
   std::vector<double> time_steps_vector =
     simulation_control->get_time_steps_vector();
+
+  // Time steps and inverse time steps which is used for numerous calculations
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
 
   Vector<double> bdf_coefs;
 
@@ -102,7 +109,8 @@ HeatTransfer<dim>::assemble_system(
   FEValues<dim>     fe_values_ht(fe,
                              quadrature_formula,
                              update_values | update_gradients |
-                               update_quadrature_points | update_JxW_values);
+                               update_quadrature_points | update_JxW_values |
+                               update_hessians | update_JxW_values);
 
   auto &evaluation_point = this->get_evaluation_point();
 
@@ -112,7 +120,6 @@ HeatTransfer<dim>::assemble_system(
   Vector<double>     cell_rhs(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const unsigned int                   n_q_points = quadrature_formula.size();
-  std::vector<Tensor<1, dim>>          temperature_gradients(n_q_points);
   std::vector<double>                  source_term_values(n_q_points);
 
 
@@ -136,6 +143,9 @@ HeatTransfer<dim>::assemble_system(
   // Shape functions and gradients
   std::vector<double>         phi_T(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_T(dofs_per_cell);
+  std::vector<Tensor<2, dim>> hess_phi_T(dofs_per_cell);
+  std::vector<double>         laplacian_phi_T(dofs_per_cell);
+
 
   // Velocity values
   const FEValuesExtractors::Vector velocities(0);
@@ -144,8 +154,10 @@ HeatTransfer<dim>::assemble_system(
   std::vector<Tensor<1, dim>> velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> velocity_gradient_values(n_q_points);
 
-  std::vector<double> present_temperature_values(n_q_points);
-  std::vector<double> present_face_temperature_values(
+  std::vector<double>         present_temperature_values(n_q_points);
+  std::vector<Tensor<1, dim>> temperature_gradients(n_q_points);
+  std::vector<double>         present_temperature_laplacians(n_q_points);
+  std::vector<double>         present_face_temperature_values(
     face_quadrature_formula.size());
 
   // Values for backward Euler scheme
@@ -159,6 +171,13 @@ HeatTransfer<dim>::assemble_system(
         {
           cell_matrix = 0;
           cell_rhs    = 0;
+          double h    = 0;
+
+          if (dim == 2)
+            h = std::sqrt(4. * cell->measure() / M_PI) / fe.degree;
+          else if (dim == 3)
+            h = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe.degree;
+
           fe_values_ht.reinit(cell);
 
           fe_values_ht.get_function_gradients(evaluation_point,
@@ -193,6 +212,11 @@ HeatTransfer<dim>::assemble_system(
           fe_values_ht.get_function_values(evaluation_point,
                                            present_temperature_values);
 
+
+          // Gather present laplacian
+          fe_values_ht.get_function_laplacians(evaluation_point,
+                                               present_temperature_laplacians);
+
           // Gather the previous time steps for heat transfer depending on
           // the number of stages of the time integration method
           if (time_stepping_method !=
@@ -217,38 +241,82 @@ HeatTransfer<dim>::assemble_system(
             {
               // Store JxW in local variable for faster access
               const double JxW = fe_values_ht.JxW(q);
+
+              const auto velocity = velocity_values[q];
+
+
+              // Calculation of the magnitude of the velocity for the
+              // stabilization parameter
+              const double u_mag = std::max(velocity.norm(), 1e-12);
+
+              // Calculation of the GLS stabilization parameter. The
+              // stabilization parameter used is different if the simulation is
+              // steady or unsteady. In the unsteady case it includes the value
+              // of the time-step
+              const double tau =
+                is_steady(time_stepping_method) ?
+                  1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
+                                 9 * std::pow(4 * alpha / (h * h), 2)) :
+                  1. / std::sqrt(std::pow(sdt, 2) +
+                                 std::pow(2. * rho_cp * u_mag / h, 2) +
+                                 9 * std::pow(4 * alpha / (h * h), 2));
+
               // Gather the shape functions and their gradient
               for (unsigned int k : fe_values_ht.dof_indices())
                 {
                   phi_T[k]      = fe_values_ht.shape_value(k, q);
                   grad_phi_T[k] = fe_values_ht.shape_grad(k, q);
+                  hess_phi_T[k] = fe_values_ht.shape_hessian(k, q);
+
+                  laplacian_phi_T[k] = trace(hess_phi_T[k]);
                 }
+
+
 
               for (const unsigned int i : fe_values_ht.dof_indices())
                 {
                   const auto phi_T_i      = phi_T[i];
                   const auto grad_phi_T_i = grad_phi_T[i];
 
+
                   if (assemble_matrix)
                     {
                       for (const unsigned int j : fe_values_ht.dof_indices())
                         {
-                          const auto phi_T_j      = phi_T[j];
-                          const auto grad_phi_T_j = grad_phi_T[j];
+                          const auto phi_T_j           = phi_T[j];
+                          const auto grad_phi_T_j      = grad_phi_T[j];
+                          const auto laplacian_phi_T_j = laplacian_phi_T[j];
 
-                          // Weak form for : - k * laplacian T + rho * cp * u *
-                          //                      gradT - f - grad(u)*grad(u) =0
+
+
+                          // Weak form for : - k * laplacian T + rho * cp *
+                          // u
+                          // *
+                          //                      gradT - f -
+                          //                      grad(u)*grad(u) =0
                           cell_matrix(i, j) +=
                             (thermal_conductivity * grad_phi_T_i *
                                grad_phi_T_j +
-                             rho_cp * phi_T_i * velocity_values[q] *
-                               grad_phi_T_j) *
+                             rho_cp * phi_T_i * velocity * grad_phi_T_j) *
                             JxW;
+
+                          auto strong_jacobian =
+                            rho_cp * velocity * grad_phi_T_j -
+                            thermal_conductivity * laplacian_phi_T_j;
 
                           // Mass matrix for transient simulation
                           if (is_bdf(time_stepping_method))
-                            cell_matrix(i, j) +=
-                              rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
+                            {
+                              cell_matrix(i, j) +=
+                                rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
+
+                              strong_jacobian +=
+                                rho_cp * phi_T_j * bdf_coefs[0];
+                            }
+
+                          cell_matrix(i, j) +=
+                            tau * strong_jacobian *
+                            (grad_phi_T_i * velocity_values[q]) * JxW;
                         }
                     }
 
@@ -266,35 +334,69 @@ HeatTransfer<dim>::assemble_system(
                                       transpose(velocity_gradient_values[q]))) *
                     JxW;
 
+                  // Calculate the strong residual for GLS stabilization
+                  auto strong_residual =
+                    rho_cp * velocity_values[q] * temperature_gradients[q] -
+                    thermal_conductivity * present_temperature_laplacians[q];
+
+
+
                   // Residual associated with BDF schemes
                   if (time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::bdf1 ||
                       time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::steady_bdf)
-                    cell_rhs(i) -=
-                      rho_cp *
-                      (bdf_coefs[0] * present_temperature_values[q] +
-                       bdf_coefs[1] * p1_temperature_values[q]) *
-                      phi_T_i * JxW;
+                    {
+                      cell_rhs(i) -=
+                        rho_cp *
+                        (bdf_coefs[0] * present_temperature_values[q] +
+                         bdf_coefs[1] * p1_temperature_values[q]) *
+                        phi_T_i * JxW;
+
+                      strong_residual +=
+                        rho_cp * (bdf_coefs[0] * present_temperature_values[q] +
+                                  bdf_coefs[1] * p1_temperature_values[q]);
+                    }
 
                   if (time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    cell_rhs(i) -=
-                      rho_cp *
-                      (bdf_coefs[0] * present_temperature_values[q] +
-                       bdf_coefs[1] * p1_temperature_values[q] +
-                       bdf_coefs[2] * p2_temperature_values[q]) *
-                      phi_T_i * JxW;
+                    {
+                      cell_rhs(i) -=
+                        rho_cp *
+                        (bdf_coefs[0] * present_temperature_values[q] +
+                         bdf_coefs[1] * p1_temperature_values[q] +
+                         bdf_coefs[2] * p2_temperature_values[q]) *
+                        phi_T_i * JxW;
+
+                      strong_residual +=
+                        rho_cp * (bdf_coefs[0] * present_temperature_values[q] +
+                                  bdf_coefs[1] * p1_temperature_values[q] +
+                                  bdf_coefs[2] * p2_temperature_values[q]);
+                    }
 
                   if (time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                    cell_rhs(i) -=
-                      rho_cp *
-                      (bdf_coefs[0] * present_temperature_values[q] +
-                       bdf_coefs[1] * p1_temperature_values[q] +
-                       bdf_coefs[2] * p2_temperature_values[q] +
-                       bdf_coefs[3] * p3_temperature_values[q]) *
-                      phi_T_i * JxW;
+                    {
+                      cell_rhs(i) -=
+                        rho_cp *
+                        (bdf_coefs[0] * present_temperature_values[q] +
+                         bdf_coefs[1] * p1_temperature_values[q] +
+                         bdf_coefs[2] * p2_temperature_values[q] +
+                         bdf_coefs[3] * p3_temperature_values[q]) *
+                        phi_T_i * JxW;
+
+                      strong_residual +=
+                        rho_cp * (bdf_coefs[0] * present_temperature_values[q] +
+                                  bdf_coefs[1] * p1_temperature_values[q] +
+                                  bdf_coefs[2] * p2_temperature_values[q] +
+                                  bdf_coefs[3] * p3_temperature_values[q]);
+                    }
+
+
+                  cell_rhs(i) -=
+                    tau *
+                    (strong_residual * (grad_phi_T_i * velocity_values[q])) *
+                    JxW;
                 }
 
             } // end loop on quadrature points
