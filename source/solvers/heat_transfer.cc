@@ -110,7 +110,7 @@ HeatTransfer<dim>::assemble_system(
                              quadrature_formula,
                              update_values | update_gradients |
                                update_quadrature_points | update_JxW_values |
-                               update_hessians | update_JxW_values);
+                               update_hessians);
 
   auto &evaluation_point = this->get_evaluation_point();
 
@@ -290,10 +290,8 @@ HeatTransfer<dim>::assemble_system(
 
 
                           // Weak form for : - k * laplacian T + rho * cp *
-                          // u
-                          // *
-                          //                      gradT - f -
-                          //                      grad(u)*grad(u) =0
+                          //                  u * gradT - f -
+                          //                  mu*tau:grad(u) =0
                           cell_matrix(i, j) +=
                             (thermal_conductivity * grad_phi_T_i *
                                grad_phi_T_j +
