@@ -95,7 +95,8 @@ template <int dim>
 void
 Visualization<dim>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, dim> &                   g)
+  const Tensor<1, dim> &                   g,
+  const ConditionalOStream &               pcout)
 {
   // Storing local particles in a map for writing
   std::map<int, Particles::ParticleIterator<dim>> local_particles;
@@ -121,11 +122,9 @@ Visualization<dim>::print_xyz(
     }
 
   std::vector<int> precision = {0, 0, 5, 3, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1};
-  if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0)
-    std::cout
-      << "id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
-         "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
-      << std::endl;
+  pcout << "id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
+           "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
+        << std::endl;
 
   unsigned int counter;
   for (auto &iterator : local_particles)
@@ -136,7 +135,7 @@ Visualization<dim>::print_xyz(
 
       // Writing ID
       std::cout.precision(precision[0]);
-      std::cout << std::fixed << id << " ";
+      pcout << std::fixed << id << " ";
 
       // Since ID is written manually, counter starts from 1
       counter = 1;
@@ -147,10 +146,9 @@ Visualization<dim>::print_xyz(
            ++property_number, ++counter)
         {
           std::cout.precision(precision[counter]);
-          std::cout << std::fixed << particle_properties[property_number]
-                    << " ";
+          pcout << std::fixed << particle_properties[property_number] << " ";
         }
-      std::cout << std::endl;
+      pcout << std::endl;
     }
 }
 

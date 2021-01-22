@@ -49,7 +49,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
               physical_properties.particle_size_std.at(i) <
           0)
         {
-          std::cout
+          pcout
             << "Warning: Requested particle size distribution for type: " << i
             << " is not well-defined. Using requested distribution may lead to "
                "changes in sampled particle sizes to avoid negative particle "
@@ -58,6 +58,16 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
             << std::endl;
         }
     }
+
+  // Insertion parameters checking
+  if (parameters.insertion_info.random_number_range >=
+      (0.5 * (parameters.insertion_info.distance_threshold - 1)))
+    pcout
+      << "Warning: Particles may have collision at the insertion step. This can lead"
+         " to high initial velocities (due to initial overlap) or errors when using "
+         "less stable integration schemes. It is recommended to decrease the random "
+         "number range or to increase the insertion distance threshold."
+      << std::endl;
 }
 
 template void
