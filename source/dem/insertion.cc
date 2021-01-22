@@ -241,7 +241,7 @@ template <>
 bool
 Insertion<2>::particle_on_processor(const unsigned int &i,
                                     const unsigned int &j,
-                                    const unsigned int &k,
+                                    const unsigned int & /*k*/,
                                     const unsigned int &this_mpi_process,
                                     const unsigned int &number_of_processors)
 {
