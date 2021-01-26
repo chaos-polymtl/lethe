@@ -62,25 +62,11 @@ template <int dim>
 void
 GLSVANSSolver<dim>::read_dem()
 {
-  DEMSolverParameters<dim>             parameters;
-  Particles::ParticleHandler<dim, dim> particle_handler;
-  Particles::PropertyPool property_pool(DEM::get_number_properties());
-  parallel::distributed::Triangulation<dim> triangulation(
-    this->mpi_communicator);
-  MappingQGeneric<dim> mapping(1);
-  PVDHandler           particles_pvdhandler;
-
-  std::shared_ptr<SimulationControl> simulation_control;
-
-  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
-  std::string        prefix = parameters.restart.filename;
-  simulation_control->read(prefix);
-  particles_pvdhandler.read(prefix);
-
-  triangulation.signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              true));
+  std::string prefix = "dem_restart"; // this->parameters.restart.filename;
+  //  this->triangulation.signals.post_distributed_load.connect(
+  //    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+  //              &particle_handler,
+  //              true));
 
   // Gather particle serialization information
   std::string   particle_filename = prefix + ".particles";
@@ -104,18 +90,17 @@ GLSVANSSolver<dim>::read_dem()
                     "but the restart file <") +
                   filename + "> does not appear to exist!"));
 
-  try
-    {
-      triangulation.load(filename.c_str());
-    }
-  catch (...)
-    {
-      AssertThrow(false,
-                  ExcMessage("Cannot open snapshot mesh file or read the "
-                             "triangulation stored there."));
-    }
+  //  try
+  //    {
+  //      this->triangulation.load(filename.c_str());
+  //    }
+  //  catch (...)
+  //    {
+  //      AssertThrow(false,
+  //                  ExcMessage("Cannot open snapshot mesh file or read the "
+  //                             "triangulation stored there."));
+  //    }
 }
-
 
 template <int dim>
 void
@@ -996,8 +981,8 @@ GLSVANSSolver<dim>::solve()
     this->simulation_parameters.boundary_conditions);
 
   setup_dofs();
-  if (parameters.restart.restart == true)
-    read_dem();
+  // if (parameters.restart.restart == true)
+  read_dem();
   calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
