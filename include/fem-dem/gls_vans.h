@@ -132,6 +132,7 @@ private:
   FE_Q<dim>       fe_void_fraction;
 
   Vector<double>                       cell_void_fraction;
+  MappingQGeneric<dim>                 particle_mapping;
   Particles::ParticleHandler<dim, dim> particle_handler;
 
   // Solution of the void fraction at previous time steps

@@ -6,8 +6,10 @@ GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
   , void_fraction_dof_handler(*this->triangulation)
   , fe_void_fraction(p_nsparam.fem_parameters.velocity_order)
-
-
+  , particle_mapping(1)
+  , particle_handler(*this->triangulation,
+                     particle_mapping,
+                     DEM::get_number_properties())
 {}
 
 template <int dim>
@@ -115,6 +117,8 @@ GLSVANSSolver<dim>::read_dem()
       throw std::runtime_error(
         "VANS equations currently do not support triangulations other than parallel::distributed");
     }
+
+  setup_dofs();
 }
 
 template <int dim>
