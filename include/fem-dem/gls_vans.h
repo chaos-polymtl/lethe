@@ -128,14 +128,8 @@ protected:
 
 protected:
 private:
-  // parallel::distributed::Triangulation<dim> triangulation;
-
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
-
-  const auto parallel_triangulation =
-    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
-      &*this->triangulation);
 
   Vector<double>                       cell_void_fraction;
   Particles::ParticleHandler<dim, dim> particle_handler;

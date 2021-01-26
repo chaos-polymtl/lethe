@@ -62,6 +62,8 @@ namespace Parameters
   public:
     VoidFractionMode               mode;
     Functions::ParsedFunction<dim> void_fraction;
+    bool                           read_dem;
+    std::string                    dem_file_name;
   };
 
 
