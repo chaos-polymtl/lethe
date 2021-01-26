@@ -33,10 +33,7 @@
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
-//#include <core/pvd_handler.h>
-//#include <core/simulation_control.h>
 #include <dem/dem.h>
-//#include <dem/dem_solver_parameters.h>
 
 #include "core/bdf.h"
 #include "core/grids.h"
