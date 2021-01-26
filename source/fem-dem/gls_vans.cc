@@ -135,16 +135,27 @@ template <int dim>
 void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
-  this->simulation_parameters.void_fraction->void_fraction.set_time(time);
+  if (this->simulation_parameters.void_fraction->mode ==
+      Parameters::VoidFractionMode::function)
+    {
+      const MappingQ<dim> mapping(this->velocity_fem_degree);
+
+      this->simulation_parameters.void_fraction->void_fraction.set_time(time);
 
 
-  VectorTools::interpolate(
-    *this->mapping,
-    void_fraction_dof_handler,
-    this->simulation_parameters.void_fraction->void_fraction,
-    nodal_void_fraction_owned);
+      VectorTools::interpolate(
+        mapping,
+        void_fraction_dof_handler,
+        this->simulation_parameters.void_fraction->void_fraction,
+        nodal_void_fraction_owned);
 
-  nodal_void_fraction_relevant = nodal_void_fraction_owned;
+      nodal_void_fraction_relevant = nodal_void_fraction_owned;
+    }
+  else if (this->simulation_parameters.void_fraction->mode ==
+           Parameters::VoidFractionMode::dem)
+    {
+      // Use the PCM method to determine the void fraction
+    }
 }
 
 // Do an iteration with the NavierStokes Solver
@@ -998,6 +1009,7 @@ GLSVANSSolver<dim>::solve()
   setup_dofs();
   if (this->simulation_parameters.void_fraction->read_dem == true)
     read_dem();
+  setup_dofs();
   calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,

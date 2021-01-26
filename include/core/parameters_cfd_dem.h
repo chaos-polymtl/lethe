@@ -40,7 +40,8 @@ namespace Parameters
 {
   enum class VoidFractionMode
   {
-    function
+    function,
+    dem
   };
 
 
