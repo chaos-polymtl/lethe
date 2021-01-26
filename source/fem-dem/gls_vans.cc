@@ -67,6 +67,7 @@ GLSVANSSolver<dim>::read_dem()
       &*this->triangulation);
 
   std::string prefix = this->simulation_parameters.void_fraction->dem_file_name;
+
   parallel_triangulation->signals.post_distributed_load.connect(
     std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
               &particle_handler,
@@ -981,7 +982,8 @@ GLSVANSSolver<dim>::solve()
     this->triangulation,
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.restart_parameters.restart ||
+      this->simulation_parameters.void_fraction->read_dem == true,
     this->simulation_parameters.boundary_conditions);
 
   setup_dofs();
