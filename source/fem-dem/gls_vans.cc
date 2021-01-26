@@ -90,16 +90,26 @@ GLSVANSSolver<dim>::read_dem()
                     "but the restart file <") +
                   filename + "> does not appear to exist!"));
 
-  //  try
-  //    {
-  //      this->triangulation.load(filename.c_str());
-  //    }
-  //  catch (...)
-  //    {
-  //      AssertThrow(false,
-  //                  ExcMessage("Cannot open snapshot mesh file or read the "
-  //                             "triangulation stored there."));
-  //    }
+  if (auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation))
+    {
+      try
+        {
+          parallel_triangulation->load(filename.c_str());
+        }
+      catch (...)
+        {
+          AssertThrow(false,
+                      ExcMessage("Cannot open snapshot mesh file or read the"
+                                 "triangulation stored there."));
+        }
+    }
+  else
+    {
+      throw std::runtime_error(
+        "VANS equations currently do not support triangulations other than parallel::distributed");
+    }
 }
 
 template <int dim>
