@@ -1006,7 +1006,6 @@ GLSVANSSolver<dim>::solve()
       this->simulation_parameters.void_fraction->read_dem == true,
     this->simulation_parameters.boundary_conditions);
 
-  setup_dofs();
   if (this->simulation_parameters.void_fraction->read_dem == true)
     read_dem();
   setup_dofs();
