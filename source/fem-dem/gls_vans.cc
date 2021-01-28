@@ -144,7 +144,31 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
   else if (this->simulation_parameters.void_fraction->mode ==
            Parameters::VoidFractionMode::dem)
     {
-      // Use the PCM method to determine the void fraction
+      // Loop over cells of the domain
+      for (const auto &cell : this->dof_handler.active_cell_iterators())
+        if (cell->is_locally_owned())
+          {double particles_volume_in_cell = 0;
+          
+            // Loop over particles in cell
+            // Begin and end iterator for particles in cell
+            const auto pic = particle_handler.particles_in_cell(cell);
+            for (auto &particle : pic)
+              {
+                auto particle_properties = particle.get_properties();
+                if (dim == 2)
+                  particles_volume_in_cell +=
+                M_PI *pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4;
+                if (dim == 3)
+                  particles_volume_in_cell +=
+                    M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], 3) /
+                    6;
+              }
+            double cell_volume = cell->measure();
+            double cell_void_fraction =
+              (cell_volume - particles_volume_in_cell) / cell_volume;
+            std::cout << "Cell Void Fraction = "
+                      << " " << cell_void_fraction << std::endl;
+          }
     }
 }
 
