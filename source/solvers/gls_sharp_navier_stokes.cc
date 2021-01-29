@@ -81,9 +81,35 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
-  particles = this->simulation_parameters.particlesParameters.particles;
-  table_f.resize(particles.size());
-  table_t.resize(particles.size());
+    particles = this->simulation_parameters.particlesParameters.particles;
+    table_f.resize(particles.size());
+    table_t.resize(particles.size());
+
+    for (unsigned int p = 0; p < particles.size(); ++p) {
+
+        particles[p].forces[0]=0;
+        particles[p].forces[1]=0;
+        particles[p].last_forces[0]=0;
+        particles[p].last_forces[1]=0;
+        particles[p].last_torques=0;
+        if (dim==3) {
+            particles[p].forces[2] = 0;
+            particles[p].last_forces[2] = 0;
+        }
+        particles[p].last_velocity=particles[p].velocity;
+        particles[p].velocity_iter=particles[p].velocity;
+        particles[p].last_position=particles[p].position;
+
+        particles[p].last_omega=particles[p].omega;
+        particles[p].omega_iter=particles[p].omega;
+        particles[p].angular_position[0]=0;
+        particles[p].angular_position[1]=0;
+        particles[p].angular_position[2]=0;
+        particles[p].last_angular_position=particles[p].angular_position;
+        particles[p].local_alpha_torque=1;
+        particles[p].local_alpha_force=1;
+
+    }
 }
 
 
@@ -157,7 +183,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     GridTools::minimal_cell_diameter(*this->triangulation);
 
   double dr = (min_cell_diameter) / std::sqrt(2);
-
+  double rho= this->simulation_parameters.particlesParameters.density;
   // Define stuff for later use
   using numbers::PI;
   Point<dim> center_immersed;
@@ -187,8 +213,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         this->simulation_parameters.particlesParameters.nb_force_eval;
 
       // Loop on all particles
-      for (unsigned int p = 0; p < particles.size(); ++p)
-        {
+      for (unsigned int p = 0; p < particles.size(); ++p) {
           // Define the center
           center_immersed = particles[p].position;
 
@@ -196,16 +221,15 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
           double t_torque = 0;
           // unsigned int nb_eval=0;
-          double fx_v   = 0;
-          double fy_v   = 0;
+          double fx_v = 0;
+          double fy_v = 0;
           double fx_p_2 = 0;
           double fy_p_2 = 0;
 
 
           // loop on all the evaluation point
 
-          for (unsigned int i = 0; i < nb_evaluation; ++i)
-            {
+          for (unsigned int i = 0; i < nb_evaluation; ++i) {
               // define the normal to the surface evaluated and the vector that
               // is along the surface.
               Tensor<1, dim, double> surf_normal;
@@ -214,46 +238,45 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
               surf_normal[0] = dr * cos(i * 2 * PI / (nb_evaluation));
               surf_normal[1] = dr * sin(i * 2 * PI / (nb_evaluation));
-              surf_vect[0]   = -surf_normal[1];
-              surf_vect[1]   = surf_normal[0];
-              double da      = 2 * PI * particles[p].radius / (nb_evaluation);
+              surf_vect[0] = -surf_normal[1];
+              surf_vect[1] = surf_normal[0];
+              double da = 2 * PI * particles[p].radius / (nb_evaluation);
               // define the reference point for the surface evaluated.
               // the step ratio is the proportion constant used to multiplie the
               // size of the smallest cell (dr) the step done are then:
               // step_ratio * dr
-              double           step_ratio = 0.5;
+              double step_ratio = 0.5;
               const Point<dim> eval_point(
-                particles[p].radius * cos(i * 2 * PI / (nb_evaluation)) +
-                  center_immersed(0),
-                particles[p].radius * sin(i * 2 * PI / (nb_evaluation)) +
-                  center_immersed(1));
+                      particles[p].radius * cos(i * 2 * PI / (nb_evaluation)) +
+                      center_immersed(0),
+                      particles[p].radius * sin(i * 2 * PI / (nb_evaluation)) +
+                      center_immersed(1));
 
               // step in the normal direction of the surface until we find a
               // cell that is not cut by the immersed boundary of the particule
               // p.
-              unsigned int     nb_step    = 0;
-              bool             cell_found = false;
+              unsigned int nb_step = 0;
+              bool cell_found = false;
               const Point<dim> eval_point_2(
-                eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
-                eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
+                      eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                      eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
 
               // step in the normal direction to the surface until the point
               // used for the ib stencil is not in a cell that is cut by the
               // boundary.
-              while (cell_found == false)
-                {
+              while (cell_found == false) {
                   // define the new point
                   Point<dim> eval_point_iter(
-                    eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
-                    eval_point[1] +
-                      surf_normal[1] * (nb_step + 1) * step_ratio);
+                          eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                          eval_point[1] +
+                          surf_normal[1] * (nb_step + 1) * step_ratio);
                   /*const auto &cell_iter =
                     GridTools::find_active_cell_around_point(this->dof_handler,
                                                              eval_point_iter);*/
                   // std::cout << "before cell found " << i << std::endl;
                   const auto &cell_iter =
-                    find_cell_around_point_with_tree(this->dof_handler,
-                                                     eval_point_iter);
+                          find_cell_around_point_with_tree(this->dof_handler,
+                                                           eval_point_iter);
                   // std::cout << "cell found " << i<< std::endl;
                   // std::cout << "cell found v index " << cell_vertex_map.first
                   // << std::endl; std::cout << "cell found map " <<
@@ -261,50 +284,42 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
 
-                  if (cell_iter->is_artificial() == false)
-                    {
+                  if (cell_iter->is_artificial() == false) {
                       // const auto
                       // &cell_iter=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       cell_iter->get_dof_indices(local_dof_indices);
                       // std::cout << "got dof _indices " << std::endl;
                       unsigned int count_small = 0;
-                      center_immersed          = particles[p].position;
+                      center_immersed = particles[p].position;
 
                       // check if the cell is cut
                       for (unsigned int j = 0; j < local_dof_indices.size();
-                           ++j)
-                        {
+                           ++j) {
                           // count the number of dof that ar smaller or larger
                           // then the radius of the particles if all the dof are
                           // on one side the cell is not cut by the boundary
                           // meaning we dont have to do anything
                           if ((support_points[local_dof_indices[j]] -
                                center_immersed)
-                                .norm() <= particles[p].radius)
-                            {
+                                      .norm() <= particles[p].radius) {
                               ++count_small;
-                            }
-                        }
+                          }
+                      }
 
                       if (count_small != 0 and
-                          count_small != local_dof_indices.size())
-                        {
+                          count_small != local_dof_indices.size()) {
                           cell_found = false;
-                        }
-                      else
-                        {
+                      } else {
                           cell_found = true;
-                        }
+                      }
 
                       // step a bit further away from the boundary.
                       if (cell_found == false)
-                        nb_step += 1;
-                    }
-                  else
-                    {
+                          nb_step += 1;
+                  } else {
                       break;
-                    }
-                }
+                  }
+              }
 
 
               // when the point is found outside cell that are cut by the
@@ -312,22 +327,21 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
               // interpolation and  extrapolation of the solution  to evalutate
               // the force on the boundart
               const Point<dim> second_point(
-                eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
-                eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
+                      eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                      eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio);
               const Point<dim> third_point(second_point[0] +
-                                             surf_normal[0] * step_ratio,
+                                           surf_normal[0] * step_ratio,
                                            second_point[1] +
-                                             surf_normal[1] * step_ratio);
+                                           surf_normal[1] * step_ratio);
               const Point<dim> fourth_point(third_point[0] +
-                                              surf_normal[0] * step_ratio,
+                                            surf_normal[0] * step_ratio,
                                             third_point[1] +
-                                              surf_normal[1] * step_ratio);
-
+                                            surf_normal[1] * step_ratio);
 
 
               const auto &cell_2 =
-                find_cell_around_point_with_tree(this->dof_handler,
-                                                 second_point);
+                      find_cell_around_point_with_tree(this->dof_handler,
+                                                       second_point);
 
 
 
@@ -335,16 +349,15 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
               // if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
               // const auto
               // &cell_2=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
-              if (cell_2->is_locally_owned())
-                {
+              if (cell_2->is_locally_owned()) {
                   const auto &cell_3 =
-                    find_cell_around_point_with_tree(this->dof_handler,
-                                                     third_point);
+                          find_cell_around_point_with_tree(this->dof_handler,
+                                                           third_point);
                   // =
                   // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                   const auto &cell_4 =
-                    find_cell_around_point_with_tree(this->dof_handler,
-                                                     fourth_point);
+                          find_cell_around_point_with_tree(this->dof_handler,
+                                                           fourth_point);
                   // const auto &cell_4 =
                   // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                   cell_2->get_dof_indices(local_dof_indices);
@@ -378,14 +391,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // used support function of the cell to define the
                   // interpolation of the velocity
                   Point<dim> second_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_2,
-                                                             second_point);
+                          immersed_map.transform_real_to_unit_cell(cell_2,
+                                                                   second_point);
                   Point<dim> third_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_3,
-                                                             third_point);
+                          immersed_map.transform_real_to_unit_cell(cell_3,
+                                                                   third_point);
                   Point<dim> fourth_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_4,
-                                                             fourth_point);
+                          immersed_map.transform_real_to_unit_cell(cell_4,
+                                                                   fourth_point);
 
                   // initialise the component of the velocity
                   u_2[0] = 0;
@@ -400,8 +413,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                   // define the interpolation of the cell in order to have the
                   // solution at the point previously define
-                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                    {
+                  for (unsigned int j = 0; j < local_dof_indices.size(); ++j) {
                       auto &present_solution = this->present_solution;
                       const unsigned int component_i =
                         this->fe->system_to_component_index(j).first;
@@ -423,8 +435,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                 present_solution(local_dof_indices_2[j]);
                           P3 += this->fe->shape_value(j, fourth_point_v) *
                                 present_solution(local_dof_indices_3[j]);
-                        }
-                    }
+                      }
+                  }
                   // Evaluate the solution in the reference frame of the
                   // particle
                   u_2[0] = u_2[0] - particles[p].velocity[0];
@@ -440,69 +452,69 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                   // Project the velocity along the normal
                   double U1_r =
-                    (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
-                    surf_normal.norm();
+                          (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1]) /
+                          surf_normal.norm();
                   double U2_r =
-                    (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
-                    surf_normal.norm();
+                          (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1]) /
+                          surf_normal.norm();
                   double U3_r =
-                    (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
-                    surf_normal.norm();
+                          (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1]) /
+                          surf_normal.norm();
 
 
                   // Define the 2nd order stencil for the derivative at the
                   // boundary with variable length between the points
                   double du_dn_1 =
-                    (U2 / (particles[p].radius +
-                           surf_normal.norm() * (nb_step + 1) * step_ratio) -
-                     U1 / particles[p].radius) /
-                    ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                          (U2 / (particles[p].radius +
+                                 surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                           U1 / particles[p].radius) /
+                          ((nb_step + 1) * surf_normal.norm() * step_ratio);
                   double du_dn_2 =
-                    (U3 / (particles[p].radius +
-                           surf_normal.norm() * (nb_step + 2) * step_ratio) -
-                     U2 / (particles[p].radius +
-                           surf_normal.norm() * (nb_step + 1) * step_ratio)) /
-                    (surf_normal.norm() * step_ratio);
+                          (U3 / (particles[p].radius +
+                                 surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                           U2 / (particles[p].radius +
+                                 surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                          (surf_normal.norm() * step_ratio);
 
                   double du_dr_1 =
-                    (U2_r - U1_r) /
-                    ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                          (U2_r - U1_r) /
+                          ((nb_step + 1) * surf_normal.norm() * step_ratio);
                   double du_dr_2 =
-                    (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
+                          (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
 
 
                   double du_dn = du_dn_1 - (du_dn_2 - du_dn_1) * (nb_step + 1) /
-                                             ((nb_step + 1) + 1);
+                                           ((nb_step + 1) + 1);
                   double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) * (nb_step + 1) /
-                                             ((nb_step + 1) + 1);
+                                           ((nb_step + 1) + 1);
 
                   // Define the 3rd order stencil for the solution at the
                   // boundary of the pressure  with variable length between the
                   // points
                   double P_local = P1 + (nb_step + 1) * (P1 - P2) +
                                    ((nb_step + 2) * (nb_step + 1) / 2) *
-                                     ((P1 - P2) - (P2 - P3));
+                                   ((P1 - P2) - (P2 - P3));
 
 
                   // Evaluate the local force on the boundary
 
                   // First evaluate the viscous force
                   double local_fx_v =
-                    ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
-                     (-particles[p].radius * mu * du_dn * surf_vect[0] /
-                      surf_vect.norm())) *
-                    da;
+                          ((-mu * du_dr * 2 * surf_normal[0] / surf_normal.norm()) +
+                           (-particles[p].radius * mu * du_dn * surf_vect[0] /
+                            surf_vect.norm())) *
+                          da;
                   double local_fy_v =
-                    ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
-                     (-particles[p].radius * mu * du_dn * surf_vect[1] /
-                      surf_vect.norm())) *
-                    da;
+                          ((-mu * du_dr * 2 * surf_normal[1] / surf_normal.norm()) +
+                           (-particles[p].radius * mu * du_dn * surf_vect[1] /
+                            surf_vect.norm())) *
+                          da;
 
                   // Second evaluate the pressure force
                   double local_fx_p_2 =
-                    P_local * da * surf_normal[0] / surf_normal.norm();
+                          P_local * da * surf_normal[0] / surf_normal.norm();
                   double local_fy_p_2 =
-                    P_local * da * surf_normal[1] / surf_normal.norm();
+                          P_local * da * surf_normal[1] / surf_normal.norm();
 
 
                   // add the local contribution to the global force evaluation
@@ -511,96 +523,28 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   fx_p_2 += -local_fx_p_2;
                   fy_p_2 += -local_fy_p_2;
                   t_torque += local_fx_v * sin(i * 2 * PI / (nb_evaluation)) *
-                                particles[p].radius -
+                              particles[p].radius -
                               local_fy_v * cos(i * 2 * PI / (nb_evaluation)) *
-                                particles[p].radius;
+                              particles[p].radius;
                   // nb_eval+=1;
-                }
+              }
               //}
-            }
+          }
 
           // Reduce the solution for each process
           double t_torque_ =
-            Utilities::MPI::sum(t_torque, this->mpi_communicator);
+                  Utilities::MPI::sum(t_torque, this->mpi_communicator);
           double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
           double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
-          double fx_v_   = Utilities::MPI::sum(fx_v, this->mpi_communicator);
-          double fy_v_   = Utilities::MPI::sum(fy_v, this->mpi_communicator);
+          double fx_v_ = Utilities::MPI::sum(fx_v, this->mpi_communicator);
+          double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator);
           // unsigned int nb_eval_total   = Utilities::MPI::sum(nb_eval,
           // this->mpi_communicator);
+          particles[p].forces[0] = fx_p_2_ + fx_v_;
+          particles[p].forces[1] = fy_p_2_ + fy_v_;
+          particles[p].torques[2] = t_torque_;
 
-
-          // Present the solution of the force on the boundary of the particle p
-          if (this->this_mpi_process == 0)
-            {
-              if (this->simulation_parameters.forces_parameters.verbosity ==
-                  Parameters::Verbosity::verbose)
-                {
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-                  std::cout << "|  Force  summary particle : " << p
-                            << "             |" << std::endl;
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-
-                  std::cout << "particle : " << p
-                            << " total_torque :" << t_torque_ << std::endl;
-                  std::cout << "particle : " << p
-                            << " total_torque :" << t_torque_ << std::endl;
-                  std::cout << "fx_P: " << fx_p_2_ << std::endl;
-                  std::cout << "fy_P: " << fy_p_2_ << std::endl;
-                  std::cout << "fx_v: " << fx_v_ << std::endl;
-                  std::cout << "fy_v: " << fy_v_ << std::endl;
-
-
-                  table_t[p].add_value("particle ID", p);
-                  if (this->simulation_parameters.simulation_control.method !=
-                      Parameters::SimulationControl::TimeSteppingMethod::steady)
-                    table_t[p].add_value(
-                      "time", this->simulation_control->get_current_time());
-                  table_t[p].add_value("T_z", t_torque_);
-                  table_t[p].set_precision("T_z",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-
-
-
-                  table_f[p].add_value("particle ID", p);
-                  if (this->simulation_parameters.simulation_control.method !=
-                      Parameters::SimulationControl::TimeSteppingMethod::steady)
-                    table_f[p].add_value(
-                      "time", this->simulation_control->get_current_time());
-                  table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
-                  table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
-
-                  table_f[p].set_precision("f_x",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-                  table_f[p].set_precision("f_y",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-                }
-            }
-        }
-
-      if (this->this_mpi_process == 0)
-        {
-          if (this->simulation_parameters.forces_parameters.verbosity ==
-              Parameters::Verbosity::verbose)
-            {
-              for (unsigned int p = 0; p < particles.size(); ++p)
-                {
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-                  std::cout << "|  Force  summary particle " << p
-                            << "               |" << std::endl;
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-                  table_f[p].write_text(std::cout);
-                  table_t[p].write_text(std::cout);
-                }
-            }
-        }
+      }
     }
 
 
@@ -632,8 +576,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       // there is the same number of evaluation in theta and phi direction
       nb_evaluation = ceil(pow(nb_evaluation, 0.5));
 
-      for (unsigned int p = 0; p < particles.size(); ++p)
-        {
+      for (unsigned int p = 0; p < particles.size(); ++p) {
           const double center_x = particles[p].position[0];
           const double center_y = particles[p].position[1];
           const double center_z = particles[p].position[2];
@@ -652,32 +595,30 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
           double fy_p_2 = 0;
           double fz_p_2 = 0;
 
-          for (unsigned int i = 0; i < nb_evaluation; ++i)
-            {
-              for (unsigned int j = 0; j < nb_evaluation; ++j)
-                {
+          for (unsigned int i = 0; i < nb_evaluation; ++i) {
+              for (unsigned int j = 0; j < nb_evaluation; ++j) {
                   Tensor<1, dim, double> surf_normal;
                   Tensor<1, dim, double> surf_vect_1;
                   Tensor<1, dim, double> surf_vect_2;
 
-                  double theta  = (i + 0.5) * PI / (nb_evaluation);
-                  double phi    = j * 2 * PI / (nb_evaluation);
+                  double theta = (i + 0.5) * PI / (nb_evaluation);
+                  double phi = j * 2 * PI / (nb_evaluation);
                   double dtheta = PI / (nb_evaluation);
-                  double dphi   = 2 * PI / (nb_evaluation);
+                  double dphi = 2 * PI / (nb_evaluation);
 
                   double da =
-                    particles[p].radius * particles[p].radius * dphi *
-                    (-cos(theta + dtheta / 2) + cos(theta - dtheta / 2));
+                          particles[p].radius * particles[p].radius * dphi *
+                          (-cos(theta + dtheta / 2) + cos(theta - dtheta / 2));
 
                   const Point<dim> eval_point(
-                    particles[p].radius * sin(theta) * cos(phi) + center_x,
-                    particles[p].radius * sin(theta) * sin(phi) + center_y,
-                    particles[p].radius * cos(theta) + center_z);
+                          particles[p].radius * sin(theta) * cos(phi) + center_x,
+                          particles[p].radius * sin(theta) * sin(phi) + center_y,
+                          particles[p].radius * cos(theta) + center_z);
 
                   double step_ratio = 0.5;
-                  surf_normal[0]    = dr * (sin(theta) * cos(phi));
-                  surf_normal[1]    = dr * (sin(theta) * sin(phi));
-                  surf_normal[2]    = dr * (cos(theta));
+                  surf_normal[0] = dr * (sin(theta) * cos(phi));
+                  surf_normal[1] = dr * (sin(theta) * sin(phi));
+                  surf_normal[2] = dr * (cos(theta));
 
                   surf_vect_1[0] = dr * (sin(theta + PI / 2) * cos(phi));
                   surf_vect_1[1] = dr * (sin(theta + PI / 2) * sin(phi));
@@ -687,37 +628,33 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   surf_vect_2 = dr * surf_vect_2 / surf_vect_2.norm();
 
 
-                  unsigned int nb_step    = 0;
-                  bool         cell_found = false;
+                  unsigned int nb_step = 0;
+                  bool cell_found = false;
 
-                  while (cell_found == false)
-                    {
+                  while (cell_found == false) {
                       Point<dim> eval_point_2(
-                        eval_point[0] +
-                          surf_normal[0] * (nb_step + 1) * step_ratio,
-                        eval_point[1] +
-                          surf_normal[1] * (nb_step + 1) * step_ratio,
-                        eval_point[2] +
-                          surf_normal[2] * (nb_step + 1) * step_ratio);
+                              eval_point[0] +
+                              surf_normal[0] * (nb_step + 1) * step_ratio,
+                              eval_point[1] +
+                              surf_normal[1] * (nb_step + 1) * step_ratio,
+                              eval_point[2] +
+                              surf_normal[2] * (nb_step + 1) * step_ratio);
 
                       const auto &cell_iter =
-                        find_cell_around_point_with_tree(this->dof_handler,
-                                                         eval_point_2);
+                              find_cell_around_point_with_tree(this->dof_handler,
+                                                               eval_point_2);
 
-                      if (cell_iter->is_artificial() == false)
-                        {
+                      if (cell_iter->is_artificial() == false) {
                           cell_iter->get_dof_indices(local_dof_indices);
 
                           unsigned int count_small = 0;
-                          if (dim == 3)
-                            {
+                          if (dim == 3) {
                               center_immersed(0) = particles[p].position[0];
                               center_immersed(1) = particles[p].position[1];
                               center_immersed(2) = particles[p].position[2];
-                            }
+                          }
                           for (unsigned int j = 0; j < local_dof_indices.size();
-                               ++j)
-                            {
+                               ++j) {
                               // Count the number of dof that ar smaller or
                               // larger then the radius of the particles if all
                               // the dof are on one side the cell is not cut by
@@ -726,65 +663,58 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                               if ((support_points[local_dof_indices[j]] -
                                    center_immersed)
-                                    .norm() <= particles[p].radius)
-                                {
+                                          .norm() <= particles[p].radius) {
                                   ++count_small;
-                                }
-                            }
+                              }
+                          }
 
                           if (count_small != 0 and
-                              count_small != local_dof_indices.size())
-                            {
+                              count_small != local_dof_indices.size()) {
                               cell_found = false;
-                            }
-                          else
-                            {
+                          } else {
                               cell_found = true;
-                            }
+                          }
 
 
                           if (cell_found == false)
-                            nb_step += 1;
-                        }
-                      else
-                        {
+                              nb_step += 1;
+                      } else {
                           break;
-                        }
-                    }
+                      }
+                  }
 
                   const Point<dim> second_point(
-                    eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
-                    eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio,
-                    eval_point[2] +
-                      surf_normal[2] * (nb_step + 1) * step_ratio);
+                          eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
+                          eval_point[1] + surf_normal[1] * (nb_step + 1) * step_ratio,
+                          eval_point[2] +
+                          surf_normal[2] * (nb_step + 1) * step_ratio);
 
                   const Point<dim> third_point(
-                    second_point[0] + surf_normal[0] * step_ratio,
-                    second_point[1] + surf_normal[1] * step_ratio,
-                    second_point[2] + surf_normal[2] * step_ratio);
+                          second_point[0] + surf_normal[0] * step_ratio,
+                          second_point[1] + surf_normal[1] * step_ratio,
+                          second_point[2] + surf_normal[2] * step_ratio);
 
                   const Point<dim> fourth_point(
-                    third_point[0] + surf_normal[0] * step_ratio,
-                    third_point[1] + surf_normal[1] * step_ratio,
-                    third_point[2] + surf_normal[2] * step_ratio);
+                          third_point[0] + surf_normal[0] * step_ratio,
+                          third_point[1] + surf_normal[1] * step_ratio,
+                          third_point[2] + surf_normal[2] * step_ratio);
 
                   const auto &cell_2 =
-                    find_cell_around_point_with_tree(this->dof_handler,
-                                                     second_point);
+                          find_cell_around_point_with_tree(this->dof_handler,
+                                                           second_point);
 
                   // if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
                   // const auto &cell_2 =
                   // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
-                  if (cell_2->is_locally_owned())
-                    {
+                  if (cell_2->is_locally_owned()) {
                       const auto &cell_3 =
-                        find_cell_around_point_with_tree(this->dof_handler,
-                                                         third_point);
+                              find_cell_around_point_with_tree(this->dof_handler,
+                                                               third_point);
                       // const auto &cell_3 =
                       // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       const auto &cell_4 =
-                        find_cell_around_point_with_tree(this->dof_handler,
-                                                         fourth_point);
+                              find_cell_around_point_with_tree(this->dof_handler,
+                                                               fourth_point);
                       // const auto &cell_4 =
                       // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       cell_2->get_dof_indices(local_dof_indices);
@@ -795,61 +725,59 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       Tensor<1, dim, double> u_1;
                       Tensor<1, dim, double> u_2;
                       Tensor<1, dim, double> u_3;
-                      double                 P1 = 0;
-                      double                 P2 = 0;
-                      double                 P3 = 0;
+                      double P1 = 0;
+                      double P2 = 0;
+                      double P3 = 0;
 
                       // Define the velocity component of the particle at the
                       // boundary on the reference point in 3 d the only
                       // rotation is around the z axis
                       u_1[0] = particles[p].omega[1] * particles[p].radius *
-                                 surf_normal[2] / surf_normal.norm() -
+                               surf_normal[2] / surf_normal.norm() -
                                particles[p].omega[2] * particles[p].radius *
-                                 surf_normal[1] / surf_normal.norm();
+                               surf_normal[1] / surf_normal.norm();
                       u_1[1] = particles[p].omega[2] * particles[p].radius *
-                                 surf_normal[0] / surf_normal.norm() -
+                               surf_normal[0] / surf_normal.norm() -
                                particles[p].omega[0] * particles[p].radius *
-                                 surf_normal[2] / surf_normal.norm();
+                               surf_normal[2] / surf_normal.norm();
                       u_1[2] = particles[p].omega[0] * particles[p].radius *
-                                 surf_normal[1] / surf_normal.norm() -
+                               surf_normal[1] / surf_normal.norm() -
                                particles[p].omega[1] * particles[p].radius *
-                                 surf_normal[0] / surf_normal.norm();
+                               surf_normal[0] / surf_normal.norm();
 
                       // Projection of the speed of the boundary on the plan of
                       // the surface used for evaluation
                       double U1_1 =
-                        (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] +
-                         surf_vect_1[2] * u_1[2]) /
-                        surf_vect_1.norm();
+                              (surf_vect_1[0] * u_1[0] + surf_vect_1[1] * u_1[1] +
+                               surf_vect_1[2] * u_1[2]) /
+                              surf_vect_1.norm();
 
                       double U1_2 =
-                        (surf_vect_2[0] * u_1[0] + surf_vect_2[1] * u_1[1] +
-                         surf_vect_2[2] * u_1[2]) /
-                        surf_vect_2.norm();
+                              (surf_vect_2[0] * u_1[0] + surf_vect_2[1] * u_1[1] +
+                               surf_vect_2[2] * u_1[2]) /
+                              surf_vect_2.norm();
 
 
                       // Used support function of the cell to define the
                       // interpolation of the velocity
                       Point<dim> second_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_2,
-                                                                 second_point);
+                              immersed_map.transform_real_to_unit_cell(cell_2,
+                                                                       second_point);
                       Point<dim> third_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_3,
-                                                                 third_point);
+                              immersed_map.transform_real_to_unit_cell(cell_3,
+                                                                       third_point);
                       Point<dim> fourth_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_4,
-                                                                 fourth_point);
+                              immersed_map.transform_real_to_unit_cell(cell_4,
+                                                                       fourth_point);
 
 
                       cell_3->get_dof_indices(local_dof_indices_2);
                       for (unsigned int j = 0; j < local_dof_indices.size();
-                           ++j)
-                        {
+                           ++j) {
                           const unsigned int component_i =
                             this->fe->system_to_component_index(j).first;
                           auto &present_solution = this->present_solution;
-                          if (component_i < dim)
-                            {
+                          if (component_i < dim) {
                               u_2[component_i] +=
                                 this->fe->shape_value(j, second_point_v) *
                                 present_solution(local_dof_indices[j]);
@@ -866,8 +794,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     present_solution(local_dof_indices_2[j]);
                               P3 += this->fe->shape_value(j, fourth_point_v) *
                                     present_solution(local_dof_indices_3[j]);
-                            }
-                        }
+                          }
+                      }
 
                       // Evaluate the solution in the reference frame of the
                       // particle
@@ -879,124 +807,124 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       u_3[2] = u_3[2] - particles[p].velocity[2];
 
                       double U2_1 =
-                        (surf_vect_1[0] * u_2[0] + surf_vect_1[1] * u_2[1] +
-                         surf_vect_1[2] * u_2[2]) /
-                        surf_vect_1.norm();
+                              (surf_vect_1[0] * u_2[0] + surf_vect_1[1] * u_2[1] +
+                               surf_vect_1[2] * u_2[2]) /
+                              surf_vect_1.norm();
                       double U3_1 =
-                        (surf_vect_1[0] * u_3[0] + surf_vect_1[1] * u_3[1] +
-                         surf_vect_1[2] * u_3[2]) /
-                        surf_vect_1.norm();
+                              (surf_vect_1[0] * u_3[0] + surf_vect_1[1] * u_3[1] +
+                               surf_vect_1[2] * u_3[2]) /
+                              surf_vect_1.norm();
                       double U2_2 =
-                        (surf_vect_2[0] * u_2[0] + surf_vect_2[1] * u_2[1] +
-                         surf_vect_2[2] * u_2[2]) /
-                        surf_vect_2.norm();
+                              (surf_vect_2[0] * u_2[0] + surf_vect_2[1] * u_2[1] +
+                               surf_vect_2[2] * u_2[2]) /
+                              surf_vect_2.norm();
                       double U3_2 =
-                        (surf_vect_2[0] * u_3[0] + surf_vect_2[1] * u_3[1] +
-                         surf_vect_2[2] * u_3[2]) /
-                        surf_vect_2.norm();
+                              (surf_vect_2[0] * u_3[0] + surf_vect_2[1] * u_3[1] +
+                               surf_vect_2[2] * u_3[2]) /
+                              surf_vect_2.norm();
 
                       double U1_r =
-                        (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1] +
-                         surf_normal[2] * u_1[2]) /
-                        surf_normal.norm();
+                              (surf_normal[0] * u_1[0] + surf_normal[1] * u_1[1] +
+                               surf_normal[2] * u_1[2]) /
+                              surf_normal.norm();
                       double U2_r =
-                        (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1] +
-                         surf_normal[2] * u_2[2]) /
-                        surf_normal.norm();
+                              (surf_normal[0] * u_2[0] + surf_normal[1] * u_2[1] +
+                               surf_normal[2] * u_2[2]) /
+                              surf_normal.norm();
                       double U3_r =
-                        (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1] +
-                         surf_normal[2] * u_3[2]) /
-                        surf_normal.norm();
+                              (surf_normal[0] * u_3[0] + surf_normal[1] * u_3[1] +
+                               surf_normal[2] * u_3[2]) /
+                              surf_normal.norm();
 
                       double du_dn_1_1 =
-                        (U2_1 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio) -
-                         U1_1 / particles[p].radius) /
-                        ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                              (U2_1 /
+                               (particles[p].radius +
+                                surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                               U1_1 / particles[p].radius) /
+                              ((nb_step + 1) * surf_normal.norm() * step_ratio);
 
                       double du_dn_2_1 =
-                        (U3_1 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 2) * step_ratio) -
-                         U2_1 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio)) /
-                        (surf_normal.norm() * step_ratio);
+                              (U3_1 /
+                               (particles[p].radius +
+                                surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                               U2_1 /
+                               (particles[p].radius +
+                                surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                              (surf_normal.norm() * step_ratio);
 
                       double du_dn_1_2 =
-                        (U2_2 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio) -
-                         U1_2 / particles[p].radius) /
-                        ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                              (U2_2 /
+                               (particles[p].radius +
+                                surf_normal.norm() * (nb_step + 1) * step_ratio) -
+                               U1_2 / particles[p].radius) /
+                              ((nb_step + 1) * surf_normal.norm() * step_ratio);
 
                       double du_dn_2_2 =
-                        (U3_2 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 2) * step_ratio) -
-                         U2_2 /
-                           (particles[p].radius +
-                            surf_normal.norm() * (nb_step + 1) * step_ratio)) /
-                        (surf_normal.norm() * step_ratio);
+                              (U3_2 /
+                               (particles[p].radius +
+                                surf_normal.norm() * (nb_step + 2) * step_ratio) -
+                               U2_2 /
+                               (particles[p].radius +
+                                surf_normal.norm() * (nb_step + 1) * step_ratio)) /
+                              (surf_normal.norm() * step_ratio);
 
 
                       double du_dr_1 =
-                        (U2_r - U1_r) /
-                        ((nb_step + 1) * surf_normal.norm() * step_ratio);
+                              (U2_r - U1_r) /
+                              ((nb_step + 1) * surf_normal.norm() * step_ratio);
 
                       double du_dr_2 =
-                        (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
+                              (U3_r - U2_r) / (surf_normal.norm() * step_ratio);
 
                       double du_dn_1 = du_dn_1_1 - (du_dn_2_1 - du_dn_1_1) *
-                                                     (nb_step + 1) /
-                                                     ((nb_step + 1) + 1);
+                                                   (nb_step + 1) /
+                                                   ((nb_step + 1) + 1);
 
                       double du_dn_2 = du_dn_1_2 - (du_dn_2_2 - du_dn_1_2) *
-                                                     (nb_step + 1) /
-                                                     ((nb_step + 1) + 1);
+                                                   (nb_step + 1) /
+                                                   ((nb_step + 1) + 1);
 
                       double du_dr = du_dr_1 - (du_dr_2 - du_dr_1) *
-                                                 (nb_step + 1) /
-                                                 ((nb_step + 1) + 1);
+                                               (nb_step + 1) /
+                                               ((nb_step + 1) + 1);
 
                       double P_local = P1 + (nb_step + 1) * (P1 - P2) +
                                        ((nb_step + 2) * (nb_step + 1) / 2) *
-                                         ((P1 - P2) - (P2 - P3));
+                                       ((P1 - P2) - (P2 - P3));
 
                       double local_fx_v =
-                        ((-mu * du_dr * 2 * surf_normal[0] /
-                          surf_normal.norm()) +
-                         (-particles[p].radius * mu * du_dn_1 * surf_vect_1[0] /
-                          surf_vect_1.norm()) +
-                         (-particles[p].radius * mu * du_dn_2 * surf_vect_2[0] /
-                          surf_vect_2.norm())) *
-                        da;
+                              ((-mu * du_dr * 2 * surf_normal[0] /
+                                surf_normal.norm()) +
+                               (-particles[p].radius * mu * du_dn_1 * surf_vect_1[0] /
+                                surf_vect_1.norm()) +
+                               (-particles[p].radius * mu * du_dn_2 * surf_vect_2[0] /
+                                surf_vect_2.norm())) *
+                              da;
 
                       double local_fy_v =
-                        ((-mu * du_dr * 2 * surf_normal[1] /
-                          surf_normal.norm()) +
-                         (-particles[p].radius * mu * du_dn_1 * surf_vect_1[1] /
-                          surf_vect_1.norm()) +
-                         (-particles[p].radius * mu * du_dn_2 * surf_vect_2[1] /
-                          surf_vect_2.norm())) *
-                        da;
+                              ((-mu * du_dr * 2 * surf_normal[1] /
+                                surf_normal.norm()) +
+                               (-particles[p].radius * mu * du_dn_1 * surf_vect_1[1] /
+                                surf_vect_1.norm()) +
+                               (-particles[p].radius * mu * du_dn_2 * surf_vect_2[1] /
+                                surf_vect_2.norm())) *
+                              da;
 
                       double local_fz_v =
-                        ((-mu * du_dr * 2 * surf_normal[2] /
-                          surf_normal.norm()) +
-                         (-particles[p].radius * mu * du_dn_1 * surf_vect_1[2] /
-                          surf_vect_1.norm()) +
-                         (-particles[p].radius * mu * du_dn_2 * surf_vect_2[2] /
-                          surf_vect_2.norm())) *
-                        da;
+                              ((-mu * du_dr * 2 * surf_normal[2] /
+                                surf_normal.norm()) +
+                               (-particles[p].radius * mu * du_dn_1 * surf_vect_1[2] /
+                                surf_vect_1.norm()) +
+                               (-particles[p].radius * mu * du_dn_2 * surf_vect_2[2] /
+                                surf_vect_2.norm())) *
+                              da;
 
                       double local_fx_p_2 =
-                        P_local * da * surf_normal[0] / surf_normal.norm();
+                              P_local * da * surf_normal[0] / surf_normal.norm();
                       double local_fy_p_2 =
-                        P_local * da * surf_normal[1] / surf_normal.norm();
+                              P_local * da * surf_normal[1] / surf_normal.norm();
                       double local_fz_p_2 =
-                        P_local * da * surf_normal[2] / surf_normal.norm();
+                              P_local * da * surf_normal[2] / surf_normal.norm();
 
                       fx_v += -local_fx_v;
                       fy_v += -local_fy_v;
@@ -1006,124 +934,44 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       fz_p_2 += -local_fz_p_2;
 
                       torque_x += local_fy_v * surf_normal[2] /
-                                    surf_normal.norm() * particles[p].radius -
+                                  surf_normal.norm() * particles[p].radius -
                                   local_fz_v * surf_normal[1] /
-                                    surf_normal.norm() * particles[p].radius;
+                                  surf_normal.norm() * particles[p].radius;
                       torque_y += local_fz_v * surf_normal[0] /
-                                    surf_normal.norm() * particles[p].radius -
+                                  surf_normal.norm() * particles[p].radius -
                                   local_fx_v * surf_normal[2] /
-                                    surf_normal.norm() * particles[p].radius;
+                                  surf_normal.norm() * particles[p].radius;
                       torque_z += local_fx_v * surf_normal[1] /
-                                    surf_normal.norm() * particles[p].radius -
+                                  surf_normal.norm() * particles[p].radius -
                                   local_fy_v * surf_normal[0] /
-                                    surf_normal.norm() * particles[p].radius;
+                                  surf_normal.norm() * particles[p].radius;
                       // nb_eval+=1;
-                    }
+                  }
                   //}
-                }
-            }
+              }
+          }
           double t_torque_x =
-            Utilities::MPI::sum(torque_x, this->mpi_communicator);
+                  Utilities::MPI::sum(torque_x, this->mpi_communicator) * rho;
           double t_torque_y =
-            Utilities::MPI::sum(torque_y, this->mpi_communicator);
+                  Utilities::MPI::sum(torque_y, this->mpi_communicator) * rho;
           double t_torque_z =
-            Utilities::MPI::sum(torque_z, this->mpi_communicator);
-          double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator);
-          double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator);
-          double fz_p_2_ = Utilities::MPI::sum(fz_p_2, this->mpi_communicator);
-          double fx_v_   = Utilities::MPI::sum(fx_v, this->mpi_communicator);
-          double fy_v_   = Utilities::MPI::sum(fy_v, this->mpi_communicator);
-          double fz_v_   = Utilities::MPI::sum(fz_v, this->mpi_communicator);
+                  Utilities::MPI::sum(torque_z, this->mpi_communicator) * rho;
+          double fx_p_2_ = Utilities::MPI::sum(fx_p_2, this->mpi_communicator) * rho;
+          double fy_p_2_ = Utilities::MPI::sum(fy_p_2, this->mpi_communicator) * rho;
+          double fz_p_2_ = Utilities::MPI::sum(fz_p_2, this->mpi_communicator) * rho;
+          double fx_v_ = Utilities::MPI::sum(fx_v, this->mpi_communicator) * rho;
+          double fy_v_ = Utilities::MPI::sum(fy_v, this->mpi_communicator) * rho;
+          double fz_v_ = Utilities::MPI::sum(fz_v, this->mpi_communicator) * rho;
           // unsigned int nb_eval_total   = Utilities::MPI::sum(nb_eval,
           // this->mpi_communicator);
+          particles[p].forces[0] = fx_p_2_ + fx_v_;
+          particles[p].forces[1] = fy_p_2_ + fy_v_;
+          particles[p].forces[2] = fz_p_2_ + fz_v_;
+          particles[p].torques[0] = t_torque_x;
+          particles[p].torques[1] = t_torque_y;
+          particles[p].torques[2] = t_torque_z;
 
-          if (this->this_mpi_process == 0)
-            {
-              if (this->simulation_parameters.forces_parameters.verbosity ==
-                  Parameters::Verbosity::verbose)
-                {
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-                  std::cout << "|  Force  summary particle : " << p
-                            << "             |" << std::endl;
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-
-                  std::cout << "particle : " << p
-                            << " total_torque_x :" << t_torque_x << std::endl;
-                  std::cout << "particle : " << p
-                            << " total_torque_y :" << t_torque_y << std::endl;
-                  std::cout << "particle : " << p
-                            << " total_torque_z :" << t_torque_z << std::endl;
-                  std::cout << "fx_P: " << fx_p_2_ << std::endl;
-                  std::cout << "fy_P: " << fy_p_2_ << std::endl;
-                  std::cout << "fz_P: " << fz_p_2_ << std::endl;
-                  std::cout << "fx_v: " << fx_v_ << std::endl;
-                  std::cout << "fy_v: " << fy_v_ << std::endl;
-                  std::cout << "fz_v: " << fz_v_ << std::endl;
-                  // std::cout << "nb eval" << nb_eval_total << std::endl;
-                  table_t[p].add_value("particle ID", p);
-                  if (this->simulation_parameters.simulation_control.method !=
-                      Parameters::SimulationControl::TimeSteppingMethod::steady)
-                    table_t[p].add_value(
-                      "time", this->simulation_control->get_current_time());
-                  table_t[p].add_value("T_x", t_torque_x);
-                  table_t[p].set_precision("T_x",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-                  table_t[p].add_value("T_y", t_torque_x);
-                  table_t[p].set_precision("T_y",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-                  table_t[p].add_value("T_z", t_torque_x);
-                  table_t[p].set_precision("T_z",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-
-
-
-                  table_f[p].add_value("particle ID", p);
-                  if (this->simulation_parameters.simulation_control.method !=
-                      Parameters::SimulationControl::TimeSteppingMethod::steady)
-                    table_f[p].add_value(
-                      "time", this->simulation_control->get_current_time());
-
-                  table_f[p].add_value("f_x", fx_p_2_ + fx_v_);
-                  table_f[p].add_value("f_y", fy_p_2_ + fy_v_);
-
-                  table_f[p].set_precision("f_x",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-                  table_f[p].set_precision("f_y",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-
-                  table_f[p].add_value("f_z", fz_p_2_ + fz_v_);
-                  table_f[p].set_precision("f_z",
-                                           this->simulation_parameters
-                                             .simulation_control.log_precision);
-                }
-            }
-        }
-      if (this->this_mpi_process == 0)
-        {
-          if (this->simulation_parameters.forces_parameters.verbosity ==
-              Parameters::Verbosity::verbose)
-            {
-              for (unsigned int p = 0; p < particles.size(); ++p)
-                {
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-                  std::cout << "|  Force  summary particle " << p
-                            << "               |" << std::endl;
-                  std::cout << "+------------------------------------------+"
-                            << std::endl;
-                  table_f[p].write_text(std::cout);
-
-                  table_t[p].write_text(std::cout);
-                }
-            }
-        }
+      }
     }
 }
 template <int dim>
@@ -1335,6 +1183,272 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   this->pcout << "div u : " << total_velocity_divergence << std::endl;
 
   return std::sqrt(l2errorU);
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::integrate_particules()
+{
+
+    double dt=this->simulation_control->get_time_steps_vector()[0];
+
+    double alpha=this->simulation_parameters.particlesParameters.alpha;
+    double g=this->simulation_parameters.particlesParameters.gravity;
+    double rho=this->simulation_parameters.particlesParameters.density;
+
+
+    if(this->simulation_parameters.particlesParameters.integrate_motion) {
+        Tensor<1, dim> gravity;
+
+        for (unsigned int p = 0; p < particles.size(); ++p) {
+            // Translation
+            gravity[0] = 0;
+            if (dim==2)
+                gravity[1] = g * (particles[p].masses -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+            if (dim == 3){
+                gravity[1] = g * (particles[p].masses -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+                gravity[2] = 0;
+            }
+
+
+            Tensor<1, dim> velocity_iter;
+            velocity_iter = particles[p].last_velocity + (particles[p].forces + gravity) * dt / particles[p].masses;
+            Tensor<1, dim> last_variation_v=particles[p].velocity_iter-particles[p].last_velocity;
+            Tensor<1, dim> variation_v= velocity_iter-particles[p].last_velocity;
+            double cross_product_v;
+            if (dim==2)
+                cross_product_v= (last_variation_v[0]*variation_v[0]+last_variation_v[1]*variation_v[1])/(last_variation_v.norm()*variation_v.norm());
+            if (dim==3)
+                cross_product_v= (last_variation_v[0]*variation_v[0]+last_variation_v[1]*variation_v[1]+last_variation_v[2]*variation_v[2])/(last_variation_v.norm()*variation_v.norm());
+
+            if (last_variation_v.norm()<1e-10){
+                particles[p].velocity = particles[p].velocity + alpha *(velocity_iter - particles[p].velocity);;
+            }
+            else {
+
+                if (variation_v.norm() * cross_product_v > -last_variation_v.norm()) {
+                    particles[p].velocity = particles[p].velocity + alpha * particles[p].local_alpha_force*
+                                                                    (velocity_iter - particles[p].velocity);
+
+                }
+                else {
+                    particles[p].velocity = particles[p].velocity + variation_v*last_variation_v.norm()/variation_v.norm() / 2;
+                    particles[p].local_alpha_force = particles[p].local_alpha_force/ 2;
+                }
+
+            }
+            particles[p].velocity_iter=particles[p].velocity;
+
+
+
+            particles[p].position =
+                    particles[p].last_position + (particles[p].velocity * 0.5 + particles[p].last_velocity * 0.5) * dt;
+
+
+            this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
+            this->pcout << "particule " << p << " velocity " << particles[p].velocity << std::endl;
+
+            // Rotation
+            if (dim==2){
+                double i_inverse;
+                i_inverse = 1.0/particles[p].inertia[2][2];
+                Tensor<1, 3>  omega_iter;
+                omega_iter = particles[p].last_omega + (i_inverse*particles[p].torques)* dt ;
+                Tensor<1, 3> last_variation=particles[p].omega_iter-particles[p].last_omega;
+                Tensor<1, 3> variation= omega_iter-particles[p].last_omega;
+                this->pcout << "particule " << p << " last variation " << last_variation << std::endl;
+                this->pcout << "particule " << p << " variation " << variation<< std::endl;
+                double cross_product= (last_variation[0]*variation[0]+last_variation[1]*variation[1]+last_variation[2]*variation[2])/(last_variation.norm()*variation.norm());
+
+                if (last_variation.norm()<1e-10){
+                    particles[p].omega = particles[p].omega + alpha *(omega_iter - particles[p].omega);;
+                }
+                else {
+                    if (variation.norm() * cross_product > -last_variation.norm()) {
+                        particles[p].omega = particles[p].omega + alpha * particles[p].local_alpha_torque *
+                                                                  (omega_iter - particles[p].omega);
+                    } else {
+                        particles[p].omega = particles[p].omega + variation*last_variation.norm()/variation.norm() / 2;
+                        particles[p].local_alpha_torque = particles[p].local_alpha_torque / 2;
+                    }
+
+                }
+
+
+                particles[p].omega_iter=particles[p].omega;
+                particles[p].velocity_iter=particles[p].velocity;
+
+                particles[p].angular_position + (particles[p].omega * 0.5 + particles[p].last_omega * 0.5) * dt;
+
+            }
+
+
+            if (dim==3) {
+                Tensor<2, 3, double> i_inverse;
+                i_inverse = invert(particles[p].inertia);
+                Tensor<1, 3, double> omega_iter ;
+                omega_iter[0] = particles[p].last_omega[0] + (i_inverse[0][0]*particles[p].torques[0]+i_inverse[0][1]*particles[p].torques[1]+i_inverse[0][2]*particles[p].torques[2])* dt ;
+                omega_iter[1] = particles[p].last_omega[1] + (i_inverse[1][0]*particles[p].torques[0]+i_inverse[1][1]*particles[p].torques[1]+i_inverse[1][2]*particles[p].torques[2])* dt ;
+                omega_iter[2] = particles[p].last_omega[2] + (i_inverse[2][0]*particles[p].torques[0]+i_inverse[2][1]*particles[p].torques[1]+i_inverse[2][2]*particles[p].torques[2])* dt ;
+                Tensor<1, 3> last_variation=particles[p].omega_iter-particles[p].last_omega;
+                Tensor<1, 3> variation= omega_iter-particles[p].last_omega;
+                this->pcout << "particule " << p << " last variation " << last_variation << std::endl;
+                this->pcout << "particule " << p << " variation " << variation << std::endl;
+                double cross_product= (last_variation[0]*variation[0]+last_variation[1]*variation[1]+last_variation[2]*variation[2])/(last_variation.norm()*variation.norm());
+
+                if (last_variation.norm()<1e-10){
+                    particles[p].omega = particles[p].omega + alpha *(omega_iter - particles[p].omega);;
+                }
+                else {
+                    if (variation.norm() * cross_product > -last_variation.norm()) {
+                        particles[p].omega = particles[p].omega + alpha * particles[p].local_alpha_torque *
+                                                                  (omega_iter - particles[p].omega);
+                    } else {
+                        particles[p].omega = particles[p].omega + variation*last_variation.norm()/variation.norm() / 2;
+                        particles[p].local_alpha_torque = particles[p].local_alpha_torque / 2;
+                    }
+
+                }
+
+
+                particles[p].omega_iter=particles[p].omega;
+
+                particles[p].angular_position + (particles[p].omega * 0.5 + particles[p].last_omega * 0.5) * dt;
+            }
+            this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
+            this->pcout << "particule " << p << " velocity " << particles[p].velocity << std::endl;
+            this->pcout << "particule " << p << " omega " << particles[p].omega << std::endl;
+
+        }
+    }
+    else{
+        /*double time=this->simulation_control->get_current_time();
+        for (unsigned int p = 0; p < particles.size(); ++p) {
+            particles[p].last_position=particles[p].position;
+            particles[p].position[0]= sin(time);
+            particles[p].velocity[0]= cos(time);
+
+        }*/
+        for (unsigned int p = 0; p < particles.size(); ++p) {
+            particles[p].last_position =particles[p].position;
+            particles[p].position[0] = particles[p].position[0]+dt*particles[p].velocity[0];
+            particles[p].position[1] = particles[p].position[1]+dt*particles[p].velocity[1];
+            if (dim==3)
+                particles[p].position[2]= particles[p].position[2]+dt*particles[p].velocity[2];
+
+
+        }
+    }
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::finish_time_step_particules()
+{
+
+    for (unsigned int p = 0; p < particles.size(); ++p) {
+        particles[p].last_position=particles[p].position;
+        particles[p].last_velocity=particles[p].velocity;
+        particles[p].last_forces=particles[p].forces;
+        particles[p].last_omega=particles[p].omega;
+        particles[p].local_alpha_torque=1;
+        particles[p].local_alpha_force=1;
+
+        if(this->simulation_parameters.particlesParameters.integrate_motion) {
+            this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
+            this->pcout << "particule " << p << " velocity " << particles[p].velocity << std::endl;
+        }
+        table_t[p].add_value("particle ID", p);
+        if (this->simulation_parameters.simulation_control.method !=
+            Parameters::SimulationControl::TimeSteppingMethod::steady)
+            table_t[p].add_value(
+                    "time", this->simulation_control->get_current_time());
+        if(dim==3) {
+
+            table_t[p].add_value("T_x", particles[p].torques[0]);
+            table_t[p].set_precision(
+                    "T_x", this->simulation_parameters.simulation_control.log_precision);
+            table_f[p].add_value("omega_x", particles[p].omega[0]);
+            table_f[p].set_precision(
+                    "omega_x", this->simulation_parameters.simulation_control.log_precision);
+
+            table_t[p].add_value("T_y", particles[p].torques[1]);
+            table_t[p].set_precision(
+                    "T_y", this->simulation_parameters.simulation_control.log_precision);
+            table_f[p].add_value("omega_y", particles[p].omega[1]);
+            table_f[p].set_precision(
+                    "omega_y", this->simulation_parameters.simulation_control.log_precision);
+        }
+
+        table_t[p].add_value("T_z", particles[p].torques[2]);
+        table_t[p].set_precision(
+                "T_z", this->simulation_parameters.simulation_control.log_precision);
+        table_f[p].add_value("omega_z", particles[p].omega[2]);
+        table_f[p].set_precision(
+                "omega_z", this->simulation_parameters.simulation_control.log_precision);
+
+
+
+        table_f[p].add_value("particle ID", p);
+        if (this->simulation_parameters.simulation_control.method !=
+            Parameters::SimulationControl::TimeSteppingMethod::steady)
+            table_f[p].add_value(
+                    "time", this->simulation_control->get_current_time());
+
+        table_f[p].add_value("f_x", particles[p].forces[0]);
+        if(this->simulation_parameters.particlesParameters.integrate_motion) {
+            table_f[p].add_value("v_x", particles[p].velocity[0]);
+            table_f[p].add_value("p_x", particles[p].position[0]);
+        }
+        table_f[p].add_value("f_y", particles[p].forces[1]);
+        if(this->simulation_parameters.particlesParameters.integrate_motion) {
+            table_f[p].add_value("v_y", particles[p].velocity[1]);
+            table_f[p].add_value("p_y", particles[p].position[1]);
+        }
+        table_f[p].set_precision(
+                "f_x", this->simulation_parameters.simulation_control.log_precision);
+        table_f[p].set_precision(
+                "f_y", this->simulation_parameters.simulation_control.log_precision);
+        if(this->simulation_parameters.particlesParameters.integrate_motion) {
+            table_f[p].set_precision(
+                    "v_x", this->simulation_parameters.simulation_control.log_precision);
+            table_f[p].set_precision(
+                    "v_y", this->simulation_parameters.simulation_control.log_precision);
+            table_f[p].set_precision(
+                    "p_x", this->simulation_parameters.simulation_control.log_precision);
+            table_f[p].set_precision(
+                    "p_y", this->simulation_parameters.simulation_control.log_precision);
+        }
+        if(dim==3){
+
+            table_f[p].add_value("f_z", particles[p].forces[2]);
+            table_f[p].set_precision(
+                    "f_z", this->simulation_parameters.simulation_control.log_precision);
+            if(this->simulation_parameters.particlesParameters.integrate_motion) {
+                table_f[p].add_value("v_z", particles[p].velocity[2]);
+                table_f[p].add_value("p_z", particles[p].position[2]);
+            }
+
+        }
+    }
+    if (this->this_mpi_process == 0)
+    {
+        if (this->simulation_parameters.forces_parameters.verbosity ==
+            Parameters::Verbosity::verbose)
+        {
+            for (unsigned int p = 0; p < particles.size(); ++p)
+            {
+                std::cout << "+------------------------------------------+"
+                          << std::endl;
+                std::cout << "|  Force  summary particle " << p
+                          << "               |" << std::endl;
+                std::cout << "+------------------------------------------+"
+                          << std::endl;
+                table_f[p].write_text(std::cout);
+                table_t[p].write_text(std::cout);
+            }
+        }
+    }
 }
 
 
@@ -3097,7 +3211,10 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
-
+  if(this->simulation_parameters.particlesParameters.integrate_motion) {
+      force_on_ib();
+      integrate_particules();
+  }
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
@@ -3370,6 +3487,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   while (this->simulation_control->integrate())
     {
+      if(this->simulation_parameters.particlesParameters.integrate_motion==false)
+            integrate_particules();
+
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
         this->first_iteration();
@@ -3387,6 +3507,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       if (this->simulation_parameters.particlesParameters.calculate_force_ib)
         force_on_ib();
+      finish_time_step_particules();
       write_force_ib();
       MPI_Barrier(this->mpi_communicator);
     }

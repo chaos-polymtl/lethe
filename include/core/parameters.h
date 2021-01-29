@@ -571,6 +571,10 @@ namespace Parameters
     std::vector<IBParticle<dim>> particles;
     bool                         calculate_force_ib;
     std::string                  ib_force_output_file;
+    double                       density;
+    double                       gravity;
+    double                       alpha;
+    bool                         integrate_motion;
 
 
     static void

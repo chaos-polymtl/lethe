@@ -79,6 +79,10 @@ private:
   void
   write_force_ib();
 
+  void
+  integrate_particules();
+  void
+  finish_time_step_particules();
 
 
   double
