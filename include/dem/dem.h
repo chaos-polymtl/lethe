@@ -149,6 +149,12 @@ private:
   check_load_balance_once();
 
   /**
+   * For cases where load balance method is equal to none
+   */
+  inline bool
+  no_load_balance();
+
+  /**
    * Finds load-balance step for frequent load-balance
    */
   inline bool

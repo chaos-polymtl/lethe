@@ -30,7 +30,6 @@ end
 subsection model parameters
   set contact detection method 		   		 = constant
   set contact detection frequency                 	 = 20
-  set repartition frequency 				 = 10000
   set neighborhood threshold				 = 1.5
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear

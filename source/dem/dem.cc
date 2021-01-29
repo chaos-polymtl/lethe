@@ -121,6 +121,15 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     {
       check_load_balance_step = &DEMSolver<dim>::check_load_balance_dynamic;
     }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      check_load_balance_step = &DEMSolver<dim>::no_load_balance;
+    }
+  else
+    {
+      throw std::runtime_error("Specified load balance method is not valid");
+    }
 
 
 
@@ -374,6 +383,13 @@ DEMSolver<dim>::load_balance()
   pcout << "Minimum and maximum number of cells owned by the processors are "
         << minimum_cell_number_on_proc << " and " << maximum_cell_number_on_proc
         << std::endl;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::no_load_balance()
+{
+  return false;
 }
 
 template <int dim>
