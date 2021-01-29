@@ -140,8 +140,26 @@ namespace Parameters
 
     struct ModelParameters
     {
-      // Particle-particle, particle-wall broad and fine search frequency
-      unsigned int repartition_frequency;
+      // Load balance method
+      enum class LoadBalanceMethod
+      {
+        none,
+        once,
+        frequent,
+        dynamic
+      } load_balance_method;
+
+      // Load balance step (for single step load-balancing)
+      unsigned int load_balance_step;
+
+      // Load balance frequency
+      unsigned int load_balance_frequency;
+
+      // Load balance threshold (for dynamic load-balancing)
+      double load_balance_threshold;
+
+      // Load balance check frequency (for dynamic load-balancing)
+      unsigned int dynamic_load_balance_check_frequency;
 
       // Particle-particle, particle-wall broad and fine search frequency
       unsigned int contact_detection_frequency;

@@ -79,6 +79,7 @@ class DEMSolver
 {
   using FuncPtrType = bool (DEMSolver<dim>::*)();
   FuncPtrType check_contact_search_step;
+  FuncPtrType check_load_balance_step;
 
 public:
   DEMSolver(DEMSolverParameters<dim> dem_parameters);
@@ -132,18 +133,39 @@ private:
   /**
    * Finds contact search steps for constant contact search method
    */
-
   inline bool
   check_contact_search_step_constant();
+
+  /**
+   * Finds contact search steps for dynamic contact search method
+   */
   inline bool
   check_contact_search_step_dynamic();
+
+  /**
+   * Finds load-balance step for single-step load-balance
+   */
+  inline bool
+  check_load_balance_once();
+
+  /**
+   * Finds load-balance step for frequent load-balance
+   */
+  inline bool
+  check_load_balance_frequent();
+
+  /**
+   * Finds load-balance step for dynamic load-balance
+   */
+  inline bool
+  check_load_balance_dynamic();
 
   /**
    * @brief Manages the call to the load balancing. Returns true if
    * load balancing is performed
    *
    */
-  bool
+  void
   load_balance();
 
   /**
@@ -263,6 +285,7 @@ private:
   double                               smallest_contact_search_criterion;
   Particles::ParticleHandler<dim, dim> particle_handler;
   unsigned int                         contact_detection_step;
+  unsigned int                         load_balance_step;
   Tensor<1, dim>                       g;
   double                               triangulation_cell_diameter;
 
@@ -316,7 +339,6 @@ private:
   double             neighborhood_threshold_squared;
   double             maximum_particle_diameter;
   const unsigned int contact_detection_frequency;
-  const unsigned int repartition_frequency;
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
