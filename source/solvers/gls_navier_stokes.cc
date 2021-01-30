@@ -1363,56 +1363,74 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double relative_residual,
                                                const bool   renewed_matrix)
 {
-  auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+  unsigned int max_iter=20;
+  unsigned int original_fill=this->simulation_parameters.linear_solver.ilu_precond_fill;
+  unsigned int iter=0;
+  bool succes=false;
 
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
-    {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
+  while(succes==false and iter<max_iter){
+      try{
+          auto &system_rhs          = this->system_rhs;
+          auto &nonzero_constraints = this->nonzero_constraints;
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
+          const AffineConstraints<double> &constraints_used =
+            initial_step ? nonzero_constraints : this->zero_constraints;
+          const double linear_solver_tolerance =
+            std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
 
-  TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-    false, this->simulation_parameters.linear_solver.max_krylov_vectors);
+          if (this->simulation_parameters.linear_solver.verbosity !=
+              Parameters::Verbosity::quiet)
+            {
+              this->pcout << "  -Tolerance of iterative solver is : "
+                          << linear_solver_tolerance << std::endl;
+            }
+          TrilinosWrappers::MPI::Vector completely_distributed_solution(
+            this->locally_owned_dofs, this->mpi_communicator);
+
+          SolverControl solver_control(
+            this->simulation_parameters.linear_solver.max_iterations,
+            linear_solver_tolerance,
+            true,
+            true);
+
+          TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
+            false, this->simulation_parameters.linear_solver.max_krylov_vectors);
 
 
-  TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
+          TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
-  if (renewed_matrix || !ilu_preconditioner)
-    setup_ILU();
+          if (renewed_matrix || !ilu_preconditioner)
+            setup_ILU();
 
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+          {
+            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
-    solver.solve(system_matrix,
-                 completely_distributed_solution,
-                 system_rhs,
-                 *ilu_preconditioner);
+            solver.solve(system_matrix,
+                         completely_distributed_solution,
+                         system_rhs,
+                         *ilu_preconditioner);
 
-    if (this->simulation_parameters.linear_solver.verbosity !=
-        Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
+            if (this->simulation_parameters.linear_solver.verbosity !=
+                Parameters::Verbosity::quiet)
+              {
+                this->pcout << "  -Iterative solver took : "
+                            << solver_control.last_step() << " steps " << std::endl;
+              }
+          }
+          constraints_used.distribute(completely_distributed_solution);
+          auto &newton_update = this->newton_update;
+          newton_update       = completely_distributed_solution;
+          succes=true;
       }
+      catch (std::exception &e)
+      {
+          this->simulation_parameters.linear_solver.ilu_precond_fill+=1;
+          this->pcout << " solver failed try with high preconditionner fill . new fill = "<< this->simulation_parameters.linear_solver.ilu_precond_fill << std::endl;
+      }
+      iter+=1;
   }
-  constraints_used.distribute(completely_distributed_solution);
-  auto &newton_update = this->newton_update;
-  newton_update       = completely_distributed_solution;
+    this->simulation_parameters.linear_solver.ilu_precond_fill=original_fill;
 }
 
 template <int dim>
