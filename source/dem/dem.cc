@@ -366,20 +366,21 @@ DEMSolver<dim>::load_balance()
 
   boundary_cell_object.build(triangulation, parameters.floating_walls);
 
-  const unsigned int maximum_particle_number_on_proc =
-    Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
-                        mpi_communicator);
-  const unsigned int minimum_particle_number_on_proc =
-    Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
-                        mpi_communicator);
   const unsigned int maximum_cell_number_on_proc =
     Utilities::MPI::max(triangulation.n_active_cells(), mpi_communicator);
   const unsigned int minimum_cell_number_on_proc =
     Utilities::MPI::min(triangulation.n_active_cells(), mpi_communicator);
+
+  auto average_minimum_maximum_particles =
+    Utilities::MPI::min_max_avg(particle_handler.n_locally_owned_particles(),
+                                mpi_communicator);
+
   pcout << "Load balance finished " << std::endl;
-  pcout << "Minimum and maximum number of particles on the processors are "
-        << minimum_particle_number_on_proc << " and "
-        << maximum_particle_number_on_proc << std::endl;
+  pcout
+    << "Average, minimum and maximum number of particles on the processors are "
+    << average_minimum_maximum_particles.avg << " , "
+    << average_minimum_maximum_particles.min << " and "
+    << average_minimum_maximum_particles.max << std::endl;
   pcout << "Minimum and maximum number of cells owned by the processors are "
         << minimum_cell_number_on_proc << " and " << maximum_cell_number_on_proc
         << std::endl;

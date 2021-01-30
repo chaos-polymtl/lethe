@@ -8,15 +8,15 @@ Starting simulation with Lethe/DEM on 2 processors
 ***************************************************************** 
 -->Repartitionning triangulation
 Load balance finished 
-Minimum and maximum number of particles on the processors are 39 and 61
+Average, minimum and maximum number of particles on the processors are 50 , 39 and 61
 Minimum and maximum number of cells owned by the processors are 2898 and 3108
 -->Repartitionning triangulation
 Load balance finished 
-Minimum and maximum number of particles on the processors are 0 and 100
+Average, minimum and maximum number of particles on the processors are 50 , 0 and 100
 Minimum and maximum number of cells owned by the processors are 2506 and 3262
 -->Repartitionning triangulation
 Load balance finished 
-Minimum and maximum number of particles on the processors are 0 and 100
+Average, minimum and maximum number of particles on the processors are 50 , 0 and 100
 Minimum and maximum number of cells owned by the processors are 2506 and 3262
 id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, 
 0 0 0.00500 2000.000 0.659 0.189 -0.092 -70.7 27.7 163.3 0.00 0.00 0.00 85.5 -217.7 26.1 
