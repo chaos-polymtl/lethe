@@ -65,9 +65,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   Function<spacedim> *solid_velocity = solid.get_solid_velocity();
 
   // Penalization terms
-  const auto penalty_parameter =
-    1.0 / GridTools::minimal_cell_diameter(*this->triangulation);
-  double beta = this->simulation_parameters.nitsche->beta;
+  // const auto penalty_parameter =
+  //  1.0 / GridTools::minimal_cell_diameter(*this->triangulation);
+  const double beta = this->simulation_parameters.nitsche->beta;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -78,7 +78,14 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
 
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
-      const auto &dh_cell =
+      double      h    = 0;
+      if (dim == 2)
+        h = std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
+      else if (dim == 3)
+        h =
+          pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
+      const double penalty_parameter = 1 / h / h;
+      const auto & dh_cell =
         typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
 
