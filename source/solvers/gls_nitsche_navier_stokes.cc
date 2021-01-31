@@ -65,8 +65,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   Function<spacedim> *solid_velocity = solid.get_solid_velocity();
 
   // Penalization terms
-  // const auto penalty_parameter =
-  //  1.0 / GridTools::minimal_cell_diameter(*this->triangulation);
+  // const double h = GridTools::minimal_cell_diameter(*this->triangulation);
+  // const auto   global_penalty_parameter = 1.0 / (h);
   const double beta = this->simulation_parameters.nitsche->beta;
 
   // Loop over all local particles
@@ -77,14 +77,15 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
       local_rhs    = 0;
 
 
-      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
-      double      h    = 0;
+      const auto &cell   = particle->get_surrounding_cell(*this->triangulation);
+      double      h_cell = 0;
       if (dim == 2)
-        h = std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
+        h_cell =
+          std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
       else if (dim == 3)
-        h =
+        h_cell =
           pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
-      const double penalty_parameter = 1 / h / h;
+      const double penalty_parameter = 1. / (h_cell * h_cell);
       const auto & dh_cell =
         typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
@@ -320,14 +321,26 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         {
           if (this->simulation_control->is_at_start())
             {
-              solid.initial_setup();
-              solid.setup_particles();
+              {
+                TimerOutput::Scope t(this->computing_timer,
+                                     "Nitsche solid mesh");
+                solid.initial_setup();
+              }
+              {
+                TimerOutput::Scope t(this->computing_timer,
+                                     "Nitsche particles insertion");
+                solid.setup_particles();
+              }
               std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
                 solid.get_solid_particle_handler();
               output_solid_particles(solid_ph);
               output_solid_triangulation();
             }
-          solid.integrate_velocity(this->simulation_control->get_time_step());
+          {
+            TimerOutput::Scope t(this->computing_timer,
+                                 "Nitsche particles motion");
+            solid.integrate_velocity(this->simulation_control->get_time_step());
+          }
           solid.move_solid_triangulation(
             this->simulation_control->get_time_step());
         }
@@ -340,7 +353,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->postprocess(false);
-      // postprocess_ht();
       if (this->simulation_parameters.nitsche->calculate_force_on_solid &&
           dim == 2 && spacedim == 3)
         {
@@ -356,18 +368,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->finish_time_step();
-      if (this->simulation_parameters.multiphysics.heat_transfer)
-        {
-          //          finish_time_step_ht();
-        }
     }
   if (this->simulation_parameters.test.enabled)
     solid.print_particle_positions();
   this->finish_simulation();
-  if (this->simulation_parameters.multiphysics.heat_transfer)
-    {
-      //      finish_ht();
-    }
 }
 
 template <int dim, int spacedim>
