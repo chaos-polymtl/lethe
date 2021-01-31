@@ -43,9 +43,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(0)
+  , load_balance_step(0)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
-  , repartition_frequency(parameters.model_parameters.repartition_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
@@ -85,6 +85,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
               &particle_handler,
               false));
 
+  // Setting contact detection method (constant or dynamic)
   if (parameters.model_parameters.contact_detection_method ==
       Parameters::Lagrangian::ModelParameters::ContactDetectionMethod::constant)
     {
@@ -103,6 +104,34 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
       throw std::runtime_error(
         "Specified contact detection method is not valid");
     }
+
+  // Setting load-balance method (single-step, frequent or dynamic)
+  if (parameters.model_parameters.load_balance_method ==
+      Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::once)
+    {
+      check_load_balance_step = &DEMSolver<dim>::check_load_balance_once;
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::frequent)
+    {
+      check_load_balance_step = &DEMSolver<dim>::check_load_balance_frequent;
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::dynamic)
+    {
+      check_load_balance_step = &DEMSolver<dim>::check_load_balance_dynamic;
+    }
+  else if (parameters.model_parameters.load_balance_method ==
+           Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    {
+      check_load_balance_step = &DEMSolver<dim>::no_load_balance;
+    }
+  else
+    {
+      throw std::runtime_error("Specified load balance method is not valid");
+    }
+
+
 
   // Calling input_parameter_inspection to evaluate input parameters in the
   // parameter handler file, finding maximum particle diameter used in
@@ -322,25 +351,105 @@ DEMSolver<dim>::setup_background_dofs()
 }
 
 template <int dim>
-bool
+void
 DEMSolver<dim>::load_balance()
 {
-  if (simulation_control->get_step_number() % repartition_frequency == 0)
-    {
-      pcout << "-->Repartitionning triangulation" << std::endl;
-      triangulation.repartition();
+  pcout << "-->Repartitionning triangulation" << std::endl;
+  triangulation.repartition();
 
-      cells_local_neighbor_list.clear();
-      cells_ghost_neighbor_list.clear();
+  cells_local_neighbor_list.clear();
+  cells_ghost_neighbor_list.clear();
 
-      cell_neighbors_object.find_cell_neighbors(triangulation,
-                                                cells_local_neighbor_list,
-                                                cells_ghost_neighbor_list);
+  cell_neighbors_object.find_cell_neighbors(triangulation,
+                                            cells_local_neighbor_list,
+                                            cells_ghost_neighbor_list);
 
-      boundary_cell_object.build(triangulation, parameters.floating_walls);
-      return true;
-    }
+  boundary_cell_object.build(triangulation, parameters.floating_walls);
+
+  const auto average_minimum_maximum_cells =
+    Utilities::MPI::min_max_avg(triangulation.n_active_cells(),
+                                mpi_communicator);
+
+  const auto average_minimum_maximum_particles =
+    Utilities::MPI::min_max_avg(particle_handler.n_locally_owned_particles(),
+                                mpi_communicator);
+
+  pcout << "Load balance finished " << std::endl;
+  pcout
+    << "Average, minimum and maximum number of particles on the processors are "
+    << average_minimum_maximum_particles.avg << " , "
+    << average_minimum_maximum_particles.min << " and "
+    << average_minimum_maximum_particles.max << std::endl;
+  pcout << "Minimum and maximum number of cells owned by the processors are "
+        << average_minimum_maximum_cells.min << " and "
+        << average_minimum_maximum_cells.max << std::endl;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::no_load_balance()
+{
   return false;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::check_load_balance_once()
+{
+  bool load_balance_step = (simulation_control->get_step_number() ==
+                            parameters.model_parameters.load_balance_step);
+
+  if (load_balance_step)
+    load_balance();
+
+  return load_balance_step;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::check_load_balance_frequent()
+{
+  bool load_balance_step =
+    (simulation_control->get_step_number() %
+       parameters.model_parameters.load_balance_frequency ==
+     0);
+
+  if (load_balance_step)
+    load_balance();
+
+  return load_balance_step;
+}
+
+template <int dim>
+inline bool
+DEMSolver<dim>::check_load_balance_dynamic()
+{
+  bool load_balance_step = 0;
+  if (simulation_control->get_step_number() %
+        parameters.model_parameters.dynamic_load_balance_check_frequency ==
+      0)
+    {
+      unsigned int maximum_particle_number_on_proc = 0;
+      unsigned int minimum_particle_number_on_proc = 0;
+
+      maximum_particle_number_on_proc =
+        Utilities::MPI::max(particle_handler.n_locally_owned_particles(),
+                            mpi_communicator);
+      minimum_particle_number_on_proc =
+        Utilities::MPI::min(particle_handler.n_locally_owned_particles(),
+                            mpi_communicator);
+
+      if ((maximum_particle_number_on_proc - minimum_particle_number_on_proc) >
+          parameters.model_parameters.load_balance_threshold *
+            (particle_handler.n_global_particles() / n_mpi_processes))
+        {
+          load_balance();
+          load_balance_step = true;
+        }
+    }
+
+
+  return load_balance_step;
 }
 
 template <int dim>
@@ -714,14 +823,13 @@ DEMSolver<dim>::solve()
       bool particles_insertion_step = insert_particles();
 
       // Load balancing
-      bool load_balancing_step = load_balance();
+      bool load_balance_step = (this->*check_load_balance_step)();
 
       // Check to see if it is contact search step
       bool contact_search_step = (this->*check_contact_search_step)();
 
       // Sort particles in cells
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
+      if (particles_insertion_step || load_balance_step || contact_search_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -742,8 +850,7 @@ DEMSolver<dim>::solve()
         }
 
       // Broad particle-particle contact search
-      if (particles_insertion_step || load_balancing_step ||
-          contact_search_step)
+      if (particles_insertion_step || load_balance_step || contact_search_step)
         {
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,

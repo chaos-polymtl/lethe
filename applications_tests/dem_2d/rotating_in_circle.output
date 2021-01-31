@@ -6,10 +6,6 @@ Starting simulation with Lethe/DEM on 1 processors
 ***************************************************************** 
 50 particles of type 0 were inserted, 0 particles of type 0 remaining
 ***************************************************************** 
--->Repartitionning triangulation
--->Repartitionning triangulation
--->Repartitionning triangulation
--->Repartitionning triangulation
 id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, 
 0 0 0.00500 2000.000 -0.012 0.001 0.000 -0.7 0.1 0.0 0.00 0.00 0.00 0.0 0.0 0.0 
 1 0 0.00500 2000.000 -0.011 0.003 0.000 -0.6 0.2 0.0 0.00 0.00 0.00 0.0 0.0 0.0 

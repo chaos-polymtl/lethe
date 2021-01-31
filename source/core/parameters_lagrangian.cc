@@ -399,12 +399,36 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
+        prm.declare_entry("load balance method",
+                          "none",
+                          Patterns::Selection("none|once|frequent|dynamic"),
+                          "Choosing load-balance method"
+                          "Choices are <none|once|frequent|dynamic>.");
+
         prm.declare_entry(
-          "repartition frequency",
+          "load balance step",
+          "1000000000",
+          Patterns::Integer(),
+          "Step at which the triangulation is repartitioned "
+          "and load is balanced for single-step load-balancing");
+
+        prm.declare_entry(
+          "load balance frequency",
           "1000000000",
           Patterns::Integer(),
           "Frequency at which the triangulation is repartitioned "
-          "and load is balanced");
+          "and load is balanced for frequent load-balancing");
+
+        prm.declare_entry("load balance threshold",
+                          "1",
+                          Patterns::Double(),
+                          "Threshold for dynamic load-balancing");
+
+        prm.declare_entry("dynamic load balance check frequency",
+                          "100000",
+                          Patterns::Integer(),
+                          "Checking frequency for dynamic load-balancing");
+
 
         prm.declare_entry("contact detection method",
                           "dynamic",
@@ -455,7 +479,36 @@ namespace Parameters
     {
       prm.enter_subsection("model parameters");
       {
-        repartition_frequency = prm.get_integer("repartition frequency");
+        const std::string load_balance = prm.get("load balance method");
+
+        if (load_balance == "once")
+          {
+            load_balance_method = LoadBalanceMethod::once;
+
+            load_balance_step = prm.get_integer("load balance step");
+          }
+        else if (load_balance == "frequent")
+          {
+            load_balance_method    = LoadBalanceMethod::frequent;
+            load_balance_frequency = prm.get_integer("load balance frequency");
+          }
+        else if (load_balance == "dynamic")
+          {
+            load_balance_method    = LoadBalanceMethod::dynamic;
+            load_balance_threshold = prm.get_double("load balance threshold");
+            dynamic_load_balance_check_frequency =
+              prm.get_integer("dynamic load balance check frequency");
+          }
+        else if (load_balance == "none")
+          {
+            load_balance_method = LoadBalanceMethod::none;
+          }
+        else
+          {
+            throw(std::runtime_error("Invalid load-balance method "));
+          }
+
+
 
         const std::string contact_search = prm.get("contact detection method");
         if (contact_search == "constant")

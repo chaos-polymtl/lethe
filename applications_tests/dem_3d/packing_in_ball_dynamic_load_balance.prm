@@ -1,3 +1,4 @@
+# Listing of Parameters
 # ---------------------
 # --------------------------------------------------
 # Simulation and IO Control
@@ -27,8 +28,11 @@ end
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
-  set contact detection method 		   		 = constant
-  set contact detection frequency                 	 = 10
+  set contact detection method 		   		 = dynamic
+  set dynamic contact search size coefficient	 	 = 0.9
+  set load balance method				 = dynamic
+  set load balance threshold				 = 0.5
+  set dynamic load balance check frequency		 = 5000
   set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
@@ -50,15 +54,15 @@ subsection physical properties
     		set density            	 		= 2000
     		set young modulus particle         	= 1000000
     		set poisson ratio particle          	= 0.3
-    		set restitution coefficient particle	= 0.3
-    		set friction coefficient particle       = 0.1
-    		set rolling friction particle         	= 0.05
+    		set restitution coefficient particle	= 0.7
+    		set friction coefficient particle       = 0.3
+    		set rolling friction particle         	= 0.1
 	end
     set young modulus wall            			= 1000000
     set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.3
-    set friction coefficient wall         		= 0.1
-    set rolling friction wall         	      	  	= 0.05
+    set restitution coefficient wall           		= 0.7
+    set friction coefficient wall         		= 0.3
+    set rolling friction wall         	      	  	= 0.1
 end
 
 #---------------------------------------------------
@@ -70,34 +74,13 @@ subsection insertion info
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.04
+    set insertion box minimum z            	        = -0.03
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = 0.03
-    set insertion distance threshold			= 1.5
+    set insertion box maximum z            	        = 0.07
+    set insertion distance threshold			= 2
     set insertion random number range			= 0.2
     set insertion random number seed			= 19
-end
-
-#---------------------------------------------------
-# Floating Walls
-#---------------------------------------------------
-subsection floating walls
-    set number of floating walls	                = 1
-    	subsection wall 0
-		subsection point on wall
-			set x				= 0
-			set y				= 0
-			set z				= -0.06
-		end
-		subsection normal vector
-			set nx				= 0	
-			set ny				= 0.5
-			set nz				= 1
-		end
-		set start time				= 0
-		set end time				= 0.2
-    	end
 end
 
 #---------------------------------------------------
