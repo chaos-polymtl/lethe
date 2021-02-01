@@ -42,6 +42,8 @@
 #include "core/time_integration_utilities.h"
 #include "solvers/gls_navier_stokes.h"
 
+
+
 using namespace dealii;
 
 /**
@@ -53,6 +55,8 @@ using namespace dealii;
  * @ingroup solvers
  * @author Toni EL Geitani, 2020
  */
+
+
 
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
@@ -74,6 +78,14 @@ private:
 
   void
   calculate_void_fraction(const double time);
+
+  void
+  assemble_L2_projection();
+
+  void
+  solve_L2_system(const bool initial_step,
+                  double     absolute_residual,
+                  double     relative_residual);
 
   virtual void
   iterate() override;
@@ -128,6 +140,7 @@ protected:
 private:
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
+
 
   Vector<double>                       cell_void_fraction;
   MappingQGeneric<dim>                 particle_mapping;
