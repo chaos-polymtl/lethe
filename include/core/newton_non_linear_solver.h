@@ -83,8 +83,8 @@ NewtonNonLinearSolver<VectorType>::solve(
   double       last_res;
   bool         first_step      = is_initial_step;
   unsigned int outer_iteration = 0;
-  last_res                     = 1.0;
-  current_res                  = 1.0;
+  last_res                     = 1e6;
+  current_res                  = 1e6;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 

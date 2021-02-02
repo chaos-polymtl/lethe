@@ -69,6 +69,7 @@ test()
   param->solid_mesh.grid_type          = "hyper_cube";
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 3;
+  param->particles_sub_iterations      = 1;
 
   double time_step = 0.01;
   param->solid_velocity.declare_parameters(prm, 3);

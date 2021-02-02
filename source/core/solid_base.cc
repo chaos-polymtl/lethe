@@ -24,7 +24,11 @@
 #include <deal.II/fe/fe_nothing.h>
 #include <deal.II/fe/fe_values.h>
 
+#include <deal.II/grid/filtered_iterator.h>
 #include <deal.II/grid/grid_in.h>
+#include <deal.II/grid/grid_tools.h>
+
+#include <deal.II/lac/trilinos_vector.h>
 
 #include <deal.II/particles/data_out.h>
 
@@ -144,17 +148,34 @@ SolidBase<dim, spacedim>::setup_particles()
           }
       }
 
-  std::vector<BoundingBox<spacedim>> all_boxes;
-  all_boxes.reserve(fluid_tria->n_locally_owned_active_cells());
-  for (const auto cell : fluid_tria->active_cell_iterators())
-    if (cell->is_locally_owned())
-      all_boxes.emplace_back(cell->bounding_box());
-  const auto tree        = pack_rtree(all_boxes);
-  const auto local_boxes = extract_rtree_level(tree, 1);
-
   std::vector<std::vector<BoundingBox<spacedim>>> global_fluid_bounding_boxes;
-  global_fluid_bounding_boxes =
-    Utilities::MPI::all_gather(mpi_communicator, local_boxes);
+
+  // if Triangulation is a parallel::distributed::triangulation, use the naive
+  // bounding box algorithm of deal.II
+  if (auto tria =
+        dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
+          fluid_tria.get()))
+    {
+      const auto my_bounding_box =
+        GridTools::compute_mesh_predicate_bounding_box(
+          *tria, IteratorFilters::LocallyOwnedCell());
+      global_fluid_bounding_boxes =
+        Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
+    }
+  // else, use the more general boost rtree bounding boxes
+  else
+    {
+      std::vector<BoundingBox<spacedim>> all_boxes;
+      all_boxes.reserve(fluid_tria->n_locally_owned_active_cells());
+      for (const auto cell : fluid_tria->active_cell_iterators())
+        if (cell->is_locally_owned())
+          all_boxes.emplace_back(cell->bounding_box());
+      const auto tree        = pack_rtree(all_boxes);
+      const auto local_boxes = extract_rtree_level(tree, 1);
+
+      global_fluid_bounding_boxes =
+        Utilities::MPI::all_gather(mpi_communicator, local_boxes);
+    }
 
   solid_particle_handler->insert_global_particles(quadrature_points_vec,
                                                   global_fluid_bounding_boxes,
@@ -165,7 +186,8 @@ SolidBase<dim, spacedim>::setup_particles()
   fluid_tria->signals.post_distributed_refinement.connect(
     [&]() { solid_particle_handler->register_load_callback_function(false); });
 
-  setup_done = true;
+  setup_done                  = true;
+  initial_number_of_particles = solid_particle_handler->n_global_particles();
 }
 
 template <int dim, int spacedim>
@@ -198,35 +220,65 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::integrate_velocity(double time_step)
 {
-  for (auto particle = solid_particle_handler->begin();
-       particle != solid_particle_handler->end();
-       ++particle)
+  const unsigned int sub_particles_iterations = param->particles_sub_iterations;
+  AssertThrow(sub_particles_iterations >= 1,
+              ExcMessage("Sub particles iterations must be 1 or larger"));
+  double sub_iteration_relaxation = 1. / sub_particles_iterations;
+  // Particle sub iterations divide the time step in a number of "sub
+  // iterations". This allows the solver to use a larger CFL without
+  // necessitating the use of the more complex particle location detection
+  // approaches. The number of sub particles iterations must be chosen so that
+  // the time_step / sub_particles_iterations  * velocity / cell size is smaller
+  // than unity
+  for (unsigned int it = 0; it < sub_particles_iterations; ++it)
     {
-      Point<spacedim> particle_location = particle->get_location();
+      for (auto particle = solid_particle_handler->begin();
+           particle != solid_particle_handler->end();
+           ++particle)
+        {
+          Point<spacedim> particle_location = particle->get_location();
 
-      Tensor<1, spacedim> k1;
-      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-        k1[comp_i] = velocity->value(particle_location, comp_i);
+          Tensor<1, spacedim> k1;
+          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+            k1[comp_i] = velocity->value(particle_location, comp_i);
 
-      Point<spacedim>     p1 = particle_location + time_step / 2 * k1;
-      Tensor<1, spacedim> k2;
-      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-        k2[comp_i] = velocity->value(p1, comp_i);
+          Point<spacedim>     p1 = particle_location + time_step / 2 * k1;
+          Tensor<1, spacedim> k2;
+          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+            k2[comp_i] = velocity->value(p1, comp_i);
 
-      Point<spacedim>     p2 = particle_location + time_step / 2 * k2;
-      Tensor<1, spacedim> k3;
-      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-        k3[comp_i] = velocity->value(p2, comp_i);
+          Point<spacedim>     p2 = particle_location + time_step / 2 * k2;
+          Tensor<1, spacedim> k3;
+          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+            k3[comp_i] = velocity->value(p2, comp_i);
 
-      Point<spacedim>     p3 = particle_location + time_step * k3;
-      Tensor<1, spacedim> k4;
-      for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-        k4[comp_i] = velocity->value(p3, comp_i);
+          Point<spacedim>     p3 = particle_location + time_step * k3;
+          Tensor<1, spacedim> k4;
+          for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+            k4[comp_i] = velocity->value(p3, comp_i);
 
-      particle_location += time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
-      particle->set_location(particle_location);
+          particle_location += sub_iteration_relaxation * time_step / 6 *
+                               (k1 + 2 * k2 + 2 * k3 + k4);
+          particle->set_location(particle_location);
+        }
+      solid_particle_handler->sort_particles_into_subdomains_and_cells();
     }
-  solid_particle_handler->sort_particles_into_subdomains_and_cells();
+
+  if (initial_number_of_particles !=
+      solid_particle_handler->n_global_particles())
+    {
+      if (this_mpi_process == 0)
+        {
+          std::cout << "Warning - Nitsche Particles have been lost"
+                    << std::endl;
+          std::cout << "Initial number of particles : "
+                    << initial_number_of_particles << std::endl;
+
+          std::cout << "Current number of particles : "
+                    << solid_particle_handler->n_global_particles()
+                    << std::endl;
+        }
+    }
 }
 
 template <int dim, int spacedim>
@@ -238,35 +290,40 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
 
   for (const auto &cell : solid_dh.active_cell_iterators())
     {
-      for (unsigned int i = 0; i < GeometryInfo<spacedim>::vertices_per_cell;
-           ++i)
+      if (cell->is_locally_owned())
         {
-          if (displacement[cell->vertex_index(i)] == false)
+          for (unsigned int i = 0;
+               i < GeometryInfo<spacedim>::vertices_per_cell;
+               ++i)
             {
-              Point<spacedim> &vertex_position = cell->vertex(i);
+              if (!displacement[cell->vertex_index(i)])
+                {
+                  Point<spacedim> &vertex_position = cell->vertex(i);
 
-              Tensor<1, spacedim> k1;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k1[comp_i] = velocity->value(vertex_position, comp_i);
+                  Tensor<1, spacedim> k1;
+                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                    k1[comp_i] = velocity->value(vertex_position, comp_i);
 
-              Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
-              Tensor<1, spacedim> k2;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k2[comp_i] = velocity->value(p1, comp_i);
+                  Point<spacedim>     p1 = vertex_position + time_step / 2 * k1;
+                  Tensor<1, spacedim> k2;
+                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                    k2[comp_i] = velocity->value(p1, comp_i);
 
-              Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
-              Tensor<1, spacedim> k3;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k3[comp_i] = velocity->value(p2, comp_i);
+                  Point<spacedim>     p2 = vertex_position + time_step / 2 * k2;
+                  Tensor<1, spacedim> k3;
+                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                    k3[comp_i] = velocity->value(p2, comp_i);
 
-              Point<spacedim>     p3 = vertex_position + time_step * k3;
-              Tensor<1, spacedim> k4;
-              for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
-                k4[comp_i] = velocity->value(p3, comp_i);
+                  Point<spacedim>     p3 = vertex_position + time_step * k3;
+                  Tensor<1, spacedim> k4;
+                  for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
+                    k4[comp_i] = velocity->value(p3, comp_i);
 
-              vertex_position += time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
+                  vertex_position +=
+                    time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
 
-              displacement[cell->vertex_index(i)] = true;
+                  displacement[cell->vertex_index(i)] = true;
+                }
             }
         }
     }

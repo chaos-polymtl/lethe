@@ -139,6 +139,7 @@ private:
   Function<spacedim> *velocity;
 
   const unsigned int degree_velocity;
+  unsigned int       initial_number_of_particles;
 
   bool setup_done = false;
 };

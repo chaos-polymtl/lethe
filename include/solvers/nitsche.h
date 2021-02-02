@@ -60,6 +60,9 @@ namespace Parameters
     Verbosity   verbosity;
     bool        calculate_force_on_solid;
     std::string force_output_name;
+
+    // Particle motion integration parameters
+    unsigned int particles_sub_iterations;
   };
 
   template <int dim>
@@ -98,6 +101,13 @@ namespace Parameters
                         "force_solid",
                         Patterns::FileName(),
                         "File output solid force prefix");
+
+      prm.declare_entry(
+        "particles sub iterations",
+        "1",
+        Patterns::Integer(),
+        "Number of sub iterations for the motion of the particles. This parameter"
+        "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
     }
     prm.leave_subsection();
   }
@@ -121,6 +131,7 @@ namespace Parameters
         verbosity = Verbosity::quiet;
       calculate_force_on_solid = prm.get_bool("calculate forces on solid");
       force_output_name        = prm.get("solid force name");
+      particles_sub_iterations = prm.get_integer("particles sub iterations");
     }
     prm.leave_subsection();
   }
