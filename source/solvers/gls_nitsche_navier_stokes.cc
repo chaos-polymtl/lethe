@@ -65,8 +65,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   Function<spacedim> *solid_velocity = solid.get_solid_velocity();
 
   // Penalization terms
-  // const double h = GridTools::minimal_cell_diameter(*this->triangulation);
-  // const auto   global_penalty_parameter = 1.0 / (h);
   const double beta = this->simulation_parameters.nitsche->beta;
 
   // Loop over all local particles
