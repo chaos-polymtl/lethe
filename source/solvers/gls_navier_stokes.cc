@@ -1364,12 +1364,14 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const bool   renewed_matrix)
 {
 
+
+  // try multiple fill of the ILU preconditioner
   unsigned int max_iter=20;
   unsigned int original_fill=this->simulation_parameters.linear_solver.ilu_precond_fill;
   unsigned int iter=0;
-  bool succes=false;
+  bool success=false;
 
-  while(succes==false and iter<max_iter){
+  while(success==false and iter<max_iter){
       try{
           auto &system_rhs          = this->system_rhs;
           auto &nonzero_constraints = this->nonzero_constraints;
@@ -1421,12 +1423,12 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           constraints_used.distribute(completely_distributed_solution);
           auto &newton_update = this->newton_update;
           newton_update       = completely_distributed_solution;
-          succes=true;
+          success=true;
       }
       catch (std::exception &e)
       {
           this->simulation_parameters.linear_solver.ilu_precond_fill+=1;
-          this->pcout << " solver failed try with high preconditionner fill . new fill = "<< this->simulation_parameters.linear_solver.ilu_precond_fill << std::endl;
+          this->pcout << " GMRES solver failed! New try with higher preconditioner fill. New fill = "<< this->simulation_parameters.linear_solver.ilu_precond_fill << std::endl;
       }
       iter+=1;
   }

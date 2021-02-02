@@ -1189,9 +1189,14 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::integrate_particules()
 {
+// Integrate the velocity of the particle. If integrate motion is defined as true in the parameter this function will also integrate the force to update the velocity.
+// Otherwise the velocity is kept constant
+
+// To integrate the forces and update the velocity, this function use the implicite Euler algorithme.
+// To find the force at t+dt the function use the fix point algorithm in parallel to the newton iteration for the fluid.
+
 
     double dt=this->simulation_control->get_time_steps_vector()[0];
-
     double alpha=this->simulation_parameters.particlesParameters.alpha;
     double g=this->simulation_parameters.particlesParameters.gravity;
     double rho=this->simulation_parameters.particlesParameters.density;
@@ -1213,6 +1218,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
 
             Tensor<1, dim> velocity_iter;
             velocity_iter = particles[p].last_velocity + (particles[p].forces + gravity) * dt / particles[p].masses;
+
+            // This section is used to check if the fix point iteration is diverging.
+            // If, between 2 iterations, the correction change it's direction the relaxation parameter alpha is divided by 2.
+            // A change of direction is defined as a negative cross product of the correction vector and the last correction vector
+            // and the norm of the new correction vector being larger then the last.
             Tensor<1, dim> last_variation_v=particles[p].velocity_iter-particles[p].last_velocity;
             Tensor<1, dim> variation_v= velocity_iter-particles[p].last_velocity;
             double cross_product_v;
@@ -1232,6 +1242,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
 
                 }
                 else {
+                    // if a potential divergence is observed the norm of the correction vector is adjusted to be half of the last correction vector norm and alpha is divided by 2.
                     particles[p].velocity = particles[p].velocity + variation_v*last_variation_v.norm()/variation_v.norm() / 2;
                     particles[p].local_alpha_force = particles[p].local_alpha_force/ 2;
                 }
@@ -1245,10 +1256,8 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
                     particles[p].last_position + (particles[p].velocity * 0.5 + particles[p].last_velocity * 0.5) * dt;
 
 
-            this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
-            this->pcout << "particule " << p << " velocity " << particles[p].velocity << std::endl;
 
-            // Rotation
+            // Rotation same as the velocity.
             if (dim==2){
                 double i_inverse;
                 i_inverse = 1.0/particles[p].inertia[2][2];
@@ -1256,8 +1265,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
                 omega_iter = particles[p].last_omega + (i_inverse*particles[p].torques)* dt ;
                 Tensor<1, 3> last_variation=particles[p].omega_iter-particles[p].last_omega;
                 Tensor<1, 3> variation= omega_iter-particles[p].last_omega;
-                this->pcout << "particule " << p << " last variation " << last_variation << std::endl;
-                this->pcout << "particule " << p << " variation " << variation<< std::endl;
+
                 double cross_product= (last_variation[0]*variation[0]+last_variation[1]*variation[1]+last_variation[2]*variation[2])/(last_variation.norm()*variation.norm());
 
                 if (last_variation.norm()<1e-10){
@@ -1292,10 +1300,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
                 omega_iter[2] = particles[p].last_omega[2] + (i_inverse[2][0]*particles[p].torques[0]+i_inverse[2][1]*particles[p].torques[1]+i_inverse[2][2]*particles[p].torques[2])* dt ;
                 Tensor<1, 3> last_variation=particles[p].omega_iter-particles[p].last_omega;
                 Tensor<1, 3> variation= omega_iter-particles[p].last_omega;
-                this->pcout << "particule " << p << " last variation " << last_variation << std::endl;
-                this->pcout << "particule " << p << " variation " << variation << std::endl;
+
                 double cross_product= (last_variation[0]*variation[0]+last_variation[1]*variation[1]+last_variation[2]*variation[2])/(last_variation.norm()*variation.norm());
 
+                
                 if (last_variation.norm()<1e-10){
                     particles[p].omega = particles[p].omega + alpha *(omega_iter - particles[p].omega);;
                 }
@@ -1315,20 +1323,13 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
 
                 particles[p].angular_position + (particles[p].omega * 0.5 + particles[p].last_omega * 0.5) * dt;
             }
-            this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
+            /*this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
             this->pcout << "particule " << p << " velocity " << particles[p].velocity << std::endl;
-            this->pcout << "particule " << p << " omega " << particles[p].omega << std::endl;
+            this->pcout << "particule " << p << " omega " << particles[p].omega << std::endl;*/
 
         }
     }
     else{
-        /*double time=this->simulation_control->get_current_time();
-        for (unsigned int p = 0; p < particles.size(); ++p) {
-            particles[p].last_position=particles[p].position;
-            particles[p].position[0]= sin(time);
-            particles[p].velocity[0]= cos(time);
-
-        }*/
         for (unsigned int p = 0; p < particles.size(); ++p) {
             particles[p].last_position =particles[p].position;
             particles[p].position[0] = particles[p].position[0]+dt*particles[p].velocity[0];
@@ -1345,6 +1346,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::finish_time_step_particules()
 {
+    // Store the information about the particle used for the integration and print the results if requested.
 
     for (unsigned int p = 0; p < particles.size(); ++p) {
         particles[p].last_position=particles[p].position;
@@ -1368,24 +1370,30 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particules()
             table_t[p].add_value("T_x", particles[p].torques[0]);
             table_t[p].set_precision(
                     "T_x", this->simulation_parameters.simulation_control.log_precision);
-            table_t[p].add_value("omega_x", particles[p].omega[0]);
-            table_t[p].set_precision(
-                    "omega_x", this->simulation_parameters.simulation_control.log_precision);
+            if(this->simulation_parameters.particlesParameters.integrate_motion) {
+                table_t[p].add_value("omega_x", particles[p].omega[0]);
+                table_t[p].set_precision(
+                        "omega_x", this->simulation_parameters.simulation_control.log_precision);
+            }
 
             table_t[p].add_value("T_y", particles[p].torques[1]);
             table_t[p].set_precision(
                     "T_y", this->simulation_parameters.simulation_control.log_precision);
-            table_t[p].add_value("omega_y", particles[p].omega[1]);
-            table_t[p].set_precision(
-                    "omega_y", this->simulation_parameters.simulation_control.log_precision);
+            if(this->simulation_parameters.particlesParameters.integrate_motion) {
+                table_t[p].add_value("omega_y", particles[p].omega[1]);
+                table_t[p].set_precision(
+                        "omega_y", this->simulation_parameters.simulation_control.log_precision);
+            }
         }
 
         table_t[p].add_value("T_z", particles[p].torques[2]);
         table_t[p].set_precision(
                 "T_z", this->simulation_parameters.simulation_control.log_precision);
-        table_t[p].add_value("omega_z", particles[p].omega[2]);
-        table_t[p].set_precision(
-                "omega_z", this->simulation_parameters.simulation_control.log_precision);
+        if(this->simulation_parameters.particlesParameters.integrate_motion) {
+            table_t[p].add_value("omega_z", particles[p].omega[2]);
+            table_t[p].set_precision(
+                    "omega_z", this->simulation_parameters.simulation_control.log_precision);
+        }
 
 
 
@@ -2603,7 +2611,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       evaluation_point(global_index_overwrite) *
                                         sum_line;
                                   if(modifed_stencil)
-                                        // Impose the value for dummy dof
+                                        // Impose the value of the dummy dof. This help with pressure variation when the IB is moving.
                                         this->system_rhs(global_index_overwrite) =(sum_line*v_ib*(1-vect_dist.norm()/(vect_dist.norm()+dr)) +local_interp_sol*vect_dist.norm()/(vect_dist.norm()+dr))-this->evaluation_point(
                                                 global_index_overwrite) *sum_line;
                                 }
