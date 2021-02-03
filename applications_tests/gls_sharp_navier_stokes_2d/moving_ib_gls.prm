@@ -134,7 +134,7 @@ subsection mesh adaptation
   set max number elements  = 40000
 
  # Maximum refinement level
-  set min refinement level = 5
+  set min refinement level = 0
  # Maximum refinement level
   set max refinement level = 5
   # Type of mesh adaptationChoices are <none|uniform|kelly>.

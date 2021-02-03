@@ -1303,7 +1303,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particules()
 
                 double cross_product= (last_variation[0]*variation[0]+last_variation[1]*variation[1]+last_variation[2]*variation[2])/(last_variation.norm()*variation.norm());
 
-                
+
                 if (last_variation.norm()<1e-10){
                     particles[p].omega = particles[p].omega + alpha *(omega_iter - particles[p].omega);;
                 }
