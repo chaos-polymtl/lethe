@@ -82,10 +82,10 @@ private:
   void
   assemble_L2_projection();
 
-  void
-  solve_L2_system(const bool initial_step,
-                  double     absolute_residual,
-                  double     relative_residual);
+  // void
+  // solve_L2_system(const bool initial_step,
+  //                  double     absolute_residual,
+  //                  double     relative_residual);
 
   virtual void
   iterate() override;
@@ -142,7 +142,7 @@ private:
   FE_Q<dim>       fe_void_fraction;
 
 
-  Vector<double>                       cell_void_fraction;
+  // Vector<double>                       cell_void_fraction;
   MappingQGeneric<dim>                 particle_mapping;
   Particles::ParticleHandler<dim, dim> particle_handler;
 
@@ -154,6 +154,8 @@ private:
 
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+
+
 
   const bool   PSPG        = true;
   const bool   SUPG        = true;
