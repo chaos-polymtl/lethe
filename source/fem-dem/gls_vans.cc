@@ -23,6 +23,8 @@ template <int dim>
 void
 GLSVANSSolver<dim>::setup_dofs()
 {
+  ilu_preconditioner.reset();
+
   GLSNavierStokesSolver<dim>::setup_dofs();
   void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
 
@@ -48,6 +50,28 @@ GLSVANSSolver<dim>::setup_dofs()
                           this->mpi_communicator);
   nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
                                    this->mpi_communicator);
+
+  auto &nonzero_constraints = this->nonzero_constraints;
+
+  DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
+  DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
+                                  dsp,
+                                  nonzero_constraints,
+                                  false);
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    locally_owned_dofs_voidfraction,
+    this->mpi_communicator,
+    locally_relevant_dofs_voidfraction);
+
+  system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
+                                     locally_owned_dofs_voidfraction,
+                                     dsp,
+                                     this->mpi_communicator);
+
+
+  system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
+                                  this->mpi_communicator);
 }
 
 template <int dim>
@@ -142,26 +166,19 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
   else if (this->simulation_parameters.void_fraction->mode ==
            Parameters::VoidFractionMode::dem)
     {
-      assemble_and_solve_L2_projection();
-      // solve_L2_system(true, 1e-15, 1e-15);
+      assemble_L2_projection();
+      solve_L2_system(true, 1e-15, 1e-15);
     }
 }
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
+GLSVANSSolver<dim>::assemble_L2_projection()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(
     this->velocity_fem_degree,
     this->simulation_parameters.fem_parameters.qmapping_all);
-
-  FEValues<dim> fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
-                          update_values | update_quadrature_points |
-                            update_JxW_values | update_gradients |
-                            update_hessians);
 
   FEValues<dim> fe_values_void_fraction(mapping,
                                         this->fe_void_fraction,
@@ -170,49 +187,15 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
                                           update_quadrature_points |
                                           update_JxW_values | update_gradients);
 
-  TrilinosWrappers::SparseMatrix system_matrix;
-  TrilinosWrappers::MPI::Vector  system_rhs;
-
-  const IndexSet locally_owned_dofs_voidfraction =
-    void_fraction_dof_handler.locally_owned_dofs();
-  IndexSet locally_relevant_dofs_voidfraction;
-  auto &   nonzero_constraints = this->nonzero_constraints;
-  DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler,
-
-                                          locally_relevant_dofs_voidfraction);
-  system_matrix.clear();
-  DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
-  DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
-                                  dsp,
-                                  nonzero_constraints,
-                                  false);
-  SparsityTools::distribute_sparsity_pattern(
-    dsp,
-    locally_owned_dofs_voidfraction,
-    this->mpi_communicator,
-    locally_relevant_dofs_voidfraction);
-  system_matrix.reinit(locally_owned_dofs_voidfraction,
-                       locally_owned_dofs_voidfraction,
-                       dsp,
-                       this->mpi_communicator);
-
-
-  system_rhs.reinit(locally_owned_dofs_voidfraction, this->mpi_communicator);
-
-  const FEValuesExtractors::Scalar voidfraction(dim);
   const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
   const unsigned int n_q_points    = quadrature_formula.size();
-  FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     local_rhs(dofs_per_cell);
+  FullMatrix<double> local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_void_fraction(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_vf(dofs_per_cell);
 
-  system_rhs    = 0;
-  system_matrix = 0;
-
-
-  // Gather void fraction (values, gradient)
-  std::vector<double> present_void_fraction_values(n_q_points);
+  system_rhs_void_fraction    = 0;
+  system_matrix_void_fraction = 0;
 
   for (const auto &cell :
        this->void_fraction_dof_handler.active_cell_iterators())
@@ -228,8 +211,8 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
           //            &this->void_fraction_dof_handler);
           fe_values_void_fraction.reinit(cell);
 
-          local_matrix = 0;
-          local_rhs    = 0;
+          local_matrix_void_fraction = 0;
+          local_rhs_void_fraction    = 0;
 
           double particles_volume_in_cell = 0;
 
@@ -253,9 +236,6 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
           // Calculate cell void fraction
           double cell_void_fraction =
             (cell_volume - particles_volume_in_cell) / cell_volume;
-          std::cout << "Void Fraction:"
-                    << "" << cell_void_fraction << std::endl;
-
 
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
@@ -263,48 +243,46 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
                 {
                   // fe_values_void_fraction.get_function_values(
                   //  nodal_void_fraction_relevant, phi_vf);
-                  phi_vf[k] = fe_values_void_fraction[voidfraction].value(k, q);
+                  phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   // Matrix assembly
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
-                      local_matrix(i, j) += (phi_vf[j] * phi_vf[i]) *
-                                            fe_values_void_fraction.JxW(q);
+                      local_matrix_void_fraction(i, j) +=
+                        (phi_vf[j] * phi_vf[i]) *
+                        fe_values_void_fraction.JxW(q);
                     }
-                  local_rhs(i) += phi_vf[i] * cell_void_fraction *
-                                  fe_values_void_fraction.JxW(q);
-
-                  std::cout << "phi_vf:"
-                            << "" << phi_vf[i] << std::endl;
+                  local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
+                                                fe_values_void_fraction.JxW(q);
                 }
-              // std::cout << "fe_values:"
-              //           << "" << fe_values_void_fraction.JxW(q) << std::endl;
             }
           cell->get_dof_indices(local_dof_indices);
           this->nonzero_constraints.distribute_local_to_global(
-            local_matrix,
-            local_rhs,
+            local_matrix_void_fraction,
+            local_rhs_void_fraction,
             local_dof_indices,
-            system_matrix,
-            system_rhs);
+            system_matrix_void_fraction,
+            system_rhs_void_fraction);
         }
     }
-  system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
-
+  system_matrix_void_fraction.compress(VectorOperation::add);
+  system_rhs_void_fraction.compress(VectorOperation::add);
+}
+template <int dim>
+void
+GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
+                                    double     absolute_residual,
+                                    double     relative_residual)
+{
   // Solve the L2 projection system
-  const bool initial_step      = true;
-  double     absolute_residual = 1e-15;
-  double     relative_residual = 1e-15;
-
-  // auto &             nonzero_constraints = this->nonzero_constraints;
-  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+  auto &nonzero_constraints = this->nonzero_constraints;
   const AffineConstraints<double> &constraints_used =
     initial_step ? nonzero_constraints : this->zero_constraints;
   const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+    std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
+             absolute_residual);
 
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
@@ -312,8 +290,8 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
-  //  const IndexSet locally_owned_dofs_voidfraction =
-  //    void_fraction_dof_handler.locally_owned_dofs();
+  const IndexSet locally_owned_dofs_voidfraction =
+    void_fraction_dof_handler.locally_owned_dofs();
 
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs_voidfraction, this->mpi_communicator);
@@ -323,8 +301,13 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
     linear_solver_tolerance,
     true,
     true);
-  SolverFGMRES<TrilinosWrappers::MPI::Vector> solver(solver_control);
-  TrilinosWrappers::PreconditionILU           preconditioner;
+
+  // SolverFGMRES<TrilinosWrappers::MPI::Vector> solver(solver_control);
+  TrilinosWrappers::SolverTFQMR solver(solver_control);
+
+  // TrilinosWrappers::PreconditionILU           preconditioner;
+
+  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
   //**********************************************
   // Trillinos Wrapper ILU Preconditioner
@@ -335,8 +318,14 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
     this->simulation_parameters.linear_solver.ilu_precond_atol;
   const double ilu_rtol =
     this->simulation_parameters.linear_solver.ilu_precond_rtol;
+
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
     ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_matrix_void_fraction,
+                                 preconditionerOptions);
   // pmass_preconditioner.initialize(pressure_mass_matrix,
   // preconditionerOptions);
 
@@ -344,12 +333,13 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
   // const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU>
   //  preconditioner(this->system_matrix, pmass_preconditioner, solver_control);
 
-  preconditioner.initialize(system_matrix, preconditionerOptions);
+  // preconditioner.initialize(system_matrix_void_fraction,
+  // preconditionerOptions);
 
-  solver.solve(system_matrix,
+  solver.solve(system_matrix_void_fraction,
                completely_distributed_solution,
-               system_rhs,
-               preconditioner);
+               system_rhs_void_fraction,
+               *ilu_preconditioner);
 
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
@@ -360,17 +350,14 @@ GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
 
   constraints_used.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
-  // for (unsigned int q = 0; q < n_q_points; ++q)
-  // std::cout << "Nodal values"
-  //           << "" << nodal_void_fraction_relevant(q) << std::endl;
+
+  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
+  const unsigned int n_q_points = quadrature_formula.size();
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    std::cout << "Nodal values"
+              << "" << nodal_void_fraction_relevant(q) << std::endl;
 }
 
-// template <int dim>
-// void
-// GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
-//                                    double     absolute_residual,
-//                                    double     relative_residual)
-//{}
 
 
 // Do an iteration with the NavierStokes Solver
