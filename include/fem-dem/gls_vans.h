@@ -159,7 +159,7 @@ private:
   TrilinosWrappers::MPI::Vector  system_rhs_void_fraction;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
-  AffineConstraints<double>                          constraints;
+  AffineConstraints<double>                          void_fraction_constraints;
 
 
 

@@ -36,11 +36,11 @@ GLSVANSSolver<dim>::setup_dofs()
 
                                           locally_relevant_dofs_voidfraction);
 
-  constraints.clear();
-  constraints.reinit(locally_relevant_dofs_voidfraction);
+  void_fraction_constraints.clear();
+  void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
   DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
-                                          constraints);
-  constraints.close();
+                                          void_fraction_constraints);
+  void_fraction_constraints.close();
 
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
@@ -60,7 +60,7 @@ GLSVANSSolver<dim>::setup_dofs()
   DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
   DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
                                   dsp,
-                                  constraints,
+                                  void_fraction_constraints,
                                   false);
   SparsityTools::distribute_sparsity_pattern(
     dsp,
@@ -263,11 +263,12 @@ GLSVANSSolver<dim>::assemble_L2_projection()
                 }
             }
           cell->get_dof_indices(local_dof_indices);
-          constraints.distribute_local_to_global(local_matrix_void_fraction,
-                                                 local_rhs_void_fraction,
-                                                 local_dof_indices,
-                                                 system_matrix_void_fraction,
-                                                 system_rhs_void_fraction);
+          void_fraction_constraints.distribute_local_to_global(
+            local_matrix_void_fraction,
+            local_rhs_void_fraction,
+            local_dof_indices,
+            system_matrix_void_fraction,
+            system_rhs_void_fraction);
         }
     }
   system_matrix_void_fraction.compress(VectorOperation::add);
@@ -285,9 +286,9 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
   //  initial_step ? nonzero_constraints : this->zero_constraints;
 
 
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
-             absolute_residual);
+  const double linear_solver_tolerance = 1e-15;
+  // std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
+  //         absolute_residual);
 
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
@@ -309,10 +310,7 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
     true,
     true);
 
-  // SolverFGMRES<TrilinosWrappers::MPI::Vector> solver(solver_control);
-  TrilinosWrappers::SolverTFQMR solver(solver_control);
-
-  // TrilinosWrappers::PreconditionILU           preconditioner;
+  TrilinosWrappers::SolverCG solver(solver_control);
 
   TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
@@ -355,7 +353,7 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
                   << " steps " << std::endl;
     }
 
-  constraints.distribute(completely_distributed_solution);
+  void_fraction_constraints.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
 
   QGauss<dim>        quadrature_formula(this->number_quadrature_points);
