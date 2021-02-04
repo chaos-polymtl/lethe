@@ -36,6 +36,12 @@ GLSVANSSolver<dim>::setup_dofs()
 
                                           locally_relevant_dofs_voidfraction);
 
+  constraints.clear();
+  constraints.reinit(locally_relevant_dofs_voidfraction);
+  DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
+                                          constraints);
+  constraints.close();
+
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
                                       this->mpi_communicator);
@@ -51,12 +57,10 @@ GLSVANSSolver<dim>::setup_dofs()
   nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
                                    this->mpi_communicator);
 
-  auto &nonzero_constraints = this->nonzero_constraints;
-
   DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
   DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
                                   dsp,
-                                  nonzero_constraints,
+                                  constraints,
                                   false);
   SparsityTools::distribute_sparsity_pattern(
     dsp,
@@ -269,12 +273,11 @@ GLSVANSSolver<dim>::assemble_L2_projection()
                 }
             }
           cell->get_dof_indices(local_dof_indices);
-          this->nonzero_constraints.distribute_local_to_global(
-            local_matrix_void_fraction,
-            local_rhs_void_fraction,
-            local_dof_indices,
-            system_matrix_void_fraction,
-            system_rhs_void_fraction);
+          constraints.distribute_local_to_global(local_matrix_void_fraction,
+                                                 local_rhs_void_fraction,
+                                                 local_dof_indices,
+                                                 system_matrix_void_fraction,
+                                                 system_rhs_void_fraction);
         }
     }
   system_matrix_void_fraction.compress(VectorOperation::add);
@@ -287,9 +290,11 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
                                     double     relative_residual)
 {
   // Solve the L2 projection system
-  auto &nonzero_constraints = this->nonzero_constraints;
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
+  // auto &nonzero_constraints = this->nonzero_constraints;
+  // const AffineConstraints<double> &constraints_used =
+  //  initial_step ? nonzero_constraints : this->zero_constraints;
+
+
   const double linear_solver_tolerance =
     std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
              absolute_residual);
@@ -300,11 +305,13 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
       this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
+
   const IndexSet locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
 
   TrilinosWrappers::MPI::Vector completely_distributed_solution(
     locally_owned_dofs_voidfraction, this->mpi_communicator);
+
 
   SolverControl solver_control(
     this->simulation_parameters.linear_solver.max_iterations,
@@ -358,7 +365,7 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
                   << " steps " << std::endl;
     }
 
-  constraints_used.distribute(completely_distributed_solution);
+  constraints.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
 
   QGauss<dim>        quadrature_formula(this->number_quadrature_points);
