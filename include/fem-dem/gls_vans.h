@@ -80,7 +80,7 @@ private:
   calculate_void_fraction(const double time);
 
   void
-  assemble_L2_projection();
+  assemble_and_solve_L2_projection();
 
   // void
   // solve_L2_system(const bool initial_step,

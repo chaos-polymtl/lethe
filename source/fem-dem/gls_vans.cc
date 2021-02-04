@@ -142,14 +142,14 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
   else if (this->simulation_parameters.void_fraction->mode ==
            Parameters::VoidFractionMode::dem)
     {
-      assemble_L2_projection();
+      assemble_and_solve_L2_projection();
       // solve_L2_system(true, 1e-15, 1e-15);
     }
 }
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_L2_projection()
+GLSVANSSolver<dim>::assemble_and_solve_L2_projection()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(
@@ -199,6 +199,7 @@ GLSVANSSolver<dim>::assemble_L2_projection()
 
   system_rhs.reinit(locally_owned_dofs_voidfraction, this->mpi_communicator);
 
+  const FEValuesExtractors::Scalar voidfraction(dim);
   const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
   const unsigned int n_q_points    = quadrature_formula.size();
   FullMatrix<double> local_matrix(dofs_per_cell, dofs_per_cell);
@@ -226,8 +227,6 @@ GLSVANSSolver<dim>::assemble_L2_projection()
           //            cell->index(),
           //            &this->void_fraction_dof_handler);
           fe_values_void_fraction.reinit(cell);
-          fe_values_void_fraction.get_function_values(
-            nodal_void_fraction_relevant, phi_vf);
 
           local_matrix = 0;
           local_rhs    = 0;
@@ -254,16 +253,18 @@ GLSVANSSolver<dim>::assemble_L2_projection()
           // Calculate cell void fraction
           double cell_void_fraction =
             (cell_volume - particles_volume_in_cell) / cell_volume;
-          //          std::cout << "Void Fraction:"
-          //                    << "" << cell_void_fraction << std::endl;
+          std::cout << "Void Fraction:"
+                    << "" << cell_void_fraction << std::endl;
+
 
           for (unsigned int q = 0; q < n_q_points; ++q)
-            { /*
-               for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                 {
-                   phi_vf[k] = fe_values_void_fraction.get_function_values(k,
-               q);
-                 }*/
+            {
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  // fe_values_void_fraction.get_function_values(
+                  //  nodal_void_fraction_relevant, phi_vf);
+                  phi_vf[k] = fe_values_void_fraction[voidfraction].value(k, q);
+                }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   // Matrix assembly
@@ -274,7 +275,12 @@ GLSVANSSolver<dim>::assemble_L2_projection()
                     }
                   local_rhs(i) += phi_vf[i] * cell_void_fraction *
                                   fe_values_void_fraction.JxW(q);
+
+                  std::cout << "phi_vf:"
+                            << "" << phi_vf[i] << std::endl;
                 }
+              // std::cout << "fe_values:"
+              //           << "" << fe_values_void_fraction.JxW(q) << std::endl;
             }
           cell->get_dof_indices(local_dof_indices);
           this->nonzero_constraints.distribute_local_to_global(
@@ -288,6 +294,7 @@ GLSVANSSolver<dim>::assemble_L2_projection()
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
 
+  // Solve the L2 projection system
   const bool initial_step      = true;
   double     absolute_residual = 1e-15;
   double     relative_residual = 1e-15;
@@ -353,6 +360,9 @@ GLSVANSSolver<dim>::assemble_L2_projection()
 
   constraints_used.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
+  // for (unsigned int q = 0; q < n_q_points; ++q)
+  // std::cout << "Nodal values"
+  //           << "" << nodal_void_fraction_relevant(q) << std::endl;
 }
 
 // template <int dim>
