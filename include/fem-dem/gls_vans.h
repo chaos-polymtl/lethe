@@ -80,12 +80,12 @@ private:
   calculate_void_fraction(const double time);
 
   void
-  assemble_and_solve_L2_projection();
+  assemble_L2_projection();
 
-  // void
-  // solve_L2_system(const bool initial_step,
-  //                  double     absolute_residual,
-  //                  double     relative_residual);
+  void
+  solve_L2_system(const bool initial_step,
+                  double     absolute_residual,
+                  double     relative_residual);
 
   virtual void
   iterate() override;
@@ -154,6 +154,11 @@ private:
 
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+
+  TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
+  TrilinosWrappers::MPI::Vector  system_rhs_void_fraction;
+
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
 
 
 
