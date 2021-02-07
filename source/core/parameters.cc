@@ -1144,7 +1144,7 @@ namespace Parameters
               particles[i].position[2]          = prm.get_double("z");
               particles[i].velocity[2]          = prm.get_double("w");
               particles[i].pressure_location[2] = prm.get_double("pressure z");
-              particles[i].masses               = 4.0/3.0*3.14159265359*particles[i].radius*particles[i].radius*particles[i].radius*prm.get_double("density");
+              particles[i].mass               = 4.0/3.0*3.14159265359*particles[i].radius*particles[i].radius*particles[i].radius*prm.get_double("density");
             }
           if (dim == 2)
             {
