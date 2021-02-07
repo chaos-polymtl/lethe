@@ -67,33 +67,43 @@ private:
   // BB - TODO The particles structure should be refactored to use a small class
   // to store the information or a struct instead of just using a vector where
   // the things are hardcoded within.
+
+  // Defined the particle structure and value based on the parameter file.
   void
   define_particles();
 
+  // Evaluate the forces applied on each of the Ib particles.
   void
   force_on_ib();
 
+  // Modified the system matrix to impose IB condition
   void
   sharp_edge();
 
+  // Right in  the ouput file the force , velocity , position of each of the particles
   void
   write_force_ib();
 
+  // Integrate the particle velocity and position based on the forces and torque applied to it
   void
   integrate_particles();
+
+  // Store the solution for the particles dynamics parameters for integration. Defined the table to store the history of each of the particles
   void
   finish_time_step_particules();
 
-
+  // Evaluate the L2 error on the computational domain if an analytical solution is given.
   double
   calculate_L2_error_particles();
 
   virtual void
   postprocess_fd(bool firstIter) override;
 
+  // allow a refinement around each of the particles.
   void
   refine_ib();
 
+  // modified version of assemble_matrix_and_rhs to include the presence of extra steps.
   void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod

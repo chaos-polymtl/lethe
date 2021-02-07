@@ -1186,7 +1186,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::integrate_particules()
+GLSSharpNavierStokesSolver<dim>::integrate_particles()
 {
 // Integrate the velocity of the particle. If integrate motion is defined as true in the parameter this function will also integrate the force to update the velocity.
 // Otherwise the velocity is kept constant
@@ -3259,7 +3259,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   TimerOutput::Scope t(this->computing_timer, "assemble_system");
   if(this->simulation_parameters.particlesParameters.integrate_motion) {
       force_on_ib();
-      integrate_particules();
+      integrate_particles();
   }
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
@@ -3534,7 +3534,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
   while (this->simulation_control->integrate())
     {
       if(this->simulation_parameters.particlesParameters.integrate_motion==false)
-            integrate_particules();
+            integrate_particles();
 
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
