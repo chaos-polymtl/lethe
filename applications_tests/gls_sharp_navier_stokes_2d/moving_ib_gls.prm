@@ -42,8 +42,6 @@ end
 
 subsection boundary conditions
 set number                  = 3
-    
-   
     subsection bc 0
 	set id = 0
         set type              = noslip
