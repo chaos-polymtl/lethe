@@ -28,6 +28,10 @@ template <int dim>
 class IBParticle
 {
 public:
+    // This class defined values related to a particle used for in the sharp interface immersed boundary.
+    // Each particle defined will have these value used in the solver
+
+
     Point<dim> position;
     Point<dim> last_position;
     Tensor<1, dim> forces;
@@ -38,17 +42,24 @@ public:
     Tensor<2, 3>  inertia;
     // Translational velocity
     Tensor<1, dim> velocity;
+    // Store the last velocity of the fix point iteration.
     Tensor<1, dim> last_velocity;
     Tensor<1, dim> velocity_iter;
     // Angular velocity
+
+    // By default the angular position is always 0 on every axis.
     Tensor<1, 3> angular_position;
-    // by default the angular position is always 0 use to integrate motion
+    // Store the last angular position of the particle for integration.
     Tensor<1, 3> last_angular_position;
 
+    // Angular velocity
     Tensor<1, 3> omega;
+    // Store the last angular velocity of the particle for integration.
     Tensor<1, 3> last_omega;
+    // Store the last  angular velocity of the fix point iteration.
     Tensor<1, 3> omega_iter;
-    Tensor<1, 3> last_torques;
+
+    // Allow the definition of a local relaxation parameter for each particle in the integration process.
     double local_alpha_torque ;
     double local_alpha_force;
 

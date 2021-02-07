@@ -91,7 +91,6 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         particles[p].forces[1]=0;
         particles[p].last_forces[0]=0;
         particles[p].last_forces[1]=0;
-        particles[p].last_torques=0;
         if (dim==3) {
             particles[p].forces[2] = 0;
             particles[p].last_forces[2] = 0;
@@ -2481,7 +2480,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                center_immersed)
                                                 .norm())[2] *
                                              particles[p].radius +
-                                           particles[p].velocity[2];
+                                           particles[p].velocity[1];
                                     }
                                   v_ib=vy;
                                   auto &evaluation_point =
