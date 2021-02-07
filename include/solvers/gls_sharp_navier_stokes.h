@@ -80,7 +80,7 @@ private:
   write_force_ib();
 
   void
-  integrate_particules();
+  integrate_particles();
   void
   finish_time_step_particules();
 
