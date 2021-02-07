@@ -1365,7 +1365,11 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
 {
 
 
-  // try multiple fill of the ILU preconditioner
+  // try multiple fill of the ILU preconditioner. Start from the initial fill given in the parameter file.
+  // If for any reason the linear solver would have crash it will restart with a fill level increased by 1.
+  // This restart process will happen up to a maximum of 20 times, after which it will let the solver crash.
+  // if a change happened on the fill level it will go back to it's original value at the end of the restart process.
+
   unsigned int max_iter=20;
   unsigned int original_fill=this->simulation_parameters.linear_solver.ilu_precond_fill;
   unsigned int iter=0;
@@ -1429,6 +1433,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
       {
           this->simulation_parameters.linear_solver.ilu_precond_fill+=1;
           this->pcout << " GMRES solver failed! New try with higher preconditioner fill. New fill = "<< this->simulation_parameters.linear_solver.ilu_precond_fill << std::endl;
+          if( iter==max_iter-1)
+              throw e;
       }
       iter+=1;
   }

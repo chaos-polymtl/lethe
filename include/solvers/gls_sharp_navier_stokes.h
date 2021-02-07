@@ -90,7 +90,7 @@ private:
 
   // Store the solution for the particles dynamics parameters for integration. Defined the table to store the history of each of the particles
   void
-  finish_time_step_particules();
+  finish_time_step_particles();
 
   // Evaluate the L2 error on the computational domain if an analytical solution is given.
   double

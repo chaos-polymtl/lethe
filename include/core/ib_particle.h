@@ -38,7 +38,7 @@ public:
     Tensor<1, dim> last_forces;
 
     Tensor<1, 3> torques;
-    double masses;
+    double mass;
     Tensor<2, 3>  inertia;
     // Translational velocity
     Tensor<1, dim> velocity;

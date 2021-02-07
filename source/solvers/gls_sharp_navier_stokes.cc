@@ -1208,15 +1208,15 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             // Translation
             gravity[0] = 0;
             if (dim==2)
-                gravity[1] = g * (particles[p].masses -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+                gravity[1] = g * (particles[p].mass -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
             if (dim == 3){
-                gravity[1] = g * (particles[p].masses -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+                gravity[1] = g * (particles[p].mass -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
                 gravity[2] = 0;
             }
 
 
             Tensor<1, dim> velocity_iter;
-            velocity_iter = particles[p].last_velocity + (particles[p].forces + gravity) * dt / particles[p].masses;
+            velocity_iter = particles[p].last_velocity + (particles[p].forces + gravity) * dt / particles[p].mass;
 
             // This section is used to check if the fix point iteration is diverging.
             // If, between 2 iterations, the correction change it's direction the relaxation parameter alpha is divided by 2.
@@ -1343,7 +1343,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::finish_time_step_particules()
+GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 {
     // Store the information about the particle used for the integration and print the results if requested.
 
@@ -3553,7 +3553,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       if (this->simulation_parameters.particlesParameters.calculate_force_ib)
         force_on_ib();
-      finish_time_step_particules();
+      finish_time_step_particles();
       write_force_ib();
       MPI_Barrier(this->mpi_communicator);
     }
