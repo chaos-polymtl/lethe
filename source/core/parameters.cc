@@ -978,7 +978,7 @@ namespace Parameters
       "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in z ");
     prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles radius ");
     prm.declare_entry("density", "1", Patterns::Double(), "density of the particle ");
-    prm.declare_entry("inertia", "1", Patterns::Double(), "uniform rotational inertia");
+    prm.declare_entry("inertia", "1", Patterns::Double(), "uniform rotational moment of inertia");
 
   }
 
@@ -1033,7 +1033,7 @@ namespace Parameters
                 "integrate motion",
                 "false",
                 Patterns::Bool(),
-                "Bool to define if the the particle trajectory is integrated");
+                "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
       prm.declare_entry(
                 "fluid density",
                 "1",
