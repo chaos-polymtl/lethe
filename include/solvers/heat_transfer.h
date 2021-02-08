@@ -276,6 +276,15 @@ private:
     solution_transfer_m2;
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer_m3;
+
+  // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
+  // Warning, this GGLS implementation is valid only for Linear elements
+  // Quad elements will be lacking the third derivative of the diffusion
+  // operator Whether this affects or not the final result is unclear to me at
+  // the moment. Additionnaly, this formulation does not use the gradient of the
+  // source term. The same applies, I have no clue if this is detrimental or not
+  // to the solution since anyway the GGLS term scales as h^(order+1)
+  const bool GGLS = true;
 };
 
 
