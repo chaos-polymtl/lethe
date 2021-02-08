@@ -165,6 +165,11 @@ HeatTransfer<dim>::assemble_system(
   std::vector<double> p2_temperature_values(n_q_points);
   std::vector<double> p3_temperature_values(n_q_points);
 
+  // Values for GGLS stabilization
+  std::vector<Tensor<1, dim>> p1_temperature_gradients(n_q_points);
+  std::vector<Tensor<1, dim>> p2_temperature_gradients(n_q_points);
+  std::vector<Tensor<1, dim>> p3_temperature_gradients(n_q_points);
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -221,16 +226,30 @@ HeatTransfer<dim>::assemble_system(
           // the number of stages of the time integration method
           if (time_stepping_method !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values_ht.get_function_values(this->solution_m1,
-                                             p1_temperature_values);
+            {
+              fe_values_ht.get_function_values(this->solution_m1,
+                                               p1_temperature_values);
+              fe_values_ht.get_function_gradients(this->solution_m1,
+                                                  p1_temperature_gradients);
+            }
 
           if (time_stepping_method_has_two_stages(time_stepping_method))
-            fe_values_ht.get_function_values(this->solution_m2,
-                                             p2_temperature_values);
+            {
+              fe_values_ht.get_function_values(this->solution_m2,
+                                               p2_temperature_values);
+
+              fe_values_ht.get_function_gradients(this->solution_m2,
+                                                  p2_temperature_gradients);
+            }
 
           if (time_stepping_method_has_three_stages(time_stepping_method))
-            fe_values_ht.get_function_values(this->solution_m3,
-                                             p3_temperature_values);
+            {
+              fe_values_ht.get_function_values(this->solution_m3,
+                                               p3_temperature_values);
+
+              fe_values_ht.get_function_gradients(this->solution_m3,
+                                                  p3_temperature_gradients);
+            }
 
           source_term.value_list(fe_values_ht.get_quadrature_points(),
                                  source_term_values);
@@ -260,6 +279,8 @@ HeatTransfer<dim>::assemble_system(
                   1. / std::sqrt(std::pow(sdt, 2) +
                                  std::pow(2. * rho_cp * u_mag / h, 2) +
                                  9 * std::pow(4 * alpha / (h * h), 2));
+
+              const double tau_ggls = std::pow(h, fe.degree + 1) / 6. / rho_cp;
 
               // Gather the shape functions and their gradient
               for (unsigned int k : fe_values_ht.dof_indices())
@@ -310,6 +331,14 @@ HeatTransfer<dim>::assemble_system(
 
                               strong_jacobian +=
                                 rho_cp * phi_T_j * bdf_coefs[0];
+
+                              if (GGLS)
+                                {
+                                  cell_matrix(i, j) +=
+                                    rho_cp * rho_cp * tau_ggls *
+                                    (grad_phi_T_i * grad_phi_T_j) *
+                                    bdf_coefs[0] * JxW;
+                                }
                             }
 
                           cell_matrix(i, j) +=
@@ -354,6 +383,15 @@ HeatTransfer<dim>::assemble_system(
                       strong_residual +=
                         rho_cp * (bdf_coefs[0] * present_temperature_values[q] +
                                   bdf_coefs[1] * p1_temperature_values[q]);
+
+                      if (GGLS)
+                        {
+                          cell_rhs(i) -=
+                            rho_cp * rho_cp * tau_ggls * grad_phi_T_i *
+                            (bdf_coefs[0] * temperature_gradients[q] +
+                             bdf_coefs[1] * p1_temperature_gradients[q]) *
+                            JxW;
+                        }
                     }
 
                   if (time_stepping_method ==
@@ -370,6 +408,16 @@ HeatTransfer<dim>::assemble_system(
                         rho_cp * (bdf_coefs[0] * present_temperature_values[q] +
                                   bdf_coefs[1] * p1_temperature_values[q] +
                                   bdf_coefs[2] * p2_temperature_values[q]);
+
+                      if (GGLS)
+                        {
+                          cell_rhs(i) -=
+                            rho_cp * rho_cp * tau_ggls * grad_phi_T_i *
+                            (bdf_coefs[0] * temperature_gradients[q] +
+                             bdf_coefs[1] * p1_temperature_gradients[q] +
+                             bdf_coefs[2] * p2_temperature_gradients[q]) *
+                            JxW;
+                        }
                     }
 
                   if (time_stepping_method ==
@@ -388,6 +436,17 @@ HeatTransfer<dim>::assemble_system(
                                   bdf_coefs[1] * p1_temperature_values[q] +
                                   bdf_coefs[2] * p2_temperature_values[q] +
                                   bdf_coefs[3] * p3_temperature_values[q]);
+
+                      if (GGLS)
+                        {
+                          cell_rhs(i) -=
+                            rho_cp * rho_cp * tau_ggls * grad_phi_T_i *
+                            (bdf_coefs[0] * temperature_gradients[q] +
+                             bdf_coefs[1] * p1_temperature_gradients[q] +
+                             bdf_coefs[2] * p2_temperature_gradients[q] +
+                             bdf_coefs[3] * p3_temperature_gradients[q]) *
+                            JxW;
+                        }
                     }
 
 
