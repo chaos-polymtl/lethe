@@ -32,6 +32,9 @@
 class SimulationControl
 {
 protected:
+  // Time stepping method used for the simulation
+  Parameters::SimulationControl::TimeSteppingMethod method;
+
   // Time of the current iteration being solved for
   double current_time;
 
@@ -163,6 +166,20 @@ public:
   {
     return iteration_number <= 1;
   }
+
+  /**
+   * @brief Establish if the simulation is a steady-state simulation or no
+   *
+   */
+  bool
+  is_steady()
+  {
+    return method ==
+             Parameters::SimulationControl::TimeSteppingMethod::steady ||
+           method ==
+             Parameters::SimulationControl::TimeSteppingMethod::steady_bdf;
+  }
+
 
   /**
    * @brief Calculates the next value of the time step. The base function returns

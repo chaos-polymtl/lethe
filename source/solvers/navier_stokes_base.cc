@@ -217,8 +217,19 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
        i_boundary < simulation_parameters.boundary_conditions.size;
        ++i_boundary)
     {
-      this->forces_tables[i_boundary].add_value(
-        "time", simulation_control->get_current_time());
+      if (simulation_control->is_steady())
+        {
+          this->forces_tables[i_boundary].add_value(
+            "cells", this->triangulation->n_global_active_cells());
+        }
+      else
+        {
+          this->forces_tables[i_boundary].add_value(
+            "time", simulation_control->get_current_time());
+          this->forces_tables[i_boundary].set_precision(
+            "time", simulation_parameters.forces_parameters.output_precision);
+        }
+
       this->forces_tables[i_boundary].add_value(
         "f_x", this->forces_on_boundaries[i_boundary][0]);
       this->forces_tables[i_boundary].add_value(
@@ -236,8 +247,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
         "f_y", simulation_parameters.forces_parameters.output_precision);
       this->forces_tables[i_boundary].set_precision(
         "f_z", simulation_parameters.forces_parameters.output_precision);
-      this->forces_tables[i_boundary].set_precision(
-        "time", simulation_parameters.forces_parameters.output_precision);
     }
 }
 
@@ -286,8 +295,18 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
        boundary_id < simulation_parameters.boundary_conditions.size;
        ++boundary_id)
     {
-      this->torques_tables[boundary_id].add_value(
-        "time", simulation_control->get_current_time());
+      if (simulation_control->is_steady())
+        {
+          this->torques_tables[boundary_id].add_value(
+            "cells", this->triangulation->n_global_active_cells());
+        }
+      else
+        {
+          this->torques_tables[boundary_id].add_value(
+            "time", simulation_control->get_current_time());
+          this->torques_tables[boundary_id].set_precision(
+            "time", simulation_parameters.forces_parameters.output_precision);
+        }
       this->torques_tables[boundary_id].add_value(
         "T_x", this->torques_on_boundaries[boundary_id][0]);
       this->torques_tables[boundary_id].add_value(
@@ -302,8 +321,6 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
         "T_y", simulation_parameters.forces_parameters.output_precision);
       this->torques_tables[boundary_id].set_precision(
         "T_z", simulation_parameters.forces_parameters.output_precision);
-      this->torques_tables[boundary_id].set_precision(
-        "time", simulation_parameters.forces_parameters.output_precision);
     }
 }
 
@@ -1137,7 +1154,8 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_out.add_data_vector(subdomain, "subdomain");
 
 
-  // Create additional post-processor that derives information from the solution
+  // Create additional post-processor that derives information from the
+  // solution
   VorticityPostprocessor<dim> vorticity;
   data_out.add_data_vector(solution, vorticity);
 
