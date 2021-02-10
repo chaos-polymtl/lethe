@@ -50,14 +50,6 @@ namespace DEM
     properties[PropertiesIndex::displacement] =
       std::make_pair("Displacement", dim);
 
-    // First derivative of acceleration. Used in some integration algorithms
-    properties[PropertiesIndex::acc_derivative_x] =
-      std::make_pair("Acceleration_derivative", dim);
-    properties[PropertiesIndex::acc_derivative_y] =
-      std::make_pair("Acceleration_derivative", 1);
-    properties[PropertiesIndex::acc_derivative_z] =
-      std::make_pair("Acceleration_derivative", 1);
-
 
     return properties;
   }
