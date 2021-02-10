@@ -7,7 +7,8 @@
 
 
 SimulationControl::SimulationControl(Parameters::SimulationControl param)
-  : current_time(0)
+  : method(param.method)
+  , current_time(0)
   , time_step(param.dt)
   , end_time(param.timeEnd)
   , iteration_number(0)
