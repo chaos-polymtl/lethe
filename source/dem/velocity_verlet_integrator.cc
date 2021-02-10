@@ -36,9 +36,10 @@ VelocityVerletIntegrator<dim>::integrate_pre_force(
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_post_force(
-  Particles::ParticleHandler<dim> &particle_handler,
-  Tensor<1, dim>                   g,
-  double                           dt)
+  Particles::ParticleHandler<dim> &        particle_handler,
+  Tensor<1, dim>                           g,
+  double                                   dt,
+  std::unordered_map<int, Tensor<1, dim>> &momentum)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -46,7 +47,8 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-      auto particle_properties = particle->get_properties();
+      auto            particle_properties = particle->get_properties();
+      Tensor<1, dim> &particle_momentum   = momentum[particle->get_id()];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -64,11 +66,11 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
 
           // Updating angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
-            dt * (particle_properties[PropertiesIndex::M_x + d] /
+            dt * (particle_momentum[d] /
                   particle_properties[PropertiesIndex::mom_inertia]);
 
           // Reinitializing torque
-          particle_properties[PropertiesIndex::M_x + d] = 0;
+          particle_momentum[d] = 0;
         }
     }
 }

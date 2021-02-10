@@ -70,11 +70,13 @@ public:
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
    * @param time_step The value of the time step used for the integration
+   * @param momentum Momentum of particles
    */
   virtual void
   integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
                        Tensor<1, dim>                   body_force,
-                       double                           time_step) = 0;
+                       double                           time_step,
+                       std::unordered_map<int, Tensor<1, dim>> &momentum) = 0;
 };
 
 #endif /* integration_h */

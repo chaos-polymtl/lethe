@@ -60,6 +60,7 @@ public:
    * local-ghost particle-particle contact force. These information were
    * obtained in the fine search
    * @param dt DEM time-step
+   * @param momentum An unordered_map of momentum of particles
    */
   virtual void
   calculate_pp_contact_force(
@@ -68,8 +69,9 @@ public:
       &adjacent_particles,
     std::unordered_map<int,
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
-      &           ghost_adjacent_particles,
-    const double &dt) override;
+      &                                      ghost_adjacent_particles,
+    const double &                           dt,
+    std::unordered_map<int, Tensor<1, dim>> &momentum) override;
 
 private:
   /**

@@ -133,7 +133,9 @@ PPContactForce<dim>::apply_force_and_torque_real(
   const Tensor<1, dim> &normal_force,
   const Tensor<1, dim> &tangential_force,
   const Tensor<1, dim> &tangential_torque,
-  const Tensor<1, dim> &rolling_resistance_torque)
+  const Tensor<1, dim> &rolling_resistance_torque,
+  Tensor<1, dim> &      particle_one_momentum,
+  Tensor<1, dim> &      particle_two_momentum)
 {
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
@@ -146,12 +148,12 @@ PPContactForce<dim>::apply_force_and_torque_real(
       particle_two_properties[PropertiesIndex::force_x + d] =
         particle_two_properties[PropertiesIndex::force_x + d] + total_force[d];
 
-      particle_one_properties[PropertiesIndex::M_x + d] =
-        particle_one_properties[PropertiesIndex::M_x + d] -
-        tangential_torque[d] + rolling_resistance_torque[d];
-      particle_two_properties[PropertiesIndex::M_x + d] =
-        particle_two_properties[PropertiesIndex::M_x + d] -
-        tangential_torque[d] - rolling_resistance_torque[d];
+      particle_one_momentum[d] = particle_one_momentum[d] -
+                                 tangential_torque[d] +
+                                 rolling_resistance_torque[d];
+      particle_two_momentum[d] = particle_two_momentum[d] -
+                                 tangential_torque[d] -
+                                 rolling_resistance_torque[d];
     }
 }
 
@@ -164,7 +166,8 @@ PPContactForce<dim>::apply_force_and_torque_ghost(
   const Tensor<1, dim> &normal_force,
   const Tensor<1, dim> &tangential_force,
   const Tensor<1, dim> &tangential_torque,
-  const Tensor<1, dim> &rolling_resistance_torque)
+  const Tensor<1, dim> &rolling_resistance_torque,
+  Tensor<1, dim> &      particle_one_momentum)
 {
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
@@ -175,9 +178,9 @@ PPContactForce<dim>::apply_force_and_torque_ghost(
       particle_one_properties[PropertiesIndex::force_x + d] =
         particle_one_properties[PropertiesIndex::force_x + d] - total_force[d];
 
-      particle_one_properties[PropertiesIndex::M_x + d] =
-        particle_one_properties[PropertiesIndex::M_x + d] -
-        tangential_torque[d] + rolling_resistance_torque[d];
+      particle_one_momentum[d] = particle_one_momentum[d] -
+                                 tangential_torque[d] +
+                                 rolling_resistance_torque[d];
     }
 }
 

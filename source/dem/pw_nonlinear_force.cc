@@ -82,8 +82,9 @@ template <int dim>
 void
 PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    &           pw_pairs_in_contact,
-  const double &dt)
+    &                                      pw_pairs_in_contact,
+  const double &                           dt,
+  std::unordered_map<int, Tensor<1, dim>> &momentum)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -140,9 +141,13 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
                   this->calculate_nonlinear_contact_force_and_torque(
                     contact_information, particle_properties);
 
+              // Getting particle's momentum
+              Tensor<1, dim> &particle_momentum = momentum[particle->get_id()];
+
               // Apply the calculated forces and torques on the particle pair
               this->apply_force_and_torque(particle_properties,
-                                           forces_and_torques);
+                                           forces_and_torques,
+                                           particle_momentum);
             }
           else
             {

@@ -50,12 +50,14 @@ public:
    * @param pw_pairs_in_contact Required information for the calculation of the
    * particle-wall contact force
    * @param dt DEM time step
+   * @param momentum An unordered_map of momentum of particles
    */
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &           pw_pairs_in_contact,
-    const double &dt) = 0;
+      &                                      pw_pairs_in_contact,
+    const double &                           dt,
+    std::unordered_map<int, Tensor<1, dim>> &momentum) = 0;
 
 protected:
   /**
@@ -82,13 +84,15 @@ protected:
    * @param forces_and_torques A tuple which contains: 1, normal force, 2,
    * tangential force, 3, tangential torque and 4, rolling resistance torque of
    * a contact pair
+   * @param particle_momentum Momentum of particle
    */
   void
   apply_force_and_torque(ArrayView<double> &               particle_properties,
                          const std::tuple<Tensor<1, dim>,
                                           Tensor<1, dim>,
                                           Tensor<1, dim>,
-                                          Tensor<1, dim>> &forces_and_torques);
+                                          Tensor<1, dim>> &forces_and_torques,
+                         Tensor<1, dim> &                  particle_momentum);
 
   /** This function is used to find the projection of vector_a on
    * vector_b

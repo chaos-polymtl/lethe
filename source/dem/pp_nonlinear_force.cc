@@ -90,8 +90,9 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
   std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    &           ghost_adjacent_particles,
-  const double &dt)
+    &                                      ghost_adjacent_particles,
+  const double &                           dt,
+  std::unordered_map<int, Tensor<1, dim>> &momentum)
 {
   // Updating contact force of particles for local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -152,6 +153,13 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     tangential_torque,
                     rolling_resistance_torque);
 
+                  // Getting particles' momentum
+                  Tensor<1, dim> &particle_one_momentum =
+                    momentum[particle_one->get_id()];
+                  Tensor<1, dim> &particle_two_momentum =
+                    momentum[particle_two->get_id()];
+
+
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_real(particle_one_properties,
@@ -159,7 +167,9 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                                                     normal_force,
                                                     tangential_force,
                                                     tangential_torque,
-                                                    rolling_resistance_torque);
+                                                    rolling_resistance_torque,
+                                                    particle_one_momentum,
+                                                    particle_two_momentum);
                 }
 
               else
@@ -234,13 +244,18 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     tangential_torque,
                     rolling_resistance_torque);
 
+                  // Getting momentum of particle one
+                  Tensor<1, dim> &particle_one_momentum =
+                    momentum[particle_one->get_id()];
+
                   // Apply the calculated forces and torques on the particle
                   // pair
                   this->apply_force_and_torque_ghost(particle_one_properties,
                                                      normal_force,
                                                      tangential_force,
                                                      tangential_torque,
-                                                     rolling_resistance_torque);
+                                                     rolling_resistance_torque,
+                                                     particle_one_momentum);
                 }
 
               else

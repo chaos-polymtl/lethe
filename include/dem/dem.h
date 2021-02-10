@@ -363,6 +363,7 @@ private:
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
   const unsigned int                   standard_deviation_multiplier;
+  std::unordered_map<int, Tensor<1, dim>> momentum;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

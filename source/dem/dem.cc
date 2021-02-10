@@ -556,13 +556,13 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    pw_pairs_in_contact, simulation_control->get_time_step());
+    pw_pairs_in_contact, simulation_control->get_time_step(), momentum);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(
-        pfw_pairs_in_contact, simulation_control->get_time_step());
+        pfw_pairs_in_contact, simulation_control->get_time_step(), momentum);
     }
 
   particle_point_line_contact_force_object
@@ -916,7 +916,8 @@ DEMSolver<dim>::solve()
       pp_contact_force_object->calculate_pp_contact_force(
         local_adjacent_particles,
         ghost_adjacent_particles,
-        simulation_control->get_time_step());
+        simulation_control->get_time_step(),
+        momentum);
 
       // Particles-walls contact force:
       particle_wall_contact_force();
@@ -925,7 +926,8 @@ DEMSolver<dim>::solve()
       integrator_object->integrate_post_force(
         particle_handler,
         parameters.physical_properties.g,
-        simulation_control->get_time_step());
+        simulation_control->get_time_step(),
+        momentum);
 
       // Visualization
       if (simulation_control->is_output_iteration())
