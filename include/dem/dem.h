@@ -286,6 +286,7 @@ private:
   parallel::distributed::Triangulation<dim> triangulation;
 
   MappingQGeneric<dim>                 mapping;
+  bool                                 particles_insertion_step;
   unsigned int                         contact_build_number;
   TimerOutput                          computing_timer;
   double                               smallest_contact_search_criterion;
@@ -363,8 +364,10 @@ private:
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
   const unsigned int                   standard_deviation_multiplier;
+
   std::unordered_map<int, Tensor<1, dim>> momentum;
   std::unordered_map<int, Tensor<1, dim>> force;
+  std::unordered_map<int, double>         displacement;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

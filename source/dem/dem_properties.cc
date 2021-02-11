@@ -40,8 +40,6 @@ namespace DEM
     properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);
     properties[PropertiesIndex::mass]    = std::make_pair("Mass", 1);
     properties[PropertiesIndex::mom_inertia] = std::make_pair("MOI", 1);
-    properties[PropertiesIndex::displacement] =
-      std::make_pair("Displacement", dim);
 
 
     return properties;

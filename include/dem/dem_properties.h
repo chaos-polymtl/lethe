@@ -50,8 +50,7 @@ namespace DEM
     omega_z      = 10,
     mass         = 11,
     mom_inertia  = 12,
-    displacement = 13,
-    n_properties = 14,
+    n_properties = 13,
   };
 
   unsigned int

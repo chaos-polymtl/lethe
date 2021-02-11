@@ -36,6 +36,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
   , mapping(1)
+  , particles_insertion_step(0)
   , contact_build_number(0)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
@@ -456,11 +457,16 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_step_dynamic()
 {
-  find_contact_detection_step<dim>(particle_handler,
-                                   simulation_control->get_time_step(),
-                                   smallest_contact_search_criterion,
-                                   mpi_communicator,
-                                   contact_detection_step);
+  bool sorting_in_subdomains_step =
+    (particles_insertion_step || load_balance_step || contact_detection_step);
+
+  contact_detection_step =
+    find_contact_detection_step<dim>(particle_handler,
+                                     simulation_control->get_time_step(),
+                                     smallest_contact_search_criterion,
+                                     mpi_communicator,
+                                     sorting_in_subdomains_step,
+                                     displacement);
 
   return contact_detection_step;
 }
@@ -824,16 +830,17 @@ DEMSolver<dim>::solve()
       simulation_control->print_progression(pcout);
 
       // Keep track if particles were inserted this step
-      bool particles_insertion_step = insert_particles();
+      particles_insertion_step = insert_particles();
 
       // Load balancing
-      bool load_balance_step = (this->*check_load_balance_step)();
+      load_balance_step = (this->*check_load_balance_step)();
 
       // Check to see if it is contact search step
-      bool contact_search_step = (this->*check_contact_search_step)();
+      contact_detection_step = (this->*check_contact_search_step)();
 
       // Sort particles in cells
-      if (particles_insertion_step || load_balance_step || contact_search_step)
+      if (particles_insertion_step || load_balance_step ||
+          contact_detection_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
@@ -860,7 +867,8 @@ DEMSolver<dim>::solve()
         }
 
       // Broad particle-particle contact search
-      if (particles_insertion_step || load_balance_step || contact_search_step)
+      if (particles_insertion_step || load_balance_step ||
+          contact_detection_step)
         {
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
