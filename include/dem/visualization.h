@@ -129,7 +129,7 @@ private:
   /**
    * Number of properties that are written in output files
    */
-  const unsigned int number_of_properties_to_write = 13;
+  const unsigned int number_of_properties_to_write = 12;
 
   /**
    * Particle properties that are written in output files

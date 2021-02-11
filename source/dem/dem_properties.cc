@@ -29,7 +29,6 @@ namespace DEM
       PropertiesIndex::n_properties);
     properties[PropertiesIndex::type]    = std::make_pair("Type", 1);
     properties[PropertiesIndex::dp]      = std::make_pair("Diameter", 1);
-    properties[PropertiesIndex::rho]     = std::make_pair("Density", 1);
     properties[PropertiesIndex::v_x]     = std::make_pair("Velocity", dim);
     properties[PropertiesIndex::v_y]     = std::make_pair("Velocity", 1);
     properties[PropertiesIndex::v_z]     = std::make_pair("Velocity", 1);

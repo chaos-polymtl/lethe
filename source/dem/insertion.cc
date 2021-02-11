@@ -104,7 +104,6 @@ Insertion<dim>::assign_particle_properties(
 
       std::vector<double> properties_of_one_particle{type,
                                                      diameter,
-                                                     density,
                                                      vel_x,
                                                      vel_y,
                                                      vel_z,
