@@ -243,8 +243,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
   const double        beta = this->simulation_parameters.nitsche->beta;
   Tensor<1, spacedim> velocity;
   Function<spacedim> *solid_velocity = solid.get_solid_velocity();
-  Tensor<1, spacedim> force; // to be changed for a vector of tensors when
-                             // allowing multiple solids
+  Tensor<1, spacedim> force;
+  for (unsigned int i = 0; i < spacedim; ++i)
+    force[i] = 0;
 
   // Loop over all local particles
   auto particle = solid_ph->begin();
@@ -289,11 +290,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
               const auto comp_i = this->fe.system_to_component_index(i).first;
               if (comp_i < spacedim)
                 {
-                  force[i] += penalty_parameter * beta * velocity[comp_i] *
-                                this->fe.shape_value(i, ref_q) * JxW +
-                              penalty_parameter * beta *
-                                solid_velocity->value(real_q, comp_i) *
-                                this->fe.shape_value(i, ref_q) * JxW;
+                  force[comp_i] += penalty_parameter * beta * velocity[comp_i] *
+                                     this->fe.shape_value(i, ref_q) * JxW +
+                                   penalty_parameter * beta *
+                                     solid_velocity->value(real_q, comp_i) *
+                                     this->fe.shape_value(i, ref_q) * JxW;
                 }
             }
         }
@@ -349,8 +350,18 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
   std::ofstream output(filename.c_str());
 
 
-  solid_forces_table.add_value("time",
-                               this->simulation_control->get_current_time());
+  if (this->simulation_control->is_steady())
+    {
+      solid_forces_table.add_value(
+        "cells", this->triangulation->n_global_active_cells());
+    }
+  else
+    {
+      solid_forces_table.add_value(
+        "time", this->simulation_control->get_current_time());
+      solid_forces_table.set_precision(
+        "time", this->simulation_parameters.forces_parameters.output_precision);
+    }
   solid_forces_table.add_value("f_x", force[0][0]);
   solid_forces_table.add_value("f_y", force[0][1]);
   if (dim == 3)
@@ -365,8 +376,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
     "f_y", this->simulation_parameters.forces_parameters.output_precision);
   solid_forces_table.set_precision(
     "f_z", this->simulation_parameters.forces_parameters.output_precision);
-  solid_forces_table.set_precision(
-    "time", this->simulation_parameters.forces_parameters.output_precision);
+
 
   solid_forces_table.write_text(output);
 }
@@ -425,8 +435,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
         }
 
       this->postprocess(false);
-      if (this->simulation_parameters.nitsche->calculate_force_on_solid &&
-          dim == 2 && spacedim == 3)
+      if (this->simulation_parameters.nitsche->calculate_force_on_solid)
         {
           postprocess_solid_forces();
         }
