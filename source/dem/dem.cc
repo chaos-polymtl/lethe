@@ -837,6 +837,12 @@ DEMSolver<dim>::solve()
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
 
+          // We clear force and momentum every time we sort the particles
+          // into subdomains to avoid increasing the size of these unordered
+          // maps on each processor
+          force.clear();
+          momentum.clear();
+
 #if (DEAL_II_VERSION_MINOR <= 2)
           particle_handler.exchange_ghost_particles();
 
