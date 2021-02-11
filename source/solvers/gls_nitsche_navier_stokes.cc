@@ -149,24 +149,24 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
   this->system_rhs.compress(VectorOperation::add);
 }
 
-template <int dim, int spacedim>
-Tensor<1, spacedim>
-GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
+template <>
+Tensor<1, 3>
+GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid()
 {
-  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+  std::shared_ptr<Particles::ParticleHandler<3>> solid_ph =
     solid.get_solid_particle_handler();
 
   const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
 
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
-  Tensor<2, spacedim> velocity_gradient;
-  double              pressure;
-  Tensor<1, spacedim> normal_vector;
-  Tensor<2, spacedim> fluid_stress;
-  Tensor<2, spacedim> fluid_pressure;
-  Tensor<1, spacedim> force; // to be changed for a vector of tensors when
-                             // allowing multiple solids
+  Tensor<2, 3> velocity_gradient;
+  double       pressure;
+  Tensor<1, 3> normal_vector;
+  Tensor<2, 3> fluid_stress;
+  Tensor<2, 3> fluid_pressure;
+  Tensor<1, 3> force; // to be changed for a vector of tensors when
+                      // allowing multiple solids
   const double viscosity =
     this->simulation_parameters.physical_properties.viscosity;
 
@@ -176,7 +176,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
     {
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
       const auto &dh_cell =
-        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+        typename DoFHandler<3>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
 
       const auto pic = solid_ph->particles_in_cell(cell);
@@ -185,10 +185,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
       // Generate FEField functoin to evaluate values and gradients
       // at the particle location
       auto &evaluation_point = this->evaluation_point;
-      Functions::FEFieldFunction<spacedim,
-                                 DoFHandler<spacedim>,
-                                 TrilinosWrappers::MPI::Vector>
-        fe_field(this->dof_handler, evaluation_point);
+      Functions::
+        FEFieldFunction<3, DoFHandler<3>, TrilinosWrappers::MPI::Vector>
+          fe_field(this->dof_handler, evaluation_point);
 
       fe_field.set_active_cell(dh_cell);
 
@@ -200,19 +199,19 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
           const auto &JxW   = p.get_properties()[0];
           normal_vector[0]  = -p.get_properties()[1];
           normal_vector[1]  = -p.get_properties()[2];
-          if (spacedim == 3)
+          if (3 == 3)
             {
               normal_vector[2] = -p.get_properties()[3];
             }
 
-          for (int k = 0; k < spacedim; ++k)
+          for (int k = 0; k < 3; ++k)
             {
               velocity_gradient[k] = fe_field.gradient(q, k);
             }
 
           pressure = fe_field.value(q, 3);
 
-          for (int d = 0; d < dim; ++d)
+          for (int d = 0; d < 2; ++d)
             {
               fluid_pressure[d][d] = pressure;
             }
@@ -223,6 +222,81 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
           force += fluid_stress * normal_vector * JxW;
         }
 
+      particle = pic.end();
+    }
+  force = Utilities::MPI::sum(force, this->mpi_communicator);
+  return force;
+}
+
+template <int dim, int spacedim>
+Tensor<1, spacedim>
+GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
+{
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+    solid.get_solid_particle_handler();
+
+  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+
+  // Penalization terms
+  const double        beta = this->simulation_parameters.nitsche->beta;
+  Tensor<1, spacedim> velocity;
+  Function<spacedim> *solid_velocity = solid.get_solid_velocity();
+  Tensor<1, spacedim> force; // to be changed for a vector of tensors when
+                             // allowing multiple solids
+
+  // Loop over all local particles
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
+    {
+      const auto &cell   = particle->get_surrounding_cell(*this->triangulation);
+      double      h_cell = 0;
+      if (dim == 2)
+        h_cell =
+          std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
+      else if (dim == 3)
+        h_cell =
+          pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
+      const double penalty_parameter = 1. / (h_cell * h_cell);
+      const auto & dh_cell =
+        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+      dh_cell->get_dof_indices(fluid_dof_indices);
+
+      const auto pic = solid_ph->particles_in_cell(cell);
+      Assert(pic.begin() == particle, ExcInternalError());
+      for (const auto &p : pic)
+        {
+          velocity           = 0;
+          const auto &ref_q  = p.get_reference_location();
+          const auto &real_q = p.get_location();
+          const auto &JxW    = p.get_properties()[0];
+
+          for (unsigned int k = 0; k < dofs_per_cell; ++k)
+            {
+              const auto comp_k = this->fe.system_to_component_index(k).first;
+              if (comp_k < spacedim)
+                {
+                  // Get the velocity at non-quadrature point (particle in
+                  // fluid)
+                  auto &evaluation_point = this->evaluation_point;
+                  velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
+                                      this->fe.shape_value(k, ref_q);
+                }
+            }
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              const auto comp_i = this->fe.system_to_component_index(i).first;
+              if (comp_i < spacedim)
+                {
+                  force[i] += penalty_parameter * beta * velocity[comp_i] *
+                                this->fe.shape_value(i, ref_q) * JxW +
+                              penalty_parameter * beta *
+                                solid_velocity->value(real_q, comp_i) *
+                                this->fe.shape_value(i, ref_q) * JxW;
+                }
+            }
+        }
       particle = pic.end();
     }
   force = Utilities::MPI::sum(force, this->mpi_communicator);
