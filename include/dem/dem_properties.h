@@ -46,16 +46,13 @@ namespace DEM
     acc_x        = 6,
     acc_y        = 7,
     acc_z        = 8,
-    force_x      = 9,
-    force_y      = 10,
-    force_z      = 11,
-    omega_x      = 12,
-    omega_y      = 13,
-    omega_z      = 14,
-    mass         = 15,
-    mom_inertia  = 16,
-    displacement = 17,
-    n_properties = 18,
+    omega_x      = 9,
+    omega_y      = 10,
+    omega_z      = 11,
+    mass         = 12,
+    mom_inertia  = 13,
+    displacement = 14,
+    n_properties = 15,
   };
 
   unsigned int

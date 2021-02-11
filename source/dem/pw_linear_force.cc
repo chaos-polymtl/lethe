@@ -76,7 +76,8 @@ PWLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
     &                                      pw_pairs_in_contact,
   const double &                           dt,
-  std::unordered_map<int, Tensor<1, dim>> &momentum)
+  std::unordered_map<int, Tensor<1, dim>> &momentum,
+  std::unordered_map<int, Tensor<1, dim>> &force)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -133,13 +134,15 @@ PWLinearForce<dim>::calculate_pw_contact_force(
                   this->calculate_linear_contact_force_and_torque(
                     contact_information, particle_properties);
 
-              // Getting particle's momentum
-              Tensor<1, dim> &particle_momentum = momentum[particle->get_id()];
+              // Getting particle's momentum and force
+              unsigned int    particle_id       = particle->get_id();
+              Tensor<1, dim> &particle_momentum = momentum[particle_id];
+              Tensor<1, dim> &particle_force    = force[particle_id];
 
               // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque(particle_properties,
-                                           forces_and_torques,
-                                           particle_momentum);
+              this->apply_force_and_torque(forces_and_torques,
+                                           particle_momentum,
+                                           particle_force);
             }
           else
             {

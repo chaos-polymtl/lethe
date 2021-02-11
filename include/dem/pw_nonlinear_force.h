@@ -64,13 +64,15 @@ public:
    * the fine search
    * @param dt DEM time step
    * @param momentum An unordered_map of momentum of particles
+   * @param force Force acting on particles
    */
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
       &                                      pw_pairs_in_contact,
     const double &                           dt,
-    std::unordered_map<int, Tensor<1, dim>> &momentum) override;
+    std::unordered_map<int, Tensor<1, dim>> &momentum,
+    std::unordered_map<int, Tensor<1, dim>> &force) override;
 
 private:
   /**

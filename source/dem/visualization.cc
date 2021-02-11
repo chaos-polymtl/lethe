@@ -10,8 +10,7 @@ template <int dim>
 void
 Visualization<dim>::build_patches(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<std::pair<std::string, int>> properties,
-  const Tensor<1, dim> &                   g)
+  std::vector<std::pair<std::string, int>> properties)
 {
   // Adding ID to properties vector for visualization
   properties.insert(properties.begin(), std::make_pair("ID", 1));
@@ -66,12 +65,6 @@ Visualization<dim>::build_patches(
         {
           // Calculating force for visualization
           auto particle_properties = particle->get_properties();
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              particle_properties[DEM::PropertiesIndex::force_x + d] =
-                particle_properties[DEM::PropertiesIndex::mass] *
-                (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
-            }
 
           // Adding ID to patches
           patches[i].data(0, 0) = particle->get_id();
@@ -81,12 +74,6 @@ Visualization<dim>::build_patches(
                ++property_index)
             patches[i].data(property_index, 0) =
               particle_properties[property_index - 1];
-
-          // Resetting force to zero
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              particle_properties[DEM::PropertiesIndex::force_x + d] = 0;
-            }
         }
     }
 }
@@ -95,7 +82,6 @@ template <int dim>
 void
 Visualization<dim>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, dim> &                   g,
   const ConditionalOStream &               pcout)
 {
   // Storing local particles in a map for writing
@@ -104,26 +90,12 @@ Visualization<dim>::print_xyz(
        particle != particle_handler.end();
        ++particle)
     {
-      // Calculating force for xyz writing
-      auto particle_properties = particle->get_properties();
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::force_x + d] =
-            particle_properties[DEM::PropertiesIndex::mass] *
-            (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
-        }
       local_particles.insert({particle->get_id(), particle});
-
-      // Resetting force to zero
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::force_x + d] = 0;
-        }
     }
 
-  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1};
+  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 3, 2, 2, 2, 1, 1, 1};
   pcout << "id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
-           "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
+           "acc_z , omega_x, omega_y, omega_z, "
         << std::endl;
 
   unsigned int counter;

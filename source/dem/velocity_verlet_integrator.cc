@@ -39,7 +39,8 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
   Particles::ParticleHandler<dim> &        particle_handler,
   Tensor<1, dim>                           g,
   double                                   dt,
-  std::unordered_map<int, Tensor<1, dim>> &momentum)
+  std::unordered_map<int, Tensor<1, dim>> &momentum,
+  std::unordered_map<int, Tensor<1, dim>> &force)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -47,18 +48,20 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
+      unsigned int    particle_id         = particle->get_id();
       auto            particle_properties = particle->get_properties();
-      Tensor<1, dim> &particle_momentum   = momentum[particle->get_id()];
+      Tensor<1, dim> &particle_momentum   = momentum[particle_id];
+      Tensor<1, dim> &particle_force      = force[particle_id];
 
       for (int d = 0; d < dim; ++d)
         {
           // Calculate the acceleration
           particle_properties[PropertiesIndex::acc_x + d] =
-            g[d] + particle_properties[PropertiesIndex::force_x + d] /
-                     particle_properties[PropertiesIndex::mass];
+            g[d] +
+            particle_force[d] / particle_properties[PropertiesIndex::mass];
 
           // Reinitializing force
-          particle_properties[PropertiesIndex::force_x + d] = 0;
+          particle_force[d] = 0;
 
           // Calculate the particle full step velocity
           particle_properties[PropertiesIndex::v_x + d] +=

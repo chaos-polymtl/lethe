@@ -128,14 +128,14 @@ PPContactForce<dim>::update_contact_information(
 template <int dim>
 void
 PPContactForce<dim>::apply_force_and_torque_real(
-  ArrayView<double> &   particle_one_properties,
-  ArrayView<double> &   particle_two_properties,
   const Tensor<1, dim> &normal_force,
   const Tensor<1, dim> &tangential_force,
   const Tensor<1, dim> &tangential_torque,
   const Tensor<1, dim> &rolling_resistance_torque,
   Tensor<1, dim> &      particle_one_momentum,
-  Tensor<1, dim> &      particle_two_momentum)
+  Tensor<1, dim> &      particle_two_momentum,
+  Tensor<1, dim> &      particle_one_force,
+  Tensor<1, dim> &      particle_two_force)
 {
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
@@ -143,10 +143,8 @@ PPContactForce<dim>::apply_force_and_torque_real(
   // Updating the force and torque of particles in the particle handler
   for (int d = 0; d < dim; ++d)
     {
-      particle_one_properties[PropertiesIndex::force_x + d] =
-        particle_one_properties[PropertiesIndex::force_x + d] - total_force[d];
-      particle_two_properties[PropertiesIndex::force_x + d] =
-        particle_two_properties[PropertiesIndex::force_x + d] + total_force[d];
+      particle_one_force[d] = particle_one_force[d] - total_force[d];
+      particle_two_force[d] = particle_two_force[d] + total_force[d];
 
       particle_one_momentum[d] = particle_one_momentum[d] -
                                  tangential_torque[d] +
@@ -162,12 +160,12 @@ PPContactForce<dim>::apply_force_and_torque_real(
 template <int dim>
 void
 PPContactForce<dim>::apply_force_and_torque_ghost(
-  ArrayView<double> &   particle_one_properties,
   const Tensor<1, dim> &normal_force,
   const Tensor<1, dim> &tangential_force,
   const Tensor<1, dim> &tangential_torque,
   const Tensor<1, dim> &rolling_resistance_torque,
-  Tensor<1, dim> &      particle_one_momentum)
+  Tensor<1, dim> &      particle_one_momentum,
+  Tensor<1, dim> &      particle_one_force)
 {
   // Calculation of total force
   Tensor<1, dim> total_force = normal_force + tangential_force;
@@ -175,8 +173,7 @@ PPContactForce<dim>::apply_force_and_torque_ghost(
   // Updating the force and torque acting on particles in the particle handler
   for (int d = 0; d < dim; ++d)
     {
-      particle_one_properties[PropertiesIndex::force_x + d] =
-        particle_one_properties[PropertiesIndex::force_x + d] - total_force[d];
+      particle_one_force[d] = particle_one_force[d] - total_force[d];
 
       particle_one_momentum[d] = particle_one_momentum[d] -
                                  tangential_torque[d] +

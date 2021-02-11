@@ -103,11 +103,11 @@ PWContactForce<dim>::update_contact_information(
 template <int dim>
 void
 PWContactForce<dim>::apply_force_and_torque(
-  ArrayView<double> &particle_properties,
   const std::
     tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
       &           forces_and_torques,
-  Tensor<1, dim> &particle_momentum)
+  Tensor<1, dim> &particle_momentum,
+  Tensor<1, dim> &particle_force)
 {
   // Getting the values from the forces_and_torques tuple, which are: 1, normal
   // force, 2, tangential force, 3, tangential torque and 4, rolling resistance
@@ -123,8 +123,7 @@ PWContactForce<dim>::apply_force_and_torque(
   // Updating the force of particles in the particle handler
   for (int d = 0; d < dim; ++d)
     {
-      particle_properties[DEM::PropertiesIndex::force_x + d] =
-        particle_properties[DEM::PropertiesIndex::force_x + d] + total_force[d];
+      particle_force[d] = particle_force[d] + total_force[d];
     }
 
   // Updating the torque acting on particles

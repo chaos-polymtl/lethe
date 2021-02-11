@@ -57,6 +57,7 @@ public:
    * obtained in the fine search
    * @param dt DEM time step
    * @param momentum An unordered_map of momentum of particles
+   * @param force Force acting on particles
    */
   virtual void
   calculate_pp_contact_force(
@@ -67,7 +68,8 @@ public:
                        std::unordered_map<int, pp_contact_info_struct<dim>>>
       &                                      ghost_adjacent_particles,
     const double &                           dt,
-    std::unordered_map<int, Tensor<1, dim>> &momentum) = 0;
+    std::unordered_map<int, Tensor<1, dim>> &momentum,
+    std::unordered_map<int, Tensor<1, dim>> &force) = 0;
 
 protected:
   /**
@@ -98,45 +100,44 @@ protected:
    * particle pair in contact, for both non-linear and linear contact force
    * calculations
    *
-   * @param particle_one_properties Properties of particle one in contact
-   * @param particle_two_properties Properties of particle two in contact
    * @param normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
    * @param rolling_friction_torque Contact rolling resistance torque
    * @param particle_one_momentum Momentum of particle one
    * @param particle_two_momentum Momentum of particle two
+   * @param particle_one_force Force acting on particle one
+   * @param particle_two_force Force acting on particle two
    */
   void
-  apply_force_and_torque_real(ArrayView<double> &   particle_one_properties,
-                              ArrayView<double> &   particle_two_properties,
-                              const Tensor<1, dim> &normal_force,
+  apply_force_and_torque_real(const Tensor<1, dim> &normal_force,
                               const Tensor<1, dim> &tangential_force,
                               const Tensor<1, dim> &tangential_torque,
                               const Tensor<1, dim> &rolling_resistance_torque,
                               Tensor<1, dim> &      particle_one_momentum,
-                              Tensor<1, dim> &      particle_two_momentum);
+                              Tensor<1, dim> &      particle_two_momentum,
+                              Tensor<1, dim> &      particle_one_force,
+                              Tensor<1, dim> &      particle_two_force);
 
   /**
    * Carries out applying the calculated force and torque on the local-ghost
    * particle pair in contact, for both non-linear and linear contact force
    * calculations. The contact force is only applied on the local particles
    *
-   * @param particle_one_properties Properties of particle one (local) in
-   * contact
    * @param normal_force normal_force Contact normal force
    * @param tangential_force Contact tangential force
    * @param tangential_torque Contact tangential torque
    * @param rolling_friction_torque Contact rolling resistance torque
    * @param particle_one_momentum Momentum of particle one (local)
+   * @param particle_one_force Force acting on particle one
    */
   void
-  apply_force_and_torque_ghost(ArrayView<double> &   particle_one_properties,
-                               const Tensor<1, dim> &normal_force,
+  apply_force_and_torque_ghost(const Tensor<1, dim> &normal_force,
                                const Tensor<1, dim> &tangential_force,
                                const Tensor<1, dim> &tangential_torque,
                                const Tensor<1, dim> &rolling_resistance_torque,
-                               Tensor<1, dim> &      particle_one_momentum);
+                               Tensor<1, dim> &      particle_one_momentum,
+                               Tensor<1, dim> &      particle_one_force);
 
   /**
    * Carries out the calculation of effective mass and radius of particles i and

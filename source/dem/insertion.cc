@@ -94,9 +94,6 @@ Insertion<dim>::assign_particle_properties(
       double acc_x        = 0.;
       double acc_y        = 0.;
       double acc_z        = 0.;
-      double f_x          = 0.;
-      double f_y          = 0.;
-      double f_z          = 0.;
       double w_x          = 0.;
       double w_y          = 0.;
       double w_z          = 0.;
@@ -114,9 +111,6 @@ Insertion<dim>::assign_particle_properties(
                                                      acc_x,
                                                      acc_y,
                                                      acc_z,
-                                                     f_x,
-                                                     f_y,
-                                                     f_z,
                                                      w_x,
                                                      w_y,
                                                      w_z,

@@ -36,9 +36,6 @@ namespace DEM
     properties[PropertiesIndex::acc_x]   = std::make_pair("Acceleration", dim);
     properties[PropertiesIndex::acc_y]   = std::make_pair("Acceleration", 1);
     properties[PropertiesIndex::acc_z]   = std::make_pair("Acceleration", 1);
-    properties[PropertiesIndex::force_x] = std::make_pair("Force", dim);
-    properties[PropertiesIndex::force_y] = std::make_pair("Force", 1);
-    properties[PropertiesIndex::force_z] = std::make_pair("Force", 1);
     properties[PropertiesIndex::omega_x] = std::make_pair("Omega", dim);
     properties[PropertiesIndex::omega_y] = std::make_pair("Omega", 1);
     properties[PropertiesIndex::omega_z] = std::make_pair("Omega", 1);

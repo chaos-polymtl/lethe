@@ -58,23 +58,19 @@ public:
    * element and the size of the property as the second element. For vectors
    * only the size of the first element of the vector is defined equal to the
    * dimension
-   * @param g Body force for calculation of the exerted force on particles
    */
   void
   build_patches(Particles::ParticleHandler<dim> &        particle_handler,
-                std::vector<std::pair<std::string, int>> properties,
-                const Tensor<1, dim> &                   g);
+                std::vector<std::pair<std::string, int>> properties);
 
   /**
    * Prints the data of particles in the xyz format
    *
    * @param particle_handler The particle handler of active particles
-   * @param g Body force for calculation of the exerted force on particles
    * @param pcout Printing in parallel
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
-            const Tensor<1, dim> &                   g,
             const ConditionalOStream &               pcout);
 
   ~Visualization();
@@ -133,7 +129,7 @@ private:
   /**
    * Number of properties that are written in output files
    */
-  const unsigned int number_of_properties_to_write = 16;
+  const unsigned int number_of_properties_to_write = 13;
 
   /**
    * Particle properties that are written in output files

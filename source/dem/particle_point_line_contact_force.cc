@@ -14,7 +14,8 @@ void
 ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
   const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     *particle_point_pairs_in_contact,
-  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties)
+  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties,
+  std::unordered_map<int, Tensor<1, dim>> &              force)
 
 {
   // Looping over particle_point_line_pairs_in_contact
@@ -127,12 +128,13 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
           Tensor<1, dim> total_force =
             spring_normal_force - dashpot_normal_force;
 
+          // Getting force
+          Tensor<1, dim> &particle_force = force[particle->get_id()];
+
           // Updating the body force of particles in the particle handler
           for (int d = 0; d < dim; ++d)
             {
-              particle_properties[DEM::PropertiesIndex::force_x + d] =
-                particle_properties[DEM::PropertiesIndex::force_x + d] +
-                total_force[d];
+              particle_force[d] = particle_force[d] + total_force[d];
             }
         }
     }
@@ -145,7 +147,8 @@ void
 ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
   const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
     *particle_line_pairs_in_contact,
-  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties)
+  const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties,
+  std::unordered_map<int, Tensor<1, dim>> &              force)
 {
   // Looping over particle_point_line_pairs_in_contact
   for (auto pairs_in_contact_iterator = particle_line_pairs_in_contact->begin();
@@ -264,12 +267,13 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
           Tensor<1, dim> total_force =
             spring_normal_force - dashpot_normal_force;
 
+          // Getting force
+          Tensor<1, dim> &particle_force = force[particle->get_id()];
+
           // Updating the body force of particles in the particle handler
           for (int d = 0; d < dim; ++d)
             {
-              particle_properties[DEM::PropertiesIndex::force_x + d] =
-                particle_properties[DEM::PropertiesIndex::force_x + d] +
-                total_force[d];
+              particle_force[d] = particle_force[d] + total_force[d];
             }
         }
     }

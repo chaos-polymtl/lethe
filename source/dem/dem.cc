@@ -556,24 +556,29 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    pw_pairs_in_contact, simulation_control->get_time_step(), momentum);
+    pw_pairs_in_contact, simulation_control->get_time_step(), momentum, force);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(
-        pfw_pairs_in_contact, simulation_control->get_time_step(), momentum);
+        pfw_pairs_in_contact,
+        simulation_control->get_time_step(),
+        momentum,
+        force);
     }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            parameters.physical_properties);
+                                            parameters.physical_properties,
+                                            force);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               parameters.physical_properties);
+                                               parameters.physical_properties,
+                                               force);
     }
 }
 
@@ -598,7 +603,7 @@ DEMSolver<dim>::finish_simulation()
         {
           if (this_mpi_process == processor_number)
             {
-              visualization_object.print_xyz(particle_handler, g, pcout);
+              visualization_object.print_xyz(particle_handler, pcout);
             }
           MPI_Barrier(MPI_COMM_WORLD);
         }
@@ -728,8 +733,7 @@ DEMSolver<dim>::write_output_results()
   // Write particles
   Visualization<dim> particle_data_out;
   particle_data_out.build_patches(particle_handler,
-                                  properties_class.get_properties_name(),
-                                  g);
+                                  properties_class.get_properties_name());
 
   write_vtu_and_pvd<0, dim>(particles_pvdhandler,
                             particle_data_out,
@@ -917,7 +921,8 @@ DEMSolver<dim>::solve()
         local_adjacent_particles,
         ghost_adjacent_particles,
         simulation_control->get_time_step(),
-        momentum);
+        momentum,
+        force);
 
       // Particles-walls contact force:
       particle_wall_contact_force();
@@ -927,7 +932,8 @@ DEMSolver<dim>::solve()
         particle_handler,
         parameters.physical_properties.g,
         simulation_control->get_time_step(),
-        momentum);
+        momentum,
+        force);
 
       // Visualization
       if (simulation_control->is_output_iteration())
