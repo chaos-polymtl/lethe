@@ -74,6 +74,10 @@ test()
   Point<3> position1 = {0, 0, 0};
   int      id        = 0;
 
+  DEMSolverParameters<dim> dem_parameters;
+  dem_parameters.physical_properties.particle_type_number = 1;
+  dem_parameters.physical_properties.density[0]           = 2500;
+
   Particles::Particle<dim> particle1(position1, position1, id);
   typename Triangulation<dim>::active_cell_iterator particle_cell =
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
@@ -84,26 +88,26 @@ test()
 
   pit->get_properties()[DEM::PropertiesIndex::type]        = 1;
   pit->get_properties()[DEM::PropertiesIndex::dp]          = 0.005;
-  pit->get_properties()[DEM::PropertiesIndex::rho]         = 2500;
   pit->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
   pit->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
   pit->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
   pit->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
   pit->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
   pit->get_properties()[DEM::PropertiesIndex::acc_z]       = -9.81;
-  pit->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
   pit->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
   pit->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
   pit->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
   pit->get_properties()[DEM::PropertiesIndex::mass]        = 1;
   pit->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
 
+  std::unordered_map<int, Tensor<1, dim>> momentum;
+  std::unordered_map<int, Tensor<1, dim>> force;
+
   // Calling velocity verlet integrator
   VelocityVerletIntegrator<dim> integration_object;
   integration_object.integrate_pre_force(particle_handler, g, dt);
-  integration_object.integrate_post_force(particle_handler, g, dt);
+  integration_object.integrate_post_force(
+    particle_handler, g, dt, momentum, force);
 
   // Output
   for (auto particle_iterator = particle_handler.begin();

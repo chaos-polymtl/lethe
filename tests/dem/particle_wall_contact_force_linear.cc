@@ -70,7 +70,6 @@ test()
   Tensor<1, dim> g{{0, 0, -9.81}};
   double         dt                                             = 0.00001;
   double         particle_diameter                              = 0.005;
-  int            particle_density                               = 2500;
   unsigned int   rotating_wall_maximum_number                   = 6;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 50000000;
@@ -84,6 +83,7 @@ test()
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.physical_properties.density[0]            = 2500;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;
@@ -115,21 +115,20 @@ test()
     particle_handler.insert_particle(particle1, cell1);
   pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0.01;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
   pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+
+  std::unordered_map<int, Tensor<1, dim>> momentum;
+  std::unordered_map<int, Tensor<1, dim>> force;
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
@@ -164,13 +163,15 @@ test()
     dem_parameters.boundary_motion.boundary_rotational_vector,
     grid_radius,
     dem_parameters);
-  force_object.calculate_pw_contact_force(pw_contact_information, dt);
+  force_object.calculate_pw_contact_force(pw_contact_information,
+                                          dt,
+                                          momentum,
+                                          force);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force acting on particle 1 is: "
-          << particle->get_properties()[DEM::PropertiesIndex::force_x] << " N "
-          << std::endl;
+          << force[particle->get_id()][0] << " N " << std::endl;
 }
 
 int

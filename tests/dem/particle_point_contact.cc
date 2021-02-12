@@ -70,7 +70,6 @@ test()
   Tensor<1, dim> g{{0, -9.81}};
   double         dt                                             = 0.0001;
   double         particle_diameter                              = 0.1;
-  int            particle_density                               = 2000;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
   dem_parameters.physical_properties.youngs_modulus_wall        = 200000000000;
@@ -83,6 +82,7 @@ test()
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.physical_properties.density[0]            = 2500;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
@@ -99,16 +99,12 @@ test()
     particle_handler.insert_particle(particle1, particle_cell);
   pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
@@ -133,11 +129,14 @@ test()
   ParticlePointLineForce<dim>   force_object;
   VelocityVerletIntegrator<dim> integrator_object;
 
+  std::unordered_map<int, Tensor<1, dim>> momentum;
+  std::unordered_map<int, Tensor<1, dim>> force;
+
   for (double time = 0; time < 0.2; time += dt)
     {
-      auto particle = particle_handler.begin();
-      particle->get_properties()[DEM::PropertiesIndex::force_x] = 0;
-      particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
+      auto particle                = particle_handler.begin();
+      force[particle->get_id()][0] = 0;
+      force[particle->get_id()][1] = 0;
 
       contact_candidates =
         broad_search_object.find_particle_point_contact_pairs(
@@ -150,8 +149,9 @@ test()
 
       integrator_object.integrate_pre_force(particle_handler, g, dt);
       force_object.calculate_particle_point_contact_force(
-        &contact_information, dem_parameters.physical_properties);
-      integrator_object.integrate_post_force(particle_handler, g, dt);
+        &contact_information, dem_parameters.physical_properties, force);
+      integrator_object.integrate_post_force(
+        particle_handler, g, dt, momentum, force);
 
       if (step % writing_frequency == 0)
         {

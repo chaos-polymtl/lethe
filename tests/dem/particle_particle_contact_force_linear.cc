@@ -68,7 +68,6 @@ test()
   Tensor<1, dim> g{{0, 0, -9.81}};
   double         dt                                             = 0.00001;
   double         particle_diameter                              = 0.005;
-  int            particle_density                               = 2500;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 50000000;
   dem_parameters.physical_properties.poisson_ratio_particle[0]  = 0.3;
@@ -76,6 +75,8 @@ test()
   dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.5;
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
+  dem_parameters.physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.physical_properties.density[0]            = 2500;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   Particles::ParticleHandler<dim> particle_handler(
@@ -110,16 +111,12 @@ test()
     particle_handler.insert_particle(particle1, cell1);
   pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0.01;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
   pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
@@ -134,21 +131,20 @@ test()
     particle_handler.insert_particle(particle2, cell2);
   pit2->get_properties()[DEM::PropertiesIndex::type]        = 0;
   pit2->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit2->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
   pit2->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
   pit2->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
   pit2->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
   pit2->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
   pit2->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
   pit2->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
   pit2->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
   pit2->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
   pit2->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
   pit2->get_properties()[DEM::PropertiesIndex::mass]        = 1;
   pit2->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+
+  std::unordered_map<int, Tensor<1, dim>> momentum;
+  std::unordered_map<int, Tensor<1, dim>> force;
 
   // Calling broad search
   std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
@@ -185,17 +181,14 @@ test()
 
   // Calling linear force
   PPLinearForce<dim> linear_force_object(dem_parameters);
-  linear_force_object.calculate_pp_contact_force(local_adjacent_particles,
-                                                 ghost_adjacent_particles,
-                                                 dt);
+  linear_force_object.calculate_pp_contact_force(
+    local_adjacent_particles, ghost_adjacent_particles, dt, momentum, force);
 
   // Output
   auto particle = particle_handler.begin();
   deallog << "The contact force vector for particle 1 is: "
-          << particle->get_properties()[DEM::PropertiesIndex::force_x] << " "
-          << particle->get_properties()[DEM::PropertiesIndex::force_y] << " "
-          << particle->get_properties()[DEM::PropertiesIndex::force_z] << " N "
-          << std::endl;
+          << force[particle->get_id()][0] << " " << force[particle->get_id()][1]
+          << " " << force[particle->get_id()][2] << " N " << std::endl;
 }
 
 int
