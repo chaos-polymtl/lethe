@@ -493,6 +493,25 @@ DEMSolver<dim>::insert_particles()
 
 template <int dim>
 void
+DEMSolver<dim>::update_moment_of_inertia(
+  dealii::Particles::ParticleHandler<dim> &particle_handler,
+  std::unordered_map<int, double> &        MOI)
+{
+  // Clearing the container first
+  MOI.clear();
+
+  for (auto &particle : particle_handler)
+    {
+      auto &particle_properties = particle.get_properties();
+      MOI.insert({particle.get_id(),
+                  0.4 * particle_properties[DEM::PropertiesIndex::mass] *
+                    (particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
+                    (particle_properties[DEM::PropertiesIndex::dp] * 0.5)});
+    }
+}
+
+template <int dim>
+void
 DEMSolver<dim>::particle_wall_broad_search()
 {
   // Particle - wall contact candidates
@@ -797,7 +816,10 @@ DEMSolver<dim>::solve()
   read_mesh();
 
   if (parameters.restart.restart == true)
-    read_checkpoint();
+    {
+      read_checkpoint();
+      update_moment_of_inertia(particle_handler, MOI);
+    }
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
@@ -849,6 +871,9 @@ DEMSolver<dim>::solve()
           // maps on each processor
           force.clear();
           momentum.clear();
+
+          // Updating moment of inertia container
+          update_moment_of_inertia(particle_handler, MOI);
 
 #if (DEAL_II_VERSION_MINOR <= 2)
           particle_handler.exchange_ghost_particles();
@@ -947,7 +972,8 @@ DEMSolver<dim>::solve()
         parameters.physical_properties.g,
         simulation_control->get_time_step(),
         momentum,
-        force);
+        force,
+        MOI);
 
       // Visualization
       if (simulation_control->is_output_iteration())

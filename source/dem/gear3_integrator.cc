@@ -52,7 +52,8 @@ Gear3Integrator<dim>::integrate_post_force(
   Tensor<1, dim> /*g*/,
   double /*dt*/,
   std::unordered_map<int, Tensor<1, dim>> & /*momentum*/,
-  std::unordered_map<int, Tensor<1, dim>> & /*force*/)
+  std::unordered_map<int, Tensor<1, dim>> & /*force*/,
+  std::unordered_map<int, double> & /*MOI*/)
 {
   /*
 for (auto particle = particle_handler.begin();

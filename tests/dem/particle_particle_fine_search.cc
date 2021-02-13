@@ -96,19 +96,18 @@ test()
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
 
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
@@ -116,19 +115,18 @@ test()
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit2->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit2->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Calling broad search
   std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;

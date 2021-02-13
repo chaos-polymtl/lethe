@@ -100,16 +100,17 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   // mass and moment of inertia
-  pit->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit->get_properties()[DEM::PropertiesIndex::mass] = 1;
 
   std::unordered_map<int, Tensor<1, dim>> momentum;
   std::unordered_map<int, Tensor<1, dim>> force;
+  std::unordered_map<int, double>         MOI;
+  MOI.insert({0, 1});
 
   ExplicitEulerIntegrator<dim> integrator_object;
   integrator_object.integrate_pre_force(particle_handler, g, dt);
   integrator_object.integrate_post_force(
-    particle_handler, g, dt, momentum, force);
+    particle_handler, g, dt, momentum, force, MOI);
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();

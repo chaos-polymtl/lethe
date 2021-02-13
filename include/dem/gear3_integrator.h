@@ -89,13 +89,15 @@ public:
    * @param time_step The value of the time step used for the integration
    * @param momentum Momentum of particles
    * @param force Force acting on particles
+   * @param MOI A container of moment of inertia of particles
    */
   virtual void
   integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
                        Tensor<1, dim>                   body_force,
                        double                           time_step,
                        std::unordered_map<int, Tensor<1, dim>> &momentum,
-                       std::unordered_map<int, Tensor<1, dim>> &force) override;
+                       std::unordered_map<int, Tensor<1, dim>> &force,
+                       std::unordered_map<int, double> &        MOI) override;
 
 private:
   Point<dim>     predicted_location;

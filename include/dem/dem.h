@@ -183,6 +183,16 @@ private:
   insert_particles();
 
   /**
+   * @brief Updates moment of inertia container after sorting particles
+   * into subdomains
+   *
+   */
+  void
+  update_moment_of_inertia(
+    dealii::Particles::ParticleHandler<dim> &particle_handler,
+    std::unordered_map<int, double> &        MOI);
+
+  /**
    * @brief Carries out the broad contact detection search using the
    * background triangulation for particle-walls contact
    *
@@ -368,6 +378,7 @@ private:
   std::unordered_map<int, Tensor<1, dim>> momentum;
   std::unordered_map<int, Tensor<1, dim>> force;
   std::unordered_map<int, double>         displacement;
+  std::unordered_map<int, double>         MOI;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

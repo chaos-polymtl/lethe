@@ -132,10 +132,11 @@ test(double coefficient_of_restitution)
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::mass] =
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
 
   std::unordered_map<int, Tensor<1, dim>> momentum;
   std::unordered_map<int, Tensor<1, dim>> force;
+  std::unordered_map<int, double>         MOI;
+  MOI.insert({0, 1});
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
@@ -183,7 +184,7 @@ test(double coefficient_of_restitution)
                                                  momentum,
                                                  force);
       integrator_object.integrate_post_force(
-        particle_handler, g, dt, momentum, force);
+        particle_handler, g, dt, momentum, force, MOI);
     }
 
   deallog << "Coefficient of restitution is " << coefficient_of_restitution

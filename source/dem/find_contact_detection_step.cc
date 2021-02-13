@@ -25,11 +25,11 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
 
       for (auto &particle : particle_handler)
         {
-          auto &       particle_properties = particle.get_properties();
-          unsigned int particle_id         = particle.get_id();
+          auto &particle_properties   = particle.get_properties();
+          auto &particle_displacement = displacement[particle.get_id()];
 
           // Finding displacement of each particle during last step
-          displacement[particle_id] +=
+          particle_displacement +=
             dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
                         particle_properties[DEM::PropertiesIndex::v_x] +
                       particle_properties[DEM::PropertiesIndex::v_y] *
@@ -38,8 +38,7 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
                         particle_properties[DEM::PropertiesIndex::v_z]);
 
           // Updating maximum displacement of particles
-          max_displacement =
-            std::max(max_displacement, displacement[particle_id]);
+          max_displacement = std::max(max_displacement, particle_displacement);
         }
     }
   else
@@ -49,11 +48,11 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
 
       for (auto &particle : particle_handler)
         {
-          auto &       particle_properties = particle.get_properties();
-          unsigned int particle_id         = particle.get_id();
+          auto &particle_properties   = particle.get_properties();
+          auto &particle_displacement = displacement[particle.get_id()];
 
           // Finding displacement of each particle during last step
-          displacement[particle_id] +=
+          particle_displacement +=
             dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
                         particle_properties[DEM::PropertiesIndex::v_x] +
                       particle_properties[DEM::PropertiesIndex::v_y] *
@@ -62,8 +61,7 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
                         particle_properties[DEM::PropertiesIndex::v_z]);
 
           // Updating maximum displacement of particles
-          max_displacement =
-            std::max(max_displacement, displacement[particle_id]);
+          max_displacement = std::max(max_displacement, particle_displacement);
         }
     }
 

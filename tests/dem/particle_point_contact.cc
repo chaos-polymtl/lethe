@@ -97,19 +97,18 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Construct boundary cells object and build it
   BoundaryCellsInformation<dim> boundary_cells_object;
@@ -131,6 +130,8 @@ test()
 
   std::unordered_map<int, Tensor<1, dim>> momentum;
   std::unordered_map<int, Tensor<1, dim>> force;
+  std::unordered_map<int, double>         MOI;
+  MOI.insert({0, 1});
 
   for (double time = 0; time < 0.2; time += dt)
     {
@@ -151,7 +152,7 @@ test()
       force_object.calculate_particle_point_contact_force(
         &contact_information, dem_parameters.physical_properties, force);
       integrator_object.integrate_post_force(
-        particle_handler, g, dt, momentum, force);
+        particle_handler, g, dt, momentum, force, MOI);
 
       if (step % writing_frequency == 0)
         {

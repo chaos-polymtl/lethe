@@ -281,19 +281,18 @@ test()
                                              particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = -0.4;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = -0.4;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
@@ -301,25 +300,27 @@ test()
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit2->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit2->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Defining variables
   std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
   std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
   std::unordered_map<int, Tensor<1, dim>>   momentum;
   std::unordered_map<int, Tensor<1, dim>>   force;
+  std::unordered_map<int, double>           MOI;
+  MOI.insert({0, 1});
+  MOI.insert({1, 1});
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
@@ -364,7 +365,7 @@ test()
 
       // Integration
       integrator_object.integrate_post_force(
-        particle_handler, g, dt, momentum, force);
+        particle_handler, g, dt, momentum, force, MOI);
 
       update_contact_containers(local_adjacent_particles,
                                 ghost_adjacent_particles,
