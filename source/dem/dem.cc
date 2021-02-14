@@ -973,7 +973,8 @@ DEMSolver<dim>::solve()
         simulation_control->get_time_step(),
         momentum,
         force,
-        MOI);
+        MOI,
+        acceleration);
 
       // Visualization
       if (simulation_control->is_output_iteration())

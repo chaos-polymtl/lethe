@@ -42,14 +42,11 @@ namespace DEM
     v_x          = 2,
     v_y          = 3,
     v_z          = 4,
-    acc_x        = 5,
-    acc_y        = 6,
-    acc_z        = 7,
-    omega_x      = 8,
-    omega_y      = 9,
-    omega_z      = 10,
-    mass         = 11,
-    n_properties = 12,
+    omega_x      = 5,
+    omega_y      = 6,
+    omega_z      = 7,
+    mass         = 8,
+    n_properties = 9,
   };
 
   unsigned int

@@ -21,10 +21,6 @@ VelocityVerletIntegrator<dim>::integrate_pre_force(
 
       for (int d = 0; d < dim; ++d)
         {
-          // Calculate the half step particle velocity
-          particle_properties[PropertiesIndex::v_x + d] +=
-            0.5 * dt * particle_properties[PropertiesIndex::acc_x + d];
-
           // Update particle position
           particle_position[d] +=
             (particle_properties[PropertiesIndex::v_x + d] * dt);
@@ -41,7 +37,8 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
   double                                   dt,
   std::unordered_map<int, Tensor<1, dim>> &momentum,
   std::unordered_map<int, Tensor<1, dim>> &force,
-  std::unordered_map<int, double> &        MOI)
+  std::unordered_map<int, double> &        MOI,
+  std::unordered_map<int, Tensor<1, dim>> &acceleration)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -49,16 +46,17 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-      unsigned int    particle_id         = particle->get_id();
-      auto            particle_MOI        = MOI[particle_id];
-      auto            particle_properties = particle->get_properties();
-      Tensor<1, dim> &particle_momentum   = momentum[particle_id];
-      Tensor<1, dim> &particle_force      = force[particle_id];
+      unsigned int    particle_id           = particle->get_id();
+      auto            particle_MOI          = MOI[particle_id];
+      auto            particle_properties   = particle->get_properties();
+      Tensor<1, dim> &particle_momentum     = momentum[particle_id];
+      Tensor<1, dim> &particle_force        = force[particle_id];
+      Tensor<1, dim> &particle_acceleration = acceleration[particle_id];
 
       for (int d = 0; d < dim; ++d)
         {
           // Calculate the acceleration
-          particle_properties[PropertiesIndex::acc_x + d] =
+          particle_acceleration[d] =
             g[d] +
             particle_force[d] / particle_properties[PropertiesIndex::mass];
 
@@ -67,7 +65,7 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
 
           // Calculate the particle full step velocity
           particle_properties[PropertiesIndex::v_x + d] +=
-            particle_properties[PropertiesIndex::acc_x + d] * 0.5 * dt;
+            particle_acceleration[d] * 0.5 * dt;
 
           // Updating angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
@@ -75,6 +73,12 @@ VelocityVerletIntegrator<dim>::integrate_post_force(
 
           // Reinitializing torque
           particle_momentum[d] = 0;
+
+          // Calculate the half step particle velocity for the next integration
+          // (pre-force) step. I moved this part from the beginning of pre-force
+          // integration.
+          particle_properties[PropertiesIndex::v_x + d] +=
+            0.5 * dt * particle_acceleration[d];
         }
     }
 }

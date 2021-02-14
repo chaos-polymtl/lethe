@@ -93,9 +93,8 @@ Visualization<dim>::print_xyz(
       local_particles.insert({particle->get_id(), particle});
     }
 
-  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 2, 2, 2, 1, 1, 1};
-  pcout << "id, type, dp , v_x  , v_y  , v_z  , acc_x , acc_y , "
-           "acc_z , omega_x, omega_y, omega_z, "
+  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 1, 1, 1};
+  pcout << "id, type, dp , v_x  , v_y  , v_z  , omega_x, omega_y, omega_z, "
         << std::endl;
 
   unsigned int counter;

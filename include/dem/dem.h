@@ -379,6 +379,7 @@ private:
   std::unordered_map<int, Tensor<1, dim>> force;
   std::unordered_map<int, double>         displacement;
   std::unordered_map<int, double>         MOI;
+  std::unordered_map<int, Tensor<1, dim>> acceleration;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

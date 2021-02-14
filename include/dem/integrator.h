@@ -73,14 +73,17 @@ public:
    * @param momentum Momentum of particles
    * @param force Force acting on particles
    * @param MOI A container of moment of inertia of particles
+   * @param acceleration A container of acceleration of particles
    */
   virtual void
-  integrate_post_force(Particles::ParticleHandler<dim> &particle_handler,
-                       Tensor<1, dim>                   body_force,
-                       double                           time_step,
-                       std::unordered_map<int, Tensor<1, dim>> &momentum,
-                       std::unordered_map<int, Tensor<1, dim>> &force,
-                       std::unordered_map<int, double> &        MOI) = 0;
+  integrate_post_force(
+    Particles::ParticleHandler<dim> &        particle_handler,
+    Tensor<1, dim>                           body_force,
+    double                                   time_step,
+    std::unordered_map<int, Tensor<1, dim>> &momentum,
+    std::unordered_map<int, Tensor<1, dim>> &force,
+    std::unordered_map<int, double> &        MOI,
+    std::unordered_map<int, Tensor<1, dim>> &acceleration) = 0;
 };
 
 #endif /* integration_h */
