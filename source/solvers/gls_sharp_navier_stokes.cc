@@ -85,7 +85,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     table_f.resize(particles.size());
     table_t.resize(particles.size());
 
-    for (unsigned int p = 0; p < particles.size(); ++p) {
+    /*for (unsigned int p = 0; p < particles.size(); ++p) {
 
         particles[p].forces[0]=0;
         particles[p].forces[1]=0;
@@ -108,7 +108,7 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
         particles[p].local_alpha_torque=1;
         particles[p].local_alpha_force=1;
 
-    }
+    }*/
 }
 
 
@@ -3555,7 +3555,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
         force_on_ib();
       finish_time_step_particles();
       write_force_ib();
-      MPI_Barrier(this->mpi_communicator);
+
     }
 
   if (this->simulation_parameters.particlesParameters.calculate_force_ib)

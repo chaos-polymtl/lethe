@@ -1,5 +1,6 @@
 #include "core/parameters.h"
 
+
 namespace Parameters
 {
   void
@@ -1124,6 +1125,7 @@ namespace Parameters
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
         {
+          particles[i].initialise_all();
           std::string section = "particle info " + std::to_string(i);
           prm.enter_subsection(section);
           particles[i].position[0]          = prm.get_double("x");
@@ -1152,6 +1154,7 @@ namespace Parameters
                 particles[i].mass               = PI*particles[i].radius*particles[i].radius*prm.get_double("density");
 
             }
+          particles[i].initialise_last();
           prm.leave_subsection();
         }
       prm.leave_subsection();

@@ -28,9 +28,13 @@ template <int dim>
 class IBParticle
 {
 public:
-    // This class defined values related to a particle used for in the sharp interface immersed boundary.
-    // Each particle defined will have these value used in the solver
 
+
+
+// This class defined values related to a particle used for in the sharp interface immersed boundary.
+    // Each particle defined will have these value used in the solver
+    void initialise_all();
+    void initialise_last();
 
     Point<dim> position;
     Point<dim> last_position;
@@ -65,6 +69,7 @@ public:
 
 
     double radius;
+
 
     // Pressure imposition location
     Point<dim> pressure_location;

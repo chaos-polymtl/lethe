@@ -577,6 +577,7 @@ namespace Parameters
     bool                         integrate_motion;
 
 
+
     static void
     declare_parameters(ParameterHandler &prm);
     static void
