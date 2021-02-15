@@ -48,23 +48,23 @@ public:
   {}
 
   /**
-   * Carries out the integration calculations before updating particle force.
-   * After calculation of new acting forces on particles, integrate_post_force
-   * updates the integrate_pre_force results.
+   * Carries out integrating of new particles' location after insertion.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
+   * @param force Force acting on particles
    * @param time_step The value of the time step used for the integration
    */
   virtual void
-  integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
-                      Tensor<1, dim>                   body_force,
-                      double                           time_step) = 0;
+  integrate_half_step_location(
+    Particles::ParticleHandler<dim> &                 particle_handler,
+    Tensor<1, dim>                                    body_force,
+    std::unordered_map<unsigned int, Tensor<1, dim>> &force,
+    double                                            dt) = 0;
 
   /**
-   * Carries out updating integrate_pre_force information after contact force
-   * calculations.
+   * Carries out integrating of particles' velocity and position.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -73,17 +73,14 @@ public:
    * @param momentum Momentum of particles
    * @param force Force acting on particles
    * @param MOI A container of moment of inertia of particles
-   * @param acceleration A container of acceleration of particles
    */
   virtual void
-  integrate_post_force(
-    Particles::ParticleHandler<dim> &        particle_handler,
-    Tensor<1, dim>                           body_force,
-    double                                   time_step,
-    std::unordered_map<int, Tensor<1, dim>> &momentum,
-    std::unordered_map<int, Tensor<1, dim>> &force,
-    std::unordered_map<int, double> &        MOI,
-    std::unordered_map<int, Tensor<1, dim>> &acceleration) = 0;
+  integrate(Particles::ParticleHandler<dim> &                 particle_handler,
+            Tensor<1, dim>                                    body_force,
+            double                                            time_step,
+            std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
+            std::unordered_map<unsigned int, Tensor<1, dim>> &force,
+            std::unordered_map<unsigned int, double> &        MOI) = 0;
 };
 
 #endif /* integration_h */

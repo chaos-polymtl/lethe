@@ -64,8 +64,8 @@ test()
 
   // Defining simulation general parameters
   Tensor<1, dim>     g{{0, 0, 0}};
-  double             dt1             = 0.2;
-  double             dt2             = 0.1;
+  double             dt1             = 0.1;
+  double             dt2             = 0.05;
   const unsigned int time_step_ratio = dt1 / dt2;
 
   // Defning particle handler
@@ -74,7 +74,7 @@ test()
 
   int    id              = 0;
   double particle_mass   = 1;
-  double spring_constant = 2;
+  double spring_constant = 1;
 
 
   DEMSolverParameters<dim> dem_parameters;
@@ -84,7 +84,7 @@ test()
   double   t         = 0;
   double   x0        = 0.3;
   Point<3> position1 = {0, 0, x0};
-  double   t_final   = 0.999999999;
+  double   t_final   = 0.999999;
   double   x_analytical;
   double   particle_axial_position_error_Euler_dt1;
   double   particle_axial_position_error_Euler_dt2;
@@ -92,9 +92,6 @@ test()
   double   particle_axial_position_error_Verlet_dt2;
   double   particle_axial_position_error_Gear3_dt1;
   double   particle_axial_position_error_Gear3_dt2;
-
-  // Output Analytical
-  x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * t_final);
 
   Particles::Particle<dim> particle0(position1, position1, id);
   typename Triangulation<dim>::active_cell_iterator particle0_cell =
@@ -104,42 +101,39 @@ test()
   Particles::ParticleIterator<dim> pit0 =
     particle_handler.insert_particle(particle0, particle0_cell);
 
-  pit0->get_properties()[DEM::PropertiesIndex::v_x]   = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::v_y]   = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::v_z]   = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::acc_x] = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::acc_y] = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::acc_z] = 0;
-  pit0->get_properties()[DEM::PropertiesIndex::mass]  = particle_mass;
+  pit0->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
+  pit0->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
+  pit0->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
+  pit0->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   // Calling integrators
   ExplicitEulerIntegrator<dim>  explicit_euler_object;
   VelocityVerletIntegrator<dim> velocity_verlet_object;
   Gear3Integrator<dim>          gear3_integration_object;
 
-  std::unordered_map<int, Tensor<1, dim>> momentum;
-  std::unordered_map<int, Tensor<1, dim>> force;
-  std::unordered_map<int, double>         MOI;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
   MOI.insert({0, 1});
 
   // Explicit Euler
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
        ++particle_iterator)
-
     {
       while (t < t_final)
         {
-          explicit_euler_object.integrate_pre_force(particle_handler, g, dt1);
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
           force[particle_iterator->get_id()] = force_tensor;
-          explicit_euler_object.integrate_post_force(
+          explicit_euler_object.integrate(
             particle_handler, g, dt1, momentum, force, MOI);
 
           t += dt1;
         }
+      // Output Analytical
+      x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Euler_dt1 =
         particle_iterator->get_location()[dim - 1] - x_analytical;
     }
@@ -154,31 +148,29 @@ test()
     particle_handler.insert_particle(particle1, particle1_cell);
 
 
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]  = particle_mass;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
        ++particle_iterator)
     {
       t = 0;
+
       while (t < t_final)
         {
-          explicit_euler_object.integrate_pre_force(particle_handler, g, dt2);
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
           force[particle_iterator->get_id()] = force_tensor;
-          explicit_euler_object.integrate_post_force(
+          explicit_euler_object.integrate(
             particle_handler, g, dt2, momentum, force, MOI);
-
           t += dt2;
         }
+      // Output Analytical
+      x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Euler_dt2 =
         particle_iterator->get_location()[dim - 1] - x_analytical;
     }
@@ -197,13 +189,10 @@ test()
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, particle2_cell);
 
-  pit2->get_properties()[DEM::PropertiesIndex::v_x]   = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_y]   = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_z]   = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_x] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_y] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_z] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::mass]  = particle_mass;
+  pit2->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   // Output Velocity Verlet
   for (auto particle_iterator = particle_handler.begin();
@@ -211,22 +200,30 @@ test()
        ++particle_iterator)
     {
       t = 0;
+
+      force[particle_iterator->get_id()][dim - 1] = -x0;
+      velocity_verlet_object.integrate_half_step_location(particle_handler,
+                                                          g,
+                                                          force,
+                                                          dt1);
+      t += dt1;
+
       while (t < t_final)
         {
-          velocity_verlet_object.integrate_pre_force(particle_handler, g, dt1);
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
           force[particle_iterator->get_id()] = force_tensor;
-          velocity_verlet_object.integrate_post_force(
-            particle_handler, g, dt2, momentum, force, MOI);
+          velocity_verlet_object.integrate(
+            particle_handler, g, dt1, momentum, force, MOI);
 
           t += dt1;
         }
+      // Output Analytical
+      x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Verlet_dt1 =
         particle_iterator->get_location()[dim - 1] - x_analytical;
     }
-
   particle_handler.clear_particles();
   Particles::Particle<dim> particle3(position1, position1, id);
   typename Triangulation<dim>::active_cell_iterator particle3_cell =
@@ -236,13 +233,10 @@ test()
   Particles::ParticleIterator<dim> pit3 =
     particle_handler.insert_particle(particle3, particle3_cell);
 
-  pit3->get_properties()[DEM::PropertiesIndex::v_x]   = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::v_y]   = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::v_z]   = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::acc_x] = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::acc_y] = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::acc_z] = 0;
-  pit3->get_properties()[DEM::PropertiesIndex::mass]  = particle_mass;
+  pit3->get_properties()[DEM::PropertiesIndex::v_x]  = 0;
+  pit3->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
+  pit3->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
+  pit3->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   // Output Velocity Verlet
   for (auto particle_iterator = particle_handler.begin();
@@ -250,19 +244,27 @@ test()
        ++particle_iterator)
     {
       t = 0;
+
+      force[particle_iterator->get_id()][dim - 1] = -x0;
+      velocity_verlet_object.integrate_half_step_location(particle_handler,
+                                                          g,
+                                                          force,
+                                                          dt2);
+      t += dt2;
+
       while (t < t_final)
         {
-          velocity_verlet_object.integrate_pre_force(particle_handler, g, dt2);
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
           force[particle_iterator->get_id()] = force_tensor;
-          velocity_verlet_object.integrate_post_force(
-            particle_handler, g, dt2, momentum, force, MOI);
 
+          velocity_verlet_object.integrate(
+            particle_handler, g, dt2, momentum, force, MOI);
           t += dt2;
         }
-
+      // Output Analytical
+      x_analytical = x0 * cos(sqrt(spring_constant / particle_mass) * (t));
       particle_axial_position_error_Verlet_dt2 =
         particle_iterator->get_location()[dim - 1] - x_analytical;
     }

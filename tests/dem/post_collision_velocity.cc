@@ -124,18 +124,15 @@ test(double coefficient_of_restitution)
   pit1->get_properties()[DEM::PropertiesIndex::v_x]     = -0.1;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::mass] =
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
 
-  std::unordered_map<int, Tensor<1, dim>> momentum;
-  std::unordered_map<int, Tensor<1, dim>> force;
-  std::unordered_map<int, double>         MOI;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
   MOI.insert({0, 1});
 
   // Finding boundary cells
@@ -178,12 +175,11 @@ test(double coefficient_of_restitution)
       pw_fine_search_object.particle_wall_fine_search(pw_contact_list,
                                                       pw_contact_information);
 
-      integrator_object.integrate_pre_force(particle_handler, g, dt);
       pw_force_object.calculate_pw_contact_force(pw_contact_information,
                                                  dt,
                                                  momentum,
                                                  force);
-      integrator_object.integrate_post_force(
+      integrator_object.integrate(
         particle_handler, g, dt, momentum, force, MOI);
     }
 

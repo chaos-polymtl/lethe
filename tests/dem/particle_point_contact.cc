@@ -102,9 +102,6 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
@@ -128,9 +125,9 @@ test()
   ParticlePointLineForce<dim>   force_object;
   VelocityVerletIntegrator<dim> integrator_object;
 
-  std::unordered_map<int, Tensor<1, dim>> momentum;
-  std::unordered_map<int, Tensor<1, dim>> force;
-  std::unordered_map<int, double>         MOI;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
   MOI.insert({0, 1});
 
   for (double time = 0; time < 0.2; time += dt)
@@ -148,10 +145,9 @@ test()
         fine_search_object.particle_point_fine_search(contact_candidates,
                                                       neighborhood_threshold);
 
-      integrator_object.integrate_pre_force(particle_handler, g, dt);
       force_object.calculate_particle_point_contact_force(
         &contact_information, dem_parameters.physical_properties, force);
-      integrator_object.integrate_post_force(
+      integrator_object.integrate(
         particle_handler, g, dt, momentum, force, MOI);
 
       if (step % writing_frequency == 0)

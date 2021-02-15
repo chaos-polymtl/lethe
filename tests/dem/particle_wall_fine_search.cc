@@ -81,9 +81,6 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;

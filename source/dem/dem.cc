@@ -494,8 +494,8 @@ DEMSolver<dim>::insert_particles()
 template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
-  dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<int, double> &        MOI)
+  dealii::Particles::ParticleHandler<dim> & particle_handler,
+  std::unordered_map<unsigned int, double> &MOI)
 {
   // Clearing the container first
   MOI.clear();
@@ -949,12 +949,6 @@ DEMSolver<dim>::solve()
 #endif
         }
 
-      // Integration prediction step (before force calculation)
-      integrator_object->integrate_pre_force(
-        particle_handler,
-        parameters.physical_properties.g,
-        simulation_control->get_time_step());
-
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
         local_adjacent_particles,
@@ -967,14 +961,25 @@ DEMSolver<dim>::solve()
       particle_wall_contact_force();
 
       // Integration correction step (after force calculation)
-      integrator_object->integrate_post_force(
-        particle_handler,
-        parameters.physical_properties.g,
-        simulation_control->get_time_step(),
-        momentum,
-        force,
-        MOI,
-        acceleration);
+      // In the first step, we have to obtain location of particles at half-step
+      // time
+      if (simulation_control->get_step_number() == 0)
+        {
+          integrator_object->integrate_half_step_location(
+            particle_handler,
+            parameters.physical_properties.g,
+            force,
+            simulation_control->get_time_step());
+        }
+      else
+        {
+          integrator_object->integrate(particle_handler,
+                                       parameters.physical_properties.g,
+                                       simulation_control->get_time_step(),
+                                       momentum,
+                                       force,
+                                       MOI);
+        }
 
       // Visualization
       if (simulation_control->is_output_iteration())

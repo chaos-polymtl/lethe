@@ -69,10 +69,10 @@ public:
   virtual void
   calculate_pw_contact_force(
     std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                      pw_pairs_in_contact,
-    const double &                           dt,
-    std::unordered_map<int, Tensor<1, dim>> &momentum,
-    std::unordered_map<int, Tensor<1, dim>> &force) override;
+      &                                               pw_pairs_in_contact,
+    const double &                                    dt,
+    std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
+    std::unordered_map<unsigned int, Tensor<1, dim>> &force) override;
 
 private:
   /**

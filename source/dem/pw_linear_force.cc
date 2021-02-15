@@ -74,10 +74,10 @@ template <int dim>
 void
 PWLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    &                                      pw_pairs_in_contact,
-  const double &                           dt,
-  std::unordered_map<int, Tensor<1, dim>> &momentum,
-  std::unordered_map<int, Tensor<1, dim>> &force)
+    &                                               pw_pairs_in_contact,
+  const double &                                    dt,
+  std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
+  std::unordered_map<unsigned int, Tensor<1, dim>> &force)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator

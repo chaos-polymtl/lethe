@@ -47,11 +47,12 @@ using namespace dealii;
 
 template <int dim>
 bool
-find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
-                            const double &                   dt,
-                            const double &smallest_contact_search_criterion,
-                            MPI_Comm &    mpi_communicator,
-                            bool &        sorting_in_subdomains_step,
-                            std::unordered_map<int, double> &displacement);
+find_contact_detection_step(
+  Particles::ParticleHandler<dim> &         particle_handler,
+  const double &                            dt,
+  const double &                            smallest_contact_search_criterion,
+  MPI_Comm &                                mpi_communicator,
+  bool &                                    sorting_in_subdomains_step,
+  std::unordered_map<unsigned int, double> &displacement);
 
 #endif

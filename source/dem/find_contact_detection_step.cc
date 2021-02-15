@@ -4,12 +4,13 @@ using namespace dealii;
 
 template <int dim>
 bool
-find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
-                            const double &                   dt,
-                            const double &smallest_contact_search_criterion,
-                            MPI_Comm &    mpi_communicator,
-                            bool &        sorting_in_subdomains_step,
-                            std::unordered_map<int, double> &displacement)
+find_contact_detection_step(
+  Particles::ParticleHandler<dim> &         particle_handler,
+  const double &                            dt,
+  const double &                            smallest_contact_search_criterion,
+  MPI_Comm &                                mpi_communicator,
+  bool &                                    sorting_in_subdomains_step,
+  std::unordered_map<unsigned int, double> &displacement)
 {
   double       max_displacement       = 0;
   unsigned int contact_detection_step = 0;
@@ -81,18 +82,18 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
   return contact_detection_step;
 }
 
-template bool
-  find_contact_detection_step(Particles::ParticleHandler<2> &particle_handler,
-                              const double &                 dt,
-                              const double &smallest_contact_search_criterion,
-                              MPI_Comm &    mpi_communicator,
-                              bool &        sorting_in_subdomains_step,
-                              std::unordered_map<int, double> &displacement);
+template bool find_contact_detection_step(
+  Particles::ParticleHandler<2> &           particle_handler,
+  const double &                            dt,
+  const double &                            smallest_contact_search_criterion,
+  MPI_Comm &                                mpi_communicator,
+  bool &                                    sorting_in_subdomains_step,
+  std::unordered_map<unsigned int, double> &displacement);
 
-template bool
-  find_contact_detection_step(Particles::ParticleHandler<3> &particle_handler,
-                              const double &                 dt,
-                              const double &smallest_contact_search_criterion,
-                              MPI_Comm &    mpi_communicator,
-                              bool &        sorting_in_subdomains_step,
-                              std::unordered_map<int, double> &displacement);
+template bool find_contact_detection_step(
+  Particles::ParticleHandler<3> &           particle_handler,
+  const double &                            dt,
+  const double &                            smallest_contact_search_criterion,
+  MPI_Comm &                                mpi_communicator,
+  bool &                                    sorting_in_subdomains_step,
+  std::unordered_map<unsigned int, double> &displacement);

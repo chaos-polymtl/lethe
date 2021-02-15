@@ -62,7 +62,7 @@ public:
     const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
       *particle_point_line_pairs_in_contact,
     const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties,
-    std::unordered_map<int, Tensor<1, dim>> &              force);
+    std::unordered_map<unsigned int, Tensor<1, dim>> &     force);
 
   /**
    * Carries out the calculation of the particle-line contact force using
@@ -79,7 +79,7 @@ public:
     const std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
       *particle_line_pairs_in_contact,
     const Parameters::Lagrangian::PhysicalProperties<dim> &physical_properties,
-    std::unordered_map<int, Tensor<1, dim>> &              force);
+    std::unordered_map<unsigned int, Tensor<1, dim>> &     force);
 
 private:
   /** This private function is used to find the projection of point_p on

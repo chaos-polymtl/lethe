@@ -180,9 +180,9 @@ locate_local_particles_in_cells(
 
 template <int dim>
 void
-reinitialize_force(Particles::ParticleHandler<dim> &        particle_handler,
-                   std::unordered_map<int, Tensor<1, dim>> &momentum,
-                   std::unordered_map<int, Tensor<1, dim>> &force)
+reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
+                   std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
+                   std::unordered_map<unsigned int, Tensor<1, dim>> &force)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -287,9 +287,6 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
   pit1->get_properties()[DEM::PropertiesIndex::v_y]     = -0.5;
   pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
@@ -306,9 +303,6 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
   pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0.5;
   pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_x]   = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_y]   = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_z]   = 0;
   pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
   pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
   pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
@@ -317,9 +311,9 @@ test()
   // Defining variables
   std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
   std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
-  std::unordered_map<int, Tensor<1, dim>>   momentum;
-  std::unordered_map<int, Tensor<1, dim>>   force;
-  std::unordered_map<int, double>           MOI;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
   MOI.insert({0, 1});
   MOI.insert({1, 1});
 
@@ -354,8 +348,6 @@ test()
         neighborhood_threshold);
 
       // Integration
-      integrator_object.integrate_pre_force(particle_handler, g, dt);
-
       // Calling non-linear force
       nonlinear_force_object.calculate_pp_contact_force(
         cleared_local_adjacent_particles,
@@ -365,7 +357,7 @@ test()
         force);
 
       // Integration
-      integrator_object.integrate_post_force(
+      integrator_object.integrate(
         particle_handler, g, dt, momentum, force, MOI);
 
       update_contact_containers(local_adjacent_particles,

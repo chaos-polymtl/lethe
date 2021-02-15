@@ -189,8 +189,8 @@ private:
    */
   void
   update_moment_of_inertia(
-    dealii::Particles::ParticleHandler<dim> &particle_handler,
-    std::unordered_map<int, double> &        MOI);
+    dealii::Particles::ParticleHandler<dim> & particle_handler,
+    std::unordered_map<unsigned int, double> &MOI);
 
   /**
    * @brief Carries out the broad contact detection search using the
@@ -375,11 +375,10 @@ private:
   PVDHandler                           particles_pvdhandler;
   const unsigned int                   standard_deviation_multiplier;
 
-  std::unordered_map<int, Tensor<1, dim>> momentum;
-  std::unordered_map<int, Tensor<1, dim>> force;
-  std::unordered_map<int, double>         displacement;
-  std::unordered_map<int, double>         MOI;
-  std::unordered_map<int, Tensor<1, dim>> acceleration;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         displacement;
+  std::unordered_map<unsigned int, double>         MOI;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

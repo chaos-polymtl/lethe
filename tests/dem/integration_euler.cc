@@ -91,10 +91,6 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::v_x] = 0;
   pit->get_properties()[DEM::PropertiesIndex::v_y] = 0;
   pit->get_properties()[DEM::PropertiesIndex::v_z] = 0;
-  // Acceleration
-  pit->get_properties()[DEM::PropertiesIndex::acc_x] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::acc_y] = 0;
-  pit->get_properties()[DEM::PropertiesIndex::acc_z] = -9.81;
   // Angular velocity
   pit->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
   pit->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
@@ -102,15 +98,13 @@ test()
   // mass and moment of inertia
   pit->get_properties()[DEM::PropertiesIndex::mass] = 1;
 
-  std::unordered_map<int, Tensor<1, dim>> momentum;
-  std::unordered_map<int, Tensor<1, dim>> force;
-  std::unordered_map<int, double>         MOI;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
   MOI.insert({0, 1});
 
   ExplicitEulerIntegrator<dim> integrator_object;
-  integrator_object.integrate_pre_force(particle_handler, g, dt);
-  integrator_object.integrate_post_force(
-    particle_handler, g, dt, momentum, force, MOI);
+  integrator_object.integrate(particle_handler, g, dt, momentum, force, MOI);
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();

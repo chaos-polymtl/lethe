@@ -5,56 +5,22 @@ using namespace DEM;
 
 template <int dim>
 void
-Gear3Integrator<dim>::integrate_pre_force(
+Gear3Integrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
   Tensor<1, dim> /*g*/,
+  std::unordered_map<unsigned int, Tensor<1, dim>> & /*force*/,
   double /*dt*/)
-{
-  /*
-for (auto particle = particle_handler.begin();
-     particle != particle_handler.end();
-     ++particle)
-  {
-    // Get the total array view to the particle properties once to improve
-    // efficiency
-    auto particle_properties = particle->get_properties();
-    auto particle_position   = particle->get_location();
-
-    // Updating particle location, velocity, acceleration and derivative of
-    // acceleration:
-    for (int d = 0; d < dim; ++d)
-      {
-        // Predictor
-        predicted_location[d] =
-          particle_position[d] +
-          (particle_properties[PropertiesIndex::v_x + d] * dt) +
-          (particle_properties[PropertiesIndex::acc_x + d] * dt * dt * 0.5) +
-          (particle_properties[PropertiesIndex::acc_derivative_x + d] * dt *
-           dt * dt * 0.1667);
-        particle_properties[PropertiesIndex::v_x + d] =
-          particle_properties[PropertiesIndex::v_x + d] +
-          (particle_properties[PropertiesIndex::acc_x + d] * dt) +
-          (particle_properties[PropertiesIndex::acc_derivative_x + d] * dt *
-           dt * 0.5);
-        particle_properties[PropertiesIndex::acc_x + d] =
-          particle_properties[PropertiesIndex::acc_x + d] +
-          (particle_properties[PropertiesIndex::acc_derivative_x + d] * dt);
-      }
-    particle->set_location(predicted_location);
-  }
-  */
-}
+{}
 
 template <int dim>
 void
-Gear3Integrator<dim>::integrate_post_force(
+Gear3Integrator<dim>::integrate(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
   Tensor<1, dim> /*g*/,
   double /*dt*/,
-  std::unordered_map<int, Tensor<1, dim>> & /*momentum*/,
-  std::unordered_map<int, Tensor<1, dim>> & /*force*/,
-  std::unordered_map<int, double> & /*MOI*/,
-  std::unordered_map<int, Tensor<1, dim>> & /*acceleration*/)
+  std::unordered_map<unsigned int, Tensor<1, dim>> & /*momentum*/,
+  std::unordered_map<unsigned int, Tensor<1, dim>> & /*force*/,
+  std::unordered_map<unsigned int, double> & /*MOI*/)
 {
   /*
 for (auto particle = particle_handler.begin();

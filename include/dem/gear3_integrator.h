@@ -67,21 +67,24 @@ public:
   {}
 
   /**
-   * Carries out the prediction (pre_force) integration calculations.
+   * Carries out integrating of new particles' location after insertion.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
    * @param body_force A constant volumetric body force applied to all particles
+   * @param force Force acting on particles
    * @param time_step The value of the time step used for the integration
    */
   virtual void
-  integrate_pre_force(Particles::ParticleHandler<dim> &particle_handler,
-                      Tensor<1, dim>                   body_force,
-                      double                           time_step) override;
+  integrate_half_step_location(
+    Particles::ParticleHandler<dim> &                 particle_handler,
+    Tensor<1, dim>                                    body_force,
+    std::unordered_map<unsigned int, Tensor<1, dim>> &force,
+    double                                            dt) override;
 
   /**
-   * Carries out the correction (post-force) integration of the motion of all
-   * particles by using the acceleration with the explicit Euler method.
+   * Carries out the integration of the motion of all
+   * particles by using the Gear3 method.
    *
    * @param particle_handler The particle handler whose particle motion we wish
    * to integrate
@@ -90,17 +93,14 @@ public:
    * @param momentum Momentum of particles
    * @param force Force acting on particles
    * @param MOI A container of moment of inertia of particles
-   * @param acceleration A container of acceleration of particles
    */
   virtual void
-  integrate_post_force(
-    Particles::ParticleHandler<dim> &        particle_handler,
-    Tensor<1, dim>                           body_force,
-    double                                   time_step,
-    std::unordered_map<int, Tensor<1, dim>> &momentum,
-    std::unordered_map<int, Tensor<1, dim>> &force,
-    std::unordered_map<int, double> &        MOI,
-    std::unordered_map<int, Tensor<1, dim>> &acceleration) override;
+  integrate(Particles::ParticleHandler<dim> &                 particle_handler,
+            Tensor<1, dim>                                    body_force,
+            double                                            time_step,
+            std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
+            std::unordered_map<unsigned int, Tensor<1, dim>> &force,
+            std::unordered_map<unsigned int, double> &        MOI) override;
 
 private:
   Point<dim>     predicted_location;
