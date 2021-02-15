@@ -37,7 +37,7 @@ using namespace dealii;
 template <int dim>
 void
 update_ghost_particle_container(
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &                                    ghost_particle_container,
   const Particles::ParticleHandler<dim> *particle_handler);
 

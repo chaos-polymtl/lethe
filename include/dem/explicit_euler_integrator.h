@@ -59,10 +59,10 @@ public:
    */
   virtual void
   integrate_half_step_location(
-    Particles::ParticleHandler<dim> &                 particle_handler,
-    Tensor<1, dim>                                    body_force,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &force,
-    double                                            dt) override;
+    Particles::ParticleHandler<dim> &                          particle_handler,
+    Tensor<1, dim> &                                           body_force,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
+    double time_step) override;
 
   /**
    * Carries out integration of the motion of all
@@ -77,12 +77,12 @@ public:
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
-  integrate(Particles::ParticleHandler<dim> &                 particle_handler,
-            Tensor<1, dim>                                    body_force,
-            double                                            time_step,
-            std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-            std::unordered_map<unsigned int, Tensor<1, dim>> &force,
-            std::unordered_map<unsigned int, double> &        MOI) override;
+  integrate(Particles::ParticleHandler<dim> &particle_handler,
+            Tensor<1, dim> &                 body_force,
+            double                           time_step,
+            std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+            std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
+            std::unordered_map<types::particle_index, double> &MOI) override;
 
 private:
   Tensor<1, dim> acceleration;

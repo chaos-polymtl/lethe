@@ -38,31 +38,32 @@ namespace Parameters
       unsigned int particle_type_number;
 
       // Average diameter of each particle type
-      std::unordered_map<int, double> particle_average_diameter;
+      std::unordered_map<unsigned int, double> particle_average_diameter;
 
       // Size standard deviation of each particle type
-      std::unordered_map<int, double> particle_size_std;
+      std::unordered_map<unsigned int, double> particle_size_std;
 
       // Number of each particle type
-      std::unordered_map<int, int> number;
+      std::unordered_map<unsigned int, int> number;
 
       // Density of each particle type
-      std::unordered_map<int, double> density;
+      std::unordered_map<unsigned int, double> density;
 
       // Young's modulus of each particle type
-      std::unordered_map<int, double> youngs_modulus_particle;
+      std::unordered_map<unsigned int, double> youngs_modulus_particle;
 
       // Poisson's ratio of each particle type
-      std::unordered_map<int, double> poisson_ratio_particle;
+      std::unordered_map<unsigned int, double> poisson_ratio_particle;
 
       // Coefficients of restituion of each particle type
-      std::unordered_map<int, double> restitution_coefficient_particle;
+      std::unordered_map<unsigned int, double> restitution_coefficient_particle;
 
       // Friction coefficient of each particle type
-      std::unordered_map<int, double> friction_coefficient_particle;
+      std::unordered_map<unsigned int, double> friction_coefficient_particle;
 
       // Rolling friction coefficient of each particle type
-      std::unordered_map<int, double> rolling_friction_coefficient_particle;
+      std::unordered_map<unsigned int, double>
+        rolling_friction_coefficient_particle;
 
       // Young's modulus of wall
       double youngs_modulus_wall;
@@ -94,15 +95,17 @@ namespace Parameters
 
       void
       initialize_containers(
-        std::unordered_map<int, double> &particle_average_diameter,
-        std::unordered_map<int, double> &particle_size_std,
-        std::unordered_map<int, int> &   number,
-        std::unordered_map<int, double> &density,
-        std::unordered_map<int, double> &youngs_modulus_particle,
-        std::unordered_map<int, double> &poisson_ratio_particle,
-        std::unordered_map<int, double> &restitution_coefficient_particle,
-        std::unordered_map<int, double> &friction_coefficient_particle,
-        std::unordered_map<int, double> &rolling_friction_coefficient_particle);
+        std::unordered_map<unsigned int, double> &particle_average_diameter,
+        std::unordered_map<unsigned int, double> &particle_size_std,
+        std::unordered_map<unsigned int, int> &   number,
+        std::unordered_map<unsigned int, double> &density,
+        std::unordered_map<unsigned int, double> &youngs_modulus_particle,
+        std::unordered_map<unsigned int, double> &poisson_ratio_particle,
+        std::unordered_map<unsigned int, double>
+          &restitution_coefficient_particle,
+        std::unordered_map<unsigned int, double> &friction_coefficient_particle,
+        std::unordered_map<unsigned int, double>
+          &rolling_friction_coefficient_particle);
     };
 
     struct InsertionInfo
@@ -250,13 +253,15 @@ namespace Parameters
       } motion_type;
 
       // Translational velocities of moving boundaries
-      std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity;
+      std::unordered_map<unsigned int, Tensor<1, dim>>
+        boundary_translational_velocity;
 
       // Rotational speeds of rotating boundaries
-      std::unordered_map<int, double> boundary_rotational_speed;
+      std::unordered_map<unsigned int, double> boundary_rotational_speed;
 
       // Rotational vectors of rotating boundaries
-      std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
+      std::unordered_map<unsigned int, Tensor<1, dim>>
+        boundary_rotational_vector;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -271,10 +276,11 @@ namespace Parameters
       unsigned int moving_boundary_maximum_number = 6;
       void
       initialize_containers(
-        std::unordered_map<int, Tensor<1, dim>>
-          &                              boundary_translational_velocity,
-        std::unordered_map<int, double> &boundary_rotational_speed,
-        std::unordered_map<int, Tensor<1, dim>> &boundary_rotational_vector);
+        std::unordered_map<unsigned int, Tensor<1, dim>>
+          &boundary_translational_velocity,
+        std::unordered_map<unsigned int, double> &boundary_rotational_speed,
+        std::unordered_map<unsigned int, Tensor<1, dim>>
+          &boundary_rotational_vector);
     };
 
   } // namespace Lagrangian

@@ -48,12 +48,14 @@ class PWNonLinearForce : public PWContactForce<dim>
 {
 public:
   PWNonLinearForce<dim>(
-    const std::unordered_map<int, Tensor<1, dim>>
-                                                  boundary_translational_velocity,
-    const std::unordered_map<int, double>         boundary_rotational_speed,
-    const std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector,
-    const double                                  triangulation_radius,
-    const DEMSolverParameters<dim> &              dem_parameters);
+    const std::unordered_map<types::particle_index, Tensor<1, dim>>
+      boundary_translational_velocity,
+    const std::unordered_map<types::particle_index, double>
+      boundary_rotational_speed,
+    const std::unordered_map<types::particle_index, Tensor<1, dim>>
+                                    boundary_rotational_vector,
+    const double                    triangulation_radius,
+    const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * Carries out the calculation of the particle-wall contact force using
@@ -68,11 +70,13 @@ public:
    */
   virtual void
   calculate_pw_contact_force(
-    std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                               pw_pairs_in_contact,
-    const double &                                    dt,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &force) override;
+    std::unordered_map<
+      types::particle_index,
+      std::map<types::particle_index, pw_contact_info_struct<dim>>>
+      &           pw_pairs_in_contact,
+    const double &dt,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &force) override;
 
 private:
   /**

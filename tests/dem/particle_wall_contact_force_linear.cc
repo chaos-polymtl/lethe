@@ -135,8 +135,8 @@ test()
   // Calling broad search
   PWBroadSearch<dim> broad_search_object;
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    unsigned int,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
@@ -149,7 +149,8 @@ test()
 
   // Calling fine search
   PWFineSearch<dim> fine_search_object;
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<unsigned int,
+                     std::map<unsigned int, pw_contact_info_struct<dim>>>
     pw_contact_information;
   fine_search_object.particle_wall_fine_search(pw_contact_list,
                                                pw_contact_information);

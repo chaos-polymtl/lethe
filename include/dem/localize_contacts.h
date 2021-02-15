@@ -51,25 +51,36 @@ using namespace std;
 template <int dim>
 void
 localize_contacts(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    *local_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    *ghost_adjacent_particles,
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *pw_pairs_in_contact,
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    *                                        pfw_pairs_in_contact,
-  std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
-  std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates,
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    *local_adjacent_particles,
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    *ghost_adjacent_particles,
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    *pw_pairs_in_contact,
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    *pfw_pairs_in_contact,
+  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+    &local_contact_pair_candidates,
+  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+    &ghost_contact_pair_candidates,
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   unsigned int>>> &pw_contact_candidates,
-  std::unordered_map<int,
-                     std::unordered_map<int, Particles::ParticleIterator<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates);
 
 #endif /* localize_contacts_h */

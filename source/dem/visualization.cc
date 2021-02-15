@@ -18,7 +18,7 @@ Visualization<dim>::build_patches(
   // Defining properties for writing
   this->properties_to_write.assign(properties.begin(),
                                    properties.begin() +
-                                     this->number_of_properties_to_write);
+                                     DEM::get_number_properties());
 
   // Defining property field position
   int field_position = 0;
@@ -58,7 +58,7 @@ Visualization<dim>::build_patches(
       patches[i].vertices[0]    = particle->get_location();
       patches[i].patch_index    = i;
       patches[i].n_subdivisions = 1;
-      patches[i].data.reinit(this->number_of_properties_to_write, 1);
+      patches[i].data.reinit(DEM::get_number_properties(), 1);
 
       // ID and other properties
       if (particle->has_properties())
@@ -70,7 +70,7 @@ Visualization<dim>::build_patches(
           patches[i].data(0, 0) = particle->get_id();
 
           for (unsigned int property_index = 1;
-               property_index < this->number_of_properties_to_write;
+               property_index < DEM::get_number_properties();
                ++property_index)
             patches[i].data(property_index, 0) =
               particle_properties[property_index - 1];
@@ -113,7 +113,7 @@ Visualization<dim>::print_xyz(
 
       // Looping over properties of particle
       for (unsigned int property_number = 0;
-           property_number < this->number_of_properties_to_write - 1;
+           property_number < DEM::get_number_properties() - 1;
            ++property_number, ++counter)
         {
           std::cout.precision(precision[counter]);

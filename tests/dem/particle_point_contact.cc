@@ -112,14 +112,14 @@ test()
   boundary_cells_object.build(tr);
 
   // Particle-point broad search
-  std::unordered_map<int,
+  std::unordered_map<unsigned int,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
                                     contact_candidates;
   ParticlePointLineBroadSearch<dim> broad_search_object;
 
   // Particle-point fine search
   ParticlePointLineFineSearch<dim> fine_search_object;
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<unsigned int, particle_point_line_contact_info_struct<dim>>
     contact_information;
 
   ParticlePointLineForce<dim>   force_object;

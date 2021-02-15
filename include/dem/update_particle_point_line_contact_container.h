@@ -35,11 +35,13 @@ using namespace dealii;
 template <int dim>
 void
 update_particle_point_line_contact_container_iterators(
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<types::particle_index,
+                     particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<types::particle_index,
+                     particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact,
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &particle_container);
 
 #endif /* update_particle_point_line_contact_container_h */

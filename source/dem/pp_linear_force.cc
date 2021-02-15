@@ -72,13 +72,17 @@ PPLinearForce<dim>::PPLinearForce(
 template <int dim>
 void
 PPLinearForce<dim>::calculate_pp_contact_force(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
-    &                                               ghost_adjacent_particles,
-  const double &                                    dt,
-  std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-  std::unordered_map<unsigned int, Tensor<1, dim>> &force)
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+    &           ghost_adjacent_particles,
+  const double &dt,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &force)
 {
   // Updating contact force of particles for local-local and local-ghost contact
   // pairs are different. Consequently, contact forces of local-local and

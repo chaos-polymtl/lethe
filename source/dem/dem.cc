@@ -494,8 +494,8 @@ DEMSolver<dim>::insert_particles()
 template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
-  dealii::Particles::ParticleHandler<dim> & particle_handler,
-  std::unordered_map<unsigned int, double> &MOI)
+  dealii::Particles::ParticleHandler<dim> &          particle_handler,
+  std::unordered_map<types::particle_index, double> &MOI)
 {
   // Clearing the container first
   MOI.clear();
@@ -504,9 +504,9 @@ DEMSolver<dim>::update_moment_of_inertia(
     {
       auto &particle_properties = particle.get_properties();
       MOI.insert({particle.get_id(),
-                  0.4 * particle_properties[DEM::PropertiesIndex::mass] *
-                    (particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
-                    (particle_properties[DEM::PropertiesIndex::dp] * 0.5)});
+                  0.1 * particle_properties[DEM::PropertiesIndex::mass] *
+                    particle_properties[DEM::PropertiesIndex::dp] *
+                    particle_properties[DEM::PropertiesIndex::dp]});
     }
 }
 

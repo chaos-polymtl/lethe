@@ -8,20 +8,20 @@ template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate_half_step_location(
   Particles::ParticleHandler<dim> & /*particle_handler*/,
-  Tensor<1, dim> /*g*/,
-  std::unordered_map<unsigned int, Tensor<1, dim>> & /*force*/,
+  Tensor<1, dim> & /*g*/,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> & /*force*/,
   double /*dt*/)
 {}
 
 template <int dim>
 void
 ExplicitEulerIntegrator<dim>::integrate(
-  Particles::ParticleHandler<dim> &                 particle_handler,
-  Tensor<1, dim>                                    g,
-  double                                            dt,
-  std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-  std::unordered_map<unsigned int, Tensor<1, dim>> &force,
-  std::unordered_map<unsigned int, double> &        MOI)
+  Particles::ParticleHandler<dim> &                          particle_handler,
+  Tensor<1, dim> &                                           g,
+  double                                                     dt,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
+  std::unordered_map<types::particle_index, double> &        MOI)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

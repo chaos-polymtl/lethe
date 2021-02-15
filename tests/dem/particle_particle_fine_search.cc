@@ -123,9 +123,12 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Calling broad search
-  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
-  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
-  std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
+  std::unordered_map<unsigned int, std::vector<unsigned int>>
+    local_contact_pair_candidates;
+  std::unordered_map<unsigned int, std::vector<unsigned int>>
+    ghost_contact_pair_candidates;
+  std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
+    particle_container;
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
@@ -142,9 +145,13 @@ test()
     ghost_contact_pair_candidates);
 
   // Calling fine search
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
     ghost_adjacent_particles;
 
   fine_search_obejct.particle_particle_fine_search(

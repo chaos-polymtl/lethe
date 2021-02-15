@@ -58,10 +58,10 @@ public:
    */
   virtual void
   integrate_half_step_location(
-    Particles::ParticleHandler<dim> &                 particle_handler,
-    Tensor<1, dim>                                    body_force,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &force,
-    double                                            dt) = 0;
+    Particles::ParticleHandler<dim> &                          particle_handler,
+    Tensor<1, dim> &                                           body_force,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
+    double                                                     time_step) = 0;
 
   /**
    * Carries out integrating of particles' velocity and position.
@@ -75,12 +75,12 @@ public:
    * @param MOI A container of moment of inertia of particles
    */
   virtual void
-  integrate(Particles::ParticleHandler<dim> &                 particle_handler,
-            Tensor<1, dim>                                    body_force,
-            double                                            time_step,
-            std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-            std::unordered_map<unsigned int, Tensor<1, dim>> &force,
-            std::unordered_map<unsigned int, double> &        MOI) = 0;
+  integrate(Particles::ParticleHandler<dim> &particle_handler,
+            Tensor<1, dim> &                 body_force,
+            double                           time_step,
+            std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+            std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
+            std::unordered_map<types::particle_index, double> &        MOI) = 0;
 };
 
 #endif /* integration_h */

@@ -61,15 +61,17 @@ public:
    */
   virtual void
   calculate_pp_contact_force(
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
       &local_adjacent_particles,
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
-      &                                               ghost_adjacent_particles,
-    const double &                                    dt,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &force) = 0;
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
+      &           ghost_adjacent_particles,
+    const double &dt,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &force) = 0;
 
 protected:
   /**

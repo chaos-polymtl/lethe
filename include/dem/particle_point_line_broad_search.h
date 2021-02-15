@@ -60,7 +60,7 @@ public:
    * (particle located near boundaries with vertices and the vertex location)
    */
 
-  std::unordered_map<int,
+  std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
   find_particle_point_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,
@@ -84,7 +84,7 @@ public:
    */
 
   std::unordered_map<
-    int,
+    types::particle_index,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
   find_particle_line_contact_pairs(
     const Particles::ParticleHandler<dim> &particle_handler,

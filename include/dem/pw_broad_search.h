@@ -72,8 +72,8 @@ public:
       &                                    boundary_cells_information,
     const Particles::ParticleHandler<dim> &particle_handler,
     std::unordered_map<
-      int,
-      std::unordered_map<int,
+      types::particle_index,
+      std::unordered_map<types::particle_index,
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
@@ -99,15 +99,15 @@ public:
   void
   find_particle_floating_wall_contact_pairs(
     const std::unordered_map<
-      int,
+      types::particle_index,
       std::set<typename Triangulation<dim>::active_cell_iterator>>
       &                                    boundary_cells_for_floating_walls,
     const Particles::ParticleHandler<dim> &particle_handler,
     const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
     const double &                                    simulation_time,
-    std::unordered_map<
-      int,
-      std::unordered_map<int, Particles::ParticleIterator<dim>>>
+    std::unordered_map<types::particle_index,
+                       std::unordered_map<types::particle_index,
+                                          Particles::ParticleIterator<dim>>>
       &pfw_contact_candidates);
 };
 

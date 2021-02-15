@@ -55,11 +55,13 @@ public:
    */
   virtual void
   calculate_pw_contact_force(
-    std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-      &                                               pw_pairs_in_contact,
-    const double &                                    dt,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-    std::unordered_map<unsigned int, Tensor<1, dim>> &force) = 0;
+    std::unordered_map<
+      types::particle_index,
+      std::map<types::particle_index, pw_contact_info_struct<dim>>>
+      &           pw_pairs_in_contact,
+    const double &dt,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &force) = 0;
 
 protected:
   /**
@@ -107,17 +109,21 @@ protected:
   find_projection(const Tensor<1, dim> &vector_a,
                   const Tensor<1, dim> &vector_b);
 
-  double                                  triangulation_radius;
-  double                                  effective_radius;
-  double                                  effective_mass;
-  std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity_map;
-  std::unordered_map<int, double>         boundary_rotational_speed_map;
-  std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector;
-  std::map<int, double>                   effective_youngs_modulus;
-  std::map<int, double>                   effective_shear_modulus;
-  std::map<int, double>                   effective_coefficient_of_restitution;
-  std::map<int, double>                   effective_coefficient_of_friction;
-  std::map<int, double> effective_coefficient_of_rolling_friction;
+  double triangulation_radius;
+  double effective_radius;
+  double effective_mass;
+  std::unordered_map<types::particle_index, Tensor<1, dim>>
+    boundary_translational_velocity_map;
+  std::unordered_map<types::particle_index, double>
+    boundary_rotational_speed_map;
+  std::unordered_map<types::particle_index, Tensor<1, dim>>
+                                          boundary_rotational_vector;
+  std::map<types::particle_index, double> effective_youngs_modulus;
+  std::map<types::particle_index, double> effective_shear_modulus;
+  std::map<types::particle_index, double> effective_coefficient_of_restitution;
+  std::map<types::particle_index, double> effective_coefficient_of_friction;
+  std::map<types::particle_index, double>
+    effective_coefficient_of_rolling_friction;
 };
 
 #endif /* particle_wall_contact_force_h */

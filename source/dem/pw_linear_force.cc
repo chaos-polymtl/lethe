@@ -4,11 +4,14 @@ using namespace dealii;
 
 template <int dim>
 PWLinearForce<dim>::PWLinearForce(
-  const std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity,
-  const std::unordered_map<int, double>         boundary_rotational_speed,
-  const std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector,
-  const double                                  triangulation_radius,
-  const DEMSolverParameters<dim> &              dem_parameters)
+  const std::unordered_map<types::particle_index, Tensor<1, dim>>
+    boundary_translational_velocity,
+  const std::unordered_map<types::particle_index, double>
+    boundary_rotational_speed,
+  const std::unordered_map<types::particle_index, Tensor<1, dim>>
+                                  boundary_rotational_vector,
+  const double                    triangulation_radius,
+  const DEMSolverParameters<dim> &dem_parameters)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
   this->boundary_rotational_speed_map       = boundary_rotational_speed;
@@ -73,11 +76,13 @@ PWLinearForce<dim>::PWLinearForce(
 template <int dim>
 void
 PWLinearForce<dim>::calculate_pw_contact_force(
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
-    &                                               pw_pairs_in_contact,
-  const double &                                    dt,
-  std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-  std::unordered_map<unsigned int, Tensor<1, dim>> &force)
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    &           pw_pairs_in_contact,
+  const double &dt,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &force)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator

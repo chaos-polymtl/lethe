@@ -95,8 +95,8 @@ test()
   // Calling particle-wall broad search
   PWBroadSearch<dim> broad_search_object;
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    unsigned int,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,

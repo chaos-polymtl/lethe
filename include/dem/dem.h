@@ -316,39 +316,52 @@ private:
 
   BoundaryCellsInformation<dim> boundary_cell_object;
 
-  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
-  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
-  std::unordered_map<int,
-                     std::unordered_map<int, Particles::ParticleIterator<dim>>>
+  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+    local_contact_pair_candidates;
+  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+    ghost_contact_pair_candidates;
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     pfw_contact_candidates;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     ghost_adjacent_particles;
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     pw_pairs_in_contact;
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     pfw_pairs_in_contact;
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    types::particle_index,
+    std::unordered_map<types::particle_index,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   unsigned int>>>
     pw_contact_candidates;
-  std::unordered_map<int,
+  std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
   std::unordered_map<
-    int,
+    types::particle_index,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<types::particle_index,
+                     particle_point_line_contact_info_struct<dim>>
     particle_points_in_contact, particle_lines_in_contact;
 
-  std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
+    particle_container;
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
                                            ghost_particle_container;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
@@ -375,10 +388,10 @@ private:
   PVDHandler                           particles_pvdhandler;
   const unsigned int                   standard_deviation_multiplier;
 
-  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
-  std::unordered_map<unsigned int, Tensor<1, dim>> force;
-  std::unordered_map<unsigned int, double>         displacement;
-  std::unordered_map<unsigned int, double>         MOI;
+  std::unordered_map<types::particle_index, Tensor<1, dim>> momentum;
+  std::unordered_map<types::particle_index, Tensor<1, dim>> force;
+  std::unordered_map<types::particle_index, double>         displacement;
+  std::unordered_map<types::particle_index, double>         MOI;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

@@ -139,8 +139,8 @@ test()
   // P-W broad search
   PWBroadSearch<dim> pw_broad_search_object;
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    unsigned int,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
@@ -153,7 +153,8 @@ test()
 
   // P-W fine search
   PWFineSearch<dim> pw_fine_search_object;
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<unsigned int,
+                     std::map<unsigned int, pw_contact_info_struct<dim>>>
                         pw_contact_information;
   PWNonLinearForce<dim> pw_force_object(
     dem_parameters.boundary_motion.boundary_translational_velocity,
