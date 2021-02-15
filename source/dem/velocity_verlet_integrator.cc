@@ -56,19 +56,18 @@ VelocityVerletIntegrator<dim>::integrate(
       // Get the total array view to the particle properties once to improve
       // efficiency
       unsigned int    particle_id         = particle->get_id();
-      auto            particle_MOI        = MOI[particle_id];
       auto            particle_properties = particle->get_properties();
       Tensor<1, dim> &particle_momentum   = momentum[particle_id];
       Tensor<1, dim> &particle_force      = force[particle_id];
       Tensor<1, dim>  new_acceleration;
       Tensor<1, dim> &old_acceleration  = acceleration[particle_id];
       auto            particle_position = particle->get_location();
+      double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
+      double MOI_inverse  = 1 / MOI[particle_id];
 
       for (int d = 0; d < dim; ++d)
         {
-          new_acceleration[d] =
-            g[d] +
-            particle_force[d] / particle_properties[PropertiesIndex::mass];
+          new_acceleration[d] = g[d] + particle_force[d] * mass_inverse;
 
           // Particle velocity integration
           particle_properties[PropertiesIndex::v_x + d] +=
@@ -84,7 +83,7 @@ VelocityVerletIntegrator<dim>::integrate(
 
           // Updating angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
-            dt * (particle_momentum[d] / particle_MOI);
+            dt * (particle_momentum[d] * MOI_inverse);
 
           // Reinitializing force
           particle_force[d] = 0;
