@@ -91,13 +91,38 @@ protected:
    * @param particle_momentum Momentum of particle
    * @param particle_force Force acting on particle
    */
-  void
+  inline void
   apply_force_and_torque(const std::tuple<Tensor<1, dim>,
                                           Tensor<1, dim>,
                                           Tensor<1, dim>,
                                           Tensor<1, dim>> &forces_and_torques,
                          Tensor<1, dim> &                  particle_momentum,
-                         Tensor<1, dim> &                  particle_force);
+                         Tensor<1, dim> &                  particle_force)
+  {
+    // Getting the values from the forces_and_torques tuple, which are: 1,
+    // normal force, 2, tangential force, 3, tangential torque and 4, rolling
+    // resistance torque
+    Tensor<1, dim> normal_force              = std::get<0>(forces_and_torques);
+    Tensor<1, dim> tangential_force          = std::get<1>(forces_and_torques);
+    Tensor<1, dim> tangential_torque         = std::get<2>(forces_and_torques);
+    Tensor<1, dim> rolling_resistance_torque = std::get<3>(forces_and_torques);
+
+    // Calculation of total force
+    Tensor<1, dim> total_force = normal_force + tangential_force;
+
+    // Updating the force of particles in the particle handler
+    for (int d = 0; d < dim; ++d)
+      {
+        particle_force[d] = particle_force[d] + total_force[d];
+      }
+
+    // Updating the torque acting on particles
+    for (int d = 0; d < dim; ++d)
+      {
+        particle_momentum[d] = particle_momentum[d] + tangential_torque[d] +
+                               rolling_resistance_torque[d];
+      }
+  }
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -105,9 +130,15 @@ protected:
    * @param vector_b The projection vector of vector_a
    * @return The projection of vector_a on vector_b
    */
-  Tensor<1, dim>
+  inline Tensor<1, dim>
   find_projection(const Tensor<1, dim> &vector_a,
-                  const Tensor<1, dim> &vector_b);
+                  const Tensor<1, dim> &vector_b)
+  {
+    Tensor<1, dim> vector_c;
+    vector_c = ((vector_a * vector_b) / (vector_b.norm_square())) * vector_b;
+
+    return vector_c;
+  }
 
   double triangulation_radius;
   double effective_radius;
