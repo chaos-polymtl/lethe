@@ -771,9 +771,11 @@ GLSVANSSolver<dim>::assembleGLS()
                 force * present_void_fraction_values[q];
 
               // Addition of drag
-              strong_residual -=
-                0.5 * c_d * reference_area * relative_velocity.norm() *
-                (present_velocity_values[q] - particle_velocity);
+              if (this->simulation_parameters.void_fraction->mode ==
+                  Parameters::VoidFractionMode::dem)
+                strong_residual -=
+                  0.5 * c_d * reference_area * relative_velocity.norm() *
+                  (present_velocity_values[q] - particle_velocity);
 
               if (velocity_source ==
                   Parameters::VelocitySource::VelocitySourceType::srf)
@@ -848,8 +850,10 @@ GLSVANSSolver<dim>::assembleGLS()
                          + mass_source * phi_u[j] + grad_phi_p[j] -
                          viscosity * laplacian_phi_u[j]);
                       // Drag term
-                      strong_jac -= 0.5 * c_d * reference_area *
-                                    relative_velocity.norm() * phi_u[j];
+                      if (this->simulation_parameters.void_fraction->mode ==
+                          Parameters::VoidFractionMode::dem)
+                        strong_jac -= 0.5 * c_d * reference_area *
+                                      relative_velocity.norm() * phi_u[j];
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
