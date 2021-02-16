@@ -83,9 +83,7 @@ private:
   assemble_L2_projection();
 
   void
-  solve_L2_system(const bool initial_step,
-                  double     absolute_residual,
-                  double     relative_residual);
+  solve_L2_system();
 
   virtual void
   iterate() override;

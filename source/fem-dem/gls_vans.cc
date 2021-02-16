@@ -181,7 +181,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
            Parameters::VoidFractionMode::dem)
     {
       assemble_L2_projection();
-      solve_L2_system(true, 1e-15, 1e-15);
+      solve_L2_system();
     }
 }
 
@@ -216,13 +216,6 @@ GLSVANSSolver<dim>::assemble_L2_projection()
     {
       if (cell->is_locally_owned())
         {
-          // fe_values.reinit(cell);
-          //          typename DoFHandler<dim>::active_cell_iterator
-          //          void_fraction_cell(
-          //            &(*this->triangulation),
-          //            cell->level(),
-          //            cell->index(),
-          //            &this->void_fraction_dof_handler);
           fe_values_void_fraction.reinit(cell);
 
           local_matrix_void_fraction = 0;
@@ -255,8 +248,6 @@ GLSVANSSolver<dim>::assemble_L2_projection()
             {
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
-                  // fe_values_void_fraction.get_function_values(
-                  //  nodal_void_fraction_relevant, phi_vf);
                   phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -286,16 +277,8 @@ GLSVANSSolver<dim>::assemble_L2_projection()
 }
 template <int dim>
 void
-GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
-                                    double     absolute_residual,
-                                    double     relative_residual)
+GLSVANSSolver<dim>::solve_L2_system()
 {
-  // Solve the L2 projection system
-  // auto &nonzero_constraints = this->nonzero_constraints;
-  // const AffineConstraints<double> &constraints_used =
-  //  initial_step ? nonzero_constraints : this->zero_constraints;
-
-
   const double linear_solver_tolerance = 1e-15;
   // std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
   //         absolute_residual);
@@ -341,15 +324,6 @@ GLSVANSSolver<dim>::solve_L2_system(const bool initial_step,
 
   ilu_preconditioner->initialize(system_matrix_void_fraction,
                                  preconditionerOptions);
-  // pmass_preconditioner.initialize(pressure_mass_matrix,
-  // preconditionerOptions);
-
-
-  // const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU>
-  //  preconditioner(this->system_matrix, pmass_preconditioner, solver_control);
-
-  // preconditioner.initialize(system_matrix_void_fraction,
-  // preconditionerOptions);
 
   solver.solve(system_matrix_void_fraction,
                completely_distributed_solution,
@@ -656,6 +630,7 @@ GLSVANSSolver<dim>::assembleGLS()
           if (l_forcing_function)
             l_forcing_function->vector_value_list(quadrature_points, rhs_force);
 
+
           // Gather the previous time steps depending on the number of stages
           // of the time integration scheme
           if (scheme !=
@@ -688,7 +663,6 @@ GLSVANSSolver<dim>::assembleGLS()
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m3, p3_void_fraction_values);
             }
-
 
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -744,6 +718,55 @@ GLSVANSSolver<dim>::assembleGLS()
               const double present_velocity_divergence =
                 trace(present_velocity_gradients[q]);
 
+              // Calculation of the drag force
+              double         reference_area;
+              double         re;
+              double         c_d;
+              Tensor<1, dim> particle_velocity;
+              Tensor<1, dim> relative_velocity;
+
+              if (this->simulation_parameters.void_fraction->mode ==
+                  Parameters::VoidFractionMode::dem)
+                {
+                  // Loop over particles in cell
+                  // Begin and end iterator for particles in cell
+                  const auto pic = particle_handler.particles_in_cell(cell);
+                  for (auto &particle : pic)
+                    {
+                      auto particle_properties = particle.get_properties();
+
+                      // Reference area for drag coefficient calculation
+                      reference_area =
+                        M_PI *
+                        pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
+                        4;
+
+                      // Stock the values of particle velocity in a
+                      // tensor
+
+                      particle_velocity[0] =
+                        particle_properties[DEM::PropertiesIndex::v_x];
+                      particle_velocity[1] =
+                        particle_properties[DEM::PropertiesIndex::v_y];
+                      if (dim == 3)
+                        particle_velocity[2] =
+                          particle_properties[DEM::PropertiesIndex::v_z];
+
+                      // Calculate the relative velocity
+                      relative_velocity =
+                        present_velocity_values[q] - particle_velocity;
+
+                      // Particle's Reynolds number
+                      re = relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           viscosity;
+
+                      // Drag Coefficient (Modified form valied for Re_p
+                      // < 200,000)
+                      c_d = 24 / re + 0.44;
+                    }
+                }
+
               // Calculate the strong residual for GLS stabilization
               auto strong_residual =
                 present_velocity_gradients[q] * present_velocity_values[q] *
@@ -753,6 +776,11 @@ GLSVANSSolver<dim>::assembleGLS()
                 present_pressure_gradients[q] -
                 viscosity * present_velocity_laplacians[q] -
                 force * present_void_fraction_values[q];
+
+              // Addition of drag
+              strong_residual -=
+                0.5 * c_d * reference_area * relative_velocity.norm() *
+                (present_velocity_values[q] - particle_velocity);
 
               if (velocity_source ==
                   Parameters::VelocitySource::VelocitySourceType::srf)
@@ -826,6 +854,9 @@ GLSVANSSolver<dim>::assembleGLS()
                          // Mass source term
                          + mass_source * phi_u[j] + grad_phi_p[j] -
                          viscosity * laplacian_phi_u[j]);
+                      // Drag term
+                      strong_jac -= 0.5 * c_d * reference_area *
+                                    relative_velocity.norm() * phi_u[j];
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
@@ -1042,7 +1073,6 @@ GLSVANSSolver<dim>::assembleGLS()
                             phi_u[i] * JxW;
                         }
                     }
-
                   // PSPG GLS term
                   if (PSPG)
                     local_rhs(i) +=
