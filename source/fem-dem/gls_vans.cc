@@ -337,8 +337,6 @@ GLSVANSSolver<dim>::solve_L2_system()
               << "" << nodal_void_fraction_relevant(q) << std::endl;
 }
 
-
-
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial conditions
@@ -521,6 +519,13 @@ GLSVANSSolver<dim>::assembleGLS()
   // Angular velocity of the rotating frame. This is always a 3D vector even
   // in 2D.
   Tensor<1, dim> omega_vector;
+
+  // Variables for drag calculation
+  double         reference_area;
+  double         re;
+  double         c_d;
+  Tensor<1, dim> particle_velocity;
+  Tensor<1, dim> relative_velocity;
 
   double omega_z  = this->simulation_parameters.velocitySource.omega_z;
   omega_vector[0] = this->simulation_parameters.velocitySource.omega_x;
@@ -711,13 +716,17 @@ GLSVANSSolver<dim>::assembleGLS()
               const double present_velocity_divergence =
                 trace(present_velocity_gradients[q]);
 
-              // Calculation of the drag force
-              double         reference_area;
-              double         re;
-              double         c_d;
-              Tensor<1, dim> particle_velocity;
-              Tensor<1, dim> relative_velocity;
+              // Calculate the strong residual for GLS stabilization
+              auto strong_residual =
+                present_velocity_gradients[q] * present_velocity_values[q] *
+                  present_void_fraction_values[q]
+                // Mass source term
+                + mass_source * present_velocity_values[q] +
+                present_pressure_gradients[q] -
+                viscosity * present_velocity_laplacians[q] -
+                force * present_void_fraction_values[q];
 
+              // Addition of the drag force
               if (this->simulation_parameters.void_fraction->mode ==
                   Parameters::VoidFractionMode::dem)
                 {
@@ -757,25 +766,13 @@ GLSVANSSolver<dim>::assembleGLS()
                       // Drag Coefficient (Modified form valied for Re_p
                       // < 200,000)
                       c_d = 24 / re + 0.44;
+
+                      strong_residual -=
+                        0.5 * c_d * reference_area * relative_velocity.norm() *
+                        (present_velocity_values[q] - particle_velocity);
                     }
                 }
 
-              // Calculate the strong residual for GLS stabilization
-              auto strong_residual =
-                present_velocity_gradients[q] * present_velocity_values[q] *
-                  present_void_fraction_values[q]
-                // Mass source term
-                + mass_source * present_velocity_values[q] +
-                present_pressure_gradients[q] -
-                viscosity * present_velocity_laplacians[q] -
-                force * present_void_fraction_values[q];
-
-              // Addition of drag
-              if (this->simulation_parameters.void_fraction->mode ==
-                  Parameters::VoidFractionMode::dem)
-                strong_residual -=
-                  0.5 * c_d * reference_area * relative_velocity.norm() *
-                  (present_velocity_values[q] - particle_velocity);
 
               if (velocity_source ==
                   Parameters::VelocitySource::VelocitySourceType::srf)
@@ -849,11 +846,58 @@ GLSVANSSolver<dim>::assembleGLS()
                          // Mass source term
                          + mass_source * phi_u[j] + grad_phi_p[j] -
                          viscosity * laplacian_phi_u[j]);
-                      // Drag term
+
+                      // Addition of the drag force
                       if (this->simulation_parameters.void_fraction->mode ==
                           Parameters::VoidFractionMode::dem)
-                        strong_jac -= 0.5 * c_d * reference_area *
-                                      relative_velocity.norm() * phi_u[j];
+                        {
+                          // Loop over particles in cell
+                          // Begin and end iterator for particles in cell
+                          const auto pic =
+                            particle_handler.particles_in_cell(cell);
+                          for (auto &particle : pic)
+                            {
+                              auto particle_properties =
+                                particle.get_properties();
+
+                              // Reference area for drag coefficient calculation
+                              reference_area =
+                                M_PI *
+                                pow(
+                                  particle_properties[DEM::PropertiesIndex::dp],
+                                  2) /
+                                4;
+
+                              // Stock the values of particle velocity in a
+                              // tensor
+
+                              particle_velocity[0] =
+                                particle_properties[DEM::PropertiesIndex::v_x];
+                              particle_velocity[1] =
+                                particle_properties[DEM::PropertiesIndex::v_y];
+                              if (dim == 3)
+                                particle_velocity[2] = particle_properties
+                                  [DEM::PropertiesIndex::v_z];
+
+                              // Calculate the relative velocity
+                              relative_velocity =
+                                present_velocity_values[q] - particle_velocity;
+
+                              // Particle's Reynolds number
+                              re =
+                                relative_velocity.norm() *
+                                particle_properties[DEM::PropertiesIndex::dp] /
+                                viscosity;
+
+                              // Drag Coefficient (Modified form valied for Re_p
+                              // < 200,000)
+                              c_d = 24 / re + 0.44;
+
+
+                              strong_jac -= 0.5 * c_d * reference_area *
+                                            relative_velocity.norm() * phi_u[j];
+                            }
+                        }
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
@@ -894,6 +938,76 @@ GLSVANSSolver<dim>::assembleGLS()
                                  (phi_u[j] *
                                   present_void_fraction_gradients[q]))) *
                             JxW;
+
+                          // Addition of the drag force
+                          if (this->simulation_parameters.void_fraction->mode ==
+                              Parameters::VoidFractionMode::dem)
+                            {
+                              // Loop over particles in cell
+                              // Begin and end iterator for particles in cell
+                              const auto pic =
+                                particle_handler.particles_in_cell(cell);
+                              for (auto &particle : pic)
+                                {
+                                  auto particle_properties =
+                                    particle.get_properties();
+
+                                  // Reference area for drag coefficient
+                                  // calculation
+                                  reference_area =
+                                    M_PI *
+                                    pow(particle_properties
+                                          [DEM::PropertiesIndex::dp],
+                                        2) /
+                                    4;
+
+                                  // Stock the values of particle velocity in a
+                                  // tensor
+
+                                  particle_velocity[0] = particle_properties
+                                    [DEM::PropertiesIndex::v_x];
+                                  particle_velocity[1] = particle_properties
+                                    [DEM::PropertiesIndex::v_y];
+                                  if (dim == 3)
+                                    particle_velocity[2] = particle_properties
+                                      [DEM::PropertiesIndex::v_z];
+
+                                  // Calculate the relative velocity
+                                  relative_velocity =
+                                    present_velocity_values[q] -
+                                    particle_velocity;
+
+                                  // Particle's Reynolds number
+                                  re = relative_velocity.norm() *
+                                       particle_properties
+                                         [DEM::PropertiesIndex::dp] /
+                                       viscosity;
+
+                                  // Drag Coefficient (Modified form valied for
+                                  // Re_p < 200,000)
+                                  c_d = 24 / re + 0.44;
+
+
+                                  // Reference location of the particle
+                                  const auto &reference_location =
+                                    particle.get_reference_location();
+
+                                  const auto comp_j =
+                                    this->fe.system_to_component_index(j).first;
+                                  // if (comp_j < dim)
+                                  const auto comp_i =
+                                    this->fe.system_to_component_index(i).first;
+                                  if (comp_i == comp_j)
+                                    local_matrix(i, j) -=
+                                      0.5 * c_d * reference_area *
+                                      relative_velocity.norm() *
+                                      this->fe.shape_value(j,
+                                                           reference_location) *
+                                      this->fe.shape_value(i,
+                                                           reference_location);
+                                }
+                            }
+
 
                           // Mass matrix
                           if (is_bdf(scheme))
@@ -984,6 +1098,61 @@ GLSVANSSolver<dim>::assembleGLS()
                        mass_source) *
                         phi_p[i]) *
                     JxW;
+
+                  // Addition of the drag force
+                  if (this->simulation_parameters.void_fraction->mode ==
+                      Parameters::VoidFractionMode::dem)
+                    {
+                      // Loop over particles in cell
+                      // Begin and end iterator for particles in cell
+                      const auto pic = particle_handler.particles_in_cell(cell);
+                      for (auto &particle : pic)
+                        {
+                          auto particle_properties = particle.get_properties();
+
+                          // Reference area for drag coefficient calculation
+                          reference_area =
+                            M_PI *
+                            pow(particle_properties[DEM::PropertiesIndex::dp],
+                                2) /
+                            4;
+
+                          // Stock the values of particle velocity in a
+                          // tensor
+
+                          particle_velocity[0] =
+                            particle_properties[DEM::PropertiesIndex::v_x];
+                          particle_velocity[1] =
+                            particle_properties[DEM::PropertiesIndex::v_y];
+                          if (dim == 3)
+                            particle_velocity[2] =
+                              particle_properties[DEM::PropertiesIndex::v_z];
+
+                          // Calculate the relative velocity
+                          relative_velocity =
+                            present_velocity_values[q] - particle_velocity;
+
+                          // Particle's Reynolds number
+                          re = relative_velocity.norm() *
+                               particle_properties[DEM::PropertiesIndex::dp] /
+                               viscosity;
+
+                          // Drag Coefficient (Modified form valied for Re_p
+                          // < 200,000)
+                          c_d = 24 / re + 0.44;
+
+
+                          // Reference location of the particle
+                          const auto &reference_location =
+                            particle.get_reference_location();
+
+                          local_rhs(i) +=
+                            0.5 * c_d * reference_area *
+                            relative_velocity.norm() *
+                            (present_velocity_values[q] - particle_velocity) *
+                            this->fe.shape_value(i, reference_location);
+                        }
+                    }
 
                   // Residual associated with BDF schemes
                   if (scheme == Parameters::SimulationControl::
