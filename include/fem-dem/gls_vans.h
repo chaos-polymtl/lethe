@@ -85,6 +85,16 @@ private:
   void
   solve_L2_system();
 
+  //  void
+  //  calculate_drag_coefficient(
+  //    double         reference_area,
+  //    double         re,
+  //    double         c_d,
+  //    Tensor<1, dim> particle_velocity,
+  //    Tensor<1, dim> relative_velocity,
+  //    typename Particles::ParticleHandler<dim, dim>::particle_iterator
+  //    &particle);
+
   virtual void
   iterate() override;
 
