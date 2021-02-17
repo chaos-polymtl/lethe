@@ -65,10 +65,24 @@ private:
   calculate_forces_on_solid();
 
   /**
+   * @brief Calculates the torque due to the fluid motion on the solid
+   * @return Tensor of torque on the solid
+   */
+  Tensor<1, 3>
+  calculate_torque_on_solid();
+
+  /**
    * @brief Post-process for forces on solid after an iteration
    */
   void
   postprocess_solid_forces();
+
+
+  /**
+   * @brief Post-process for torques on solid after an iteration
+   */
+  void
+  postprocess_solid_torques();
 
   /**
    * @brief Same has in gls_navier_stokes, but calls assemble_nitsche_restriction() when global matrix and rhs are assembled
@@ -103,6 +117,7 @@ private:
 
 
   TableHandler solid_forces_table;
+  TableHandler solid_torques_table;
 
   /**
    * @brief Temporary - Addition for Heat Transfer solving - test in subfunction before global multiphysics implementation
