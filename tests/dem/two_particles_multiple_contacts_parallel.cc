@@ -341,6 +341,7 @@ test()
   std::unordered_map<unsigned int, double>         MOI;
   MOI.insert({0, 1});
   MOI.insert({1, 1});
+  double step_force;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
@@ -381,6 +382,12 @@ test()
         momentum,
         force);
 
+      // Storing force before integration
+      for (unsigned int d = 0; d < dim; ++d)
+        {
+          step_force = force[0][1];
+        }
+
       // Integration
       integrator_object.integrate(
         particle_handler, g, dt, momentum, force, MOI);
@@ -401,22 +408,9 @@ test()
                 {
                   if (particle->get_id() == 0)
                     {
-                      // Recalculating force
-                      auto particle_properties = particle->get_properties();
-
-                      for (unsigned int d = 0; d < dim; ++d)
-                        {
-                          force[particle->get_id()][d] =
-                            particle_properties[DEM::PropertiesIndex::mass] *
-                            (integrator_object
-                               .acceleration[particle->get_id()][d] -
-                             g[d]);
-                        }
-
                       deallog << "The exerted force on particle "
                               << particle->get_id() << " at step " << iteration
-                              << " is: " << force[particle->get_id()][1]
-                              << std::endl;
+                              << " is: " << step_force << std::endl;
                     }
                 }
             }

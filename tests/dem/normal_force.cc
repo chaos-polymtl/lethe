@@ -129,6 +129,7 @@ test()
   std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
   std::unordered_map<unsigned int, Tensor<1, dim>> force;
   std::unordered_map<unsigned int, double>         MOI;
+  double                                           step_force;
   MOI.insert({0, 1});
 
   // Finding boundary cells
@@ -216,21 +217,20 @@ test()
                                                      momentum,
                                                      force);
 
+          // Storing force before integration
+          for (unsigned int d = 0; d < dim; ++d)
+            {
+              step_force = force[particle->get_id()][0];
+            }
+
+
           integrator_object.integrate(
             particle_handler, g, dt, momentum, force, MOI);
 
-          // Recalculating force
-          auto particle_properties = particle->get_properties();
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              force[particle->get_id()][d] =
-                particle_properties[DEM::PropertiesIndex::mass] *
-                (integrator_object.acceleration[particle->get_id()][d] - g[d]);
-            }
 
           deallog << " "
                   << pw_contact_information_iterator->second.normal_overlap
-                  << " " << force[particle->get_id()][0] << std::endl;
+                  << " " << step_force << std::endl;
         }
     }
 }

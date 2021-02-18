@@ -17,12 +17,11 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-      auto            particle_properties   = particle->get_properties();
-      auto            particle_position     = particle->get_location();
-      unsigned int    particle_id           = particle->get_id();
-      Tensor<1, dim> &particle_acceleration = acceleration[particle_id];
-      Tensor<1, dim> &particle_force        = force[particle_id];
-      Tensor<1, dim>  half_step_velocity;
+      auto            particle_properties = particle->get_properties();
+      auto            particle_position   = particle->get_location();
+      unsigned int    particle_id         = particle->get_id();
+      Tensor<1, dim>  particle_acceleration;
+      Tensor<1, dim> &particle_force = force[particle_id];
 
       for (int d = 0; d < dim; ++d)
         {
@@ -32,12 +31,12 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
             particle_force[d] / particle_properties[PropertiesIndex::mass];
 
           // Half-step velocity
-          half_step_velocity[d] =
-            particle_properties[PropertiesIndex::v_x + d] +
+          particle_properties[PropertiesIndex::v_x + d] +=
             0.5 * particle_acceleration[d] * dt;
 
           // Update particle position using half-step velocity
-          particle_position[d] += half_step_velocity[d] * dt;
+          particle_position[d] +=
+            particle_properties[PropertiesIndex::v_x + d] * dt;
         }
       particle->set_location(particle_position);
     }
@@ -63,27 +62,22 @@ VelocityVerletIntegrator<dim>::integrate(
       auto            particle_properties = particle->get_properties();
       Tensor<1, dim> &particle_momentum   = momentum[particle_id];
       Tensor<1, dim> &particle_force      = force[particle_id];
-      Tensor<1, dim>  new_acceleration;
-      Tensor<1, dim> &old_acceleration  = acceleration[particle_id];
+      Tensor<1, dim>  particle_acceleration;
       auto            particle_position = particle->get_location();
       double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
       double MOI_inverse  = 1 / MOI[particle_id];
 
       for (int d = 0; d < dim; ++d)
         {
-          new_acceleration[d] = g[d] + particle_force[d] * mass_inverse;
+          particle_acceleration[d] = g[d] + particle_force[d] * mass_inverse;
 
           // Particle velocity integration
           particle_properties[PropertiesIndex::v_x + d] +=
-            0.5 * dt * (old_acceleration[d] + new_acceleration[d]);
+            dt * particle_acceleration[d];
 
           // Particle location integration
           particle_position[d] +=
-            particle_properties[PropertiesIndex::v_x + d] * dt +
-            0.5 * dt * dt * new_acceleration[d];
-
-          // Updating old acceleration
-          old_acceleration[d] = new_acceleration[d];
+            particle_properties[PropertiesIndex::v_x + d] * dt;
 
           // Updating angular velocity
           particle_properties[PropertiesIndex::omega_x + d] +=
