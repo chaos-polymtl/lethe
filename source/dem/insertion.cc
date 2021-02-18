@@ -88,53 +88,17 @@ Insertion<dim>::assign_particle_properties(
         -particle_sizes[particle_counter];
       double density =
         physical_properties.density[current_inserting_particle_type];
-      double vel_x        = 0.;
-      double vel_y        = 0.;
-      double vel_z        = 0.;
-      double acc_x        = 0.;
-      double acc_y        = 0.;
-      double acc_z        = 0.;
-      double f_x          = 0.;
-      double f_y          = 0.;
-      double f_z          = 0.;
-      double w_x          = 0.;
-      double w_y          = 0.;
-      double w_z          = 0.;
-      double mass         = density * (1.3333 * M_PI * (diameter * 0.5) *
+      double vel_x = 0.;
+      double vel_y = 0.;
+      double vel_z = 0.;
+      double w_x   = 0.;
+      double w_y   = 0.;
+      double w_z   = 0.;
+      double mass  = density * (1.3333 * M_PI * (diameter * 0.5) *
                                (diameter * 0.5) * (diameter * 0.5));
-      double MOI          = 0.4 * mass * (diameter * 0.5) * (diameter * 0.5);
-      double T_x          = 0.;
-      double T_y          = 0.;
-      double T_z          = 0.;
-      double displacement = 0.;
-      double acc_derivative_x = 0.;
-      double acc_derivative_y = 0.;
-      double acc_derivative_z = 0.;
 
-      std::vector<double> properties_of_one_particle{type,
-                                                     diameter,
-                                                     density,
-                                                     vel_x,
-                                                     vel_y,
-                                                     vel_z,
-                                                     acc_x,
-                                                     acc_y,
-                                                     acc_z,
-                                                     f_x,
-                                                     f_y,
-                                                     f_z,
-                                                     w_x,
-                                                     w_y,
-                                                     w_z,
-                                                     mass,
-                                                     MOI,
-                                                     T_x,
-                                                     T_y,
-                                                     T_z,
-                                                     displacement,
-                                                     acc_derivative_x,
-                                                     acc_derivative_y,
-                                                     acc_derivative_z};
+      std::vector<double> properties_of_one_particle{
+        type, diameter, vel_x, vel_y, vel_z, w_x, w_y, w_z, mass};
 
       particle_properties.push_back(properties_of_one_particle);
       properties_of_one_particle.clear();

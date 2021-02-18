@@ -72,7 +72,6 @@ test()
   Tensor<1, dim> g{{0, 0, 0}};
   double         dt                                             = 0.000001;
   double         particle_diameter                              = 0.001;
-  int            particle_density                               = 7850;
   unsigned int   rotating_wall_maximum_number                   = 6;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
@@ -86,6 +85,7 @@ test()
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.physical_properties.density[0]            = 7850;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;
@@ -116,23 +116,21 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = -1.0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = -1.0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
+  double                                           step_force;
+  MOI.insert({0, 1});
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
@@ -142,8 +140,8 @@ test()
   // P-W broad search
   PWBroadSearch<dim> pw_broad_search_object;
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    unsigned int,
+    std::unordered_map<unsigned int,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
@@ -156,7 +154,8 @@ test()
 
   // P-W fine search
   PWFineSearch<dim> pw_fine_search_object;
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<unsigned int,
+                     std::map<unsigned int, pw_contact_info_struct<dim>>>
                         pw_contact_information;
   PWNonLinearForce<dim> pw_force_object(
     dem_parameters.boundary_motion.boundary_translational_velocity,
@@ -170,11 +169,11 @@ test()
   for (double time = 0; time < 0.00115; time += dt)
     {
       auto particle = particle_handler.begin();
-      particle->get_properties()[DEM::PropertiesIndex::force_x] = 0;
-      particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
+      force[0]      = 0;
+      force[1]      = 0;
       if (dim == 3)
         {
-          particle->get_properties()[DEM::PropertiesIndex::force_z] = 0;
+          force[2] = 0;
         }
       distance = hyper_cube_length + particle->get_location()[0] -
                  particle->get_properties()[DEM::PropertiesIndex::dp] / 2.0;
@@ -183,8 +182,8 @@ test()
         {
           // If particle and wall are not in contact, only the integration class
           // is called
-          integrator_object.integrate_pre_force(particle_handler, g, dt);
-          integrator_object.integrate_post_force(particle_handler, g, dt);
+          integrator_object.integrate(
+            particle_handler, g, dt, momentum, force, MOI);
         }
       else
         {
@@ -213,27 +212,25 @@ test()
                 .tangential_relative_velocity[2] = 0.0;
             }
 
-          integrator_object.integrate_pre_force(particle_handler, g, dt);
-
           pw_force_object.calculate_pw_contact_force(pw_contact_information,
-                                                     dt);
+                                                     dt,
+                                                     momentum,
+                                                     force);
 
-          integrator_object.integrate_post_force(particle_handler, g, dt);
-
-          // Recalculating force
-          auto particle_properties = particle->get_properties();
+          // Storing force before integration
           for (unsigned int d = 0; d < dim; ++d)
             {
-              particle_properties[DEM::PropertiesIndex::force_x + d] =
-                particle_properties[DEM::PropertiesIndex::mass] *
-                (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
+              step_force = force[particle->get_id()][0];
             }
+
+
+          integrator_object.integrate(
+            particle_handler, g, dt, momentum, force, MOI);
+
 
           deallog << " "
                   << pw_contact_information_iterator->second.normal_overlap
-                  << " "
-                  << particle->get_properties()[DEM::PropertiesIndex::force_x]
-                  << std::endl;
+                  << " " << step_force << std::endl;
         }
     }
 }

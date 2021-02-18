@@ -34,9 +34,11 @@ using namespace dealii;
 template <int dim>
 void
 update_ghost_iterator_pp_contact_container(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     &ghost_adjacent_particles,
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &ghost_particle_container);
 
 #endif /* update_ghost_iterator_particle_particle_contact_container_h */

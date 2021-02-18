@@ -281,15 +281,17 @@ namespace Parameters
     template <int dim>
     void
     PhysicalProperties<dim>::initialize_containers(
-      std::unordered_map<int, double> &particle_average_diameter,
-      std::unordered_map<int, double> &particle_size_std,
-      std::unordered_map<int, int> &   number,
-      std::unordered_map<int, double> &density,
-      std::unordered_map<int, double> &youngs_modulus_particle,
-      std::unordered_map<int, double> &poisson_ratio_particle,
-      std::unordered_map<int, double> &restitution_coefficient_particle,
-      std::unordered_map<int, double> &friction_coefficient_particle,
-      std::unordered_map<int, double> &rolling_friction_coefficient_particle)
+      std::unordered_map<unsigned int, double> &particle_average_diameter,
+      std::unordered_map<unsigned int, double> &particle_size_std,
+      std::unordered_map<unsigned int, int> &   number,
+      std::unordered_map<unsigned int, double> &density,
+      std::unordered_map<unsigned int, double> &youngs_modulus_particle,
+      std::unordered_map<unsigned int, double> &poisson_ratio_particle,
+      std::unordered_map<unsigned int, double>
+        &restitution_coefficient_particle,
+      std::unordered_map<unsigned int, double> &friction_coefficient_particle,
+      std::unordered_map<unsigned int, double>
+        &rolling_friction_coefficient_particle)
     {
       for (unsigned int counter = 0; counter < particle_type_maximum_number;
            ++counter)
@@ -985,9 +987,11 @@ namespace Parameters
     template <int dim>
     void
     BoundaryMotion<dim>::initialize_containers(
-      std::unordered_map<int, Tensor<1, dim>> &boundary_translational_velocity,
-      std::unordered_map<int, double> &        boundary_rotational_speed,
-      std::unordered_map<int, Tensor<1, dim>> &boundary_rotational_vector)
+      std::unordered_map<unsigned int, Tensor<1, dim>>
+        &                                       boundary_translational_velocity,
+      std::unordered_map<unsigned int, double> &boundary_rotational_speed,
+      std::unordered_map<unsigned int, Tensor<1, dim>>
+        &boundary_rotational_vector)
     {
       Tensor<1, dim> zero_tensor;
       for (unsigned int d = 0; d < dim; ++d)

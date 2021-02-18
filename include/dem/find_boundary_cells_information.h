@@ -97,7 +97,7 @@ public:
   }
 
   std::unordered_map<
-    int,
+    unsigned int,
     std::set<typename Triangulation<dim>::active_cell_iterator>> &
   get_boundary_cells_with_floating_walls()
   {
@@ -177,7 +177,7 @@ private:
 
   // Structure that contains the boundary cells with floating walls
   std::unordered_map<
-    int,
+    unsigned int,
     std::set<typename Triangulation<dim>::active_cell_iterator>>
     boundary_cells_for_floating_walls;
 

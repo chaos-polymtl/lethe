@@ -3,69 +3,45 @@
 using namespace dealii;
 
 template <int dim>
-void
-find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
-                            const double &                   dt,
-                            const double &smallest_contact_search_criterion,
-                            MPI_Comm &    mpi_communicator,
-                            unsigned int &contact_detection_step)
+bool
+find_contact_detection_step(
+  Particles::ParticleHandler<dim> &particle_handler,
+  const double &                   dt,
+  const double &                   smallest_contact_search_criterion,
+  MPI_Comm &                       mpi_communicator,
+  bool &                           sorting_in_subdomains_step,
+  std::unordered_map<types::particle_index, double> &displacement)
 {
-  double max_displacement = 0;
+  double       max_displacement       = 0;
+  unsigned int contact_detection_step = 0;
 
   // Looping through all the particles:
-  if (contact_detection_step)
+  if (sorting_in_subdomains_step)
     {
-      // If last step was a contact detection step, the displcement and
-      // contact_detection_step should be reinitialized and then the new
-      // displacement is calculated
+      // If last step was a sorting into subdomains step, the displcement
+      // is reinitialized and then the new displacement is calculated
 
-      // Reinitilizing contact_detection_step
-      contact_detection_step = 0;
-
-      for (auto &particle : particle_handler)
-        {
-          auto &particle_properties = particle.get_properties();
-          // Setting displacement to zero
-          particle_properties[DEM::PropertiesIndex::displacement] = 0;
-
-          // Finding displacement of each particle during last step
-          particle_properties[DEM::PropertiesIndex::displacement] +=
-            dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
-                        particle_properties[DEM::PropertiesIndex::v_x] +
-                      particle_properties[DEM::PropertiesIndex::v_y] *
-                        particle_properties[DEM::PropertiesIndex::v_y] +
-                      particle_properties[DEM::PropertiesIndex::v_z] *
-                        particle_properties[DEM::PropertiesIndex::v_z]);
-
-          // Updating maximum displacement of particles
-          max_displacement =
-            std::max(max_displacement,
-                     particle_properties[DEM::PropertiesIndex::displacement]);
-        }
+      // Clearing displacement
+      displacement.clear();
     }
-  else
+
+  // Updating displacement
+  for (auto &particle : particle_handler)
     {
-      // If last step was not a contact_detection_step, only new displcement is
-      // calculated
+      auto &particle_properties   = particle.get_properties();
+      auto &particle_displacement = displacement[particle.get_id()];
 
-      for (auto &particle : particle_handler)
-        {
-          auto &particle_properties = particle.get_properties();
+      // Finding displacement of each particle during last step
+      particle_displacement +=
+        dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
+                    particle_properties[DEM::PropertiesIndex::v_x] +
+                  particle_properties[DEM::PropertiesIndex::v_y] *
+                    particle_properties[DEM::PropertiesIndex::v_y] +
+                  particle_properties[DEM::PropertiesIndex::v_z] *
+                    particle_properties[DEM::PropertiesIndex::v_z]);
 
-          // Finding displacement of each particle during last step
-          particle_properties[DEM::PropertiesIndex::displacement] +=
-            dt * sqrt(particle_properties[DEM::PropertiesIndex::v_x] *
-                        particle_properties[DEM::PropertiesIndex::v_x] +
-                      particle_properties[DEM::PropertiesIndex::v_y] *
-                        particle_properties[DEM::PropertiesIndex::v_y] +
-                      particle_properties[DEM::PropertiesIndex::v_z] *
-                        particle_properties[DEM::PropertiesIndex::v_z]);
-
-          // Updating maximum displacement of particles
-          max_displacement =
-            std::max(max_displacement,
-                     particle_properties[DEM::PropertiesIndex::displacement]);
-        }
+      // Updating maximum displacement of particles
+      max_displacement = std::max(max_displacement, particle_displacement);
     }
 
   if (max_displacement > smallest_contact_search_criterion)
@@ -80,18 +56,22 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
   // Broadcasting updating_step value to other processors
   contact_detection_step =
     Utilities::MPI::max(contact_detection_step, mpi_communicator);
+
+  return contact_detection_step;
 }
 
-template void
-  find_contact_detection_step(Particles::ParticleHandler<2> &particle_handler,
-                              const double &                 dt,
-                              const double &smallest_contact_search_criterion,
-                              MPI_Comm &    mpi_communicator,
-                              unsigned int &contact_detection_step);
+template bool find_contact_detection_step(
+  Particles::ParticleHandler<2> &particle_handler,
+  const double &                 dt,
+  const double &                 smallest_contact_search_criterion,
+  MPI_Comm &                     mpi_communicator,
+  bool &                         sorting_in_subdomains_step,
+  std::unordered_map<types::particle_index, double> &displacement);
 
-template void
-  find_contact_detection_step(Particles::ParticleHandler<3> &particle_handler,
-                              const double &                 dt,
-                              const double &smallest_contact_search_criterion,
-                              MPI_Comm &    mpi_communicator,
-                              unsigned int &contact_detection_step);
+template bool find_contact_detection_step(
+  Particles::ParticleHandler<3> &particle_handler,
+  const double &                 dt,
+  const double &                 smallest_contact_search_criterion,
+  MPI_Comm &                     mpi_communicator,
+  bool &                         sorting_in_subdomains_step,
+  std::unordered_map<types::particle_index, double> &displacement);

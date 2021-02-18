@@ -70,7 +70,6 @@ test()
   Tensor<1, dim> g{{0, -9.81}};
   double         dt                                             = 0.0001;
   double         particle_diameter                              = 0.1;
-  int            particle_density                               = 2000;
   dem_parameters.physical_properties.particle_type_number       = 1;
   dem_parameters.physical_properties.youngs_modulus_particle[0] = 200000000000;
   dem_parameters.physical_properties.youngs_modulus_wall        = 200000000000;
@@ -83,6 +82,7 @@ test()
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall = 0.1;
+  dem_parameters.physical_properties.density[0]            = 2500;
   const double neighborhood_threshold = std::pow(1.3 * particle_diameter, 2);
 
   // Defining particle handler
@@ -97,47 +97,44 @@ test()
     GridTools::find_active_cell_around_point(tr, particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, particle_cell);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Construct boundary cells object and build it
   BoundaryCellsInformation<dim> boundary_cells_object;
   boundary_cells_object.build(tr);
 
   // Particle-point broad search
-  std::unordered_map<int,
+  std::unordered_map<unsigned int,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
                                     contact_candidates;
   ParticlePointLineBroadSearch<dim> broad_search_object;
 
   // Particle-point fine search
   ParticlePointLineFineSearch<dim> fine_search_object;
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<unsigned int, particle_point_line_contact_info_struct<dim>>
     contact_information;
 
   ParticlePointLineForce<dim>   force_object;
   VelocityVerletIntegrator<dim> integrator_object;
 
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
+  MOI.insert({0, 1});
+
   for (double time = 0; time < 0.2; time += dt)
     {
-      auto particle = particle_handler.begin();
-      particle->get_properties()[DEM::PropertiesIndex::force_x] = 0;
-      particle->get_properties()[DEM::PropertiesIndex::force_y] = 0;
+      auto particle                = particle_handler.begin();
+      force[particle->get_id()][0] = 0;
+      force[particle->get_id()][1] = 0;
 
       contact_candidates =
         broad_search_object.find_particle_point_contact_pairs(
@@ -148,10 +145,10 @@ test()
         fine_search_object.particle_point_fine_search(contact_candidates,
                                                       neighborhood_threshold);
 
-      integrator_object.integrate_pre_force(particle_handler, g, dt);
       force_object.calculate_particle_point_contact_force(
-        &contact_information, dem_parameters.physical_properties);
-      integrator_object.integrate_post_force(particle_handler, g, dt);
+        &contact_information, dem_parameters.physical_properties, force);
+      integrator_object.integrate(
+        particle_handler, g, dt, momentum, force, MOI);
 
       if (step % writing_frequency == 0)
         {

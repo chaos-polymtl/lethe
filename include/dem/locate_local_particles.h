@@ -56,19 +56,30 @@ using namespace dealii;
 template <int dim>
 void
 locate_local_particles_in_cells(
-  const Particles::ParticleHandler<dim> &                    particle_handler,
-  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  const Particles::ParticleHandler<dim> &particle_handler,
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
+    &particle_container,
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     &ghost_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact,
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     &pfw_pairs_in_contact,
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<types::particle_index,
+                     particle_point_line_contact_info_struct<dim>>
     &particle_points_in_contact,
-  std::unordered_map<int, particle_point_line_contact_info_struct<dim>>
+  std::unordered_map<types::particle_index,
+                     particle_point_line_contact_info_struct<dim>>
     &particle_lines_in_contact);
 
 #endif /* locate_local_particles_h */

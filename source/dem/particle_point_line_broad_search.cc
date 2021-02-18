@@ -9,7 +9,8 @@ ParticlePointLineBroadSearch<dim>::ParticlePointLineBroadSearch()
 
 // This function finds all the particle-point contact candidates
 template <int dim>
-std::unordered_map<int, std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
+std::unordered_map<types::particle_index,
+                   std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
 ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
   const std::unordered_map<
@@ -17,7 +18,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
     std::pair<typename Triangulation<dim>::active_cell_iterator, Point<dim>>>
     &boundary_cells_with_points)
 {
-  std::unordered_map<int,
+  std::unordered_map<types::particle_index,
                      std::pair<Particles::ParticleIterator<dim>, Point<dim>>>
     particle_point_contact_candidates;
 
@@ -67,7 +68,7 @@ ParticlePointLineBroadSearch<dim>::find_particle_point_contact_pairs(
 // This function finds all the particle-line contact candidates
 template <int dim>
 std::unordered_map<
-  int,
+  types::particle_index,
   std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
 ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
   const Particles::ParticleHandler<dim> &particle_handler,
@@ -78,13 +79,13 @@ ParticlePointLineBroadSearch<dim>::find_particle_line_contact_pairs(
                Point<dim>>> &boundary_cells_with_lines)
 {
   std::unordered_map<
-    int,
+    types::particle_index,
     std::tuple<Particles::ParticleIterator<dim>, Point<dim>, Point<dim>>>
     particle_line_contact_candidates;
 
   // Defining and reseting a local particle-line candidate counter. This is
   // used as a key to the output map
-  int contact_candidate_counter = 0;
+  unsigned int contact_candidate_counter = 0;
 
   // Iterating over the  boundary_cells_with_lines which is the output of
   // the find_boundary_cells_information class.
