@@ -37,8 +37,7 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
             0.5 * particle_acceleration[d] * dt;
 
           // Update particle position using half-step velocity
-          particle_position[d] += half_step_velocity[d] * dt +
-                                  0.5 * dt * dt * particle_acceleration[d];
+          particle_position[d] += half_step_velocity[d] * dt;
         }
       particle->set_location(particle_position);
     }
