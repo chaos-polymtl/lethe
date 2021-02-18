@@ -10,8 +10,7 @@ template <int dim>
 void
 Visualization<dim>::build_patches(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  std::vector<std::pair<std::string, int>> properties,
-  const Tensor<1, dim> &                   g)
+  std::vector<std::pair<std::string, int>> properties)
 {
   // Adding ID to properties vector for visualization
   properties.insert(properties.begin(), std::make_pair("ID", 1));
@@ -19,7 +18,7 @@ Visualization<dim>::build_patches(
   // Defining properties for writing
   this->properties_to_write.assign(properties.begin(),
                                    properties.begin() +
-                                     this->number_of_properties_to_write);
+                                     DEM::get_number_properties());
 
   // Defining property field position
   int field_position = 0;
@@ -59,34 +58,22 @@ Visualization<dim>::build_patches(
       patches[i].vertices[0]    = particle->get_location();
       patches[i].patch_index    = i;
       patches[i].n_subdivisions = 1;
-      patches[i].data.reinit(this->number_of_properties_to_write, 1);
+      patches[i].data.reinit(DEM::get_number_properties(), 1);
 
       // ID and other properties
       if (particle->has_properties())
         {
           // Calculating force for visualization
           auto particle_properties = particle->get_properties();
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              particle_properties[DEM::PropertiesIndex::force_x + d] =
-                particle_properties[DEM::PropertiesIndex::mass] *
-                (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
-            }
 
           // Adding ID to patches
           patches[i].data(0, 0) = particle->get_id();
 
           for (unsigned int property_index = 1;
-               property_index < this->number_of_properties_to_write;
+               property_index < DEM::get_number_properties();
                ++property_index)
             patches[i].data(property_index, 0) =
               particle_properties[property_index - 1];
-
-          // Resetting force to zero
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              particle_properties[DEM::PropertiesIndex::force_x + d] = 0;
-            }
         }
     }
 }
@@ -95,7 +82,6 @@ template <int dim>
 void
 Visualization<dim>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
-  const Tensor<1, dim> &                   g,
   const ConditionalOStream &               pcout)
 {
   // Storing local particles in a map for writing
@@ -104,26 +90,11 @@ Visualization<dim>::print_xyz(
        particle != particle_handler.end();
        ++particle)
     {
-      // Calculating force for xyz writing
-      auto particle_properties = particle->get_properties();
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::force_x + d] =
-            particle_properties[DEM::PropertiesIndex::mass] *
-            (particle_properties[DEM::PropertiesIndex::acc_x + d] - g[d]);
-        }
       local_particles.insert({particle->get_id(), particle});
-
-      // Resetting force to zero
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          particle_properties[DEM::PropertiesIndex::force_x + d] = 0;
-        }
     }
 
-  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 3, 1, 1, 1, 2, 2, 2, 1, 1, 1};
-  pcout << "id, type, dp   , rho  , v_x  , v_y  , v_z  , acc_x , acc_y , "
-           "acc_z , force_x, force_y, force_z, omega_x, omega_y, omega_z, "
+  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 1, 1, 1};
+  pcout << "id, type, dp , v_x  , v_y  , v_z  , omega_x, omega_y, omega_z, "
         << std::endl;
 
   unsigned int counter;
@@ -142,7 +113,7 @@ Visualization<dim>::print_xyz(
 
       // Looping over properties of particle
       for (unsigned int property_number = 0;
-           property_number < this->number_of_properties_to_write - 1;
+           property_number < DEM::get_number_properties() - 1;
            ++property_number, ++counter)
         {
           std::cout.precision(precision[counter]);

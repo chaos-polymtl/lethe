@@ -15,9 +15,11 @@ PPBroadSearch<dim>::find_particle_particle_contact_pairs(
     *cells_local_neighbor_list,
   const std::vector<
     std::vector<typename Triangulation<dim>::active_cell_iterator>>
-    *                                        cells_ghost_neighbor_list,
-  std::unordered_map<int, std::vector<int>> &local_contact_pair_candidates,
-  std::unordered_map<int, std::vector<int>> &ghost_contact_pair_candidates)
+    *cells_ghost_neighbor_list,
+  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+    &local_contact_pair_candidates,
+  std::unordered_map<types::particle_index, std::vector<types::particle_index>>
+    &ghost_contact_pair_candidates)
 {
   // First we will handle the local-lcoal candidate pairs
   // Clearing local_contact_pair_candidates
@@ -55,7 +57,7 @@ PPBroadSearch<dim>::find_particle_particle_contact_pairs(
               const unsigned int particle_one_id =
                 particles_in_main_cell_iterator_one->get_id();
 
-              std::vector<int> &particle_candidate_container =
+              std::vector<types::particle_index> &particle_candidate_container =
                 local_contact_pair_candidates[particle_one_id];
 
               if (particle_candidate_container.empty())
@@ -100,8 +102,8 @@ PPBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
-                  std::vector<int> &particle_candidate_container =
-                    local_contact_pair_candidates
+                  std::vector<types::particle_index> &
+                    particle_candidate_container = local_contact_pair_candidates
                       [particles_in_main_cell_iterator->get_id()];
                   if (particle_candidate_container.empty())
                     particle_candidate_container.reserve(40);
@@ -167,11 +169,12 @@ PPBroadSearch<dim>::find_particle_particle_contact_pairs(
                    particles_in_main_cell.end();
                    ++particles_in_main_cell_iterator)
                 {
-                  unsigned int particle_one_id =
+                  types::particle_index particle_one_id =
                     particles_in_main_cell_iterator->get_id();
 
-                  std::vector<int> &particle_candidate_container =
-                    ghost_contact_pair_candidates[particle_one_id];
+                  std::vector<types::particle_index>
+                    &particle_candidate_container =
+                      ghost_contact_pair_candidates[particle_one_id];
                   particle_candidate_container.reserve(40);
 
                   for (typename Particles::ParticleHandler<

@@ -50,13 +50,21 @@ using namespace dealii;
 
 void
 update_contact_containers(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     &local_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     &ghost_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     &cleared_local_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     &cleared_ghost_adjacent_particles)
 {
   local_adjacent_particles.clear();
@@ -69,9 +77,11 @@ update_contact_containers(
 template <int dim>
 void
 update_ghost_pp_contact_container_iterators(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
     &cleared_ghost_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
+  const std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
     &local_particle_container)
 {
   for (auto adjacent_particles_iterator =
@@ -97,9 +107,11 @@ update_ghost_pp_contact_container_iterators(
 template <int dim>
 void
 update_local_pp_contact_container_iterators(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
     &cleared_local_adjacent_particles,
-  const std::unordered_map<int, Particles::ParticleIterator<dim>>
+  const std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
     &local_particle_container)
 {
   for (auto adjacent_particles_iterator =
@@ -126,7 +138,7 @@ update_local_pp_contact_container_iterators(
 template <int dim>
 void
 update_local_particle_container(
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
     &                              local_particle_container,
   Particles::ParticleHandler<dim> *particle_handler)
 {
@@ -156,13 +168,17 @@ template <int dim>
 void
 locate_local_particles_in_cells(
   Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<int, Particles::ParticleIterator<2>>
+  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
     &local_particle_container,
-  std::unordered_map<int, Particles::ParticleIterator<2>>
+  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
     &ghost_particle_container,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     &cleared_local_adjacent_particles,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     &cleared_ghost_adjacent_particles)
 {
   local_particle_container.clear();
@@ -179,26 +195,28 @@ locate_local_particles_in_cells(
 
 template <int dim>
 void
-reinitialize_force(Particles::ParticleHandler<dim> &particle_handler)
+reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
+                   std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
+                   std::unordered_map<unsigned int, Tensor<1, dim>> &force)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
        ++particle)
     {
-      // Getting properties of particle as local variable
-      auto particle_properties = particle->get_properties();
+      // Getting id of particle as local variable
+      unsigned int particle_id = particle->get_id();
 
       // Reinitializing forces and momentums of particles in the system
-      particle_properties[DEM::PropertiesIndex::force_x] = 0;
-      particle_properties[DEM::PropertiesIndex::force_y] = 0;
+      force[particle_id][0] = 0;
+      force[particle_id][1] = 0;
 
-      particle_properties[DEM::PropertiesIndex::M_x] = 0;
-      particle_properties[DEM::PropertiesIndex::M_y] = 0;
+      momentum[particle_id][0] = 0;
+      momentum[particle_id][1] = 0;
 
       if (dim == 3)
         {
-          particle_properties[DEM::PropertiesIndex::force_z] = 0;
-          particle_properties[DEM::PropertiesIndex::M_z]     = 0;
+          force[particle_id][2]    = 0;
+          momentum[particle_id][2] = 0;
         }
     }
 }
@@ -223,7 +241,6 @@ test()
   Tensor<1, dim> g{{0, 0}};
   double         dt                                             = 0.00001;
   double         particle_diameter                              = 0.005;
-  int            particle_density                               = 2500;
   unsigned int   step_end                                       = 1000;
   unsigned int   output_frequency                               = 10;
   dem_parameters.physical_properties.particle_type_number       = 1;
@@ -233,22 +250,31 @@ test()
   dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.5;
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
-  double neighborhood_threshold = 1.3 * particle_diameter;
+  dem_parameters.physical_properties.density[0] = 2500;
+  double neighborhood_threshold                 = 1.3 * particle_diameter;
 
   Particles::ParticleHandler<dim> particle_handler(
     triangulation, mapping, DEM::get_number_properties());
 
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     local_adjacent_particles;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     ghost_adjacent_particles;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     cleared_local_adjacent_particles;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<2>>>
     cleared_ghost_adjacent_particles;
-  std::unordered_map<int, Particles::ParticleIterator<2>>
+  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
     local_particle_container;
-  std::unordered_map<int, Particles::ParticleIterator<2>>
+  std::unordered_map<unsigned int, Particles::ParticleIterator<2>>
     ghost_particle_container;
 
   // Finding cell neighbors
@@ -279,23 +305,15 @@ test()
                                              particle1.get_location());
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]         = -0.4;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit1->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = -0.4;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
@@ -303,32 +321,32 @@ test()
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[DEM::PropertiesIndex::type]        = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::dp]          = particle_diameter;
-  pit2->get_properties()[DEM::PropertiesIndex::rho]         = particle_density;
-  pit2->get_properties()[DEM::PropertiesIndex::v_x]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_y]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_z]         = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_x]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_y]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::acc_z]       = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::force_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::force_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::force_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::mass]        = 1;
-  pit2->get_properties()[DEM::PropertiesIndex::mom_inertia] = 1;
+  pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Defining variables
-  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
-  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
+  std::unordered_map<unsigned int, std::vector<unsigned int>>
+    local_contact_pair_candidates;
+  std::unordered_map<unsigned int, std::vector<unsigned int>>
+                                                   ghost_contact_pair_candidates;
+  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
+  std::unordered_map<unsigned int, Tensor<1, dim>> force;
+  std::unordered_map<unsigned int, double>         MOI;
+  MOI.insert({0, 1});
+  MOI.insert({1, 1});
+  double step_force;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {
       // Reinitializing forces
-      reinitialize_force(particle_handler);
+      reinitialize_force(particle_handler, momentum, force);
 
       particle_handler.exchange_ghost_particles();
 
@@ -356,14 +374,23 @@ test()
         neighborhood_threshold);
 
       // Integration
-      integrator_object.integrate_pre_force(particle_handler, g, dt);
-
       // Calling non-linear force
       nonlinear_force_object.calculate_pp_contact_force(
-        cleared_local_adjacent_particles, cleared_ghost_adjacent_particles, dt);
+        cleared_local_adjacent_particles,
+        cleared_ghost_adjacent_particles,
+        dt,
+        momentum,
+        force);
+
+      // Storing force before integration
+      for (unsigned int d = 0; d < dim; ++d)
+        {
+          step_force = force[0][1];
+        }
 
       // Integration
-      integrator_object.integrate_post_force(particle_handler, g, dt);
+      integrator_object.integrate(
+        particle_handler, g, dt, momentum, force, MOI);
 
       update_contact_containers(local_adjacent_particles,
                                 ghost_adjacent_particles,
@@ -381,25 +408,9 @@ test()
                 {
                   if (particle->get_id() == 0)
                     {
-                      // Recalculating force
-                      auto particle_properties = particle->get_properties();
-                      for (unsigned int d = 0; d < dim; ++d)
-                        {
-                          particle_properties[DEM::PropertiesIndex::force_x +
-                                              d] =
-                            particle_properties[DEM::PropertiesIndex::mass] *
-                            (particle_properties[DEM::PropertiesIndex::acc_x +
-                                                 d] -
-                             g[d]);
-                        }
-
-                      deallog
-                        << "The exerted force on particle "
-                        << particle->get_id() << " at step " << iteration
-                        << " is: "
-                        << particle
-                             ->get_properties()[DEM::PropertiesIndex::force_y]
-                        << std::endl;
+                      deallog << "The exerted force on particle "
+                              << particle->get_id() << " at step " << iteration
+                              << " is: " << step_force << std::endl;
                     }
                 }
             }

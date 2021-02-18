@@ -5,7 +5,7 @@ using namespace dealii;
 template <int dim>
 void
 update_ghost_particle_container(
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &                                    ghost_particle_container,
   const Particles::ParticleHandler<dim> *particle_handler)
 {
@@ -19,14 +19,12 @@ update_ghost_particle_container(
     }
 }
 
-template void
-update_ghost_particle_container(
-  std::unordered_map<int, Particles::ParticleIterator<2>>
+template void update_ghost_particle_container(
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
     &                                  ghost_particle_container,
   const Particles::ParticleHandler<2> *particle_handler);
 
-template void
-update_ghost_particle_container(
-  std::unordered_map<int, Particles::ParticleIterator<3>>
+template void update_ghost_particle_container(
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
     &                                  ghost_particle_container,
   const Particles::ParticleHandler<3> *particle_handler);

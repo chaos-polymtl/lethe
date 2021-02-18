@@ -5,21 +5,24 @@ using namespace dealii;
 template <int dim>
 void
 update_local_pp_contact_container_iterators(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     &local_adjacent_particles,
-  std::unordered_map<int, Particles::ParticleIterator<dim>> &particle_container)
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
+    &particle_container)
 {
   for (auto adjacent_particles_iterator = local_adjacent_particles.begin();
        adjacent_particles_iterator != local_adjacent_particles.end();
        ++adjacent_particles_iterator)
     {
-      int  particle_one_id          = adjacent_particles_iterator->first;
+      unsigned int particle_one_id  = adjacent_particles_iterator->first;
       auto pairs_in_contant_content = &adjacent_particles_iterator->second;
       for (auto pp_map_iterator = pairs_in_contant_content->begin();
            pp_map_iterator != pairs_in_contant_content->end();
            ++pp_map_iterator)
         {
-          int particle_two_id = pp_map_iterator->first;
+          unsigned int particle_two_id = pp_map_iterator->first;
 
           pp_map_iterator->second.particle_one =
             particle_container[particle_one_id];
@@ -29,14 +32,18 @@ update_local_pp_contact_container_iterators(
     }
 }
 
-template void
-update_local_pp_contact_container_iterators(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<2>>>
+template void update_local_pp_contact_container_iterators(
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<2>>>
     &local_adjacent_particles,
-  std::unordered_map<int, Particles::ParticleIterator<2>> &particle_container);
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<2>>
+    &particle_container);
 
-template void
-update_local_pp_contact_container_iterators(
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<3>>>
+template void update_local_pp_contact_container_iterators(
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<3>>>
     &local_adjacent_particles,
-  std::unordered_map<int, Particles::ParticleIterator<3>> &particle_container);
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<3>>
+    &particle_container);

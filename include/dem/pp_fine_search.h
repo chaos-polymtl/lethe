@@ -82,17 +82,21 @@ public:
 
   void
   particle_particle_fine_search(
-    const std::unordered_map<int, std::vector<int>>
+    const std::unordered_map<types::particle_index,
+                             std::vector<types::particle_index>>
       &local_contact_pair_candidates,
-    const std::unordered_map<int, std::vector<int>>
+    const std::unordered_map<types::particle_index,
+                             std::vector<types::particle_index>>
       &ghost_contact_pair_candidates,
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
       &local_adjacent_particles,
-    std::unordered_map<int,
-                       std::unordered_map<int, pp_contact_info_struct<dim>>>
+    std::unordered_map<
+      types::particle_index,
+      std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
       &ghost_adjacent_particles,
-    std::unordered_map<int, Particles::ParticleIterator<dim>>
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
       &          particle_container,
     const double neighborhood_threshold);
 };

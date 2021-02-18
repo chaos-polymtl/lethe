@@ -36,6 +36,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , parameters(dem_parameters)
   , triangulation(this->mpi_communicator)
   , mapping(1)
+  , particles_insertion_step(0)
   , contact_build_number(0)
   , computing_timer(this->mpi_communicator,
                     this->pcout,
@@ -456,11 +457,16 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_contact_search_step_dynamic()
 {
-  find_contact_detection_step<dim>(particle_handler,
-                                   simulation_control->get_time_step(),
-                                   smallest_contact_search_criterion,
-                                   mpi_communicator,
-                                   contact_detection_step);
+  bool sorting_in_subdomains_step =
+    (particles_insertion_step || load_balance_step || contact_detection_step);
+
+  contact_detection_step =
+    find_contact_detection_step<dim>(particle_handler,
+                                     simulation_control->get_time_step(),
+                                     smallest_contact_search_criterion,
+                                     mpi_communicator,
+                                     sorting_in_subdomains_step,
+                                     displacement);
 
   return contact_detection_step;
 }
@@ -483,6 +489,25 @@ DEMSolver<dim>::insert_particles()
       return true;
     }
   return false;
+}
+
+template <int dim>
+void
+DEMSolver<dim>::update_moment_of_inertia(
+  dealii::Particles::ParticleHandler<dim> &          particle_handler,
+  std::unordered_map<types::particle_index, double> &MOI)
+{
+  // Clearing the container first
+  MOI.clear();
+
+  for (auto &particle : particle_handler)
+    {
+      auto &particle_properties = particle.get_properties();
+      MOI.insert({particle.get_id(),
+                  0.1 * particle_properties[DEM::PropertiesIndex::mass] *
+                    particle_properties[DEM::PropertiesIndex::dp] *
+                    particle_properties[DEM::PropertiesIndex::dp]});
+    }
 }
 
 template <int dim>
@@ -556,24 +581,29 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    pw_pairs_in_contact, simulation_control->get_time_step());
+    pw_pairs_in_contact, simulation_control->get_time_step(), momentum, force);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
       pw_contact_force_object->calculate_pw_contact_force(
-        pfw_pairs_in_contact, simulation_control->get_time_step());
+        pfw_pairs_in_contact,
+        simulation_control->get_time_step(),
+        momentum,
+        force);
     }
 
   particle_point_line_contact_force_object
     .calculate_particle_point_contact_force(&particle_points_in_contact,
-                                            parameters.physical_properties);
+                                            parameters.physical_properties,
+                                            force);
 
   if (dim == 3)
     {
       particle_point_line_contact_force_object
         .calculate_particle_line_contact_force(&particle_lines_in_contact,
-                                               parameters.physical_properties);
+                                               parameters.physical_properties,
+                                               force);
     }
 }
 
@@ -598,7 +628,7 @@ DEMSolver<dim>::finish_simulation()
         {
           if (this_mpi_process == processor_number)
             {
-              visualization_object.print_xyz(particle_handler, g, pcout);
+              visualization_object.print_xyz(particle_handler, pcout);
             }
           MPI_Barrier(MPI_COMM_WORLD);
         }
@@ -728,8 +758,7 @@ DEMSolver<dim>::write_output_results()
   // Write particles
   Visualization<dim> particle_data_out;
   particle_data_out.build_patches(particle_handler,
-                                  properties_class.get_properties_name(),
-                                  g);
+                                  properties_class.get_properties_name());
 
   write_vtu_and_pvd<0, dim>(particles_pvdhandler,
                             particle_data_out,
@@ -787,7 +816,10 @@ DEMSolver<dim>::solve()
   read_mesh();
 
   if (parameters.restart.restart == true)
-    read_checkpoint();
+    {
+      read_checkpoint();
+      update_moment_of_inertia(particle_handler, MOI);
+    }
 
   // Finding the smallest contact search frequency criterion between (smallest
   // cell size - largest particle radius) and (security factor * (blab
@@ -820,18 +852,28 @@ DEMSolver<dim>::solve()
       simulation_control->print_progression(pcout);
 
       // Keep track if particles were inserted this step
-      bool particles_insertion_step = insert_particles();
+      particles_insertion_step = insert_particles();
 
       // Load balancing
-      bool load_balance_step = (this->*check_load_balance_step)();
+      load_balance_step = (this->*check_load_balance_step)();
 
       // Check to see if it is contact search step
-      bool contact_search_step = (this->*check_contact_search_step)();
+      contact_detection_step = (this->*check_contact_search_step)();
 
       // Sort particles in cells
-      if (particles_insertion_step || load_balance_step || contact_search_step)
+      if (particles_insertion_step || load_balance_step ||
+          contact_detection_step)
         {
           particle_handler.sort_particles_into_subdomains_and_cells();
+
+          // We clear force and momentum every time we sort the particles
+          // into subdomains to avoid increasing the size of these unordered
+          // maps on each processor
+          force.clear();
+          momentum.clear();
+
+          // Updating moment of inertia container
+          update_moment_of_inertia(particle_handler, MOI);
 
 #if (DEAL_II_VERSION_MINOR <= 2)
           particle_handler.exchange_ghost_particles();
@@ -850,7 +892,8 @@ DEMSolver<dim>::solve()
         }
 
       // Broad particle-particle contact search
-      if (particles_insertion_step || load_balance_step || contact_search_step)
+      if (particles_insertion_step || load_balance_step ||
+          contact_detection_step)
         {
           pp_broad_search_object.find_particle_particle_contact_pairs(
             particle_handler,
@@ -906,26 +949,37 @@ DEMSolver<dim>::solve()
 #endif
         }
 
-      // Integration prediction step (before force calculation)
-      integrator_object->integrate_pre_force(
-        particle_handler,
-        parameters.physical_properties.g,
-        simulation_control->get_time_step());
-
       // Particle-particle contact force
       pp_contact_force_object->calculate_pp_contact_force(
         local_adjacent_particles,
         ghost_adjacent_particles,
-        simulation_control->get_time_step());
+        simulation_control->get_time_step(),
+        momentum,
+        force);
 
       // Particles-walls contact force:
       particle_wall_contact_force();
 
       // Integration correction step (after force calculation)
-      integrator_object->integrate_post_force(
-        particle_handler,
-        parameters.physical_properties.g,
-        simulation_control->get_time_step());
+      // In the first step, we have to obtain location of particles at half-step
+      // time
+      if (simulation_control->get_step_number() == 0)
+        {
+          integrator_object->integrate_half_step_location(
+            particle_handler,
+            parameters.physical_properties.g,
+            force,
+            simulation_control->get_time_step());
+        }
+      else
+        {
+          integrator_object->integrate(particle_handler,
+                                       parameters.physical_properties.g,
+                                       simulation_control->get_time_step(),
+                                       momentum,
+                                       force,
+                                       MOI);
+        }
 
       // Visualization
       if (simulation_control->is_output_iteration())

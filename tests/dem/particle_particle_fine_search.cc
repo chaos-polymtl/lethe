@@ -95,24 +95,16 @@ test()
 
   Particles::ParticleIterator<dim> pit1 =
     particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[0]  = id1;
-  pit1->get_properties()[1]  = 1;
-  pit1->get_properties()[2]  = particle_diameter;
-  pit1->get_properties()[3]  = 2500;
-  pit1->get_properties()[4]  = 0;
-  pit1->get_properties()[5]  = 0;
-  pit1->get_properties()[6]  = 0;
-  pit1->get_properties()[7]  = 0;
-  pit1->get_properties()[8]  = 0;
-  pit1->get_properties()[9]  = 0;
-  pit1->get_properties()[10] = 0;
-  pit1->get_properties()[11] = 0;
-  pit1->get_properties()[12] = 0;
-  pit1->get_properties()[13] = 0;
-  pit1->get_properties()[14] = 0;
-  pit1->get_properties()[15] = 0;
-  pit1->get_properties()[16] = 1;
-  pit1->get_properties()[17] = 1;
+
+  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   Particles::Particle<dim> particle2(position2, position2, id2);
   typename Triangulation<dim>::active_cell_iterator cell2 =
@@ -120,29 +112,23 @@ test()
                                              particle2.get_location());
   Particles::ParticleIterator<dim> pit2 =
     particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[0]  = id2;
-  pit2->get_properties()[1]  = 1;
-  pit2->get_properties()[2]  = 0.005;
-  pit2->get_properties()[3]  = 2500;
-  pit2->get_properties()[4]  = 0;
-  pit2->get_properties()[5]  = 0;
-  pit2->get_properties()[6]  = 0;
-  pit2->get_properties()[7]  = 0;
-  pit2->get_properties()[8]  = 0;
-  pit2->get_properties()[9]  = 0;
-  pit2->get_properties()[10] = 0;
-  pit2->get_properties()[11] = 0;
-  pit2->get_properties()[12] = 0;
-  pit2->get_properties()[13] = 0;
-  pit2->get_properties()[14] = 0;
-  pit2->get_properties()[15] = 0;
-  pit2->get_properties()[16] = 1;
-  pit2->get_properties()[17] = 1;
+  pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+  pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+  pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
   // Calling broad search
-  std::unordered_map<int, std::vector<int>> local_contact_pair_candidates;
-  std::unordered_map<int, std::vector<int>> ghost_contact_pair_candidates;
-  std::unordered_map<int, Particles::ParticleIterator<dim>> particle_container;
+  std::unordered_map<unsigned int, std::vector<unsigned int>>
+    local_contact_pair_candidates;
+  std::unordered_map<unsigned int, std::vector<unsigned int>>
+    ghost_contact_pair_candidates;
+  std::unordered_map<unsigned int, Particles::ParticleIterator<dim>>
+    particle_container;
 
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
@@ -159,9 +145,13 @@ test()
     ghost_contact_pair_candidates);
 
   // Calling fine search
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
     local_adjacent_particles;
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    unsigned int,
+    std::unordered_map<unsigned int, pp_contact_info_struct<dim>>>
     ghost_adjacent_particles;
 
   fine_search_obejct.particle_particle_fine_search(

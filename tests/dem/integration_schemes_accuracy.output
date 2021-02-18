@@ -1,4 +1,3 @@
 
-DEAL::Explicit Euler is a 1.06022 order integration scheme
-DEAL::Velocity Verlet is a 2.00188 order integration scheme
-DEAL::Gear3 is a 5.11124 order integration scheme
+DEAL::Explicit Euler is a 1.00529 order integration scheme
+DEAL::Velocity Verlet is a 2.00189 order integration scheme

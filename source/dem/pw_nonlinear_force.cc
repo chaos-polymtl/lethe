@@ -4,11 +4,14 @@ using namespace dealii;
 
 template <int dim>
 PWNonLinearForce<dim>::PWNonLinearForce(
-  const std::unordered_map<int, Tensor<1, dim>> boundary_translational_velocity,
-  const std::unordered_map<int, double>         boundary_rotational_speed,
-  const std::unordered_map<int, Tensor<1, dim>> boundary_rotational_vector,
-  const double                                  triangulation_radius,
-  const DEMSolverParameters<dim> &              dem_parameters)
+  const std::unordered_map<types::particle_index, Tensor<1, dim>>
+    boundary_translational_velocity,
+  const std::unordered_map<types::particle_index, double>
+    boundary_rotational_speed,
+  const std::unordered_map<types::particle_index, Tensor<1, dim>>
+                                  boundary_rotational_vector,
+  const double                    triangulation_radius,
+  const DEMSolverParameters<dim> &dem_parameters)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
   this->boundary_rotational_speed_map       = boundary_rotational_speed;
@@ -81,9 +84,13 @@ PWNonLinearForce<dim>::PWNonLinearForce(
 template <int dim>
 void
 PWNonLinearForce<dim>::calculate_pw_contact_force(
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     &           pw_pairs_in_contact,
-  const double &dt)
+  const double &dt,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &force)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -140,9 +147,15 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
                   this->calculate_nonlinear_contact_force_and_torque(
                     contact_information, particle_properties);
 
+              // Getting particle's momentum and force
+              unsigned int    particle_id       = particle->get_id();
+              Tensor<1, dim> &particle_momentum = momentum[particle_id];
+              Tensor<1, dim> &particle_force    = force[particle_id];
+
               // Apply the calculated forces and torques on the particle pair
-              this->apply_force_and_torque(particle_properties,
-                                           forces_and_torques);
+              this->apply_force_and_torque(forces_and_torques,
+                                           particle_momentum,
+                                           particle_force);
             }
           else
             {

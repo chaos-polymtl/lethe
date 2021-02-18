@@ -7,16 +7,17 @@ PWFineSearch<dim>::PWFineSearch()
 {}
 
 template <int dim>
-void
-PWFineSearch<dim>::particle_wall_fine_search(
+void PWFineSearch<dim>::particle_wall_fine_search(
   std::unordered_map<
-    int,
-    std::unordered_map<int,
+    types::particle_index,
+    std::unordered_map<types::particle_index,
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
                                   unsigned int>>> &pw_contact_pair_candidates,
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     &pw_pairs_in_contact)
 {
   // Iterating over contact candidates from broad search and adding the pairs to
@@ -64,12 +65,15 @@ PWFineSearch<dim>::particle_wall_fine_search(
 template <int dim>
 void
 PWFineSearch<dim>::particle_floating_wall_fine_search(
-  std::unordered_map<int,
-                     std::unordered_map<int, Particles::ParticleIterator<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>>
     &                                               pfw_contact_candidates,
   const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
   const double &                                    simulation_time,
-  std::unordered_map<int, std::map<int, pw_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
     &pfw_pairs_in_contact)
 {
   // Reading floating wall properties
@@ -89,7 +93,8 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
            ++particle_pair_candidate_iterator)
         {
           // Getting the floating wall id once to improve efficiency
-          int floating_wall_id = particle_pair_candidate_iterator->first;
+          unsigned int floating_wall_id =
+            particle_pair_candidate_iterator->first;
 
           // Checking simulation time for temporary floating walls
           if (simulation_time >=

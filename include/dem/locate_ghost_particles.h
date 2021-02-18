@@ -45,9 +45,11 @@ template <int dim>
 void
 locate_ghost_particles_in_cells(
   const Particles::ParticleHandler<dim> &particle_handler,
-  std::unordered_map<int, Particles::ParticleIterator<dim>>
+  std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     &ghost_particle_container,
-  std::unordered_map<int, std::unordered_map<int, pp_contact_info_struct<dim>>>
+  std::unordered_map<
+    types::particle_index,
+    std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
     &ghost_adjacent_particles);
 
 #endif /* locate_ghost_particles_h */
