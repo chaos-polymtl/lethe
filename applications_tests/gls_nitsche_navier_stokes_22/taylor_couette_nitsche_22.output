@@ -6,13 +6,13 @@ Running on 1 MPI rank(s)...
 *****************************************************************
 Steady iteration :        1/3
 *****************************************************************
+L2 error velocity : 0.026378
 
 +------------------------------------------+
-|  Force  summary                          |
+|  Torque on solids summary                |
 +------------------------------------------+
-Boundary ID   f_x      f_y    
-          0 0.000000 0.000000 
-L2 error velocity : 0.026378
+Solid ID   T_x      T_y      T_z    
+       1 0.000000 0.000000 0.689904 
 
 *****************************************************************
 Steady iteration :        2/3
@@ -20,13 +20,13 @@ Steady iteration :        2/3
    Number of active cells:       1280
    Number of degrees of freedom: 3939
    Volume of triangulation:      3.13655
+L2 error velocity : 0.0123064
 
 +------------------------------------------+
-|  Force  summary                          |
+|  Torque on solids summary                |
 +------------------------------------------+
-Boundary ID    f_x      f_y    
-          0 -0.000000 0.000000 
-L2 error velocity : 0.0123064
+Solid ID   T_x      T_y      T_z    
+       1 0.000000 0.000000 0.767109 
 
 *****************************************************************
 Steady iteration :        3/3
@@ -34,13 +34,13 @@ Steady iteration :        3/3
    Number of active cells:       5120
    Number of degrees of freedom: 15555
    Volume of triangulation:      3.14033
+L2 error velocity : 0.00632566
 
 +------------------------------------------+
-|  Force  summary                          |
+|  Torque on solids summary                |
 +------------------------------------------+
-Boundary ID    f_x      f_y    
-          0 -0.000000 0.000000 
-L2 error velocity : 0.00632566
+Solid ID   T_x      T_y      T_z    
+       1 0.000000 0.000000 0.800608 
 cells error_velocity   error_pressure  
   320 2.6378e-02    - 1.5066e-02     - 
  1280 1.2306e-02 1.10 1.9528e-02 -0.37 
