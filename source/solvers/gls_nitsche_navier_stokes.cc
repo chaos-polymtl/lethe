@@ -199,10 +199,7 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid()
           const auto &JxW   = p.get_properties()[0];
           normal_vector[0]  = -p.get_properties()[1];
           normal_vector[1]  = -p.get_properties()[2];
-          if (3 == 3)
-            {
-              normal_vector[2] = -p.get_properties()[3];
-            }
+          normal_vector[2]  = -p.get_properties()[3];
 
           for (int k = 0; k < 3; ++k)
             {
