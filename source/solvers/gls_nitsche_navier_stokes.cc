@@ -41,7 +41,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
   , solid(this->simulation_parameters.nitsche,
           this->triangulation,
           p_nsparam.fem_parameters.velocity_order)
-  , fe_ht(1)
 {}
 
 template <int dim, int spacedim>
