@@ -81,7 +81,10 @@ subsection nitsche
 		set initial refinement = 8
 	end
 	
+	set calculate forces on solid 	= true
+	set solid force name 		= solid_force
 	set beta = 100
+        set verbosity = verbose
 end
 
 # --------------------------------------------------

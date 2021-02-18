@@ -32,7 +32,7 @@ end
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = true
+    set calculate forces      = false
     set calculate torques     = false
     set force name            = force
     set torque name           = torque
@@ -72,6 +72,8 @@ subsection nitsche
 	subsection solid velocity
 		set Function expression = -y ; x
 	end
+    set verbosity = verbose
+    set calculate torques on solid = true
 end
 
 # --------------------------------------------------

@@ -59,7 +59,12 @@ namespace Parameters
     // Calculate forces
     Verbosity   verbosity;
     bool        calculate_force_on_solid;
+    bool        calculate_torque_on_solid;
+    Point<dim>  cor; // Center of rotation used for torque calculation
     std::string force_output_name;
+    std::string torque_output_name;
+
+
 
     // Particle motion integration parameters
     unsigned int particles_sub_iterations;
@@ -97,10 +102,18 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of forces on solid");
+      prm.declare_entry("calculate torques on solid",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of torques on solid");
       prm.declare_entry("solid force name",
                         "force_solid",
                         Patterns::FileName(),
                         "File output solid force prefix");
+      prm.declare_entry("solid torque name",
+                        "torque_solid",
+                        Patterns::FileName(),
+                        "File output solid torque prefix");
 
       prm.declare_entry(
         "particles sub iterations",
@@ -108,6 +121,12 @@ namespace Parameters
         Patterns::Integer(),
         "Number of sub iterations for the motion of the particles. This parameter"
         "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
+
+      prm.enter_subsection("cor");
+      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
+      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
+      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -129,9 +148,18 @@ namespace Parameters
         verbosity = Verbosity::verbose;
       if (op == "quiet")
         verbosity = Verbosity::quiet;
-      calculate_force_on_solid = prm.get_bool("calculate forces on solid");
-      force_output_name        = prm.get("solid force name");
-      particles_sub_iterations = prm.get_integer("particles sub iterations");
+      calculate_force_on_solid  = prm.get_bool("calculate forces on solid");
+      calculate_torque_on_solid = prm.get_bool("calculate torques on solid");
+      force_output_name         = prm.get("solid force name");
+      torque_output_name        = prm.get("solid torque name");
+      particles_sub_iterations  = prm.get_integer("particles sub iterations");
+
+      prm.enter_subsection("cor");
+      cor[0] = prm.get_double("x");
+      cor[1] = prm.get_double("y");
+      if (dim == 3)
+        cor[2] = prm.get_double("z");
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
