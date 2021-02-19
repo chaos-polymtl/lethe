@@ -224,6 +224,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
   AssertThrow(sub_particles_iterations >= 1,
               ExcMessage("Sub particles iterations must be 1 or larger"));
   double sub_iteration_relaxation = 1. / sub_particles_iterations;
+  time_step                       = time_step * sub_iteration_relaxation;
   // Particle sub iterations divide the time step in a number of "sub
   // iterations". This allows the solver to use a larger CFL without
   // necessitating the use of the more complex particle location detection
@@ -257,8 +258,7 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
           for (unsigned int comp_i = 0; comp_i < spacedim; ++comp_i)
             k4[comp_i] = velocity->value(p3, comp_i);
 
-          particle_location += sub_iteration_relaxation * time_step / 6 *
-                               (k1 + 2 * k2 + 2 * k3 + k4);
+          particle_location += time_step / 6 * (k1 + 2 * k2 + 2 * k3 + k4);
           particle->set_location(particle_location);
         }
       solid_particle_handler->sort_particles_into_subdomains_and_cells();
