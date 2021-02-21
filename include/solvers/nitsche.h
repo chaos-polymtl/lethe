@@ -34,6 +34,80 @@ using namespace dealii;
 namespace Parameters
 {
   template <int dim>
+  class NitscheSolid
+  {
+  public:
+    NitscheSolid()
+      : solid_velocity(dim)
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm, unsigned int id);
+    void
+    parse_parameters(ParameterHandler &prm, unsigned int id);
+
+    // Solid mesh
+    Parameters::Mesh solid_mesh;
+
+    // Solid velocity
+    Functions::ParsedFunction<dim> solid_velocity;
+    bool                           enable_particles_motion;
+
+    // information for force calculation
+    Point<dim> cor; // Center of rotation used for torque calculation
+  };
+
+
+  template <int dim>
+  void
+  NitscheSolid<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
+  {
+    prm.enter_subsection("nitsche object " + Utilities::int_to_string(id, 1));
+    {
+      solid_mesh.declare_parameters(prm);
+      prm.enter_subsection("solid velocity");
+      solid_velocity.declare_parameters(prm, dim);
+      if (dim == 2)
+        prm.set("Function expression", "0; 0");
+      if (dim == 3)
+        prm.set("Function expression", "0; 0; 0");
+      prm.leave_subsection();
+      prm.declare_entry("enable particles motion",
+                        "false",
+                        Patterns::Bool(),
+                        "Condition on the motion of particles");
+
+      prm.enter_subsection("cor");
+      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
+      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
+      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  NitscheSolid<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
+  {
+    prm.enter_subsection("nitsche object " + Utilities::int_to_string(id, 1));
+    {
+      solid_mesh.parse_parameters(prm);
+      prm.enter_subsection("solid velocity");
+      solid_velocity.parse_parameters(prm);
+      prm.leave_subsection();
+      enable_particles_motion = prm.get_bool("enable particles motion");
+      prm.enter_subsection("cor");
+      cor[0] = prm.get_double("x");
+      cor[1] = prm.get_double("y");
+      if (dim == 3)
+        cor[2] = prm.get_double("z");
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
   class Nitsche
   {
   public:
@@ -64,6 +138,11 @@ namespace Parameters
     std::string force_output_name;
     std::string torque_output_name;
 
+    std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
+
+    unsigned int              number_solids;
+    static const unsigned int max_nitsche_solids = 2;
+
 
 
     // Particle motion integration parameters
@@ -74,6 +153,9 @@ namespace Parameters
   void
   Nitsche<dim>::declare_parameters(ParameterHandler &prm)
   {
+    nitsche_solids.resize(max_nitsche_solids);
+    number_solids = 0;
+
     prm.enter_subsection("nitsche");
     {
       solid_mesh.declare_parameters(prm);
@@ -127,6 +209,18 @@ namespace Parameters
       prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
       prm.leave_subsection();
+
+
+      prm.declare_entry("number of solids",
+                        "1",
+                        Patterns::Integer(),
+                        "Number of immersed object");
+
+      for (unsigned int i_solid = 0; i_solid < max_nitsche_solids; ++i_solid)
+        {
+          nitsche_solids[i_solid] = std::make_shared<NitscheSolid<dim>>();
+          nitsche_solids[i_solid]->declare_parameters(prm, i_solid);
+        }
     }
     prm.leave_subsection();
   }
@@ -160,6 +254,14 @@ namespace Parameters
       if (dim == 3)
         cor[2] = prm.get_double("z");
       prm.leave_subsection();
+
+      number_solids = prm.get_integer("number of solids");
+
+
+      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+        {
+          nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
+        }
     }
     prm.leave_subsection();
   }
