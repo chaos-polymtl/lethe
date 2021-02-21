@@ -111,9 +111,9 @@ private:
   void
   output_solid_triangulation();
 
-  SolidBase<dim, spacedim> solid;
-  PVDHandler               pvdhandler_solid_triangulation;
-  PVDHandler               pvdhandler_solid_particles;
+  std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solid;
+  PVDHandler pvdhandler_solid_triangulation;
+  PVDHandler pvdhandler_solid_particles;
 
   TableHandler solid_forces_table;
   TableHandler solid_torques_table;
