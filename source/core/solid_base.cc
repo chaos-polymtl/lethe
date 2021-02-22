@@ -41,7 +41,7 @@
 
 template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
-  std::shared_ptr<Parameters::Nitsche<spacedim>> &                  param,
+  std::shared_ptr<Parameters::NitscheSolid<spacedim>> &             param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
   const unsigned int degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)

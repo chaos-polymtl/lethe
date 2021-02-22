@@ -81,6 +81,15 @@ subsection nitsche
 	end
 	
 	set beta = 100
+
+        subsection nitsche solid 0
+	    subsection mesh
+		set type = dealii
+		set grid type = hyper_rectangle
+		set grid arguments = 0, -0.5 : 1, 0. : true
+		set initial refinement = 6
+            end
+        end
 end
 # --------------------------------------------------
 # Mesh Adaptation Control

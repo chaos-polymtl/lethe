@@ -53,6 +53,9 @@ namespace Parameters
     Functions::ParsedFunction<dim> solid_velocity;
     bool                           enable_particles_motion;
 
+    // Particle motion integration parameters
+    unsigned int particles_sub_iterations;
+
     // information for force calculation
     Point<dim> cor; // Center of rotation used for torque calculation
   };
@@ -62,7 +65,7 @@ namespace Parameters
   void
   NitscheSolid<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
   {
-    prm.enter_subsection("nitsche object " + Utilities::int_to_string(id, 1));
+    prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.declare_parameters(prm);
       prm.enter_subsection("solid velocity");
@@ -77,6 +80,13 @@ namespace Parameters
                         Patterns::Bool(),
                         "Condition on the motion of particles");
 
+      prm.declare_entry(
+        "particles sub iterations",
+        "1",
+        Patterns::Integer(),
+        "Number of sub iterations for the motion of the particles. This parameter"
+        "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
+
       prm.enter_subsection("cor");
       prm.declare_entry("x", "0", Patterns::Double(), "X COR");
       prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
@@ -90,13 +100,15 @@ namespace Parameters
   void
   NitscheSolid<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
   {
-    prm.enter_subsection("nitsche object " + Utilities::int_to_string(id, 1));
+    prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.parse_parameters(prm);
       prm.enter_subsection("solid velocity");
       solid_velocity.parse_parameters(prm);
       prm.leave_subsection();
-      enable_particles_motion = prm.get_bool("enable particles motion");
+      enable_particles_motion  = prm.get_bool("enable particles motion");
+      particles_sub_iterations = prm.get_integer("particles sub iterations");
+
       prm.enter_subsection("cor");
       cor[0] = prm.get_double("x");
       cor[1] = prm.get_double("y");

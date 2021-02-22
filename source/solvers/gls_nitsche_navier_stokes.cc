@@ -40,7 +40,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
   : GLSNavierStokesSolver<spacedim>(p_nsparam)
 {
   solid.push_back(std::make_shared<SolidBase<dim, spacedim>>(
-    this->simulation_parameters.nitsche,
+    this->simulation_parameters.nitsche->nitsche_solids[0],
     this->triangulation,
     p_nsparam.fem_parameters.velocity_order));
 }
