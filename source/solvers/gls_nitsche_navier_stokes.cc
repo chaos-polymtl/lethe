@@ -616,18 +616,20 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             }
         }
 
-      if (this->simulation_parameters.nitsche->enable_particles_motion)
-        {
-          TimerOutput::Scope t(this->computing_timer,
-                               "Nitsche particles motion");
-          for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-            {
-              solid[i_solid]->integrate_velocity(
-                this->simulation_control->get_time_step());
-              solid[i_solid]->move_solid_triangulation(
-                this->simulation_control->get_time_step());
-            }
-        }
+      {
+        TimerOutput::Scope t(this->computing_timer, "Nitsche particles motion");
+        for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+          {
+            if (this->simulation_parameters.nitsche->nitsche_solids[i_solid]
+                  ->enable_particles_motion)
+              {
+                solid[i_solid]->integrate_velocity(
+                  this->simulation_control->get_time_step());
+                solid[i_solid]->move_solid_triangulation(
+                  this->simulation_control->get_time_step());
+              }
+          }
+      }
       if (this->simulation_control->is_at_start())
         this->first_iteration();
       else
