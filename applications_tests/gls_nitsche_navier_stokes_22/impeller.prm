@@ -81,7 +81,6 @@ subsection nitsche
 		set Function expression = -pi*y ; pi*x
 	    end
         end
-
 end
 
 # --------------------------------------------------

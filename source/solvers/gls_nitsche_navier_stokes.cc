@@ -600,34 +600,33 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
   while (this->simulation_control->integrate())
     {
       this->simulation_control->print_progression(this->pcout);
+
+      if (this->simulation_control->is_at_start())
+        {
+          TimerOutput::Scope t(this->computing_timer,
+                               "Nitsche solid mesh and particles");
+          for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+            {
+              solid[i_solid]->initial_setup();
+              solid[i_solid]->setup_particles();
+              std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+                solid[i_solid]->get_solid_particle_handler();
+              output_solid_particles(solid_ph);
+              output_solid_triangulation();
+            }
+        }
+
       if (this->simulation_parameters.nitsche->enable_particles_motion)
         {
-          if (this->simulation_control->is_at_start())
+          TimerOutput::Scope t(this->computing_timer,
+                               "Nitsche particles motion");
+          for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
             {
-              TimerOutput::Scope t(this->computing_timer,
-                                   "Nitsche solid mesh and particles");
-
-              for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-                {
-                  solid[i_solid]->initial_setup();
-                  solid[i_solid]->setup_particles();
-                  std::shared_ptr<Particles::ParticleHandler<spacedim>>
-                    solid_ph = solid[i_solid]->get_solid_particle_handler();
-                  output_solid_particles(solid_ph);
-                  output_solid_triangulation();
-                }
+              solid[i_solid]->integrate_velocity(
+                this->simulation_control->get_time_step());
+              solid[i_solid]->move_solid_triangulation(
+                this->simulation_control->get_time_step());
             }
-          {
-            TimerOutput::Scope t(this->computing_timer,
-                                 "Nitsche particles motion");
-            for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-              {
-                solid[i_solid]->integrate_velocity(
-                  this->simulation_control->get_time_step());
-                solid[i_solid]->move_solid_triangulation(
-                  this->simulation_control->get_time_step());
-              }
-          }
         }
       if (this->simulation_control->is_at_start())
         this->first_iteration();
