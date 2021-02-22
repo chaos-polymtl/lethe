@@ -68,18 +68,19 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	subsection mesh
+	set beta = 100
+        subsection nitsche solid 0
+	    subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle
 		set grid arguments = -0.5, -0.2 : 0.5, 0.2 : true
 		set initial refinement = 4
-	end
-	
-	set beta = 100
-	subsection solid velocity
+	    end
+	    set enable particles motion = true
+    	    subsection solid velocity
 		set Function expression = -pi*y ; pi*x
-	end
-	set enable particles motion = true
+	    end
+        end
 
 end
 
