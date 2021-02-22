@@ -60,14 +60,16 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	subsection mesh
+	set beta = 100
+        subsection nitsche solid 0
+	    subsection mesh
 		set type = gmsh
 		set file name = ../taylor_couette_small_cylinder.msh
-	end
-	set beta = 100
-	subsection solid velocity
+	    end
+	    subsection solid velocity
 		set Function expression = -y ; x ; 0
-	end
+	    end
+        end
 end
 
 # --------------------------------------------------

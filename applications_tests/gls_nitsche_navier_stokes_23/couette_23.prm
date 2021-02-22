@@ -73,20 +73,20 @@ end
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	subsection mesh
-		#set type = gmsh
-		#set file name = ../noslip_23.msh
+	set beta 			= 10
+	set verbosity 			= verbose
+	set calculate forces on solid 	= true
+	set solid force name 		= solid_force
+
+        subsection nitsche solid 0
+	    subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle
 		set grid arguments = 0., 0. : 1, 1 : true
 		set initial refinement = 5
 
-	end
-	
-	set beta 			= 10
-	set verbosity 			= verbose
-	set calculate forces on solid 	= true
-	set solid force name 		= solid_force
+            end
+        end
 end
 
 # --------------------------------------------------
