@@ -71,7 +71,8 @@ InitialConditionsNavierStokes<dim>::runTest()
                        this->present_solution,
                        this->exact_solution,
                        this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+                       this->mpi_communicator,
+                       this->simulation_parameters.mesh.simplex);
   double error_L2projection = errors.first;
   if (error_L2projection < 1e-9)
     {
@@ -88,7 +89,8 @@ InitialConditionsNavierStokes<dim>::runTest()
                        this->present_solution,
                        this->exact_solution,
                        this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+                       this->mpi_communicator,
+                       this->simulation_parameters.mesh.simplex);
   double error_nodal = errors_nodal.first;
   if (error_nodal < 1e-9)
     {

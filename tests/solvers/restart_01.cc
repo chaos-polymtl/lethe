@@ -104,7 +104,8 @@ RestartNavierStokes<dim>::run()
                        this->present_solution,
                        this->exact_solution,
                        this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+                       this->mpi_communicator,
+                       this->simulation_parameters.mesh.simplex);
   double error1 = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step_fd();
@@ -115,7 +116,8 @@ RestartNavierStokes<dim>::run()
                        this->present_solution,
                        this->exact_solution,
                        this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+                       this->mpi_communicator,
+                       this->simulation_parameters.mesh.simplex);
 
   double error2 = errors_p2.first;
 
@@ -133,7 +135,8 @@ RestartNavierStokes<dim>::run()
                        this->present_solution,
                        this->exact_solution,
                        this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+                       this->mpi_communicator,
+                       this->simulation_parameters.mesh.simplex);
 
   double error3 = errors_p3.first;
   deallog << "Error after restarting the simulation: " << error3 << std::endl;

@@ -98,7 +98,7 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
                                        this->dof_handler,
                                        support_points);
 
-  const unsigned int                   dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int                   dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
@@ -165,8 +165,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   if (dim == 2)
     {
       // Define general stuff useful for the evaluation of force with stencil
-      QGauss<dim>   q_formula(this->fe.degree + 1);
-      FEValues<dim> fe_values(this->fe, q_formula, update_quadrature_points);
+      QGauss<dim>   q_formula(this->fe->degree + 1);
+      FEValues<dim> fe_values(*this->fe, q_formula, update_quadrature_points);
 
       double mu = this->simulation_parameters.physical_properties.viscosity;
 
@@ -178,11 +178,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
       std::vector<types::global_dof_index> local_dof_indices(
-        this->fe.dofs_per_cell);
+        this->fe->dofs_per_cell);
       std::vector<types::global_dof_index> local_dof_indices_2(
-        this->fe.dofs_per_cell);
+        this->fe->dofs_per_cell);
       std::vector<types::global_dof_index> local_dof_indices_3(
-        this->fe.dofs_per_cell);
+        this->fe->dofs_per_cell);
       const unsigned int nb_evaluation =
         this->simulation_parameters.particlesParameters.nb_force_eval;
 
@@ -404,24 +404,24 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                     {
                       auto &present_solution = this->present_solution;
                       const unsigned int component_i =
-                        this->fe.system_to_component_index(j).first;
+                        this->fe->system_to_component_index(j).first;
                       if (component_i < dim)
                         {
                           u_2[component_i] +=
-                            this->fe.shape_value(j, second_point_v) *
+                            this->fe->shape_value(j, second_point_v) *
                             present_solution(local_dof_indices[j]);
 
                           u_3[component_i] +=
-                            this->fe.shape_value(j, third_point_v) *
+                            this->fe->shape_value(j, third_point_v) *
                             present_solution(local_dof_indices_2[j]);
                         }
                       if (component_i == dim)
                         {
-                          P1 += this->fe.shape_value(j, second_point_v) *
+                          P1 += this->fe->shape_value(j, second_point_v) *
                                 present_solution(local_dof_indices[j]);
-                          P2 += this->fe.shape_value(j, third_point_v) *
+                          P2 += this->fe->shape_value(j, third_point_v) *
                                 present_solution(local_dof_indices_2[j]);
-                          P3 += this->fe.shape_value(j, fourth_point_v) *
+                          P3 += this->fe->shape_value(j, fourth_point_v) *
                                 present_solution(local_dof_indices_3[j]);
                         }
                     }
@@ -608,8 +608,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // vector on the surface for the evaluation
   if (dim == 3)
     {
-      QGauss<dim>   q_formula(this->fe.degree + 1);
-      FEValues<dim> fe_values(this->fe, q_formula, update_quadrature_points);
+      QGauss<dim>   q_formula(this->fe->degree + 1);
+      FEValues<dim> fe_values(*this->fe, q_formula, update_quadrature_points);
 
       double mu = this->simulation_parameters.physical_properties.viscosity;
       MappingQ1<dim>                                immersed_map;
@@ -620,11 +620,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
       std::vector<types::global_dof_index> local_dof_indices(
-        this->fe.dofs_per_cell);
+        this->fe->dofs_per_cell);
       std::vector<types::global_dof_index> local_dof_indices_2(
-        this->fe.dofs_per_cell);
+        this->fe->dofs_per_cell);
       std::vector<types::global_dof_index> local_dof_indices_3(
-        this->fe.dofs_per_cell);
+        this->fe->dofs_per_cell);
       unsigned int nb_evaluation =
         this->simulation_parameters.particlesParameters.nb_force_eval;
 
@@ -846,25 +846,25 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                            ++j)
                         {
                           const unsigned int component_i =
-                            this->fe.system_to_component_index(j).first;
+                            this->fe->system_to_component_index(j).first;
                           auto &present_solution = this->present_solution;
                           if (component_i < dim)
                             {
                               u_2[component_i] +=
-                                this->fe.shape_value(j, second_point_v) *
+                                this->fe->shape_value(j, second_point_v) *
                                 present_solution(local_dof_indices[j]);
 
                               u_3[component_i] +=
-                                this->fe.shape_value(j, third_point_v) *
+                                this->fe->shape_value(j, third_point_v) *
                                 present_solution(local_dof_indices_2[j]);
                             }
                           if (component_i == dim)
                             {
-                              P1 += this->fe.shape_value(j, second_point_v) *
+                              P1 += this->fe->shape_value(j, second_point_v) *
                                     present_solution(local_dof_indices[j]);
-                              P2 += this->fe.shape_value(j, third_point_v) *
+                              P2 += this->fe->shape_value(j, third_point_v) *
                                     present_solution(local_dof_indices_2[j]);
-                              P3 += this->fe.shape_value(j, fourth_point_v) *
+                              P3 += this->fe->shape_value(j, fourth_point_v) *
                                     present_solution(local_dof_indices_3[j]);
                             }
                         }
@@ -1206,11 +1206,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   TimerOutput::Scope t(this->computing_timer, "error");
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points + 1);
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim> fe_values(mapping,
-                          this->fe,
+  FEValues<dim> fe_values(*this->velocity_mapping,
+                          *this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
@@ -1219,7 +1216,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   const FEValuesExtractors::Scalar pressure(dim);
 
   const unsigned int dofs_per_cell =
-    this->fe.dofs_per_cell; // This gives you dofs per cell
+    this->fe->dofs_per_cell; // This gives you dofs per cell
   std::vector<types::global_dof_index> local_dof_indices(
     dofs_per_cell); //  Local connectivity
 
@@ -1368,10 +1365,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   // Initalize fe value object in order to do calculation with it later
   QGauss<dim>        q_formula(this->number_quadrature_points);
-  FEValues<dim>      fe_values(this->fe,
+  FEValues<dim>      fe_values(*this->fe,
                           q_formula,
                           update_quadrature_points | update_JxW_values);
-  const unsigned int dofs_per_cell   = this->fe.dofs_per_cell;
+  const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
   unsigned int       vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
 
 
@@ -1513,7 +1510,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
                     {
                       const unsigned int component_i =
-                        this->fe.system_to_component_index(i).first;
+                        this->fe->system_to_component_index(i).first;
 
                       if (component_i < dim)
                         {
@@ -1835,7 +1832,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 {
                                   // First the dof itself
                                   const unsigned int component_j =
-                                    this->fe.system_to_component_index(j).first;
+                                    this->fe->system_to_component_index(j).first;
                                   if (component_j == component_i)
                                     {
                                       if (global_index_overwrite ==
@@ -1859,13 +1856,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_2 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   dof_2 * sum_line);
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -1879,25 +1876,25 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_3 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   dof_3 * sum_line +
                                                   tp_3 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, third_point_v) *
                                                     sum_line);
 
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_2 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, third_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -1910,36 +1907,36 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_4 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   dof_4 * sum_line +
                                                   tp_4 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, third_point_v) *
                                                     sum_line +
                                                   fp_4 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, fourth_point_v) *
                                                     sum_line);
 
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_2 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, third_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_3 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, fourth_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -1951,11 +1948,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                               this->system_matrix.set(
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, first_point_v) *
                                                   sum_line);
                                               local_interp_sol +=
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, first_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -1970,47 +1967,47 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 local_dof_indices_2[j],
                                                 dof_5 * sum_line +
                                                   sp_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   tp_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, third_point_v) *
                                                     sum_line +
                                                   fp1_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, fourth_point_v) *
                                                     sum_line +
                                                   fp2_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, fifth_point_v) *
                                                     sum_line);
 
 
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_2 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, third_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_3 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, fourth_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_4 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, fifth_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -2031,12 +2028,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_2 *
-                                                  this->fe.shape_value(
+                                                  this->fe->shape_value(
                                                     j, second_point_v) *
                                                   sum_line);
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -2050,24 +2047,24 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_3 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   tp_3 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, third_point_v) *
                                                     sum_line);
 
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_2 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, third_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -2080,35 +2077,35 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_4 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   tp_4 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, third_point_v) *
                                                     sum_line +
                                                   fp_4 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, fourth_point_v) *
                                                     sum_line);
 
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_2 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, third_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_3 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, fourth_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -2120,11 +2117,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                               this->system_matrix.set(
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, first_point_v) *
                                                   sum_line);
                                               local_interp_sol +=
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, first_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -2137,46 +2134,46 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                 global_index_overwrite,
                                                 local_dof_indices_2[j],
                                                 sp_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, second_point_v) *
                                                     sum_line +
                                                   tp_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, third_point_v) *
                                                     sum_line +
                                                   fp1_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, fourth_point_v) *
                                                     sum_line +
                                                   fp2_5 *
-                                                    this->fe.shape_value(
+                                                    this->fe->shape_value(
                                                       j, fifth_point_v) *
                                                     sum_line);
 
                                               local_interp_sol +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, second_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_2 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, third_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_3 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, fourth_point_v) *
                                                 sum_line *
                                                 evaluation_point(
                                                   local_dof_indices_2[j]);
                                               local_interp_sol_4 +=
                                                 1 *
-                                                this->fe.shape_value(
+                                                this->fe->shape_value(
                                                   j, fifth_point_v) *
                                                 sum_line *
                                                 evaluation_point(
@@ -2562,16 +2559,13 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim>                    fe_values(mapping,
-                          this->fe,
+  FEValues<dim>                    fe_values(*this->velocity_mapping,
+                          *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  const unsigned int               dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int               n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -2812,7 +2806,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                   for (int i = 0; i < dim; ++i)
                     {
                       const unsigned int component_i =
-                        this->fe.system_to_component_index(i).first;
+                        this->fe->system_to_component_index(i).first;
                       force[i] = rhs_force[q](component_i);
                     }
 

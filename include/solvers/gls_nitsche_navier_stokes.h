@@ -72,6 +72,13 @@ private:
   calculate_torque_on_solid(const unsigned int i_solid);
 
   /**
+   * @brief Calculates the torque due to the fluid motion on the solid
+   * @return Tensor of torque on the solid. This is always a 3D tensor even in 2D
+   */
+  Tensor<1, 3>
+  calculate_torque_on_solid();
+
+  /**
    * @brief Post-process for forces on solid after an iteration
    */
   void

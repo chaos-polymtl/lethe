@@ -229,7 +229,7 @@ GLSVANSSolver<dim>::assembleGLS()
     this->velocity_fem_degree,
     this->simulation_parameters.fem_parameters.qmapping_all);
   FEValues<dim> fe_values(mapping,
-                          this->fe,
+                          *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
@@ -242,7 +242,7 @@ GLSVANSSolver<dim>::assembleGLS()
                                           update_quadrature_points |
                                           update_JxW_values | update_gradients);
 
-  const unsigned int               dofs_per_cell = this->fe.dofs_per_cell;
+  const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int               n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -447,11 +447,11 @@ GLSVANSSolver<dim>::assembleGLS()
               for (int i = 0; i < dim; ++i)
                 {
                   const unsigned int component_i =
-                    this->fe.system_to_component_index(i).first;
+                    this->fe->system_to_component_index(i).first;
                   force[i] = rhs_force[q](component_i);
                 }
               const unsigned int component_mass =
-                this->fe.system_to_component_index(dim).first;
+                this->fe->system_to_component_index(dim).first;
               double mass_source = rhs_force[q](component_mass);
 
               // Calculate the divergence of the velocity

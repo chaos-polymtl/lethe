@@ -74,6 +74,7 @@
 #include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
 // Numerics
@@ -83,9 +84,14 @@
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
+//Simplex
+#include <deal.II/simplex/fe_lib.h>
+#include <deal.II/simplex/quadrature_lib.h>
+
 // Distributed
 #include <deal.II/distributed/grid_refinement.h>
 #include <deal.II/distributed/solution_transfer.h>
+#include <deal.II/distributed/fully_distributed_tria.h>
 
 
 // Lethe Includes
@@ -436,7 +442,7 @@ protected:
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   DoFHandler<dim>                                              dof_handler;
-  FESystem<dim>                                                fe;
+  std::shared_ptr<FESystem<dim>>                               fe;
 
   TimerOutput computing_timer;
 
@@ -474,7 +480,14 @@ protected:
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
 
-  // Multiphysics interface
+  // Mappings and Quadratures
+  std::shared_ptr<Mapping<dim>>   velocity_mapping;
+  std::shared_ptr<Mapping<dim>>   pressure_mapping;
+  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+
+
+    // Multiphysics interface
   std::shared_ptr<MultiphysicsInterface<dim>> multiphysics;
 
   // Simulation control for time stepping and I/Os

@@ -35,7 +35,6 @@
 
 #include "core/time_integration_utilities.h"
 
-
 /*
  * Constructor for the Navier-Stokes base class
  */
@@ -46,17 +45,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
-  , triangulation(dynamic_cast<parallel::DistributedTriangulationBase<dim> *>(
-      new parallel::distributed::Triangulation<dim>(
-        this->mpi_communicator,
-        typename Triangulation<dim>::MeshSmoothing(
-          Triangulation<dim>::smoothing_on_refinement |
-          Triangulation<dim>::smoothing_on_coarsening))))
-  , dof_handler(*this->triangulation)
-  , fe(FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
-       dim,
-       FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
-       1)
+  , dof_handler()
   , computing_timer(this->mpi_communicator,
                     this->pcout,
                     TimerOutput::summary,
@@ -67,6 +56,44 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
 {
+#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
+      if (simulation_parameters.mesh.simplex){
+        // for simplex meshes
+
+        const Simplex::FE_P<dim> velocity_fe(p_nsparam.fem_parameters.velocity_order);
+        const Simplex::FE_P<dim> pressure_fe(p_nsparam.fem_parameters.pressure_order);
+        fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
+        velocity_mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
+        pressure_mapping = std::make_shared<MappingFE<dim>>(pressure_fe);
+        cell_quadrature = std::make_shared<Simplex::QGauss<dim>>(number_quadrature_points);
+        face_quadrature = std::make_shared<Simplex::QGauss<dim-1>>(number_quadrature_points);
+        triangulation = std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
+                  this->mpi_communicator);
+        dof_handler.clear();
+        dof_handler.reinit(*this->triangulation);
+      } else
+#endif
+    {
+        //Usual case, for quad/hex meshes
+        fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
+                                             dim,
+                                             FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
+                                             1);
+          velocity_mapping = std::make_shared<MappingQ<dim>>(velocity_fem_degree,
+                simulation_parameters.fem_parameters.qmapping_all);
+          pressure_mapping = std::make_shared<MappingQ<dim>>(pressure_fem_degree,
+                simulation_parameters.fem_parameters.qmapping_all);
+          cell_quadrature = std::make_shared<QGauss<dim>>(this->number_quadrature_points);
+          face_quadrature = std::make_shared<QGauss<dim-1>>(this->number_quadrature_points + 1);
+          triangulation = std::make_shared<parallel::distributed::Triangulation<dim>>(
+                  this->mpi_communicator,
+                  typename Triangulation<dim>::MeshSmoothing(
+                          Triangulation<dim>::smoothing_on_refinement |
+                          Triangulation<dim>::smoothing_on_coarsening));
+          dof_handler.clear();
+          dof_handler.reinit(*this->triangulation);
+  }
+
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
 
@@ -135,7 +162,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
                         evaluation_point,
                         simulation_parameters.flow_control.boundary_flow_id,
                         simulation_parameters.fem_parameters,
+<<<<<<< HEAD
                         mpi_communicator);
+=======
+                        mpi_communicator,
+                        simulation_parameters.mesh.simplex);
+>>>>>>> Enable Simplex usage in NS GLS from msh grid
 
   // Showing results (area and flow rate)
   if (simulation_parameters.flow_control.verbosity ==
@@ -185,7 +217,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
                      evaluation_point,
                      simulation_parameters.physical_properties,
                      simulation_parameters.boundary_conditions,
-                     mpi_communicator);
+                     mpi_communicator,
+                     simulation_parameters.mesh.simplex);
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -264,7 +297,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
                       simulation_parameters.physical_properties,
                       simulation_parameters.fem_parameters,
                       simulation_parameters.boundary_conditions,
-                      mpi_communicator);
+                      mpi_communicator,
+                      simulation_parameters.mesh.simplex);
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -390,7 +424,8 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
       const double CFL = calculate_CFL(this->dof_handler,
                                        this->present_solution,
                                        simulation_control->get_time_step(),
-                                       mpi_communicator);
+                                       mpi_communicator,
+                                       simulation_parameters.mesh.simplex);
       this->simulation_control->set_CFL(CFL);
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&
@@ -575,9 +610,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   TimerOutput::Scope t(this->computing_timer, "refine");
 
   Vector<float>       estimated_error_per_cell(tria.n_active_cells());
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
@@ -585,25 +617,25 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       Parameters::MeshAdaptation::Variable::pressure)
     {
       KellyErrorEstimator<dim>::estimate(
-        mapping,
+        *this->velocity_mapping,
         this->dof_handler,
-        QGauss<dim - 1>(this->number_quadrature_points + 1),
+        *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         present_solution,
         estimated_error_per_cell,
-        this->fe.component_mask(pressure));
+        this->fe->component_mask(pressure));
     }
   else if (this->simulation_parameters.mesh_adaptation.variable ==
            Parameters::MeshAdaptation::Variable::velocity)
     {
       KellyErrorEstimator<dim>::estimate(
-        mapping,
+        *this->velocity_mapping,
         this->dof_handler,
-        QGauss<dim - 1>(this->number_quadrature_points + 1),
+        *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
         present_solution,
         estimated_error_per_cell,
-        this->fe.component_mask(velocity));
+        this->fe->component_mask(velocity));
     }
 
   if (this->simulation_parameters.mesh_adaptation.fractionType ==
@@ -758,7 +790,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         calculate_enstrophy(this->dof_handler,
                             present_solution,
                             simulation_parameters.fem_parameters,
-                            mpi_communicator);
+                            mpi_communicator,
+                            simulation_parameters.mesh.simplex);
 
       this->enstrophy_table.add_value("time",
                                       simulation_control->get_current_time());
@@ -812,7 +845,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       double             kE = calculate_kinetic_energy(this->dof_handler,
                                            present_solution,
                                            simulation_parameters.fem_parameters,
-                                           mpi_communicator);
+                                           mpi_communicator,
+                                           simulation_parameters.mesh.simplex);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
@@ -887,7 +921,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                present_solution,
                                exact_solution,
                                simulation_parameters.fem_parameters,
-                               mpi_communicator);
+                               mpi_communicator,
+                               simulation_parameters.mesh.simplex);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
           if (simulation_parameters.simulation_control.method ==
@@ -931,19 +966,16 @@ NavierStokesBase<dim, VectorType, DofsType>::set_nodal_values()
 {
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
-  const MappingQ<dim>              mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
-  VectorTools::interpolate(mapping,
+  VectorTools::interpolate(*this->velocity_mapping,
                            this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
                            this->newton_update,
-                           this->fe.component_mask(velocities));
-  VectorTools::interpolate(mapping,
+                           this->fe->component_mask(velocities));
+  VectorTools::interpolate(*this->pressure_mapping,
                            this->dof_handler,
                            this->simulation_parameters.initial_condition->uvwp,
                            this->newton_update,
-                           this->fe.component_mask(pressure));
+                           this->fe->component_mask(pressure));
   this->nonzero_constraints.distribute(this->newton_update);
   this->present_solution = this->newton_update;
 }
@@ -1027,7 +1059,8 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                             present_solution,
                             simulation_parameters.flow_control.boundary_flow_id,
                             simulation_parameters.fem_parameters,
-                            mpi_communicator);
+                            mpi_communicator,
+                            simulation_parameters.mesh.simplex);
     }
 
 
@@ -1046,9 +1079,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const VectorType &solution)
 {
   TimerOutput::Scope  t(this->computing_timer, "output");
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    simulation_parameters.fem_parameters.qmapping_all);
 
   const std::string  folder        = simulation_control->get_output_path();
   const std::string  solution_name = simulation_control->get_output_name();
@@ -1176,7 +1206,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
 
   // Build the patches and write the output
 
-  data_out.build_patches(mapping,
+  data_out.build_patches(*this->velocity_mapping,
                          subdivision,
                          DataOut<dim>::curved_inner_cells);
 
@@ -1195,7 +1225,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
       BoundaryPostprocessor<dim> boundary_id;
       data_out_faces.attach_dof_handler(this->dof_handler);
       data_out_faces.add_data_vector(solution, boundary_id);
-      data_out_faces.build_patches();
+      data_out_faces.build_patches(*this->velocity_mapping);
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);

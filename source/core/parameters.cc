@@ -528,7 +528,14 @@ namespace Parameters
         Patterns::Bool(),
         "Enable initial refinement until target size is reached.");
 
-      prm.declare_entry("target size",
+      prm.declare_entry(
+        "enable simplex",
+        "false",
+        Patterns::Bool(),
+        "Enable the use of simplex meshes.");
+
+
+        prm.declare_entry("target size",
                         "1",
                         Patterns::Double(),
                         "Target size of the initial refinement");
@@ -566,6 +573,7 @@ namespace Parameters
       grid_arguments = prm.get("grid arguments");
 
       refine_until_target_size = prm.get_bool("enable target size");
+      simplex                  = prm.get_bool("enable simplex");
       target_size              = prm.get_double("target size");
     }
     prm.leave_subsection();

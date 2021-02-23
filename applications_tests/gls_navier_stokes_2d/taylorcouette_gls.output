@@ -1,7 +1,7 @@
 Running on 1 MPI rank(s)...
    Number of active cells:       64
    Number of degrees of freedom: 864
-   Volume of triangulation:      2.87
+   Volume of triangulation:      2.95
 
 *****************************************************************
 Steady iteration :        1/3
@@ -19,7 +19,7 @@ Steady iteration :        2/3
 *****************************************************************
    Number of active cells:       256
    Number of degrees of freedom: 3264
-   Volume of triangulation:      2.93
+   Volume of triangulation:      2.95
 
 +------------------------------------------+
 |  Torque summary                          |
@@ -33,7 +33,7 @@ Steady iteration :        3/3
 *****************************************************************
    Number of active cells:       1024
    Number of degrees of freedom: 12672
-   Volume of triangulation:      2.94
+   Volume of triangulation:      2.95
 
 +------------------------------------------+
 |  Torque summary                          |
@@ -43,5 +43,5 @@ Boundary ID  T_x   T_y   T_z
           1 0.000 0.000  0.837 
 cells error_velocity  error_pressure  
    64 7.7383e-04    - 1.4915e-03    - 
-  256 1.1452e-04 2.76 3.9630e-04 1.91 
- 1024 1.5173e-05 2.92 9.8270e-05 2.01 
+  256 1.1452e-04 2.76 3.9627e-04 1.91 
+ 1024 1.5173e-05 2.92 9.8263e-05 2.01 

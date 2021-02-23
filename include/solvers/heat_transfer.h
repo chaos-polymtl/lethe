@@ -31,10 +31,22 @@
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
+<<<<<<< HEAD
+=======
+#include <deal.II/fe/mapping_fe.h>
+
+#include <deal.II/fe/mapping_q.h>
+>>>>>>> Enable Simplex usage in NS GLS from msh grid
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+<<<<<<< HEAD
+=======
+#include <deal.II/simplex/fe_lib.h>
+#include <deal.II/simplex/quadrature_lib.h>
+
+>>>>>>> Enable Simplex usage in NS GLS from msh grid
 #include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
@@ -56,12 +68,27 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , fe(simulation_parameters.fem_parameters.temperature_order)
     , solution_transfer(dof_handler)
     , solution_transfer_m1(dof_handler)
     , solution_transfer_m2(dof_handler)
     , solution_transfer_m3(dof_handler)
-  {}
+  {
+      if (simulation_parameters.mesh.simplex){
+          // for simplex meshes
+          fe = std::make_shared<Simplex::FE_P<dim>>(simulation_parameters.fem_parameters.temperature_order);
+          temperature_mapping = std::make_shared<MappingFE<dim>>(*fe);
+          cell_quadrature = std::make_shared<Simplex::QGauss<dim>>(fe->degree+1);
+          face_quadrature = std::make_shared<Simplex::QGauss<dim-1>>(fe->degree+1);
+          error_quadrature= std::make_shared<Simplex::QGauss<dim>>(fe->degree+2);
+      } else {
+          //Usual case, for quad/hex meshes
+          fe = std::make_shared<FE_Q<dim>>(simulation_parameters.fem_parameters.temperature_order);
+          temperature_mapping = std::make_shared<MappingQ<dim>>(fe->degree,simulation_parameters.fem_parameters.qmapping_all);
+          cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree+1);
+          face_quadrature = std::make_shared<QGauss<dim-1>>(fe->degree+1);
+          error_quadrature= std::make_shared<QGauss<dim>>(fe->degree+2);
+      }
+  }
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
@@ -243,12 +270,18 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
-  FE_Q<dim>                          fe;
+
+  std::shared_ptr<FiniteElement<dim>> fe;
   ConvergenceTable                   error_table;
 
+  //Mapping and Quadrature
+  std::shared_ptr<Mapping<dim>>   temperature_mapping;
+  std::shared_ptr<Quadrature<dim>>   cell_quadrature;
+  std::shared_ptr<Quadrature<dim-1>> face_quadrature;
+  std::shared_ptr<Quadrature<dim>>   error_quadrature;
 
 
-  // Solution storage:
+    // Solution storage:
   IndexSet locally_owned_dofs;
   IndexSet locally_relevant_dofs;
 
