@@ -39,15 +39,23 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::GLSNitscheNavierStokesSolver(
   SimulationParameters<spacedim> &p_nsparam)
   : GLSNavierStokesSolver<spacedim>(p_nsparam)
 {
-  for (unsigned int i_solid = 0;
-       i_solid < this->simulation_parameters.nitsche->number_solids;
-       ++i_solid)
+  const unsigned int n_solids =
+    this->simulation_parameters.nitsche->number_solids;
+
+  for (unsigned int i_solid = 0; i_solid < n_solids; ++i_solid)
     {
       solid.push_back(std::make_shared<SolidBase<dim, spacedim>>(
-        this->simulation_parameters.nitsche->nitsche_solids[0],
+        this->simulation_parameters.nitsche->nitsche_solids[i_solid],
         this->triangulation,
         p_nsparam.fem_parameters.velocity_order));
     }
+
+  pvdhandler_solid_particles.resize(n_solids);
+
+  pvdhandler_solid_triangulation.resize(n_solids);
+
+  solid_forces_table.resize(n_solids);
+  solid_torques_table.resize(n_solids);
 }
 
 template <int dim, int spacedim>
@@ -167,271 +175,253 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 
 template <>
 Tensor<1, 3>
-GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid()
+GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
+  const unsigned int i_solid)
 {
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  std::shared_ptr<Particles::ParticleHandler<3>> solid_ph =
+    solid[i_solid]->get_solid_particle_handler();
+
+  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+
+  Tensor<2, 3> velocity_gradient;
+  double       pressure;
+  Tensor<1, 3> normal_vector;
+  Tensor<2, 3> fluid_stress;
+  Tensor<2, 3> fluid_pressure;
+  Tensor<1, 3> force; // to be changed for a vector of tensors when
+                      // allowing multiple solids
+  const double viscosity =
+    this->simulation_parameters.physical_properties.viscosity;
+
+  // Loop over all local particles
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
     {
-      std::shared_ptr<Particles::ParticleHandler<3>> solid_ph =
-        solid[i_solid]->get_solid_particle_handler();
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
+      const auto &dh_cell =
+        typename DoFHandler<3>::cell_iterator(*cell, &this->dof_handler);
+      dh_cell->get_dof_indices(fluid_dof_indices);
 
-      const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+      const auto pic = solid_ph->particles_in_cell(cell);
+      Assert(pic.begin() == particle, ExcInternalError());
 
-      std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+      // Generate FEField functoin to evaluate values and gradients
+      // at the particle location
+      auto &evaluation_point = this->evaluation_point;
+      Functions::
+        FEFieldFunction<3, DoFHandler<3>, TrilinosWrappers::MPI::Vector>
+          fe_field(this->dof_handler, evaluation_point);
 
-      Tensor<2, 3> velocity_gradient;
-      double       pressure;
-      Tensor<1, 3> normal_vector;
-      Tensor<2, 3> fluid_stress;
-      Tensor<2, 3> fluid_pressure;
-      Tensor<1, 3> force; // to be changed for a vector of tensors when
-                          // allowing multiple solids
-      const double viscosity =
-        this->simulation_parameters.physical_properties.viscosity;
+      fe_field.set_active_cell(dh_cell);
 
-      // Loop over all local particles
-      auto particle = solid_ph->begin();
-      while (particle != solid_ph->end())
+      for (const auto &p : pic)
         {
-          const auto &cell =
-            particle->get_surrounding_cell(*this->triangulation);
-          const auto &dh_cell =
-            typename DoFHandler<3>::cell_iterator(*cell, &this->dof_handler);
-          dh_cell->get_dof_indices(fluid_dof_indices);
+          velocity_gradient = 0;
+          pressure          = 0;
+          const auto &q     = p.get_location();
+          const auto &JxW   = p.get_properties()[0];
+          normal_vector[0]  = -p.get_properties()[1];
+          normal_vector[1]  = -p.get_properties()[2];
+          normal_vector[2]  = -p.get_properties()[3];
 
-          const auto pic = solid_ph->particles_in_cell(cell);
-          Assert(pic.begin() == particle, ExcInternalError());
-
-          // Generate FEField functoin to evaluate values and gradients
-          // at the particle location
-          auto &evaluation_point = this->evaluation_point;
-          Functions::
-            FEFieldFunction<3, DoFHandler<3>, TrilinosWrappers::MPI::Vector>
-              fe_field(this->dof_handler, evaluation_point);
-
-          fe_field.set_active_cell(dh_cell);
-
-          for (const auto &p : pic)
+          for (int k = 0; k < 3; ++k)
             {
-              velocity_gradient = 0;
-              pressure          = 0;
-              const auto &q     = p.get_location();
-              const auto &JxW   = p.get_properties()[0];
-              normal_vector[0]  = -p.get_properties()[1];
-              normal_vector[1]  = -p.get_properties()[2];
-              normal_vector[2]  = -p.get_properties()[3];
-
-              for (int k = 0; k < 3; ++k)
-                {
-                  velocity_gradient[k] = fe_field.gradient(q, k);
-                }
-
-              pressure = fe_field.value(q, 3);
-
-              for (int d = 0; d < 2; ++d)
-                {
-                  fluid_pressure[d][d] = pressure;
-                }
-
-              fluid_stress =
-                viscosity * (velocity_gradient + transpose(velocity_gradient)) -
-                fluid_pressure;
-              force += fluid_stress * normal_vector * JxW;
+              velocity_gradient[k] = fe_field.gradient(q, k);
             }
 
-          particle = pic.end();
+          pressure = fe_field.value(q, 3);
+
+          for (int d = 0; d < 2; ++d)
+            {
+              fluid_pressure[d][d] = pressure;
+            }
+
+          fluid_stress =
+            viscosity * (velocity_gradient + transpose(velocity_gradient)) -
+            fluid_pressure;
+          force += fluid_stress * normal_vector * JxW;
         }
-      force = Utilities::MPI::sum(force, this->mpi_communicator);
-      return force;
+
+      particle = pic.end();
     }
+  force = Utilities::MPI::sum(force, this->mpi_communicator);
+  return force;
 }
 
 template <int dim, int spacedim>
 Tensor<1, spacedim>
-GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid()
+GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
+  const unsigned int i_solid)
 {
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  std::shared_ptr<Particles::ParticleHandler<dim, spacedim>> solid_ph =
+    solid[i_solid]->get_solid_particle_handler();
+
+  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+
+  // Penalization terms
+  const double        beta = this->simulation_parameters.nitsche->beta;
+  Tensor<1, spacedim> velocity;
+  Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
+  Tensor<1, spacedim> force;
+  for (unsigned int i = 0; i < spacedim; ++i)
+    force[i] = 0;
+
+  // Loop over all local particles
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
     {
-      std::shared_ptr<Particles::ParticleHandler<dim, spacedim>> solid_ph =
-        solid[i_solid]->get_solid_particle_handler();
+      const auto &cell   = particle->get_surrounding_cell(*this->triangulation);
+      double      h_cell = 0;
+      if (dim == 2)
+        h_cell =
+          std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
+      else if (dim == 3)
+        h_cell =
+          pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
+      const double penalty_parameter = 1. / (h_cell * h_cell);
+      const auto & dh_cell =
+        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+      dh_cell->get_dof_indices(fluid_dof_indices);
 
-      const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
-
-      std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
-
-      // Penalization terms
-      const double        beta = this->simulation_parameters.nitsche->beta;
-      Tensor<1, spacedim> velocity;
-      Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
-      Tensor<1, spacedim> force;
-      for (unsigned int i = 0; i < spacedim; ++i)
-        force[i] = 0;
-
-      // Loop over all local particles
-      auto particle = solid_ph->begin();
-      while (particle != solid_ph->end())
+      const auto pic = solid_ph->particles_in_cell(cell);
+      Assert(pic.begin() == particle, ExcInternalError());
+      for (const auto &p : pic)
         {
-          const auto &cell =
-            particle->get_surrounding_cell(*this->triangulation);
-          double h_cell = 0;
-          if (dim == 2)
-            h_cell = std::sqrt(4. * cell->measure() / M_PI) /
-                     this->velocity_fem_degree;
-          else if (dim == 3)
-            h_cell = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                     this->velocity_fem_degree;
-          const double penalty_parameter = 1. / (h_cell * h_cell);
-          const auto & dh_cell =
-            typename DoFHandler<spacedim>::cell_iterator(*cell,
-                                                         &this->dof_handler);
-          dh_cell->get_dof_indices(fluid_dof_indices);
+          velocity           = 0;
+          const auto &ref_q  = p.get_reference_location();
+          const auto &real_q = p.get_location();
+          const auto &JxW    = p.get_properties()[0];
 
-          const auto pic = solid_ph->particles_in_cell(cell);
-          Assert(pic.begin() == particle, ExcInternalError());
-          for (const auto &p : pic)
+          for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
-              velocity           = 0;
-              const auto &ref_q  = p.get_reference_location();
-              const auto &real_q = p.get_location();
-              const auto &JxW    = p.get_properties()[0];
-
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+              const auto comp_k = this->fe.system_to_component_index(k).first;
+              if (comp_k < spacedim)
                 {
-                  const auto comp_k =
-                    this->fe.system_to_component_index(k).first;
-                  if (comp_k < spacedim)
-                    {
-                      // Get the velocity at non-quadrature point (particle in
-                      // fluid)
-                      auto &evaluation_point = this->evaluation_point;
-                      velocity[comp_k] +=
-                        evaluation_point[fluid_dof_indices[k]] *
-                        this->fe.shape_value(k, ref_q);
-                    }
-                }
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  const auto comp_i =
-                    this->fe.system_to_component_index(i).first;
-                  if (comp_i < spacedim)
-                    {
-                      force[comp_i] += penalty_parameter * beta *
-                                       this->fe.shape_value(i, ref_q) * JxW *
-                                       (solid_velocity->value(real_q, comp_i) -
-                                        velocity[comp_i]);
-                    }
+                  // Get the velocity at non-quadrature point (particle in
+                  // fluid)
+                  auto &evaluation_point = this->evaluation_point;
+                  velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
+                                      this->fe.shape_value(k, ref_q);
                 }
             }
-          particle = pic.end();
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              const auto comp_i = this->fe.system_to_component_index(i).first;
+              if (comp_i < spacedim)
+                {
+                  force[comp_i] +=
+                    penalty_parameter * beta * this->fe.shape_value(i, ref_q) *
+                    JxW *
+                    (solid_velocity->value(real_q, comp_i) - velocity[comp_i]);
+                }
+            }
         }
-      force = Utilities::MPI::sum(force, this->mpi_communicator);
-      return force;
+      particle = pic.end();
     }
+  force = Utilities::MPI::sum(force, this->mpi_communicator);
+  return force;
 }
 
 template <int dim, int spacedim>
 Tensor<1, 3>
-GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid()
+GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
+  const unsigned int i_solid)
 {
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
+    solid[i_solid]->get_solid_particle_handler();
+
+  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+
+  // Penalization terms
+  const double        beta = this->simulation_parameters.nitsche->beta;
+  Tensor<1, spacedim> velocity;
+  Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
+
+
+  Tensor<1, 3> torque;
+  torque = 0;
+
+  // Todo center of rotation should be parameter passed.
+  Point<spacedim> center_of_rotation = this->simulation_parameters.nitsche->cor;
+
+  // Loop over all local particles
+  auto particle = solid_ph->begin();
+  while (particle != solid_ph->end())
     {
-      std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
-        solid[i_solid]->get_solid_particle_handler();
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
 
-      const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+      double h_cell = 0;
+      if (dim == 2)
+        h_cell =
+          std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
+      else if (dim == 3)
+        h_cell =
+          pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
+      const double penalty_parameter = 1. / (h_cell * h_cell);
+      const auto & dh_cell =
+        typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
+      dh_cell->get_dof_indices(fluid_dof_indices);
 
-      std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
-
-      // Penalization terms
-      const double        beta = this->simulation_parameters.nitsche->beta;
-      Tensor<1, spacedim> velocity;
-      Function<spacedim> *solid_velocity = solid[i_solid]->get_solid_velocity();
-
-
-      Tensor<1, 3> torque;
-      torque = 0;
-
-      // Todo center of rotation should be parameter passed.
-      Point<spacedim> center_of_rotation =
-        this->simulation_parameters.nitsche->cor;
-
-      // Loop over all local particles
-      auto particle = solid_ph->begin();
-      while (particle != solid_ph->end())
+      const auto pic = solid_ph->particles_in_cell(cell);
+      Assert(pic.begin() == particle, ExcInternalError());
+      for (const auto &p : pic)
         {
-          const auto &cell =
-            particle->get_surrounding_cell(*this->triangulation);
+          Tensor<1, spacedim> force;
+          force              = 0;
+          velocity           = 0;
+          const auto &ref_q  = p.get_reference_location();
+          const auto &real_q = p.get_location();
+          const auto &JxW    = p.get_properties()[0];
 
-          double h_cell = 0;
-          if (dim == 2)
-            h_cell = std::sqrt(4. * cell->measure() / M_PI) /
-                     this->velocity_fem_degree;
-          else if (dim == 3)
-            h_cell = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                     this->velocity_fem_degree;
-          const double penalty_parameter = 1. / (h_cell * h_cell);
-          const auto & dh_cell =
-            typename DoFHandler<spacedim>::cell_iterator(*cell,
-                                                         &this->dof_handler);
-          dh_cell->get_dof_indices(fluid_dof_indices);
-
-          const auto pic = solid_ph->particles_in_cell(cell);
-          Assert(pic.begin() == particle, ExcInternalError());
-          for (const auto &p : pic)
+          for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
-              Tensor<1, spacedim> force;
-              force              = 0;
-              velocity           = 0;
-              const auto &ref_q  = p.get_reference_location();
-              const auto &real_q = p.get_location();
-              const auto &JxW    = p.get_properties()[0];
-
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+              const auto comp_k = this->fe.system_to_component_index(k).first;
+              if (comp_k < spacedim)
                 {
-                  const auto comp_k =
-                    this->fe.system_to_component_index(k).first;
-                  if (comp_k < spacedim)
-                    {
-                      // Get the velocity at non-quadrature point (particle in
-                      // fluid)
-                      auto &evaluation_point = this->evaluation_point;
-                      velocity[comp_k] +=
-                        evaluation_point[fluid_dof_indices[k]] *
-                        this->fe.shape_value(k, ref_q);
-                    }
-                }
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  const auto comp_i =
-                    this->fe.system_to_component_index(i).first;
-                  if (comp_i < spacedim)
-                    {
-                      force[comp_i] += penalty_parameter * beta *
-                                       this->fe.shape_value(i, ref_q) * JxW *
-                                       (solid_velocity->value(real_q, comp_i) -
-                                        velocity[comp_i]);
-                    }
-                }
-              // Calculate torque on particle location
-              auto distance = real_q - center_of_rotation;
-
-              if (dim == 2)
-                {
-                  torque[0] = 0.;
-                  torque[1] = 0.;
-                  torque[2] += distance[0] * force[1] - distance[1] * force[0];
-                }
-              else if (dim == 3)
-                {
-                  torque[0] += distance[1] * force[2] - distance[2] * force[1];
-                  torque[1] += distance[2] * force[0] - distance[0] * force[2];
-                  torque[2] += distance[0] * force[1] - distance[1] * force[0];
+                  // Get the velocity at non-quadrature point (particle in
+                  // fluid)
+                  auto &evaluation_point = this->evaluation_point;
+                  velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
+                                      this->fe.shape_value(k, ref_q);
                 }
             }
-          particle = pic.end();
+          for (unsigned int i = 0; i < dofs_per_cell; ++i)
+            {
+              const auto comp_i = this->fe.system_to_component_index(i).first;
+              if (comp_i < spacedim)
+                {
+                  force[comp_i] +=
+                    penalty_parameter * beta * this->fe.shape_value(i, ref_q) *
+                    JxW *
+                    (solid_velocity->value(real_q, comp_i) - velocity[comp_i]);
+                }
+            }
+          // Calculate torque on particle location
+          auto distance = real_q - center_of_rotation;
+
+          if (dim == 2)
+            {
+              torque[0] = 0.;
+              torque[1] = 0.;
+              torque[2] += distance[0] * force[1] - distance[1] * force[0];
+            }
+          else if (dim == 3)
+            {
+              torque[0] += distance[1] * force[2] - distance[2] * force[1];
+              torque[1] += distance[2] * force[0] - distance[0] * force[2];
+              torque[2] += distance[0] * force[1] - distance[1] * force[0];
+            }
         }
-      torque = Utilities::MPI::sum(torque, this->mpi_communicator);
-      return torque;
+      particle = pic.end();
     }
+  torque = Utilities::MPI::sum(torque, this->mpi_communicator);
+  return torque;
 }
 
 template <int dim, int spacedim>
@@ -440,9 +430,17 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_force_on_solid");
 
-  std::vector<Tensor<1, spacedim>> force(
-    1, this->calculate_forces_on_solid()); // hard coded, has to be changed for
-                                           // when allowing more than 1 solid
+  std::vector<Tensor<1, spacedim>> force;
+
+  std::vector<unsigned int> solid_indices;
+
+  for (unsigned int i_solid = 0;
+       i_solid < this->simulation_parameters.nitsche->number_solids;
+       ++i_solid)
+    {
+      force.push_back(this->calculate_forces_on_solid(i_solid));
+      solid_indices.push_back(i_solid);
+    }
 
 
   if (this->simulation_parameters.nitsche->verbosity ==
@@ -450,10 +448,6 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
-      const std::vector<unsigned int> solid_indices(
-        1,
-        1); // hard coded, has to be changed for when allowing more than 1 solid
-
       std::string independent_column_names = "Solid ID";
 
       std::vector<std::string> dependent_column_names;
@@ -475,38 +469,45 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
       table.write_text(std::cout);
     }
 
-  if (this->simulation_control->is_steady())
+  for (unsigned int i_solid = 0;
+       i_solid < this->simulation_parameters.nitsche->number_solids;
+       ++i_solid)
     {
-      solid_forces_table.add_value(
-        "cells", this->triangulation->n_global_active_cells());
+      if (this->simulation_control->is_steady())
+        {
+          solid_forces_table[i_solid].add_value(
+            "cells", this->triangulation->n_global_active_cells());
+        }
+      else
+        {
+          solid_forces_table[i_solid].add_value(
+            "time", this->simulation_control->get_current_time());
+          solid_forces_table[i_solid].set_precision(
+            "time",
+            this->simulation_parameters.forces_parameters.output_precision);
+        }
+      solid_forces_table[i_solid].add_value("f_x", force[0][0]);
+      solid_forces_table[i_solid].add_value("f_y", force[0][1]);
+      if (dim == 3)
+        solid_forces_table[i_solid].add_value("f_z", force[0][2]);
+      else
+        solid_forces_table[i_solid].add_value("f_z", 0.);
+
+      // Precision
+      solid_forces_table[i_solid].set_precision(
+        "f_x", this->simulation_parameters.forces_parameters.output_precision);
+      solid_forces_table[i_solid].set_precision(
+        "f_y", this->simulation_parameters.forces_parameters.output_precision);
+      solid_forces_table[i_solid].set_precision(
+        "f_z", this->simulation_parameters.forces_parameters.output_precision);
+
+      std::string filename_force =
+        this->simulation_parameters.nitsche->force_output_name + "_" +
+        Utilities::int_to_string(i_solid, 2) + ".dat";
+      std::ofstream output_force(filename_force.c_str());
+
+      solid_forces_table[i_solid].write_text(output_force);
     }
-  else
-    {
-      solid_forces_table.add_value(
-        "time", this->simulation_control->get_current_time());
-      solid_forces_table.set_precision(
-        "time", this->simulation_parameters.forces_parameters.output_precision);
-    }
-  solid_forces_table.add_value("f_x", force[0][0]);
-  solid_forces_table.add_value("f_y", force[0][1]);
-  if (dim == 3)
-    solid_forces_table.add_value("f_z", force[0][2]);
-  else
-    solid_forces_table.add_value("f_z", 0.);
-
-  // Precision
-  solid_forces_table.set_precision(
-    "f_x", this->simulation_parameters.forces_parameters.output_precision);
-  solid_forces_table.set_precision(
-    "f_y", this->simulation_parameters.forces_parameters.output_precision);
-  solid_forces_table.set_precision(
-    "f_z", this->simulation_parameters.forces_parameters.output_precision);
-
-  std::string filename_force =
-    this->simulation_parameters.nitsche->force_output_name + ".dat";
-  std::ofstream output_force(filename_force.c_str());
-
-  solid_forces_table.write_text(output_force);
 }
 
 template <int dim, int spacedim>
@@ -515,20 +516,22 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
 {
   TimerOutput::Scope t(this->computing_timer, "calculate_torque_on_solid");
 
-  std::vector<Tensor<1, 3>> torque(
-    1, this->calculate_torque_on_solid()); // hard coded, has to be changed for
-                                           // when allowing more than 1 solid
+  std::vector<Tensor<1, 3>> torque;
+  std::vector<unsigned int> solid_indices;
 
+  for (unsigned int i_solid = 0;
+       i_solid < this->simulation_parameters.nitsche->number_solids;
+       ++i_solid)
+    {
+      torque.push_back(calculate_torque_on_solid(i_solid));
+      solid_indices.push_back(i_solid);
+    }
 
   if (this->simulation_parameters.nitsche->verbosity ==
         Parameters::Verbosity::verbose &&
       this->this_mpi_process == 0)
     {
       std::cout << std::endl;
-      const std::vector<unsigned int> solid_indices(
-        1,
-        1); // hard coded, has to be changed for when allowing more than 1 solid
-
       std::string independent_column_names = "Solid ID";
 
       std::vector<std::string> dependent_column_names;
@@ -550,36 +553,41 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
     }
 
 
-
-  if (this->simulation_control->is_steady())
+  for (unsigned int i_solid = 0;
+       i_solid < this->simulation_parameters.nitsche->number_solids;
+       ++i_solid)
     {
-      solid_torques_table.add_value(
-        "cells", this->triangulation->n_global_active_cells());
+      if (this->simulation_control->is_steady())
+        {
+          solid_torques_table[i_solid].add_value(
+            "cells", this->triangulation->n_global_active_cells());
+        }
+      else
+        {
+          solid_torques_table[i_solid].add_value(
+            "time", this->simulation_control->get_current_time());
+          solid_torques_table[i_solid].set_precision(
+            "time",
+            this->simulation_parameters.forces_parameters.output_precision);
+        }
+      solid_torques_table[i_solid].add_value("T_x", torque[0][0]);
+      solid_torques_table[i_solid].add_value("T_y", torque[0][1]);
+      solid_torques_table[i_solid].add_value("T_z", torque[0][2]);
+
+      // Precision
+      solid_torques_table[i_solid].set_precision(
+        "T_x", this->simulation_parameters.forces_parameters.output_precision);
+      solid_torques_table[i_solid].set_precision(
+        "T_y", this->simulation_parameters.forces_parameters.output_precision);
+      solid_torques_table[i_solid].set_precision(
+        "T_z", this->simulation_parameters.forces_parameters.output_precision);
+
+      std::string filename_torque =
+        this->simulation_parameters.nitsche->torque_output_name + ".dat";
+      std::ofstream output_torque(filename_torque.c_str());
+
+      solid_torques_table[i_solid].write_text(output_torque);
     }
-  else
-    {
-      solid_torques_table.add_value(
-        "time", this->simulation_control->get_current_time());
-      solid_torques_table.set_precision(
-        "time", this->simulation_parameters.forces_parameters.output_precision);
-    }
-  solid_torques_table.add_value("T_x", torque[0][0]);
-  solid_torques_table.add_value("T_y", torque[0][1]);
-  solid_torques_table.add_value("T_z", torque[0][2]);
-
-  // Precision
-  solid_torques_table.set_precision(
-    "T_x", this->simulation_parameters.forces_parameters.output_precision);
-  solid_torques_table.set_precision(
-    "T_y", this->simulation_parameters.forces_parameters.output_precision);
-  solid_torques_table.set_precision(
-    "T_z", this->simulation_parameters.forces_parameters.output_precision);
-
-  std::string filename_torque =
-    this->simulation_parameters.nitsche->torque_output_name + ".dat";
-  std::ofstream output_torque(filename_torque.c_str());
-
-  solid_torques_table.write_text(output_torque);
 }
 
 template <int dim, int spacedim>
@@ -609,11 +617,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             {
               solid[i_solid]->initial_setup();
               solid[i_solid]->setup_particles();
-              std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
-                solid[i_solid]->get_solid_particle_handler();
-              output_solid_particles(solid_ph);
-              output_solid_triangulation();
             }
+          output_solid_particles();
+          output_solid_triangulation();
         }
 
       {
@@ -655,7 +661,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             {
               std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
                 solid[i_solid]->get_solid_particle_handler();
-              output_solid_particles(solid_ph);
+              output_solid_particles();
               output_solid_triangulation();
             }
         }
@@ -674,27 +680,33 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
-  std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler)
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles()
 {
-  Particles::DataOut<spacedim, spacedim> particles_out;
-  particles_out.build_patches(*particle_handler);
+  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
+    {
+      std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler =
+        solid[i_solid]->get_solid_particle_handler();
+      Particles::DataOut<spacedim, spacedim> particles_out;
+      particles_out.build_patches(*particle_handler);
 
-  const std::string folder = this->simulation_control->get_output_path();
-  const std::string solution_name =
-    this->simulation_control->get_output_name() + "_solid_particles";
-  const unsigned int iter        = this->simulation_control->get_step_number();
-  const double       time        = this->simulation_control->get_current_time();
-  const unsigned int group_files = this->simulation_control->get_group_files();
+      const std::string folder = this->simulation_control->get_output_path();
+      const std::string solution_name =
+        this->simulation_control->get_output_name() + "_solid_particles_" +
+        Utilities::int_to_string(i_solid, 2);
+      const unsigned int iter = this->simulation_control->get_step_number();
+      const double       time = this->simulation_control->get_current_time();
+      const unsigned int group_files =
+        this->simulation_control->get_group_files();
 
-  write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles,
-                                 *(&particles_out),
-                                 folder,
-                                 solution_name,
-                                 time,
-                                 iter,
-                                 group_files,
-                                 this->mpi_communicator);
+      write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles[i_solid],
+                                     *(&particles_out),
+                                     folder,
+                                     solution_name,
+                                     time,
+                                     iter,
+                                     group_files,
+                                     this->mpi_communicator);
+    }
 }
 
 template <int dim, int spacedim>
@@ -719,7 +731,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
       const unsigned int group_files =
         this->simulation_control->get_group_files();
 
-      write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation,
+      write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation[i_solid],
                              data_out,
                              folder,
                              solution_name,
