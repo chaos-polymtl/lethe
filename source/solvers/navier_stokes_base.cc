@@ -162,12 +162,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
                         evaluation_point,
                         simulation_parameters.flow_control.boundary_flow_id,
                         simulation_parameters.fem_parameters,
-<<<<<<< HEAD
-                        mpi_communicator);
-=======
                         mpi_communicator,
                         simulation_parameters.mesh.simplex);
->>>>>>> Enable Simplex usage in NS GLS from msh grid
 
   // Showing results (area and flow rate)
   if (simulation_parameters.flow_control.verbosity ==

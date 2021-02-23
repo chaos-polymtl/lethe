@@ -480,6 +480,10 @@ protected:
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Enable Simplex usage in NS GLS from msh grid
   // Mappings and Quadratures
   std::shared_ptr<Mapping<dim>>   velocity_mapping;
   std::shared_ptr<Mapping<dim>>   pressure_mapping;

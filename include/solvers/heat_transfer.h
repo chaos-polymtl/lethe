@@ -31,22 +31,14 @@
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
-<<<<<<< HEAD
-=======
 #include <deal.II/fe/mapping_fe.h>
-
 #include <deal.II/fe/mapping_q.h>
->>>>>>> Enable Simplex usage in NS GLS from msh grid
-
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
-<<<<<<< HEAD
-=======
 #include <deal.II/simplex/fe_lib.h>
 #include <deal.II/simplex/quadrature_lib.h>
 
->>>>>>> Enable Simplex usage in NS GLS from msh grid
 #include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>

@@ -120,8 +120,6 @@ HeatTransfer<dim>::assemble_system(
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   const unsigned int                   n_q_points = this->cell_quadrature->size();
   std::vector<double>                  source_term_values(n_q_points);
-
-
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   FEValues<dim> fe_values_flow(dof_handler_fluid->get_fe(),
@@ -274,7 +272,6 @@ HeatTransfer<dim>::assemble_system(
                                  std::pow(2. * rho_cp * u_mag / h, 2) +
                                  9 * std::pow(4 * alpha / (h * h), 2));
               const double tau_ggls = std::pow(h, fe->degree + 1) / 6. / rho_cp;
-
 
               // Gather the shape functions and their gradient
               for (unsigned int k : fe_values_ht.dof_indices())

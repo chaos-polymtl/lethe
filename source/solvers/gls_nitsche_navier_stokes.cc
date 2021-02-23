@@ -65,13 +65,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
 {
   TimerOutput::Scope t(this->computing_timer, "assemble Nitsche restriction");
 
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-    {
-      std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
-        solid[i_solid]->get_solid_particle_handler();
-
-
-      const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+      const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
       std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
@@ -119,7 +113,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
                   const auto comp_k =
-                    this->fe.system_to_component_index(k).first;
+                    this->fe->system_to_component_index(k).first;
                   if (comp_k < spacedim)
                     {
                       // Get the velocity at non-quadrature point (particle in
@@ -127,7 +121,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                       auto &evaluation_point = this->evaluation_point;
                       velocity[comp_k] +=
                         evaluation_point[fluid_dof_indices[k]] *
-                        this->fe.shape_value(k, ref_q);
+                        this->fe->shape_value(k, ref_q);
                     }
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -141,12 +135,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
                           for (unsigned int j = 0; j < dofs_per_cell; ++j)
                             {
                               const auto comp_j =
-                                this->fe.system_to_component_index(j).first;
+                                this->fe->system_to_component_index(j).first;
                               if (comp_i == comp_j)
                                 local_matrix(i, j) +=
                                   penalty_parameter * beta *
-                                  this->fe.shape_value(i, ref_q) *
-                                  this->fe.shape_value(j, ref_q) * JxW;
+                                  this->fe->shape_value(i, ref_q) *
+                                  this->fe->shape_value(j, ref_q) * JxW;
                             }
                         }
                       local_rhs(i) += -penalty_parameter * beta *
@@ -258,7 +252,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   std::shared_ptr<Particles::ParticleHandler<dim, spacedim>> solid_ph =
     solid[i_solid]->get_solid_particle_handler();
 
-  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
+    const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
 
@@ -314,7 +308,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
               if (comp_i < spacedim)
                 {
                   force[comp_i] +=
-                    penalty_parameter * beta * this->fe.shape_value(i, ref_q) *
+                    penalty_parameter * beta * this->fe->shape_value(i, ref_q) *
                     JxW *
                     (solid_velocity->value(real_q, comp_i) - velocity[comp_i]);
                 }
@@ -382,23 +376,23 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
 
           for (unsigned int k = 0; k < dofs_per_cell; ++k)
             {
-              const auto comp_k = this->fe.system_to_component_index(k).first;
+              const auto comp_k = this->fe->system_to_component_index(k).first;
               if (comp_k < spacedim)
                 {
                   // Get the velocity at non-quadrature point (particle in
                   // fluid)
                   auto &evaluation_point = this->evaluation_point;
                   velocity[comp_k] += evaluation_point[fluid_dof_indices[k]] *
-                                      this->fe.shape_value(k, ref_q);
+                          this->fe->shape_value(k, ref_q);
                 }
             }
           for (unsigned int i = 0; i < dofs_per_cell; ++i)
             {
-              const auto comp_i = this->fe.system_to_component_index(i).first;
+              const auto comp_i = this->fe->system_to_component_index(i).first;
               if (comp_i < spacedim)
                 {
                   force[comp_i] +=
-                    penalty_parameter * beta * this->fe.shape_value(i, ref_q) *
+                    penalty_parameter * beta * this->fe->shape_value(i, ref_q) *
                     JxW *
                     (solid_velocity->value(real_q, comp_i) - velocity[comp_i]);
                 }
