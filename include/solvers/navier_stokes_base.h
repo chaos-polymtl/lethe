@@ -84,14 +84,14 @@
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
 
-//Simplex
+// Simplex
 #include <deal.II/simplex/fe_lib.h>
 #include <deal.II/simplex/quadrature_lib.h>
 
 // Distributed
+#include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 #include <deal.II/distributed/solution_transfer.h>
-#include <deal.II/distributed/fully_distributed_tria.h>
 
 
 // Lethe Includes
@@ -485,13 +485,13 @@ protected:
 
 >>>>>>> Enable Simplex usage in NS GLS from msh grid
   // Mappings and Quadratures
-  std::shared_ptr<Mapping<dim>>   velocity_mapping;
-  std::shared_ptr<Mapping<dim>>   pressure_mapping;
+  std::shared_ptr<Mapping<dim>>        velocity_mapping;
+  std::shared_ptr<Mapping<dim>>        pressure_mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
 
-    // Multiphysics interface
+  // Multiphysics interface
   std::shared_ptr<MultiphysicsInterface<dim>> multiphysics;
 
   // Simulation control for time stepping and I/Os

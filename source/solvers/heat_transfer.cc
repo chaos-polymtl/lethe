@@ -105,7 +105,7 @@ HeatTransfer<dim>::assemble_system(
   auto &source_term = simulation_parameters.sourceTerm->heat_transfer_source;
   source_term.set_time(simulation_control->get_current_time());
 
-  FEValues<dim>     fe_values_ht(*fe,
+  FEValues<dim> fe_values_ht(*fe,
                              *this->cell_quadrature,
                              update_values | update_gradients |
                                update_quadrature_points | update_JxW_values |
@@ -150,7 +150,8 @@ HeatTransfer<dim>::assemble_system(
   std::vector<double>         present_temperature_values(n_q_points);
   std::vector<Tensor<1, dim>> temperature_gradients(n_q_points);
   std::vector<double>         present_temperature_laplacians(n_q_points);
-  std::vector<double>         present_face_temperature_values(this->face_quadrature->size());
+  std::vector<double>         present_face_temperature_values(
+    this->face_quadrature->size());
 
   // Values for backward Euler scheme
   std::vector<double> p1_temperature_values(n_q_points);

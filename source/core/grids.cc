@@ -22,7 +22,8 @@ attach_grid_to_triangulation(
 
 {
   // GMSH input
-  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh && !mesh_parameters.simplex)
+  if (mesh_parameters.type == Parameters::Mesh::Type::gmsh &&
+      !mesh_parameters.simplex)
     {
       GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(*triangulation);
@@ -30,35 +31,38 @@ attach_grid_to_triangulation(
       grid_in.read_msh(input_file);
     }
 #ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
-    // Simplex && GMSH input
-  else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh && mesh_parameters.simplex)
+  // Simplex && GMSH input
+  else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh &&
+           mesh_parameters.simplex)
     {
-        // create serial triangulation
-        Triangulation<dim, spacedim> basetria(Triangulation<dim,spacedim>::limit_level_difference_at_vertices);
-        GridIn<dim, spacedim> grid_in;
-        grid_in.attach_triangulation(basetria);
-        std::ifstream input_file(mesh_parameters.file_name);
-        grid_in.read_msh(input_file);
+      // create serial triangulation
+      Triangulation<dim, spacedim> basetria(
+        Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
+      GridIn<dim, spacedim> grid_in;
+      grid_in.attach_triangulation(basetria);
+      std::ifstream input_file(mesh_parameters.file_name);
+      grid_in.read_msh(input_file);
 
-        GridTools::partition_triangulation_zorder(
-                    Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
-                    basetria);
-            GridTools::partition_multigrid_levels(basetria);
+      GridTools::partition_triangulation_zorder(
+        Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
+        basetria);
+      GridTools::partition_multigrid_levels(basetria);
 
-        // create parallel::fullydistributed::Triangulation from description
-        auto construction_data = TriangulationDescription::Utilities::create_description_from_triangulation(
-                basetria
-                , triangulation->get_communicator()
-                , TriangulationDescription::Settings::construct_multigrid_hierarchy);
-        triangulation->create_triangulation(construction_data);
+      // create parallel::fullydistributed::Triangulation from description
+      auto construction_data = TriangulationDescription::Utilities::
+        create_description_from_triangulation(
+          basetria,
+          triangulation->get_communicator(),
+          TriangulationDescription::Settings::construct_multigrid_hierarchy);
+      triangulation->create_triangulation(construction_data);
 
-        for (auto &cell : triangulation->active_cell_iterators())
+      for (auto &cell : triangulation->active_cell_iterators())
         {
-            CellId id        = cell->id();
-            auto   cell_base = basetria.create_cell_iterator(id);
-            // Assert(cell->center() == cell_base->center(),
-            //       ExcMessage("Cells do not match"));
-            for (unsigned int d = 0; d < dim; d++)
+          CellId id        = cell->id();
+          auto   cell_base = basetria.create_cell_iterator(id);
+          // Assert(cell->center() == cell_base->center(),
+          //       ExcMessage("Cells do not match"));
+          for (unsigned int d = 0; d < dim; d++)
             Assert(std::abs(cell->center()[d] - cell_base->center()[d]) < 1e-9,
                    ExcMessage("Cells do not match"));
         }

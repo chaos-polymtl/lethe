@@ -37,12 +37,12 @@
 #  include <deal.II/fe/fe_q.h>
 #  include <deal.II/fe/fe_system.h>
 #  include <deal.II/fe/fe_values.h>
-#  include <deal.II/fe/mapping_q.h>
 #  include <deal.II/fe/mapping_fe.h>
+#  include <deal.II/fe/mapping_q.h>
 
-//Simplex
-#include <deal.II/simplex/fe_lib.h>
-#include <deal.II/simplex/quadrature_lib.h>
+// Simplex
+#  include <deal.II/simplex/fe_lib.h>
+#  include <deal.II/simplex/quadrature_lib.h>
 
 // Lethe includes
 #  include <core/boundary_conditions.h>
@@ -91,7 +91,7 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
                     const VectorType &     evaluation_point,
                     const Parameters::FEM &fem_parameters,
                     const MPI_Comm &       mpi_communicator,
-                    const bool simplex_enabled);
+                    const bool             simplex_enabled);
 
 /**
  * @brief Calculate the average kinetic energy in the simulation domain
@@ -113,7 +113,7 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
                          const VectorType &     evaluation_point,
                          const Parameters::FEM &fem_parameters,
                          const MPI_Comm &       mpi_communicator,
-                         const bool simplex_enabled);
+                         const bool             simplex_enabled);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -141,7 +141,7 @@ calculate_forces(
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator,
-  const bool simplex_enabled);
+  const bool                                           simplex_enabled);
 
 
 /**
@@ -173,7 +173,7 @@ calculate_torques(
   const Parameters::FEM &                              fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator,
-  const bool simplex_enabled);
+  const bool                                           simplex_enabled);
 
 
 /**
@@ -202,7 +202,7 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
                    const Function<dim> *  exact_solution,
                    const Parameters::FEM &fem_parameters,
                    const MPI_Comm &       mpi_communicator,
-                   const bool simplex_enabled);
+                   const bool             simplex_enabled);
 
 
 /**
@@ -229,7 +229,7 @@ calculate_flow_rate(const DoFHandler<dim> &dof_handler,
                     const unsigned int &   boundary_id,
                     const Parameters::FEM &fem_parameters,
                     const MPI_Comm &       mpi_communicator,
-                    const bool simplex_enabled);
+                    const bool             simplex_enabled);
 
 
 

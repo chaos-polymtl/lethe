@@ -57,42 +57,53 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
 {
 #ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
-      if (simulation_parameters.mesh.simplex){
-        // for simplex meshes
+  if (simulation_parameters.mesh.simplex)
+    {
+      // for simplex meshes
 
-        const Simplex::FE_P<dim> velocity_fe(p_nsparam.fem_parameters.velocity_order);
-        const Simplex::FE_P<dim> pressure_fe(p_nsparam.fem_parameters.pressure_order);
-        fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
-        velocity_mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
-        pressure_mapping = std::make_shared<MappingFE<dim>>(pressure_fe);
-        cell_quadrature = std::make_shared<Simplex::QGauss<dim>>(number_quadrature_points);
-        face_quadrature = std::make_shared<Simplex::QGauss<dim-1>>(number_quadrature_points);
-        triangulation = std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
-                  this->mpi_communicator);
-        dof_handler.clear();
-        dof_handler.reinit(*this->triangulation);
-      } else
+      const Simplex::FE_P<dim> velocity_fe(
+        p_nsparam.fem_parameters.velocity_order);
+      const Simplex::FE_P<dim> pressure_fe(
+        p_nsparam.fem_parameters.pressure_order);
+      fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
+      velocity_mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
+      pressure_mapping = std::make_shared<MappingFE<dim>>(pressure_fe);
+      cell_quadrature =
+        std::make_shared<Simplex::QGauss<dim>>(number_quadrature_points);
+      face_quadrature =
+        std::make_shared<Simplex::QGauss<dim - 1>>(number_quadrature_points);
+      triangulation =
+        std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
+          this->mpi_communicator);
+      dof_handler.clear();
+      dof_handler.reinit(*this->triangulation);
+    }
+  else
 #endif
     {
-        //Usual case, for quad/hex meshes
-        fe = std::make_shared<FESystem<dim>>(FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
-                                             dim,
-                                             FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
-                                             1);
-          velocity_mapping = std::make_shared<MappingQ<dim>>(velocity_fem_degree,
-                simulation_parameters.fem_parameters.qmapping_all);
-          pressure_mapping = std::make_shared<MappingQ<dim>>(pressure_fem_degree,
-                simulation_parameters.fem_parameters.qmapping_all);
-          cell_quadrature = std::make_shared<QGauss<dim>>(this->number_quadrature_points);
-          face_quadrature = std::make_shared<QGauss<dim-1>>(this->number_quadrature_points + 1);
-          triangulation = std::make_shared<parallel::distributed::Triangulation<dim>>(
-                  this->mpi_communicator,
-                  typename Triangulation<dim>::MeshSmoothing(
-                          Triangulation<dim>::smoothing_on_refinement |
-                          Triangulation<dim>::smoothing_on_coarsening));
-          dof_handler.clear();
-          dof_handler.reinit(*this->triangulation);
-  }
+      // Usual case, for quad/hex meshes
+      fe = std::make_shared<FESystem<dim>>(
+        FE_Q<dim>(p_nsparam.fem_parameters.velocity_order),
+        dim,
+        FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
+        1);
+      velocity_mapping = std::make_shared<MappingQ<dim>>(
+        velocity_fem_degree, simulation_parameters.fem_parameters.qmapping_all);
+      pressure_mapping = std::make_shared<MappingQ<dim>>(
+        pressure_fem_degree, simulation_parameters.fem_parameters.qmapping_all);
+      cell_quadrature =
+        std::make_shared<QGauss<dim>>(this->number_quadrature_points);
+      face_quadrature =
+        std::make_shared<QGauss<dim - 1>>(this->number_quadrature_points + 1);
+      triangulation =
+        std::make_shared<parallel::distributed::Triangulation<dim>>(
+          this->mpi_communicator,
+          typename Triangulation<dim>::MeshSmoothing(
+            Triangulation<dim>::smoothing_on_refinement |
+            Triangulation<dim>::smoothing_on_coarsening));
+      dof_handler.clear();
+      dof_handler.reinit(*this->triangulation);
+    }
 
   this->pcout.set_condition(
     Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0);
@@ -605,7 +616,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // Time monitoring
   TimerOutput::Scope t(this->computing_timer, "refine");
 
-  Vector<float>       estimated_error_per_cell(tria.n_active_cells());
+  Vector<float> estimated_error_per_cell(tria.n_active_cells());
   const FEValuesExtractors::Vector velocity(0);
   const FEValuesExtractors::Scalar pressure(dim);
   auto &                           present_solution = this->present_solution;
@@ -1074,7 +1085,7 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   const VectorType &solution)
 {
-  TimerOutput::Scope  t(this->computing_timer, "output");
+  TimerOutput::Scope t(this->computing_timer, "output");
 
   const std::string  folder        = simulation_control->get_output_path();
   const std::string  solution_name = simulation_control->get_output_name();

@@ -528,14 +528,13 @@ namespace Parameters
         Patterns::Bool(),
         "Enable initial refinement until target size is reached.");
 
-      prm.declare_entry(
-        "enable simplex",
-        "false",
-        Patterns::Bool(),
-        "Enable the use of simplex meshes.");
+      prm.declare_entry("enable simplex",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable the use of simplex meshes.");
 
 
-        prm.declare_entry("target size",
+      prm.declare_entry("target size",
                         "1",
                         Patterns::Double(),
                         "Target size of the initial refinement");

@@ -246,7 +246,8 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
         }
     }
 
-  double global_volume = GridTools::volume(*this->triangulation,*this->velocity_mapping);
+  double global_volume =
+    GridTools::volume(*this->triangulation, *this->velocity_mapping);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
@@ -283,7 +284,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                             update_JxW_values | update_gradients |
                             update_hessians);
   const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int               n_q_points    = this->cell_quadrature->size();
+  const unsigned int               n_q_points = this->cell_quadrature->size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
@@ -872,7 +873,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
   this->system_rhs = 0;
 
   FEValues<dim>               fe_values(*this->velocity_mapping,
-                         *this->fe,
+                          *this->fe,
                           *this->cell_quadrature,
                           update_values | update_quadrature_points |
                             update_JxW_values);

@@ -1205,7 +1205,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
 {
   TimerOutput::Scope t(this->computing_timer, "error");
 
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points + 1);
+  QGauss<dim>   quadrature_formula(this->number_quadrature_points + 1);
   FEValues<dim> fe_values(*this->velocity_mapping,
                           *this->fe,
                           quadrature_formula,
@@ -1832,7 +1832,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 {
                                   // First the dof itself
                                   const unsigned int component_j =
-                                    this->fe->system_to_component_index(j).first;
+                                    this->fe->system_to_component_index(j)
+                                      .first;
                                   if (component_j == component_i)
                                     {
                                       if (global_index_overwrite ==
@@ -2558,15 +2559,15 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   double viscosity_ = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  FEValues<dim>                    fe_values(*this->velocity_mapping,
+  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
+  FEValues<dim>      fe_values(*this->velocity_mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int               n_q_points    = quadrature_formula.size();
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_q_points    = quadrature_formula.size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);

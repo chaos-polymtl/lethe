@@ -336,7 +336,6 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   system_matrix    = 0;
   auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
-
   FEValues<dim>           fe_values(*this->velocity_mapping,
                           *this->fe,
                           *this->cell_quadrature,
