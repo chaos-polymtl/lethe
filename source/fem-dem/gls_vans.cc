@@ -1061,88 +1061,92 @@ GLSVANSSolver<dim>::assembleGLS()
                 }
             }
 
-          cell->get_dof_indices(local_dof_indices);
+          //          cell->get_dof_indices(local_dof_indices);
 
-          // The non-linear solver assumes that the nonzero constraints have
-          // already been applied to the solution
-          const AffineConstraints<double> &constraints_used =
-            this->zero_constraints;
-          // initial_step ? nonzero_constraints : zero_constraints;
-          if (assemble_matrix)
-            {
-              constraints_used.distribute_local_to_global(local_matrix,
-                                                          local_rhs,
-                                                          local_dof_indices,
-                                                          this->system_matrix,
-                                                          system_rhs);
-            }
-          else
-            {
-              constraints_used.distribute_local_to_global(local_rhs,
-                                                          local_dof_indices,
-                                                          system_rhs);
-            }
+          //          // The non-linear solver assumes that the nonzero
+          //          constraints have
+          //          // already been applied to the solution
+          //          const AffineConstraints<double> &constraints_used =
+          //            this->zero_constraints;
+          //          // initial_step ? nonzero_constraints : zero_constraints;
+          //          if (assemble_matrix)
+          //            {
+          //              constraints_used.distribute_local_to_global(local_matrix,
+          //                                                          local_rhs,
+          //                                                          local_dof_indices,
+          //                                                          this->system_matrix,
+          //                                                          system_rhs);
+          //            }
+          //          else
+          //            {
+          //              constraints_used.distribute_local_to_global(local_rhs,
+          //                                                          local_dof_indices,
+          //                                                          system_rhs);
+          //            }
         }
       //***********************************************************************
       // Addition of particle dependent forces (drag)
       //***********************************************************************
+
       if (cell->is_locally_owned())
         {
-          fe_values.reinit(cell);
-
-          if (dim == 2)
-            h = std::sqrt(4. * cell->measure() / M_PI) /
-                this->velocity_fem_degree;
-          else if (dim == 3)
-            h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                this->velocity_fem_degree;
-
-          const auto &dh_cell =
-            typename DoFHandler<dim>::cell_iterator(*cell, &this->dof_handler);
-          dh_cell->get_dof_indices(local_dof_indices);
-
-          // Loop over the quadrature points
-          //              for (unsigned int q = 0; q < n_q_points; ++q)
-          //                {
-          // Calculation of the magnitude of the velocity for the
-          // stabilization parameter
-
-          //          const double u_mag =
-          //            std::max(present_velocity_values[q].norm(), 1e-12 *
-          //            GLS_u_scale);
-
-          // Store JxW in local variable for faster access;
-          // const double JxW = fe_values.JxW(q);
-
-          // Calculation of the GLS stabilization parameter. The
-          // stabilization parameter used is different if the simulation
-          // is steady or unsteady. In the unsteady case it includes the
-          // value of the time-step
-          //          const double tau =
-          //            scheme ==
-          //                Parameters::SimulationControl::TimeSteppingMethod::steady
-          //                ?
-          //              1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-          //                             9 * std::pow(4 * viscosity / (h * h),
-          //                             2)) :
-          //              1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag
-          //              / h, 2) +
-          //                             9 * std::pow(4 * viscosity / (h * h),
-          //                             2));
-
-          // Gather the shape functions, their gradient and their
-          // laplacian for the velocity and the pressure
-          //          for (unsigned int n = 0; n < dofs_per_cell; ++n)
-          //            {
-          //              grad_phi_u[n] = fe_values[velocities].gradient(n, q);
-          //              phi_u[n]      = fe_values[velocities].value(n, q);
-          //              phi_p[n]      = fe_values[pressure].value(n, q);
-          //              grad_phi_p[n] = fe_values[pressure].gradient(n, q);
-          //            }
-
           if (this->simulation_parameters.void_fraction->mode ==
               Parameters::VoidFractionMode::dem)
             {
+              fe_values.reinit(cell);
+
+              if (dim == 2)
+                h = std::sqrt(4. * cell->measure() / M_PI) /
+                    this->velocity_fem_degree;
+              else if (dim == 3)
+                h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                    this->velocity_fem_degree;
+
+              const auto &dh_cell =
+                typename DoFHandler<dim>::cell_iterator(*cell,
+                                                        &this->dof_handler);
+              dh_cell->get_dof_indices(local_dof_indices);
+
+              // Loop over the quadrature points
+              //              for (unsigned int q = 0; q < n_q_points; ++q)
+              //                {
+              // Calculation of the magnitude of the velocity for the
+              // stabilization parameter
+
+              //          const double u_mag =
+              //            std::max(present_velocity_values[q].norm(), 1e-12 *
+              //            GLS_u_scale);
+
+              // Store JxW in local variable for faster access;
+              // const double JxW = fe_values.JxW(q);
+
+              // Calculation of the GLS stabilization parameter. The
+              // stabilization parameter used is different if the simulation
+              // is steady or unsteady. In the unsteady case it includes the
+              // value of the time-step
+              //          const double tau =
+              //            scheme ==
+              //                Parameters::SimulationControl::TimeSteppingMethod::steady
+              //                ?
+              //              1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+              //                             9 * std::pow(4 * viscosity / (h *
+              //                             h), 2)) :
+              //              1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. *
+              //              u_mag / h, 2) +
+              //                             9 * std::pow(4 * viscosity / (h *
+              //                             h), 2));
+
+              // Gather the shape functions, their gradient and their
+              // laplacian for the velocity and the pressure
+              //          for (unsigned int n = 0; n < dofs_per_cell; ++n)
+              //            {
+              //              grad_phi_u[n] = fe_values[velocities].gradient(n,
+              //              q); phi_u[n]      = fe_values[velocities].value(n,
+              //              q); phi_p[n]      = fe_values[pressure].value(n,
+              //              q); grad_phi_p[n] =
+              //              fe_values[pressure].gradient(n, q);
+              //            }
+
               // Loop over particles in cell
               // Begin and end iterator for particles in cell
               const auto pic = particle_handler.particles_in_cell(cell);
