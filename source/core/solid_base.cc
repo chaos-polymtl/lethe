@@ -156,9 +156,13 @@ SolidBase<dim, spacedim>::setup_particles()
         dynamic_cast<parallel::distributed::Triangulation<spacedim> *>(
           fluid_tria.get()))
     {
+      // Increase number of bounding box level to ensure that insertion is
+      // faster. Right now this is hardcoded at 3, which is a very good
+      // compromise Eventually this can be a user parameter, but for the moment
+      // I do not think this is necessary.
       const auto my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
-          *tria, IteratorFilters::LocallyOwnedCell());
+          *tria, IteratorFilters::LocallyOwnedCell(), 3, true);
       global_fluid_bounding_boxes =
         Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
     }
