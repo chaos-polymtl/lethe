@@ -62,6 +62,8 @@
  * @param fem_parameters The fem_parameters of the simulation
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
+ *
+ * @param simplex_enabled Is the simplex mode enabled
  */
 template <int dim, typename VectorType>
 double
@@ -106,6 +108,8 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
  * @param fem_parameters The fem_parameters of the simulation
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ *
+ * @param simplex_enabled Is the simplex mode enabled
  */
 template <int dim, typename VectorType>
 double
@@ -132,6 +136,8 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  * @param boundary_conditions The boundary conditions object
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ *
+ * @param simplex_enabled Is the simplex mode enabled
  */
 template <int dim, typename VectorType>
 std::vector<Tensor<1, dim>>
@@ -163,6 +169,8 @@ calculate_forces(
  * @param boundary_conditions The boundary conditions object.
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the torque calculation.
+ *
+ * @param simplex_enabled Is the simplex mode enabled
  */
 template <int dim, typename VectorType>
 std::vector<Tensor<1, 3>>
@@ -194,6 +202,8 @@ calculate_torques(
  * @param fem_parameters The fem_parameters of the simulation.
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the error calculation.
+ *
+ * @param simplex_enabled Is the simplex mode enabled
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
@@ -221,6 +231,8 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
  * @param fem_parameters. The FEM parameters
  *
  * @param mpi_communicator. The mpi communicator
+ *
+ * @param simplex_enabled Is the simplex mode enabled
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
