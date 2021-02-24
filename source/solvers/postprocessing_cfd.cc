@@ -166,7 +166,8 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
   double                      en = 0.0;
   //    double domain_volume =
   //    GridTools::volume(dof_handler.get_triangulation(),*mapping);
-  double domain_volume = GridTools::volume(dof_handler.get_triangulation(),*mapping);
+  double domain_volume =
+    GridTools::volume(dof_handler.get_triangulation(), *mapping);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
@@ -275,7 +276,8 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
   const unsigned int               n_q_points = quadrature_formula->size();
 
   std::vector<Tensor<1, dim>> local_velocity_values(n_q_points);
-  double domain_volume = GridTools::volume(dof_handler.get_triangulation(),*mapping);
+  double                      domain_volume =
+    GridTools::volume(dof_handler.get_triangulation(), *mapping);
   // double domain_volume =
   // GridTools::volume(dof_handler.get_triangulation(),*mapping);
 
@@ -713,8 +715,9 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
 
   // double global_volume    =
   // GridTools::volume(dof_handler.get_triangulation(),*mapping);
-  double global_volume    = GridTools::volume(dof_handler.get_triangulation(),*mapping);
-  double average_pressure = pressure_integral / global_volume;
+  double global_volume =
+    GridTools::volume(dof_handler.get_triangulation(), *mapping);
+  double average_pressure       = pressure_integral / global_volume;
   double average_exact_pressure = exact_pressure_integral / global_volume;
 
 

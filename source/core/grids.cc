@@ -30,15 +30,15 @@ attach_grid_to_triangulation(
       std::ifstream input_file(mesh_parameters.file_name);
       grid_in.read_msh(input_file);
     }
-      // Dealii grids
+  // Dealii grids
   else if (mesh_parameters.type == Parameters::Mesh::Type::dealii &&
            !mesh_parameters.simplex)
-  {
+    {
       GridGenerator::generate_from_name_and_arguments(
-              *triangulation,
-              mesh_parameters.grid_type,
-              mesh_parameters.grid_arguments);
-  }
+        *triangulation,
+        mesh_parameters.grid_type,
+        mesh_parameters.grid_arguments);
+    }
 #ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
   // Simplex && GMSH input
   else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh &&
@@ -76,39 +76,38 @@ attach_grid_to_triangulation(
                    ExcMessage("Cells do not match"));
         }
     }
-      // Dealii grids
-  else if (mesh_parameters.type == Parameters::Mesh::Type::dealii&&
+  // Dealii grids
+  else if (mesh_parameters.type == Parameters::Mesh::Type::dealii &&
            mesh_parameters.simplex)
-  {
+    {
       Triangulation<dim, spacedim> temporary_quad_triangulation;
 
       GridGenerator::generate_from_name_and_arguments(
-              temporary_quad_triangulation,
-              mesh_parameters.grid_type,
-              mesh_parameters.grid_arguments);
+        temporary_quad_triangulation,
+        mesh_parameters.grid_type,
+        mesh_parameters.grid_arguments);
 
       Triangulation<dim, spacedim> temporary_tri_triangulation;
       GridGenerator::convert_hypercube_to_simplex_mesh(
-              temporary_quad_triangulation,
-              temporary_tri_triangulation);
+        temporary_quad_triangulation, temporary_tri_triangulation);
 
       // extract relevant information from distributed triangulation
       auto construction_data = TriangulationDescription::Utilities::
-      create_description_from_triangulation(
-              temporary_tri_triangulation, triangulation->get_communicator());
+        create_description_from_triangulation(
+          temporary_tri_triangulation, triangulation->get_communicator());
       triangulation->create_triangulation(construction_data);
 
       for (auto &cell : triangulation->active_cell_iterators())
-      {
-          CellId id        = cell->id();
-          auto   cell_base = temporary_tri_triangulation.create_cell_iterator(id);
+        {
+          CellId id      = cell->id();
+          auto cell_base = temporary_tri_triangulation.create_cell_iterator(id);
           // Assert(cell->center() == cell_base->center(),
           //       ExcMessage("Cells do not match"));
           for (unsigned int d = 0; d < dim; d++)
-          Assert(std::abs(cell->center()[d] - cell_base->center()[d]) < 1e-9,
-                 ExcMessage("Cells do not match"));
-      }
-  }
+            Assert(std::abs(cell->center()[d] - cell_base->center()[d]) < 1e-9,
+                   ExcMessage("Cells do not match"));
+        }
+    }
 #endif
 
 
