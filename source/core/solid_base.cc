@@ -157,12 +157,12 @@ SolidBase<dim, spacedim>::setup_particles()
           fluid_tria.get()))
     {
       // Increase number of bounding box level to ensure that insertion is
-      // faster. Right now this is hardcoded at 3, which is a very good
-      // compromise Eventually this can be a user parameter, but for the moment
-      // I do not think this is necessary.
-      const auto my_bounding_box =
+      // faster. Right now this is set to the maximum refinement level-1 which
+      // is a decent heuristic.
+      const unsigned int bounding_box_level = fluid_tria->n_global_levels() - 1;
+      const auto         my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
-          *tria, IteratorFilters::LocallyOwnedCell(), 3, true);
+          *tria, IteratorFilters::LocallyOwnedCell(), bounding_box_level, true);
       global_fluid_bounding_boxes =
         Utilities::MPI::all_gather(mpi_communicator, my_bounding_box);
     }
