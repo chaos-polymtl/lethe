@@ -27,6 +27,7 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <core/pvd_handler.h>
+#include <dem/checkpointing.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
@@ -260,19 +261,6 @@ private:
   void
   write_output_results();
 
-  /**
-   * @brief read_checkpoint Read a DEM simulation checkpoint, allowing the simulation to restart from where it stopped.
-   *
-   */
-  virtual void
-  read_checkpoint();
-
-  /**
-   * @brief write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.
-   */
-  virtual void
-  write_checkpoint();
-
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
@@ -358,6 +346,7 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
+  Checkpointing<dim>                   checkpointing_object;
   PPBroadSearch<dim>                   pp_broad_search_object;
   PPFineSearch<dim>                    pp_fine_search_object;
   PWBroadSearch<dim>                   pw_broad_search_object;

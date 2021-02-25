@@ -21,9 +21,6 @@
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-
 #include <core/solutions_output.h>
 #include <dem/dem.h>
 
@@ -199,86 +196,6 @@ DEMSolver<dim>::cell_weight(
   Assert(false, ExcInternalError());
   return 0;
 }
-
-template <int dim>
-void
-DEMSolver<dim>::write_checkpoint()
-{
-  TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
-
-  pcout << "Writing restart file" << std::endl;
-
-  std::string prefix = this->parameters.restart.filename;
-  if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    {
-      simulation_control->save(prefix);
-      particles_pvdhandler.save(prefix);
-    }
-
-  triangulation.signals.pre_distributed_save.connect(std::bind(
-    &Particles::ParticleHandler<dim>::register_store_callback_function,
-    &particle_handler));
-
-  std::ostringstream            oss;
-  boost::archive::text_oarchive oa(oss, boost::archive::no_header);
-  oa << particle_handler;
-  std::string triangulation_name = prefix + ".triangulation";
-  triangulation.save(prefix + ".triangulation");
-
-  // Write additional particle information for deserialization
-  std::string   particle_filename = prefix + ".particles";
-  std::ofstream output(particle_filename.c_str());
-  output << oss.str() << std::endl;
-}
-
-template <int dim>
-void
-DEMSolver<dim>::read_checkpoint()
-{
-  TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
-  std::string        prefix = parameters.restart.filename;
-  simulation_control->read(prefix);
-  particles_pvdhandler.read(prefix);
-
-  triangulation.signals.post_distributed_load.connect(
-    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
-              &particle_handler,
-              true));
-
-  // Gather particle serialization information
-  std::string   particle_filename = prefix + ".particles";
-  std::ifstream input(particle_filename.c_str());
-  AssertThrow(input, ExcFileNotOpen(particle_filename));
-
-  std::string buffer;
-  std::getline(input, buffer);
-  std::istringstream            iss(buffer);
-  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
-
-  ia >> particle_handler;
-
-  const std::string filename = prefix + ".triangulation";
-  std::ifstream     in(filename.c_str());
-  if (!in)
-    AssertThrow(false,
-                ExcMessage(
-                  std::string(
-                    "You are trying to restart a previous computation, "
-                    "but the restart file <") +
-                  filename + "> does not appear to exist!"));
-
-  try
-    {
-      triangulation.load(filename.c_str());
-    }
-  catch (...)
-    {
-      AssertThrow(false,
-                  ExcMessage("Cannot open snapshot mesh file or read the "
-                             "triangulation stored there."));
-    }
-}
-
 
 template <int dim>
 void
@@ -754,7 +671,13 @@ DEMSolver<dim>::solve()
 
   if (parameters.restart.restart == true)
     {
-      read_checkpoint();
+      checkpointing_object.read_checkpoint(computing_timer,
+                                           parameters,
+                                           simulation_control,
+                                           particles_pvdhandler,
+                                           triangulation,
+                                           particle_handler);
+
       update_moment_of_inertia(particle_handler, MOI);
     }
 
@@ -929,7 +852,14 @@ DEMSolver<dim>::solve()
               parameters.restart.frequency ==
             0)
         {
-          write_checkpoint();
+          checkpointing_object.write_checkpoint(computing_timer,
+                                                parameters,
+                                                simulation_control,
+                                                particles_pvdhandler,
+                                                triangulation,
+                                                particle_handler,
+                                                pcout,
+                                                mpi_communicator);
         }
     }
 
