@@ -25,7 +25,8 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-
+#include <iostream>
+#include <fstream>
 #include <core/pvd_handler.h>
 #include <dem/dem_solver_parameters.h>
 
