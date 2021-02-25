@@ -151,18 +151,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
 }
 
 template <int dim>
-void
-DEMSolver<dim>::print_initial_info()
-{
-  pcout
-    << "***************************************************************** \n";
-  pcout << "Starting simulation with Lethe/DEM on " << n_mpi_processes
-        << " processors" << std::endl;
-  pcout << "***************************************************************** "
-           "\n\n";
-}
-
-template <int dim>
 unsigned int
 DEMSolver<dim>::cell_weight(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
@@ -211,57 +199,6 @@ DEMSolver<dim>::cell_weight(
   Assert(false, ExcInternalError());
   return 0;
 }
-
-template <int dim>
-void
-DEMSolver<dim>::read_mesh()
-{
-  // GMSH input
-  if (parameters.mesh.type == Parameters::Mesh::Type::gmsh)
-    {
-      GridIn<dim> grid_in;
-      grid_in.attach_triangulation(triangulation);
-      std::ifstream input_file(parameters.mesh.file_name);
-      grid_in.read_msh(input_file);
-    }
-
-  // Dealii grids
-  else if (parameters.mesh.type == Parameters::Mesh::Type::dealii)
-    {
-      GridGenerator::generate_from_name_and_arguments(
-        triangulation,
-        parameters.mesh.grid_type,
-        parameters.mesh.grid_arguments);
-    }
-  else
-    throw std::runtime_error(
-      "Unsupported mesh type - mesh will not be created");
-
-  triangulation_cell_diameter = 0.5 * GridTools::diameter(triangulation);
-
-  if (parameters.restart.restart == false)
-    {
-      if (parameters.mesh.refine_until_target_size)
-        {
-          double minimal_cell_size =
-            GridTools::minimal_cell_diameter(triangulation);
-          double       target_size = parameters.mesh.target_size;
-          unsigned int number_refinement =
-            floor(std::log(minimal_cell_size / target_size) / std::log(2));
-          pcout << "Automatically refining grid until target size : "
-                << target_size << std::endl;
-          triangulation.refine_global(number_refinement);
-          pcout << "Mesh was automatically refined : " << number_refinement
-                << " times" << std::endl;
-        }
-      else
-        {
-          const int initial_refinement = parameters.mesh.initial_refinement;
-          triangulation.refine_global(initial_refinement);
-        }
-    }
-}
-
 
 template <int dim>
 void
@@ -810,10 +747,10 @@ void
 DEMSolver<dim>::solve()
 {
   // Print simulation starting information
-  print_initial_info();
+  print_initial_information(pcout, n_mpi_processes);
 
   // Reading mesh
-  read_mesh();
+  read_mesh(parameters, pcout, triangulation, triangulation_cell_diameter);
 
   if (parameters.restart.restart == true)
     {
