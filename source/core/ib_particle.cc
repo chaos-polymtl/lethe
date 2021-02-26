@@ -5,6 +5,7 @@ template <int dim>
 void
 IBParticle<dim>::initialise_all()
 {
+  // initilise all the variables associated to an immersed boundary particle.
   mass               = 1;
   radius             = 1;
   local_alpha_torque = 1;
@@ -55,6 +56,7 @@ template <int dim>
 void
 IBParticle<dim>::initialise_last()
 {
+  // initilise all the variables associated to an immersed boundary particle
   last_forces           = forces;
   last_position         = position;
   last_velocity         = velocity;

@@ -85,30 +85,6 @@ GLSSharpNavierStokesSolver<dim>::define_particles()
     table_f.resize(particles.size());
     table_t.resize(particles.size());
 
-    /*for (unsigned int p = 0; p < particles.size(); ++p) {
-
-        particles[p].forces[0]=0;
-        particles[p].forces[1]=0;
-        particles[p].last_forces[0]=0;
-        particles[p].last_forces[1]=0;
-        if (dim==3) {
-            particles[p].forces[2] = 0;
-            particles[p].last_forces[2] = 0;
-        }
-        particles[p].last_velocity=particles[p].velocity;
-        particles[p].velocity_iter=particles[p].velocity;
-        particles[p].last_position=particles[p].position;
-
-        particles[p].last_omega=particles[p].omega;
-        particles[p].omega_iter=particles[p].omega;
-        particles[p].angular_position[0]=0;
-        particles[p].angular_position[1]=0;
-        particles[p].angular_position[2]=0;
-        particles[p].last_angular_position=particles[p].angular_position;
-        particles[p].local_alpha_torque=1;
-        particles[p].local_alpha_force=1;
-
-    }*/
 }
 
 
@@ -269,17 +245,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           eval_point[0] + surf_normal[0] * (nb_step + 1) * step_ratio,
                           eval_point[1] +
                           surf_normal[1] * (nb_step + 1) * step_ratio);
-                  /*const auto &cell_iter =
-                    GridTools::find_active_cell_around_point(this->dof_handler,
-                                                             eval_point_iter);*/
-                  // std::cout << "before cell found " << i << std::endl;
+
                   const auto &cell_iter =
                           find_cell_around_point_with_tree(this->dof_handler,
                                                            eval_point_iter);
-                  // std::cout << "cell found " << i<< std::endl;
-                  // std::cout << "cell found v index " << cell_vertex_map.first
-                  // << std::endl; std::cout << "cell found map " <<
-                  // cell_vertex_map.second << std::endl;
 
 
 
@@ -345,9 +314,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
               // Check if the cell is locally owned before doing the evalation.
-              // if (cell_vertex_map.first!=vertices_to_cell.size()+1) {
-              // const auto
-              // &cell_2=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
               if (cell_2->is_locally_owned()) {
                   const auto &cell_3 =
                           find_cell_around_point_with_tree(this->dof_handler,
@@ -527,7 +493,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               particles[p].radius;
                   // nb_eval+=1;
               }
-              //}
           }
 
           // Reduce the solution for each process
@@ -1206,6 +1171,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
         for (unsigned int p = 0; p < particles.size(); ++p) {
             // Translation
+            // Define the gravity force applied on the particle based on his masse and the density of fluide applied on it.
             gravity[0] = 0;
             if (dim==2)
                 gravity[1] = g * (particles[p].mass -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
@@ -1213,6 +1179,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 gravity[1] = g * (particles[p].mass -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
                 gravity[2] = 0;
             }
+            // Evaluate the velocity of the particle
 
 
             Tensor<1, dim> velocity_iter;
@@ -1230,6 +1197,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             if (dim==3)
                 cross_product_v= (last_variation_v[0]*variation_v[0]+last_variation_v[1]*variation_v[1]+last_variation_v[2]*variation_v[2])/(last_variation_v.norm()*variation_v.norm());
 
+            // Evaluate the velocity of the particle with the relaxation parmameter
             if (last_variation_v.norm()<1e-10){
                 particles[p].velocity = particles[p].velocity + alpha *(velocity_iter - particles[p].velocity);;
             }
@@ -1238,7 +1206,6 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                 if (variation_v.norm() * cross_product_v > -last_variation_v.norm()) {
                     particles[p].velocity = particles[p].velocity + alpha * particles[p].local_alpha_force*
                                                                     (velocity_iter - particles[p].velocity);
-
                 }
                 else {
                     // if a potential divergence is observed the norm of the correction vector is adjusted to be half of the last correction vector norm and alpha is divided by 2.
@@ -1316,26 +1283,20 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
                     }
 
                 }
-
-
                 particles[p].omega_iter=particles[p].omega;
 
                 particles[p].angular_position + (particles[p].omega * 0.5 + particles[p].last_omega * 0.5) * dt;
             }
-            /*this->pcout << "particule " << p << " position " << particles[p].position << std::endl;
-            this->pcout << "particule " << p << " velocity " << particles[p].velocity << std::endl;
-            this->pcout << "particule " << p << " omega " << particles[p].omega << std::endl;*/
-
         }
     }
     else{
+        // direct integration of the movement of the particle if it's velocity is predefined.
         for (unsigned int p = 0; p < particles.size(); ++p) {
             particles[p].last_position =particles[p].position;
             particles[p].position[0] = particles[p].position[0]+dt*particles[p].velocity[0];
             particles[p].position[1] = particles[p].position[1]+dt*particles[p].velocity[1];
             if (dim==3)
                 particles[p].position[2]= particles[p].position[2]+dt*particles[p].velocity[2];
-
 
         }
     }
