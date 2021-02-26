@@ -57,7 +57,8 @@ namespace Parameters
     unsigned int particles_sub_iterations;
 
     // information for force calculation
-    Point<dim> cor; // Center of rotation used for torque calculation
+    Point<dim>
+      center_of_rotation; // Center of rotation used for torque calculation
   };
 
 
@@ -87,7 +88,7 @@ namespace Parameters
         "Number of sub iterations for the motion of the particles. This parameter"
         "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
 
-      prm.enter_subsection("cor");
+      prm.enter_subsection("center of rotation");
       prm.declare_entry("x", "0", Patterns::Double(), "X COR");
       prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
       prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
@@ -109,11 +110,11 @@ namespace Parameters
       enable_particles_motion  = prm.get_bool("enable particles motion");
       particles_sub_iterations = prm.get_integer("particles sub iterations");
 
-      prm.enter_subsection("cor");
-      cor[0] = prm.get_double("x");
-      cor[1] = prm.get_double("y");
+      prm.enter_subsection("center of rotation");
+      center_of_rotation[0] = prm.get_double("x");
+      center_of_rotation[1] = prm.get_double("y");
       if (dim == 3)
-        cor[2] = prm.get_double("z");
+        center_of_rotation[2] = prm.get_double("z");
       prm.leave_subsection();
     }
     prm.leave_subsection();

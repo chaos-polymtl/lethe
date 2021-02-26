@@ -617,9 +617,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             {
               solid[i_solid]->initial_setup();
               solid[i_solid]->setup_particles();
+              output_solid_particles(i_solid);
+              output_solid_triangulation(i_solid);
             }
-          output_solid_particles();
-          output_solid_triangulation();
         }
 
       {
@@ -661,8 +661,8 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
             {
               std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_ph =
                 solid[i_solid]->get_solid_particle_handler();
-              output_solid_particles();
-              output_solid_triangulation();
+              output_solid_particles(i_solid);
+              output_solid_triangulation(i_solid);
             }
         }
 
@@ -680,66 +680,59 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::solve()
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles()
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_particles(
+  const unsigned int i_solid)
 {
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-    {
-      std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler =
-        solid[i_solid]->get_solid_particle_handler();
-      Particles::DataOut<spacedim, spacedim> particles_out;
-      particles_out.build_patches(*particle_handler);
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler =
+    solid[i_solid]->get_solid_particle_handler();
+  Particles::DataOut<spacedim, spacedim> particles_out;
+  particles_out.build_patches(*particle_handler);
 
-      const std::string folder = this->simulation_control->get_output_path();
-      const std::string solution_name =
-        this->simulation_control->get_output_name() + "_solid_particles_" +
-        Utilities::int_to_string(i_solid, 2);
-      const unsigned int iter = this->simulation_control->get_step_number();
-      const double       time = this->simulation_control->get_current_time();
-      const unsigned int group_files =
-        this->simulation_control->get_group_files();
+  const std::string folder = this->simulation_control->get_output_path();
+  const std::string solution_name =
+    this->simulation_control->get_output_name() + "_solid_particles_" +
+    Utilities::int_to_string(i_solid, 2);
+  const unsigned int iter        = this->simulation_control->get_step_number();
+  const double       time        = this->simulation_control->get_current_time();
+  const unsigned int group_files = this->simulation_control->get_group_files();
 
-      write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles[i_solid],
-                                     *(&particles_out),
-                                     folder,
-                                     solution_name,
-                                     time,
-                                     iter,
-                                     group_files,
-                                     this->mpi_communicator);
-    }
+  write_vtu_and_pvd<0, spacedim>(pvdhandler_solid_particles[i_solid],
+                                 *(&particles_out),
+                                 folder,
+                                 solution_name,
+                                 time,
+                                 iter,
+                                 group_files,
+                                 this->mpi_communicator);
 }
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation()
+GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
+  const unsigned int i_solid)
 {
-  for (unsigned int i_solid = 0; i_solid < solid.size(); ++i_solid)
-    {
-      DataOut<dim, DoFHandler<dim, spacedim>> data_out;
-      DoFHandler<dim, spacedim> &             solid_dh =
-        solid[i_solid]->get_solid_dof_handler();
-      data_out.attach_dof_handler(solid_dh);
+  DataOut<dim, DoFHandler<dim, spacedim>> data_out;
+  DoFHandler<dim, spacedim> &solid_dh = solid[i_solid]->get_solid_dof_handler();
+  data_out.attach_dof_handler(solid_dh);
 
-      data_out.build_patches();
+  data_out.build_patches();
 
-      const std::string folder = this->simulation_control->get_output_path();
-      const std::string solution_name =
-        this->simulation_control->get_output_name() + "_solid_triangulation_" +
-        Utilities::int_to_string(i_solid, 2);
-      const unsigned int iter = this->simulation_control->get_step_number();
-      const double       time = this->simulation_control->get_current_time();
-      const unsigned int group_files =
-        this->simulation_control->get_group_files();
+  const std::string folder = this->simulation_control->get_output_path();
+  const std::string solution_name =
+    this->simulation_control->get_output_name() + "_solid_triangulation_" +
+    Utilities::int_to_string(i_solid, 2);
+  const unsigned int iter        = this->simulation_control->get_step_number();
+  const double       time        = this->simulation_control->get_current_time();
+  const unsigned int group_files = this->simulation_control->get_group_files();
 
-      write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation[i_solid],
-                             data_out,
-                             folder,
-                             solution_name,
-                             time,
-                             iter,
-                             group_files,
-                             this->mpi_communicator);
-    }
+  write_vtu_and_pvd<dim>(pvdhandler_solid_triangulation[i_solid],
+                         data_out,
+                         folder,
+                         solution_name,
+                         time,
+                         iter,
+                         group_files,
+                         this->mpi_communicator);
 }
 
 template <int dim, int spacedim>

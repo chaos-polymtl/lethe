@@ -103,12 +103,12 @@ private:
    * @brief Outputs a vtu file for each output frequency of the particles
    */
   void
-  output_solid_particles();
+  output_solid_particles(const unsigned int i_solid);
   /**
    * @brief Outputs a vtu file for each output frequency of the solid triangulation
    */
   void
-  output_solid_triangulation();
+  output_solid_triangulation(const unsigned int i_solid);
 
   std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solid;
   std::vector<PVDHandler> pvdhandler_solid_triangulation;

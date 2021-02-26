@@ -80,7 +80,7 @@ namespace BoundaryConditions
     Functions::ParsedFunction<dim> w;
 
     // Point for the center of rotation
-    Point<dim> cor;
+    Point<dim> center_of_rotation;
   };
 
 
@@ -172,8 +172,8 @@ namespace BoundaryConditions
     prm.set("Function expression", "0");
     prm.leave_subsection();
 
-    // Center of mass of the boundary condition for torque calculation
-    prm.enter_subsection("cor");
+    // Center of rotation of the boundary condition for torque calculation
+    prm.enter_subsection("center of rotation");
     prm.declare_entry("x", "0", Patterns::Double(), "X COR");
     prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
     prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
@@ -213,11 +213,11 @@ namespace BoundaryConditions
         bcFunctions[i_bc].w.parse_parameters(prm);
         prm.leave_subsection();
 
-        prm.enter_subsection("cor");
-        bcFunctions[i_bc].cor[0] = prm.get_double("x");
-        bcFunctions[i_bc].cor[1] = prm.get_double("y");
+        prm.enter_subsection("center of rotation");
+        bcFunctions[i_bc].center_of_rotation[0] = prm.get_double("x");
+        bcFunctions[i_bc].center_of_rotation[1] = prm.get_double("y");
         if (dim == 3)
-          bcFunctions[i_bc].cor[2] = prm.get_double("z");
+          bcFunctions[i_bc].center_of_rotation[2] = prm.get_double("z");
         prm.leave_subsection();
       }
     if (op == "periodic")
