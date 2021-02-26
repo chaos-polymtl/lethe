@@ -34,53 +34,41 @@ using namespace dealii;
 namespace Parameters
 {
   template <int dim>
-  class Nitsche
+  class NitscheSolid
   {
   public:
-    Nitsche()
+    NitscheSolid()
       : solid_velocity(dim)
     {}
 
     void
-    declare_parameters(ParameterHandler &prm);
+    declare_parameters(ParameterHandler &prm, unsigned int id);
     void
-    parse_parameters(ParameterHandler &prm);
+    parse_parameters(ParameterHandler &prm, unsigned int id);
 
     // Solid mesh
     Parameters::Mesh solid_mesh;
-
-    // Penalization term
-    double beta;
 
     // Solid velocity
     Functions::ParsedFunction<dim> solid_velocity;
     bool                           enable_particles_motion;
 
-    // Calculate forces
-    Verbosity   verbosity;
-    bool        calculate_force_on_solid;
-    bool        calculate_torque_on_solid;
-    Point<dim>  cor; // Center of rotation used for torque calculation
-    std::string force_output_name;
-    std::string torque_output_name;
-
-
-
     // Particle motion integration parameters
     unsigned int particles_sub_iterations;
+
+    // information for force calculation
+    Point<dim>
+      center_of_rotation; // Center of rotation used for torque calculation
   };
+
 
   template <int dim>
   void
-  Nitsche<dim>::declare_parameters(ParameterHandler &prm)
+  NitscheSolid<dim>::declare_parameters(ParameterHandler &prm, unsigned int id)
   {
-    prm.enter_subsection("nitsche");
+    prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
     {
       solid_mesh.declare_parameters(prm);
-      prm.declare_entry("beta",
-                        "1",
-                        Patterns::Double(),
-                        "Penalization term for Nitsche method");
       prm.enter_subsection("solid velocity");
       solid_velocity.declare_parameters(prm, dim);
       if (dim == 2)
@@ -92,6 +80,88 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Condition on the motion of particles");
+
+      prm.declare_entry(
+        "particles sub iterations",
+        "1",
+        Patterns::Integer(),
+        "Number of sub iterations for the motion of the particles. This parameter"
+        "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
+
+      prm.enter_subsection("center of rotation");
+      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
+      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
+      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  void
+  NitscheSolid<dim>::parse_parameters(ParameterHandler &prm, unsigned int id)
+  {
+    prm.enter_subsection("nitsche solid " + Utilities::int_to_string(id, 1));
+    {
+      solid_mesh.parse_parameters(prm);
+      prm.enter_subsection("solid velocity");
+      solid_velocity.parse_parameters(prm);
+      prm.leave_subsection();
+      enable_particles_motion  = prm.get_bool("enable particles motion");
+      particles_sub_iterations = prm.get_integer("particles sub iterations");
+
+      prm.enter_subsection("center of rotation");
+      center_of_rotation[0] = prm.get_double("x");
+      center_of_rotation[1] = prm.get_double("y");
+      if (dim == 3)
+        center_of_rotation[2] = prm.get_double("z");
+      prm.leave_subsection();
+    }
+    prm.leave_subsection();
+  }
+
+  template <int dim>
+  class Nitsche
+  {
+  public:
+    Nitsche()
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    // Penalization term
+    double beta;
+
+    // Calculate forces
+    Verbosity   verbosity;
+    bool        calculate_force_on_solid;
+    bool        calculate_torque_on_solid;
+    Point<dim>  cor; // Center of rotation used for torque calculation
+    std::string force_output_name;
+    std::string torque_output_name;
+
+    // Nitsche solid objects
+    std::vector<std::shared_ptr<NitscheSolid<dim>>> nitsche_solids;
+    unsigned int                                    number_solids;
+    static const unsigned int                       max_nitsche_solids = 2;
+  };
+
+  template <int dim>
+  void
+  Nitsche<dim>::declare_parameters(ParameterHandler &prm)
+  {
+    nitsche_solids.resize(max_nitsche_solids);
+    number_solids = 0;
+
+    prm.enter_subsection("nitsche");
+    {
+      prm.declare_entry("beta",
+                        "1",
+                        Patterns::Double(),
+                        "Penalization term for Nitsche method");
       prm.declare_entry(
         "verbosity",
         "quiet",
@@ -115,18 +185,16 @@ namespace Parameters
                         Patterns::FileName(),
                         "File output solid torque prefix");
 
-      prm.declare_entry(
-        "particles sub iterations",
-        "1",
-        Patterns::Integer(),
-        "Number of sub iterations for the motion of the particles. This parameter"
-        "enables the uses of a higher CFL condition for the Nitsche solver while preventing the loss of particles");
+      prm.declare_entry("number of solids",
+                        "1",
+                        Patterns::Integer(),
+                        "Number of immersed object");
 
-      prm.enter_subsection("cor");
-      prm.declare_entry("x", "0", Patterns::Double(), "X COR");
-      prm.declare_entry("y", "0", Patterns::Double(), "Y COR");
-      prm.declare_entry("z", "0", Patterns::Double(), "Z COR");
-      prm.leave_subsection();
+      for (unsigned int i_solid = 0; i_solid < max_nitsche_solids; ++i_solid)
+        {
+          nitsche_solids[i_solid] = std::make_shared<NitscheSolid<dim>>();
+          nitsche_solids[i_solid]->declare_parameters(prm, i_solid);
+        }
     }
     prm.leave_subsection();
   }
@@ -137,13 +205,8 @@ namespace Parameters
   {
     prm.enter_subsection("nitsche");
     {
-      solid_mesh.parse_parameters(prm);
-      beta = prm.get_double("beta");
-      prm.enter_subsection("solid velocity");
-      solid_velocity.parse_parameters(prm);
-      prm.leave_subsection();
-      enable_particles_motion = prm.get_bool("enable particles motion");
-      const std::string op    = prm.get("verbosity");
+      beta                 = prm.get_double("beta");
+      const std::string op = prm.get("verbosity");
       if (op == "verbose")
         verbosity = Verbosity::verbose;
       if (op == "quiet")
@@ -152,14 +215,12 @@ namespace Parameters
       calculate_torque_on_solid = prm.get_bool("calculate torques on solid");
       force_output_name         = prm.get("solid force name");
       torque_output_name        = prm.get("solid torque name");
-      particles_sub_iterations  = prm.get_integer("particles sub iterations");
 
-      prm.enter_subsection("cor");
-      cor[0] = prm.get_double("x");
-      cor[1] = prm.get_double("y");
-      if (dim == 3)
-        cor[2] = prm.get_double("z");
-      prm.leave_subsection();
+      number_solids = prm.get_integer("number of solids");
+      for (unsigned int i_solid = 0; i_solid < number_solids; ++i_solid)
+        {
+          nitsche_solids[i_solid]->parse_parameters(prm, i_solid);
+        }
     }
     prm.leave_subsection();
   }

@@ -62,14 +62,14 @@ private:
    * @return Tensor of forces on the solid
    */
   Tensor<1, spacedim>
-  calculate_forces_on_solid();
+  calculate_forces_on_solid(const unsigned int i_solid);
 
   /**
    * @brief Calculates the torque due to the fluid motion on the solid
    * @return Tensor of torque on the solid. This is always a 3D tensor even in 2D
    */
   Tensor<1, 3>
-  calculate_torque_on_solid();
+  calculate_torque_on_solid(const unsigned int i_solid);
 
   /**
    * @brief Post-process for forces on solid after an iteration
@@ -103,20 +103,19 @@ private:
    * @brief Outputs a vtu file for each output frequency of the particles
    */
   void
-  output_solid_particles(
-    std::shared_ptr<Particles::ParticleHandler<spacedim>> particle_handler);
+  output_solid_particles(const unsigned int i_solid);
   /**
    * @brief Outputs a vtu file for each output frequency of the solid triangulation
    */
   void
-  output_solid_triangulation();
+  output_solid_triangulation(const unsigned int i_solid);
 
-  SolidBase<dim, spacedim> solid;
-  PVDHandler               pvdhandler_solid_triangulation;
-  PVDHandler               pvdhandler_solid_particles;
+  std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solid;
+  std::vector<PVDHandler> pvdhandler_solid_triangulation;
+  std::vector<PVDHandler> pvdhandler_solid_particles;
 
-  TableHandler solid_forces_table;
-  TableHandler solid_torques_table;
+  std::vector<TableHandler> solid_forces_table;
+  std::vector<TableHandler> solid_torques_table;
 };
 
 

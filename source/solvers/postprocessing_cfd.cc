@@ -448,7 +448,7 @@ calculate_torques(
       unsigned int boundary_id = boundary_conditions.id[i_bc];
       torque                   = 0;
       Point<dim> center_of_rotation =
-        boundary_conditions.bcFunctions[boundary_id].cor;
+        boundary_conditions.bcFunctions[boundary_id].center_of_rotation;
       for (const auto &cell : dof_handler.active_cell_iterators())
         {
           if (cell->is_locally_owned())
