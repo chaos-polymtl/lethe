@@ -7,7 +7,7 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 3
+  set number mesh adapt       = 2
   set output name             = poiseuille_22
   set output frequency        = 1
   set subdivision             = 1
@@ -17,7 +17,7 @@ end
 # FEM
 #---------------------------------------------------
 subsection FEM
-    set velocity order        = 2
+    set velocity order        = 1
     set pressure order        = 1
 end
 
@@ -26,20 +26,6 @@ end
 #---------------------------------------------------
 subsection timer
     set type    = none                                  # <none|iteration|end>
-end
-
-#---------------------------------------------------
-# Force
-#---------------------------------------------------
-subsection forces
-    set verbosity             = verbose
-    set calculate forces      = true
-    set calculate torques     = false
-    set force name            = force
-    set torque name           = torque
-    set output precision      = 10
-    set calculation frequency = 1
-    set output frequency      = 1
 end
 
 #---------------------------------------------------
@@ -65,8 +51,8 @@ end
 subsection mesh
 		set type = dealii
 		set grid type = hyper_rectangle
-		set grid arguments = 0, -0.5 : 1, 0.5 : true
-		set initial refinement = 2
+		set grid arguments = 0, -0.5 : 1, 1.0 : true
+		set initial refinement = 4
 end
 
 #---------------------------------------------------
@@ -74,12 +60,23 @@ end
 #---------------------------------------------------
 subsection nitsche
 	set beta = 100
+    set calculate forces on solid = true
+    set verbosity = verbose
+    set number of solids = 2
         subsection nitsche solid 0
-	    subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = 0, -0.5 : 1, 0. : true
-		set initial refinement = 6
+	        subsection mesh
+		        set type = dealii
+		        set grid type = hyper_rectangle
+		        set grid arguments = 0, -0.5 : 1, 0. : true
+        		set initial refinement = 6
+            end
+        end
+        subsection nitsche solid 1
+	        subsection mesh
+		        set type = dealii
+		        set grid type = hyper_rectangle
+		        set grid arguments = 0, 0.5 : 1, 1.0 : true
+        		set initial refinement = 6
             end
         end
 end
@@ -98,7 +95,7 @@ subsection analytical solution
   set verbosity = verbose
     subsection uvw
             set Function constants = H=0.5, G=1, mu=1
-            set Function expression =  if(y >= 0.,  0.5 * G / mu * (y) * (H - y) , 0)  ; 0 ; 0
+            set Function expression =  if(y >= 0. && y<=0.5,  0.5 * G / mu * (y) * (H - y) , 0)  ; 0 ; 0
     end
 end
 
