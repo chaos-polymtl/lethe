@@ -624,7 +624,7 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       Parameters::MeshAdaptation::Variable::pressure)
     {
       KellyErrorEstimator<dim>::estimate(
-        *this->velocity_mapping,
+        *this->pressure_mapping,
         this->dof_handler,
         *this->face_quadrature,
         typename std::map<types::boundary_id, const Function<dim, double> *>(),
