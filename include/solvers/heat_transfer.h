@@ -67,15 +67,15 @@ public:
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        fe = std::make_shared<Simplex::FE_P<dim>>(
+        fe = std::make_shared<FE_SimplexP<dim>>(
           simulation_parameters.fem_parameters.temperature_order);
         temperature_mapping = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature =
-          std::make_shared<Simplex::QGauss<dim>>(fe->degree + 1);
+          std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
-          std::make_shared<Simplex::QGauss<dim - 1>>(fe->degree + 1);
+          std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
         error_quadrature =
-          std::make_shared<Simplex::QGauss<dim>>(fe->degree + 2);
+          std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
       }
     else
       {

@@ -61,17 +61,17 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     {
       // for simplex meshes
 
-      const Simplex::FE_P<dim> velocity_fe(
+      const FE_SimplexP<dim> velocity_fe(
         p_nsparam.fem_parameters.velocity_order);
-      const Simplex::FE_P<dim> pressure_fe(
+      const FE_SimplexP<dim> pressure_fe(
         p_nsparam.fem_parameters.pressure_order);
       fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
       velocity_mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
       pressure_mapping = std::make_shared<MappingFE<dim>>(pressure_fe);
       cell_quadrature =
-        std::make_shared<Simplex::QGauss<dim>>(number_quadrature_points);
+        std::make_shared<QGaussSimplex<dim>>(number_quadrature_points);
       face_quadrature =
-        std::make_shared<Simplex::QGauss<dim - 1>>(number_quadrature_points);
+        std::make_shared<QGaussSimplex<dim - 1>>(number_quadrature_points);
       triangulation =
         std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
           this->mpi_communicator);
