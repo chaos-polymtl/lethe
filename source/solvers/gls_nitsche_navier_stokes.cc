@@ -127,7 +127,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
                   const auto comp_i =
-                    this->fe.system_to_component_index(i).first;
+                    this->fe->system_to_component_index(i).first;
                   if (comp_i < spacedim)
                     {
                       if (assemble_matrix)
