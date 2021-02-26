@@ -78,15 +78,15 @@
 #include <deal.II/fe/mapping_q.h>
 
 // Numerics
+#include <deal.II/base/quadrature_lib.h>
+
+#include <deal.II/fe/fe_simplex_p.h>
+
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/solution_transfer.h>
 #include <deal.II/numerics/vector_tools.h>
-
-// Simplex
-#include <deal.II/simplex/fe_lib.h>
-#include <deal.II/simplex/quadrature_lib.h>
 
 // Distributed
 #include <deal.II/distributed/fully_distributed_tria.h>

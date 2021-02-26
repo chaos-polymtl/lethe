@@ -34,15 +34,14 @@
 #  include <deal.II/dofs/dof_handler.h>
 
 // Fe
+#  include <deal.II/base/quadrature_lib.h>
+
 #  include <deal.II/fe/fe_q.h>
+#  include <deal.II/fe/fe_simplex_p.h>
 #  include <deal.II/fe/fe_system.h>
 #  include <deal.II/fe/fe_values.h>
 #  include <deal.II/fe/mapping_fe.h>
 #  include <deal.II/fe/mapping_q.h>
-
-// Simplex
-#  include <deal.II/simplex/fe_lib.h>
-#  include <deal.II/simplex/quadrature_lib.h>
 
 // Lethe includes
 #  include <core/boundary_conditions.h>

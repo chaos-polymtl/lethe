@@ -43,8 +43,8 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
   std::shared_ptr<Mapping<dim>>    mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
-      quadrature_formula = std::make_shared<Simplex::QGauss<dim>>(1);
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
+      quadrature_formula = std::make_shared<QGaussSimplex<dim>>(1);
     }
   else
     {
@@ -142,9 +142,8 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
   std::shared_ptr<Mapping<dim>>    mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
-      quadrature_formula =
-        std::make_shared<Simplex::QGauss<dim>>(fe.degree + 1);
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
+      quadrature_formula = std::make_shared<QGaussSimplex<dim>>(fe.degree + 1);
     }
   else
     {
@@ -256,9 +255,8 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
   std::shared_ptr<Mapping<dim>>    mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
-      quadrature_formula =
-        std::make_shared<Simplex::QGauss<dim>>(fe.degree + 1);
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
+      quadrature_formula = std::make_shared<QGaussSimplex<dim>>(fe.degree + 1);
     }
   else
     {
@@ -358,9 +356,9 @@ calculate_forces(
   std::shared_ptr<Mapping<dim>>        mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
       face_quadrature_formula =
-        std::make_shared<Simplex::QGauss<dim - 1>>(fe.degree + 1);
+        std::make_shared<QGaussSimplex<dim - 1>>(fe.degree + 1);
     }
   else
     {
@@ -493,9 +491,9 @@ calculate_torques(
   std::shared_ptr<Mapping<dim>>        mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
       face_quadrature_formula =
-        std::make_shared<Simplex::QGauss<dim - 1>>(fe.degree + 1);
+        std::make_shared<QGaussSimplex<dim - 1>>(fe.degree + 1);
     }
   else
     {
@@ -650,9 +648,8 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
   std::shared_ptr<Mapping<dim>>    mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
-      quadrature_formula =
-        std::make_shared<Simplex::QGauss<dim>>(fe.degree + 2);
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
+      quadrature_formula = std::make_shared<QGaussSimplex<dim>>(fe.degree + 2);
     }
   else
     {
@@ -823,9 +820,9 @@ calculate_flow_rate(const DoFHandler<dim> &dof_handler,
   std::shared_ptr<Mapping<dim>>        mapping;
   if (simplex_enabled)
     {
-      mapping = std::make_shared<MappingFE<dim>>(Simplex::FE_P<dim>(fe.degree));
+      mapping = std::make_shared<MappingFE<dim>>(FE_SimplexP<dim>(fe.degree));
       face_quadrature_formula =
-        std::make_shared<Simplex::QGauss<dim - 1>>(fe.degree + 1);
+        std::make_shared<QGaussSimplex<dim - 1>>(fe.degree + 1);
     }
   else
     {

@@ -26,19 +26,19 @@
 #define lethe_heat_transfer_h
 
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <core/simulation_control.h>
-#include <deal.II/fe/fe_simplex_p.h>
-#include <deal.II/base/quadrature_lib.h>
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
 
@@ -70,12 +70,10 @@ public:
         fe = std::make_shared<FE_SimplexP<dim>>(
           simulation_parameters.fem_parameters.temperature_order);
         temperature_mapping = std::make_shared<MappingFE<dim>>(*fe);
-        cell_quadrature =
-          std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
-        error_quadrature =
-          std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
+        error_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
       }
     else
       {
