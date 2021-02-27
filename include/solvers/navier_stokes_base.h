@@ -72,16 +72,13 @@
 
 // Fe
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
 // Numerics
-#include <deal.II/base/quadrature_lib.h>
-
-#include <deal.II/fe/fe_simplex_p.h>
-
 #include <deal.II/numerics/data_out.h>
 #include <deal.II/numerics/error_estimator.h>
 #include <deal.II/numerics/matrix_tools.h>
