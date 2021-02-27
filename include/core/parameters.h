@@ -430,7 +430,7 @@ namespace Parameters
     // Enabling fixing initial refinement from a target size
     bool refine_until_target_size;
 
-    // Allowing to use a simplex mesh
+    // Allowing the use of a simplex mesh
     bool simplex;
 
     // Target size when automatically refining initial mesh

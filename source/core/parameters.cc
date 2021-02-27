@@ -531,7 +531,7 @@ namespace Parameters
       prm.declare_entry("enable simplex",
                         "false",
                         Patterns::Bool(),
-                        "Enable the use of simplex meshes.");
+                        "Indicates that the mesh used should be a simplex mesh.");
 
 
       prm.declare_entry("target size",
