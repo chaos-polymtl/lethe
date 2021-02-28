@@ -4,7 +4,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 1e-5
-  set time end       					 = 0.2
+  set time end       					 = 0.1
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -74,7 +74,7 @@ subsection insertion info
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
     set insertion box maximum z            	        = 0.03
-    set insertion distance threshold			= 1.5
+    set insertion distance threshold			= 3
     set insertion random number range			= 0.2
     set insertion random number seed			= 19
 end
