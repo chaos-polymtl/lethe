@@ -72,13 +72,11 @@ template <int dim>
 void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
-  const MappingQ<dim> mapping(this->velocity_fem_degree);
-
   this->simulation_parameters.void_fraction->void_fraction.set_time(time);
 
 
   VectorTools::interpolate(
-    mapping,
+    *this->mapping,
     void_fraction_dof_handler,
     this->simulation_parameters.void_fraction->void_fraction,
     nodal_void_fraction_owned);
@@ -225,17 +223,14 @@ GLSVANSSolver<dim>::assembleGLS()
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim> fe_values(mapping,
+  FEValues<dim> fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
 
-  FEValues<dim> fe_values_void_fraction(mapping,
+  FEValues<dim> fe_values_void_fraction(*this->mapping,
                                         this->fe_void_fraction,
                                         quadrature_formula,
                                         update_values |
