@@ -72,6 +72,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         std::make_shared<QGaussSimplex<dim>>(number_quadrature_points);
       face_quadrature =
         std::make_shared<QGaussSimplex<dim - 1>>(number_quadrature_points);
+      one_pt_quadrature = std::make_shared<QGaussSimplex<dim>>(1);
+      higher_cell_quadrature =
+        std::make_shared<QGaussSimplex<dim>>(number_quadrature_points + 1);
       triangulation =
         std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
           this->mpi_communicator);
@@ -95,6 +98,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         std::make_shared<QGauss<dim>>(this->number_quadrature_points);
       face_quadrature =
         std::make_shared<QGauss<dim - 1>>(this->number_quadrature_points + 1);
+      one_pt_quadrature = std::make_shared<QGauss<dim>>(1);
+      higher_cell_quadrature =
+        std::make_shared<QGauss<dim>>(number_quadrature_points + 1);
       triangulation =
         std::make_shared<parallel::distributed::Triangulation<dim>>(
           this->mpi_communicator,
@@ -174,7 +180,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_flow_rate(
                         simulation_parameters.flow_control.boundary_flow_id,
                         simulation_parameters.fem_parameters,
                         mpi_communicator,
-                        simulation_parameters.mesh.simplex);
+                        *this->fe,
+                        *this->face_quadrature,
+                        *this->velocity_mapping);
 
   // Showing results (area and flow rate)
   if (simulation_parameters.flow_control.verbosity ==
@@ -225,7 +233,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
                      simulation_parameters.physical_properties,
                      simulation_parameters.boundary_conditions,
                      mpi_communicator,
-                     simulation_parameters.mesh.simplex);
+                     *this->fe,
+                     *this->face_quadrature,
+                     *this->velocity_mapping);
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -305,7 +315,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
                       simulation_parameters.fem_parameters,
                       simulation_parameters.boundary_conditions,
                       mpi_communicator,
-                      simulation_parameters.mesh.simplex);
+                      *this->fe,
+                      *this->face_quadrature,
+                      *this->velocity_mapping);
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -432,7 +444,9 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
                                        this->present_solution,
                                        simulation_control->get_time_step(),
                                        mpi_communicator,
-                                       simulation_parameters.mesh.simplex);
+                                       *this->fe,
+                                       *this->one_pt_quadrature,
+                                       *this->velocity_mapping);
       this->simulation_control->set_CFL(CFL);
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&
@@ -798,7 +812,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                             present_solution,
                             simulation_parameters.fem_parameters,
                             mpi_communicator,
-                            simulation_parameters.mesh.simplex);
+                            *this->fe,
+                            *this->cell_quadrature,
+                            *this->velocity_mapping);
 
       this->enstrophy_table.add_value("time",
                                       simulation_control->get_current_time());
@@ -853,7 +869,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                            present_solution,
                                            simulation_parameters.fem_parameters,
                                            mpi_communicator,
-                                           simulation_parameters.mesh.simplex);
+                                           *this->fe,
+                                           *this->cell_quadrature,
+                                           *this->velocity_mapping);
       this->kinetic_energy_table.add_value(
         "time", simulation_control->get_current_time());
       this->kinetic_energy_table.add_value("kinetic-energy", kE);
@@ -929,7 +947,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                exact_solution,
                                simulation_parameters.fem_parameters,
                                mpi_communicator,
-                               simulation_parameters.mesh.simplex);
+                               *this->fe,
+                               *this->higher_cell_quadrature,
+                               *this->velocity_mapping);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
           if (simulation_parameters.simulation_control.method ==
@@ -1067,7 +1087,9 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                             simulation_parameters.flow_control.boundary_flow_id,
                             simulation_parameters.fem_parameters,
                             mpi_communicator,
-                            simulation_parameters.mesh.simplex);
+                            *this->fe,
+                            *this->face_quadrature,
+                            *this->velocity_mapping);
     }
 
 

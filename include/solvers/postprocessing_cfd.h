@@ -62,15 +62,21 @@
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
  *
- * @param simplex_enabled Is the simplex mode enabled
+ * @param fe The finite element of the simulation
+ *
+ * @param quadrature_formula The quadrature formula that for the calculation
+ *
+ * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_CFL(const DoFHandler<dim> &dof_handler,
-              const VectorType &     evaluation_point,
-              const double           time_step,
-              const MPI_Comm &       mpi_communicator,
-              const bool             simplex_enabled);
+calculate_CFL(const DoFHandler<dim> &   dof_handler,
+              const VectorType &        evaluation_point,
+              const double              time_step,
+              const MPI_Comm &          mpi_communicator,
+              const FiniteElement<dim> &fe,
+              const Quadrature<dim> &   quadrature_formula,
+              const Mapping<dim> &      mapping);
 
 /**
  * @brief Calculate the average enstrophy in the simulation domain
@@ -85,14 +91,22 @@ calculate_CFL(const DoFHandler<dim> &dof_handler,
  * @param fem_parameters The fem_parameters of the simulation
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
+ *
+ * @param fe The finite element of the simulation
+ *
+ * @param quadrature_formula The quadrature formula that for the calculation
+ *
+ * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_enstrophy(const DoFHandler<dim> &dof_handler,
-                    const VectorType &     evaluation_point,
-                    const Parameters::FEM &fem_parameters,
-                    const MPI_Comm &       mpi_communicator,
-                    const bool             simplex_enabled);
+calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
+                    const VectorType &        evaluation_point,
+                    const Parameters::FEM &   fem_parameters,
+                    const MPI_Comm &          mpi_communicator,
+                    const FiniteElement<dim> &fe,
+                    const Quadrature<dim> &   quadrature_formula,
+                    const Mapping<dim> &      mapping);
 
 /**
  * @brief Calculate the average kinetic energy in the simulation domain
@@ -108,15 +122,21 @@ calculate_enstrophy(const DoFHandler<dim> &dof_handler,
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
  *
- * @param simplex_enabled Is the simplex mode enabled
+ * @param fe The finite element of the simulation
+ *
+ * @param quadrature_formula The quadrature formula that for the calculation
+ *
+ * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 double
-calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
-                         const VectorType &     evaluation_point,
-                         const Parameters::FEM &fem_parameters,
-                         const MPI_Comm &       mpi_communicator,
-                         const bool             simplex_enabled);
+calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
+                         const VectorType &        evaluation_point,
+                         const Parameters::FEM &   fem_parameters,
+                         const MPI_Comm &          mpi_communicator,
+                         const FiniteElement<dim> &fe,
+                         const Quadrature<dim> &   quadrature_formula,
+                         const Mapping<dim> &      mapping);
 
 /**
  * @brief Calculates the force due to the fluid motion on every boundary conditions
@@ -136,7 +156,11 @@ calculate_kinetic_energy(const DoFHandler<dim> &dof_handler,
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
  *
- * @param simplex_enabled Is the simplex mode enabled
+ * @param fe The finite element of the simulation
+ *
+ * @param face_quadrature_formula The face quadrature formula that for the calculation
+ *
+ * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 std::vector<Tensor<1, dim>>
@@ -146,7 +170,9 @@ calculate_forces(
   const Parameters::PhysicalProperties &               physical_properties,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator,
-  const bool                                           simplex_enabled);
+  const FiniteElement<dim> &                           fe,
+  const Quadrature<dim - 1> &                          face_quadrature_formula,
+  const Mapping<dim> &                                 mapping);
 
 
 /**
@@ -169,7 +195,11 @@ calculate_forces(
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the torque calculation.
  *
- * @param simplex_enabled Is the simplex mode enabled
+ * @param fe The finite element of the simulation.
+ *
+ * @param face_quadrature_formula The face quadrature formula that for the calculation.
+ *
+ * @param mapping The mapping of the simulation.
  */
 template <int dim, typename VectorType>
 std::vector<Tensor<1, 3>>
@@ -180,7 +210,9 @@ calculate_torques(
   const Parameters::FEM &                              fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator,
-  const bool                                           simplex_enabled);
+  const FiniteElement<dim> &                           fe,
+  const Quadrature<dim - 1> &                          face_quadrature_formula,
+  const Mapping<dim> &                                 mapping);
 
 
 /**
@@ -202,16 +234,22 @@ calculate_torques(
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the error calculation.
  *
- * @param simplex_enabled Is the simplex mode enabled
+ * @param fe The finite element of the simulation.
+ *
+ * @param quadrature_formula The quadrature formula that for the calculation.
+ *
+ * @param mapping The mapping of the simulation.
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_L2_error(const DoFHandler<dim> &dof_handler,
-                   const VectorType &     evaluation_point,
-                   const Function<dim> *  exact_solution,
-                   const Parameters::FEM &fem_parameters,
-                   const MPI_Comm &       mpi_communicator,
-                   const bool             simplex_enabled);
+calculate_L2_error(const DoFHandler<dim> &   dof_handler,
+                   const VectorType &        evaluation_point,
+                   const Function<dim> *     exact_solution,
+                   const Parameters::FEM &   fem_parameters,
+                   const MPI_Comm &          mpi_communicator,
+                   const FiniteElement<dim> &fe,
+                   const Quadrature<dim> &   quadrature_formula,
+                   const Mapping<dim> &      mapping);
 
 
 /**
@@ -231,16 +269,22 @@ calculate_L2_error(const DoFHandler<dim> &dof_handler,
  *
  * @param mpi_communicator. The mpi communicator
  *
- * @param simplex_enabled Is the simplex mode enabled
+ * @param fe The finite element of the simulation
+ *
+ * @param face_quadrature_formula The face quadrature formula that for the calculation
+ *
+ * @param mapping The mapping of the simulation
  */
 template <int dim, typename VectorType>
 std::pair<double, double>
-calculate_flow_rate(const DoFHandler<dim> &dof_handler,
-                    const VectorType &     present_solution,
-                    const unsigned int &   boundary_id,
-                    const Parameters::FEM &fem_parameters,
-                    const MPI_Comm &       mpi_communicator,
-                    const bool             simplex_enabled);
+calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
+                    const VectorType &         present_solution,
+                    const unsigned int &       boundary_id,
+                    const Parameters::FEM &    fem_parameters,
+                    const MPI_Comm &           mpi_communicator,
+                    const FiniteElement<dim> & fe,
+                    const Quadrature<dim - 1> &face_quadrature_formula,
+                    const Mapping<dim> &       mapping);
 
 
 
