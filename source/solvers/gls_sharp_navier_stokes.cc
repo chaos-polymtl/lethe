@@ -1162,7 +1162,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
     double dt=this->simulation_control->get_time_steps_vector()[0];
     double alpha=this->simulation_parameters.particlesParameters.alpha;
-    double g=this->simulation_parameters.particlesParameters.gravity;
+    Tensor<1,dim> g=this->simulation_parameters.particlesParameters.gravity;
     double rho=this->simulation_parameters.particlesParameters.density;
 
 
@@ -1172,12 +1172,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
         for (unsigned int p = 0; p < particles.size(); ++p) {
             // Translation
             // Define the gravity force applied on the particle based on his masse and the density of fluide applied on it.
-            gravity[0] = 0;
+
             if (dim==2)
-                gravity[1] = g * (particles[p].mass -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+                gravity = g * (particles[p].mass -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
             if (dim == 3){
-                gravity[1] = g * (particles[p].mass -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
-                gravity[2] = 0;
+                gravity= g * (particles[p].mass -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
             }
             // Evaluate the velocity of the particle
 

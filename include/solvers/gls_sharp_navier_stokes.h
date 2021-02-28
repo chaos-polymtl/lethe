@@ -58,14 +58,13 @@ private:
   // and Adjacent_3 needs to be renamed if possible to a clearer notation
 
   // Map the vertex index to the cell that include that vertex used later in
-  // which cell a point falls in vertices_to_cell is a vector of vectof of dof
+  // which cell a point falls in vertices_to_cell is a vector of vector of dof
   // handler active cell iterator each element i of the vector is a vector of
-  // all the cell in contact with the vertex i
+  // all the cell in contact with the vertex i.
   void
   vertices_cell_mapping();
 
-
-  // Defined the particle structure and value based on the parameter file.
+  // Defines the particle structure and value based on the parameter file.
   void
   define_particles();
 
@@ -73,19 +72,19 @@ private:
   void
   force_on_ib();
 
-  // Modified the system matrix to impose IB condition
+  // Modify the system matrix to impose IB condition.
   void
   sharp_edge();
 
-  // Write in  the ouput file the force , velocity , position of each of the particles
+  // Write in  the ouput file the force , velocity , position of each of the particles.
   void
   write_force_ib();
 
-  // Integrate the particle velocity and position based on the forces and torque applied to it
+  // Integrate the particle velocity and position based on the forces and torque applied to it.
   void
   integrate_particles();
 
-  // Store the solution for the particles dynamics parameters for integration. Defined the table to store the history of each of the particles
+  // Store the solution for the particles dynamics parameters for integration. Defines the table to store the history of each of the particles.
   void
   finish_time_step_particles();
 
@@ -96,11 +95,11 @@ private:
   virtual void
   postprocess_fd(bool firstIter) override;
 
-  // allow a refinement around each of the particles.
+  // Allow a refinement around each of the particles.
   void
   refine_ib();
 
-  // modified version of assemble_matrix_and_rhs to include the presence of extra steps.
+  // Modified version of assemble_matrix_and_rhs to include the presence of extra steps.
   void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod

@@ -1041,8 +1041,18 @@ namespace Parameters
                 Patterns::Double(),
                 "density of the fluid");
       prm.declare_entry(
-                "gravity",
+                "gravity_x",
+                "0",
+                Patterns::Double(),
+                "gravitational acceleration");
+      prm.declare_entry(
+                "gravity_y",
                 "-9.81",
+                Patterns::Double(),
+                "gravitational acceleration");
+      prm.declare_entry(
+                "gravity_z",
+                "0",
                 Patterns::Double(),
                 "gravitational acceleration");
       prm.declare_entry("alpha", "1", Patterns::Double(), "relaxation parameter");
@@ -1118,9 +1128,14 @@ namespace Parameters
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
       density            = prm.get_double("fluid density");
-      gravity            = prm.get_double("gravity");
       integrate_motion   = prm.get_bool("integrate motion");
       alpha              = prm.get_double("alpha");
+      gravity[0]            = prm.get_double("gravity_x");
+      gravity[1]            = prm.get_double("gravity_y");
+      if (dim==3)
+        gravity[2]            = prm.get_double("gravity_z");
+
+
 
       particles.resize(nb);
       for (unsigned int i = 0; i < nb; ++i)
