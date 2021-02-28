@@ -86,7 +86,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
             BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
-              *this->velocity_mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
@@ -104,13 +104,13 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
               0,
               no_normal_flux_boundaries,
               nonzero_constraints,
-              *this->velocity_mapping);
+              *this->mapping);
           }
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
-              *this->velocity_mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               NavierStokesFunctionDefined<dim>(
@@ -162,7 +162,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
               0,
               no_normal_flux_boundaries,
               this->zero_constraints,
-              *this->velocity_mapping);
+              *this->mapping);
           }
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::periodic)
@@ -179,7 +179,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
              // || Parameters::function)
           {
             VectorTools::interpolate_boundary_values(
-              *this->velocity_mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
@@ -247,7 +247,7 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
   double global_volume =
-    GridTools::volume(*this->triangulation, *this->velocity_mapping);
+    GridTools::volume(*this->triangulation, *this->mapping);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
@@ -277,7 +277,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   double viscosity = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
-  FEValues<dim>                    fe_values(*this->velocity_mapping,
+  FEValues<dim>                    fe_values(*this->mapping,
                           *this->fe,
                           *this->cell_quadrature,
                           update_values | update_quadrature_points |
@@ -871,8 +871,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 {
   system_matrix    = 0;
   this->system_rhs = 0;
-
-  FEValues<dim>               fe_values(*this->velocity_mapping,
+  FEValues<dim>               fe_values(*this->mapping,
                           *this->fe,
                           *this->cell_quadrature,
                           update_values | update_quadrature_points |

@@ -74,7 +74,7 @@ InitialConditionsNavierStokes<dim>::runTest()
                        this->mpi_communicator,
                        *this->fe,
                        *this->higher_cell_quadrature,
-                       *this->velocity_mapping);
+                       *this->mapping);
   double error_L2projection = errors.first;
   if (error_L2projection < 1e-9)
     {
@@ -94,7 +94,7 @@ InitialConditionsNavierStokes<dim>::runTest()
                        this->mpi_communicator,
                        *this->fe,
                        *this->higher_cell_quadrature,
-                       *this->velocity_mapping);
+                       *this->mapping);
   double error_nodal = errors_nodal.first;
   if (error_nodal < 1e-9)
     {

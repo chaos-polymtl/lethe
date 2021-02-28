@@ -103,7 +103,7 @@ GDNavierStokesSolver<dim>::assembleGD()
 
   this->system_rhs = 0;
 
-  FEValues<dim> fe_values(*this->velocity_mapping,
+  FEValues<dim> fe_values(*this->mapping,
                           *this->fe,
                           *this->cell_quadrature,
                           update_values | update_quadrature_points |
@@ -336,7 +336,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   system_matrix    = 0;
   auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
-  FEValues<dim>           fe_values(*this->velocity_mapping,
+  FEValues<dim>               fe_values(*this->mapping,
                           *this->fe,
                           *this->cell_quadrature,
                           update_values | update_quadrature_points |
@@ -471,7 +471,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
             BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
-              *this->velocity_mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
@@ -494,7 +494,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                  BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
-              *this->velocity_mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               NavierStokesFunctionDefined<dim>(
@@ -562,7 +562,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
           // || Parameters::function)
           {
             VectorTools::interpolate_boundary_values(
-              *this->velocity_mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),

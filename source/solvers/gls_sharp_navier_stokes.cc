@@ -1206,7 +1206,7 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   TimerOutput::Scope t(this->computing_timer, "error");
 
   QGauss<dim>   quadrature_formula(this->number_quadrature_points + 1);
-  FEValues<dim> fe_values(*this->velocity_mapping,
+  FEValues<dim> fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_gradients |
@@ -2560,7 +2560,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>        quadrature_formula(this->number_quadrature_points);
-  FEValues<dim>      fe_values(*this->velocity_mapping,
+  FEValues<dim>      fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
