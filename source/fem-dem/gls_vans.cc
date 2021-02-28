@@ -222,7 +222,7 @@ GLSVANSSolver<dim>::assembleGLS()
   double viscosity = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  QGauss<dim>   quadrature_formula(this->number_quadrature_points);
   FEValues<dim> fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,

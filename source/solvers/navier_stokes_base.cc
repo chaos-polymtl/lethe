@@ -66,7 +66,11 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       const FE_SimplexP<dim> pressure_fe(
         p_nsparam.fem_parameters.pressure_order);
       fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
-        mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
+      mapping = std::make_shared<MappingFE<dim>>(velocity_fe);
+      mapping_q_all_cells =
+        std::make_shared<MappingFE<dim>>(velocity_fe); // dummy
+      mapping_no_q_all_cells =
+        std::make_shared<MappingFE<dim>>(velocity_fe); // dummy
       cell_quadrature =
         std::make_shared<QGaussSimplex<dim>>(number_quadrature_points);
       face_quadrature =
@@ -89,8 +93,12 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
         dim,
         FE_Q<dim>(p_nsparam.fem_parameters.pressure_order),
         1);
-        mapping = std::make_shared<MappingQ<dim>>(
+      mapping = std::make_shared<MappingQ<dim>>(
         velocity_fem_degree, simulation_parameters.fem_parameters.qmapping_all);
+      mapping_q_all_cells =
+        std::make_shared<MappingQ<dim>>(velocity_fem_degree, true);
+      mapping_no_q_all_cells =
+        std::make_shared<MappingQ<dim>>(velocity_fem_degree, false);
       cell_quadrature =
         std::make_shared<QGauss<dim>>(this->number_quadrature_points);
       face_quadrature =
@@ -232,7 +240,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_forces(
                      mpi_communicator,
                      *this->fe,
                      *this->face_quadrature,
-                     *this->mapping);
+                     *this->mapping_q_all_cells);
 
   if (simulation_parameters.forces_parameters.verbosity ==
         Parameters::Verbosity::verbose &&
@@ -443,7 +451,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
                                        mpi_communicator,
                                        *this->fe,
                                        *this->one_pt_quadrature,
-                                       *this->mapping);
+                                       *this->mapping_no_q_all_cells);
       this->simulation_control->set_CFL(CFL);
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&

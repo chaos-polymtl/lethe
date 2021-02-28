@@ -483,6 +483,8 @@ protected:
 >>>>>>> Enable Simplex usage in NS GLS from msh grid
   // Mappings and Quadratures
   std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Mapping<dim>>        mapping_q_all_cells;
+  std::shared_ptr<Mapping<dim>>        mapping_no_q_all_cells;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim>>     one_pt_quadrature;
   std::shared_ptr<Quadrature<dim>>     higher_cell_quadrature;
