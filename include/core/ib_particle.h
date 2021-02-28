@@ -28,10 +28,7 @@ template <int dim>
 class IBParticle
 {
 public:
-
-
-
-    // This class defines values related to a particle used for in the sharp interface immersed boundary.
+// This class defined values related to a particle used for in the sharp interface immersed boundary.
     // Each particle defined will have these value used in the solver
     void initialise_all();
     void initialise_last();
@@ -66,10 +63,8 @@ public:
     // Allow the definition of a local relaxation parameter for each particle in the integration process.
     double local_alpha_torque ;
     double local_alpha_force;
-
-
+    
     double radius;
-
 
     // Pressure imposition location
     Point<dim> pressure_location;

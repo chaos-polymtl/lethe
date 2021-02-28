@@ -64,9 +64,6 @@ private:
   void
   vertices_cell_mapping();
 
-  // BB - TODO The particles structure should be refactored to use a small class
-  // to store the information or a struct instead of just using a vector where
-  // the things are hardcoded within.
 
   // Defined the particle structure and value based on the parameter file.
   void
