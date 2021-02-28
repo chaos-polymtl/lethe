@@ -77,7 +77,7 @@ private:
   void
   sharp_edge();
 
-  // Right in  the ouput file the force , velocity , position of each of the particles
+  // Write in  the ouput file the force , velocity , position of each of the particles
   void
   write_force_ib();
 
