@@ -68,7 +68,7 @@ private:
   void
   define_particles();
 
-  // Evaluate the forces applied on each of the Ib particles.
+  // Evaluate the forces applied on each of the IB particles.
   void
   force_on_ib();
 
