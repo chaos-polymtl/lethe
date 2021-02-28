@@ -38,9 +38,9 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           echo "pulling docker image for branch"
-          docker pull blaisb/dealii_docker:dealii_master_nov_2020
+          docker pull dealii/dealii:master-focal
           echo "Docker image is good, ready for action!"
-          docker run blaisb/dealii_docker:dealii_master_nov_2020 /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout ${GITHUB_REF#refs/heads/} && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
+          docker run dealii/dealii:master-focal /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout ${GITHUB_REF#refs/heads/} && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest";
           
       - name: sanity master
         if: github.event_name == 'pull_request'
@@ -51,9 +51,11 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           echo "pulling docker image for master"
-          docker pull blaisb/dealii_docker:dealii_master_nov_2020
+          docker pull dealii/dealii:master-focal
           echo "Docker image is good, ready for action!"
-          docker run blaisb/dealii_docker:dealii_master_nov_2020 /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
+          docker run dealii/dealii:master-focal /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Release && make -j2 && ctest";
+
+          #-DDEAL_II_DIR=/home/dealii/candi/deal.II-master
 
   build-debug:
     # The type of runner that the job will run on
@@ -78,9 +80,9 @@ jobs:
         if: github.event_name != 'pull_request'
         run: |
           echo "pulling docker image for branch"
-          docker pull blaisb/dealii_docker:dealii_master_nov_2020
+          docker pull dealii/dealii:master-focal
           echo "Docker image is good, ready for action!"
-          docker run blaisb/dealii_docker:dealii_master_nov_2020 /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout ${GITHUB_REF#refs/heads/} && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Debug -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
+          docker run dealii/dealii:master-focal /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && git checkout ${GITHUB_REF#refs/heads/} && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Debug -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
           
       - name: sanity master
         if: github.event_name == 'pull_request'
@@ -91,9 +93,9 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           echo "pulling docker image for master"
-          docker pull blaisb/dealii_docker:dealii_master_nov_2020
+          docker pull dealii/dealii:master-focal
           echo "Docker image is good, ready for action!"
-          docker run blaisb/dealii_docker:dealii_master_nov_2020 /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Debug -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
+          docker run dealii/dealii:master-focal /bin/sh -c "git clone https://github.com/lethe-cfd/lethe && cd lethe && mkdir build && cd build && cmake ../ -DCMAKE_BUILD_TYPE=Debug -DDEAL_II_DIR=/home/dealii/candi/deal.II-master && make -j2 && ctest";
 
 
           #formatting:
