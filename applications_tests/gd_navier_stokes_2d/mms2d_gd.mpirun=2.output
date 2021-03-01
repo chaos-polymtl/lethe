@@ -21,6 +21,6 @@ Steady iteration :        3/3
    Number of degrees of freedom: 9539
    Volume of triangulation:      4
 cells error_velocity  error_pressure  
-   64 1.4733e-02    - 5.6116e-02    - 
-  256 1.9369e-03 2.93 1.1904e-02 2.24 
- 1024 2.4521e-04 2.98 2.8913e-03 2.04 
+   64 1.2205e-02    - 5.6159e-02    - 
+  256 1.6165e-03 2.92 1.1907e-02 2.24 
+ 1024 2.0503e-04 2.98 2.8915e-03 2.04

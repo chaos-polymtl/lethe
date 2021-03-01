@@ -13,6 +13,6 @@ Steady iteration :        2/2
    Number of active cells:       640
    Number of degrees of freedom: 17988
    Volume of triangulation:      6.12293
-cells error_velocity  error_pressure  
-   80 5.0180e-04    - 4.5479e-08    - 
-  640 3.1971e-05 3.97 1.5891e-08 1.52 
+cells error_velocity   error_pressure  
+   80 5.2682e-04    - 7.0397e-09     - 
+  640 3.2530e-05 4.02 1.1777e-08 -0.74
