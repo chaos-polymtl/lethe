@@ -76,7 +76,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 
 
   VectorTools::interpolate(
-    *this->mapping_no_q_all_cells,
+    *this->mapping,
     void_fraction_dof_handler,
     this->simulation_parameters.void_fraction->void_fraction,
     nodal_void_fraction_owned);

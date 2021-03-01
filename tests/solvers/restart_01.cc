@@ -106,7 +106,7 @@ RestartNavierStokes<dim>::run()
                        this->simulation_parameters.fem_parameters,
                        this->mpi_communicator,
                        *this->fe,
-                       *this->higher_cell_quadrature,
+                       *this->cell_quadrature,
                        *this->mapping);
   double error1 = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
@@ -120,7 +120,7 @@ RestartNavierStokes<dim>::run()
                        this->simulation_parameters.fem_parameters,
                        this->mpi_communicator,
                        *this->fe,
-                       *this->higher_cell_quadrature,
+                       *this->cell_quadrature,
                        *this->mapping);
 
   double error2 = errors_p2.first;
@@ -141,7 +141,7 @@ RestartNavierStokes<dim>::run()
                        this->simulation_parameters.fem_parameters,
                        this->mpi_communicator,
                        *this->fe,
-                       *this->higher_cell_quadrature,
+                       *this->cell_quadrature,
                        *this->mapping);
 
   double error3 = errors_p3.first;

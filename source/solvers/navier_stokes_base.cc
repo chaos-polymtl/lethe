@@ -60,7 +60,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   if (simulation_parameters.mesh.simplex)
     {
       // for simplex meshes
-
       const FE_SimplexP<dim> velocity_fe(
         p_nsparam.fem_parameters.velocity_order);
       const FE_SimplexP<dim> pressure_fe(
@@ -68,12 +67,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       fe = std::make_shared<FESystem<dim>>(velocity_fe, dim, pressure_fe, 1);
       mapping = std::make_shared<MappingFE<dim>>(*fe);
       cell_quadrature =
-        std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+        std::make_shared<QGaussSimplex<dim>>(number_quadrature_points);
       face_quadrature =
-        std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
-      one_pt_quadrature = std::make_shared<QGaussSimplex<dim>>(1);
-      higher_cell_quadrature =
-        std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
+        std::make_shared<QGaussSimplex<dim - 1>>(number_quadrature_points);
       triangulation =
         std::make_shared<parallel::fullydistributed::Triangulation<dim>>(
           this->mpi_communicator);
@@ -92,12 +88,9 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       mapping = std::make_shared<MappingQ<dim>>(
         fe->degree, simulation_parameters.fem_parameters.qmapping_all);
       cell_quadrature =
-        std::make_shared<QGauss<dim>>(fe->degree + 1);
+        std::make_shared<QGauss<dim>>(number_quadrature_points);
       face_quadrature =
-        std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
-      one_pt_quadrature = std::make_shared<QGauss<dim>>(1);
-      higher_cell_quadrature =
-        std::make_shared<QGauss<dim>>(fe->degree + 2);
+        std::make_shared<QGauss<dim - 1>>(number_quadrature_points);
       triangulation =
         std::make_shared<parallel::distributed::Triangulation<dim>>(
           this->mpi_communicator,
@@ -442,7 +435,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
                                        simulation_control->get_time_step(),
                                        mpi_communicator,
                                        *this->fe,
-                                       *this->one_pt_quadrature,
+                                       *this->cell_quadrature,
                                        *this->mapping);
       this->simulation_control->set_CFL(CFL);
     }
@@ -945,7 +938,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
                                simulation_parameters.fem_parameters,
                                mpi_communicator,
                                *this->fe,
-                               *this->higher_cell_quadrature,
+                               *this->cell_quadrature,
                                *this->mapping);
           const double error_velocity = errors.first;
           const double error_pressure = errors.second;
