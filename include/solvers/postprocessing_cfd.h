@@ -64,7 +64,7 @@
  *
  * @param fe The finite element of the simulation
  *
- * @param quadrature_formula The quadrature formula that for the calculation
+ * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
@@ -94,7 +94,7 @@ calculate_CFL(const DoFHandler<dim> &   dof_handler,
  *
  * @param fe The finite element of the simulation
  *
- * @param quadrature_formula The quadrature formula that for the calculation
+ * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
@@ -124,7 +124,7 @@ calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
  *
  * @param fe The finite element of the simulation
  *
- * @param quadrature_formula The quadrature formula that for the calculation
+ * @param quadrature_formula The quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
@@ -158,7 +158,7 @@ calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
  *
  * @param fe The finite element of the simulation
  *
- * @param face_quadrature_formula The face quadrature formula that for the calculation
+ * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
@@ -197,7 +197,7 @@ calculate_forces(
  *
  * @param fe The finite element of the simulation.
  *
- * @param face_quadrature_formula The face quadrature formula that for the calculation.
+ * @param face_quadrature_formula The face quadrature formula for the calculation.
  *
  * @param mapping The mapping of the simulation.
  */
@@ -236,7 +236,7 @@ calculate_torques(
  *
  * @param fe The finite element of the simulation.
  *
- * @param quadrature_formula The quadrature formula that for the calculation.
+ * @param quadrature_formula The quadrature formula for the calculation.
  *
  * @param mapping The mapping of the simulation.
  */
@@ -271,7 +271,7 @@ calculate_L2_error(const DoFHandler<dim> &   dof_handler,
  *
  * @param fe The finite element of the simulation
  *
- * @param face_quadrature_formula The face quadrature formula that for the calculation
+ * @param face_quadrature_formula The face quadrature formula for the calculation
  *
  * @param mapping The mapping of the simulation
  */
