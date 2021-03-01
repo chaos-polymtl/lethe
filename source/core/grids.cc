@@ -81,20 +81,26 @@ attach_grid_to_triangulation(
            mesh_parameters.simplex)
     {
       Triangulation<dim, spacedim> temporary_quad_triangulation;
-
       GridGenerator::generate_from_name_and_arguments(
         temporary_quad_triangulation,
         mesh_parameters.grid_type,
         mesh_parameters.grid_arguments);
-
-      Triangulation<dim, spacedim> temporary_tri_triangulation;
+      Triangulation<dim, spacedim> temporary_tri_triangulation(
+        Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
       GridGenerator::convert_hypercube_to_simplex_mesh(
         temporary_quad_triangulation, temporary_tri_triangulation);
+
+      GridTools::partition_triangulation_zorder(
+        Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
+        temporary_tri_triangulation);
+      GridTools::partition_multigrid_levels(temporary_tri_triangulation);
 
       // extract relevant information from distributed triangulation
       auto construction_data = TriangulationDescription::Utilities::
         create_description_from_triangulation(
-          temporary_tri_triangulation, triangulation->get_communicator());
+          temporary_tri_triangulation,
+          triangulation->get_communicator(),
+          TriangulationDescription::Settings::construct_multigrid_hierarchy);
       triangulation->create_triangulation(construction_data);
 
       for (auto &cell : triangulation->active_cell_iterators())
