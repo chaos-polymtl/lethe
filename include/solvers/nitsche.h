@@ -184,12 +184,17 @@ namespace Parameters
                         "torque_solid",
                         Patterns::FileName(),
                         "File output solid torque prefix");
+
+      prm.declare_entry("number of solids",
+                        "1",
+                        Patterns::Integer(),
+                        "Number of immersed object");
+
       for (unsigned int i_solid = 0; i_solid < max_nitsche_solids; ++i_solid)
         {
           nitsche_solids[i_solid] = std::make_shared<NitscheSolid<dim>>();
           nitsche_solids[i_solid]->declare_parameters(prm, i_solid);
         }
-
     }
     prm.leave_subsection();
   }

@@ -118,8 +118,8 @@ HeatTransfer<dim>::assemble_system(
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>     cell_rhs(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const unsigned int                   n_q_points = this->cell_quadrature->size();
-  std::vector<double>                  source_term_values(n_q_points);
+  const unsigned int     n_q_points = this->cell_quadrature->size();
+  std::vector<double>    source_term_values(n_q_points);
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   FEValues<dim> fe_values_flow(dof_handler_fluid->get_fe(),
@@ -751,7 +751,7 @@ template <int dim>
 void
 HeatTransfer<dim>::setup_dofs()
 {
-    dof_handler.distribute_dofs(*fe);
+  dof_handler.distribute_dofs(*fe);
   DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
   auto mpi_communicator = triangulation->get_communicator();
@@ -852,7 +852,7 @@ template <int dim>
 void
 HeatTransfer<dim>::set_initial_conditions()
 {
-    VectorTools::interpolate(*this->temperature_mapping,
+  VectorTools::interpolate(*this->temperature_mapping,
                            dof_handler,
                            simulation_parameters.initial_condition->temperature,
                            newton_update);
