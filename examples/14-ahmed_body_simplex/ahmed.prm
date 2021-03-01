@@ -47,7 +47,7 @@ end
 subsection mesh
     set type                 = gmsh
     set file name            = Ahmed_Body_20_2D.msh
-    set enable simplex       = true
+    set simplex              = true
 end
 
 # --------------------------------------------------
