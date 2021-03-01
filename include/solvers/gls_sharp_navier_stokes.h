@@ -57,8 +57,8 @@ private:
   // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
   // and Adjacent_3 needs to be renamed if possible to a clearer notation
 
-  // Map the vertex index to the cell that include that vertex used later in
-  // which cell a point falls in vertices_to_cell is a vector of vector of dof
+  // Map the vertex index to the cell that includes that vertex used later in
+  // which cell a point fall in vertices_to_cell is a vector of vector of dof
   // handler active cell iterator each element i of the vector is a vector of
   // all the cell in contact with the vertex i.
   void
@@ -68,7 +68,7 @@ private:
   void
   define_particles();
 
-  // Evaluate the forces applied on each of the IB particles.
+  // Evaluate the forces applied to each of the IB particles.
   void
   force_on_ib();
 
@@ -76,7 +76,7 @@ private:
   void
   sharp_edge();
 
-  // Write in  the ouput file the force , velocity , position of each of the particles.
+  // Write in  the output file the forces , velocity , position of each of the particles.
   void
   write_force_ib();
 
@@ -84,7 +84,7 @@ private:
   void
   integrate_particles();
 
-  // Store the solution for the particles dynamics parameters for integration. Defines the table to store the history of each of the particles.
+  // Store the solution of the particles dynamics parameters for integration. Defines the table to store the history of each of the particles.
   void
   finish_time_step_particles();
 

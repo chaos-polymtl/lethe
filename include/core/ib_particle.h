@@ -57,7 +57,7 @@ public:
     Tensor<1, 3> omega;
     // Store the last angular velocity of the particle for integration.
     Tensor<1, 3> last_omega;
-    // Store the last  angular velocity of the fix point iteration.
+    // Store the last  angular velocity of the of the particle for the fix point iteration.
     Tensor<1, 3> omega_iter;
 
     // Allow the definition of a local relaxation parameter for each particle in the integration process.
