@@ -706,7 +706,7 @@ Tracer<dim>::set_initial_conditions()
   MappingQ<dim> mapping(fe.degree);
   VectorTools::interpolate(mapping,
                            dof_handler,
-                           simulation_parameters.initial_condition->temperature,
+                           simulation_parameters.initial_condition->tracer,
                            newton_update);
   nonzero_constraints.distribute(newton_update);
   present_solution = newton_update;
