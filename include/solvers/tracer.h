@@ -56,7 +56,7 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , fe(simulation_parameters.fem_parameters.temperature_order)
+    , fe(simulation_parameters.fem_parameters.tracer_order)
     , solution_transfer(dof_handler)
     , solution_transfer_m1(dof_handler)
     , solution_transfer_m2(dof_handler)

@@ -284,6 +284,9 @@ namespace Parameters
     // Interpolation order temperature
     unsigned int temperature_order;
 
+    // Interpolation order tracer
+    unsigned int tracer_order;
+
     // Apply high order mapping everywhere
     bool qmapping_all;
 

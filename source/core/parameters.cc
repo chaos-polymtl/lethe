@@ -243,7 +243,11 @@ namespace Parameters
       prm.declare_entry("temperature order",
                         "1",
                         Patterns::Integer(),
-                        "interpolation order temperatue");
+                        "interpolation order temperature");
+      prm.declare_entry("tracer order",
+                        "1",
+                        Patterns::Integer(),
+                        "interpolation order tracer");
       prm.declare_entry("qmapping all",
                         "false",
                         Patterns::Bool(),
@@ -260,6 +264,7 @@ namespace Parameters
       velocity_order    = prm.get_integer("velocity order");
       pressure_order    = prm.get_integer("pressure order");
       temperature_order = prm.get_integer("temperature order");
+      tracer_order      = prm.get_integer("tracer order");
       qmapping_all      = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();

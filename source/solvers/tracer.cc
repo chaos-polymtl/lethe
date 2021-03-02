@@ -87,11 +87,11 @@ Tracer<dim>::assemble_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
     {
       throw std::runtime_error(
-        "SDIRK schemes are not supported by heat transfer physics");
+        "SDIRK schemes are not supported by tracer physics");
     }
 
 
-  auto &source_term = simulation_parameters.sourceTerm->heat_transfer_source;
+  auto &source_term = simulation_parameters.sourceTerm->tracer_source;
   source_term.set_time(simulation_control->get_current_time());
 
   const QGauss<dim> quadrature_formula(fe.degree + 1);
@@ -417,7 +417,7 @@ Tracer<dim>::calculate_L2_error()
   std::vector<double> q_exact_solution(n_q_points);
   std::vector<double> q_scalar_values(n_q_points);
 
-  auto &exact_solution = simulation_parameters.analytical_solution->temperature;
+  auto &exact_solution = simulation_parameters.analytical_solution->tracer;
   exact_solution.set_time(simulation_control->get_current_time());
 
   double l2error = 0.;
@@ -497,17 +497,16 @@ Tracer<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.analytical_solution->calculate_error() == true &&
       !first_iteration)
     {
-      double temperature_error = calculate_L2_error();
+      double tracer_error = calculate_L2_error();
 
       error_table.add_value("cells",
                             this->triangulation->n_global_active_cells());
-      error_table.add_value("error_temperature", temperature_error);
+      error_table.add_value("error_tracer", tracer_error);
 
       if (simulation_parameters.analytical_solution->verbosity ==
           Parameters::Verbosity::verbose)
         {
-          this->pcout << "L2 error temperature : " << temperature_error
-                      << std::endl;
+          this->pcout << "L2 error tracer : " << tracer_error << std::endl;
         }
     }
 }
