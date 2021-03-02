@@ -34,8 +34,6 @@
 #  include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#  include <deal.II/base/quadrature_lib.h>
-
 #  include <deal.II/fe/fe_q.h>
 #  include <deal.II/fe/fe_simplex_p.h>
 #  include <deal.II/fe/fe_system.h>
