@@ -1,10 +1,10 @@
-
+JobId equipoise Tue Mar  2 11:15:35 2021
 DEAL::Check 8	0.00204885
 DEAL::Convergence step 8 value 0.00204885
 DEAL::Check 6	9.85227e-05
 DEAL::Convergence step 6 value 9.85227e-05
 DEAL::Check 10	3.32384e-08
 DEAL::Convergence step 10 value 3.32384e-08
-DEAL::Error after first simulation : 0.0343628
+DEAL::Error after first simulation : 0.0303454
 DEAL::Error after zeroing the solution: 0.612372
-DEAL::Error after restarting the simulation: 0.0343628
+DEAL::Error after restarting the simulation: 0.0303454
