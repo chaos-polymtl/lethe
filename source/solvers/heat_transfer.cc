@@ -304,7 +304,10 @@ HeatTransfer<dim>::assemble_system(
 
                           // Weak form for : - k * laplacian T + rho * cp *
                           //                  u * gradT - f -
-                          //                  mu*tau:grad(u) =0
+                          //                  tau:grad(u) =0
+                          // Hypothesis : incompressible newtonian fluid
+                          // so tau:grad(u) =
+                          // mu*(grad(u)+transpose(grad(u)).transpose(grad(u))
                           cell_matrix(i, j) +=
                             (thermal_conductivity * grad_phi_T_i *
                                grad_phi_T_j +

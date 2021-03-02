@@ -117,6 +117,18 @@ private:
   void
   output_solid_triangulation(const unsigned int i_solid);
 
+  /**
+   * @brief Write a gls_nitsche simulation checkpointing to allow for gls_nitsche simulation restart
+   */
+  virtual void
+  write_checkpoint() override;
+
+  /**
+   * @brief Read a gls_nitsche simulation checkpoint and initiate simulation restart
+   */
+  virtual void
+  read_checkpoint() override;
+
   std::vector<std::shared_ptr<SolidBase<dim, spacedim>>> solid;
   std::vector<PVDHandler> pvdhandler_solid_triangulation;
   std::vector<PVDHandler> pvdhandler_solid_particles;
