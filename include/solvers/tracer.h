@@ -147,14 +147,14 @@ public:
   write_checkpoint() override;
 
   /**
-   * @brief Allows Heat Transfer to set-up solution vector from checkpoint file;
+   * @brief Allows tracer physics to set-up solution vector from checkpoint file;
    */
   virtual void
   read_checkpoint() override;
 
 
   /**
-   * @brief Returns the dof_handler of the heat transfer physics
+   * @brief Returns the dof_handler of the tracer physics
    */
   virtual const DoFHandler<dim> &
   get_dof_handler() override
@@ -192,10 +192,6 @@ public:
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   *
-   * @param number_physic_current Indicates the number associated with the physic currently solved
-   * default value = 0, meaning only one physic, generally associated with the
-   * flow equations, is solved by default
    */
   virtual TrilinosWrappers::MPI::Vector &
   get_evaluation_point() override
@@ -230,6 +226,11 @@ public:
 
 
 private:
+  /**
+   * @brief Actual assembly of the matrix and rhs
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
   template <bool assemble_matrix>
   void
   assemble_system(const Parameters::SimulationControl::TimeSteppingMethod
@@ -245,8 +246,6 @@ private:
   DoFHandler<dim>                    dof_handler;
   FE_Q<dim>                          fe;
   ConvergenceTable                   error_table;
-
-
 
   // Solution storage:
   IndexSet locally_owned_dofs;

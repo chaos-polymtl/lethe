@@ -223,10 +223,6 @@ public:
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   *
-   * @param number_physic_current Indicates the number associated with the physic currently solved
-   * default value = 0, meaning only one physic, generally associated with the
-   * flow equations, is solved by default
    */
   virtual TrilinosWrappers::MPI::Vector &
   get_evaluation_point() override
