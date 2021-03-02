@@ -485,7 +485,7 @@ namespace BoundaryConditions
   class TracerBoundaryConditions : public BoundaryConditions<dim>
   {
   public:
-    Functions::ParsedFunction<dim> u;
+    std::vector<std::shared_ptr<Functions::ParsedFunction<dim>>> tracer;
 
 
     void
@@ -512,7 +512,7 @@ namespace BoundaryConditions
                                                      unsigned int      i_bc)
   {
     prm.declare_entry("type",
-                      "temperature",
+                      "dirichlet",
                       Patterns::Selection("dirichlet"),
                       "Type of boundary condition for tracer"
                       "Choices are <dirichlet>.");
@@ -521,6 +521,12 @@ namespace BoundaryConditions
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
+
+    prm.enter_subsection("tracer");
+    tracer[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
+    tracer[i_bc]->declare_parameters(prm);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
   }
 
   /**
@@ -543,6 +549,7 @@ namespace BoundaryConditions
                         "Number of boundary conditions");
       this->id.resize(this->max_size);
       this->type.resize(this->max_size);
+      tracer.resize(this->max_size);
 
       for (unsigned int n = 0; n < this->max_size; n++)
         {
@@ -570,10 +577,12 @@ namespace BoundaryConditions
                                                 unsigned int      i_bc)
   {
     const std::string op = prm.get("type");
-    if (op == "temperature")
+    if (op == "dirichlet")
       {
-        this->type[i_bc]  = BoundaryType::tracer_dirichlet;
-        this->value[i_bc] = prm.get_double("value");
+        this->type[i_bc] = BoundaryType::tracer_dirichlet;
+        prm.enter_subsection("tracer");
+        tracer[i_bc]->parse_parameters(prm);
+        prm.leave_subsection();
       }
 
     this->id[i_bc] = prm.get_integer("id");
@@ -590,7 +599,7 @@ namespace BoundaryConditions
   void
   TracerBoundaryConditions<dim>::parse_parameters(ParameterHandler &prm)
   {
-    prm.enter_subsection("boundary conditions heat transfer");
+    prm.enter_subsection("boundary conditions tracer");
     {
       this->size = prm.get_integer("number");
 

@@ -367,6 +367,19 @@ Tracer<dim>::assemble_system(
 
             } // end loop on quadrature points
 
+          // std::cout << cell_matrix(0, 0) << " " << cell_matrix(0, 1) << " "
+          //          << cell_matrix(0, 2) << " " << cell_matrix(0, 3) << " "
+          //          << std::endl;
+          // std::cout << cell_matrix(1, 0) << " " << cell_matrix(1, 1) << " "
+          //          << cell_matrix(1, 2) << " " << cell_matrix(1, 3) << " "
+          //          << std::endl;
+          // std::cout << cell_matrix(2, 0) << " " << cell_matrix(2, 1) << " "
+          //          << cell_matrix(2, 2) << " " << cell_matrix(2, 3) << " "
+          //          << std::endl;
+          // std::cout << cell_matrix(3, 0) << " " << cell_matrix(3, 1) << " "
+          //          << cell_matrix(3, 2) << " " << cell_matrix(3, 3) << " "
+          //          << std::endl;
+
           // transfer cell contribution into global objects
           cell->get_dof_indices(local_dof_indices);
           zero_constraints.distribute_local_to_global(cell_matrix,
@@ -637,18 +650,18 @@ Tracer<dim>::setup_dofs()
                                             nonzero_constraints);
 
     for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+         i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
          ++i_bc)
       {
         // Dirichlet condition : imposed temperature at i_bc
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
+        if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
+            BoundaryConditions::BoundaryType::tracer_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
-              dealii::Functions::ConstantFunction<dim>(
-                this->simulation_parameters.boundary_conditions_ht.value[i_bc]),
+              this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
+              *this->simulation_parameters.boundary_conditions_tracer
+                 .tracer[i_bc],
               nonzero_constraints);
           }
       }
@@ -662,15 +675,15 @@ Tracer<dim>::setup_dofs()
                                             zero_constraints);
 
     for (unsigned int i_bc = 0;
-         i_bc < this->simulation_parameters.boundary_conditions_ht.size;
+         i_bc < this->simulation_parameters.boundary_conditions_tracer.size;
          ++i_bc)
       {
-        if (this->simulation_parameters.boundary_conditions_ht.type[i_bc] ==
-            BoundaryConditions::BoundaryType::temperature)
+        if (this->simulation_parameters.boundary_conditions_tracer.type[i_bc] ==
+            BoundaryConditions::BoundaryType::tracer_dirichlet)
           {
             VectorTools::interpolate_boundary_values(
               this->dof_handler,
-              this->simulation_parameters.boundary_conditions_ht.id[i_bc],
+              this->simulation_parameters.boundary_conditions_tracer.id[i_bc],
               Functions::ZeroFunction<dim>(),
               zero_constraints);
           }
