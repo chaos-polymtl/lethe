@@ -7,4 +7,4 @@ Running on 1 MPI rank(s)...
 Steady iteration :        1/1
 *****************************************************************
 cells error_velocity error_pressure 
- 1536 2.1571e-01   - 8.0683e-01   -
+ 1536 2.1571e-01   - 8.0699e-01   -
