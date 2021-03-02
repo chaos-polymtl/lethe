@@ -204,6 +204,11 @@ namespace Parameters
                         "1",
                         Patterns::Double(),
                         "Thermal conductivity");
+
+      prm.declare_entry("tracer diffusivity",
+                        "0",
+                        Patterns::Double(),
+                        "Tracer diffusivity");
     }
     prm.leave_subsection();
   }
@@ -217,6 +222,7 @@ namespace Parameters
       density              = prm.get_double("density");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
+      tracer_diffusivity   = prm.get_double("tracer diffusivity");
     }
     prm.leave_subsection();
   }

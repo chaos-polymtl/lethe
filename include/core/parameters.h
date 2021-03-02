@@ -157,6 +157,8 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // tracer diffusivity) in L^2/s
+    double tracer_diffusivity;
 
     static void
     declare_parameters(ParameterHandler &prm);
