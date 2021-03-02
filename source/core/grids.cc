@@ -85,10 +85,19 @@ attach_grid_to_triangulation(
         temporary_quad_triangulation,
         mesh_parameters.grid_type,
         mesh_parameters.grid_arguments);
+
+      // initial refinement
+      const int initial_refinement = mesh_parameters.initial_refinement;
+      temporary_quad_triangulation.refine_global(initial_refinement);
+      // flatten the triangulation
+      Triangulation<dim, spacedim> flat_temp_quad_triangulation;
+      GridGenerator::flatten_triangulation(temporary_quad_triangulation,
+                                           flat_temp_quad_triangulation);
+
       Triangulation<dim, spacedim> temporary_tri_triangulation(
         Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
       GridGenerator::convert_hypercube_to_simplex_mesh(
-        temporary_quad_triangulation, temporary_tri_triangulation);
+        flat_temp_quad_triangulation, temporary_tri_triangulation);
 
       GridTools::partition_triangulation_zorder(
         Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
@@ -163,7 +172,7 @@ read_mesh_and_manifolds(
                                boundary_conditions);
   attach_manifolds_to_triangulation(triangulation, manifolds_parameters);
 
-  if (mesh_parameters.refine_until_target_size)
+  if (mesh_parameters.refine_until_target_size && !mesh_parameters.simplex)
     {
       double minimal_cell_size =
         GridTools::minimal_cell_diameter(*triangulation);
@@ -172,7 +181,7 @@ read_mesh_and_manifolds(
         floor(std::log(minimal_cell_size / target_size) / std::log(2));
       triangulation->refine_global(number_refinement);
     }
-  else if (!restart)
+  else if (!restart && !mesh_parameters.simplex)
     {
       const int initial_refinement = mesh_parameters.initial_refinement;
       triangulation->refine_global(initial_refinement);

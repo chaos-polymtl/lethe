@@ -20,8 +20,9 @@ end
 #---------------------------------------------------
 subsection mesh
     set type                 = dealii
-    set grid type            = subdivided_hyper_cube
-    set grid arguments       = 8 : -1 : 1 : false
+    set grid type            = hyper_cube
+    set grid arguments       = -1 : 1 : false
+    set initial refinement   = 3
     set simplex              = true
 end
 

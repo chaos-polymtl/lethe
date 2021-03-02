@@ -794,13 +794,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
 
   if (this->simulation_parameters.post_processing.calculate_enstrophy)
     {
-      double enstrophy =
-        calculate_enstrophy(this->dof_handler,
-                            present_solution,
-                            mpi_communicator,
-                            *this->fe,
-                            *this->cell_quadrature,
-                            *this->mapping);
+      double enstrophy = calculate_enstrophy(this->dof_handler,
+                                             present_solution,
+                                             mpi_communicator,
+                                             *this->fe,
+                                             *this->cell_quadrature,
+                                             *this->mapping);
 
       this->enstrophy_table.add_value("time",
                                       simulation_control->get_current_time());
