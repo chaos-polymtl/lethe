@@ -26,11 +26,15 @@
 #define lethe_tracer_h
 
 #include <deal.II/base/convergence_table.h>
+#include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/solution_transfer.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
+#include <deal.II/fe/mapping_fe.h>
+#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
@@ -56,12 +60,31 @@ public:
     , triangulation(p_triangulation)
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
-    , fe(simulation_parameters.fem_parameters.tracer_order)
     , solution_transfer(dof_handler)
     , solution_transfer_m1(dof_handler)
     , solution_transfer_m2(dof_handler)
     , solution_transfer_m3(dof_handler)
-  {}
+  {
+#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
+    if (false) // simulation_parameters.mesh.simplex)
+      {
+        // for simplex meshes
+        fe = std::make_shared<FE_SimplexP<dim>>(
+          simulation_parameters.fem_parameters.tracer_order);
+        mapping         = std::make_shared<MappingFE<dim>>(*fe);
+        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+      }
+    else
+#endif
+      {
+        // Usual case, for quad/hex meshes
+        fe = std::make_shared<FE_Q<dim>>(
+          simulation_parameters.fem_parameters.tracer_order);
+        mapping = std::make_shared<MappingQ<dim>>(
+          fe->degree, simulation_parameters.fem_parameters.qmapping_all);
+        cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
+      }
+  }
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
@@ -244,8 +267,15 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
-  FE_Q<dim>                          fe;
-  ConvergenceTable                   error_table;
+
+  // Finite element spce
+  std::shared_ptr<FiniteElement<dim>> fe;
+  // Mapping and Quadrature
+  std::shared_ptr<Mapping<dim>>    mapping;
+  std::shared_ptr<Quadrature<dim>> cell_quadrature;
+
+
+  ConvergenceTable error_table;
 
   // Solution storage:
   IndexSet locally_owned_dofs;
