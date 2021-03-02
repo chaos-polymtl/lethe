@@ -58,8 +58,6 @@
  *
  * @param evaluation_point The solution for which the CFL is calculated. The velocity field is assumed to be the first field.
  *
- * @param fem_parameters The fem_parameters of the simulation
- *
  * @param mpi_communicator The mpi communicator. It is used to reduce the CFL calculation.
  *
  * @param fe The finite element of the simulation
@@ -88,8 +86,6 @@ calculate_CFL(const DoFHandler<dim> &   dof_handler,
  *
  * @param evaluation_point The solution at which the force is calculated
  *
- * @param fem_parameters The fem_parameters of the simulation
- *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
  *
  * @param fe The finite element of the simulation
@@ -102,7 +98,6 @@ template <int dim, typename VectorType>
 double
 calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
                     const VectorType &        evaluation_point,
-                    const Parameters::FEM &   fem_parameters,
                     const MPI_Comm &          mpi_communicator,
                     const FiniteElement<dim> &fe,
                     const Quadrature<dim> &   quadrature_formula,
@@ -118,8 +113,6 @@ calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
  *
  * @param evaluation_point The solution at which the force is calculated
  *
- * @param fem_parameters The fem_parameters of the simulation
- *
  * @param mpi_communicator The mpi communicator. It is used to reduce the force calculation
  *
  * @param fe The finite element of the simulation
@@ -132,7 +125,6 @@ template <int dim, typename VectorType>
 double
 calculate_kinetic_energy(const DoFHandler<dim> &   dof_handler,
                          const VectorType &        evaluation_point,
-                         const Parameters::FEM &   fem_parameters,
                          const MPI_Comm &          mpi_communicator,
                          const FiniteElement<dim> &fe,
                          const Quadrature<dim> &   quadrature_formula,
@@ -189,8 +181,6 @@ calculate_forces(
  *
  * @param physical_properties The parameters containing the required physical properties.
  *
- * @param fem_parameters The fem_parameters of the simulation.
- *
  * @param boundary_conditions The boundary conditions object.
  *
  * @param mpi_communicator The mpi communicator. It is used to reduce the torque calculation.
@@ -207,7 +197,6 @@ calculate_torques(
   const DoFHandler<dim> &                              dof_handler,
   const VectorType &                                   evaluation_point,
   const Parameters::PhysicalProperties &               physical_properties,
-  const Parameters::FEM &                              fem_parameters,
   const BoundaryConditions::NSBoundaryConditions<dim> &boundary_conditions,
   const MPI_Comm &                                     mpi_communicator,
   const FiniteElement<dim> &                           fe,
@@ -230,8 +219,6 @@ calculate_torques(
  *
  * @param exact_solution The exact solution, a function of dim+1 component for velocity + pressure
  *
- * @param fem_parameters The fem_parameters of the simulation.
- *
  * @param mpi_communicator The mpi communicator. It is used to reduce the error calculation.
  *
  * @param fe The finite element of the simulation.
@@ -245,7 +232,6 @@ std::pair<double, double>
 calculate_L2_error(const DoFHandler<dim> &   dof_handler,
                    const VectorType &        evaluation_point,
                    const Function<dim> *     exact_solution,
-                   const Parameters::FEM &   fem_parameters,
                    const MPI_Comm &          mpi_communicator,
                    const FiniteElement<dim> &fe,
                    const Quadrature<dim> &   quadrature_formula,
@@ -265,8 +251,6 @@ calculate_L2_error(const DoFHandler<dim> &   dof_handler,
  *
  * @param boundary_id. The inlet boundary
  *
- * @param fem_parameters. The FEM parameters
- *
  * @param mpi_communicator. The mpi communicator
  *
  * @param fe The finite element of the simulation
@@ -280,7 +264,6 @@ std::pair<double, double>
 calculate_flow_rate(const DoFHandler<dim> &    dof_handler,
                     const VectorType &         present_solution,
                     const unsigned int &       boundary_id,
-                    const Parameters::FEM &    fem_parameters,
                     const MPI_Comm &           mpi_communicator,
                     const FiniteElement<dim> & fe,
                     const Quadrature<dim - 1> &face_quadrature_formula,
