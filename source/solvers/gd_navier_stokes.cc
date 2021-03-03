@@ -642,7 +642,8 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
 
-  double global_volume = GridTools::volume(*this->triangulation);
+  double global_volume =
+    GridTools::volume(*this->triangulation, *this->mapping);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
