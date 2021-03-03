@@ -103,19 +103,14 @@ GDNavierStokesSolver<dim>::assembleGD()
 
   this->system_rhs = 0;
 
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
-
-  FEValues<dim> fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
+  FEValues<dim> fe_values(*this->mapping,
+                          *this->fe,
+                          *this->cell_quadrature,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients);
 
-  const unsigned int dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int n_q_points    = quadrature_formula.size();
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int n_q_points    = this->cell_quadrature->size();
 
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
@@ -208,7 +203,7 @@ GDNavierStokesSolver<dim>::assembleGD()
               for (int i = 0; i < dim; ++i)
                 {
                   const unsigned int component_i =
-                    this->fe.system_to_component_index(i).first;
+                    this->fe->system_to_component_index(i).first;
                   force[i] = rhs_force[q](component_i);
                 }
               // Correct force to include the dynamic forcing term for flow
@@ -341,17 +336,13 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
   system_matrix    = 0;
   auto &system_rhs = this->system_rhs;
   system_rhs       = 0;
-  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
-  FEValues<dim>               fe_values(mapping,
-                          this->fe,
-                          quadrature_formula,
+  FEValues<dim>               fe_values(*this->mapping,
+                          *this->fe,
+                          *this->cell_quadrature,
                           update_values | update_quadrature_points |
                             update_JxW_values);
-  const unsigned int          dofs_per_cell = this->fe.dofs_per_cell;
-  const unsigned int          n_q_points    = quadrature_formula.size();
+  const unsigned int          dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int          n_q_points    = this->cell_quadrature->size();
   FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>              local_rhs(dofs_per_cell);
   std::vector<Vector<double>> initial_velocity(n_q_points,
@@ -387,7 +378,7 @@ GDNavierStokesSolver<dim>::assemble_L2_projection()
               for (int i = 0; i < dim; ++i)
                 {
                   const unsigned int component_i =
-                    this->fe.system_to_component_index(i).first;
+                    this->fe->system_to_component_index(i).first;
                   rhs_initial_velocity_pressure[i] =
                     initial_velocity[q](component_i);
                 }
@@ -431,7 +422,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
 
   system_matrix.clear();
 
-  this->dof_handler.distribute_dofs(this->fe);
+  this->dof_handler.distribute_dofs(*this->fe);
   // DoFRenumbering::Cuthill_McKee(this->dof_handler);
 
 
@@ -463,9 +454,6 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
   this->locally_relevant_dofs[1] =
     locally_relevant_dofs_acquisition.get_view(dof_u, dof_u + dof_p);
 
-  const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
   FEValuesExtractors::Vector velocities(0);
 
   // Non-zero constraints
@@ -483,12 +471,12 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
             BoundaryConditions::BoundaryType::noslip)
           {
             VectorTools::interpolate_boundary_values(
-              mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
               nonzero_constraints,
-              this->fe.component_mask(velocities));
+              this->fe->component_mask(velocities));
           }
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
                  BoundaryConditions::BoundaryType::slip)
@@ -506,7 +494,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                  BoundaryConditions::BoundaryType::function)
           {
             VectorTools::interpolate_boundary_values(
-              mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               NavierStokesFunctionDefined<dim>(
@@ -520,7 +508,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                    .bcFunctions[i_bc]
                    .w),
               nonzero_constraints,
-              this->fe.component_mask(velocities));
+              this->fe->component_mask(velocities));
           }
 
         else if (this->simulation_parameters.boundary_conditions.type[i_bc] ==
@@ -574,12 +562,12 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
           // || Parameters::function)
           {
             VectorTools::interpolate_boundary_values(
-              mapping,
+              *this->mapping,
               this->dof_handler,
               this->simulation_parameters.boundary_conditions.id[i_bc],
               dealii::Functions::ZeroFunction<dim>(dim + 1),
               this->zero_constraints,
-              this->fe.component_mask(velocities));
+              this->fe->component_mask(velocities));
           }
       }
   }
@@ -641,7 +629,7 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
 
       this->average_velocities.initialize_vectors(this->locally_owned_dofs,
                                                   this->locally_relevant_dofs,
-                                                  this->fe.n_dofs_per_vertex(),
+                                                  this->fe->n_dofs_per_vertex(),
                                                   this->mpi_communicator);
 
       if (this->simulation_parameters.restart_parameters.checkpoint)
@@ -654,7 +642,8 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
     }
 
 
-  double global_volume = GridTools::volume(*this->triangulation);
+  double global_volume =
+    GridTools::volume(*this->triangulation, *this->mapping);
 
   this->pcout << "   Number of active cells:       "
               << this->triangulation->n_global_active_cells() << std::endl
@@ -823,7 +812,7 @@ GDNavierStokesSolver<dim>::setup_AMG()
   this->computing_timer.enter_subsection("AMG_velocity");
   const bool elliptic_velocity     = false;
   bool       higher_order_elements = false;
-  if (this->fe.degree > 1)
+  if (this->fe->degree > 1)
     higher_order_elements = true;
   const unsigned int n_cycles =
     this->simulation_parameters.linear_solver.amg_n_cycles;

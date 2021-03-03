@@ -13,6 +13,6 @@ Steady iteration :        1/1
 Boundary ID    f_x       f_y       f_z    
           0  0.012632 -0.202299 -0.000176 
           1 -0.008614 -0.009601  0.003104 
-L2 error velocity : 0.0764587
+L2 error velocity : 0.0763614
 cells error_velocity error_pressure 
- 2904 7.6459e-02   - 2.1680e-01   - 
+ 2904 7.6361e-02   - 2.1652e-01   - 
