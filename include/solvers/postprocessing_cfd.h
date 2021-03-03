@@ -35,7 +35,6 @@
 
 // Fe
 #  include <deal.II/fe/fe_q.h>
-#  include <deal.II/fe/fe_simplex_p.h>
 #  include <deal.II/fe/fe_system.h>
 #  include <deal.II/fe/fe_values.h>
 #  include <deal.II/fe/mapping_fe.h>
