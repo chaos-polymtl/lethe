@@ -48,6 +48,7 @@ namespace SourceTerms
     SourceTerm()
       : navier_stokes_source(dim + 1)
       , heat_transfer_source(1)
+      , tracer_source(1)
     {}
 
     virtual void
@@ -67,6 +68,9 @@ namespace SourceTerms
 
     // Heat transfer source
     Functions::ParsedFunction<dim> heat_transfer_source;
+
+    // Tracer source
+    Functions::ParsedFunction<dim> tracer_source;
 
   protected:
     bool enable;
@@ -93,7 +97,12 @@ namespace SourceTerms
 
 
     prm.enter_subsection("heat transfer");
-    heat_transfer_source.declare_parameters(prm, dim);
+    heat_transfer_source.declare_parameters(prm);
+    prm.set("Function expression", "0");
+    prm.leave_subsection();
+
+    prm.enter_subsection("tracer");
+    tracer_source.declare_parameters(prm);
     prm.set("Function expression", "0");
     prm.leave_subsection();
 
@@ -115,6 +124,11 @@ namespace SourceTerms
     prm.enter_subsection("heat transfer");
     heat_transfer_source.parse_parameters(prm);
     prm.leave_subsection();
+
+    prm.enter_subsection("tracer");
+    tracer_source.parse_parameters(prm);
+    prm.leave_subsection();
+
     prm.leave_subsection();
   }
 } // namespace SourceTerms

@@ -61,6 +61,9 @@ namespace Parameters
     // Temperature
     Functions::ParsedFunction<dim> temperature;
 
+    // Tracer
+    Functions::ParsedFunction<dim> tracer;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -93,7 +96,12 @@ namespace Parameters
 
 
       prm.enter_subsection("temperature");
-      uvwp.declare_parameters(prm, dim);
+      temperature.declare_parameters(prm);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
+
+      prm.enter_subsection("tracer");
+      tracer.declare_parameters(prm);
       prm.set("Function expression", "0");
       prm.leave_subsection();
     }
@@ -121,6 +129,10 @@ namespace Parameters
 
       prm.enter_subsection("temperature");
       temperature.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("tracer");
+      tracer.parse_parameters(prm);
       prm.leave_subsection();
     }
     prm.leave_subsection();

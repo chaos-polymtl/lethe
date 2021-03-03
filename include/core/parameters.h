@@ -157,6 +157,8 @@ namespace Parameters
     double specific_heat;
     // thermal conductivity (k) in W/m/K
     double thermal_conductivity;
+    // tracer diffusivity) in L^2/s
+    double tracer_diffusivity;
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -281,6 +283,9 @@ namespace Parameters
 
     // Interpolation order temperature
     unsigned int temperature_order;
+
+    // Interpolation order tracer
+    unsigned int tracer_order;
 
     // Apply high order mapping everywhere
     bool qmapping_all;

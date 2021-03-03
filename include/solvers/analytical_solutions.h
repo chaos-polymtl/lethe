@@ -53,7 +53,7 @@ namespace AnalyticalSolutions
       : enable(false)
       , velocity(dim + 1)
       , temperature(1)
-
+      , tracer(1)
     {}
 
     virtual void
@@ -78,6 +78,8 @@ namespace AnalyticalSolutions
     Functions::ParsedFunction<dim> velocity;
 
     Functions::ParsedFunction<dim> temperature;
+
+    Functions::ParsedFunction<dim> tracer;
   };
 } // namespace AnalyticalSolutions
 
