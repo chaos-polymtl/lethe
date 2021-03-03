@@ -60,6 +60,13 @@ namespace AnalyticalSolutions
       prm.set("Function expression", "0");
       prm.leave_subsection();
     }
+
+    {
+      prm.enter_subsection("tracer");
+      temperature.declare_parameters(prm);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
+    }
     prm.leave_subsection();
   }
 
@@ -85,6 +92,12 @@ namespace AnalyticalSolutions
     {
       prm.enter_subsection("temperature");
       temperature.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+
+    {
+      prm.enter_subsection("tracer");
+      tracer.parse_parameters(prm);
       prm.leave_subsection();
     }
 

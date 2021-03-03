@@ -29,7 +29,8 @@
 enum PhysicsID : unsigned int
 {
   fluid_dynamics = 0,
-  heat_transfer  = 1
+  heat_transfer  = 1,
+  tracer         = 2
 };
 
 #endif

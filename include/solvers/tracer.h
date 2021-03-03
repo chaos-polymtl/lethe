@@ -22,8 +22,8 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
 
-#ifndef lethe_heat_transfer_h
-#define lethe_heat_transfer_h
+#ifndef lethe_tracer_h
+#define lethe_tracer_h
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -32,10 +32,7 @@
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
-#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
-#  include <deal.II/fe/fe_simplex_p.h>
-#endif
-
+#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
@@ -48,14 +45,14 @@
 
 
 template <int dim>
-class HeatTransfer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class Tracer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  HeatTransfer<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-                    const SimulationParameters<dim> &p_simulation_parameters,
-                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                       p_triangulation,
-                    std::shared_ptr<SimulationControl> p_simulation_control)
+  Tracer<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+              const SimulationParameters<dim> &p_simulation_parameters,
+              std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                                 p_triangulation,
+              std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -73,24 +70,19 @@ public:
       {
         // for simplex meshes
         fe = std::make_shared<FE_SimplexP<dim>>(
-          simulation_parameters.fem_parameters.temperature_order);
-        temperature_mapping = std::make_shared<MappingFE<dim>>(*fe);
+          simulation_parameters.fem_parameters.tracer_order);
+        mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
-        face_quadrature =
-          std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
-        error_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
       }
     else
 #endif
       {
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.temperature_order);
-        temperature_mapping = std::make_shared<MappingQ<dim>>(
+          simulation_parameters.fem_parameters.tracer_order);
+        mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
-        cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
-        face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
-        error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
+        cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
       }
   }
 
@@ -178,14 +170,14 @@ public:
   write_checkpoint() override;
 
   /**
-   * @brief Allows Heat Transfer to set-up solution vector from checkpoint file;
+   * @brief Allows tracer physics to set-up solution vector from checkpoint file;
    */
   virtual void
   read_checkpoint() override;
 
 
   /**
-   * @brief Returns the dof_handler of the heat transfer physics
+   * @brief Returns the dof_handler of the tracer physics
    */
   virtual const DoFHandler<dim> &
   get_dof_handler() override
@@ -257,6 +249,11 @@ public:
 
 
 private:
+  /**
+   * @brief Actual assembly of the matrix and rhs
+   *
+   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   */
   template <bool assemble_matrix>
   void
   assemble_system(const Parameters::SimulationControl::TimeSteppingMethod
@@ -266,20 +263,19 @@ private:
   const SimulationParameters<dim> &simulation_parameters;
 
 
-  // Core elements for the heat transfer simulation
+  // Core elements for the tracer
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
 
+  // Finite element spce
   std::shared_ptr<FiniteElement<dim>> fe;
-  ConvergenceTable                    error_table;
-
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        temperature_mapping;
-  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
-  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
-  std::shared_ptr<Quadrature<dim>>     error_quadrature;
+  std::shared_ptr<Mapping<dim>>    mapping;
+  std::shared_ptr<Quadrature<dim>> cell_quadrature;
 
+
+  ConvergenceTable error_table;
 
   // Solution storage:
   IndexSet locally_owned_dofs;
@@ -309,15 +305,6 @@ private:
     solution_transfer_m2;
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer_m3;
-
-  // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
-  // Warning, this GGLS implementation is valid only for Linear elements
-  // Quad elements will be lacking the third derivative of the diffusion
-  // operator Whether this affects or not the final result is unclear to me at
-  // the moment. Additionnaly, this formulation does not use the gradient of the
-  // source term. The same applies, I have no clue if this is detrimental or not
-  // to the solution since anyway the GGLS term scales as h^(order+1)
-  const bool GGLS = true;
 };
 
 

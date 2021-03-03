@@ -27,7 +27,6 @@ namespace BoundaryConditions
   extern template class NSBoundaryConditions<3>;
   extern template class HTBoundaryConditions<2>;
   extern template class HTBoundaryConditions<3>;
+  extern template class TracerBoundaryConditions<2>;
+  extern template class TracerBoundaryConditions<3>;
 } // namespace BoundaryConditions
-
-// extern template class PeriodicBoundaryValues<2>;
-// extern template class PeriodicBoundaryValues<3>;
