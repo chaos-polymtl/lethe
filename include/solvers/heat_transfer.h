@@ -32,7 +32,10 @@
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_simplex_p.h>
+#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
+#  include <deal.II/fe/fe_simplex_p.h>
+#endif
+
 #include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
