@@ -99,23 +99,25 @@ RestartNavierStokes<dim>::run()
   this->simulation_control->print_progression(this->pcout);
   this->first_iteration();
   this->postprocess_fd(false);
-  auto errors_p1 =
-    calculate_L2_error(this->dof_handler,
-                       this->present_solution,
-                       this->exact_solution,
-                       this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
-  double error1 = errors_p1.first;
+  auto   errors_p1 = calculate_L2_error(this->dof_handler,
+                                      this->present_solution,
+                                      this->exact_solution,
+                                      this->mpi_communicator,
+                                      *this->fe,
+                                      *this->cell_quadrature,
+                                      *this->mapping);
+  double error1    = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step_fd();
 
   this->set_solution_vector(0.);
-  auto errors_p2 =
-    calculate_L2_error(this->dof_handler,
-                       this->present_solution,
-                       this->exact_solution,
-                       this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+  auto errors_p2 = calculate_L2_error(this->dof_handler,
+                                      this->present_solution,
+                                      this->exact_solution,
+                                      this->mpi_communicator,
+                                      *this->fe,
+                                      *this->cell_quadrature,
+                                      *this->mapping);
 
   double error2 = errors_p2.first;
 
@@ -128,12 +130,13 @@ RestartNavierStokes<dim>::run()
 
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type, true);
-  auto errors_p3 =
-    calculate_L2_error(this->dof_handler,
-                       this->present_solution,
-                       this->exact_solution,
-                       this->simulation_parameters.fem_parameters,
-                       this->mpi_communicator);
+  auto errors_p3 = calculate_L2_error(this->dof_handler,
+                                      this->present_solution,
+                                      this->exact_solution,
+                                      this->mpi_communicator,
+                                      *this->fe,
+                                      *this->cell_quadrature,
+                                      *this->mapping);
 
   double error3 = errors_p3.first;
   deallog << "Error after restarting the simulation: " << error3 << std::endl;

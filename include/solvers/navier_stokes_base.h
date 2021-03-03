@@ -72,8 +72,13 @@
 
 // Fe
 #include <deal.II/fe/fe_q.h>
+#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
+#  include <deal.II/fe/fe_simplex_p.h>
+#endif
+
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/fe_values.h>
+#include <deal.II/fe/mapping_fe.h>
 #include <deal.II/fe/mapping_q.h>
 
 // Numerics
@@ -84,6 +89,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 // Distributed
+#include <deal.II/distributed/fully_distributed_tria.h>
 #include <deal.II/distributed/grid_refinement.h>
 #include <deal.II/distributed/solution_transfer.h>
 
@@ -436,7 +442,7 @@ protected:
 
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   DoFHandler<dim>                                              dof_handler;
-  FESystem<dim>                                                fe;
+  std::shared_ptr<FESystem<dim>>                               fe;
 
   TimerOutput computing_timer;
 
@@ -473,6 +479,12 @@ protected:
   const unsigned int velocity_fem_degree;
   const unsigned int pressure_fem_degree;
   unsigned int       number_quadrature_points;
+
+  // Mappings and Quadratures
+  std::shared_ptr<Mapping<dim>>        mapping;
+  std::shared_ptr<Quadrature<dim>>     cell_quadrature;
+  std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
+
 
   // Multiphysics interface
   std::shared_ptr<MultiphysicsInterface<dim>> multiphysics;

@@ -118,14 +118,12 @@ public:
         unsigned int boundary_id  = 0;
         double       min_distance = DBL_MAX;
 
-        for (unsigned int face = 0; face < GeometryInfo<dim>::faces_per_cell;
-             face++)
+        for (const auto face : current_cell->face_indices())
           {
             if (current_cell->face(face)->at_boundary())
               {
-                for (unsigned int vertex = 0;
-                     vertex < GeometryInfo<dim>::vertices_per_face;
-                     vertex++)
+                for (const auto vertex :
+                     current_cell->face(face)->vertex_indices())
                   {
                     double distance = input_data.evaluation_points[p].distance(
                       current_cell->face(face)->vertex(vertex));

@@ -528,6 +528,13 @@ namespace Parameters
         Patterns::Bool(),
         "Enable initial refinement until target size is reached.");
 
+      prm.declare_entry(
+        "simplex",
+        "false",
+        Patterns::Bool(),
+        "Indicates that the mesh used is a mesh made of only simplex elements.");
+
+
       prm.declare_entry("target size",
                         "1",
                         Patterns::Double(),
@@ -566,6 +573,7 @@ namespace Parameters
       grid_arguments = prm.get("grid arguments");
 
       refine_until_target_size = prm.get_bool("enable target size");
+      simplex                  = prm.get_bool("simplex");
       target_size              = prm.get_double("target size");
     }
     prm.leave_subsection();
