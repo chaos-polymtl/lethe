@@ -712,8 +712,7 @@ template <int dim>
 void
 Tracer<dim>::set_initial_conditions()
 {
-  MappingQ<dim> mapping(fe->degree);
-  VectorTools::interpolate(mapping,
+  VectorTools::interpolate(*mapping,
                            dof_handler,
                            simulation_parameters.initial_condition->tracer,
                            newton_update);

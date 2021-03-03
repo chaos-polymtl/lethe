@@ -66,7 +66,7 @@ public:
     , solution_transfer_m3(dof_handler)
   {
 #ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
-    if (false) // simulation_parameters.mesh.simplex)
+    if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
         fe = std::make_shared<FE_SimplexP<dim>>(
