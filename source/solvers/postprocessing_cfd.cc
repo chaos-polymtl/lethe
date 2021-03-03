@@ -147,9 +147,7 @@ calculate_enstrophy(const DoFHandler<dim> &   dof_handler,
 
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
   double                      en = 0.0;
-  //    double domain_volume =
-  //    GridTools::volume(dof_handler.get_triangulation(),*mapping);
-  double domain_volume =
+  double                      domain_volume =
     GridTools::volume(dof_handler.get_triangulation(), mapping);
 
   for (const auto &cell : dof_handler.active_cell_iterators())
@@ -363,9 +361,7 @@ calculate_forces(
             {
               if (cell->at_boundary())
                 {
-                  for (unsigned int face = 0;
-                       face < GeometryInfo<dim>::faces_per_cell;
-                       face++)
+                  for (const auto face : cell->face_indices())
                     {
                       if (cell->face(face)->at_boundary())
                         {
@@ -493,9 +489,7 @@ calculate_torques(
         {
           if (cell->is_locally_owned())
             {
-              for (unsigned int face = 0;
-                   face < GeometryInfo<dim>::faces_per_cell;
-                   face++)
+              for (const auto face : cell->face_indices())
                 {
                   if (cell->face(face)->at_boundary())
                     {

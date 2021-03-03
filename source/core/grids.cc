@@ -44,14 +44,20 @@ attach_grid_to_triangulation(
   else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh &&
            mesh_parameters.simplex)
     {
-      // create serial triangulation
+      // TODO - Serial triangulation should only be created on one processor...
+      // Get communicator from triangulation
+      // auto communicator     = triangulation->get_communicator();
+      // auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
+
       Triangulation<dim, spacedim> basetria(
         Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
+
+
       GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(basetria);
       std::ifstream input_file(mesh_parameters.file_name);
-      grid_in.read_msh(input_file);
 
+      grid_in.read_msh(input_file);
       GridTools::partition_triangulation_zorder(
         Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
         basetria);
@@ -64,17 +70,6 @@ attach_grid_to_triangulation(
           triangulation->get_communicator(),
           TriangulationDescription::Settings::construct_multigrid_hierarchy);
       triangulation->create_triangulation(construction_data);
-
-      for (auto &cell : triangulation->active_cell_iterators())
-        {
-          CellId id        = cell->id();
-          auto   cell_base = basetria.create_cell_iterator(id);
-          // Assert(cell->center() == cell_base->center(),
-          //       ExcMessage("Cells do not match"));
-          for (unsigned int d = 0; d < dim; d++)
-            Assert(std::abs(cell->center()[d] - cell_base->center()[d]) < 1e-9,
-                   ExcMessage("Cells do not match"));
-        }
     }
   // Dealii grids
   else if (mesh_parameters.type == Parameters::Mesh::Type::dealii &&
@@ -111,17 +106,6 @@ attach_grid_to_triangulation(
           triangulation->get_communicator(),
           TriangulationDescription::Settings::construct_multigrid_hierarchy);
       triangulation->create_triangulation(construction_data);
-
-      for (auto &cell : triangulation->active_cell_iterators())
-        {
-          CellId id      = cell->id();
-          auto cell_base = temporary_tri_triangulation.create_cell_iterator(id);
-          // Assert(cell->center() == cell_base->center(),
-          //       ExcMessage("Cells do not match"));
-          for (unsigned int d = 0; d < dim; d++)
-            Assert(std::abs(cell->center()[d] - cell_base->center()[d]) < 1e-9,
-                   ExcMessage("Cells do not match"));
-        }
     }
 #endif
 
