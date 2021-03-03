@@ -65,6 +65,7 @@ public:
     , solution_transfer_m2(dof_handler)
     , solution_transfer_m3(dof_handler)
   {
+#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
@@ -77,6 +78,7 @@ public:
         error_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
       }
     else
+#endif
       {
         // Usual case, for quad/hex meshes
         fe = std::make_shared<FE_Q<dim>>(
