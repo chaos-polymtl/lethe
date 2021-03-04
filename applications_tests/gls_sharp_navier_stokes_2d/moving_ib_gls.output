@@ -23,7 +23,7 @@ particle ID  time    T_z    omega_z
 0           0.0312 0.005734 0.000159 
 
 *****************************************************************
-Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.0116326
+Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.0116358
 *****************************************************************
    Number of active cells:       457
    Number of degrees of freedom: 1524
@@ -41,7 +41,7 @@ particle ID  time    T_z    omega_z
 0           0.0625 0.010171 0.000459 
 
 *****************************************************************
-Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.0220161
+Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.022025
 *****************************************************************
    Number of active cells:       457
    Number of degrees of freedom: 1524
@@ -61,7 +61,7 @@ particle ID  time    T_z    omega_z
 0           0.0938 0.013595 0.000864 
 
 *****************************************************************
-Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.0316635
+Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.0316795
 *****************************************************************
    Number of active cells:       457
    Number of degrees of freedom: 1524
