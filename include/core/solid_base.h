@@ -72,27 +72,59 @@ public:
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
                                fluid_tria,
             const unsigned int degree_velocity);
+
   /**
-   * @brief Generates a solid triangulation from a dealii or gmsh mesh
+   * @brief Manages solid triangulation and particles setup
    */
   void
   initial_setup();
 
   /**
-   * @brief Creates a particle handler in the fluid triangulation domain that holds the particles of the solid
+   * @brief Generates a solid triangulation from a dealii or gmsh mesh
+   */
+  void
+  setup_triangulation(const bool restart);
+
+  /**
+   * @brief Creates a particle handler in the fluid triangulation domain
+   */
+  void
+  setup_particles_handler();
+
+  /**
+   * @brief Sets-up particles with particle handler, in the fluid triangulation domain that holds the particles of the solid
    * according to a specific quadrature
    */
   void
   setup_particles();
 
   /**
-   * @return std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
+   * @brief Loads a solid triangulation from a restart file
    */
-  std::shared_ptr<Particles::ParticleHandler<spacedim>>
+  void
+  load_triangulation(const std::string filename_tria);
+
+  /**
+   * @brief Loads a particle handler in the fluid triangulation domain that holds the particles of the solid
+   * according to a specific quadrature, and sets up dofs
+   */
+  void
+  load_particles(const std::string filename_part);
+
+  /**
+   * @return the reference to the std::shared_ptr of a Particles::ParticleHandler<spacedim> that contains the solid particle handler
+   */
+  std::shared_ptr<Particles::ParticleHandler<spacedim>> &
   get_solid_particle_handler();
 
   /**
-   * @return the solid dof handler
+   * @return shared_ptr of the solid triangulation
+   */
+  std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+  get_solid_triangulation();
+
+  /**
+   * @return the reference to the solid dof handler
    */
   DoFHandler<dim, spacedim> &
   get_solid_dof_handler();
@@ -140,8 +172,6 @@ private:
 
   const unsigned int degree_velocity;
   unsigned int       initial_number_of_particles;
-
-  bool setup_done = false;
 };
 
 #endif
