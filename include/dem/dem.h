@@ -27,7 +27,6 @@
 #include <deal.II/particles/particle_handler.h>
 
 #include <core/pvd_handler.h>
-#include <dem/checkpointing.h>
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/explicit_euler_integrator.h>
@@ -58,10 +57,12 @@
 #include <dem/pw_fine_search.h>
 #include <dem/pw_linear_force.h>
 #include <dem/pw_nonlinear_force.h>
+#include <dem/read_checkpoint.h>
 #include <dem/read_mesh.h>
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/visualization.h>
+#include <dem/write_checkpoint.h>
 
 #include <fstream>
 #include <iostream>
@@ -346,7 +347,6 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
-  Checkpointing<dim>                   checkpointing_object;
   PPBroadSearch<dim>                   pp_broad_search_object;
   PPFineSearch<dim>                    pp_fine_search_object;
   PWBroadSearch<dim>                   pw_broad_search_object;

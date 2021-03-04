@@ -671,12 +671,12 @@ DEMSolver<dim>::solve()
 
   if (parameters.restart.restart == true)
     {
-      checkpointing_object.read_checkpoint(computing_timer,
-                                           parameters,
-                                           simulation_control,
-                                           particles_pvdhandler,
-                                           triangulation,
-                                           particle_handler);
+      read_checkpoint(computing_timer,
+                      parameters,
+                      simulation_control,
+                      particles_pvdhandler,
+                      triangulation,
+                      particle_handler);
 
       update_moment_of_inertia(particle_handler, MOI);
     }
@@ -852,14 +852,14 @@ DEMSolver<dim>::solve()
               parameters.restart.frequency ==
             0)
         {
-          checkpointing_object.write_checkpoint(computing_timer,
-                                                parameters,
-                                                simulation_control,
-                                                particles_pvdhandler,
-                                                triangulation,
-                                                particle_handler,
-                                                pcout,
-                                                mpi_communicator);
+          write_checkpoint(computing_timer,
+                           parameters,
+                           simulation_control,
+                           particles_pvdhandler,
+                           triangulation,
+                           particle_handler,
+                           pcout,
+                           mpi_communicator);
         }
     }
 
