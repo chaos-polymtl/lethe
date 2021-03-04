@@ -25,6 +25,9 @@
 
 #include <dem/dem_solver_parameters.h>
 
+#include <fstream>
+#include <iostream>
+
 using namespace std;
 
 #ifndef read_mesh_h
