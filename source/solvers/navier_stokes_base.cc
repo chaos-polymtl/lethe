@@ -437,6 +437,7 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_time_step_fd()
       this->simulation_control->set_CFL(CFL);
     }
   if (this->simulation_parameters.restart_parameters.checkpoint &&
+      simulation_control->get_step_number() != 0 &&
       simulation_control->get_step_number() %
           this->simulation_parameters.restart_parameters.frequency ==
         0)

@@ -32,6 +32,9 @@
 
 #include <deal.II/particles/data_out.h>
 
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <core/solid_base.h>
@@ -65,15 +68,29 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::initial_setup()
 {
+  // initial_setup is called if the simulation is not a restarted one
+  // Set-up of Nitsche triangulation, then particles (order important)
+  setup_triangulation(false);
+  setup_particles();
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
+{
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
+      // Grid creation
       GridIn<dim, spacedim> grid_in;
+      // Attach triangulation to the grid
       grid_in.attach_triangulation(*solid_tria);
+      // Read input gmsh file
       std::ifstream input_file(param->solid_mesh.file_name);
       grid_in.read_msh(input_file);
     }
   else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
+      // deal.ii creates grid and attaches the solid triangulation
       GridGenerator::generate_from_name_and_arguments(
         *solid_tria,
         param->solid_mesh.grid_type,
@@ -84,18 +101,59 @@ SolidBase<dim, spacedim>::initial_setup()
       "Unsupported mesh type - solid mesh will not be created");
 
   // Refine the solid triangulation to its initial size
-  solid_tria->refine_global(param->solid_mesh.initial_refinement);
+  // NB: solid_tria should not be refined if loaded from a restart file
+  // afterwards
+  if (!restart)
+    {
+      solid_tria->refine_global(param->solid_mesh.initial_refinement);
+      // Initialize dof handler for solid
+      FE_Q<dim, spacedim> fe(1);
+      solid_dh.distribute_dofs(fe);
+    }
 }
-
 
 template <int dim, int spacedim>
 void
-SolidBase<dim, spacedim>::setup_particles()
+SolidBase<dim, spacedim>::load_triangulation(const std::string filename_tria)
 {
+  // Load solid triangulation from given file
+  // TODO not functional for now, as not all information as passed with the load
+  // function (see dealii documentation for classTriangulation) => change the
+  // way the load works, or change the way the solid triangulation is handled
+  std::ifstream in_folder(filename_tria.c_str());
+  if (!in_folder)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename_tria + "> does not appear to exist!"));
+
+  try
+    {
+      if (auto solid_tria =
+            dynamic_cast<parallel::distributed::Triangulation<dim, spacedim> *>(
+              get_solid_triangulation().get()))
+        {
+          solid_tria->load(filename_tria.c_str());
+        }
+    }
+  catch (...)
+    {
+      AssertThrow(false,
+                  ExcMessage("Cannot open snapshot mesh file or read the "
+                             "solid triangulation stored there."));
+    }
+
+  // Initialize dof handler for solid
   FE_Q<dim, spacedim> fe(1);
   solid_dh.distribute_dofs(fe);
+}
 
-  QGauss<dim>  quadrature(degree_velocity + 1);
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::setup_particles_handler()
+{
   unsigned int n_properties = (dim == 2 && spacedim == 3) ? 1 + spacedim : 1;
 
   solid_particle_handler =
@@ -104,6 +162,24 @@ SolidBase<dim, spacedim>::setup_particles()
   solid_particle_handler->initialize(*fluid_tria,
                                      StaticMappingQ1<spacedim>::mapping,
                                      n_properties);
+
+  // Connect Nitsche particles to the fluid triangulation
+  fluid_tria->signals.pre_distributed_refinement.connect(
+    [&]() { solid_particle_handler->register_store_callback_function(); });
+  fluid_tria->signals.post_distributed_refinement.connect(
+    [&]() { solid_particle_handler->register_load_callback_function(false); });
+}
+
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::setup_particles()
+{
+  setup_particles_handler();
+
+  // Initialize FEValues
+  FE_Q<dim, spacedim> fe(1);
+
+  QGauss<dim>                  quadrature(degree_velocity + 1);
   std::vector<Point<spacedim>> quadrature_points_vec;
   quadrature_points_vec.reserve(quadrature.size() *
                                 solid_tria->n_locally_owned_active_cells());
@@ -117,6 +193,8 @@ SolidBase<dim, spacedim>::setup_particles()
 
   FEValues<dim, spacedim> fe_v(fe, quadrature, update_flags);
 
+  // Fill quadrature points vector and properties, used to fill
+  // solid_particle_handler
   for (const auto &cell : solid_dh.active_cell_iterators())
     if (cell->is_locally_owned())
       {
@@ -148,6 +226,7 @@ SolidBase<dim, spacedim>::setup_particles()
           }
       }
 
+  // Compute fluid bounding box
   std::vector<std::vector<BoundingBox<spacedim>>> global_fluid_bounding_boxes;
 
   // if Triangulation is a parallel::distributed::triangulation, use the naive
@@ -181,16 +260,33 @@ SolidBase<dim, spacedim>::setup_particles()
         Utilities::MPI::all_gather(mpi_communicator, local_boxes);
     }
 
+  // Fill solid particle handler
   solid_particle_handler->insert_global_particles(quadrature_points_vec,
                                                   global_fluid_bounding_boxes,
                                                   properties);
 
-  fluid_tria->signals.pre_distributed_refinement.connect(
-    [&]() { solid_particle_handler->register_store_callback_function(); });
-  fluid_tria->signals.post_distributed_refinement.connect(
-    [&]() { solid_particle_handler->register_load_callback_function(false); });
+  // Number of particles used to assess that no particle is lost
+  initial_number_of_particles = solid_particle_handler->n_global_particles();
+}
 
-  setup_done                  = true;
+template <int dim, int spacedim>
+void
+SolidBase<dim, spacedim>::load_particles(const std::string filename_part)
+{
+  // Setup particles handler
+  setup_particles_handler();
+
+  // Gather particle serialization information
+  std::ifstream input(filename_part.c_str());
+  AssertThrow(input, ExcFileNotOpen(filename_part));
+
+  std::string buffer;
+  std::getline(input, buffer);
+  std::istringstream            iss(buffer);
+  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
+
+  ia >> *solid_particle_handler;
+
   initial_number_of_particles = solid_particle_handler->n_global_particles();
 }
 
@@ -202,15 +298,17 @@ SolidBase<dim, spacedim>::get_solid_dof_handler()
 }
 
 template <int dim, int spacedim>
-std::shared_ptr<Particles::ParticleHandler<spacedim>>
+std::shared_ptr<Particles::ParticleHandler<spacedim>> &
 SolidBase<dim, spacedim>::get_solid_particle_handler()
 {
-  if (!setup_done)
-    {
-      initial_setup();
-      setup_particles();
-    }
   return solid_particle_handler;
+}
+
+template <int dim, int spacedim>
+std::shared_ptr<parallel::DistributedTriangulationBase<dim, spacedim>>
+SolidBase<dim, spacedim>::get_solid_triangulation()
+{
+  return solid_tria;
 }
 
 template <int dim, int spacedim>
@@ -277,7 +375,6 @@ SolidBase<dim, spacedim>::integrate_velocity(double time_step)
                     << std::endl;
           std::cout << "Initial number of particles : "
                     << initial_number_of_particles << std::endl;
-
           std::cout << "Current number of particles : "
                     << solid_particle_handler->n_global_particles()
                     << std::endl;

@@ -109,6 +109,7 @@ RestartNavierStokes<dim>::run()
   double error1    = errors_p1.first;
   deallog << "Error after first simulation : " << error1 << std::endl;
   this->finish_time_step_fd();
+  this->write_checkpoint(); // write_checkpoint needs to be called explicitly
 
   this->set_solution_vector(0.);
   auto errors_p2 = calculate_L2_error(this->dof_handler,
