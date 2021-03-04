@@ -28,11 +28,11 @@ template <int dim>
 class IBParticle
 {
 public:
-// This class defined values related to a particle used for in the sharp interface immersed boundary.
-    // Each particle defined will have these value used in the solver
+    // Function to initialise the value associated with each particle.
     void initialise_all();
     void initialise_last();
-
+    // This class defines values related to a particle used in the sharp interface IB.
+    // Each particle defined will have these value used in the solver.
     Point<dim> position;
     Point<dim> last_position;
     Tensor<1, dim> forces;

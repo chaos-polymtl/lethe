@@ -1157,7 +1157,7 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
 
 // To integrate the forces and update the velocity, this function uses the implicit Euler algorithm.
 // To find the force at t+dt the function use the fix point algorithm in parallel to the newton iteration used for the fluid resolution.
-
+    using numbers::PI;
     double dt=this->simulation_control->get_time_steps_vector()[0];
     double alpha=this->simulation_parameters.particlesParameters.alpha;
     Tensor<1,dim> g=this->simulation_parameters.particlesParameters.gravity;
@@ -1171,12 +1171,11 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             // Define the gravity force applied on the particle based on his masse and the density of fluide applied on it.
 
             if (dim==2)
-                gravity = g * (particles[p].mass -particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+                gravity = g * (particles[p].mass -particles[p].radius*particles[p].radius*PI*rho) ;
             if (dim == 3){
-                gravity= g * (particles[p].mass -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*3.14159265359*rho) ;
+                gravity= g * (particles[p].mass -4.0/3.0*particles[p].radius*particles[p].radius*particles[p].radius*PI*rho) ;
             }
             // Evaluate the velocity of the particle
-
 
             Tensor<1, dim> velocity_iter;
             velocity_iter = particles[p].last_velocity + (particles[p].forces + gravity) * dt / particles[p].mass;
