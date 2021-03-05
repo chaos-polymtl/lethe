@@ -1440,7 +1440,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
         {
           this->simulation_parameters.linear_solver.ilu_precond_fill += 1;
           this->pcout
-            << " GMRES solver failed! New try with higher preconditioner fill. New fill = "
+            << " GMRES solver failed! Trying with higher preconditioner fill level. New fill = "
             << this->simulation_parameters.linear_solver.ilu_precond_fill
             << std::endl;
           if (iter == max_iter - 1)
