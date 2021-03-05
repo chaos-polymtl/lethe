@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 0.00001
-  set time end       					 = 1
+  set time end       					 = 0.3
   set log frequency				         = 10000000
   set output frequency            			 = 10000000
 end
@@ -46,7 +46,7 @@ subsection physical properties
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            		= 0.003
-    		set number				= 30
+    		set number				= 10
     		set density            	 		= 2000
     		set young modulus particle         	= 1500000
     		set poisson ratio particle          	= 0.4
@@ -57,7 +57,7 @@ subsection physical properties
     	subsection particle type 1
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
-    		set number				= 30
+    		set number				= 10
     		set density            	 		= 3000
     		set young modulus particle         	= 1000000
     		set poisson ratio particle          	= 0.3
@@ -78,7 +78,7 @@ end
 subsection insertion info
     set insertion method				= non_uniform
     set inserted number of particles at each time step  = 50
-    set insertion frequency            		 	= 20000
+    set insertion frequency            		 	= 10000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
     set insertion box maximum x            	        = 0.05
