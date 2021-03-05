@@ -581,7 +581,7 @@ void
 Tracer<dim>::read_checkpoint()
 {
   auto mpi_communicator = triangulation->get_communicator();
-  this->pcout << "Reading heat transfer checkpoint" << std::endl;
+  this->pcout << "Reading tracer checkpoint" << std::endl;
 
   std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(4);
   TrilinosWrappers::MPI::Vector distributed_system(locally_owned_dofs,
@@ -704,7 +704,7 @@ Tracer<dim>::setup_dofs()
                        dsp,
                        mpi_communicator);
 
-  this->pcout << "   Number of thermal degrees of freedom: "
+  this->pcout << "   Number of tracer degrees of freedom: "
               << dof_handler.n_dofs() << std::endl;
 }
 

@@ -2,78 +2,78 @@ Running on 1 MPI rank(s)...
    Number of active cells:       1024
    Number of degrees of freedom: 3267
    Volume of triangulation:      1
-   Number of thermal degrees of freedom: 1089
+   Number of tracer degrees of freedom: 1089
 
 *****************************************************************
 Transient iteration : 1        Time : 0.02     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.00402125
 
 *****************************************************************
 Transient iteration : 2        Time : 0.04     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.00762851
 
 *****************************************************************
 Transient iteration : 3        Time : 0.06     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0107674
 
 *****************************************************************
 Transient iteration : 4        Time : 0.08     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0146504
 
 *****************************************************************
 Transient iteration : 5        Time : 0.1      Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0174482
 
 *****************************************************************
 Transient iteration : 6        Time : 0.12     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.020317
 
 *****************************************************************
 Transient iteration : 7        Time : 0.14     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0237186
 
 *****************************************************************
 Transient iteration : 8        Time : 0.16     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0258645
 
 *****************************************************************
 Transient iteration : 9        Time : 0.18     Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0286727
 
 *****************************************************************
 Transient iteration : 10       Time : 0.2      Time step : 0.02     CFL : 0.567185
 *****************************************************************
-L2 error velocity : 0
+L2 error velocity : 5.55112e-17
 L2 error tracer : 0.0315421
  time  error_velocity 
-0.0200 0.0000e+00     
-0.0400 0.0000e+00     
-0.0600 0.0000e+00     
-0.0800 0.0000e+00     
-0.1000 0.0000e+00     
-0.1200 0.0000e+00     
-0.1400 0.0000e+00     
-0.1600 0.0000e+00     
-0.1800 0.0000e+00     
-0.2000 0.0000e+00     
+0.0200 5.5511e-17     
+0.0400 5.5511e-17     
+0.0600 5.5511e-17     
+0.0800 5.5511e-17     
+0.1000 5.5511e-17     
+0.1200 5.5511e-17     
+0.1400 5.5511e-17     
+0.1600 5.5511e-17     
+0.1800 5.5511e-17     
+0.2000 5.5511e-17     
 cells error_tracer 
 1024  4.0213e-03   
 1024  7.6285e-03   
