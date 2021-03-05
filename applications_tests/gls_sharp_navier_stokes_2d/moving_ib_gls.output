@@ -1,0 +1,83 @@
+Running on 1 MPI rank(s)...
+   Number of active cells:       256
+   Number of degrees of freedom: 867
+   Volume of triangulation:      16
+   Number of active cells:       457
+   Number of degrees of freedom: 1524
+   Volume of triangulation:      16
+   Number of active cells:       457
+   Number of degrees of freedom: 1524
+   Volume of triangulation:      16
+
+*****************************************************************
+Transient iteration : 1        Time : 0.03125  Time step : 0.03125  CFL : 0       
+*****************************************************************
+particule 0 position 0.999977 0.99918
+particule 0 velocity -0.00148849 -0.0524534
++------------------------------------------+
+|  Force  summary particle 0               |
++------------------------------------------+
+particle ID  time     f_x       v_x      p_x      f_y       v_y      p_y    
+0           0.0312 -0.056112 -0.001488 0.999977 1.874953 -0.052453 0.999180 
+particle ID  time    T_z    omega_z  
+0           0.0312 0.005734 0.000159 
+
+*****************************************************************
+Transient iteration : 2        Time : 0.0625   Time step : 0.03125  CFL : 0.0116358
+*****************************************************************
+   Number of active cells:       457
+   Number of degrees of freedom: 1524
+   Volume of triangulation:      16
+particule 0 position 0.999903 0.99681
+particule 0 velocity -0.00323926 -0.0992261
++------------------------------------------+
+|  Force  summary particle 0               |
++------------------------------------------+
+particle ID  time     f_x       v_x      p_x      f_y       v_y      p_y    
+0           0.0312 -0.056112 -0.001488 0.999977 1.874953 -0.052453 0.999180 
+0           0.0625 -0.066025 -0.003239 0.999903 2.089083 -0.099226 0.996810 
+particle ID  time    T_z    omega_z  
+0           0.0312 0.005734 0.000159 
+0           0.0625 0.010171 0.000459 
+
+*****************************************************************
+Transient iteration : 3        Time : 0.09375  Time step : 0.03125  CFL : 0.022025
+*****************************************************************
+   Number of active cells:       457
+   Number of degrees of freedom: 1524
+   Volume of triangulation:      16
+particule 0 position 0.999772 0.993031
+particule 0 velocity -0.00513705 -0.14264
++------------------------------------------+
+|  Force  summary particle 0               |
++------------------------------------------+
+particle ID  time     f_x       v_x      p_x      f_y       v_y      p_y    
+0           0.0312 -0.056112 -0.001488 0.999977 1.874953 -0.052453 0.999180 
+0           0.0625 -0.066025 -0.003239 0.999903 2.089083 -0.099226 0.996810 
+0           0.0938 -0.071567 -0.005137 0.999772 2.215710 -0.142640 0.993031 
+particle ID  time    T_z    omega_z  
+0           0.0312 0.005734 0.000159 
+0           0.0625 0.010171 0.000459 
+0           0.0938 0.013595 0.000864 
+
+*****************************************************************
+Transient iteration : 4        Time : 0.125    Time step : 0.03125  CFL : 0.0316795
+*****************************************************************
+   Number of active cells:       457
+   Number of degrees of freedom: 1524
+   Volume of triangulation:      16
+particule 0 position 0.99958 0.98794
+particule 0 velocity -0.00717708 -0.183228
++------------------------------------------+
+|  Force  summary particle 0               |
++------------------------------------------+
+particle ID  time     f_x       v_x      p_x      f_y       v_y      p_y    
+0           0.0312 -0.056112 -0.001488 0.999977 1.874953 -0.052453 0.999180 
+0           0.0625 -0.066025 -0.003239 0.999903 2.089083 -0.099226 0.996810 
+0           0.0938 -0.071567 -0.005137 0.999772 2.215710 -0.142640 0.993031 
+0           0.1250 -0.076927 -0.007177 0.999580 2.322261 -0.183228 0.987940 
+particle ID  time    T_z    omega_z  
+0           0.0312 0.005734 0.000159 
+0           0.0625 0.010171 0.000459 
+0           0.0938 0.013595 0.000864 
+0           0.1250 0.016251 0.001351 
