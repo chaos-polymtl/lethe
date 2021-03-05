@@ -108,7 +108,7 @@ Visualization<dim>::print_xyz(
             << particle_properties[DEM::PropertiesIndex::type] << " "
             << std::setprecision(5)
             << particle_properties[DEM::PropertiesIndex::dp] << " "
-            << std::setprecision(5) << particle_location << std::endl;
+            << std::setprecision(4) << particle_location << std::endl;
     }
 }
 
