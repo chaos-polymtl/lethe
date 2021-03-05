@@ -515,14 +515,14 @@ namespace BoundaryConditions
                       "dirichlet",
                       Patterns::Selection("dirichlet"),
                       "Type of boundary condition for tracer"
-                      "Choices are <dirichlet>.");
+                      "Choices are <function>.");
 
     prm.declare_entry("id",
                       Utilities::int_to_string(i_bc, 2),
                       Patterns::Integer(),
                       "Mesh id for boundary conditions");
 
-    prm.enter_subsection("tracer");
+    prm.enter_subsection("dirichlet");
     tracer[i_bc] = std::make_shared<Functions::ParsedFunction<dim>>();
     tracer[i_bc]->declare_parameters(prm);
     prm.set("Function expression", "0");
@@ -580,7 +580,7 @@ namespace BoundaryConditions
     if (op == "dirichlet")
       {
         this->type[i_bc] = BoundaryType::tracer_dirichlet;
-        prm.enter_subsection("tracer");
+        prm.enter_subsection("dirichlet");
         tracer[i_bc]->parse_parameters(prm);
         prm.leave_subsection();
       }

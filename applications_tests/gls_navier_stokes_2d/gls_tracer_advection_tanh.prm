@@ -111,17 +111,6 @@ subsection boundary conditions
     end
 end
 
-subsection boundary conditions tracer
-  set number                  = 0
-    #subsection bc 0
-    #set id = 0
-    #set type              = dirichlet
-    #  subsection tracer
-    #          set Function expression =  1 
-    #  end
-    #end
-end
-
 # --------------------------------------------------
 # Source term
 #---------------------------------------------------
