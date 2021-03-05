@@ -57,39 +57,54 @@ private:
   // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
   // and Adjacent_3 needs to be renamed if possible to a clearer notation
 
-  // Map the vertex index to the cell that include that vertex used later in
-  // which cell a point falls in vertices_to_cell is a vector of vectof of dof
+  // Map the vertex index to the cell that includes that vertex used later in
+  // which cell a point fall in vertices_to_cell is a vector of vector of dof
   // handler active cell iterator each element i of the vector is a vector of
-  // all the cell in contact with the vertex i
+  // all the cell in contact with the vertex i.
   void
   vertices_cell_mapping();
 
-  // BB - TODO The particles structure should be refactored to use a small class
-  // to store the information or a struct instead of just using a vector where
-  // the things are hardcoded within.
+  // Defines the particle structure and value based on the parameter file.
   void
   define_particles();
 
+  // Evaluate the forces applied to each of the IB particles.
   void
   force_on_ib();
 
+  // Modify the system matrix to impose IB condition.
   void
   sharp_edge();
 
+  // Write in  the output file the forces , velocity , position of each of the
+  // particles.
   void
   write_force_ib();
 
+  // Integrate the particle velocity and position based on the forces and torque
+  // applied to it.
+  void
+  integrate_particles();
 
+  // Store the solution of the particles dynamics parameters for integration.
+  // Defines the table to store the history of each of the particles.
+  void
+  finish_time_step_particles();
 
+  // Evaluate the L2 error on the computational domain if an analytical solution
+  // is given.
   double
   calculate_L2_error_particles();
 
   virtual void
   postprocess_fd(bool firstIter) override;
 
+  // Allow a refinement around each of the particles.
   void
   refine_ib();
 
+  // Modified version of assemble_matrix_and_rhs to include the presence of
+  // extra steps.
   void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
