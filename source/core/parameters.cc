@@ -978,9 +978,14 @@ namespace Parameters
       Patterns::Double(),
       "position relative to the center of the particle  for the location of the point where the pressure is impose inside the particle  in z ");
     prm.declare_entry("radius", "0.2", Patterns::Double(), "Particles radius ");
-    prm.declare_entry("density", "1", Patterns::Double(), "density of the particle ");
-    prm.declare_entry("inertia", "1", Patterns::Double(), "uniform rotational moment of inertia");
-
+    prm.declare_entry("density",
+                      "1",
+                      Patterns::Double(),
+                      "density of the particle ");
+    prm.declare_entry("inertia",
+                      "1",
+                      Patterns::Double(),
+                      "uniform rotational moment of inertia");
   }
 
   template <int dim>
@@ -1031,31 +1036,30 @@ namespace Parameters
         Patterns::FileName(),
         "Bool to define if the force is evaluated on each particle ");
       prm.declare_entry(
-                "integrate motion",
-                "false",
-                Patterns::Bool(),
-                "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
-      prm.declare_entry(
-                "fluid density",
-                "1",
-                Patterns::Double(),
-                "density of the fluid");
-      prm.declare_entry(
-                "gravity_x",
-                "0",
-                Patterns::Double(),
-                "gravitational acceleration");
-      prm.declare_entry(
-                "gravity_y",
-                "-9.81",
-                Patterns::Double(),
-                "gravitational acceleration");
-      prm.declare_entry(
-                "gravity_z",
-                "0",
-                Patterns::Double(),
-                "gravitational acceleration");
-      prm.declare_entry("alpha", "1", Patterns::Double(), "relaxation parameter");
+        "integrate motion",
+        "false",
+        Patterns::Bool(),
+        "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+      prm.declare_entry("fluid density",
+                        "1",
+                        Patterns::Double(),
+                        "density of the fluid");
+      prm.declare_entry("gravity_x",
+                        "0",
+                        Patterns::Double(),
+                        "gravitational acceleration");
+      prm.declare_entry("gravity_y",
+                        "-9.81",
+                        Patterns::Double(),
+                        "gravitational acceleration");
+      prm.declare_entry("gravity_z",
+                        "0",
+                        Patterns::Double(),
+                        "gravitational acceleration");
+      prm.declare_entry("alpha",
+                        "1",
+                        Patterns::Double(),
+                        "relaxation parameter");
 
       prm.enter_subsection("particle info 0");
       {
@@ -1127,13 +1131,13 @@ namespace Parameters
       nb_force_eval      = prm.get_integer("nb force evaluation");
       calculate_force_ib = prm.get_bool("calculate force");
       ib_force_output_file = prm.get("ib force output file");
-      density            = prm.get_double("fluid density");
-      integrate_motion   = prm.get_bool("integrate motion");
-      alpha              = prm.get_double("alpha");
-      gravity[0]            = prm.get_double("gravity_x");
-      gravity[1]            = prm.get_double("gravity_y");
-      if (dim==3)
-        gravity[2]            = prm.get_double("gravity_z");
+      density              = prm.get_double("fluid density");
+      integrate_motion     = prm.get_bool("integrate motion");
+      alpha                = prm.get_double("alpha");
+      gravity[0]           = prm.get_double("gravity_x");
+      gravity[1]           = prm.get_double("gravity_y");
+      if (dim == 3)
+        gravity[2] = prm.get_double("gravity_z");
 
 
 
@@ -1162,12 +1166,15 @@ namespace Parameters
               particles[i].position[2]          = prm.get_double("z");
               particles[i].velocity[2]          = prm.get_double("w");
               particles[i].pressure_location[2] = prm.get_double("pressure z");
-              particles[i].mass               = 4.0/3.0*PI*particles[i].radius*particles[i].radius*particles[i].radius*prm.get_double("density");
+              particles[i].mass = 4.0 / 3.0 * PI * particles[i].radius *
+                                  particles[i].radius * particles[i].radius *
+                                  prm.get_double("density");
             }
           if (dim == 2)
             {
-                particles[i].mass               = PI*particles[i].radius*particles[i].radius*prm.get_double("density");
-
+              particles[i].mass = PI * particles[i].radius *
+                                  particles[i].radius *
+                                  prm.get_double("density");
             }
           particles[i].initialise_last();
           prm.leave_subsection();

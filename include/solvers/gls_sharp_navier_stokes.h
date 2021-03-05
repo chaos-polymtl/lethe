@@ -76,19 +76,23 @@ private:
   void
   sharp_edge();
 
-  // Write in  the output file the forces , velocity , position of each of the particles.
+  // Write in  the output file the forces , velocity , position of each of the
+  // particles.
   void
   write_force_ib();
 
-  // Integrate the particle velocity and position based on the forces and torque applied to it.
+  // Integrate the particle velocity and position based on the forces and torque
+  // applied to it.
   void
   integrate_particles();
 
-  // Store the solution of the particles dynamics parameters for integration. Defines the table to store the history of each of the particles.
+  // Store the solution of the particles dynamics parameters for integration.
+  // Defines the table to store the history of each of the particles.
   void
   finish_time_step_particles();
 
-  // Evaluate the L2 error on the computational domain if an analytical solution is given.
+  // Evaluate the L2 error on the computational domain if an analytical solution
+  // is given.
   double
   calculate_L2_error_particles();
 
@@ -99,7 +103,8 @@ private:
   void
   refine_ib();
 
-  // Modified version of assemble_matrix_and_rhs to include the presence of extra steps.
+  // Modified version of assemble_matrix_and_rhs to include the presence of
+  // extra steps.
   void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod

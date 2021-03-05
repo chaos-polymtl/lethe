@@ -574,8 +574,8 @@ namespace Parameters
     double                       density;
     Tensor<1, dim>               gravity;
 
-    double                       alpha;
-    bool                         integrate_motion;
+    double alpha;
+    bool   integrate_motion;
 
 
 

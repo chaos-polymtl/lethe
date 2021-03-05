@@ -1363,27 +1363,31 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double relative_residual,
                                                const bool   renewed_matrix)
 {
+  // Try multiple fill of the ILU preconditioner. Start from the initial fill
+  // given in the parameter file. If for any reason the linear solver would have
+  // crash it will restart with a fill level increased by 1. This restart
+  // process will happen up to a maximum of 20 times, after which it will let
+  // the solver crash. if a change happened on the fill level it will go back to
+  // it's original value at the end of the restart process.
 
+  unsigned int max_iter = 20;
+  unsigned int original_fill =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  unsigned int iter    = 0;
+  bool         success = false;
 
-  // try multiple fill of the ILU preconditioner. Start from the initial fill given in the parameter file.
-  // If for any reason the linear solver would have crash it will restart with a fill level increased by 1.
-  // This restart process will happen up to a maximum of 20 times, after which it will let the solver crash.
-  // if a change happened on the fill level it will go back to it's original value at the end of the restart process.
-
-  unsigned int max_iter=20;
-  unsigned int original_fill=this->simulation_parameters.linear_solver.ilu_precond_fill;
-  unsigned int iter=0;
-  bool success=false;
-
-  while(success==false and iter<max_iter){
-      try{
+  while (success == false and iter < max_iter)
+    {
+      try
+        {
           auto &system_rhs          = this->system_rhs;
           auto &nonzero_constraints = this->nonzero_constraints;
 
           const AffineConstraints<double> &constraints_used =
             initial_step ? nonzero_constraints : this->zero_constraints;
           const double linear_solver_tolerance =
-            std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+            std::max(relative_residual * system_rhs.l2_norm(),
+                     absolute_residual);
 
           if (this->simulation_parameters.linear_solver.verbosity !=
               Parameters::Verbosity::quiet)
@@ -1401,10 +1405,12 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             true);
 
           TrilinosWrappers::SolverGMRES::AdditionalData solver_parameters(
-            false, this->simulation_parameters.linear_solver.max_krylov_vectors);
+            false,
+            this->simulation_parameters.linear_solver.max_krylov_vectors);
 
 
-          TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
+          TrilinosWrappers::SolverGMRES solver(solver_control,
+                                               solver_parameters);
 
           if (renewed_matrix || !ilu_preconditioner)
             setup_ILU();
@@ -1420,25 +1426,29 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             if (this->simulation_parameters.linear_solver.verbosity !=
                 Parameters::Verbosity::quiet)
               {
-                this->pcout << "  -Iterative solver took : "
-                            << solver_control.last_step() << " steps " << std::endl;
+                this->pcout
+                  << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
               }
           }
           constraints_used.distribute(completely_distributed_solution);
           auto &newton_update = this->newton_update;
           newton_update       = completely_distributed_solution;
-          success=true;
-      }
+          success             = true;
+        }
       catch (std::exception &e)
-      {
-          this->simulation_parameters.linear_solver.ilu_precond_fill+=1;
-          this->pcout << " GMRES solver failed! New try with higher preconditioner fill. New fill = "<< this->simulation_parameters.linear_solver.ilu_precond_fill << std::endl;
-          if( iter==max_iter-1)
-              throw e;
-      }
-      iter+=1;
-  }
-    this->simulation_parameters.linear_solver.ilu_precond_fill=original_fill;
+        {
+          this->simulation_parameters.linear_solver.ilu_precond_fill += 1;
+          this->pcout
+            << " GMRES solver failed! New try with higher preconditioner fill. New fill = "
+            << this->simulation_parameters.linear_solver.ilu_precond_fill
+            << std::endl;
+          if (iter == max_iter - 1)
+            throw e;
+        }
+      iter += 1;
+    }
+  this->simulation_parameters.linear_solver.ilu_precond_fill = original_fill;
 }
 
 template <int dim>
