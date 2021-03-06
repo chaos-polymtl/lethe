@@ -110,20 +110,18 @@ protected:
    * Carries out assigning the properties of inserted particles.
    *
    * @param dem_parameters DEM parameters declared in the .prm file
-   * @param inserted_this_step Number of particles that are inserted
-   * at each insertion step. This value can change in the last insertion step to
-   * reach the desired number of particles
+   * @param inserted_this_step_this_proc Number of particles that are inserted
+   * at each insertion step on each processor. This value can change in the last
+   * insertion step to reach the desired number of particles
    * @param current_inserting_particle_type Type of inserting particles
    * @param particle_propertis Properties of all inserted particles at each insertion step
-   * @param communicator MPI communicator
    */
   void
   assign_particle_properties(
     const DEMSolverParameters<dim> &  dem_parameters,
-    const unsigned int &              inserted_this_step,
+    const unsigned int &              inserted_this_step_this_proc,
     const unsigned int &              current_inserting_particle_type,
-    std::vector<std::vector<double>> &particle_properties,
-    const MPI_Comm &                  communicator);
+    std::vector<std::vector<double>> &particle_properties);
 
   /**
    * Carries out finding the insertion points of inserted particles.
