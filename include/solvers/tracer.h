@@ -14,10 +14,7 @@
  * ---------------------------------------------------------------------
 
  *
- * Implementation of heat transfer as an auxiliary physics.
- * This heat equation is weakly coupled to the velocity field.
- * Equation solved:
- * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
+ * Implementation of tracer as an auxiliary physics.
  *
  * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
@@ -91,7 +88,7 @@ public:
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
-  virtual void
+  void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
       time_stepping_method) override;
@@ -101,7 +98,7 @@ public:
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
-  virtual void
+  void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override;
 
@@ -109,7 +106,7 @@ public:
    * @brief Attach the solution vector to the DataOut provided. This function
    * enable the auxiliary physics to output their solution via the core solver.
    */
-  virtual void
+  void
   attach_solution_to_output(DataOut<dim> &data_out) override;
 
 
@@ -123,20 +120,20 @@ public:
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
-  virtual void
+  void
   finish_simulation() override;
 
   /**
    * @brief Carry out the operations require to finish a time step correctly. This
    * includes setting the previous values
    */
-  virtual void
+  void
   finish_time_step() override;
 
   /**
    * @brief Rearrange vector solution correctly for transient simulations
    */
-  virtual void
+  void
   percolate_time_vectors() override;
 
   /**
@@ -146,7 +143,7 @@ public:
    * DataOutObject, which is accomplished through the attach_solution_to_output
    * function
    */
-  virtual void
+  void
   postprocess(bool first_iteration) override;
 
 
@@ -154,32 +151,32 @@ public:
    * @brief pre_mesh_adaption Prepares the auxiliary physics variables for a
    * mesh refinement/coarsening
    */
-  virtual void
+  void
   pre_mesh_adaptation();
 
   /**
    * @brief post_mesh_adaption Interpolates the auxiliary physics variables to the new mesh
    */
-  virtual void
+  void
   post_mesh_adaptation();
 
   /**
    * @brief Prepares Heat Transfer to write checkpoint
    */
-  virtual void
+  void
   write_checkpoint() override;
 
   /**
    * @brief Allows tracer physics to set-up solution vector from checkpoint file;
    */
-  virtual void
+  void
   read_checkpoint() override;
 
 
   /**
    * @brief Returns the dof_handler of the tracer physics
    */
-  virtual const DoFHandler<dim> &
+  const DoFHandler<dim> &
   get_dof_handler() override
   {
     return dof_handler;
@@ -188,7 +185,7 @@ public:
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
-  virtual void
+  void
   setup_dofs() override;
 
   /**
@@ -196,7 +193,7 @@ public:
    * only support imposing nodal values, but some physics additionnaly support
    * the use of L2 projection or steady-state solutions.
    */
-  virtual void
+  void
   set_initial_conditions() override;
 
   /**
@@ -208,40 +205,43 @@ public:
    *
    * @param renewed_matrix Indicates to the linear solve if the system matrix has been recalculated or not
    */
-  virtual void
+  void
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
+   * NB : dof_handler and present_solution are already passed to the
+   * multiphysics interface at the end of the setup_dofs method
+   * //TODO Refactor
    */
-  virtual TrilinosWrappers::MPI::Vector &
+  TrilinosWrappers::MPI::Vector &
   get_evaluation_point() override
   {
     return evaluation_point;
   }
-  virtual TrilinosWrappers::MPI::Vector &
+  TrilinosWrappers::MPI::Vector &
   get_local_evaluation_point() override
   {
     return local_evaluation_point;
   }
-  virtual TrilinosWrappers::MPI::Vector &
+  TrilinosWrappers::MPI::Vector &
   get_newton_update() override
   {
     return newton_update;
   }
-  virtual TrilinosWrappers::MPI::Vector &
+  TrilinosWrappers::MPI::Vector &
   get_present_solution() override
   {
     return present_solution;
   }
-  virtual TrilinosWrappers::MPI::Vector &
+  TrilinosWrappers::MPI::Vector &
   get_system_rhs() override
   {
     return system_rhs;
   }
-  virtual AffineConstraints<double> &
+  AffineConstraints<double> &
   get_nonzero_constraints() override
   {
     return nonzero_constraints;

@@ -100,7 +100,7 @@ typename DoFHandler<dim>::active_cell_iterator
 find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
                                  Point<dim>             point)
 {
-  // find cell around point using tree propries instead of looping on all cell
+  // find cell around point using tree properties instead of looping on all cell
 
   // define stuff for the search
   MappingQ1<dim> map;
@@ -274,3 +274,27 @@ find_cell_around_point_with_tree(const DoFHandler<3> &dof_handler,
 template typename DoFHandler<2>::active_cell_iterator
 find_cell_around_point_with_tree(const DoFHandler<2> &dof_handler,
                                  Point<2>             point);
+
+double
+calculate_point_property(const double phase,
+                         const double property0,
+                         const double property1)
+{
+  double property_eq = phase * property1 + (1 - phase) * property0;
+
+  // Limit parameters value (patch)
+  // TODO see if necessary after compression term is added in the
+  // free_surface advection equation
+  const double property_min = std::min(property0, property1);
+  const double property_max = std::max(property0, property1);
+  if (property_eq < property_min)
+    {
+      property_eq = property_min;
+    }
+  if (property_eq > property_max)
+    {
+      property_eq = property_max;
+    }
+
+  return property_eq;
+}

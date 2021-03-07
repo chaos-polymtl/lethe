@@ -1,8 +1,8 @@
 #include <solvers/multiphysics_interface.h>
 
+#include "solvers/free_surface.h"
 #include "solvers/heat_transfer.h"
 #include "solvers/tracer.h"
-
 
 
 template <int dim>
@@ -26,6 +26,12 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
     {
       active_physics.push_back(PhysicsID::tracer);
       physics[PhysicsID::tracer] = std::make_shared<Tracer<dim>>(
+        this, nsparam, p_triangulation, p_simulation_control);
+    }
+  if (multiphysics_parameters.free_surface)
+    {
+      active_physics.push_back(PhysicsID::free_surface);
+      physics[PhysicsID::free_surface] = std::make_shared<FreeSurface<dim>>(
         this, nsparam, p_triangulation, p_simulation_control);
     }
 }

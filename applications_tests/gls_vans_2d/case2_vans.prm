@@ -101,7 +101,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function expression = exp(sin(pi*x)*sin(pi*y))/exp(1) ; exp(sin(pi*x)*sin(pi*y))/exp(1); 0.5 + 0.5*sin(pi*x)*sin(pi*y)
     end
 end

@@ -74,12 +74,15 @@ namespace AnalyticalSolutions
     }
 
     Parameters::Verbosity verbosity;
-    // Velocity components
+    // Velocity components + pressure value
     Functions::ParsedFunction<dim> velocity;
 
+    // Auxiliary physics
     Functions::ParsedFunction<dim> temperature;
 
     Functions::ParsedFunction<dim> tracer;
+
+    Functions::ParsedFunction<dim> phase;
   };
 } // namespace AnalyticalSolutions
 

@@ -19,6 +19,8 @@
 
 #include "solvers/gls_navier_stokes.h"
 
+#include <core/utilities.h>
+
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
@@ -258,6 +260,8 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
               << std::endl;
 
 
+  // Provide the fluid dynamics dof_handler and present solution to the
+  // multiphysics interface
   this->multiphysics->set_dof_handler(PhysicsID::fluid_dynamics,
                                       &this->dof_handler);
   this->multiphysics->set_solution(PhysicsID::fluid_dynamics,
@@ -304,8 +308,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
   // Velocity dependent source term
   //----------------------------------
-  // Angular velocity of the rotating frame. This is always a 3D vector even in
-  // 2D.
+  // Angular velocity of the rotating frame. This is always a 3D vector even
+  // in 2D.
   Tensor<1, dim> omega_vector;
 
   double omega_z  = this->simulation_parameters.velocitySource.omega_z;
@@ -330,7 +334,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
 
-  // Time steps and inverse time steps which is used for numerous calculations
+  // Time steps and inverse time steps which is used for numerous
+  // calculations
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
@@ -405,8 +410,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           if (l_forcing_function)
             l_forcing_function->vector_value_list(quadrature_points, rhs_force);
 
-          // Gather the previous time steps depending on the number of stages
-          // of the time integration scheme
+          // Gather the previous time steps depending on the number of
+          // stages of the time integration scheme
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             fe_values[velocities].get_function_values(this->solution_m1,
@@ -445,9 +450,9 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               const double JxW = fe_values.JxW(q);
 
               // Calculation of the GLS stabilization parameter. The
-              // stabilization parameter used is different if the simulation is
-              // steady or unsteady. In the unsteady case it includes the value
-              // of the time-step
+              // stabilization parameter used is different if the simulation
+              // is steady or unsteady. In the unsteady case it includes the
+              // value of the time-step
               const double tau =
                 is_steady(scheme) ?
                   1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
@@ -456,8 +461,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                     std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                               9 * std::pow(4 * viscosity / (h * h), 2));
 
-              // Gather the shape functions, their gradient and their laplacian
-              // for the velocity and the pressure
+              // Gather the shape functions, their gradient and their
+              // laplacian for the velocity and the pressure
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
                   div_phi_u[k]  = fe_values[velocities].divergence(k, q);
@@ -513,10 +518,10 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
               /* Adjust the strong residual in cases where the scheme is
                transient.
-               The BDF schemes require values at previous time steps which are
-               stored in the p1, p2 and p3 vectors. The SDIRK scheme require the
-               values at the different stages, which are also stored in the same
-               arrays.
+               The BDF schemes require values at previous time steps which
+               are stored in the p1, p2 and p3 vectors. The SDIRK scheme
+               require the values at the different stages, which are also
+               stored in the same arrays.
                */
 
               if (scheme ==
@@ -561,8 +566,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               // Matrix assembly
               if (assemble_matrix)
                 {
-                  // We loop over the column first to prevent recalculation of
-                  // the strong jacobian in the inner loop
+                  // We loop over the column first to prevent recalculation
+                  // of the strong jacobian in the inner loop
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
                       const auto phi_u_j      = phi_u[j];
@@ -640,8 +645,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                             }
 
 
-                          // PSPG TAU term is currently disabled because it does
-                          // not alter the matrix sufficiently
+                          // PSPG TAU term is currently disabled because it
+                          // does not alter the matrix sufficiently
                           // local_matrix(i, j) +=
                           //  -tau * tau * tau * 4 / h / h *
                           //  (velocity *phi_u_j) *
@@ -657,8 +662,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                                  strong_residual * (grad_phi_u_i * phi_u_j)) *
                                 JxW;
 
-                              // SUPG TAU term is currently disabled because it
-                              // does not alter the matrix sufficiently
+                              // SUPG TAU term is currently disabled because
+                              // it does not alter the matrix sufficiently
                               // local_matrix(i, j)
                               // +=
                               //   -strong_residual
@@ -818,6 +823,528 @@ GLSNavierStokesSolver<dim>::assembleGLS()
   this->system_rhs.compress(VectorOperation::add);
 }
 
+template <int dim>
+template <bool                                              assemble_matrix,
+          Parameters::SimulationControl::TimeSteppingMethod scheme,
+          Parameters::VelocitySource::VelocitySourceType    velocity_source>
+void
+GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
+{
+  // FreeSurface FEValues information gathering
+  const DoFHandler<dim> *dof_handler_fs =
+    this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+
+  FEValues<dim> fe_values_fs(dof_handler_fs->get_fe(),
+                             *this->cell_quadrature,
+                             update_values | update_gradients |
+                               update_quadrature_points);
+
+  // Fluid FEValues
+  if (assemble_matrix)
+    system_matrix = 0;
+  this->system_rhs = 0;
+
+  Function<dim> *l_forcing_function = this->forcing_function;
+
+  FEValues<dim>                    fe_values(*this->mapping,
+                          *this->fe,
+                          *this->cell_quadrature,
+                          update_values | update_quadrature_points |
+                            update_JxW_values | update_gradients |
+                            update_hessians);
+  const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int               n_q_points = this->cell_quadrature->size();
+  const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+  FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
+  Vector<double>                   local_rhs(dofs_per_cell);
+  std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<Tensor<1, dim>>          present_velocity_values(n_q_points);
+  std::vector<Tensor<2, dim>>          present_velocity_gradients(n_q_points);
+  std::vector<double>                  present_pressure_values(n_q_points);
+  std::vector<Tensor<1, dim>>          present_pressure_gradients(n_q_points);
+  std::vector<Tensor<1, dim>>          present_velocity_laplacians(n_q_points);
+  std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
+
+  Tensor<1, dim> force;
+  Tensor<1, dim> beta_force = this->beta;
+
+  // Velocity dependent source term
+  //----------------------------------
+  // Angular velocity of the rotating frame. This is always a 3D vector even in
+  // 2D.
+  Tensor<1, dim> omega_vector;
+
+  double omega_z  = this->simulation_parameters.velocitySource.omega_z;
+  omega_vector[0] = this->simulation_parameters.velocitySource.omega_x;
+  omega_vector[1] = this->simulation_parameters.velocitySource.omega_y;
+  if (dim == 3)
+    omega_vector[2] = this->simulation_parameters.velocitySource.omega_z;
+
+  std::vector<double>         div_phi_u(dofs_per_cell);
+  std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
+  std::vector<Tensor<3, dim>> hess_phi_u(dofs_per_cell);
+  std::vector<Tensor<1, dim>> laplacian_phi_u(dofs_per_cell);
+  std::vector<Tensor<2, dim>> grad_phi_u(dofs_per_cell);
+  std::vector<double>         phi_p(dofs_per_cell);
+  std::vector<Tensor<1, dim>> grad_phi_p(dofs_per_cell);
+
+  // Values at previous time step for transient schemes
+  std::vector<Tensor<1, dim>> p1_velocity_values(n_q_points);
+  std::vector<Tensor<1, dim>> p2_velocity_values(n_q_points);
+  std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
+
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+
+  // Time steps and inverse time steps which is used for numerous calculations
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
+
+  // Vector for the BDF coefficients
+  // The coefficients are stored in the following fashion :
+  // 0 - n+1
+  // 1 - n
+  // 2 - n-1
+  // 3 - n-2
+  Vector<double> bdf_coefs;
+
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+      scheme == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+    bdf_coefs = bdf_coefficients(1, time_steps_vector);
+
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    bdf_coefs = bdf_coefficients(2, time_steps_vector);
+
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    bdf_coefs = bdf_coefficients(3, time_steps_vector);
+
+  // Matrix of coefficients for the SDIRK methods
+  // The lines store the information required for each step
+  // Column 0 always refer to outcome of the step that is being calculated
+  // Column 1 always refer to step n
+  // Column 2+ refer to intermediary steps
+  FullMatrix<double> sdirk_coefs;
+  if (is_sdirk2(scheme))
+    sdirk_coefs = sdirk_coefficients(2, dt);
+
+  if (is_sdirk3(scheme))
+    sdirk_coefs = sdirk_coefficients(3, dt);
+
+  // Phase values for FreeSurface
+  const FEValuesExtractors::Scalar phase(0); // ou phase(dim)?
+  std::vector<double>              phase_values(n_q_points);
+  std::vector<double>              phase_values_m1(n_q_points);
+  std::vector<Tensor<1, dim>>      phase_gradient_values(n_q_points);
+
+  // Element size
+  double h;
+
+  auto &evaluation_point    = this->evaluation_point;
+  auto &physical_properties = this->simulation_parameters.physical_properties;
+
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+
+          if (dim == 2)
+            h = std::sqrt(4. * cell->measure() / M_PI) /
+                this->velocity_fem_degree;
+          else if (dim == 3)
+            h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                this->velocity_fem_degree;
+
+          local_matrix = 0;
+          local_rhs    = 0;
+
+          // Gather FreeSurface values
+          typename DoFHandler<dim>::active_cell_iterator phase_cell(
+            &(*(this->triangulation)),
+            cell->level(),
+            cell->index(),
+            dof_handler_fs);
+
+          fe_values_fs.reinit(phase_cell);
+          // //see if statement is_block necessary
+          fe_values_fs.get_function_values(*this->multiphysics->get_solution(
+                                             PhysicsID::free_surface),
+                                           phase_values);
+          fe_values_fs.get_function_values(*this->multiphysics->get_solution_m1(
+                                             PhysicsID::free_surface),
+                                           phase_values_m1);
+          fe_values_fs.get_function_gradients(*this->multiphysics->get_solution(
+                                                PhysicsID::free_surface),
+                                              phase_gradient_values);
+
+          // Gather velocity (values, gradient and laplacian)
+          fe_values[velocities].get_function_values(evaluation_point,
+                                                    present_velocity_values);
+          fe_values[velocities].get_function_gradients(
+            evaluation_point, present_velocity_gradients);
+          fe_values[velocities].get_function_laplacians(
+            evaluation_point, present_velocity_laplacians);
+
+          // Gather pressure (values, gradient)
+          fe_values[pressure].get_function_values(evaluation_point,
+                                                  present_pressure_values);
+          fe_values[pressure].get_function_gradients(
+            evaluation_point, present_pressure_gradients);
+
+          std::vector<Point<dim>> quadrature_points =
+            fe_values.get_quadrature_points();
+
+          // Calculate forcing term if there is a forcing function
+          if (l_forcing_function)
+            l_forcing_function->vector_value_list(quadrature_points, rhs_force);
+
+          // Gather the previous time steps depending on the number of stages
+          // of the time integration scheme
+          if (scheme !=
+              Parameters::SimulationControl::TimeSteppingMethod::steady)
+            fe_values[velocities].get_function_values(this->solution_m1,
+                                                      p1_velocity_values);
+
+          if (time_stepping_method_has_two_stages(scheme))
+            fe_values[velocities].get_function_values(this->solution_m2,
+                                                      p2_velocity_values);
+
+          if (time_stepping_method_has_three_stages(scheme))
+            fe_values[velocities].get_function_values(this->solution_m3,
+                                                      p3_velocity_values);
+          // Loop over the quadrature points
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              // Calculation of the equivalent density at the quadrature point
+              double density_eq =
+                calculate_point_property(phase_values[q],
+                                         physical_properties.fluids[0].density,
+                                         physical_properties.fluids[1].density);
+
+              double density_eq_m1 =
+                calculate_point_property(phase_values_m1[q],
+                                         physical_properties.fluids[0].density,
+                                         physical_properties.fluids[1].density);
+
+              double dynamic_viscosity_eq = calculate_point_property(
+                phase_values[q],
+                physical_properties.fluids[0].dynamic_viscosity,
+                physical_properties.fluids[1].dynamic_viscosity);
+
+              // BB temporary
+              // Limitations for cases where air becomes liquid
+              if (density_eq < density_eq_m1)
+                density_eq_m1 = 0;
+
+              // BB temporary
+              // define epsilon below which gravity is not applied
+              double epsilon_alpha = 1e-6;
+
+              // Gather into local variables the relevant fields
+              const Tensor<1, dim> velocity = present_velocity_values[q];
+              const Tensor<2, dim> velocity_gradient =
+                present_velocity_gradients[q];
+              const double present_velocity_divergence =
+                trace(velocity_gradient);
+              const Tensor<1, dim> p1_velocity = p1_velocity_values[q];
+              const double current_pressure    = present_pressure_values[q];
+
+              // Calculation of the magnitude of the velocity for the
+              // stabilization parameter
+              const double u_mag =
+                std::max(velocity.norm(), 1e-12 * GLS_u_scale);
+
+              // Store JxW in local variable for faster access;
+              const double JxW = fe_values.JxW(q);
+
+              // Calculation of the GLS stabilization parameter. The
+              // stabilization parameter used is different if the simulation
+              // is steady or unsteady. In the unsteady case it includes the
+              // value of the time-step
+              const double tau =
+                is_steady(scheme) ?
+                  1. / std::sqrt(
+                         std::pow(2. * density_eq * u_mag / h, 2) +
+                         9 * std::pow(4 * dynamic_viscosity_eq / (h * h), 2)) :
+                  1. / std::sqrt(
+                         std::pow(sdt, 2) +
+                         std::pow(2. * density_eq * u_mag / h, 2) +
+                         9 * std::pow(4 * dynamic_viscosity_eq / (h * h), 2));
+
+
+              // Gather the shape functions, their gradient and their
+              // laplacian for the velocity and the pressure
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  div_phi_u[k]  = fe_values[velocities].divergence(k, q);
+                  grad_phi_u[k] = fe_values[velocities].gradient(k, q);
+                  phi_u[k]      = fe_values[velocities].value(k, q);
+                  hess_phi_u[k] = fe_values[velocities].hessian(k, q);
+                  phi_p[k]      = fe_values[pressure].value(k, q);
+                  grad_phi_p[k] = fe_values[pressure].gradient(k, q);
+
+                  for (int d = 0; d < dim; ++d)
+                    laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
+                }
+
+              // Establish the force vector
+              for (int i = 0; i < dim; ++i)
+                {
+                  const unsigned int component_i =
+                    this->fe->system_to_component_index(i).first;
+                  force[i] = rhs_force[q](component_i);
+                  if (phase_values[q] < epsilon_alpha)
+                    force[i] = 0;
+                }
+              // Correct force to include the dynamic forcing term for flow
+              // control
+              force = force + beta_force;
+
+              // Calculate the strong residual for GLS stabilization
+              auto strong_residual =
+                density_eq * velocity_gradient * velocity +
+                present_pressure_gradients[q] -
+                dynamic_viscosity_eq * present_velocity_laplacians[q] -
+                density_eq * force;
+
+              if (velocity_source ==
+                  Parameters::VelocitySource::VelocitySourceType::srf)
+                {
+                  if (dim == 2)
+                    {
+                      strong_residual +=
+                        2 * omega_z * (-1.) * cross_product_2d(velocity);
+                      auto centrifugal =
+                        omega_z * (-1.) *
+                        cross_product_2d(
+                          omega_z * (-1.) *
+                          cross_product_2d(quadrature_points[q]));
+                      strong_residual += centrifugal;
+                    }
+                  else // dim == 3
+                    {
+                      strong_residual +=
+                        2 * cross_product_3d(omega_vector, velocity);
+                      strong_residual += cross_product_3d(
+                        omega_vector,
+                        cross_product_3d(omega_vector, quadrature_points[q]));
+                    }
+                }
+
+              /* Adjust the strong residual in cases where the scheme is
+               transient.
+               The BDF schemes require values at previous time steps which are
+               stored in the p1, p2 and p3 vectors. The SDIRK scheme require
+               the values at the different stages, which are also stored in
+               the same arrays.
+               */
+
+              if (scheme ==
+                    Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+                  scheme == Parameters::SimulationControl::TimeSteppingMethod::
+                              steady_bdf)
+                strong_residual +=
+                  density_eq * bdf_coefs[0] * velocity +
+                  density_eq_m1 * bdf_coefs[1] * p1_velocity_values[q];
+
+              // Matrix assembly
+              if (assemble_matrix)
+                {
+                  // We loop over the column first to prevent recalculation of
+                  // the strong jacobian in the inner loop
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      const auto phi_u_j      = phi_u[j];
+                      const auto grad_phi_u_j = grad_phi_u[j];
+                      const auto phi_p_j      = phi_p[j];
+                      const auto grad_phi_p_j = grad_phi_p[j];
+
+                      auto strong_jac =
+                        (density_eq * velocity_gradient * phi_u_j +
+                         density_eq * grad_phi_u_j * velocity + grad_phi_p_j -
+                         dynamic_viscosity_eq * laplacian_phi_u[j]);
+
+                      if (is_bdf(scheme))
+                        strong_jac += density_eq * phi_u_j * bdf_coefs[0];
+
+                      if (velocity_source ==
+                          Parameters::VelocitySource::VelocitySourceType::srf)
+                        {
+                          if (dim == 2)
+                            strong_jac +=
+                              2 * omega_z * (-1.) * cross_product_2d(phi_u_j);
+                          else if (dim == 3)
+                            strong_jac +=
+                              2 * cross_product_3d(omega_vector, phi_u_j);
+                        }
+
+                      for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                        {
+                          const auto phi_u_i      = phi_u[i];
+                          const auto grad_phi_u_i = grad_phi_u[i];
+                          const auto phi_p_i      = phi_p[i];
+                          const auto grad_phi_p_i = grad_phi_p[i];
+
+
+                          local_matrix(i, j) +=
+                            (
+                              // Momentum terms
+                              dynamic_viscosity_eq *
+                                scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                              density_eq * velocity_gradient * phi_u_j *
+                                phi_u_i +
+                              density_eq * grad_phi_u_j * velocity * phi_u_i -
+                              div_phi_u[i] * (phi_p_j) +
+                              // Continuity
+                              (phi_p_i)*div_phi_u[j]) *
+                            JxW;
+
+                          // Mass matrix
+                          if (is_bdf(scheme))
+                            local_matrix(i, j) += density_eq * phi_u_j *
+                                                  phi_u_i * bdf_coefs[0] * JxW;
+
+                          // PSPG GLS term
+                          local_matrix(i, j) +=
+                            tau * (strong_jac * grad_phi_p_i) * JxW;
+
+                          if (velocity_source == Parameters::VelocitySource::
+                                                   VelocitySourceType::srf)
+                            {
+                              if (dim == 2)
+                                local_matrix(i, j) +=
+                                  2 * omega_z * (-1.) *
+                                  cross_product_2d(phi_u_j) * phi_u_i * JxW;
+
+                              else if (dim == 3)
+                                local_matrix(i, j) +=
+                                  2 * cross_product_3d(omega_vector, phi_u_j) *
+                                  phi_u_i * JxW;
+                            }
+
+                          // Jacobian is currently incomplete
+                          if (SUPG)
+                            {
+                              local_matrix(i, j) +=
+                                tau *
+                                (strong_jac * (grad_phi_u_i * velocity) +
+                                 strong_residual * (grad_phi_u_i * phi_u_j)) *
+                                JxW;
+                            }
+                        }
+                    }
+                }
+
+              // Assembly of the right-hand side
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  const auto phi_u_i      = phi_u[i];
+                  const auto grad_phi_u_i = grad_phi_u[i];
+                  const auto phi_p_i      = phi_p[i];
+                  const auto grad_phi_p_i = grad_phi_p[i];
+                  const auto div_phi_u_i  = div_phi_u[i];
+
+
+                  // Navier-Stokes Residual
+                  local_rhs(i) +=
+                    (
+                      // Momentum
+                      -dynamic_viscosity_eq *
+                        scalar_product(velocity_gradient, grad_phi_u_i) -
+                      density_eq * velocity_gradient * velocity * phi_u_i +
+                      current_pressure * div_phi_u_i +
+                      density_eq * force * phi_u_i -
+                      // Continuity
+                      present_velocity_divergence * (phi_p_i)
+                      //
+                      ) *
+                    JxW;
+
+                  // Residual associated with BDF schemes
+                  if (scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::bdf1 ||
+                      scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::steady_bdf)
+                    local_rhs(i) -=
+                      (density_eq * bdf_coefs[0] * velocity +
+                       density_eq_m1 * bdf_coefs[1] * p1_velocity) *
+                      phi_u_i * JxW;
+
+
+                  if (velocity_source ==
+                      Parameters::VelocitySource::VelocitySourceType::srf)
+                    {
+                      if (dim == 2)
+                        {
+                          local_rhs(i) += -2 * omega_z * (-1.) *
+                                          cross_product_2d(velocity) * phi_u_i *
+                                          JxW;
+                          auto centrifugal =
+                            omega_z * (-1.) *
+                            cross_product_2d(
+                              omega_z * (-1.) *
+                              cross_product_2d(quadrature_points[q]));
+                          local_rhs(i) += -centrifugal * phi_u_i * JxW;
+                        }
+                      else if (dim == 3)
+                        {
+                          local_rhs(i) +=
+                            -2 * cross_product_3d(omega_vector, velocity) *
+                            phi_u_i * JxW;
+                          local_rhs(i) +=
+                            -cross_product_3d(
+                              omega_vector,
+                              cross_product_3d(omega_vector,
+                                               quadrature_points[q])) *
+                            phi_u_i * JxW;
+                        }
+                    }
+
+                  // PSPG GLS term
+                  local_rhs(i) +=
+                    -tau * (strong_residual * (grad_phi_p_i)) * JxW;
+
+                  // SUPG GLS term
+                  if (SUPG)
+                    {
+                      local_rhs(i) +=
+                        -tau * (strong_residual * (grad_phi_u_i * velocity)) *
+                        JxW;
+                    }
+                }
+            }
+
+          cell->get_dof_indices(local_dof_indices);
+
+          // The non-linear solver assumes that the nonzero constraints have
+          // already been applied to the solution
+          const AffineConstraints<double> &constraints_used =
+            this->zero_constraints;
+          // initial_step ? nonzero_constraints : zero_constraints;
+          if (assemble_matrix)
+            {
+              constraints_used.distribute_local_to_global(local_matrix,
+                                                          local_rhs,
+                                                          local_dof_indices,
+                                                          system_matrix,
+                                                          this->system_rhs);
+            }
+          else
+            {
+              constraints_used.distribute_local_to_global(local_rhs,
+                                                          local_dof_indices,
+                                                          this->system_rhs);
+            }
+        }
+    }
+  if (assemble_matrix)
+    system_matrix.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::add);
+}
+
+
 /**
  * Set the initial condition using a L2 or a viscous solver
  **/
@@ -961,9 +1488,17 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
+        { // TEMPORARY free surface implementation
+          if (this->simulation_parameters.multiphysics.free_surface)
+            assembleGLSFreeSurface<
+              true,
+              Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+              Parameters::VelocitySource::VelocitySourceType::none>();
+          else
+            assembleGLS<true,
+                        Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+                        Parameters::VelocitySource::VelocitySourceType::none>();
+        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         assembleGLS<true,
@@ -1006,9 +1541,11 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
           Parameters::VelocitySource::VelocitySourceType::none>();
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
+        {
+          assembleGLS<true,
+                      Parameters::SimulationControl::TimeSteppingMethod::steady,
+                      Parameters::VelocitySource::VelocitySourceType::none>();
+        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
         assembleGLS<
@@ -1102,9 +1639,17 @@ GLSNavierStokesSolver<dim>::assemble_rhs(
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
+        {
+          if (this->simulation_parameters.multiphysics.free_surface)
+            assembleGLSFreeSurface<
+              false,
+              Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+              Parameters::VelocitySource::VelocitySourceType::none>();
+          else
+            assembleGLS<false,
+                        Parameters::SimulationControl::TimeSteppingMethod::bdf1,
+                        Parameters::VelocitySource::VelocitySourceType::none>();
+        }
       else if (time_stepping_method ==
                Parameters::SimulationControl::TimeSteppingMethod::bdf2)
         assembleGLS<false,

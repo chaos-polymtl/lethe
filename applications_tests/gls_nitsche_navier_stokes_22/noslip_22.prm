@@ -101,7 +101,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function expression = if(y >= 0.5, 2*y - 1, 0) ; 0 ; 0
     end
 end

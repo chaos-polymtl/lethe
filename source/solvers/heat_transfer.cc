@@ -19,7 +19,6 @@
 #include <core/utilities.h>
 #include <solvers/heat_transfer.h>
 
-
 template <int dim>
 void
 HeatTransfer<dim>::assemble_matrix_and_rhs(
@@ -44,19 +43,18 @@ void
 HeatTransfer<dim>::assemble_system(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  const double density = simulation_parameters.physical_properties.density;
-  const double specific_heat =
-    simulation_parameters.physical_properties.specific_heat;
-  const double thermal_conductivity =
-    simulation_parameters.physical_properties.thermal_conductivity;
+  // Gather physical properties in case of mono fluids simulations (to be
+  // modified in case of multiple fluids simulations)
+  auto &physical_properties = this->simulation_parameters.physical_properties;
 
-  const double viscosity = simulation_parameters.physical_properties.viscosity;
+  double density              = physical_properties.density;
+  double specific_heat        = physical_properties.specific_heat;
+  double thermal_conductivity = physical_properties.thermal_conductivity;
+  double viscosity            = physical_properties.viscosity;
 
-  const double dynamic_viscosity = viscosity * density;
-
-  const double rho_cp = density * specific_heat;
-
-  const double alpha = thermal_conductivity / rho_cp;
+  double dynamic_viscosity = viscosity * density;
+  double rho_cp            = density * specific_heat;
+  double alpha             = thermal_conductivity / rho_cp;
 
   if (assemble_matrix)
     system_matrix = 0;
@@ -163,6 +161,25 @@ HeatTransfer<dim>::assemble_system(
   std::vector<Tensor<1, dim>> p2_temperature_gradients(n_q_points);
   std::vector<Tensor<1, dim>> p3_temperature_gradients(n_q_points);
 
+  // Initialization for pointers and vector used in multiple fluids simulations
+  DoFHandler<dim> *              dof_handler_fs;
+  std::shared_ptr<FEValues<dim>> fe_values_fs;
+  std::vector<double>            phase_values(n_q_points);
+
+  if (simulation_parameters.multiphysics.free_surface)
+    {
+      // if free surface simulation, gather dof_handler and FEValues
+      // physical properties will be defined in quadrature points loop
+      dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+
+      fe_values_fs =
+        std::make_shared<FEValues<dim>>(dof_handler_fs->get_fe(),
+                                        *this->cell_quadrature,
+                                        update_values | update_gradients |
+                                          update_quadrature_points);
+    }
+
   for (const auto &cell : dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -170,6 +187,22 @@ HeatTransfer<dim>::assemble_system(
           cell_matrix = 0;
           cell_rhs    = 0;
           double h    = 0;
+
+          if (simulation_parameters.multiphysics.free_surface)
+            {
+              // Gather FreeSurface values, current phase
+              typename DoFHandler<dim>::active_cell_iterator phase_cell(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                dof_handler_fs);
+
+              fe_values_fs->reinit(phase_cell);
+
+              fe_values_fs->get_function_values(
+                *this->multiphysics->get_solution(PhysicsID::free_surface),
+                phase_values);
+            }
 
           if (dim == 2)
             h = std::sqrt(4. * cell->measure() / M_PI) / fe->degree;
@@ -251,10 +284,40 @@ HeatTransfer<dim>::assemble_system(
           // assembling local matrix and right hand side
           for (const unsigned int q : fe_values_ht.quadrature_point_indices())
             {
+              if (this->simulation_parameters.multiphysics.free_surface)
+                {
+                  // Calculation of the equivalent physical properties at the
+                  // quadrature point
+                  density = calculate_point_property(
+                    phase_values[q],
+                    physical_properties.fluids[0].density,
+                    physical_properties.fluids[1].density);
+
+                  dynamic_viscosity = calculate_point_property(
+                    phase_values[q],
+                    physical_properties.fluids[0].dynamic_viscosity,
+                    physical_properties.fluids[1].dynamic_viscosity);
+
+                  specific_heat = calculate_point_property(
+                    phase_values[q],
+                    physical_properties.fluids[0].specific_heat,
+                    physical_properties.fluids[1].specific_heat);
+
+                  thermal_conductivity = calculate_point_property(
+                    phase_values[q],
+                    physical_properties.fluids[0].thermal_conductivity,
+                    physical_properties.fluids[1].thermal_conductivity);
+
+                  // Useful definitions
+                  rho_cp = density * specific_heat;
+                  alpha  = thermal_conductivity / rho_cp;
+                }
+
               // Store JxW in local variable for faster access
               const double JxW = fe_values_ht.JxW(q);
 
-              const auto velocity = velocity_values[q];
+              const auto velocity          = velocity_values[q];
+              const auto velocity_gradient = velocity_gradient_values[q];
 
 
               // Calculation of the magnitude of the velocity for the
@@ -336,9 +399,8 @@ HeatTransfer<dim>::assemble_system(
                                 }
                             }
 
-                          cell_matrix(i, j) +=
-                            tau * strong_jacobian *
-                            (grad_phi_T_i * velocity_values[q]) * JxW;
+                          cell_matrix(i, j) += tau * strong_jacobian *
+                                               (grad_phi_T_i * velocity) * JxW;
                         }
                     }
 
@@ -347,13 +409,12 @@ HeatTransfer<dim>::assemble_system(
                   cell_rhs(i) -=
                     (thermal_conductivity * grad_phi_T_i *
                        temperature_gradients[q] +
-                     density * specific_heat * phi_T_i * velocity_values[q] *
-                       temperature_gradients[q] -
+                     rho_cp * phi_T_i * velocity * temperature_gradients[q] -
                      source_term_values[q] * phi_T_i -
                      dynamic_viscosity * phi_T_i *
-                       scalar_product(velocity_gradient_values[q] +
-                                        transpose(velocity_gradient_values[q]),
-                                      transpose(velocity_gradient_values[q]))) *
+                       scalar_product(velocity_gradient +
+                                        transpose(velocity_gradient),
+                                      transpose(velocity_gradient))) *
                     JxW;
 
                   // Calculate the strong residual for GLS stabilization
@@ -849,6 +910,11 @@ HeatTransfer<dim>::setup_dofs()
 
   this->pcout << "   Number of thermal degrees of freedom: "
               << dof_handler.n_dofs() << std::endl;
+
+  // Provide the heat transfer dof_handler and present solution pointers to the
+  // multiphysics interface
+  multiphysics->set_dof_handler(PhysicsID::heat_transfer, &this->dof_handler);
+  multiphysics->set_solution(PhysicsID::heat_transfer, &this->present_solution);
 }
 
 template <int dim>
@@ -885,7 +951,8 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Tolerance of iterative solver is : "
+      this->pcout << "  Heat Transfer : " << std::endl
+                  << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -923,7 +990,8 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
   if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+      this->pcout << "  Heat Transfer : " << std::endl
+                  << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
     }
 

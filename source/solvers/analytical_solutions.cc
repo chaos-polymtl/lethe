@@ -46,7 +46,7 @@ namespace AnalyticalSolutions
 
 
     {
-      prm.enter_subsection("uvw");
+      prm.enter_subsection("uvwp");
       velocity.declare_parameters(prm, dim);
       if (dim == 2)
         prm.set("Function expression", "0; 0; 0;");
@@ -63,10 +63,17 @@ namespace AnalyticalSolutions
 
     {
       prm.enter_subsection("tracer");
-      temperature.declare_parameters(prm);
+      tracer.declare_parameters(prm);
       prm.set("Function expression", "0");
       prm.leave_subsection();
     }
+    {
+      prm.enter_subsection("phase");
+      phase.declare_parameters(prm);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
+    }
+
     prm.leave_subsection();
   }
 
@@ -84,7 +91,7 @@ namespace AnalyticalSolutions
       verbosity = Parameters::Verbosity::quiet;
 
     {
-      prm.enter_subsection("uvw");
+      prm.enter_subsection("uvwp");
       velocity.parse_parameters(prm);
       prm.leave_subsection();
     }
@@ -98,6 +105,12 @@ namespace AnalyticalSolutions
     {
       prm.enter_subsection("tracer");
       tracer.parse_parameters(prm);
+      prm.leave_subsection();
+    }
+
+    {
+      prm.enter_subsection("phase");
+      phase.parse_parameters(prm);
       prm.leave_subsection();
     }
 

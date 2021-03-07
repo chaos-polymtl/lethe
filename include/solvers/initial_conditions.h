@@ -64,6 +64,9 @@ namespace Parameters
     // Tracer
     Functions::ParsedFunction<dim> tracer;
 
+    // Free Surface
+    Functions::ParsedFunction<dim> free_surface;
+
     void
     declare_parameters(ParameterHandler &prm);
     void
@@ -104,6 +107,11 @@ namespace Parameters
       tracer.declare_parameters(prm);
       prm.set("Function expression", "0");
       prm.leave_subsection();
+
+      prm.enter_subsection("free surface");
+      free_surface.declare_parameters(prm);
+      prm.set("Function expression", "0");
+      prm.leave_subsection();
     }
     prm.leave_subsection();
   }
@@ -133,6 +141,10 @@ namespace Parameters
 
       prm.enter_subsection("tracer");
       tracer.parse_parameters(prm);
+      prm.leave_subsection();
+
+      prm.enter_subsection("free surface");
+      free_surface.parse_parameters(prm);
       prm.leave_subsection();
     }
     prm.leave_subsection();

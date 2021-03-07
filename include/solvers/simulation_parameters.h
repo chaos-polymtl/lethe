@@ -67,7 +67,7 @@ public:
   declare(ParameterHandler &prm)
   {
     Parameters::SimulationControl::declare_parameters(prm);
-    Parameters::PhysicalProperties::declare_parameters(prm);
+    physical_properties.declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
@@ -135,6 +135,73 @@ public:
     particlesParameters.parse_parameters(prm);
     void_fraction->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
+
+    // Create output_folder if does not exist
+    //    if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
+    //      {
+    //        std::filesystem::create_directory(
+    //          simulation_control.output_folder.c_str());
+    //        //        _mkdir(simulation_control.output_folder.c_str());
+    //        std::cout << "Output folder created: "
+    //                  << simulation_control.output_folder << std::endl;
+    //      }
+
+    //    if (simulation_control.make_folder)
+    //      {
+    //        if (mkdir(simulation_control.output_folder.c_str(), 0777) == -1)
+    //          {
+    //            if (errno != EEXIST)
+    //              {
+    //                // if error other than "already exists"
+    //                std::cerr << "Could not create Output folder:  "
+    //                          << strerror(errno) << std::endl;
+    //              }
+    //          }
+    //        else
+    //          std::cout << "Output folder created: "
+    //                    << simulation_control.output_folder << std::endl;
+    //      }
+
+    // Update filenames with the output_folder
+    restart_parameters.filename =
+      simulation_control.output_folder + restart_parameters.filename;
+
+    forces_parameters.force_output_name =
+      simulation_control.output_folder + forces_parameters.force_output_name;
+
+    forces_parameters.torque_output_name =
+      simulation_control.output_folder + forces_parameters.torque_output_name;
+
+    post_processing.kinetic_energy_output_name =
+      simulation_control.output_folder +
+      post_processing.kinetic_energy_output_name;
+
+    post_processing.enstrophy_output_name =
+      simulation_control.output_folder + post_processing.enstrophy_output_name;
+
+    particlesParameters.ib_force_output_file =
+      simulation_control.output_folder +
+      particlesParameters.ib_force_output_file;
+
+    nitsche->force_output_name =
+      simulation_control.output_folder + nitsche->force_output_name;
+
+    nitsche->torque_output_name =
+      simulation_control.output_folder + nitsche->torque_output_name;
+
+    // Check consistency of parameters parsed in different subsections
+    if (multiphysics.free_surface && physical_properties.number_fluids == 0)
+      {
+        std::cerr
+          << "--------------------------------" << std::endl
+          << "WARNING inconsistency in .prm : " << std::endl
+          << "    in subsection multiphysics, free surface = "
+          << multiphysics.free_surface << std::endl
+          << "    but in subsection physical properties, number of fluids = "
+          << physical_properties.number_fluids << std::endl
+          << "    -> change for number of fluids = 2" << std::endl
+          << "--------------------------------" << std::endl;
+      }
   }
 };
 

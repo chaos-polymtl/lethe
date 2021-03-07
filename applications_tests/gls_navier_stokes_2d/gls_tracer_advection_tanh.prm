@@ -81,7 +81,7 @@ end
 subsection analytical solution
   set enable                 = true
   set verbosity = verbose
-    subsection uvw
+    subsection uvwp
             set Function expression =  1 ; 0 ; 0
     end
     subsection tracer
@@ -147,3 +147,4 @@ subsection linear solver
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end
+

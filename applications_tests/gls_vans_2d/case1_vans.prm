@@ -68,7 +68,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function expression = -2*sin(pi*x) * sin(pi*x) * cos(pi*y) * sin(pi*y) ; 2*cos(pi*x) * sin(pi*x) * sin(pi*y) * sin(pi*y); sin(pi*x)*sin(pi*y)
     end
 end
