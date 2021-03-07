@@ -2054,7 +2054,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   // with pressure chock when dof passe from cut
                                   // to fluid.
                                   modifed_stencil = true;
-
                                   second_point =
                                     support_points[local_dof_indices[i]] +
                                     normal_vect * dr * 1;
@@ -2093,7 +2092,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                             this->fe->shape_value(
                                               sum_line * j, second_point_v) *
                                             this->evaluation_point(
-
                                               local_dof_indices_2[j]);
                                         }
                                       else
@@ -2659,6 +2657,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       evaluation_point(global_index_overwrite) *
                                         sum_line;
                                 }
+
                               else if (component_i == 2 && dim == 3)
                                 {
                                   double vz =
@@ -2737,7 +2736,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 // Impose the value of the dummy dof. This help
                                 // with pressure variation when the IB is
                                 // moving.
-                                this->system_rhs(global_index_overwrite) =
+                                /*this->system_rhs(global_index_overwrite) =
                                   (sum_line * v_ib *
                                      (1 - vect_dist.norm() /
                                             (vect_dist.norm() + dr)) +
@@ -2746,6 +2745,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   this->evaluation_point(
                                     global_index_overwrite) *
                                     sum_line;
+                                    */
+                                  this->system_rhs(global_index_overwrite) =sum_line * v_ib-this->evaluation_point(
+                                          global_index_overwrite) *sum_line;
+
                             }
                         }
 
