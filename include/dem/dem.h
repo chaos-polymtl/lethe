@@ -24,9 +24,6 @@
 
 #include <deal.II/fe/mapping_q.h>
 
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_in.h>
-
 #include <deal.II/particles/particle_handler.h>
 
 #include <core/pvd_handler.h>
@@ -53,15 +50,19 @@
 #include <dem/pp_fine_search.h>
 #include <dem/pp_linear_force.h>
 #include <dem/pp_nonlinear_force.h>
+#include <dem/print_initial_information.h>
 #include <dem/pw_broad_search.h>
 #include <dem/pw_contact_force.h>
 #include <dem/pw_contact_info_struct.h>
 #include <dem/pw_fine_search.h>
 #include <dem/pw_linear_force.h>
 #include <dem/pw_nonlinear_force.h>
+#include <dem/read_checkpoint.h>
+#include <dem/read_mesh.h>
 #include <dem/uniform_insertion.h>
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/visualization.h>
+#include <dem/write_checkpoint.h>
 
 #include <fstream>
 #include <iostream>
@@ -116,19 +117,6 @@ private:
       &                                                                  cell,
     const typename parallel::distributed::Triangulation<dim>::CellStatus status)
     const;
-
-  /**
-   * Prints the simulation starting information including number of processors
-   */
-  void
-  print_initial_info();
-
-  /**
-   * Defines or reads the mesh based on the information provided by the user
-   * Gmsh files can also be read in this function
-   */
-  void
-  read_mesh();
 
   /**
    * Finds contact search steps for constant contact search method
@@ -273,19 +261,6 @@ private:
    */
   void
   write_output_results();
-
-  /**
-   * @brief read_checkpoint Read a DEM simulation checkpoint, allowing the simulation to restart from where it stopped.
-   *
-   */
-  virtual void
-  read_checkpoint();
-
-  /**
-   * @brief write_checkpoint Write a DEM simulation checkpointing to allow for DEM simulation restart.
-   */
-  virtual void
-  write_checkpoint();
 
 
   MPI_Comm                                  mpi_communicator;

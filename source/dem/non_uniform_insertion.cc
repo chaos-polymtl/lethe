@@ -49,7 +49,6 @@ NonUniformInsertion<dim>::insert(
 
       this->calculate_insertion_domain_maximum_particle_number(dem_parameters,
                                                                pcout);
-
       // The inserted_this_step value is the mimnum of
       // remained_particles_of_each_type and inserted_this_step
       this->inserted_this_step =
@@ -62,24 +61,33 @@ NonUniformInsertion<dim>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      //  unsigned int this_mpi_process =
-      //    Utilities::MPI::this_mpi_process(communicator);
+      // Distbuting particles between processors
+      if (Utilities::MPI::this_mpi_process(communicator) !=
+          (Utilities::MPI::n_mpi_processes(communicator) - 1))
+        this->inserted_this_step_this_proc =
+          floor(this->inserted_this_step /
+                Utilities::MPI::n_mpi_processes(communicator));
+      else
+        this->inserted_this_step_this_proc =
+          this->inserted_this_step -
+          (Utilities::MPI::n_mpi_processes(communicator) - 1) *
+            floor(this->inserted_this_step /
+                  Utilities::MPI::n_mpi_processes(communicator));
 
       // Finding insertion points using assign_insertion_points function
       std::vector<Point<dim>> insertion_points;
-      insertion_points.reserve(this->inserted_this_step);
+      insertion_points.reserve(this->inserted_this_step_this_proc);
+
       this->assign_insertion_points(insertion_points,
                                     dem_parameters.insertion_info,
                                     communicator);
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
-      this->particle_properties.reserve(this->inserted_this_step);
       this->assign_particle_properties(dem_parameters,
-                                       this->inserted_this_step,
+                                       this->inserted_this_step_this_proc,
                                        current_inserting_particle_type,
-                                       this->particle_properties,
-                                       communicator);
+                                       this->particle_properties);
 
       // Insert the particles using the points and assigned properties
       particle_handler.insert_global_particles(insertion_points,
@@ -123,7 +131,7 @@ NonUniformInsertion<dim>::assign_insertion_points(
 {
   // Calling random number generator
   std::vector<double> random_number_vector;
-  random_number_vector.reserve(this->inserted_this_step);
+  random_number_vector.reserve(this->inserted_this_step_this_proc);
   this->create_random_number_container(
     random_number_vector,
     insertion_information.random_number_range,
@@ -133,8 +141,7 @@ NonUniformInsertion<dim>::assign_insertion_points(
     Utilities::MPI::this_mpi_process(communicator);
 
   // Creating a particle counter
-  unsigned int particle_counter     = 0;
-  unsigned int particle_counter_sum = 0;
+  unsigned int particle_counter = 0;
 
   for (unsigned int i = 0; i < this->number_of_particles_x_direction; ++i)
     for (unsigned int j = 0; j < this->number_of_particles_y_direction; ++j)
@@ -154,10 +161,8 @@ NonUniformInsertion<dim>::assign_insertion_points(
                 // We need to check if the number of inserted particles so far
                 // at this step (particle_counter) reached the total desired
                 // number of inserted particles at this step
-                particle_counter_sum =
-                  Utilities::MPI::sum(particle_counter, communicator);
 
-                if (particle_counter_sum < this->inserted_this_step)
+                if (particle_counter < this->inserted_this_step_this_proc)
                   {
                     Point<dim> position;
                     // Obtaning position of the inserted particle
@@ -174,7 +179,7 @@ NonUniformInsertion<dim>::assign_insertion_points(
                     position[1] =
                       insertion_information.y_min +
                       ((j + 0.5) * insertion_information.distance_threshold -
-                       random_number_vector[this->inserted_this_step -
+                       random_number_vector[this->inserted_this_step_this_proc -
                                             particle_counter - 1]) *
                         this->maximum_diameter;
                     if (dim == 3)

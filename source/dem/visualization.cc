@@ -93,33 +93,22 @@ Visualization<dim>::print_xyz(
       local_particles.insert({particle->get_id(), particle});
     }
 
-  std::vector<int> precision = {0, 0, 5, 3, 3, 3, 1, 1, 1};
-  pcout << "id, type, dp , v_x  , v_y  , v_z  , omega_x, omega_y, omega_z, "
-        << std::endl;
+  pcout << "id, type, dp, x, y, z " << std::endl;
 
-  unsigned int counter;
   for (auto &iterator : local_particles)
     {
       unsigned int id                  = iterator.first;
       auto         particle            = iterator.second;
       auto         particle_properties = particle->get_properties();
+      auto         particle_location   = particle->get_location();
 
       // Writing ID
-      std::cout.precision(precision[0]);
-      pcout << std::fixed << id << " ";
-
-      // Since ID is written manually, counter starts from 1
-      counter = 1;
-
-      // Looping over properties of particle
-      for (unsigned int property_number = 0;
-           property_number < DEM::get_number_properties() - 1;
-           ++property_number, ++counter)
-        {
-          std::cout.precision(precision[counter]);
-          pcout << std::fixed << particle_properties[property_number] << " ";
-        }
-      pcout << std::endl;
+      pcout << std::fixed << std::setprecision(0) << id << " "
+            << std::setprecision(0)
+            << particle_properties[DEM::PropertiesIndex::type] << " "
+            << std::setprecision(5)
+            << particle_properties[DEM::PropertiesIndex::dp] << " "
+            << std::setprecision(4) << particle_location << std::endl;
     }
 }
 
