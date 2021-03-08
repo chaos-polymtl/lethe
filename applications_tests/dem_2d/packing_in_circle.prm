@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection simulation control
   set time step                 			 = 0.00001
-  set time end       					 = 0.5
+  set time end       					 = 0.1
   set log frequency				         = 1000000
   set output frequency            			 = 1000000
 end
@@ -46,7 +46,7 @@ subsection physical properties
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
-    		set number				= 50
+    		set number				= 8
     		set density            	 		= 2000
     		set young modulus particle         	= 1000000
     		set poisson ratio particle          	= 0.3

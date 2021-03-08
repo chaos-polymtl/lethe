@@ -42,27 +42,13 @@ template <int dim>
 void
 Insertion<dim>::assign_particle_properties(
   const DEMSolverParameters<dim> &  dem_parameters,
-  const unsigned int &              inserted_this_step,
+  const unsigned int &              inserted_this_step_this_proc,
   const unsigned int &              current_inserting_particle_type,
-  std::vector<std::vector<double>> &particle_properties,
-  const MPI_Comm &                  communicator)
+  std::vector<std::vector<double>> &particle_properties)
 {
-  // Distbuting particles between processors
-  if (Utilities::MPI::this_mpi_process(communicator) !=
-      (Utilities::MPI::n_mpi_processes(communicator) - 1))
-    inserted_this_step_this_proc =
-      floor(inserted_this_step / Utilities::MPI::n_mpi_processes(communicator));
-  else
-    inserted_this_step_this_proc =
-      inserted_this_step -
-      (Utilities::MPI::n_mpi_processes(communicator) - 1) *
-        floor(inserted_this_step /
-              Utilities::MPI::n_mpi_processes(communicator));
-
-
   // Clearing and resizing particle_properties
   particle_properties.clear();
-  particle_properties.reserve(inserted_this_step);
+  particle_properties.reserve(this->inserted_this_step_this_proc);
 
   // Getting properties as local parameters
   // TODO: MAYBE CHANGE THE INPUT TO PHYSICAL PROPERTIES DIRECTLY
@@ -194,11 +180,20 @@ Insertion<3>::particle_on_processor(const unsigned int &i,
                                     const unsigned int &this_mpi_process,
                                     const unsigned int &number_of_processors)
 {
-  return (std::floor((i * this->number_of_particles_y_direction *
-                        this->number_of_particles_z_direction +
-                      j * this->number_of_particles_z_direction + k) /
-                     (std::ceil(this->inserted_this_step /
-                                number_of_processors))) == this_mpi_process);
+  if (this_mpi_process == number_of_processors - 1)
+    return (std::floor((i * this->number_of_particles_y_direction *
+                          this->number_of_particles_z_direction +
+                        j * this->number_of_particles_z_direction + k) /
+                       std::floor(double(this->inserted_this_step) /
+                                  double(number_of_processors))) >=
+            this_mpi_process);
+  else
+    return (std::floor((i * this->number_of_particles_y_direction *
+                          this->number_of_particles_z_direction +
+                        j * this->number_of_particles_z_direction + k) /
+                       std::floor(double(this->inserted_this_step) /
+                                  double(number_of_processors))) ==
+            this_mpi_process);
 }
 
 template <>
@@ -209,9 +204,16 @@ Insertion<2>::particle_on_processor(const unsigned int &i,
                                     const unsigned int &this_mpi_process,
                                     const unsigned int &number_of_processors)
 {
-  return (std::floor((i * this->number_of_particles_y_direction + j) /
-                     (std::ceil(this->inserted_this_step /
-                                number_of_processors))) == this_mpi_process);
+  if (this_mpi_process == number_of_processors - 1)
+    return (std::floor((i * this->number_of_particles_y_direction + j) /
+                       std::floor(double(this->inserted_this_step) /
+                                  double(number_of_processors))) >=
+            this_mpi_process);
+  else
+    return (std::floor((i * this->number_of_particles_y_direction + j) /
+                       std::floor(double(this->inserted_this_step) /
+                                  double(number_of_processors))) ==
+            this_mpi_process);
 }
 
 template class Insertion<2>;
