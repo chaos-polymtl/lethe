@@ -4,6 +4,8 @@
 #include <deal.II/fe/mapping.h>
 #include <deal.II/fe/mapping_q.h>
 
+#include <deal.II/grid/grid_tools.h>
+
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/solver_control.h>
@@ -407,14 +409,11 @@ Tracer<dim>::calculate_L2_error()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-
   FEValues<dim> fe_values(*mapping,
                           *fe,
                           *cell_quadrature,
                           update_values | update_gradients |
                             update_quadrature_points | update_JxW_values);
-
-
 
   const unsigned int dofs_per_cell =
     fe->dofs_per_cell; // This gives you dofs per cell
@@ -518,6 +517,116 @@ Tracer<dim>::postprocess(bool first_iteration)
         {
           this->pcout << "L2 error tracer : " << tracer_error << std::endl;
         }
+    }
+
+  if (simulation_parameters.post_processing.calculate_tracer_statistics)
+    {
+      calculate_tracer_statistics();
+      if (simulation_control->get_step_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_tracer_statistics();
+    }
+}
+
+template <int dim>
+void
+Tracer<dim>::calculate_tracer_statistics()
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  FEValues<dim> fe_values(*mapping,
+                          *fe,
+                          *cell_quadrature,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  const unsigned int dofs_per_cell =
+    fe->dofs_per_cell; // This gives you dofs per cell
+
+  std::vector<types::global_dof_index> local_dof_indices(
+    dofs_per_cell); //  Local connectivity
+
+  const unsigned int  n_q_points = cell_quadrature->size();
+  std::vector<double> q_tracer_values(n_q_points);
+
+  double volume_integral  = 0;
+  double max_tracer_value = DBL_MIN;
+  double min_tracer_value = DBL_MAX;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          fe_values.get_function_values(present_solution, q_tracer_values);
+
+          // Retrieve the effective "connectivity matrix" for this element
+          cell->get_dof_indices(local_dof_indices);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              volume_integral += q_tracer_values[q] * fe_values.JxW(q);
+              max_tracer_value = std::max(q_tracer_values[q], max_tracer_value);
+              min_tracer_value = std::min(q_tracer_values[q], min_tracer_value);
+            }
+        }
+    }
+  volume_integral      = Utilities::MPI::sum(volume_integral, mpi_communicator);
+  double global_volume = GridTools::volume(*triangulation, *mapping);
+  double tracer_average = volume_integral / global_volume;
+
+  double variance_integral = 0;
+
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values.reinit(cell);
+          fe_values.get_function_values(present_solution, q_tracer_values);
+
+          // Retrieve the effective "connectivity matrix" for this element
+          cell->get_dof_indices(local_dof_indices);
+
+          for (unsigned int q = 0; q < n_q_points; q++)
+            {
+              variance_integral += (q_tracer_values[q] - tracer_average) *
+                                   (q_tracer_values[q] - tracer_average) *
+                                   fe_values.JxW(q);
+            }
+        }
+    }
+
+  variance_integral = Utilities::MPI::sum(variance_integral, mpi_communicator);
+  double tracer_variance      = variance_integral / global_volume;
+  double tracer_std_deviation = std::sqrt(tracer_variance);
+
+  this->pcout << "Tracer statistics : " << std::endl;
+  this->pcout << "\t     Min : " << min_tracer_value << std::endl;
+  this->pcout << "\t     Max : " << max_tracer_value << std::endl;
+  this->pcout << "\t Average : " << tracer_average << std::endl;
+  this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+
+  statistics_table.add_value("time", simulation_control->get_current_time());
+  statistics_table.add_value("min", min_tracer_value);
+  statistics_table.add_value("max", max_tracer_value);
+  statistics_table.add_value("average", tracer_average);
+  statistics_table.add_value("std-dev", tracer_std_deviation);
+}
+
+template <int dim>
+void
+Tracer<dim>::write_tracer_statistics()
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.post_processing.tracer_output_name + ".dat";
+      std::ofstream output(filename.c_str());
+
+      statistics_table.write_text(output);
     }
 }
 
