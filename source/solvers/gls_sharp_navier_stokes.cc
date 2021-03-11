@@ -2746,9 +2746,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                     global_index_overwrite) *
                                     sum_line;
                                     */
-                                  this->system_rhs(global_index_overwrite) =sum_line * v_ib-this->evaluation_point(
-                                          global_index_overwrite) *sum_line;
-
+                                this->system_rhs(global_index_overwrite) =
+                                  sum_line * v_ib - this->evaluation_point(
+                                                      global_index_overwrite) *
+                                                      sum_line;
                             }
                         }
 
