@@ -391,6 +391,17 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
+
+
+      prm.declare_entry("calculate tracer statistics",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of tracer statistics.");
+
+      prm.declare_entry("tracer statistics name",
+                        "tracer_statistics",
+                        Patterns::FileName(),
+                        "File name output tracer statistics");
     }
     prm.leave_subsection();
   }
@@ -410,11 +421,13 @@ namespace Parameters
       calculate_enstrophy      = prm.get_bool("calculate enstrophy");
       calculate_average_velocities =
         prm.get_bool("calculate average velocities");
-      initial_time               = prm.get_double("initial time");
-      kinetic_energy_output_name = prm.get("kinetic energy name");
-      enstrophy_output_name      = prm.get("enstrophy name");
-      calculation_frequency      = prm.get_integer("calculation frequency");
-      output_frequency           = prm.get_integer("output frequency");
+      initial_time                = prm.get_double("initial time");
+      kinetic_energy_output_name  = prm.get("kinetic energy name");
+      enstrophy_output_name       = prm.get("enstrophy name");
+      calculation_frequency       = prm.get_integer("calculation frequency");
+      output_frequency            = prm.get_integer("output frequency");
+      calculate_tracer_statistics = prm.get_bool("calculate tracer statistics");
+      tracer_output_name          = prm.get("tracer statistics name");
     }
     prm.leave_subsection();
   }

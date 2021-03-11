@@ -259,6 +259,12 @@ private:
   assemble_system(const Parameters::SimulationControl::TimeSteppingMethod
                     time_stepping_method);
 
+  /**
+   * @brief Calculate tracer statistics
+   */
+  void
+  calculate_tracer_statistics();
+
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
 
