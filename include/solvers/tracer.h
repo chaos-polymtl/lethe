@@ -260,10 +260,16 @@ private:
                     time_stepping_method);
 
   /**
-   * @brief Calculate tracer statistics
+   * @brief Calculate tracer statistics : Max, min, average and standard-deviation
    */
   void
   calculate_tracer_statistics();
+
+  /**
+   * @brief Writes the tracer statistics to an output file
+   */
+  void
+  write_tracer_statistics();
 
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;
@@ -311,6 +317,9 @@ private:
     solution_transfer_m2;
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer_m3;
+
+  // Tracer statistics table
+  TableHandler statistics_table;
 };
 
 

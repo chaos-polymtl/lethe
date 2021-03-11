@@ -522,6 +522,10 @@ Tracer<dim>::postprocess(bool first_iteration)
   if (simulation_parameters.post_processing.calculate_tracer_statistics)
     {
       calculate_tracer_statistics();
+      if (simulation_control->get_step_number() %
+            this->simulation_parameters.post_processing.output_frequency ==
+          0)
+        this->write_tracer_statistics();
     }
 }
 
@@ -602,6 +606,28 @@ Tracer<dim>::calculate_tracer_statistics()
   this->pcout << "\t     Max : " << max_tracer_value << std::endl;
   this->pcout << "\t Average : " << tracer_average << std::endl;
   this->pcout << "\t Std-Dev : " << tracer_std_deviation << std::endl;
+
+  statistics_table.add_value("time", simulation_control->get_current_time());
+  statistics_table.add_value("min", min_tracer_value);
+  statistics_table.add_value("max", max_tracer_value);
+  statistics_table.add_value("average", tracer_average);
+  statistics_table.add_value("std-dev", tracer_std_deviation);
+}
+
+template <int dim>
+void
+Tracer<dim>::write_tracer_statistics()
+{
+  auto mpi_communicator = triangulation->get_communicator();
+
+  if (Utilities::MPI::this_mpi_process(mpi_communicator) == 0)
+    {
+      std::string filename =
+        simulation_parameters.post_processing.tracer_output_name + ".dat";
+      std::ofstream output(filename.c_str());
+
+      statistics_table.write_text(output);
+    }
 }
 
 template <int dim>
