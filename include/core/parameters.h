@@ -261,6 +261,12 @@ namespace Parameters
     // Prefix for the enstrophy output
     std::string enstrophy_output_name;
 
+    // Enable tracer statistics
+    bool calculate_tracer_statistics;
+
+    // Prefix for the tracer output
+    std::string tracer_output_name;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
