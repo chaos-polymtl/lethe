@@ -1098,14 +1098,14 @@ GLSVANSSolver<dim>::assembleGLS()
                   for (unsigned int k = 0; k < dofs_per_cell; ++k)
                     {
                       const auto comp_k =
-                        this->fe.system_to_component_index(k).first;
+                        this->fe->system_to_component_index(k).first;
                       if (comp_k < dim)
                         {
                           auto &evaluation_point = this->evaluation_point;
 
                           velocity[comp_k] +=
                             evaluation_point[local_dof_indices[k]] *
-                            this->fe.shape_value(k, reference_location);
+                            this->fe->shape_value(k, reference_location);
                         }
                     }
 
@@ -1127,28 +1127,28 @@ GLSVANSSolver<dim>::assembleGLS()
                   for (unsigned int i = 0; i < dofs_per_cell; ++i)
                     {
                       const auto comp_i =
-                        this->fe.system_to_component_index(i).first;
+                        this->fe->system_to_component_index(i).first;
                       // std::cout << "comp_i" << comp_i << std::endl;
                       if (comp_i < dim)
                         {
                           for (unsigned int j = 0; j < dofs_per_cell; ++j)
                             {
                               const auto comp_j =
-                                this->fe.system_to_component_index(j).first;
+                                this->fe->system_to_component_index(j).first;
                               // std::cout << "comp_j" << comp_j << std::endl;
                               if (comp_i == comp_j)
                                 local_matrix(i, j) -=
                                   0.5 * c_d * reference_area *
                                   relative_velocity.norm() *
-                                  this->fe.shape_value(i, reference_location) *
-                                  this->fe.shape_value(j, reference_location);
+                                  this->fe->shape_value(i, reference_location) *
+                                  this->fe->shape_value(j, reference_location);
                             }
 
                           local_rhs(i) +=
                             0.5 * c_d * reference_area *
                             relative_velocity.norm() *
                             (velocity[comp_i] - p_velocity[comp_i]) *
-                            this->fe.shape_value(i, reference_location);
+                            this->fe->shape_value(i, reference_location);
                         }
                     }
                   std::cout
