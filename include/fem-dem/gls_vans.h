@@ -85,6 +85,9 @@ private:
   void
   solve_L2_system();
 
+  void
+  volume_conservation();
+
   //  void
   //  calculate_drag_coefficient(
   //    double         reference_area,

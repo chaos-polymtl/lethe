@@ -364,11 +364,11 @@ GLSVANSSolver<dim>::solve_L2_system()
   void_fraction_constraints.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
 
-  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
-  const unsigned int n_q_points = quadrature_formula.size();
-  for (unsigned int q = 0; q < n_q_points; ++q)
-    std::cout << "Nodal values"
-              << "" << nodal_void_fraction_relevant(q) << std::endl;
+  //  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
+  //  const unsigned int n_q_points = quadrature_formula.size();
+  //  for (unsigned int q = 0; q < n_q_points; ++q)
+  //    std::cout << "Nodal values"
+  //              << "" << nodal_void_fraction_relevant(q) << std::endl;
 }
 
 
@@ -1166,9 +1166,9 @@ GLSVANSSolver<dim>::assembleGLS()
                   relative_velocity = velocity - particle_velocity;
 
                   // Particle's Reynolds number
-                  re = relative_velocity.norm() *
-                       particle_properties[DEM::PropertiesIndex::dp] /
-                       viscosity;
+                  re = 1e-6 + relative_velocity.norm() *
+                                particle_properties[DEM::PropertiesIndex::dp] /
+                                viscosity;
 
                   // Drag Coefficient (Modified form valied for Re_p
                   // < 200,000)
@@ -1182,24 +1182,33 @@ GLSVANSSolver<dim>::assembleGLS()
                     {
                       const auto comp_i =
                         this->fe.system_to_component_index(i).first;
+                      // std::cout << "comp_i" << comp_i << std::endl;
                       if (comp_i < dim)
-                        for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                          {
-                            const auto comp_j =
-                              this->fe.system_to_component_index(j).first;
-                            if (comp_i == comp_j)
-                              local_matrix(i, j) -=
-                                0.5 * c_d * reference_area *
-                                relative_velocity.norm() *
-                                this->fe.shape_value(i, reference_location) *
-                                this->fe.shape_value(j, reference_location);
-                          }
+                        {
+                          for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                            {
+                              const auto comp_j =
+                                this->fe.system_to_component_index(j).first;
+                              // std::cout << "comp_j" << comp_j << std::endl;
+                              if (comp_i == comp_j)
+                                local_matrix(i, j) -=
+                                  0.5 * c_d * reference_area *
+                                  relative_velocity.norm() *
+                                  this->fe.shape_value(i, reference_location) *
+                                  this->fe.shape_value(j, reference_location);
+                            }
 
-                      local_rhs(i) +=
-                        0.5 * c_d * reference_area * relative_velocity.norm() *
-                        (velocity[comp_i] - p_velocity[comp_i]) *
-                        this->fe.shape_value(i, reference_location);
+                          local_rhs(i) +=
+                            0.5 * c_d * reference_area *
+                            relative_velocity.norm() *
+                            (velocity[comp_i] - p_velocity[comp_i]) *
+                            this->fe.shape_value(i, reference_location);
+                        }
                     }
+                  std::cout
+                    << -0.5 * c_d * reference_area * relative_velocity.norm() *
+                         (velocity - p_velocity)
+                    << std::endl;
                 }
             }
           //}
@@ -1357,6 +1366,43 @@ GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
 template <int dim>
 void
+GLSVANSSolver<dim>::volume_conservation()
+{
+  const FiniteElement<dim> &fe = void_fraction_dof_handler.get_fe();
+  QGauss<dim>               quadrature_formula(2);
+  const MappingQ<dim>       mapping(fe.degree, false);
+  FEValues<dim>             fe_values_void_fraction(mapping,
+                                        this->fe_void_fraction,
+                                        quadrature_formula,
+                                        update_values |
+                                          update_quadrature_points |
+                                          update_JxW_values | update_gradients);
+  const unsigned int        n_q_points = quadrature_formula.size();
+
+
+  std::vector<double> present_void_fraction_values(n_q_points);
+  double              fluid_volume = 0;
+
+  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_void_fraction.reinit(cell);
+          fe_values_void_fraction.get_function_values(
+            nodal_void_fraction_relevant, present_void_fraction_values);
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              fluid_volume += present_void_fraction_values[q] *
+                              fe_values_void_fraction.JxW(q);
+            }
+        }
+    }
+  fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
+  this->pcout << "Total of fluid is " << fluid_volume << std::endl;
+}
+
+template <int dim>
+void
 GLSVANSSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
@@ -1390,6 +1436,8 @@ GLSVANSSolver<dim>::solve()
         }
       this->postprocess(false);
       this->finish_time_step();
+      // To remove
+      volume_conservation();
     }
 
   this->finish_simulation();
