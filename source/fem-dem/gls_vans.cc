@@ -216,13 +216,6 @@ GLSVANSSolver<dim>::assemble_L2_projection()
     {
       if (cell->is_locally_owned())
         {
-          // fe_values.reinit(cell);
-          //          typename DoFHandler<dim>::active_cell_iterator
-          //          void_fraction_cell(
-          //            &(*this->triangulation),
-          //            cell->level(),
-          //            cell->index(),
-          //            &this->void_fraction_dof_handler);
           fe_values_void_fraction.reinit(cell);
 
           local_matrix_void_fraction = 0;
@@ -289,11 +282,6 @@ void
 GLSVANSSolver<dim>::solve_L2_system()
 {
   // Solve the L2 projection system
-  // auto &nonzero_constraints = this->nonzero_constraints;
-  // const AffineConstraints<double> &constraints_used =
-  //  initial_step ? nonzero_constraints : this->zero_constraints;
-
-
   const double linear_solver_tolerance = 1e-15;
   // std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
   //         absolute_residual);
@@ -339,15 +327,6 @@ GLSVANSSolver<dim>::solve_L2_system()
 
   ilu_preconditioner->initialize(system_matrix_void_fraction,
                                  preconditionerOptions);
-  // pmass_preconditioner.initialize(pressure_mass_matrix,
-  // preconditionerOptions);
-
-
-  // const BlockDiagPreconditioner<TrilinosWrappers::PreconditionILU>
-  //  preconditioner(this->system_matrix, pmass_preconditioner, solver_control);
-
-  // preconditioner.initialize(system_matrix_void_fraction,
-  // preconditionerOptions);
 
   solver.solve(system_matrix_void_fraction,
                completely_distributed_solution,
@@ -363,12 +342,6 @@ GLSVANSSolver<dim>::solve_L2_system()
 
   void_fraction_constraints.distribute(completely_distributed_solution);
   nodal_void_fraction_relevant = completely_distributed_solution;
-
-  //  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
-  //  const unsigned int n_q_points = quadrature_formula.size();
-  //  for (unsigned int q = 0; q < n_q_points; ++q)
-  //    std::cout << "Nodal values"
-  //              << "" << nodal_void_fraction_relevant(q) << std::endl;
 }
 
 
@@ -1067,31 +1040,6 @@ GLSVANSSolver<dim>::assembleGLS()
                     }
                 }
             }
-
-
-          //              cell->get_dof_indices(local_dof_indices);
-
-          //              // The non-linear solver assumes that the nonzero
-          //              // constraints have
-          //              // already been applied to the solution
-          //              const AffineConstraints<double> &constraints_used =
-          //                this->zero_constraints;
-          //              // initial_step ? nonzero_constraints :
-          //              zero_constraints; if (assemble_matrix)
-          //                {
-          //                  constraints_used.distribute_local_to_global(
-          //                    local_matrix,
-          //                    local_rhs,
-          //                    local_dof_indices,
-          //                    this->system_matrix,
-          //                    system_rhs);
-          //                }
-          //              else
-          //                {
-          //                  constraints_used.distribute_local_to_global(local_rhs,
-          //                                                              local_dof_indices,
-          //                                                              system_rhs);
-          //                }
         }
       //***********************************************************************
       // Addition of particle dependent forces (drag)
@@ -1115,8 +1063,6 @@ GLSVANSSolver<dim>::assembleGLS()
                 typename DoFHandler<dim>::cell_iterator(*cell,
                                                         &this->dof_handler);
               dh_cell->get_dof_indices(local_dof_indices);
-
-
 
               // Loop over particles in cell
               // Begin and end iterator for particles in cell
@@ -1211,7 +1157,6 @@ GLSVANSSolver<dim>::assembleGLS()
                     << std::endl;
                 }
             }
-          //}
 
           cell->get_dof_indices(local_dof_indices);
 
