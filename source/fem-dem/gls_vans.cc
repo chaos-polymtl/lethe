@@ -1343,7 +1343,7 @@ GLSVANSSolver<dim>::volume_conservation()
         }
     }
   fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
-  this->pcout << "Total of fluid is " << fluid_volume << std::endl;
+  // this->pcout << "Total of fluid is " << fluid_volume << std::endl;
 }
 
 template <int dim>
