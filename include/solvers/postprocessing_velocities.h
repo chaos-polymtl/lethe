@@ -154,10 +154,15 @@ public:
 
   /**
    * @brief Prepares average velocity object for dynamic mesh adaptation
-   *
    */
   void
   prepare_for_mesh_adaptation();
+
+  /**
+   * @brief Re-establish solution vectors after dynamic mesh adaptation
+   */
+  void
+  post_mesh_adaptation();
 
   /**
    * @brief save & read. Save or read checkpoints to continuing averaging after

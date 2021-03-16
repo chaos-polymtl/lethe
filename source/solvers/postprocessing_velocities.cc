@@ -178,10 +178,29 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   reynolds_shear_stresses.reinit(locally_owned_dofs, mpi_communicator);
   get_rss.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
 }
+
 template <int dim, typename VectorType, typename DofsType>
 void
 AverageVelocities<dim, VectorType, DofsType>::prepare_for_mesh_adaptation()
-{}
+{
+  solution_transfer_sum_velocity_dt.prepare_for_coarsening_and_refinement(
+    sum_velocity_dt);
+  solution_transfer_sum_reynolds_normal_stress_dt
+    .prepare_for_coarsening_and_refinement(sum_reynolds_normal_stress_dt);
+  solution_transfer_sum_reynolds_shear_stress_dt
+    .prepare_for_coarsening_and_refinement(sum_reynolds_shear_stress_dt);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::post_mesh_adaptation()
+{
+  solution_transfer_sum_velocity_dt.interpolate(sum_velocity_dt);
+  solution_transfer_sum_reynolds_normal_stress_dt.interpolate(
+    sum_reynolds_normal_stress_dt);
+  solution_transfer_sum_reynolds_shear_stress_dt.interpolate(
+    sum_reynolds_shear_stress_dt);
+}
 
 template <int dim, typename VectorType, typename DofsType>
 void

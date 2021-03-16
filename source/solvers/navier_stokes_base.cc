@@ -699,6 +699,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
   multiphysics->prepare_for_mesh_adaptation();
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    average_velocities.prepare_for_mesh_adaptation();
 
 
   tria.execute_coarsening_and_refinement();
@@ -730,6 +732,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->solution_m3 = tmp_m3;
 
   multiphysics->post_mesh_adaptation();
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    average_velocities.post_mesh_adaptation();
 }
 
 template <int dim, typename VectorType, typename DofsType>
