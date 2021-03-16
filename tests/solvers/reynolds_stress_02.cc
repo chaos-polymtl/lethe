@@ -72,8 +72,15 @@ test()
   locally_owned_dofs[0].add_range(0, 8);
   locally_owned_dofs[1].add_range(0, 4);
 
-  // Make dummy dof_handler to construct average velocities
-  DoFHandler<2> dof_handler;
+  // Make triangulation and dummy dof_handler to construct average velocities
+  parallel::distributed::Triangulation<2> tria(
+    mpi_communicator,
+    typename Triangulation<2>::MeshSmoothing(
+      Triangulation<2>::smoothing_on_refinement |
+      Triangulation<2>::smoothing_on_coarsening));
+  GridGenerator::hyper_cube(tria, -1, 1);
+  DoFHandler<2> dof_handler(tria);
+
 
   AverageVelocities<2,
                     TrilinosWrappers::MPI::BlockVector,

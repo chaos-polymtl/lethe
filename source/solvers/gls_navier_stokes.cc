@@ -225,21 +225,22 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
 
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     {
-      AssertThrow(this->simulation_parameters.mesh_adaptation.type ==
-                    Parameters::MeshAdaptation::Type::none,
-                  ExcMessage(
-                    "Time-averaging velocities and calculating reynolds "
-                    "stresses are currently unavailable for mesh "
-                    "adaptation."));
+      // AssertThrow(this->simulation_parameters.mesh_adaptation.type ==
+      //               Parameters::MeshAdaptation::Type::none,
+      //             ExcMessage(
+      //               "Time-averaging velocities and calculating reynolds "
+      //               "stresses are currently unavailable for mesh "
+      //               "adaptation."));
 
-      this->average_velocities.initialize_vectors(this->locally_owned_dofs,
-                                                  this->locally_relevant_dofs,
-                                                  this->fe->n_dofs_per_vertex(),
-                                                  this->mpi_communicator);
+      this->average_velocities->initialize_vectors(
+        this->locally_owned_dofs,
+        this->locally_relevant_dofs,
+        this->fe->n_dofs_per_vertex(),
+        this->mpi_communicator);
 
       if (this->simulation_parameters.restart_parameters.checkpoint)
         {
-          this->average_velocities.initialize_checkpoint_vectors(
+          this->average_velocities->initialize_checkpoint_vectors(
             this->locally_owned_dofs,
             this->locally_relevant_dofs,
             this->mpi_communicator);
