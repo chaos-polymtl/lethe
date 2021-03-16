@@ -28,6 +28,10 @@
 // Dofs
 #include <deal.II/dofs/dof_handler.h>
 
+// Distributed
+#include <deal.II/distributed/solution_transfer.h>
+
+
 // Lethe Includes
 #include <core/parameters.h>
 
@@ -47,7 +51,7 @@ template <int dim, typename VectorType, typename DofsType>
 class AverageVelocities
 {
 public:
-  AverageVelocities();
+  AverageVelocities(DoFHandler<dim> &dof_handler);
   /**
    * @brief calculate_average_velocities. This function calculates time-averaged
    * velocities and pressure with dof vector with no ghost cell.
@@ -147,6 +151,14 @@ public:
                                 const DofsType &locally_relevant_dofs,
                                 const MPI_Comm &mpi_communicator);
 
+
+  /**
+   * @brief Prepares average velocity object for dynamic mesh adaptation
+   *
+   */
+  void
+  prepare_for_mesh_adaptation();
+
   /**
    * @brief save & read. Save or read checkpoints to continuing averaging after
    * restart.
@@ -179,6 +191,14 @@ private:
   VectorType sum_velocity_dt_with_ghost_cells;
   VectorType sum_rns_dt_with_ghost_cells;
   VectorType sum_rss_dt_with_ghost_cells;
+
+  // Solution transfer for the three permanent velocity storage
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_sum_velocity_dt;
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_sum_reynolds_normal_stress_dt;
+  parallel::distributed::SolutionTransfer<dim, VectorType>
+    solution_transfer_sum_reynolds_shear_stress_dt;
 
   double       dt;
   double       real_initial_time;

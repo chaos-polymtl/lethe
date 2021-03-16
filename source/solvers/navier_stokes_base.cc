@@ -55,6 +55,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , velocity_fem_degree(p_nsparam.fem_parameters.velocity_order)
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
+  , average_velocities(dof_handler)
 {
 #ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
   if (simulation_parameters.mesh.simplex)

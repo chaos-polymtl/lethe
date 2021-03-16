@@ -69,8 +69,11 @@ test()
   locally_owned_dofs.add_range(0, 8);
   locally_relevant_dofs.add_range(0, 8);
 
+  // Make dummy dof_handler to construct average velocities
+  DoFHandler<3> dof_handler;
+
   AverageVelocities<3, TrilinosWrappers::MPI::Vector, IndexSet>
-    postprocessing_velocities;
+    postprocessing_velocities(dof_handler);
 
   TrilinosWrappers::MPI::Vector solution(locally_owned_dofs, mpi_communicator);
   solution(0) = 2.0;
