@@ -150,6 +150,11 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   else
     forcing_function = new NoForce<dim>;
 
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    average_velocities =
+      std::make_shared<AverageVelocities<dim, VectorType, DofsType>>(
+        dof_handler);
+
   this->pcout << "Running on "
               << Utilities::MPI::n_mpi_processes(this->mpi_communicator)
               << " MPI rank(s)..." << std::endl;
@@ -698,6 +703,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
   multiphysics->prepare_for_mesh_adaptation();
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    average_velocities->prepare_for_mesh_adaptation();
 
 
   tria.execute_coarsening_and_refinement();
@@ -729,6 +736,8 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   this->solution_m3 = tmp_m3;
 
   multiphysics->post_mesh_adaptation();
+  if (this->simulation_parameters.post_processing.calculate_average_velocities)
+    average_velocities->post_mesh_adaptation();
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -840,7 +849,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
       if (simulation_control->get_current_time() >
           (simulation_parameters.post_processing.initial_time - 1e-6 * dt))
         {
-          this->average_velocities.calculate_average_velocities(
+          this->average_velocities->calculate_average_velocities(
             this->local_evaluation_point,
             simulation_parameters.post_processing,
             simulation_control->get_current_time(),
@@ -1050,7 +1059,7 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
   if (simulation_parameters.post_processing.calculate_average_velocities)
     {
       std::vector<VectorType *> sum_vectors =
-        this->average_velocities.read(prefix);
+        this->average_velocities->read(prefix);
 
       x_system.insert(x_system.end(), sum_vectors.begin(), sum_vectors.end());
     }
@@ -1140,7 +1149,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         DataComponentInterpretation::component_is_scalar);
 
       data_out.add_data_vector(
-        this->average_velocities.get_average_velocities(),
+        this->average_velocities->get_average_velocities(),
         average_solution_names,
         DataOut<dim>::type_dof_data,
         average_data_component_interpretation);
@@ -1178,13 +1187,13 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
         DataComponentInterpretation::component_is_scalar);
 
       data_out.add_data_vector(
-        this->average_velocities.get_reynolds_normal_stresses(),
+        this->average_velocities->get_reynolds_normal_stresses(),
         reynolds_normal_stress_names,
         DataOut<dim>::type_dof_data,
         reynolds_normal_stress_data_component_interpretation);
 
       data_out.add_data_vector(
-        this->average_velocities.get_reynolds_shear_stresses(),
+        this->average_velocities->get_reynolds_shear_stresses(),
         reynolds_shear_stress_names,
         DataOut<dim>::type_dof_data,
         reynolds_shear_stress_data_component_interpretation);
@@ -1304,7 +1313,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
   if (simulation_parameters.post_processing.calculate_average_velocities)
     {
       std::vector<const VectorType *> av_set_transfer =
-        this->average_velocities.save(prefix);
+        this->average_velocities->save(prefix);
 
       // Insert average velocities vectors into the set transfer vector
       sol_set_transfer.insert(sol_set_transfer.end(),
