@@ -23,8 +23,6 @@ template <int dim>
 void
 GLSVANSSolver<dim>::setup_dofs()
 {
-  ilu_preconditioner.reset();
-
   GLSNavierStokesSolver<dim>::setup_dofs();
   void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
 
@@ -180,14 +178,14 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
   else if (this->simulation_parameters.void_fraction->mode ==
            Parameters::VoidFractionMode::dem)
     {
-      assemble_L2_projection();
-      solve_L2_system();
+      assemble_L2_projection_void_fraction();
+      solve_L2_system_void_fraction();
     }
 }
 
 template <int dim>
 void
-GLSVANSSolver<dim>::assemble_L2_projection()
+GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(
@@ -229,14 +227,9 @@ GLSVANSSolver<dim>::assemble_L2_projection()
           for (auto &particle : pic)
             {
               auto particle_properties = particle.get_properties();
-              if (dim == 2)
-                particles_volume_in_cell +=
-                  M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
-                  4;
-              if (dim == 3)
-                particles_volume_in_cell +=
-                  M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], 3) /
-                  6;
+              particles_volume_in_cell +=
+                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                (2 * dim);
             }
           double cell_volume = cell->measure();
 
@@ -279,7 +272,7 @@ GLSVANSSolver<dim>::assemble_L2_projection()
 }
 template <int dim>
 void
-GLSVANSSolver<dim>::solve_L2_system()
+GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
@@ -1151,10 +1144,11 @@ GLSVANSSolver<dim>::assembleGLS()
                             this->fe->shape_value(i, reference_location);
                         }
                     }
-                  std::cout
-                    << -0.5 * c_d * reference_area * relative_velocity.norm() *
-                         (velocity - p_velocity)
-                    << std::endl;
+                  //                  std::cout
+                  //                    << -0.5 * c_d * reference_area *
+                  //                    relative_velocity.norm() *
+                  //                         (velocity - p_velocity)
+                  //                    << std::endl;
                 }
             }
 

@@ -80,23 +80,13 @@ private:
   calculate_void_fraction(const double time);
 
   void
-  assemble_L2_projection();
+  assemble_L2_projection_void_fraction();
 
   void
-  solve_L2_system();
+  solve_L2_system_void_fraction();
 
   void
   volume_conservation();
-
-  //  void
-  //  calculate_drag_coefficient(
-  //    double         reference_area,
-  //    double         re,
-  //    double         c_d,
-  //    Tensor<1, dim> particle_velocity,
-  //    Tensor<1, dim> relative_velocity,
-  //    typename Particles::ParticleHandler<dim, dim>::particle_iterator
-  //    &particle);
 
   virtual void
   iterate() override;
