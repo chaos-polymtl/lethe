@@ -3,8 +3,12 @@
 #include <fstream>
 
 template <int dim, typename VectorType, typename DofsType>
-AverageVelocities<dim, VectorType, DofsType>::AverageVelocities()
-  : average_calculation(false)
+AverageVelocities<dim, VectorType, DofsType>::AverageVelocities(
+  DoFHandler<dim> &dof_handler)
+  : solution_transfer_sum_velocity_dt(dof_handler)
+  , solution_transfer_sum_reynolds_normal_stress_dt(dof_handler)
+  , solution_transfer_sum_reynolds_shear_stress_dt(dof_handler)
+  , average_calculation(false)
 {}
 
 template <int dim, typename VectorType, typename DofsType>
@@ -173,6 +177,37 @@ AverageVelocities<dim, VectorType, DofsType>::initialize_vectors(
   sum_reynolds_shear_stress_dt.reinit(locally_owned_dofs, mpi_communicator);
   reynolds_shear_stresses.reinit(locally_owned_dofs, mpi_communicator);
   get_rss.reinit(locally_owned_dofs, locally_relevant_dofs, mpi_communicator);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::prepare_for_mesh_adaptation()
+{
+  get_av  = sum_velocity_dt;
+  get_rns = sum_reynolds_normal_stress_dt;
+  get_rss = sum_reynolds_shear_stress_dt;
+
+  solution_transfer_sum_velocity_dt.prepare_for_coarsening_and_refinement(
+    get_av);
+  solution_transfer_sum_reynolds_normal_stress_dt
+    .prepare_for_coarsening_and_refinement(get_rns);
+  solution_transfer_sum_reynolds_shear_stress_dt
+    .prepare_for_coarsening_and_refinement(get_rss);
+}
+
+template <int dim, typename VectorType, typename DofsType>
+void
+AverageVelocities<dim, VectorType, DofsType>::post_mesh_adaptation()
+{
+  solution_transfer_sum_velocity_dt.interpolate(sum_velocity_dt);
+  solution_transfer_sum_reynolds_normal_stress_dt.interpolate(
+    sum_reynolds_normal_stress_dt);
+  solution_transfer_sum_reynolds_shear_stress_dt.interpolate(
+    sum_reynolds_shear_stress_dt);
+
+  sum_velocity_dt_with_ghost_cells = sum_velocity_dt;
+  sum_rns_dt_with_ghost_cells      = sum_reynolds_normal_stress_dt;
+  sum_rss_dt_with_ghost_cells      = sum_reynolds_shear_stress_dt;
 }
 
 template <int dim, typename VectorType, typename DofsType>
