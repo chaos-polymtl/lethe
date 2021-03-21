@@ -20,16 +20,29 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/fe/mapping_q.h>
+
+#include <deal.II/particles/particle_handler.h>
+#include <deal.II/particles/property_pool.h>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+
 #include <core/grids.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
-#include <core/simulation_control.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
 
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
 #include "core/time_integration_utilities.h"
 #include "solvers/gls_navier_stokes.h"
+
+
 
 using namespace dealii;
 
@@ -42,6 +55,8 @@ using namespace dealii;
  * @ingroup solvers
  * @author Toni EL Geitani, 2020
  */
+
+
 
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
@@ -59,7 +74,19 @@ private:
   initialize_void_fraction();
 
   void
+  read_dem();
+
+  void
   calculate_void_fraction(const double time);
+
+  void
+  assemble_L2_projection_void_fraction();
+
+  void
+  solve_L2_system_void_fraction();
+
+  void
+  volume_conservation();
 
   virtual void
   iterate() override;
@@ -115,7 +142,10 @@ private:
   DoFHandler<dim> void_fraction_dof_handler;
   FE_Q<dim>       fe_void_fraction;
 
-  Vector<double> cell_void_fraction;
+
+  // Vector<double>                       cell_void_fraction;
+  MappingQGeneric<dim>                 particle_mapping;
+  Particles::ParticleHandler<dim, dim> particle_handler;
 
   // Solution of the void fraction at previous time steps
 
@@ -125,6 +155,14 @@ private:
 
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+
+  TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
+  TrilinosWrappers::MPI::Vector  system_rhs_void_fraction;
+
+  std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
+  AffineConstraints<double>                          void_fraction_constraints;
+
+
 
   const bool   PSPG        = true;
   const bool   SUPG        = true;

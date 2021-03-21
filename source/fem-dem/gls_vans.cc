@@ -6,7 +6,10 @@ GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
   , void_fraction_dof_handler(*this->triangulation)
   , fe_void_fraction(p_nsparam.fem_parameters.velocity_order)
-
+  , particle_mapping(1)
+  , particle_handler(*this->triangulation,
+                     particle_mapping,
+                     DEM::get_number_properties())
 {}
 
 template <int dim>
@@ -26,9 +29,16 @@ GLSVANSSolver<dim>::setup_dofs()
   const IndexSet locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
   IndexSet locally_relevant_dofs_voidfraction;
+
   DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler,
 
                                           locally_relevant_dofs_voidfraction);
+
+  void_fraction_constraints.clear();
+  void_fraction_constraints.reinit(locally_relevant_dofs_voidfraction);
+  DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
+                                          void_fraction_constraints);
+  void_fraction_constraints.close();
 
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
@@ -44,6 +54,26 @@ GLSVANSSolver<dim>::setup_dofs()
                           this->mpi_communicator);
   nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
                                    this->mpi_communicator);
+
+  DynamicSparsityPattern dsp(locally_relevant_dofs_voidfraction);
+  DoFTools::make_sparsity_pattern(void_fraction_dof_handler,
+                                  dsp,
+                                  void_fraction_constraints,
+                                  false);
+  SparsityTools::distribute_sparsity_pattern(
+    dsp,
+    locally_owned_dofs_voidfraction,
+    this->mpi_communicator,
+    locally_relevant_dofs_voidfraction);
+
+  system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
+                                     locally_owned_dofs_voidfraction,
+                                     dsp,
+                                     this->mpi_communicator);
+
+
+  system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
+                                  this->mpi_communicator);
 }
 
 template <int dim>
@@ -57,6 +87,64 @@ GLSVANSSolver<dim>::finish_time_step_fd()
   void_fraction_m1 = nodal_void_fraction_relevant;
 }
 
+template <int dim>
+void
+GLSVANSSolver<dim>::read_dem()
+{
+  const auto parallel_triangulation =
+    dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+      &*this->triangulation);
+
+  std::string prefix = this->simulation_parameters.void_fraction->dem_file_name;
+
+  parallel_triangulation->signals.post_distributed_load.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &particle_handler,
+              true));
+
+  // Gather particle serialization information
+  std::string   particle_filename = prefix + ".particles";
+  std::ifstream input(particle_filename.c_str());
+  AssertThrow(input, ExcFileNotOpen(particle_filename));
+
+  std::string buffer;
+  std::getline(input, buffer);
+  std::istringstream            iss(buffer);
+  boost::archive::text_iarchive ia(iss, boost::archive::no_header);
+
+  ia >> particle_handler;
+
+  const std::string filename = prefix + ".triangulation";
+  std::ifstream     in(filename.c_str());
+  if (!in)
+    AssertThrow(false,
+                ExcMessage(
+                  std::string(
+                    "You are trying to restart a previous computation, "
+                    "but the restart file <") +
+                  filename + "> does not appear to exist!"));
+
+  if (auto parallel_triangulation =
+        dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+          &*this->triangulation))
+    {
+      try
+        {
+          parallel_triangulation->load(filename.c_str());
+        }
+      catch (...)
+        {
+          AssertThrow(false,
+                      ExcMessage("Cannot open snapshot mesh file or read the"
+                                 "triangulation stored there."));
+        }
+    }
+  else
+    {
+      throw std::runtime_error(
+        "VANS equations currently do not support triangulations other than parallel::distributed");
+    }
+}
 
 template <int dim>
 void
@@ -72,17 +160,184 @@ template <int dim>
 void
 GLSVANSSolver<dim>::calculate_void_fraction(const double time)
 {
-  this->simulation_parameters.void_fraction->void_fraction.set_time(time);
+  if (this->simulation_parameters.void_fraction->mode ==
+      Parameters::VoidFractionMode::function)
+    {
+      const MappingQ<dim> mapping(this->velocity_fem_degree);
 
+      this->simulation_parameters.void_fraction->void_fraction.set_time(time);
 
-  VectorTools::interpolate(
-    *this->mapping,
-    void_fraction_dof_handler,
-    this->simulation_parameters.void_fraction->void_fraction,
-    nodal_void_fraction_owned);
+      VectorTools::interpolate(
+        mapping,
+        void_fraction_dof_handler,
+        this->simulation_parameters.void_fraction->void_fraction,
+        nodal_void_fraction_owned);
 
-  nodal_void_fraction_relevant = nodal_void_fraction_owned;
+      nodal_void_fraction_relevant = nodal_void_fraction_owned;
+    }
+  else if (this->simulation_parameters.void_fraction->mode ==
+           Parameters::VoidFractionMode::dem)
+    {
+      assemble_L2_projection_void_fraction();
+      solve_L2_system_void_fraction();
+    }
 }
+
+template <int dim>
+void
+GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
+{
+  QGauss<dim>         quadrature_formula(this->number_quadrature_points);
+  const MappingQ<dim> mapping(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
+
+  FEValues<dim> fe_values_void_fraction(mapping,
+                                        this->fe_void_fraction,
+                                        quadrature_formula,
+                                        update_values |
+                                          update_quadrature_points |
+                                          update_JxW_values | update_gradients);
+
+  const unsigned int dofs_per_cell = this->fe_void_fraction.dofs_per_cell;
+  const unsigned int n_q_points    = quadrature_formula.size();
+  FullMatrix<double> local_matrix_void_fraction(dofs_per_cell, dofs_per_cell);
+  Vector<double>     local_rhs_void_fraction(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<double>                  phi_vf(dofs_per_cell);
+
+  system_rhs_void_fraction    = 0;
+  system_matrix_void_fraction = 0;
+
+  for (const auto &cell :
+       this->void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_void_fraction.reinit(cell);
+
+          local_matrix_void_fraction = 0;
+          local_rhs_void_fraction    = 0;
+
+          double particles_volume_in_cell = 0;
+
+          // Loop over particles in cell
+          // Begin and end iterator for particles in cell
+          const auto pic = particle_handler.particles_in_cell(cell);
+          for (auto &particle : pic)
+            {
+              auto particle_properties = particle.get_properties();
+              particles_volume_in_cell +=
+                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                (2 * dim);
+            }
+          double cell_volume = cell->measure();
+
+          // Calculate cell void fraction
+          double cell_void_fraction =
+            (cell_volume - particles_volume_in_cell) / cell_volume;
+
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                {
+                  // fe_values_void_fraction.get_function_values(
+                  //  nodal_void_fraction_relevant, phi_vf);
+                  phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
+                }
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  // Matrix assembly
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      local_matrix_void_fraction(i, j) +=
+                        (phi_vf[j] * phi_vf[i]) *
+                        fe_values_void_fraction.JxW(q);
+                    }
+                  local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
+                                                fe_values_void_fraction.JxW(q);
+                }
+            }
+          cell->get_dof_indices(local_dof_indices);
+          void_fraction_constraints.distribute_local_to_global(
+            local_matrix_void_fraction,
+            local_rhs_void_fraction,
+            local_dof_indices,
+            system_matrix_void_fraction,
+            system_rhs_void_fraction);
+        }
+    }
+  system_matrix_void_fraction.compress(VectorOperation::add);
+  system_rhs_void_fraction.compress(VectorOperation::add);
+}
+template <int dim>
+void
+GLSVANSSolver<dim>::solve_L2_system_void_fraction()
+{
+  // Solve the L2 projection system
+  const double linear_solver_tolerance = 1e-15;
+  // std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
+  //         absolute_residual);
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Tolerance of iterative solver is : "
+                  << linear_solver_tolerance << std::endl;
+    }
+
+  const IndexSet locally_owned_dofs_voidfraction =
+    void_fraction_dof_handler.locally_owned_dofs();
+
+  TrilinosWrappers::MPI::Vector completely_distributed_solution(
+    locally_owned_dofs_voidfraction, this->mpi_communicator);
+
+
+  SolverControl solver_control(
+    this->simulation_parameters.linear_solver.max_iterations,
+    linear_solver_tolerance,
+    true,
+    true);
+
+  TrilinosWrappers::SolverCG solver(solver_control);
+
+  TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+
+  //**********************************************
+  // Trillinos Wrapper ILU Preconditioner
+  //*********************************************
+  const double ilu_fill =
+    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  const double ilu_atol =
+    this->simulation_parameters.linear_solver.ilu_precond_atol;
+  const double ilu_rtol =
+    this->simulation_parameters.linear_solver.ilu_precond_rtol;
+
+  TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
+    ilu_fill, ilu_atol, ilu_rtol, 0);
+
+  ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
+
+  ilu_preconditioner->initialize(system_matrix_void_fraction,
+                                 preconditionerOptions);
+
+  solver.solve(system_matrix_void_fraction,
+               completely_distributed_solution,
+               system_rhs_void_fraction,
+               *ilu_preconditioner);
+
+  if (this->simulation_parameters.linear_solver.verbosity !=
+      Parameters::Verbosity::quiet)
+    {
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
+                  << " steps " << std::endl;
+    }
+
+  void_fraction_constraints.distribute(completely_distributed_solution);
+  nodal_void_fraction_relevant = completely_distributed_solution;
+}
+
+
 
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
@@ -257,6 +512,16 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<1, dim>> present_void_fraction_gradients(n_q_points);
 
   Tensor<1, dim> force;
+  //----------------------------------
+  // Variables for drag calculation
+  //----------------------------------
+  double         reference_area;
+  double         re;
+  double         c_d;
+  Tensor<1, dim> particle_velocity;
+  Tensor<1, dim> relative_velocity;
+  Tensor<1, dim> velocity;
+  Tensor<1, dim> p_velocity;
 
   // Velocity dependent source term
   //----------------------------------
@@ -768,11 +1033,129 @@ GLSVANSSolver<dim>::assembleGLS()
                     }
                 }
             }
+        }
+      //***********************************************************************
+      // Addition of particle dependent forces (drag)
+      //***********************************************************************
+
+      if (cell->is_locally_owned())
+        {
+          if (this->simulation_parameters.void_fraction->mode ==
+              Parameters::VoidFractionMode::dem)
+            {
+              fe_values.reinit(cell);
+
+              if (dim == 2)
+                h = std::sqrt(4. * cell->measure() / M_PI) /
+                    this->velocity_fem_degree;
+              else if (dim == 3)
+                h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                    this->velocity_fem_degree;
+
+              const auto &dh_cell =
+                typename DoFHandler<dim>::cell_iterator(*cell,
+                                                        &this->dof_handler);
+              dh_cell->get_dof_indices(local_dof_indices);
+
+              // Loop over particles in cell
+              // Begin and end iterator for particles in cell
+              const auto pic = particle_handler.particles_in_cell(cell);
+              for (auto &particle : pic)
+                {
+                  auto particle_properties = particle.get_properties();
+
+                  // Reference location of the particle
+                  const auto &reference_location =
+                    particle.get_reference_location();
+
+                  velocity   = 0;
+                  p_velocity = 0;
+
+                  // Reference area for drag coefficient calculation
+                  reference_area =
+                    M_PI *
+                    pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4;
+
+                  // Stock the values of particle velocity in a
+                  // tensor
+
+                  particle_velocity[0] =
+                    particle_properties[DEM::PropertiesIndex::v_x];
+                  particle_velocity[1] =
+                    particle_properties[DEM::PropertiesIndex::v_y];
+                  if (dim == 3)
+                    particle_velocity[2] =
+                      particle_properties[DEM::PropertiesIndex::v_z];
+
+
+                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
+                    {
+                      const auto comp_k =
+                        this->fe->system_to_component_index(k).first;
+                      if (comp_k < dim)
+                        {
+                          auto &evaluation_point = this->evaluation_point;
+
+                          velocity[comp_k] +=
+                            evaluation_point[local_dof_indices[k]] *
+                            this->fe->shape_value(k, reference_location);
+                        }
+                    }
+
+                  relative_velocity = velocity - particle_velocity;
+
+                  // Particle's Reynolds number
+                  re = 1e-6 + relative_velocity.norm() *
+                                particle_properties[DEM::PropertiesIndex::dp] /
+                                viscosity;
+
+                  // Drag Coefficient (Modified form valied for Re_p
+                  // < 200,000)
+                  c_d = 24 / re + 0.44;
+
+
+                  // We loop over the column first to prevent
+                  // recalculation of the strong jacobian in the
+                  // inner loop
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      const auto comp_i =
+                        this->fe->system_to_component_index(i).first;
+                      // std::cout << "comp_i" << comp_i << std::endl;
+                      if (comp_i < dim)
+                        {
+                          for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                            {
+                              const auto comp_j =
+                                this->fe->system_to_component_index(j).first;
+                              // std::cout << "comp_j" << comp_j << std::endl;
+                              if (comp_i == comp_j)
+                                local_matrix(i, j) -=
+                                  0.5 * c_d * reference_area *
+                                  relative_velocity.norm() *
+                                  this->fe->shape_value(i, reference_location) *
+                                  this->fe->shape_value(j, reference_location);
+                            }
+
+                          local_rhs(i) +=
+                            0.5 * c_d * reference_area *
+                            relative_velocity.norm() *
+                            (velocity[comp_i] - p_velocity[comp_i]) *
+                            this->fe->shape_value(i, reference_location);
+                        }
+                    }
+                  //                  std::cout
+                  //                    << -0.5 * c_d * reference_area *
+                  //                    relative_velocity.norm() *
+                  //                         (velocity - p_velocity)
+                  //                    << std::endl;
+                }
+            }
 
           cell->get_dof_indices(local_dof_indices);
 
-          // The non-linear solver assumes that the nonzero constraints have
-          // already been applied to the solution
+          // The non-linear solver assumes that the nonzero
+          // constraints have already been applied to the solution
           const AffineConstraints<double> &constraints_used =
             this->zero_constraints;
           // initial_step ? nonzero_constraints : zero_constraints;
@@ -922,15 +1305,55 @@ GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
 template <int dim>
 void
+GLSVANSSolver<dim>::volume_conservation()
+{
+  const FiniteElement<dim> &fe = void_fraction_dof_handler.get_fe();
+  QGauss<dim>               quadrature_formula(2);
+  const MappingQ<dim>       mapping(fe.degree, false);
+  FEValues<dim>             fe_values_void_fraction(mapping,
+                                        this->fe_void_fraction,
+                                        quadrature_formula,
+                                        update_values |
+                                          update_quadrature_points |
+                                          update_JxW_values | update_gradients);
+  const unsigned int        n_q_points = quadrature_formula.size();
+
+
+  std::vector<double> present_void_fraction_values(n_q_points);
+  double              fluid_volume = 0;
+
+  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_values_void_fraction.reinit(cell);
+          fe_values_void_fraction.get_function_values(
+            nodal_void_fraction_relevant, present_void_fraction_values);
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              fluid_volume += present_void_fraction_values[q] *
+                              fe_values_void_fraction.JxW(q);
+            }
+        }
+    }
+  fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
+  // this->pcout << "Total of fluid is " << fluid_volume << std::endl;
+}
+
+template <int dim>
+void
 GLSVANSSolver<dim>::solve()
 {
   read_mesh_and_manifolds(
     this->triangulation,
     this->simulation_parameters.mesh,
     this->simulation_parameters.manifolds_parameters,
-    this->simulation_parameters.restart_parameters.restart,
+    this->simulation_parameters.restart_parameters.restart ||
+      this->simulation_parameters.void_fraction->read_dem == true,
     this->simulation_parameters.boundary_conditions);
 
+  if (this->simulation_parameters.void_fraction->read_dem == true)
+    read_dem();
   setup_dofs();
   calculate_void_fraction(this->simulation_control->get_current_time());
   this->set_initial_condition(
@@ -952,11 +1375,12 @@ GLSVANSSolver<dim>::solve()
         }
       this->postprocess(false);
       this->finish_time_step();
+      // To remove
+      volume_conservation();
     }
 
   this->finish_simulation();
 }
-
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library
 // is valid before we actually compile the solver This greatly helps with
