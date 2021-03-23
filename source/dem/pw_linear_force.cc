@@ -172,22 +172,24 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
+  double rp_sqrt = sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5);
+
   double normal_spring_constant =
-    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
+    1.0667 * rp_sqrt *
     this->effective_youngs_modulus[particle_type] *
     pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
          contact_info.normal_relative_velocity *
          contact_info.normal_relative_velocity /
-         (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
+         (rp_sqrt *
           this->effective_youngs_modulus[particle_type])),
         0.2);
   double tangential_spring_constant =
-    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
+    -1.0667 * rp_sqrt *
       this->effective_youngs_modulus[particle_type] *
       pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
-           (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
+           (rp_sqrt *
             this->effective_youngs_modulus[particle_type])),
           0.2) +
     DBL_MIN;
@@ -199,24 +201,17 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
                DBL_MIN)),
              2)));
 
-  // Calculation of normal force using spring and dashpot normal forces
-  Tensor<1, dim> spring_normal_force =
-    (normal_spring_constant * contact_info.normal_overlap) *
-    contact_info.normal_vector;
-  Tensor<1, dim> dashpot_normal_force =
-    (normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_vector;
-  Tensor<1, dim> normal_force = spring_normal_force - dashpot_normal_force;
+  // Calculation of normal force using spring and dashpot normal forces 
+  Tensor<1, dim> normal_force = (normal_spring_constant * contact_info.normal_overlap - normal_damping_constant * contact_info.normal_relative_velocity) *
+          contact_info.normal_vector;;
 
-  // Calculation of tangential force using spring and dashpot tangential
-  // forces
-  Tensor<1, dim> spring_tangential_force =
-    tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, dim> tangential_force = -spring_tangential_force;
+  // Calculation of tangential force
+  Tensor<1, dim> tangential_force = tangential_spring_constant * contact_info.tangential_overlap;
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *
     normal_force.norm();
+
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
@@ -226,7 +221,7 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
         coulomb_threshold * (tangential_force / tangential_force.norm());
 
       contact_info.tangential_overlap =
-        -tangential_force / (tangential_spring_constant + DBL_MIN);
+        tangential_force / (tangential_spring_constant + DBL_MIN);
     }
 
   // Calculation of torque
