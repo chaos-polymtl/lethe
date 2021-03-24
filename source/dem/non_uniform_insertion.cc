@@ -191,6 +191,7 @@ NonUniformInsertion<dim>::assign_insertion_points(
                            random_number_vector[particle_counter]) *
                             this->maximum_diameter;
                       }
+
                     insertion_positions.push_back(position);
                     particle_counter++;
                   }

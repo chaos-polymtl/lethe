@@ -175,22 +175,18 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
   double rp_sqrt = sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5);
 
   double normal_spring_constant =
-    1.0667 * rp_sqrt *
-    this->effective_youngs_modulus[particle_type] *
+    1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
     pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
          contact_info.normal_relative_velocity *
          contact_info.normal_relative_velocity /
-         (rp_sqrt *
-          this->effective_youngs_modulus[particle_type])),
+         (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
   double tangential_spring_constant =
-    -1.0667 * rp_sqrt *
-      this->effective_youngs_modulus[particle_type] *
+    -1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
       pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
-           (rp_sqrt *
-            this->effective_youngs_modulus[particle_type])),
+           (rp_sqrt * this->effective_youngs_modulus[particle_type])),
           0.2) +
     DBL_MIN;
   double normal_damping_constant = sqrt(
@@ -201,12 +197,16 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
                DBL_MIN)),
              2)));
 
-  // Calculation of normal force using spring and dashpot normal forces 
-  Tensor<1, dim> normal_force = (normal_spring_constant * contact_info.normal_overlap - normal_damping_constant * contact_info.normal_relative_velocity) *
-          contact_info.normal_vector;;
+  // Calculation of normal force using spring and dashpot normal forces
+  Tensor<1, dim> normal_force =
+    (normal_spring_constant * contact_info.normal_overlap -
+     normal_damping_constant * contact_info.normal_relative_velocity) *
+    contact_info.normal_vector;
+  ;
 
   // Calculation of tangential force
-  Tensor<1, dim> tangential_force = tangential_spring_constant * contact_info.tangential_overlap;
+  Tensor<1, dim> tangential_force =
+    tangential_spring_constant * contact_info.tangential_overlap;
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *

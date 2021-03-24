@@ -339,7 +339,7 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // forces. Since we need dashpot tangential force in the gross sliding again,
   // we define it as a separate variable
   Tensor<1, dim> dashpot_tangential_force =
-    (tangential_damping_constant * contact_info.tangential_relative_velocity);
+    tangential_damping_constant * contact_info.tangential_relative_velocity;
   tangential_force =
     (tangential_spring_constant * contact_info.tangential_overlap) +
     dashpot_tangential_force;
@@ -348,17 +348,19 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     this->effective_coefficient_of_friction[particle_one_type]
                                            [particle_two_type] *
     normal_force.norm();
+
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangnetial
       // force are limited to Coulumb's criterion
-      tangential_force =
-        coulomb_threshold * (tangential_force / tangential_force.norm());
-
       contact_info.tangential_overlap =
         (tangential_force - dashpot_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
+
+      tangential_force =
+        (tangential_spring_constant * contact_info.tangential_overlap) +
+        dashpot_tangential_force;
     }
 
   // Calculation of torque
