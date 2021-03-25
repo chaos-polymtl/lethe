@@ -38,11 +38,11 @@ template <int dim>
 class PPContactForce
 {
 public:
-  PPContactForce()
-  {}
+    PPContactForce()
+    {}
 
   virtual ~PPContactForce()
-  {}
+  {}  
 
   /**
    * Carries out the calculation of the contact force using the contact pair

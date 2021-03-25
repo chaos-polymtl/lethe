@@ -67,6 +67,25 @@ PPLinearForce<dim>::PPLinearForce(
             (rolling_friction_coefficient_i + rolling_friction_coefficient_j);
         }
     }
+
+  if (    dem_parameters.model_parameters.rolling_resistance_method ==
+      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::no_rolling_resistance_torque)
+    {
+      calculate_rolling_resistance_torque =
+        &PPLinearForce<dim>::no_rolling_resistance_torque;
+    }
+  else if (    dem_parameters.model_parameters.rolling_resistance_method ==
+               Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::constant_rolling_resistance_torque)
+    {
+      calculate_rolling_resistance_torque =
+        &PPLinearForce<dim>::constant_rolling_resistance_torque;
+    }
+  else if (    dem_parameters.model_parameters.rolling_resistance_method ==
+               Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::viscous_rolling_resistance_torque)
+    {
+      calculate_rolling_resistance_torque =
+        &PPLinearForce<dim>::viscous_rolling_resistance_torque;
+    }
 }
 
 template <int dim>
@@ -371,27 +390,11 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     }
 
   // Rolling resistance torque
-  // For calculation of rolling resistance torque, we need to obtain
-  // omega_ij using rotational velocities of particles one and two
-  Tensor<1, dim> particle_one_angular_velocity, particle_two_angular_velocity,
-    omega_ij, omega_ij_direction;
-  for (int d = 0; d < dim; ++d)
-    {
-      particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
-      particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
-    }
-
-  omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
-  double omega_ij_value = omega_ij.norm() + DBL_MIN;
-  omega_ij_direction    = omega_ij / omega_ij_value;
-
-  // Calculation of rolling resistance torque
-  rolling_resistance_torque =
-    -this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                    [particle_two_type] *
-    this->effective_radius * normal_force.norm() * omega_ij_direction;
+  rolling_resistance_torque = (this->*calculate_rolling_resistance_torque)(this->effective_radius, particle_one_properties,
+                                                              particle_two_properties,
+                                                              this->effective_coefficient_of_rolling_friction[particle_one_type][particle_two_type],
+                                                              normal_force.norm(),
+                                                             normal_unit_vector);
 }
 
 template class PPLinearForce<2>;

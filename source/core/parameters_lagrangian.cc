@@ -466,6 +466,12 @@ namespace Parameters
                           "Choosing particle-wall contact force model"
                           "Choices are <pw_linear|pw_nonlinear>.");
 
+        prm.declare_entry("rolling resistance torque method",
+                          "no_rolling_resistance_torque",
+                          Patterns::Selection("no_rolling_resistance_torque|constant_rolling_resistance_torque|viscous_rolling_resistance_torque"),
+                          "Choosing rolling resistance torque model"
+                          "Choices are <no_rolling_resistance_torque|constant_rolling_resistance_torque|viscous_rolling_resistance_torque>.");
+
         prm.declare_entry(
           "integration method",
           "velocity_verlet",
@@ -510,8 +516,6 @@ namespace Parameters
             throw(std::runtime_error("Invalid load-balance method "));
           }
 
-
-
         const std::string contact_search = prm.get("contact detection method");
         if (contact_search == "constant")
           {
@@ -527,8 +531,9 @@ namespace Parameters
           }
         else
           {
-            throw(std::runtime_error("Invalid insertion method "));
+            throw(std::runtime_error("Invalid contact detection method "));
           }
+
         neighborhood_threshold = prm.get_double("neighborhood threshold");
 
         const std::string ppcf =
@@ -552,6 +557,24 @@ namespace Parameters
           {
             throw(
               std::runtime_error("Invalid particle-wall contact force model "));
+          }
+
+        const std::string rolling_resistance_torque = prm.get("rolling resistance torque method");
+        if (rolling_resistance_torque == "no_rolling_resistance_torque")
+          {
+            rolling_resistance_method = RollingResistanceMethod::no_rolling_resistance_torque;
+          }
+        else if (rolling_resistance_torque == "constant_rolling_resistance_torque")
+          {
+            rolling_resistance_method = RollingResistanceMethod::constant_rolling_resistance_torque;
+          }
+        else if (rolling_resistance_torque == "viscous_rolling_resistance_torque")
+          {
+            rolling_resistance_method = RollingResistanceMethod::viscous_rolling_resistance_torque;
+          }
+        else
+          {
+            throw(std::runtime_error("Invalid rolling resistance toruqe method "));
           }
 
         const std::string integration = prm.get("integration method");

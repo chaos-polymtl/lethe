@@ -41,6 +41,7 @@ subsection model parameters
   set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
+  set rolling resistance torque method			 = constant_rolling_resistance_torque
   set integration method				 = velocity_verlet
 end
 
