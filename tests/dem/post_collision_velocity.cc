@@ -88,7 +88,9 @@ test(double coefficient_of_restitution)
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall = 0.1;
   dem_parameters.physical_properties.density[0]            = 2500;
-
+  dem_parameters.model_parameters.rolling_resistance_method =
+    Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+      constant_rolling_resistance_torque;
 
   // Initializing motion of boundaries
   Tensor<1, dim> translational_and_rotational_veclocity;

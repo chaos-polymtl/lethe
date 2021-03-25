@@ -82,26 +82,29 @@ PPNonLinearForce<dim>::PPNonLinearForce(
                     9.8696)});
         }
 
-    // Overriding rolling resistance torque model
-  if (    dem_parameters.model_parameters.rolling_resistance_method ==
-      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::no_rolling_resistance_torque)
-    {
-      calculate_rolling_resistance_torque =
-        &PPNonLinearForce<dim>::no_rolling_resistance_torque;
+      // Overriding rolling resistance torque model
+      if (dem_parameters.model_parameters.rolling_resistance_method ==
+          Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+            no_rolling_resistance_torque)
+        {
+          calculate_rolling_resistance_torque =
+            &PPNonLinearForce<dim>::no_rolling_resistance_torque;
+        }
+      else if (dem_parameters.model_parameters.rolling_resistance_method ==
+               Parameters::Lagrangian::ModelParameters::
+                 RollingResistanceMethod::constant_rolling_resistance_torque)
+        {
+          calculate_rolling_resistance_torque =
+            &PPNonLinearForce<dim>::constant_rolling_resistance_torque;
+        }
+      else if (dem_parameters.model_parameters.rolling_resistance_method ==
+               Parameters::Lagrangian::ModelParameters::
+                 RollingResistanceMethod::viscous_rolling_resistance_torque)
+        {
+          calculate_rolling_resistance_torque =
+            &PPNonLinearForce<dim>::viscous_rolling_resistance_torque;
+        }
     }
-  else if (    dem_parameters.model_parameters.rolling_resistance_method ==
-               Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::constant_rolling_resistance_torque)
-    {
-      calculate_rolling_resistance_torque =
-        &PPNonLinearForce<dim>::constant_rolling_resistance_torque;
-    }
-  else if (    dem_parameters.model_parameters.rolling_resistance_method ==
-               Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::viscous_rolling_resistance_torque)
-    {
-      calculate_rolling_resistance_torque =
-        &PPNonLinearForce<dim>::viscous_rolling_resistance_torque;
-    }
-}
 }
 
 template <int dim>
@@ -393,10 +396,14 @@ PPNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     }
 
   // Rolling resistance torque
- rolling_resistance_torque = (this->*calculate_rolling_resistance_torque)(this->effective_radius, particle_one_properties,
-                                     particle_two_properties,
-                                     this->effective_coefficient_of_rolling_friction[particle_one_type][particle_two_type],
-                                     normal_force.norm(), normal_unit_vector);
+  rolling_resistance_torque = (this->*calculate_rolling_resistance_torque)(
+    this->effective_radius,
+    particle_one_properties,
+    particle_two_properties,
+    this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                   [particle_two_type],
+    normal_force.norm(),
+    normal_unit_vector);
 }
 
 template class PPNonLinearForce<2>;

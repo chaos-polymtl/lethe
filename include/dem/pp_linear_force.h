@@ -46,12 +46,14 @@ using namespace dealii;
 template <int dim>
 class PPLinearForce : public PPContactForce<dim>
 {
-    using FuncPtrType = Tensor<1,dim> (PPLinearForce<dim>::*)(const double &,const ArrayView<const double> &,
-    const ArrayView<const double> &,
-    const double &,
-    const double &,
-    const Tensor<1,dim> &);
-    FuncPtrType calculate_rolling_resistance_torque;
+  using FuncPtrType =
+    Tensor<1, dim> (PPLinearForce<dim>::*)(const double &,
+                                           const ArrayView<const double> &,
+                                           const ArrayView<const double> &,
+                                           const double &,
+                                           const double &,
+                                           const Tensor<1, dim> &);
+  FuncPtrType calculate_rolling_resistance_torque;
 
 public:
   PPLinearForce<dim>(const DEMSolverParameters<dim> &dem_parameters);
@@ -85,48 +87,52 @@ public:
     std::unordered_map<types::particle_index, Tensor<1, dim>> &force) override;
 
 private:
-/**
- * @brief No rolling resistance torque model
- *
- * @param particle_one_properties Particle one properties
- * @param particle_two_properties Particle two properties
- * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
- * @param normal_force_norm Normal force norm
- *
- * @return rolling resistance torque
- */
-inline Tensor<1,dim>
-no_rolling_resistance_torque(const double &/*effective_r*/,const ArrayView<const double> &/*particle_one_properties*/,
-                                   const ArrayView<const double> &/*particle_two_properties*/,
-                                   const double &/*effective_rolling_friction_coefficient*/,
-                                   const double &/*normal_force_norm*/,
-                             const Tensor<1,dim> &/*normal_contact_vector*/)
-{
-  Tensor <1,dim > rolling_resistance;
-  rolling_resistance[0] = 0;
-  rolling_resistance[1] = 0;
-  rolling_resistance[2] = 0;
+  /**
+   * @brief No rolling resistance torque model
+   *
+   * @param particle_one_properties Particle one properties
+   * @param particle_two_properties Particle two properties
+   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
+   * @param normal_force_norm Normal force norm
+   *
+   * @return rolling resistance torque
+   */
+  inline Tensor<1, dim>
+  no_rolling_resistance_torque(
+    const double & /*effective_r*/,
+    const ArrayView<const double> & /*particle_one_properties*/,
+    const ArrayView<const double> & /*particle_two_properties*/,
+    const double & /*effective_rolling_friction_coefficient*/,
+    const double & /*normal_force_norm*/,
+    const Tensor<1, dim> & /*normal_contact_vector*/)
+  {
+    Tensor<1, dim> rolling_resistance;
+    rolling_resistance[0] = 0;
+    rolling_resistance[1] = 0;
+    rolling_resistance[2] = 0;
 
     return rolling_resistance;
-}
+  }
 
-/**
- * @brief Carries out calculation of the rolling resistance torque using the constant model
- *
- * @param particle_one_properties Particle one properties
- * @param particle_two_properties Particle two properties
- * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
- * @param normal_force_norm Normal force norm
- *
- * @return rolling resistance torque
- */
-inline Tensor<1,dim>
-constant_rolling_resistance_torque(const double &effective_r, const ArrayView<const double> &particle_one_properties,
-                                   const ArrayView<const double> &particle_two_properties,
-                                   const double &effective_rolling_friction_coefficient,
-                                   const double &normal_force_norm,
-                                   const Tensor<1,dim> &/*normal_contact_vector*/)
-{
+  /**
+   * @brief Carries out calculation of the rolling resistance torque using the constant model
+   *
+   * @param particle_one_properties Particle one properties
+   * @param particle_two_properties Particle two properties
+   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
+   * @param normal_force_norm Normal force norm
+   *
+   * @return rolling resistance torque
+   */
+  inline Tensor<1, dim>
+  constant_rolling_resistance_torque(
+    const double &                 effective_r,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    const double &                 effective_rolling_friction_coefficient,
+    const double &                 normal_force_norm,
+    const Tensor<1, dim> & /*normal_contact_vector*/)
+  {
     // For calculation of rolling resistance torque, we need to obtain
     // omega_ij using rotational velocities of particles one and two
     Tensor<1, dim> particle_one_angular_velocity, particle_two_angular_velocity,
@@ -143,30 +149,32 @@ constant_rolling_resistance_torque(const double &effective_r, const ArrayView<co
     omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
     // Calculation of rolling resistance torque
-    Tensor<1,dim> rolling_resistance_torque =
-      -effective_rolling_friction_coefficient *
-      effective_r * normal_force_norm * omega_ij_direction;
+    Tensor<1, dim> rolling_resistance_torque =
+      -effective_rolling_friction_coefficient * effective_r *
+      normal_force_norm * omega_ij_direction;
 
     return rolling_resistance_torque;
-}
+  }
 
-/**
- * @brief Carries out calculation of the rolling resistance torque using the viscous model
- *
- * @param particle_one_properties Particle one properties
- * @param particle_two_properties Particle two properties
- * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
- * @param normal_force_norm Normal force norm
- *
- * @return rolling resistance torque
- */
-inline Tensor<1,dim>
-viscous_rolling_resistance_torque(const double &effective_r, const ArrayView<const double> &particle_one_properties,
-                                   const ArrayView<const double> &particle_two_properties,
-                                   const double &effective_rolling_friction_coefficient,
-                                   const double &normal_force_norm,
-                                  const Tensor<1,dim> &normal_contact_vector)
-{
+  /**
+   * @brief Carries out calculation of the rolling resistance torque using the viscous model
+   *
+   * @param particle_one_properties Particle one properties
+   * @param particle_two_properties Particle two properties
+   * @param effective_rolling_friction_coefficient Effective rolling friction coefficient
+   * @param normal_force_norm Normal force norm
+   *
+   * @return rolling resistance torque
+   */
+  inline Tensor<1, dim>
+  viscous_rolling_resistance_torque(
+    const double &                 effective_r,
+    const ArrayView<const double> &particle_one_properties,
+    const ArrayView<const double> &particle_two_properties,
+    const double &                 effective_rolling_friction_coefficient,
+    const double &                 normal_force_norm,
+    const Tensor<1, dim> &         normal_contact_vector)
+  {
     // For calculation of rolling resistance torque, we need to obtain
     // omega_ij using rotational velocities of particles one and two
     Tensor<1, dim> particle_one_angular_velocity, particle_two_angular_velocity,
@@ -182,16 +190,21 @@ viscous_rolling_resistance_torque(const double &effective_r, const ArrayView<con
     omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
     omega_ij_direction = omega_ij / (omega_ij.norm() + DBL_MIN);
 
-    Tensor<1, dim> v_omega = cross_product_3d(particle_one_angular_velocity, particle_one_properties[DEM::PropertiesIndex::dp] * 0.5 * normal_contact_vector)
-            - cross_product_3d(particle_two_angular_velocity, particle_two_properties[DEM::PropertiesIndex::dp] * 0.5 * -normal_contact_vector);
+    Tensor<1, dim> v_omega =
+      cross_product_3d(particle_one_angular_velocity,
+                       particle_one_properties[DEM::PropertiesIndex::dp] * 0.5 *
+                         normal_contact_vector) -
+      cross_product_3d(particle_two_angular_velocity,
+                       particle_two_properties[DEM::PropertiesIndex::dp] * 0.5 *
+                         -normal_contact_vector);
 
     // Calculation of rolling resistance torque
-    Tensor<1,dim> rolling_resistance_torque =
-      -effective_rolling_friction_coefficient *
-      effective_r * normal_force_norm * v_omega.norm() * omega_ij_direction;
+    Tensor<1, dim> rolling_resistance_torque =
+      -effective_rolling_friction_coefficient * effective_r *
+      normal_force_norm * v_omega.norm() * omega_ij_direction;
 
     return rolling_resistance_torque;
-}
+  }
 
   /**
    * Carries out the calculation of the particle-particle linear contact

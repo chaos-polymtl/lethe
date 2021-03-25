@@ -79,6 +79,28 @@ PWNonLinearForce<dim>::PWNonLinearForce(
            (particle_rolling_friction_coefficient +
             wall_rolling_friction_coefficient)});
     }
+
+  if (dem_parameters.model_parameters.rolling_resistance_method ==
+      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+        no_rolling_resistance_torque)
+    {
+      calculate_rolling_resistance_torque =
+        &PWNonLinearForce<dim>::no_rolling_resistance_torque;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_rolling_resistance_torque)
+    {
+      calculate_rolling_resistance_torque =
+        &PWNonLinearForce<dim>::constant_rolling_resistance_torque;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_rolling_resistance_torque)
+    {
+      calculate_rolling_resistance_torque =
+        &PWNonLinearForce<dim>::viscous_rolling_resistance_torque;
+    }
 }
 
 template <int dim>
@@ -247,24 +269,12 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     }
 
   // Rolling resistance torque
-  // For calculation of rolling resistance torque, we need to obtain
-  // omega_ij using rotational velocities of particles one and two
-  Tensor<1, dim> angular_velocity, pw_angular_velocity;
-  // add rotation of wall *********************
-  for (int d = 0; d < dim; ++d)
-    {
-      angular_velocity[d] =
-        particle_properties[DEM::PropertiesIndex::omega_x + d];
-    }
-
-  double angular_velocity_value = angular_velocity.norm() + DBL_MIN;
-  pw_angular_velocity           = angular_velocity / angular_velocity_value;
-
-  // Calcualation of rolling resistance torque
   Tensor<1, dim> rolling_resistance_torque =
-    -this->effective_coefficient_of_rolling_friction[particle_type] *
-    (particle_properties[DEM::PropertiesIndex::dp] * 0.5) *
-    normal_force.norm() * pw_angular_velocity;
+    (this->*calculate_rolling_resistance_torque)(
+      particle_properties,
+      this->effective_coefficient_of_rolling_friction[particle_type],
+      normal_force.norm(),
+      contact_info.normal_vector);
 
   return std::make_tuple(normal_force,
                          tangential_force,
