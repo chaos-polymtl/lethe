@@ -97,11 +97,10 @@ private:
    * @return rolling resistance torque
    */
   inline Tensor<1, dim>
-  no_rolling_resistance_torque(
-    const ArrayView<const double> & /*particle_properties*/,
-    const double & /*effective_rolling_friction_coefficient*/,
-    const double & /*normal_force_norm*/,
-    const Tensor<1, dim> & /*normal_contact_vector*/)
+  no_resistance(const ArrayView<const double> & /*particle_properties*/,
+                const double & /*effective_rolling_friction_coefficient*/,
+                const double & /*normal_force_norm*/,
+                const Tensor<1, dim> & /*normal_contact_vector*/)
   {
     Tensor<1, dim> rolling_resistance;
     rolling_resistance[0] = 0;
@@ -122,11 +121,10 @@ private:
    * @return rolling resistance torque
    */
   inline Tensor<1, dim>
-  constant_rolling_resistance_torque(
-    const ArrayView<const double> &particle_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> & /*normal_contact_vector*/)
+  constant_resistance(const ArrayView<const double> &particle_properties,
+                      const double &effective_rolling_friction_coefficient,
+                      const double &normal_force_norm,
+                      const Tensor<1, dim> & /*normal_contact_vector*/)
   {
     // Getting the angular velocity of particle in the vector format
     Tensor<1, dim> angular_velocity;
@@ -170,11 +168,10 @@ private:
    * @return rolling resistance torque
    */
   inline Tensor<1, dim>
-  viscous_rolling_resistance_torque(
-    const ArrayView<const double> &particle_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> &         normal_contact_vector)
+  viscous_resistance(const ArrayView<const double> &particle_properties,
+                     const double &effective_rolling_friction_coefficient,
+                     const double &normal_force_norm,
+                     const Tensor<1, dim> &normal_contact_vector)
   {
     // Getting the angular velocity of particle in the vector format
     Tensor<1, dim> angular_velocity;

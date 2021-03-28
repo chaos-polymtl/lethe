@@ -98,13 +98,12 @@ private:
    * @return rolling resistance torque
    */
   inline Tensor<1, dim>
-  no_rolling_resistance_torque(
-    const double & /*effective_r*/,
-    const ArrayView<const double> & /*particle_one_properties*/,
-    const ArrayView<const double> & /*particle_two_properties*/,
-    const double & /*effective_rolling_friction_coefficient*/,
-    const double & /*normal_force_norm*/,
-    const Tensor<1, dim> & /*normal_contact_vector*/)
+  no_resistance(const double & /*effective_r*/,
+                const ArrayView<const double> & /*particle_one_properties*/,
+                const ArrayView<const double> & /*particle_two_properties*/,
+                const double & /*effective_rolling_friction_coefficient*/,
+                const double & /*normal_force_norm*/,
+                const Tensor<1, dim> & /*normal_contact_vector*/)
   {
     Tensor<1, dim> rolling_resistance;
     rolling_resistance[0] = 0;
@@ -125,13 +124,12 @@ private:
    * @return rolling resistance torque
    */
   inline Tensor<1, dim>
-  constant_rolling_resistance_torque(
-    const double &                 effective_r,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> & /*normal_contact_vector*/)
+  constant_resistance(const double &                 effective_r,
+                      const ArrayView<const double> &particle_one_properties,
+                      const ArrayView<const double> &particle_two_properties,
+                      const double &effective_rolling_friction_coefficient,
+                      const double &normal_force_norm,
+                      const Tensor<1, dim> & /*normal_contact_vector*/)
   {
     // For calculation of rolling resistance torque, we need to obtain
     // omega_ij using rotational velocities of particles one and two
@@ -167,13 +165,12 @@ private:
    * @return rolling resistance torque
    */
   inline Tensor<1, dim>
-  viscous_rolling_resistance_torque(
-    const double &                 effective_r,
-    const ArrayView<const double> &particle_one_properties,
-    const ArrayView<const double> &particle_two_properties,
-    const double &                 effective_rolling_friction_coefficient,
-    const double &                 normal_force_norm,
-    const Tensor<1, dim> &         normal_contact_vector)
+  viscous_resistance(const double &                 effective_r,
+                     const ArrayView<const double> &particle_one_properties,
+                     const ArrayView<const double> &particle_two_properties,
+                     const double &effective_rolling_friction_coefficient,
+                     const double &normal_force_norm,
+                     const Tensor<1, dim> &normal_contact_vector)
   {
     // For calculation of rolling resistance torque, we need to obtain
     // omega_ij using rotational velocities of particles one and two

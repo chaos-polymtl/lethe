@@ -468,11 +468,11 @@ namespace Parameters
 
         prm.declare_entry(
           "rolling resistance torque method",
-          "no_rolling_resistance_torque",
+          "no_resistance",
           Patterns::Selection(
-            "no_rolling_resistance_torque|constant_rolling_resistance_torque|viscous_rolling_resistance_torque"),
+            "no_resistance|constant_resistance|viscous_resistance"),
           "Choosing rolling resistance torque model"
-          "Choices are <no_rolling_resistance_torque|constant_rolling_resistance_torque|viscous_rolling_resistance_torque>.");
+          "Choices are <no_resistance|constant_resistance|viscous_resistance>.");
 
         prm.declare_entry(
           "integration method",
@@ -563,22 +563,19 @@ namespace Parameters
 
         const std::string rolling_resistance_torque =
           prm.get("rolling resistance torque method");
-        if (rolling_resistance_torque == "no_rolling_resistance_torque")
+        if (rolling_resistance_torque == "no_resistance")
           {
-            rolling_resistance_method =
-              RollingResistanceMethod::no_rolling_resistance_torque;
+            rolling_resistance_method = RollingResistanceMethod::no_resistance;
           }
-        else if (rolling_resistance_torque ==
-                 "constant_rolling_resistance_torque")
+        else if (rolling_resistance_torque == "constant_resistance")
           {
             rolling_resistance_method =
-              RollingResistanceMethod::constant_rolling_resistance_torque;
+              RollingResistanceMethod::constant_resistance;
           }
-        else if (rolling_resistance_torque ==
-                 "viscous_rolling_resistance_torque")
+        else if (rolling_resistance_torque == "viscous_resistance")
           {
             rolling_resistance_method =
-              RollingResistanceMethod::viscous_rolling_resistance_torque;
+              RollingResistanceMethod::viscous_resistance;
           }
         else
           {

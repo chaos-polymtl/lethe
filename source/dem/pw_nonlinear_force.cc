@@ -52,7 +52,8 @@ PWNonLinearForce<dim>::PWNonLinearForce(
            (wall_youngs_modulus *
               (1 - particle_poisson_ratio * particle_poisson_ratio) +
             particle_youngs_modulus *
-              (1 - wall_poisson_ratio * wall_poisson_ratio))});
+              (1 - wall_poisson_ratio * wall_poisson_ratio) +
+            DBL_MIN)});
 
       this->effective_shear_modulus.insert(
         {i,
@@ -60,46 +61,49 @@ PWNonLinearForce<dim>::PWNonLinearForce(
            ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
              (1 + particle_poisson_ratio)) +
             (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
-             (1 + wall_poisson_ratio)))});
+             (1 + wall_poisson_ratio)) +
+            DBL_MIN)});
 
       this->effective_coefficient_of_restitution.insert(
         {i,
          2 * particle_restitution_coefficient * wall_restitution_coefficient /
-           (particle_restitution_coefficient + wall_restitution_coefficient)});
+           (particle_restitution_coefficient + wall_restitution_coefficient +
+            DBL_MIN)});
 
       this->effective_coefficient_of_friction.insert(
         {i,
          2 * particle_friction_coefficient * wall_friction_coefficient /
-           (particle_friction_coefficient + wall_friction_coefficient)});
+           (particle_friction_coefficient + wall_friction_coefficient +
+            DBL_MIN)});
 
       this->effective_coefficient_of_rolling_friction.insert(
         {i,
          2 * particle_rolling_friction_coefficient *
            wall_rolling_friction_coefficient /
            (particle_rolling_friction_coefficient +
-            wall_rolling_friction_coefficient)});
+            wall_rolling_friction_coefficient + DBL_MIN)});
     }
 
   if (dem_parameters.model_parameters.rolling_resistance_method ==
       Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-        no_rolling_resistance_torque)
+        no_resistance)
     {
       calculate_rolling_resistance_torque =
-        &PWNonLinearForce<dim>::no_rolling_resistance_torque;
+        &PWNonLinearForce<dim>::no_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             constant_rolling_resistance_torque)
+             constant_resistance)
     {
       calculate_rolling_resistance_torque =
-        &PWNonLinearForce<dim>::constant_rolling_resistance_torque;
+        &PWNonLinearForce<dim>::constant_resistance;
     }
   else if (dem_parameters.model_parameters.rolling_resistance_method ==
            Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-             viscous_rolling_resistance_torque)
+             viscous_resistance)
     {
       calculate_rolling_resistance_torque =
-        &PWNonLinearForce<dim>::viscous_rolling_resistance_torque;
+        &PWNonLinearForce<dim>::viscous_resistance;
     }
 }
 

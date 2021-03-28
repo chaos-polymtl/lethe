@@ -198,9 +198,9 @@ namespace Parameters
       // Rolling resistance torque method
       enum class RollingResistanceMethod
       {
-        no_rolling_resistance_torque,
-        constant_rolling_resistance_torque,
-        viscous_rolling_resistance_torque
+        no_resistance,
+        constant_resistance,
+        viscous_resistance
       } rolling_resistance_method;
 
       // Choosing integration method

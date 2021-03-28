@@ -44,7 +44,8 @@ PPNonLinearForce<dim>::PPNonLinearForce(
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
             ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)));
+             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)) +
+             DBL_MIN);
 
           this->effective_shear_modulus[i].insert(
             {j,
@@ -52,24 +53,26 @@ PPNonLinearForce<dim>::PPNonLinearForce(
                (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
                       (1 + poisson_ratio_i)) +
                      (youngs_modulus_i * (2 - poisson_ratio_j) *
-                      (1 + poisson_ratio_j))))});
+                      (1 + poisson_ratio_j))) +
+                DBL_MIN)});
 
           this->effective_coefficient_of_restitution[i].insert(
             {j,
              2 * restitution_coefficient_i * restitution_coefficient_j /
-               (restitution_coefficient_i + restitution_coefficient_j)});
+               (restitution_coefficient_i + restitution_coefficient_j +
+                DBL_MIN)});
 
           this->effective_coefficient_of_friction[i].insert(
             {j,
              2 * friction_coefficient_i * friction_coefficient_j /
-               (friction_coefficient_i + friction_coefficient_j)});
+               (friction_coefficient_i + friction_coefficient_j + DBL_MIN)});
 
           this->effective_coefficient_of_rolling_friction[i].insert(
             {j,
              2 * rolling_friction_coefficient_i *
                rolling_friction_coefficient_j /
                (rolling_friction_coefficient_i +
-                rolling_friction_coefficient_j)});
+                rolling_friction_coefficient_j + DBL_MIN)});
 
           double restitution_coefficient_particle_log =
             std::log(this->effective_coefficient_of_restitution[i][j]);
@@ -85,24 +88,24 @@ PPNonLinearForce<dim>::PPNonLinearForce(
       // Overriding rolling resistance torque model
       if (dem_parameters.model_parameters.rolling_resistance_method ==
           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
-            no_rolling_resistance_torque)
+            no_resistance)
         {
           calculate_rolling_resistance_torque =
-            &PPNonLinearForce<dim>::no_rolling_resistance_torque;
+            &PPNonLinearForce<dim>::no_resistance;
         }
       else if (dem_parameters.model_parameters.rolling_resistance_method ==
                Parameters::Lagrangian::ModelParameters::
-                 RollingResistanceMethod::constant_rolling_resistance_torque)
+                 RollingResistanceMethod::constant_resistance)
         {
           calculate_rolling_resistance_torque =
-            &PPNonLinearForce<dim>::constant_rolling_resistance_torque;
+            &PPNonLinearForce<dim>::constant_resistance;
         }
       else if (dem_parameters.model_parameters.rolling_resistance_method ==
                Parameters::Lagrangian::ModelParameters::
-                 RollingResistanceMethod::viscous_rolling_resistance_torque)
+                 RollingResistanceMethod::viscous_resistance)
         {
           calculate_rolling_resistance_torque =
-            &PPNonLinearForce<dim>::viscous_rolling_resistance_torque;
+            &PPNonLinearForce<dim>::viscous_resistance;
         }
     }
 }

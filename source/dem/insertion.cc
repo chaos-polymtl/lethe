@@ -80,7 +80,7 @@ Insertion<dim>::assign_particle_properties(
       double omega_x = 0.;
       double omega_y = 0.;
       double omega_z = 0.;
-      double mass    = density * (1.3333 * M_PI * (diameter * 0.5) *
+      double mass    = density * (4. / 3. * M_PI * (diameter * 0.5) *
                                (diameter * 0.5) * (diameter * 0.5));
 
       std::vector<double> properties_of_one_particle{
