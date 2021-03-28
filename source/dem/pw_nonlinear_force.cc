@@ -52,7 +52,8 @@ PWNonLinearForce<dim>::PWNonLinearForce(
            (wall_youngs_modulus *
               (1 - particle_poisson_ratio * particle_poisson_ratio) +
             particle_youngs_modulus *
-              (1 - wall_poisson_ratio * wall_poisson_ratio))});
+              (1 - wall_poisson_ratio * wall_poisson_ratio) +
+            DBL_MIN)});
 
       this->effective_shear_modulus.insert(
         {i,
@@ -60,24 +61,49 @@ PWNonLinearForce<dim>::PWNonLinearForce(
            ((2 * wall_youngs_modulus * (2 - particle_poisson_ratio) *
              (1 + particle_poisson_ratio)) +
             (2 * particle_youngs_modulus * (2 - wall_poisson_ratio) *
-             (1 + wall_poisson_ratio)))});
+             (1 + wall_poisson_ratio)) +
+            DBL_MIN)});
 
       this->effective_coefficient_of_restitution.insert(
         {i,
          2 * particle_restitution_coefficient * wall_restitution_coefficient /
-           (particle_restitution_coefficient + wall_restitution_coefficient)});
+           (particle_restitution_coefficient + wall_restitution_coefficient +
+            DBL_MIN)});
 
       this->effective_coefficient_of_friction.insert(
         {i,
          2 * particle_friction_coefficient * wall_friction_coefficient /
-           (particle_friction_coefficient + wall_friction_coefficient)});
+           (particle_friction_coefficient + wall_friction_coefficient +
+            DBL_MIN)});
 
       this->effective_coefficient_of_rolling_friction.insert(
         {i,
          2 * particle_rolling_friction_coefficient *
            wall_rolling_friction_coefficient /
            (particle_rolling_friction_coefficient +
-            wall_rolling_friction_coefficient)});
+            wall_rolling_friction_coefficient + DBL_MIN)});
+    }
+
+  if (dem_parameters.model_parameters.rolling_resistance_method ==
+      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+        no_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PWNonLinearForce<dim>::no_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PWNonLinearForce<dim>::constant_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PWNonLinearForce<dim>::viscous_resistance;
     }
 }
 
@@ -124,6 +150,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
           // projected vector, the particle-wall distance is calculated
           Tensor<1, dim> projected_vector =
             this->find_projection(point_to_particle_vector, normal_vector);
+
           double normal_overlap =
             ((particle_properties[DEM::PropertiesIndex::dp]) / 2) -
             (projected_vector.norm());
@@ -159,9 +186,9 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             }
           else
             {
+              contact_information.normal_overlap = 0;
               for (int d = 0; d < dim; ++d)
                 {
-                  contact_information.normal_overlap        = 0;
                   contact_information.tangential_overlap[d] = 0;
                 }
             }
@@ -182,45 +209,40 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
   // Calculation of model parameters (beta, sn and st). These values
   // are used to consider non-linear relation of the contact force to
   // the normal overlap
-  double model_parameter_beta =
-    log(this->effective_coefficient_of_restitution[particle_type]) /
-    sqrt(
-      pow(log(this->effective_coefficient_of_restitution[particle_type]), 2) +
-      9.8696);
-  double model_parameter_sn =
-    2 * this->effective_youngs_modulus[particle_type] *
-    sqrt(particle_properties[DEM::PropertiesIndex::dp] *
+  double radius_times_overlap_sqrt =
+    sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5 *
          contact_info.normal_overlap);
+  double log_coeff_restitution =
+    log(this->effective_coefficient_of_restitution[particle_type]);
+  double model_parameter_beta =
+    log_coeff_restitution /
+    sqrt((log_coeff_restitution * log_coeff_restitution) + 9.8696);
+  double model_parameter_sn = 2 *
+                              this->effective_youngs_modulus[particle_type] *
+                              radius_times_overlap_sqrt;
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle and wall properties
   double normal_spring_constant =
     1.3333 * this->effective_youngs_modulus[particle_type] *
-    sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
-         contact_info.normal_overlap);
+    radius_times_overlap_sqrt;
   double normal_damping_constant =
-    -1.8257 * model_parameter_beta *
+    1.8257 * model_parameter_beta *
     sqrt(model_parameter_sn * particle_properties[DEM::PropertiesIndex::mass]);
   double tangential_spring_constant =
-    8 * this->effective_shear_modulus[particle_type] *
-      sqrt(particle_properties[DEM::PropertiesIndex::dp] / 2 *
-           contact_info.normal_overlap) +
+    -8 * this->effective_shear_modulus[particle_type] *
+      radius_times_overlap_sqrt +
     DBL_MIN;
 
   // Calculation of normal force using spring and dashpot normal forces
-  Tensor<1, dim> spring_normal_force =
-    (normal_spring_constant * contact_info.normal_overlap) *
+  Tensor<1, dim> normal_force =
+    (normal_spring_constant * contact_info.normal_overlap +
+     normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
-  Tensor<1, dim> dashpot_normal_force =
-    (normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_vector;
-  Tensor<1, dim> normal_force = spring_normal_force - dashpot_normal_force;
 
-  // Calculation of tangential force using spring and dashpot tangential
-  // forces
-  Tensor<1, dim> spring_tangential_force =
+  // Calculation of tangential force
+  Tensor<1, dim> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, dim> tangential_force = -spring_tangential_force;
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *
@@ -235,7 +257,7 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
         coulomb_threshold * (tangential_force / tangential_force.norm());
 
       contact_info.tangential_overlap =
-        -tangential_force / (tangential_spring_constant + DBL_MIN);
+        tangential_force / (tangential_spring_constant + DBL_MIN);
     }
 
   // Calculation of torque
@@ -251,24 +273,12 @@ PWNonLinearForce<dim>::calculate_nonlinear_contact_force_and_torque(
     }
 
   // Rolling resistance torque
-  // For calculation of rolling resistance torque, we need to obtain
-  // omega_ij using rotational velocities of particles one and two
-  Tensor<1, dim> angular_velocity, pw_angular_velocity;
-
-  for (int d = 0; d < dim; ++d)
-    {
-      angular_velocity[d] =
-        particle_properties[DEM::PropertiesIndex::omega_x + d];
-    }
-
-  double angular_velocity_value = angular_velocity.norm() + DBL_MIN;
-  pw_angular_velocity           = angular_velocity / angular_velocity_value;
-
-  // Calcualation of rolling resistance torque
   Tensor<1, dim> rolling_resistance_torque =
-    -this->effective_coefficient_of_rolling_friction[particle_type] *
-    ((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
-    normal_force.norm() * pw_angular_velocity;
+    (this->*calculate_rolling_resistance_torque)(
+      particle_properties,
+      this->effective_coefficient_of_rolling_friction[particle_type],
+      normal_force.norm(),
+      contact_info.normal_vector);
 
   return std::make_tuple(normal_force,
                          tangential_force,

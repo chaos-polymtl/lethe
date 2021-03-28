@@ -44,28 +44,52 @@ PPLinearForce<dim>::PPLinearForce(
           this->effective_youngs_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
             ((youngs_modulus_j * (1 - poisson_ratio_i * poisson_ratio_i)) +
-             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)));
+             (youngs_modulus_i * (1 - poisson_ratio_j * poisson_ratio_j)) +
+             DBL_MIN);
 
           this->effective_shear_modulus[i][j] =
             (youngs_modulus_i * youngs_modulus_j) /
             (2 * ((youngs_modulus_j * (2 - poisson_ratio_i) *
                    (1 + poisson_ratio_i)) +
                   (youngs_modulus_i * (2 - poisson_ratio_j) *
-                   (1 + poisson_ratio_j))));
+                   (1 + poisson_ratio_j))) +
+             DBL_MIN);
 
           this->effective_coefficient_of_restitution[i][j] =
             2 * restitution_coefficient_i * restitution_coefficient_j /
-            (restitution_coefficient_i + restitution_coefficient_j);
+            (restitution_coefficient_i + restitution_coefficient_j + DBL_MIN);
 
           this->effective_coefficient_of_friction[i][j] =
             2 * friction_coefficient_i * friction_coefficient_j /
-            (friction_coefficient_i + friction_coefficient_j);
+            (friction_coefficient_i + friction_coefficient_j + DBL_MIN);
 
           this->effective_coefficient_of_rolling_friction[i][j] =
             2 * rolling_friction_coefficient_i *
             rolling_friction_coefficient_j /
-            (rolling_friction_coefficient_i + rolling_friction_coefficient_j);
+            (rolling_friction_coefficient_i + rolling_friction_coefficient_j +
+             DBL_MIN);
         }
+    }
+
+  if (dem_parameters.model_parameters.rolling_resistance_method ==
+      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+        no_resistance)
+    {
+      calculate_rolling_resistance_torque = &PPLinearForce<dim>::no_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PPLinearForce<dim>::constant_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PPLinearForce<dim>::viscous_resistance;
     }
 }
 
@@ -334,7 +358,7 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
   // forces. Since we need dashpot tangential force in the gross sliding again,
   // we define it as a separate variable
   Tensor<1, dim> dashpot_tangential_force =
-    (tangential_damping_constant * contact_info.tangential_relative_velocity);
+    tangential_damping_constant * contact_info.tangential_relative_velocity;
   tangential_force =
     (tangential_spring_constant * contact_info.tangential_overlap) +
     dashpot_tangential_force;
@@ -343,17 +367,20 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     this->effective_coefficient_of_friction[particle_one_type]
                                            [particle_two_type] *
     normal_force.norm();
+
+
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
       // Gross sliding occurs and the tangential overlap and tangnetial
       // force are limited to Coulumb's criterion
-      tangential_force =
-        coulomb_threshold * (tangential_force / tangential_force.norm());
-
       contact_info.tangential_overlap =
         (tangential_force - dashpot_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
+
+      tangential_force =
+        (tangential_spring_constant * contact_info.tangential_overlap) +
+        dashpot_tangential_force;
     }
 
   // Calculation of torque
@@ -368,27 +395,14 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
     }
 
   // Rolling resistance torque
-  // For calculation of rolling resistance torque, we need to obtain
-  // omega_ij using rotational velocities of particles one and two
-  Tensor<1, dim> particle_one_angular_velocity, particle_two_angular_velocity,
-    omega_ij, omega_ij_direction;
-  for (int d = 0; d < dim; ++d)
-    {
-      particle_one_angular_velocity[d] =
-        particle_one_properties[DEM::PropertiesIndex::omega_x + d];
-      particle_two_angular_velocity[d] =
-        particle_two_properties[DEM::PropertiesIndex::omega_x + d];
-    }
-
-  omega_ij = particle_one_angular_velocity - particle_two_angular_velocity;
-  double omega_ij_value = omega_ij.norm() + DBL_MIN;
-  omega_ij_direction    = omega_ij / omega_ij_value;
-
-  // Calculation of rolling resistance torque
-  rolling_resistance_torque =
-    -this->effective_coefficient_of_rolling_friction[particle_one_type]
-                                                    [particle_two_type] *
-    this->effective_radius * normal_force.norm() * omega_ij_direction;
+  rolling_resistance_torque = (this->*calculate_rolling_resistance_torque)(
+    this->effective_radius,
+    particle_one_properties,
+    particle_two_properties,
+    this->effective_coefficient_of_rolling_friction[particle_one_type]
+                                                   [particle_two_type],
+    normal_force.norm(),
+    normal_unit_vector);
 }
 
 template class PPLinearForce<2>;
