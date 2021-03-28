@@ -195,6 +195,14 @@ namespace Parameters
         pw_nonlinear
       } pw_contact_force_method;
 
+      // Rolling resistance torque method
+      enum class RollingResistanceMethod
+      {
+        no_resistance,
+        constant_resistance,
+        viscous_resistance
+      } rolling_resistance_method;
+
       // Choosing integration method
       enum class IntegrationMethod
       {

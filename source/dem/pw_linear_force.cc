@@ -52,24 +52,48 @@ PWLinearForce<dim>::PWLinearForce(
         (wall_youngs_modulus *
            (1 - particle_poisson_ratio * particle_poisson_ratio) +
          particle_youngs_modulus *
-           (1 - wall_poisson_ratio * wall_poisson_ratio));
+           (1 - wall_poisson_ratio * wall_poisson_ratio) +
+         DBL_MIN);
 
       this->effective_coefficient_of_restitution.insert(
         {i,
          2 * particle_restitution_coefficient * wall_restitution_coefficient /
-           (particle_restitution_coefficient + wall_restitution_coefficient)});
+           (particle_restitution_coefficient + wall_restitution_coefficient +
+            DBL_MIN)});
 
       this->effective_coefficient_of_friction.insert(
         {i,
          2 * particle_friction_coefficient * wall_friction_coefficient /
-           (particle_friction_coefficient + wall_friction_coefficient)});
+           (particle_friction_coefficient + wall_friction_coefficient +
+            DBL_MIN)});
 
       this->effective_coefficient_of_rolling_friction.insert(
         {i,
          2 * particle_rolling_friction_coefficient *
            wall_rolling_friction_coefficient /
            (particle_rolling_friction_coefficient +
-            wall_rolling_friction_coefficient)});
+            wall_rolling_friction_coefficient + DBL_MIN)});
+    }
+
+  if (dem_parameters.model_parameters.rolling_resistance_method ==
+      Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+        no_resistance)
+    {
+      calculate_rolling_resistance_torque = &PWLinearForce<dim>::no_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             constant_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PWLinearForce<dim>::constant_resistance;
+    }
+  else if (dem_parameters.model_parameters.rolling_resistance_method ==
+           Parameters::Lagrangian::ModelParameters::RollingResistanceMethod::
+             viscous_resistance)
+    {
+      calculate_rolling_resistance_torque =
+        &PWLinearForce<dim>::viscous_resistance;
     }
 }
 
@@ -172,23 +196,21 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
 
   // Calculation of normal and tangential spring and dashpot constants
   // using particle properties
+  double rp_sqrt = sqrt(particle_properties[DEM::PropertiesIndex::dp] * 0.5);
+
   double normal_spring_constant =
-    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-    this->effective_youngs_modulus[particle_type] *
+    1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
     pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
          contact_info.normal_relative_velocity *
          contact_info.normal_relative_velocity /
-         (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-          this->effective_youngs_modulus[particle_type])),
+         (rp_sqrt * this->effective_youngs_modulus[particle_type])),
         0.2);
   double tangential_spring_constant =
-    1.0667 * sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-      this->effective_youngs_modulus[particle_type] *
+    -1.0667 * rp_sqrt * this->effective_youngs_modulus[particle_type] *
       pow((0.9375 * particle_properties[DEM::PropertiesIndex::mass] *
            contact_info.tangential_relative_velocity *
            contact_info.tangential_relative_velocity /
-           (sqrt((particle_properties[DEM::PropertiesIndex::dp] / 2)) *
-            this->effective_youngs_modulus[particle_type])),
+           (rp_sqrt * this->effective_youngs_modulus[particle_type])),
           0.2) +
     DBL_MIN;
   double normal_damping_constant = sqrt(
@@ -200,23 +222,20 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
              2)));
 
   // Calculation of normal force using spring and dashpot normal forces
-  Tensor<1, dim> spring_normal_force =
-    (normal_spring_constant * contact_info.normal_overlap) *
+  Tensor<1, dim> normal_force =
+    (normal_spring_constant * contact_info.normal_overlap -
+     normal_damping_constant * contact_info.normal_relative_velocity) *
     contact_info.normal_vector;
-  Tensor<1, dim> dashpot_normal_force =
-    (normal_damping_constant * contact_info.normal_relative_velocity) *
-    contact_info.normal_vector;
-  Tensor<1, dim> normal_force = spring_normal_force - dashpot_normal_force;
+  ;
 
-  // Calculation of tangential force using spring and dashpot tangential
-  // forces
-  Tensor<1, dim> spring_tangential_force =
+  // Calculation of tangential force
+  Tensor<1, dim> tangential_force =
     tangential_spring_constant * contact_info.tangential_overlap;
-  Tensor<1, dim> tangential_force = -spring_tangential_force;
 
   double coulomb_threshold =
     this->effective_coefficient_of_friction[particle_type] *
     normal_force.norm();
+
   // Check for gross sliding
   if (tangential_force.norm() > coulomb_threshold)
     {
@@ -226,7 +245,7 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
         coulomb_threshold * (tangential_force / tangential_force.norm());
 
       contact_info.tangential_overlap =
-        -tangential_force / (tangential_spring_constant + DBL_MIN);
+        tangential_force / (tangential_spring_constant + DBL_MIN);
     }
 
   // Calculation of torque
@@ -241,33 +260,13 @@ PWLinearForce<dim>::calculate_linear_contact_force_and_torque(
                          tangential_force);
     }
 
-  // Getting the angular velocity of particle in the vector format
-  Tensor<1, dim> angular_velocity;
-  for (int d = 0; d < dim; ++d)
-    {
-      angular_velocity[d] =
-        particle_properties[DEM::PropertiesIndex::omega_x + d];
-    }
-
-  // Calculation of particle-wall angular velocity (norm of the
-  // particle angular velocity)
-  Tensor<1, dim> pw_angular_velocity;
-  for (int d = 0; d < dim; ++d)
-    {
-      pw_angular_velocity[d] = 0;
-    }
-
-  double omega_value = angular_velocity.norm();
-  if (omega_value != 0)
-    {
-      pw_angular_velocity = angular_velocity / omega_value;
-    }
-
-  // Calcualation of rolling resistance torque
+  // Rolling resistance torque
   Tensor<1, dim> rolling_resistance_torque =
-    -this->effective_coefficient_of_rolling_friction[particle_type] *
-    ((particle_properties[DEM::PropertiesIndex::dp]) / 2) *
-    normal_force.norm() * pw_angular_velocity;
+    (this->*calculate_rolling_resistance_torque)(
+      particle_properties,
+      this->effective_coefficient_of_rolling_friction[particle_type],
+      normal_force.norm(),
+      contact_info.normal_vector);
 
   return std::make_tuple(normal_force,
                          tangential_force,
