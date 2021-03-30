@@ -39,8 +39,8 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       NSparam.parse(prm);
 
-      GLSVANSSolver<3> problem_2d(NSparam);
-      problem_2d.solve();
+      GLSVANSSolver<3> problem_3d(NSparam);
+      problem_3d.solve();
     }
   catch (std::exception &exc)
     {
