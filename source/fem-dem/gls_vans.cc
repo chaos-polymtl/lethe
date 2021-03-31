@@ -1386,3 +1386,4 @@ GLSVANSSolver<dim>::solve()
 // is valid before we actually compile the solver This greatly helps with
 // debugging
 template class GLSVANSSolver<2>;
+template class GLSVANSSolver<3>;
