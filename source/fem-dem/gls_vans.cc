@@ -1076,7 +1076,13 @@ GLSVANSSolver<dim>::assembleGLS()
                     M_PI *
                     pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4;
 
-                  // Stock the values of particle velocity in a
+                  // Particle volume
+                  const double particle_volume =
+                    M_PI *
+                    pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                    pow(2, dim);
+
+                  // Store the values of particle velocity in a
                   // tensor
 
                   particle_velocity[0] =
@@ -1105,7 +1111,7 @@ GLSVANSSolver<dim>::assembleGLS()
                   relative_velocity = velocity - particle_velocity;
 
                   // Particle's Reynolds number
-                  re = 1e-6 + relative_velocity.norm() *
+                  re = 1e-1 + relative_velocity.norm() *
                                 particle_properties[DEM::PropertiesIndex::dp] /
                                 viscosity;
 
@@ -1121,34 +1127,34 @@ GLSVANSSolver<dim>::assembleGLS()
                     {
                       const auto comp_i =
                         this->fe->system_to_component_index(i).first;
-                      // std::cout << "comp_i" << comp_i << std::endl;
                       if (comp_i < dim)
                         {
                           for (unsigned int j = 0; j < dofs_per_cell; ++j)
                             {
                               const auto comp_j =
                                 this->fe->system_to_component_index(j).first;
-                              // std::cout << "comp_j" << comp_j << std::endl;
                               if (comp_i == comp_j)
                                 local_matrix(i, j) -=
                                   0.5 * c_d * reference_area *
                                   relative_velocity.norm() *
                                   this->fe->shape_value(i, reference_location) *
-                                  this->fe->shape_value(j, reference_location);
+                                  this->fe->shape_value(j, reference_location) *
+                                  particle_volume;
                             }
 
                           local_rhs(i) +=
                             0.5 * c_d * reference_area *
                             relative_velocity.norm() *
                             (velocity[comp_i] - p_velocity[comp_i]) *
-                            this->fe->shape_value(i, reference_location);
+                            this->fe->shape_value(i, reference_location) *
+                            particle_volume;
                         }
                     }
-                  //                  std::cout
-                  //                    << -0.5 * c_d * reference_area *
-                  //                    relative_velocity.norm() *
-                  //                         (velocity - p_velocity)
-                  //                    << std::endl;
+                  // std::cout
+                  //   << -0.5 * c_d * reference_area * relative_velocity.norm()
+                  //   *
+                  //        (velocity - p_velocity)
+                  //   << std::endl;
                 }
             }
 
