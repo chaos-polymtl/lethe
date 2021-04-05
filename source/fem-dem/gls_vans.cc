@@ -1127,14 +1127,14 @@ GLSVANSSolver<dim>::assembleGLS()
                                 this->fe->system_to_component_index(j).first;
                               if (comp_i == comp_j)
                                 local_matrix(i, j) +=
-                                  density_inv * 0.5 * c_d * reference_area *
+                                  0.5 * c_d * reference_area *
                                   relative_velocity.norm() *
                                   this->fe->shape_value(i, reference_location) *
                                   this->fe->shape_value(j, reference_location);
                             }
 
                           local_rhs(i) -=
-                            density_inv * 0.5 * c_d * reference_area *
+                            0.5 * c_d * reference_area *
                             relative_velocity.norm() *
                             (velocity[comp_i] - p_velocity[comp_i]) *
                             this->fe->shape_value(i, reference_location);
