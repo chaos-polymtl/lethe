@@ -40,8 +40,8 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                     TimerOutput::summary,
                     TimerOutput::wall_times)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
-  , contact_detection_step(0)
-  , load_balance_step(0)
+  , contact_detection_step(true)
+  , load_balance_step(true)
   , checkpoint_step(true)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
@@ -280,7 +280,7 @@ template <int dim>
 inline bool
 DEMSolver<dim>::check_load_balance_dynamic()
 {
-  bool load_balance_step = 0;
+  bool load_balance_step = false;
   if (simulation_control->get_step_number() %
         parameters.model_parameters.dynamic_load_balance_check_frequency ==
       0)
