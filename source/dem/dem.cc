@@ -42,7 +42,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(0)
   , load_balance_step(0)
-  , checkpoint_step(0)
+  , checkpoint_step(true)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
@@ -681,7 +681,7 @@ DEMSolver<dim>::solve()
 
       update_moment_of_inertia(particle_handler, MOI);
 
-      checkpoint_step = 1;
+      checkpoint_step = true;
     }
 
   // Finding the smallest contact search frequency criterion between (smallest
@@ -728,7 +728,7 @@ DEMSolver<dim>::solve()
           contact_detection_step || checkpoint_step)
         {
           // Reset checkpoint step
-          checkpoint_step = 0;
+          checkpoint_step = false;
 
           particle_handler.sort_particles_into_subdomains_and_cells();
 

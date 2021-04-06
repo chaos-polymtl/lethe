@@ -278,7 +278,7 @@ private:
   Particles::ParticleHandler<dim, dim> particle_handler;
   unsigned int                         contact_detection_step;
   unsigned int                         load_balance_step;
-  unsigned int                         checkpoint_step;
+  bool                                 checkpoint_step;
   Tensor<1, dim>                       g;
   double                               triangulation_cell_diameter;
 
