@@ -42,6 +42,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , particle_handler(triangulation, mapping, DEM::get_number_properties())
   , contact_detection_step(0)
   , load_balance_step(0)
+  , checkpoint_step(0)
   , contact_detection_frequency(
       parameters.model_parameters.contact_detection_frequency)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
@@ -679,6 +680,8 @@ DEMSolver<dim>::solve()
                       particle_handler);
 
       update_moment_of_inertia(particle_handler, MOI);
+
+      checkpoint_step = 1;
     }
 
   // Finding the smallest contact search frequency criterion between (smallest
@@ -722,8 +725,11 @@ DEMSolver<dim>::solve()
 
       // Sort particles in cells
       if (particles_insertion_step || load_balance_step ||
-          contact_detection_step)
+          contact_detection_step || checkpoint_step)
         {
+          // Reset checkpoint step
+          checkpoint_step = 0;
+
           particle_handler.sort_particles_into_subdomains_and_cells();
 
           // We clear force and momentum every time we sort the particles
