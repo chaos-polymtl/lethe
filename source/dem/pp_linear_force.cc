@@ -375,7 +375,8 @@ PPLinearForce<dim>::calculate_linear_contact_force_and_torque(
       // Gross sliding occurs and the tangential overlap and tangnetial
       // force are limited to Coulumb's criterion
       contact_info.tangential_overlap =
-        (coulomb_threshold * (tangential_force / tangential_force.norm()) -
+        (coulomb_threshold *
+           (tangential_force / (tangential_force.norm() + DBL_MIN)) -
          dashpot_tangential_force) /
         (tangential_spring_constant + DBL_MIN);
 
