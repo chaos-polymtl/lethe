@@ -296,8 +296,9 @@ DEMSolver<dim>::check_load_balance_dynamic()
                             mpi_communicator);
 
       if ((maximum_particle_number_on_proc - minimum_particle_number_on_proc) >
-          parameters.model_parameters.load_balance_threshold *
-            (particle_handler.n_global_particles() / n_mpi_processes) || checkpoint_step)
+            parameters.model_parameters.load_balance_threshold *
+              (particle_handler.n_global_particles() / n_mpi_processes) ||
+          checkpoint_step)
         {
           load_balance();
           load_balance_step = true;
