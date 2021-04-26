@@ -47,7 +47,7 @@ namespace AnalyticalSolutions
 
     {
       prm.enter_subsection("uvwp");
-      velocity.declare_parameters(prm, dim);
+      uvwp.declare_parameters(prm, dim);
       if (dim == 2)
         prm.set("Function expression", "0; 0; 0;");
       if (dim == 3)
@@ -92,7 +92,7 @@ namespace AnalyticalSolutions
 
     {
       prm.enter_subsection("uvwp");
-      velocity.parse_parameters(prm);
+      uvwp.parse_parameters(prm);
       prm.leave_subsection();
     }
 

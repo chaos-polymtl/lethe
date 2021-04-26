@@ -49,8 +49,6 @@ class FreeSurface : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 public:
   /**
    * @brief FreeSurface - Base constructor.
-   * For now, shamelessly copied from heat_transfer.h.
-   * TODO see for generalization to simplex
    */
   FreeSurface<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
                    const SimulationParameters<dim> &p_simulation_parameters,
@@ -69,27 +67,28 @@ public:
     , solution_transfer_m2(dof_handler)
     , solution_transfer_m3(dof_handler)
   {
-    //#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
-    //    if (simulation_parameters.mesh.simplex)
-    //      {
-    //        // for simplex meshes
-    //        fe = std::make_shared<FE_SimplexP<dim>>(
-    //          simulation_parameters.fem_parameters.tracer_order);
-    //        mapping         = std::make_shared<MappingFE<dim>>(*fe);
-    //        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree
-    //        + 1);
-    //      }
-    //    else
-    //#endif
-    {
-      // Usual case, for quad/hex meshes
-      fe      = std::make_shared<FE_Q<dim>>(1);
-      mapping = std::make_shared<MappingQ<dim>>(
-        fe->degree, simulation_parameters.fem_parameters.qmapping_all);
-      cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
-      face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
-      error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
-    }
+#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
+    if (simulation_parameters.mesh.simplex)
+      {
+        // for simplex meshes
+        fe              = std::make_shared<FE_SimplexP<dim>>(1);
+        mapping         = std::make_shared<MappingFE<dim>>(*fe);
+        cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
+        face_quadrature =
+          std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
+        error_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 2);
+      }
+    else
+#endif
+      {
+        // Usual case, for quad/hex meshes
+        fe      = std::make_shared<FE_Q<dim>>(1);
+        mapping = std::make_shared<MappingQ<dim>>(
+          fe->degree, simulation_parameters.fem_parameters.qmapping_all);
+        cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
+        face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
+        error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
+      }
   }
 
   /**
@@ -217,9 +216,8 @@ public:
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   * NB : dof_handler and present_solution are already passed to the
-   * multiphysics interface at the end of the setup_dofs method
-   * //TODO See if they are necessary
+   * NB : dof_handler and present_solution are passed to the multiphysics
+   * interface at the end of the setup_dofs method
    */
   const DoFHandler<dim> &
   get_dof_handler() override

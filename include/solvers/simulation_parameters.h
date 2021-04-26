@@ -136,32 +136,6 @@ public:
     void_fraction->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
 
-    // Create output_folder if does not exist
-    //    if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
-    //      {
-    //        std::filesystem::create_directory(
-    //          simulation_control.output_folder.c_str());
-    //        //        _mkdir(simulation_control.output_folder.c_str());
-    //        std::cout << "Output folder created: "
-    //                  << simulation_control.output_folder << std::endl;
-    //      }
-
-    //    if (simulation_control.make_folder)
-    //      {
-    //        if (mkdir(simulation_control.output_folder.c_str(), 0777) == -1)
-    //          {
-    //            if (errno != EEXIST)
-    //              {
-    //                // if error other than "already exists"
-    //                std::cerr << "Could not create Output folder:  "
-    //                          << strerror(errno) << std::endl;
-    //              }
-    //          }
-    //        else
-    //          std::cout << "Output folder created: "
-    //                    << simulation_control.output_folder << std::endl;
-    //      }
-
     // Update filenames with the output_folder
     restart_parameters.filename =
       simulation_control.output_folder + restart_parameters.filename;
@@ -190,17 +164,10 @@ public:
       simulation_control.output_folder + nitsche->torque_output_name;
 
     // Check consistency of parameters parsed in different subsections
-    if (multiphysics.free_surface && physical_properties.number_fluids == 0)
+    if (multiphysics.free_surface && physical_properties.number_fluids != 2)
       {
-        std::cerr
-          << "--------------------------------" << std::endl
-          << "WARNING inconsistency in .prm : " << std::endl
-          << "    in subsection multiphysics, free surface = "
-          << multiphysics.free_surface << std::endl
-          << "    but in subsection physical properties, number of fluids = "
-          << physical_properties.number_fluids << std::endl
-          << "    -> change for number of fluids = 2" << std::endl
-          << "--------------------------------" << std::endl;
+        throw std::logic_error(
+          "Inconsistency in .prm!\n with free surface = true\n use: number of fluids = 2");
       }
   }
 };

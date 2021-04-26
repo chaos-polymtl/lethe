@@ -142,7 +142,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   torques_tables.resize(simulation_parameters.boundary_conditions.size);
 
   // Get the exact solution from the parser
-  exact_solution = &simulation_parameters.analytical_solution->velocity;
+  exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
   // If there is a forcing function, get it from the parser
   if (simulation_parameters.sourceTerm->source_term())

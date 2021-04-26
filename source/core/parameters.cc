@@ -59,11 +59,6 @@ namespace Parameters
                         Patterns::Integer(),
                         "Output frequency");
 
-      prm.declare_entry("make folder",
-                        "false",
-                        Patterns::Bool(),
-                        "Create output folder if does not exist");
-
       prm.declare_entry(
         "output boundaries",
         "false",
@@ -152,7 +147,6 @@ namespace Parameters
       output_name       = prm.get("output name");
       output_frequency  = prm.get_integer("output frequency");
       output_boundaries = prm.get_bool("output boundaries");
-      make_folder       = prm.get_bool("make folder");
 
       subdivision   = prm.get_integer("subdivision");
       group_files   = prm.get_integer("group files");
@@ -322,10 +316,13 @@ namespace Parameters
         // if the dynamic_viscosity is not given in prm
         dynamic_viscosity = density * viscosity;
       if (dynamic_viscosity != 0 && viscosity == 1)
-        // if the dynamic_viscosity is given in prm, and not the kinematic
-        // viscosity
-        viscosity = dynamic_viscosity / density;
-
+        { // if the dynamic_viscosity is given in prm, and not the kinematic
+          // viscosity
+          if (density == 0)
+            throw std::logic_error(
+              "Inconsistency in .prm!\n fluid density = 0");
+          viscosity = dynamic_viscosity / density;
+        }
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");

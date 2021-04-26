@@ -15,6 +15,9 @@
 
  *
  * Implementation of tracer as an auxiliary physics.
+ * Equation solved:
+ * dT/dt +  u * gradT = D * div(grad T) + f
+ * with T the tracer function, D the diffusivity and f the forcing
  *
  * Author: Bruno Blais, Polytechnique Montreal, 2020-
  */
@@ -212,9 +215,8 @@ public:
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   * NB : dof_handler and present_solution are already passed to the
-   * multiphysics interface at the end of the setup_dofs method
-   * //TODO Refactor
+   * NB : dof_handler and present_solution are passed to the multiphysics
+   * interface at the end of the setup_dofs method
    */
   TrilinosWrappers::MPI::Vector &
   get_evaluation_point() override

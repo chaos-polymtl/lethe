@@ -213,9 +213,8 @@ public:
 
   /**
    * @brief Getter methods to get the private attributes for the physic currently solved
-   * NB : dof_handler and present_solution are already passed to the
-   * multiphysics interface at the end of the setup_dofs method
-   * //TODO See if they are necessary
+   * NB : dof_handler and present_solution are passed to the multiphysics
+   * interface at the end of the setup_dofs method
    */
   const DoFHandler<dim> &
   get_dof_handler() override

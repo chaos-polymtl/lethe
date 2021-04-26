@@ -369,19 +369,6 @@ Tracer<dim>::assemble_system(
 
             } // end loop on quadrature points
 
-          // std::cout << cell_matrix(0, 0) << " " << cell_matrix(0, 1) << " "
-          //          << cell_matrix(0, 2) << " " << cell_matrix(0, 3) << " "
-          //          << std::endl;
-          // std::cout << cell_matrix(1, 0) << " " << cell_matrix(1, 1) << " "
-          //          << cell_matrix(1, 2) << " " << cell_matrix(1, 3) << " "
-          //          << std::endl;
-          // std::cout << cell_matrix(2, 0) << " " << cell_matrix(2, 1) << " "
-          //          << cell_matrix(2, 2) << " " << cell_matrix(2, 3) << " "
-          //          << std::endl;
-          // std::cout << cell_matrix(3, 0) << " " << cell_matrix(3, 1) << " "
-          //          << cell_matrix(3, 2) << " " << cell_matrix(3, 3) << " "
-          //          << std::endl;
-
           // transfer cell contribution into global objects
           cell->get_dof_indices(local_dof_indices);
           zero_constraints.distribute_local_to_global(cell_matrix,
