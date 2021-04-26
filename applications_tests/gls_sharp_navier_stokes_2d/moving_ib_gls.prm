@@ -66,7 +66,7 @@ end
 subsection analytical solution
   set enable                 = false
   set verbosity 	     = verbose
-    subsection uvw
+    subsection uvwp
             # A= -(eta_ * eta_) / (1. - eta_ * eta_);
             # B= ri_ * ri_ / (1. - eta_ * eta_);
 
