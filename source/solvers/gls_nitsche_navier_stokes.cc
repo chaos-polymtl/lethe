@@ -104,8 +104,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
           else if (dim == 3)
             h_cell = pow(6 * cell->measure() / M_PI, 1. / 3.) /
                      this->velocity_fem_degree;
-          const double penalty_parameter = 1. / (h_cell * h_cell);
-          const auto & dh_cell =
+          const double penalty_parameter =
+            1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
+          const auto &dh_cell =
             typename DoFHandler<spacedim>::cell_iterator(*cell,
                                                          &this->dof_handler);
           dh_cell->get_dof_indices(fluid_dof_indices);
@@ -285,8 +286,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
       else if (dim == 3)
         h_cell =
           pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
-      const double penalty_parameter = 1. / (h_cell * h_cell);
-      const auto & dh_cell =
+      const double penalty_parameter =
+        1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
+      const auto &dh_cell =
         typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
 
@@ -366,8 +368,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
       else if (dim == 3)
         h_cell =
           pow(6 * cell->measure() / M_PI, 1. / 3.) / this->velocity_fem_degree;
-      const double penalty_parameter = 1. / (h_cell * h_cell);
-      const auto & dh_cell =
+      const double penalty_parameter =
+        1. / std::pow(h_cell * h_cell, double(dim) / double(spacedim));
+      const auto &dh_cell =
         typename DoFHandler<spacedim>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
 
@@ -399,7 +402,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
               const auto comp_i = this->fe->system_to_component_index(i).first;
               if (comp_i < spacedim)
                 {
-                  force[comp_i] +=
+                  force[comp_i] -=
                     penalty_parameter * beta * this->fe->shape_value(i, ref_q) *
                     JxW *
                     (solid_velocity->value(real_q, comp_i) - velocity[comp_i]);
