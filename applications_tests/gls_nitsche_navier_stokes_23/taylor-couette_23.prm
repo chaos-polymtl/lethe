@@ -7,7 +7,7 @@
 #---------------------------------------------------
 subsection simulation control
   set method                  = steady
-  set number mesh adapt       = 0
+  set number mesh adapt       = 1
   set output name             = taylor_couette_23
   set output frequency        = 1
 end
@@ -32,8 +32,8 @@ end
 #---------------------------------------------------
 subsection forces
     set verbosity             = verbose
-    set calculate forces      = true
-    set calculate torques     = false
+    set calculate forces      = false
+    set calculate torques     = true
     set force name            = force
     set torque name           = torque
     set output precision      = 10
@@ -52,24 +52,28 @@ end
 # Mesh
 #---------------------------------------------------
 subsection mesh
-	set type = gmsh
-	set file name = ../taylor_couette_big_cylinder.msh
+    set type                 = dealii
+    set grid type       = cylinder
+    set grid arguments  = 1 : 1   
+    set initial refinement = 2
 end
 
 #---------------------------------------------------
 # Nitsche
 #---------------------------------------------------
 subsection nitsche
-	set beta = 100
-        subsection nitsche solid 0
+	set beta = 10
+    subsection nitsche solid 0
 	    subsection mesh
-		set type = gmsh
-		set file name = ../taylor_couette_small_cylinder.msh
+		    set type = gmsh
+		    set file name = ../cylinder.msh
 	    end
 	    subsection solid velocity
-		set Function expression = -y ; x ; 0
-	    end
-        end
+		    set Function expression = 0 ; -z ; y
+	      end
+      end
+  set calculate torques on solid = true
+  set verbosity = verbose
 end
 
 # --------------------------------------------------
@@ -79,8 +83,8 @@ subsection analytical solution
   set enable                 = true
   set verbosity 	     = verbose
     subsection uvwp
-            set Function constants = eta=0.30, ri=0.30
-	    set Function expression = if(sqrt(x*x+y*y)>ri, if (sqrt(x*x+y*y)<ri/eta,-sin(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0) , sqrt(x*x+y*y)/ri*-sin(atan2(y,x))*ri) ; if(sqrt(x*x+y*y)>ri,if (sqrt(x*x+y*y)<ri/eta,cos(atan2(y,x))*(-(eta*eta) / (1-eta*eta)* sqrt(x*x+y*y)+ ri*ri/(1-eta*eta)/sqrt(x*x+y*y)),0), sqrt(x*x+y*y)/ri*cos(atan2(y,x))*ri) ; 0 ; 0
+            set Function constants = eta=0.25, ri=0.25
+        set Function expression = 0; if(sqrt(y*y+z*z)>ri, if (sqrt(y*y+z*z)<ri/eta,-sin(atan2(z,y))*(-(eta*eta) / (1-eta*eta)* sqrt(y*y+z*z)+ ri*ri/(1-eta*eta)/sqrt(y*y+z*z)),0) , sqrt(y*y+z*z)/ri*-sin(atan2(z,y))*ri) ; if(sqrt(y*y+z*z)>ri,if (sqrt(y*y+z*z)<ri/eta,cos(atan2(z,y))*(-(eta*eta) / (1-eta*eta)* sqrt(y*y+z*z)+ ri*ri/(1-eta*eta)/sqrt(y*y+z*z)),0), sqrt(y*y+z*z)/ri*cos(atan2(z,y))*ri) ; 0
      end
 end
 
@@ -88,7 +92,7 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 2
+  set number                  = 3
     subsection bc 0
     set id = 0
         set type              = noslip
@@ -96,6 +100,11 @@ subsection boundary conditions
     subsection bc 1
     set id = 1
         set type              = slip
+    end
+
+    subsection bc 2
+      set id = 2
+      set type              = slip
     end
 end
 
@@ -114,10 +123,26 @@ end
 subsection linear solver
   set verbosity               = quiet
   set method                  = gmres
-  set max iters               = 5000
-  set relative residual       = 1e-4
-  set minimum residual        = 1e-4
-  set ilu preconditioner fill = 2
+  set max iters               = 200
+  set relative residual       = 1e-2
+  set minimum residual        = 1e-8
+  set ilu preconditioner fill = 1
   set ilu preconditioner absolute tolerance = 1e-12
   set ilu preconditioner relative tolerance = 1.00
+  set max krylov vectors = 200
+end
+
+# --------------------------------------------------
+# Mesh Adaptation Control
+#---------------------------------------------------
+subsection mesh adaptation
+  set type                    = uniform
+  set variable                = velocity
+  set fraction type           = number
+  set max number elements     = 500000
+  set max refinement level    = 15
+  set min refinement level    = 0
+  set frequency               = 1
+  set fraction refinement     = 0.3
+  set fraction coarsening     = 0.15
 end
