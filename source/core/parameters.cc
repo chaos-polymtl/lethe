@@ -277,12 +277,6 @@ namespace Parameters
         "Kinematic viscosity for the fluid corresponding to Phase = " +
           Utilities::int_to_string(id, 1));
       prm.declare_entry(
-        "dynamic viscosity",
-        "0",
-        Patterns::Double(),
-        "Dynamic viscosity for the fluid corresponding to Phase = " +
-          Utilities::int_to_string(id, 1));
-      prm.declare_entry(
         "specific heat",
         "1",
         Patterns::Double(),
@@ -309,20 +303,8 @@ namespace Parameters
   {
     prm.enter_subsection("fluid " + Utilities::int_to_string(id, 1));
     {
-      density           = prm.get_double("density");
-      dynamic_viscosity = prm.get_double("dynamic viscosity");
-      viscosity         = prm.get_double("kinematic viscosity");
-      if (dynamic_viscosity == 0)
-        // if the dynamic_viscosity is not given in prm
-        dynamic_viscosity = density * viscosity;
-      if (dynamic_viscosity != 0 && viscosity == 1)
-        { // if the dynamic_viscosity is given in prm, and not the kinematic
-          // viscosity
-          if (density == 0)
-            throw std::logic_error(
-              "Inconsistency in .prm!\n fluid density = 0");
-          viscosity = dynamic_viscosity / density;
-        }
+      density              = prm.get_double("density");
+      viscosity            = prm.get_double("kinematic viscosity");
       specific_heat        = prm.get_double("specific heat");
       thermal_conductivity = prm.get_double("thermal conductivity");
       tracer_diffusivity   = prm.get_double("tracer diffusivity");

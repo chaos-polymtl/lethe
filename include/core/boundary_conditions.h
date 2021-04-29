@@ -34,12 +34,10 @@ namespace BoundaryConditions
     slip,
     function,
     periodic,
-
     // for heat transfer
     temperature, // Dirichlet
     convection,  // Robin
-
-    // for tracer
+                // for tracer
     tracer_dirichlet, // Dirichlet tracer
   };
 

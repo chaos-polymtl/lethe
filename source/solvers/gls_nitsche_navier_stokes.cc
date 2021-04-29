@@ -504,6 +504,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_forces()
         "f_z", this->simulation_parameters.forces_parameters.output_precision);
 
       std::string filename_force =
+        this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.nitsche->force_output_name + "_" +
         Utilities::int_to_string(i_solid, 2) + ".dat";
       std::ofstream output_force(filename_force.c_str());
@@ -585,6 +586,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::postprocess_solid_torques()
         "T_z", this->simulation_parameters.forces_parameters.output_precision);
 
       std::string filename_torque =
+        this->simulation_parameters.simulation_control.output_folder +
         this->simulation_parameters.nitsche->torque_output_name + ".dat";
       std::ofstream output_torque(filename_torque.c_str());
 
@@ -780,7 +782,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
 
-  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
 
   // Write data in paraview format (pvd)
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
@@ -867,7 +871,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
 
-  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
   this->simulation_control->read(prefix);
   unsigned int nb_solid = this->simulation_parameters.nitsche->number_solids;
 

@@ -11,6 +11,7 @@ MultiphysicsInterface<dim>::MultiphysicsInterface(
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
   std::shared_ptr<SimulationControl> p_simulation_control)
   : multiphysics_parameters(nsparam.multiphysics)
+  , verbosity(nsparam.linear_solver.verbosity)
 {
   if (multiphysics_parameters.fluid_dynamics)
     {

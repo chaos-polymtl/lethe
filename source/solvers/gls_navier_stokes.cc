@@ -944,6 +944,28 @@ GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
   auto &evaluation_point    = this->evaluation_point;
   auto &physical_properties = this->simulation_parameters.physical_properties;
 
+  // Limit force application : not applied if cell density is below
+  // density_ratio of the maximum density (e.g. when one of the fluids is air)
+  const double density_ratio      = 2;
+  double       phase_force_cutoff = 0;
+
+  if (physical_properties.fluids[0].density <
+        physical_properties.fluids[1].density &&
+      physical_properties.fluids[0].density * density_ratio <
+        physical_properties.fluids[1].density)
+    {
+      // gravity not will be applied for phase < phase_force_cutoff
+      phase_force_cutoff = 1e-6;
+    }
+  if (physical_properties.fluids[1].density <
+        physical_properties.fluids[0].density &&
+      physical_properties.fluids[1].density * density_ratio <
+        physical_properties.fluids[0].density)
+    {
+      // gravity not will be applied for phase > phase_force_cutoff
+      phase_force_cutoff = 1 - 1e-6;
+    }
+
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -1028,19 +1050,12 @@ GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
                                          physical_properties.fluids[0].density,
                                          physical_properties.fluids[1].density);
 
-              double dynamic_viscosity_eq = calculate_point_property(
+              double viscosity_eq = calculate_point_property(
                 phase_values[q],
-                physical_properties.fluids[0].dynamic_viscosity,
-                physical_properties.fluids[1].dynamic_viscosity);
+                physical_properties.fluids[0].viscosity,
+                physical_properties.fluids[1].viscosity);
 
-              // BB temporary
-              // Limitations for cases where air becomes liquid
-              if (density_eq < density_eq_m1)
-                density_eq_m1 = 0;
-
-              // BB temporary
-              // define epsilon below which gravity is not applied
-              double epsilon_alpha = 1e-6;
+              const double dynamic_viscosity_eq = density_eq * viscosity_eq;
 
               // Gather into local variables the relevant fields
               const Tensor<1, dim> velocity = present_velocity_values[q];
@@ -1095,7 +1110,13 @@ GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
                   const unsigned int component_i =
                     this->fe->system_to_component_index(i).first;
                   force[i] = rhs_force[q](component_i);
-                  if (phase_values[q] < epsilon_alpha)
+                  // Gravity not applied on phase 0
+                  if (phase_force_cutoff < 0.5 &&
+                      phase_values[q] < phase_force_cutoff)
+                    force[i] = 0;
+                  // Gravity not applied on phase 1
+                  if (phase_force_cutoff > 0.5 &&
+                      phase_values[q] > phase_force_cutoff)
                     force[i] = 0;
                 }
               // Correct force to include the dynamic forcing term for flow
@@ -1488,7 +1509,7 @@ GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     {
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        { // TEMPORARY free surface implementation
+        {
           if (this->simulation_parameters.multiphysics.free_surface)
             assembleGLSFreeSurface<
               true,

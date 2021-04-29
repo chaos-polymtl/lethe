@@ -66,6 +66,34 @@ public:
   }
 
   /**
+   * @brief Write physic solved in the terminal
+   *
+   * @param physics_id number associated with auxiliary physics in multiphysics.h
+   */
+  void
+  annonce_physics(const PhysicsID physics_id)
+  {
+    if (physics_id == 1)
+      {
+        std::cout << "--------------" << std::endl
+                  << "Heat Transfer" << std::endl
+                  << "--------------" << std::endl;
+      }
+    else if (physics_id == 2)
+      {
+        std::cout << "-------" << std::endl
+                  << "Tracer" << std::endl
+                  << "-------" << std::endl;
+      }
+    else if (physics_id == 3)
+      {
+        std::cout << "-------------" << std::endl
+                  << "Free Surface" << std::endl
+                  << "-------------" << std::endl;
+      }
+  }
+
+  /**
    * @brief Call for the solution of all physics
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
@@ -81,10 +109,18 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
+        // Annonce physic solved
+        if (verbosity != Parameters::Verbosity::quiet)
+          annonce_physics(iphys.first);
+
         solve_physics(iphys.first, time_stepping_method, force_matrix_renewal);
       }
     for (auto &iphys : block_physics)
       {
+        // Annonce physic solved
+        if (verbosity != Parameters::Verbosity::quiet)
+          annonce_physics(iphys.first);
+
         solve_block_physics(iphys.first,
                             time_stepping_method,
                             force_matrix_renewal);
@@ -206,10 +242,10 @@ public:
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
-   * the calculation of all derived quantities using the solution vector of the
-   * physics. It does not concern the output of the solution using the
-   * DataOutObject, which is accomplished through the attach_solution_to_output
-   * function
+   * the calculation of all derived quantities using the solution vector of
+   * the physics. It does not concern the output of the solution using the
+   * DataOutObject, which is accomplished through the
+   * attach_solution_to_output function
    */
   void
   postprocess(bool first_iteration)
@@ -540,6 +576,7 @@ public:
 
 private:
   const Parameters::Multiphysics multiphysics_parameters;
+  const Parameters::Verbosity    verbosity;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;

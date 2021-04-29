@@ -158,8 +158,6 @@ namespace Parameters
 
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double viscosity;
-    // Dynamic viscosity (mu = nu*rho) in units of Pa s
-    double dynamic_viscosity;
     // volumetric mass density (rho) in units of kg/m^3
     double density;
     // specific heat capacity (cp) in J/K/kg

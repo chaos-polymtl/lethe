@@ -136,33 +136,6 @@ public:
     void_fraction->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
 
-    // Update filenames with the output_folder
-    restart_parameters.filename =
-      simulation_control.output_folder + restart_parameters.filename;
-
-    forces_parameters.force_output_name =
-      simulation_control.output_folder + forces_parameters.force_output_name;
-
-    forces_parameters.torque_output_name =
-      simulation_control.output_folder + forces_parameters.torque_output_name;
-
-    post_processing.kinetic_energy_output_name =
-      simulation_control.output_folder +
-      post_processing.kinetic_energy_output_name;
-
-    post_processing.enstrophy_output_name =
-      simulation_control.output_folder + post_processing.enstrophy_output_name;
-
-    particlesParameters.ib_force_output_file =
-      simulation_control.output_folder +
-      particlesParameters.ib_force_output_file;
-
-    nitsche->force_output_name =
-      simulation_control.output_folder + nitsche->force_output_name;
-
-    nitsche->torque_output_name =
-      simulation_control.output_folder + nitsche->torque_output_name;
-
     // Check consistency of parameters parsed in different subsections
     if (multiphysics.free_surface && physical_properties.number_fluids != 2)
       {

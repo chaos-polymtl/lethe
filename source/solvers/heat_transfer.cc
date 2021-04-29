@@ -43,10 +43,10 @@ void
 HeatTransfer<dim>::assemble_system(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  // Gather physical properties in case of mono fluids simulations (to be
-  // modified in case of multiple fluids simulations)
   auto &physical_properties = this->simulation_parameters.physical_properties;
 
+  // Gather physical properties in case of mono fluids simulations (to be
+  // modified by cell in case of multiple fluids simulations)
   double density              = physical_properties.density;
   double specific_heat        = physical_properties.specific_heat;
   double thermal_conductivity = physical_properties.thermal_conductivity;
@@ -293,10 +293,10 @@ HeatTransfer<dim>::assemble_system(
                     physical_properties.fluids[0].density,
                     physical_properties.fluids[1].density);
 
-                  dynamic_viscosity = calculate_point_property(
+                  viscosity = calculate_point_property(
                     phase_values[q],
-                    physical_properties.fluids[0].dynamic_viscosity,
-                    physical_properties.fluids[1].dynamic_viscosity);
+                    physical_properties.fluids[0].viscosity,
+                    physical_properties.fluids[1].viscosity);
 
                   specific_heat = calculate_point_property(
                     phase_values[q],
@@ -309,8 +309,9 @@ HeatTransfer<dim>::assemble_system(
                     physical_properties.fluids[1].thermal_conductivity);
 
                   // Useful definitions
-                  rho_cp = density * specific_heat;
-                  alpha  = thermal_conductivity / rho_cp;
+                  dynamic_viscosity = viscosity * density;
+                  rho_cp            = density * specific_heat;
+                  alpha             = thermal_conductivity / rho_cp;
                 }
 
               // Store JxW in local variable for faster access

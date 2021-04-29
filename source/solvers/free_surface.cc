@@ -83,17 +83,15 @@ FreeSurface<dim>::assemble_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
     {
       throw std::runtime_error(
-        "SDIRK schemes are not supported by heat transfer physics");
+        "SDIRK schemes are not supported by free surface physics");
     }
 
 
   // Free surface FEValues initialization
-  // TODO clean up updated values after full implementation
   FEValues<dim> fe_values_fs(*fe,
                              *this->cell_quadrature,
                              update_values | update_gradients |
-                               update_quadrature_points | update_JxW_values |
-                               update_hessians);
+                               update_quadrature_points | update_JxW_values);
 
   auto &evaluation_point = this->get_evaluation_point();
 
@@ -110,15 +108,11 @@ FreeSurface<dim>::assemble_system(
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
   FEValues<dim> fe_values_flow(dof_handler_fluid->get_fe(),
                                *this->cell_quadrature,
-                               update_values | update_quadrature_points |
-                                 update_gradients);
+                               update_values | update_gradients);
 
   // Shape functions and gradients
   std::vector<double>         phi_phase(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_phase(dofs_per_cell);
-  std::vector<Tensor<2, dim>> hess_phi_phase(dofs_per_cell);
-  std::vector<double>         laplacian_phi_phase(dofs_per_cell);
-
 
   // Velocity values
   const FEValuesExtractors::Vector velocities(0);
@@ -136,9 +130,6 @@ FreeSurface<dim>::assemble_system(
   std::vector<double> p2_phase_values(n_q_points);
   std::vector<double> p3_phase_values(n_q_points);
 
-  // Element size
-  double h;
-
   double velocity_fem_degree =
     simulation_parameters.fem_parameters.velocity_order;
 
@@ -155,8 +146,8 @@ FreeSurface<dim>::assemble_system(
                                               phase_gradients);
 
           // Element size (NB : dim is implicitly converted to double)
-          h = pow(2. * dim * cell->measure() / M_PI, 1. / dim) /
-              velocity_fem_degree;
+          const double h = pow(2. * dim * cell->measure() / M_PI, 1. / dim) /
+                           velocity_fem_degree;
 
           // Gather flow values
           typename DoFHandler<dim>::active_cell_iterator velocity_cell(
@@ -198,29 +189,19 @@ FreeSurface<dim>::assemble_system(
             {
               fe_values_fs.get_function_values(this->solution_m1,
                                                p1_phase_values);
-              // TODO see if needed
-              //              fe_values_fs.get_function_gradients(this->solution_m1,
-              //                                                  p1_phase_gradients);
             }
 
           if (time_stepping_method_has_two_stages(time_stepping_method))
             {
               fe_values_fs.get_function_values(this->solution_m2,
                                                p2_phase_values);
-
-              //              fe_values_fs.get_function_gradients(this->solution_m2,
-              //                                                  p2_phase_gradients);
             }
 
           if (time_stepping_method_has_three_stages(time_stepping_method))
             {
               fe_values_fs.get_function_values(this->solution_m3,
                                                p3_phase_values);
-
-              //              fe_values_fs.get_function_gradients(this->solution_m3,
-              //                                                  p3_phase_gradients);
             }
-
 
           // assembling local matrix and right hand side
           for (const unsigned int q : fe_values_fs.quadrature_point_indices())
@@ -235,11 +216,6 @@ FreeSurface<dim>::assemble_system(
               // stabilization parameter and the compression term for the phase
               // indicator
               const double u_mag = std::max(velocity.norm(), 1e-12);
-
-              // Compression ratio //TODO use for compression term
-              //              const double cr =
-              //                std::max(velocity.norm(), 1e-12) /
-              //                present_phase_values[q];
 
               // Calculation of the GLS stabilization parameter. The
               // stabilization parameter used is different if the simulation is
@@ -257,9 +233,6 @@ FreeSurface<dim>::assemble_system(
                 {
                   phi_phase[k]      = fe_values_fs.shape_value(k, q);
                   grad_phi_phase[k] = fe_values_fs.shape_grad(k, q);
-                  hess_phi_phase[k] = fe_values_fs.shape_hessian(k, q);
-
-                  laplacian_phi_phase[k] = trace(hess_phi_phase[k]);
                 }
 
               for (const unsigned int i : fe_values_fs.dof_indices())
@@ -274,19 +247,10 @@ FreeSurface<dim>::assemble_system(
                         {
                           const auto phi_phase_j      = phi_phase[j];
                           const auto grad_phi_phase_j = grad_phi_phase[j];
-                          //                          const auto
-                          //                          laplacian_phi_phase_j =
-                          //                            laplacian_phi_phase[j];
-
-
 
                           // Weak form for advection: u * nabla(phase) = 0
-                          // TODO add compression term
                           cell_matrix(i, j) +=
                             (phi_phase_i * velocity * grad_phi_phase_j) * JxW;
-
-                          // Weak form for compression term:
-                          // div(phase(1-phase)*nabla(phase)*cr)
 
                           // Strong Jacobian associated with the GLS
                           // stabilization
@@ -309,7 +273,6 @@ FreeSurface<dim>::assemble_system(
                     }
 
                   // rhs for : u * nabla(phase) = 0
-                  // TODO add compression term
                   cell_rhs(i) -=
                     (phi_phase_i * velocity_values[q] * phase_gradients[q]) *
                     JxW;
