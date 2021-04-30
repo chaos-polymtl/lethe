@@ -39,6 +39,7 @@ namespace Parameters
     bool fluid_dynamics;
     bool heat_transfer;
     bool tracer;
+    bool free_surface;
 
     static void
     declare_parameters(ParameterHandler &prm);

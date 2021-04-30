@@ -51,7 +51,7 @@ namespace AnalyticalSolutions
   public:
     AnalyticalSolution()
       : enable(false)
-      , velocity(dim + 1)
+      , uvwp(dim + 1)
       , temperature(1)
       , tracer(1)
     {}
@@ -74,12 +74,15 @@ namespace AnalyticalSolutions
     }
 
     Parameters::Verbosity verbosity;
-    // Velocity components
-    Functions::ParsedFunction<dim> velocity;
+    // Velocity components + pressure value
+    Functions::ParsedFunction<dim> uvwp;
 
+    // Auxiliary physics
     Functions::ParsedFunction<dim> temperature;
 
     Functions::ParsedFunction<dim> tracer;
+
+    Functions::ParsedFunction<dim> phase;
   };
 } // namespace AnalyticalSolutions
 

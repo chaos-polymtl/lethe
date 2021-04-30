@@ -143,12 +143,19 @@ namespace Parameters
   };
 
   /**
-   * @brief PhysicalProperties - Define the possible physical properties.
-   * All continuum equations share the same physical properties object but only
-   * take the subset of properties they require
+   * @brief Fluid - Class for fluid definition
    */
-  struct PhysicalProperties
+  class Fluid
   {
+  public:
+    Fluid()
+    {}
+
+    void
+    declare_parameters(ParameterHandler &prm, unsigned int id);
+    void
+    parse_parameters(ParameterHandler &prm, unsigned int id);
+
     // Kinematic viscosity (nu = mu/rho) in units of L^2/s
     double viscosity;
     // volumetric mass density (rho) in units of kg/m^3
@@ -159,8 +166,39 @@ namespace Parameters
     double thermal_conductivity;
     // tracer diffusivity) in L^2/s
     double tracer_diffusivity;
+  };
 
-    static void
+  /**
+   * @brief PhysicalProperties - Define the possible physical properties.
+   * All continuum equations share the same physical properties object but only
+   * take the subset of properties they require
+   * Defined as a class with public attributes in order to use a non-static
+   * declare_paremeters methods (useful for multiple fluid simulations).
+   */
+  class PhysicalProperties
+  {
+  public:
+    PhysicalProperties()
+    {}
+
+    // Monophasic simulations parameters
+    // Kinematic viscosity (nu = mu/rho) in units of L^2/s
+    double viscosity;
+    // volumetric mass density (rho) in units of kg/m^3
+    double density;
+    // specific heat capacity (cp) in J/K/kg
+    double specific_heat;
+    // thermal conductivity (k) in W/m/K
+    double thermal_conductivity;
+    // tracer diffusivity in L^2/s
+    double tracer_diffusivity;
+
+    // Fluid objects for multiphasic simulations
+    std::vector<Fluid>        fluids;
+    unsigned int              number_fluids;
+    static const unsigned int max_fluids = 2;
+
+    void
     declare_parameters(ParameterHandler &prm);
     void
     parse_parameters(ParameterHandler &prm);

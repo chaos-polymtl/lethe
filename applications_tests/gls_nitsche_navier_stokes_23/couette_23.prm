@@ -101,7 +101,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function expression = if(z >= 0, 1/0.499 * z, 0) ; 0 ; 0 ; 0
     end
 end

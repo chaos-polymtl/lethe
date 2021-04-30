@@ -42,7 +42,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function expression = -6.28318*y; 6.28318*x ; 0 ;  0 ; 
     end
 end

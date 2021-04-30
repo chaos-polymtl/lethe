@@ -67,7 +67,7 @@ public:
   declare(ParameterHandler &prm)
   {
     Parameters::SimulationControl::declare_parameters(prm);
-    Parameters::PhysicalProperties::declare_parameters(prm);
+    physical_properties.declare_parameters(prm);
     Parameters::Mesh::declare_parameters(prm);
     nitsche = std::make_shared<Parameters::Nitsche<dim>>();
     nitsche->declare_parameters(prm);
@@ -135,6 +135,13 @@ public:
     particlesParameters.parse_parameters(prm);
     void_fraction->parse_parameters(prm);
     multiphysics.parse_parameters(prm);
+
+    // Check consistency of parameters parsed in different subsections
+    if (multiphysics.free_surface && physical_properties.number_fluids != 2)
+      {
+        throw std::logic_error(
+          "Inconsistency in .prm!\n with free surface = true\n use: number of fluids = 2");
+      }
   }
 };
 

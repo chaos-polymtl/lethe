@@ -14,16 +14,16 @@
  * ---------------------------------------------------------------------
 
  *
- * Implementation of heat transfer as an auxiliary physics.
- * This heat equation is weakly coupled to the velocity field.
- * Equation solved:
- * rho * Cp * (dT/dt + u.gradT) = k div(gradT) + nu/rho * (gradu : gradu)
+ * Implementation of free surface with a Volume of Fluid method.
+ * Two fluid formulation. The phase indicator "phase" is equal to 0
+ * in one fluid and 1 in the other. The free surface is located
+ * where "phase" is equal to 0.5.
  *
- * Author: Bruno Blais and Jeanne Joachim, Polytechnique Montreal, 2020-
+ * Author: Jeanne Joachim, Polytechnique Montreal, 2021
  */
 
-#ifndef lethe_heat_transfer_h
-#define lethe_heat_transfer_h
+#ifndef lethe_free_surface_h
+#define lethe_free_surface_h
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -48,14 +48,17 @@
 
 
 template <int dim>
-class HeatTransfer : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
+class FreeSurface : public AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>
 {
 public:
-  HeatTransfer<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
-                    const SimulationParameters<dim> &p_simulation_parameters,
-                    std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
-                                                       p_triangulation,
-                    std::shared_ptr<SimulationControl> p_simulation_control)
+  /**
+   * @brief FreeSurface - Base constructor.
+   */
+  FreeSurface<dim>(MultiphysicsInterface<dim> *     multiphysics_interface,
+                   const SimulationParameters<dim> &p_simulation_parameters,
+                   std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
+                                                      p_triangulation,
+                   std::shared_ptr<SimulationControl> p_simulation_control)
     : AuxiliaryPhysics<dim, TrilinosWrappers::MPI::Vector>(
         p_simulation_parameters.non_linear_solver)
     , multiphysics(multiphysics_interface)
@@ -72,9 +75,8 @@ public:
     if (simulation_parameters.mesh.simplex)
       {
         // for simplex meshes
-        fe = std::make_shared<FE_SimplexP<dim>>(
-          simulation_parameters.fem_parameters.temperature_order);
-        temperature_mapping = std::make_shared<MappingFE<dim>>(*fe);
+        fe              = std::make_shared<FE_SimplexP<dim>>(1);
+        mapping         = std::make_shared<MappingFE<dim>>(*fe);
         cell_quadrature = std::make_shared<QGaussSimplex<dim>>(fe->degree + 1);
         face_quadrature =
           std::make_shared<QGaussSimplex<dim - 1>>(fe->degree + 1);
@@ -84,15 +86,21 @@ public:
 #endif
       {
         // Usual case, for quad/hex meshes
-        fe = std::make_shared<FE_Q<dim>>(
-          simulation_parameters.fem_parameters.temperature_order);
-        temperature_mapping = std::make_shared<MappingQ<dim>>(
+        fe      = std::make_shared<FE_Q<dim>>(1);
+        mapping = std::make_shared<MappingQ<dim>>(
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
         error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
       }
   }
+
+  /**
+   * @brief FreeSurface - Base destructor. At the present
+   * moment this is an interface with nothing.
+   */
+  ~FreeSurface()
+  {}
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
@@ -118,8 +126,7 @@ public:
    * enable the auxiliary physics to output their solution via the core solver.
    */
   void
-  attach_solution_to_output(DataOut<dim> &data_out) override;
-
+  attach_solution_to_output(DataOut<dim> &data_out);
 
   /**
    * @brief Calculates the L2 error of the solution
@@ -127,25 +134,24 @@ public:
   double
   calculate_L2_error();
 
-
   /**
    * @brief Carry out the operations required to finish a simulation correctly.
    */
   void
-  finish_simulation() override;
+  finish_simulation();
 
   /**
-   * @brief Carry out the operations require to finish a time step correctly. This
-   * includes setting the previous values
+   * @brief Carry out the operations required to finish a time step correctly.
    */
   void
-  finish_time_step() override;
+  finish_time_step();
 
   /**
-   * @brief Rearrange vector solution correctly for transient simulations
+   * @brief Carry out the operations required to rearrange the values of the
+   * previous solution at the end of a time step
    */
   void
-  percolate_time_vectors() override;
+  percolate_time_vectors();
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
@@ -155,7 +161,7 @@ public:
    * function
    */
   void
-  postprocess(bool first_iteration) override;
+  postprocess(bool first_iteration);
 
 
   /**
@@ -172,22 +178,23 @@ public:
   post_mesh_adaptation();
 
   /**
-   * @brief Prepares Heat Transfer to write checkpoint
+   * @brief Prepares auxiliary physics to write checkpoint
    */
   void
-  write_checkpoint() override;
+  write_checkpoint();
+
 
   /**
-   * @brief Allows Heat Transfer to set-up solution vector from checkpoint file;
+   * @brief Set solution vector of Auxiliary Physics using checkpoint
    */
   void
-  read_checkpoint() override;
+  read_checkpoint();
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
    */
   void
-  setup_dofs() override;
+  setup_dofs();
 
   /**
    * @brief Sets-up the initial conditions associated with the physics. Generally, physics
@@ -195,7 +202,7 @@ public:
    * the use of L2 projection or steady-state solutions.
    */
   void
-  set_initial_conditions() override;
+  set_initial_conditions();
 
   /**
    * @brief Call for the solution of the linear system of equation using a strategy appropriate
@@ -252,7 +259,6 @@ public:
     return nonzero_constraints;
   }
 
-
 private:
   template <bool assemble_matrix>
   void
@@ -263,7 +269,7 @@ private:
   const SimulationParameters<dim> &simulation_parameters;
 
 
-  // Core elements for the heat transfer simulation
+  // Core elements for the free surface simulation
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> triangulation;
   std::shared_ptr<SimulationControl> simulation_control;
   DoFHandler<dim>                    dof_handler;
@@ -272,7 +278,7 @@ private:
   ConvergenceTable                    error_table;
 
   // Mapping and Quadrature
-  std::shared_ptr<Mapping<dim>>        temperature_mapping;
+  std::shared_ptr<Mapping<dim>>        mapping;
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
   std::shared_ptr<Quadrature<dim>>     error_quadrature;
@@ -306,16 +312,8 @@ private:
     solution_transfer_m2;
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer_m3;
-
-  // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
-  // Warning, this GGLS implementation is valid only for Linear elements
-  // Quad elements will be lacking the third derivative of the diffusion
-  // operator Whether this affects or not the final result is unclear to me at
-  // the moment. Additionnaly, this formulation does not use the gradient of the
-  // source term. The same applies, I have no clue if this is detrimental or not
-  // to the solution since anyway the GGLS term scales as h^(order+1)
-  const bool GGLS = true;
 };
+
 
 
 #endif

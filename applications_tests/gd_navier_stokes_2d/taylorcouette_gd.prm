@@ -35,7 +35,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             # A= -(eta_ * eta_) / (1. - eta_ * eta_);
             # B= ri_ * ri_ / (1. - eta_ * eta_);
             set Function constants = eta=0.25, ri=0.25, A=-0.06666666666666667, B=0.06666666666666666667

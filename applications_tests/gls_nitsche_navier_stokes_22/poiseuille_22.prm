@@ -96,7 +96,7 @@ end
 subsection analytical solution
   set enable                 = true
   set verbosity = verbose
-    subsection uvw
+    subsection uvwp
             set Function constants = H=0.5, G=1, mu=1
             set Function expression =  if(y >= 0.,  0.5 * G / mu * (y) * (H - y) , 0)  ; 0 ; 0
     end
