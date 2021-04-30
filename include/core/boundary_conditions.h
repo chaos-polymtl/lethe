@@ -37,8 +37,7 @@ namespace BoundaryConditions
     // for heat transfer
     temperature, // Dirichlet
     convection,  // Robin
-
-    // for tracer
+                // for tracer
     tracer_dirichlet, // Dirichlet tracer
   };
 
@@ -309,8 +308,8 @@ namespace BoundaryConditions
    * The members "value" and "Tenv" contain double used for bc calculation :
    *  - if bc type is "temperature" (Dirichlet condition), "value" is the
    * double passed to the deal.ii ConstantFunction
-   *  - if bc type is "convection" (Robin condition), "value" is the
-   * convective heat transfer coefficient (h) and "Tenv" is the
+   *  - if bc type is "convection" (Robin condition), "h" is the
+   * convective heat transfer coefficient and "Tinf" is the
    * environment temperature at the boundary
    */
 

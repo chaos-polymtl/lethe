@@ -95,7 +95,7 @@ end
 subsection analytical solution
   set enable                 = true
   set verbosity = verbose
-    subsection uvw
+    subsection uvwp
             set Function expression =  0 ; 0 ; 0
     end
     subsection temperature

@@ -76,7 +76,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function constants = H=1, G=1, mu=1, rho=1
             set Function expression =  ((H^2)*G*rho/(4*mu)) * (1 - (y^2+z^2)/(H^2)) ; 0 ; 0; 0  
     end

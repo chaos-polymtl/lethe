@@ -106,6 +106,8 @@ public:
 
   /**
    * @brief Provide the dof handler associated with an auxiliary physics
+   * TODO : delete as the auxiliary physics are supposed to pass their
+   * dof_handler to the multiphysics_interface directly
    */
   virtual const DoFHandler<dim> &
   get_dof_handler() = 0;

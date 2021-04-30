@@ -53,7 +53,7 @@ end
 subsection analytical solution
   set verbosity              = verbose
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function constants = viscosity=1
             set Function expression =exp(-2*viscosity*t)*   cos(x) * sin(y) ; -sin(x) * cos(y) * exp(-2*viscosity*t); 0
     end

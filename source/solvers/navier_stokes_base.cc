@@ -142,7 +142,7 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   torques_tables.resize(simulation_parameters.boundary_conditions.size);
 
   // Get the exact solution from the parser
-  exact_solution = &simulation_parameters.analytical_solution->velocity;
+  exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
   // If there is a forcing function, get it from the parser
   if (simulation_parameters.sourceTerm->source_term())
@@ -829,6 +829,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           this->this_mpi_process == 0)
         {
           std::string filename =
+            simulation_parameters.simulation_control.output_folder +
             simulation_parameters.post_processing.enstrophy_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
@@ -882,6 +883,7 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           this->this_mpi_process == 0)
         {
           std::string filename =
+            simulation_parameters.simulation_control.output_folder +
             simulation_parameters.post_processing.kinetic_energy_output_name +
             ".dat";
           std::ofstream output(filename.c_str());
@@ -967,6 +969,9 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
               this->error_table.add_value(
                 "time", simulation_control->get_current_time());
               this->error_table.add_value("error_velocity", error_velocity);
+              // Calculate error on pressure for free surface simulations
+              if (this->simulation_parameters.multiphysics.free_surface)
+                this->error_table.add_value("error_pressure", error_pressure);
             }
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
@@ -1006,7 +1011,9 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "read_checkpoint");
-  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string        prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
   this->simulation_control->read(prefix);
   this->pvdhandler.read(prefix);
 
@@ -1263,6 +1270,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_forces()
        ++boundary_id)
     {
       std::string filename =
+        simulation_parameters.simulation_control.output_folder +
         simulation_parameters.forces_parameters.force_output_name + "." +
         Utilities::int_to_string(boundary_id, 2) + ".dat";
       std::ofstream output(filename.c_str());
@@ -1281,6 +1289,7 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_torques()
        ++boundary_id)
     {
       std::string filename =
+        simulation_parameters.simulation_control.output_folder +
         simulation_parameters.forces_parameters.torque_output_name + "." +
         Utilities::int_to_string(boundary_id, 2) + ".dat";
       std::ofstream output(filename.c_str());
@@ -1294,7 +1303,9 @@ void
 NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 {
   TimerOutput::Scope timer(this->computing_timer, "write_checkpoint");
-  std::string prefix = this->simulation_parameters.restart_parameters.filename;
+  std::string        prefix =
+    this->simulation_parameters.simulation_control.output_folder +
+    this->simulation_parameters.restart_parameters.filename;
   if (Utilities::MPI::this_mpi_process(this->mpi_communicator) == 0)
     {
       simulation_control->save(prefix);

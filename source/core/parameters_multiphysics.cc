@@ -24,6 +24,11 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Passive tracer calculation <true|false>");
+
+    prm.declare_entry("free surface",
+                      "false",
+                      Patterns::Bool(),
+                      "Free surface calculation <true|false>");
   }
   prm.leave_subsection();
 }
@@ -36,6 +41,7 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     fluid_dynamics = prm.get_bool("fluid dynamics");
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
+    free_surface   = prm.get_bool("free surface");
   }
   prm.leave_subsection();
 }

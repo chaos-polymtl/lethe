@@ -66,6 +66,14 @@ protected:
   void
   assembleGLS();
 
+  // assembleGLS specialized in the case of two fluids with free surface
+  // simulation
+  template <bool                                              assemble_matrix,
+            Parameters::SimulationControl::TimeSteppingMethod scheme,
+            Parameters::VelocitySource::VelocitySourceType    velocity_source>
+  void
+  assembleGLSFreeSurface();
+
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod

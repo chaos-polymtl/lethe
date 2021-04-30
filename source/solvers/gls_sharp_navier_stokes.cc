@@ -980,10 +980,11 @@ GLSSharpNavierStokesSolver<dim>::write_force_ib()
       {
         if (this->this_mpi_process == 0)
           {
-            std::string filename = this->simulation_parameters
-                                     .particlesParameters.ib_force_output_file +
-                                   "." + Utilities::int_to_string(p, 2) +
-                                   ".dat";
+            std::string filename =
+              this->simulation_parameters.simulation_control.output_folder +
+              this->simulation_parameters.particlesParameters
+                .ib_force_output_file +
+              "." + Utilities::int_to_string(p, 2) + ".dat";
             std::ofstream output(filename.c_str());
 
             table_f[p].write_text(output);

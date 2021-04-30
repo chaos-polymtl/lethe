@@ -88,7 +88,7 @@ end
 #---------------------------------------------------
 subsection analytical solution
   set enable                 = true
-    subsection uvw
+    subsection uvwp
             set Function expression = cos(2*pi*t)*cos(pi*x)*cos(pi*y); cos(2*pi*t)*cos(pi*x)*cos(pi*y); 0
 end
 end

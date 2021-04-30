@@ -66,6 +66,34 @@ public:
   }
 
   /**
+   * @brief Write physic solved in the terminal
+   *
+   * @param physics_id number associated with auxiliary physics in multiphysics.h
+   */
+  void
+  announce_physics(const PhysicsID physics_id)
+  {
+    if (physics_id == PhysicsID::heat_transfer)
+      {
+        std::cout << "--------------" << std::endl
+                  << "Heat Transfer" << std::endl
+                  << "--------------" << std::endl;
+      }
+    else if (physics_id == PhysicsID::tracer)
+      {
+        std::cout << "-------" << std::endl
+                  << "Tracer" << std::endl
+                  << "-------" << std::endl;
+      }
+    else if (physics_id == PhysicsID::free_surface)
+      {
+        std::cout << "-------------" << std::endl
+                  << "Free Surface" << std::endl
+                  << "-------------" << std::endl;
+      }
+  }
+
+  /**
    * @brief Call for the solution of all physics
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
@@ -81,10 +109,18 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
+        // Announce physic solved (verbosity = non_linear_solver.verbosity)
+        if (verbosity != Parameters::Verbosity::quiet)
+          announce_physics(iphys.first);
+
         solve_physics(iphys.first, time_stepping_method, force_matrix_renewal);
       }
     for (auto &iphys : block_physics)
       {
+        // Announce physic solved (verbosity = non_linear_solver.verbosity)
+        if (verbosity != Parameters::Verbosity::quiet)
+          announce_physics(iphys.first);
+
         solve_block_physics(iphys.first,
                             time_stepping_method,
                             force_matrix_renewal);
@@ -206,10 +242,10 @@ public:
 
   /**
    * @brief Postprocess the auxiliary physics results. Post-processing this case implies
-   * the calculation of all derived quantities using the solution vector of the
-   * physics. It does not concern the output of the solution using the
-   * DataOutObject, which is accomplished through the attach_solution_to_output
-   * function
+   * the calculation of all derived quantities using the solution vector of
+   * the physics. It does not concern the output of the solution using the
+   * DataOutObject, which is accomplished through the
+   * attach_solution_to_output function
    */
   void
   postprocess(bool first_iteration)
@@ -345,6 +381,7 @@ public:
                            active_physics.end(),
                            physics_id) != active_physics.end()),
                 ExcInternalError());
+
     return physics_dof_handler[physics_id];
   }
 
@@ -379,6 +416,37 @@ public:
                            physics_id) != active_physics.end()),
                 ExcInternalError());
     return block_physics_solutions[physics_id];
+  }
+
+  /**
+   * @brief Request the past (minus 1) solution of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::Vector *
+  get_solution_m1(PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return physics_solutions_m1[physics_id];
+  }
+
+
+  /**
+   * @brief Request the past (minus 1) block solution of a given physics
+   *
+   * @param physics_id The physics of the solution being requested
+   */
+  TrilinosWrappers::MPI::BlockVector *
+  get_block_solution_m1(PhysicsID physics_id)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    return block_physics_solutions_m1[physics_id];
   }
 
 
@@ -435,6 +503,41 @@ public:
     block_physics_solutions[physics_id] = solution_vector;
   }
 
+  /**
+   * @brief Sets the reference to the solution of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param solution_vector The reference to the solution vector of the physics
+   */
+  void
+  set_solution_m1(PhysicsID                      physics_id,
+                  TrilinosWrappers::MPI::Vector *solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    physics_solutions_m1[physics_id] = solution_vector;
+  }
+
+  /**
+   * @brief Sets the reference to the solution of the physics in the multiphysics interface
+   *
+   * @param physics_id The physics of the DOF handler being requested
+   *
+   * @param solution_vector The reference to the solution vector of the physics
+   */
+  void
+  set_block_solution_m1(PhysicsID                           physics_id,
+                        TrilinosWrappers::MPI::BlockVector *solution_vector)
+  {
+    AssertThrow((std::find(active_physics.begin(),
+                           active_physics.end(),
+                           physics_id) != active_physics.end()),
+                ExcInternalError());
+    block_physics_solutions_m1[physics_id] = solution_vector;
+  }
 
   /**
    * @brief Prepares auxiliary physics to write simulation checkpoint
@@ -473,6 +576,7 @@ public:
 
 private:
   const Parameters::Multiphysics multiphysics_parameters;
+  const Parameters::Verbosity    verbosity;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;
@@ -490,10 +594,17 @@ private:
     block_physics;
 
 
-  std::map<PhysicsID, DoFHandler<dim> *>               physics_dof_handler;
+  std::map<PhysicsID, DoFHandler<dim> *> physics_dof_handler;
+
+  // present solution
   std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions;
   std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
     block_physics_solutions;
+
+  // past (minus 1) solution
+  std::map<PhysicsID, TrilinosWrappers::MPI::Vector *> physics_solutions_m1;
+  std::map<PhysicsID, TrilinosWrappers::MPI::BlockVector *>
+    block_physics_solutions_m1;
 };
 
 
