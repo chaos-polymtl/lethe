@@ -123,7 +123,6 @@ FreeSurface<dim>::assemble_system(
 
   std::vector<double>         present_phase_values(n_q_points);
   std::vector<Tensor<1, dim>> phase_gradients(n_q_points);
-  std::vector<double>         present_phase_laplacians(n_q_points);
 
   // Values for backward Euler scheme
   std::vector<double> p1_phase_values(n_q_points);
@@ -177,10 +176,6 @@ FreeSurface<dim>::assemble_system(
           // Gather free surface present value
           fe_values_fs.get_function_values(evaluation_point,
                                            present_phase_values);
-
-          // Gather present laplacian
-          fe_values_fs.get_function_laplacians(evaluation_point,
-                                               present_phase_laplacians);
 
           // Gather the previous time steps for heat transfer depending on
           // the number of stages of the time integration method

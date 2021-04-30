@@ -71,21 +71,21 @@ public:
    * @param physics_id number associated with auxiliary physics in multiphysics.h
    */
   void
-  annonce_physics(const PhysicsID physics_id)
+  announce_physics(const PhysicsID physics_id)
   {
-    if (physics_id == 1)
+    if (physics_id == PhysicsID::heat_transfer)
       {
         std::cout << "--------------" << std::endl
                   << "Heat Transfer" << std::endl
                   << "--------------" << std::endl;
       }
-    else if (physics_id == 2)
+    else if (physics_id == PhysicsID::tracer)
       {
         std::cout << "-------" << std::endl
                   << "Tracer" << std::endl
                   << "-------" << std::endl;
       }
-    else if (physics_id == 3)
+    else if (physics_id == PhysicsID::free_surface)
       {
         std::cout << "-------------" << std::endl
                   << "Free Surface" << std::endl
@@ -109,17 +109,17 @@ public:
     // sequentially.
     for (auto &iphys : physics)
       {
-        // Annonce physic solved
+        // Announce physic solved (verbosity = non_linear_solver.verbosity)
         if (verbosity != Parameters::Verbosity::quiet)
-          annonce_physics(iphys.first);
+          announce_physics(iphys.first);
 
         solve_physics(iphys.first, time_stepping_method, force_matrix_renewal);
       }
     for (auto &iphys : block_physics)
       {
-        // Annonce physic solved
+        // Announce physic solved (verbosity = non_linear_solver.verbosity)
         if (verbosity != Parameters::Verbosity::quiet)
-          annonce_physics(iphys.first);
+          announce_physics(iphys.first);
 
         solve_block_physics(iphys.first,
                             time_stepping_method,
