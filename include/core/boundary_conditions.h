@@ -35,9 +35,9 @@ namespace BoundaryConditions
     function,
     periodic,
     // for heat transfer
-    temperature, // Dirichlet
-    convection,  // Robin
-                // for tracer
+    temperature,      // Dirichlet
+    convection,       // Robin
+                      // for tracer
     tracer_dirichlet, // Dirichlet tracer
   };
 
