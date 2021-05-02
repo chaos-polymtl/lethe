@@ -39,7 +39,6 @@ attach_grid_to_triangulation(
         mesh_parameters.grid_type,
         mesh_parameters.grid_arguments);
     }
-#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
   // Simplex && GMSH input
   else if (mesh_parameters.type == Parameters::Mesh::Type::gmsh &&
            mesh_parameters.simplex)
@@ -107,7 +106,6 @@ attach_grid_to_triangulation(
           TriangulationDescription::Settings::construct_multigrid_hierarchy);
       triangulation->create_triangulation(construction_data);
     }
-#endif
 
 
   // Periodic Hills grid
