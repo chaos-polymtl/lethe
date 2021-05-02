@@ -56,7 +56,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   , pressure_fem_degree(p_nsparam.fem_parameters.pressure_order)
   , number_quadrature_points(p_nsparam.fem_parameters.velocity_order + 1)
 {
-#ifdef DEAL_II_WITH_SIMPLEX_SUPPORT
   if (simulation_parameters.mesh.simplex)
     {
       // for simplex meshes
@@ -77,7 +76,6 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
       dof_handler.reinit(*this->triangulation);
     }
   else
-#endif
     {
       // Usual case, for quad/hex meshes
       fe = std::make_shared<FESystem<dim>>(
