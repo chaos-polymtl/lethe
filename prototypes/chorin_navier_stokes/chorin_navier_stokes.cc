@@ -64,9 +64,16 @@
 #include <fstream>
 #include <iostream>
 
-#include "boundaryconditions.h"
-#include "exactsolutions.h"
-#include "forcingfunctions.h"
+//#include "boundaryconditions.h"
+//#include "exactsolutions.h"
+//#include "forcingfunctions.h"
+
+#include <deal.II/grid/tria.h>
+#include <deal.II/grid/grid_generator.h>
+#include <deal.II/grid/grid_out.h>
+#include <iostream>
+#include <fstream>
+#include <cmath>
 
 // Finally, this is as in previous programs:
 using namespace dealii;
@@ -88,6 +95,9 @@ public:
   runMMS();
   void
   runCouette();
+  
+  void
+  run();
 
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
@@ -111,9 +121,19 @@ private:
   void
   output_results(const unsigned int cycle) const;
 
-
-  double             viscosity_;
+  double             viscosity;
   Triangulation<dim> triangulation;
+
+  // FE system for velocity
+  FESystem<dim>      fe_velocity;
+  DoFHandler<dim>    dof_handler_velocity;
+  SparsityPattern    sparsity_pattern_velocity;
+
+  // FE system for pressure
+  FESystem<dim>      fe_pressure;
+  DoFHandler<dim>    dof_handler_pressure;
+  SparsityPattern    sparsity_pattern_pressure;
+
 };
 
 
@@ -121,17 +141,22 @@ private:
 template <int dim>
 ChorinNavierStokes<dim>::ChorinNavierStokes(const unsigned int degreeVelocity,
                                             const unsigned int degreePressure)
-  : viscosity_(1)
-{}
+  : viscosity(1)
 
+  // Initialise FE system for velocity
+  , fe_velocity(FE_Q<dim>(degreeVelocity), dim)
+  , dof_handler_velocity(triangulation)
+
+  // Initialise FE system for pressure
+  , fe_pressure(FE_Q<dim>(degreePressure), 1)
+  , dof_handler_pressure(triangulation)
+{}
 
 template <int dim>
 ChorinNavierStokes<dim>::~ChorinNavierStokes()
 {
   triangulation.clear();
 }
-
-
 
 template <int dim>
 void
@@ -148,16 +173,42 @@ ChorinNavierStokes<dim>::refine_grid()
   triangulation.refine_global(1);
 }
 
-
 template <int dim>
 void
 ChorinNavierStokes<dim>::setup_dofs()
-{}
+{
+  // Distribute DOFs
+  dof_handler_velocity.distribute_dofs(fe_velocity);
+  dof_handler_pressure.distribute_dofs(fe_pressure);
+
+  // Output information
+  std::cout << "   Number of active cells: " << triangulation.n_active_cells()
+            << std::endl
+            << "   Number of velocity degrees of freedom: " << dof_handler_velocity.n_dofs()
+            << std::endl
+            << "   Number of pressure degrees of freedom: " << dof_handler_pressure.n_dofs()
+            << std::endl;
+}
 
 template <int dim>
 void
 ChorinNavierStokes<dim>::initialize_system()
-{}
+{
+  // Build sparsity patterns
+  DynamicSparsityPattern dsp_velocity(dof_handler_velocity.n_dofs(), dof_handler_velocity.n_dofs());
+  DoFTools::make_sparsity_pattern(dof_handler_velocity, dsp_velocity);
+  sparsity_pattern_velocity.copy_from(dsp_velocity);
+
+  DynamicSparsityPattern dsp_pressure(dof_handler_pressure.n_dofs(), dof_handler_pressure.n_dofs());
+  DoFTools::make_sparsity_pattern(dof_handler_pressure, dsp_pressure);
+  sparsity_pattern_pressure.copy_from(dsp_pressure);
+
+  std::ofstream sparsity_velocity_out("sparsity_pattern_velocity.svg");
+  sparsity_pattern_velocity.print_svg(sparsity_velocity_out);
+
+  std::ofstream sparsity_pressure_out("sparsity_pattern_pressure.svg");
+  sparsity_pattern_pressure.print_svg(sparsity_pressure_out);
+}
 
 template <int dim>
 void
@@ -172,15 +223,43 @@ ChorinNavierStokes<dim>::refine_mesh_uniform()
 template <int dim>
 void
 ChorinNavierStokes<dim>::output_results(const unsigned int cycle) const
-{}
+{
+  /*
+  DataOut<dim> data_out;
 
-// Find the l2 norm of the error between the finite element sol'n and the exact
-// sol'n
+  data_out.attach_dof_handler(dof_handler_pressure);
+  //data_out.add_data_vector(solution, "pressure");
+
+  data_out.build_patches();
+
+  std::ofstream output("output_pressure-" + Utilities::int_to_string(cycle, 4) + ".vtu");
+  data_out.write_vtu(output);
+  */
+  
+  std::ofstream out("grid.svg");
+  GridOut       grid_out;
+  grid_out.write_svg(triangulation, out);
+  std::cout << "Grid written to grid.svg" << std::endl;
+  
+}
+
+// Find the l2 norm of the error between the finite element solution and the exact solution
 template <int dim>
 void
 ChorinNavierStokes<dim>::calculateL2Error()
 {}
 
+// Run function while building to test
+template <int dim>
+void
+ChorinNavierStokes<dim>::run()
+{
+  make_cube_grid(3);
+  refine_grid();
+  setup_dofs();
+  initialize_system();
+  output_results(0);
+}
 
 template <int dim>
 void
@@ -198,9 +277,10 @@ main()
 {
   try
     {
-      ChorinNavierStokes<2> problem_2d(1, 1);
-      //        problem_2d.runCouette();
-      //      problem_2d.runMMS();
+      ChorinNavierStokes<2> problem_2d(1, 1); // degreeVelocity, degreePressure
+      problem_2d.run();
+      //problem_2d.runCouette();
+      //problem_2d.runMMS();
     }
   catch (std::exception &exc)
     {
