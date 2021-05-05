@@ -195,7 +195,17 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
+
+  // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
+  // If SDIRK type of methods are used, initialize solution stages
+  for (auto &solution : this->solution_stages)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
@@ -415,10 +425,18 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
+            fe_values[velocities].get_function_values(this->solution_stages[0],
+                                                      p2_velocity_values);
+
+          if (time_stepping_method_has_three_stages(scheme))
+            fe_values[velocities].get_function_values(this->solution_stages[1],
+                                                      p3_velocity_values);
+
+          if (time_stepping_method_uses_two_previous_solutions(scheme))
             fe_values[velocities].get_function_values(
               this->previous_solutions[1], p2_velocity_values);
 
-          if (time_stepping_method_has_three_stages(scheme))
+          if (time_stepping_method_uses_three_previous_solutions(scheme))
             fe_values[velocities].get_function_values(
               this->previous_solutions[2], p3_velocity_values);
 

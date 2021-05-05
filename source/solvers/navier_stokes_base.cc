@@ -25,6 +25,7 @@
 #include <deal.II/opencascade/utilities.h>
 
 #include <core/grids.h>
+#include <core/sdirk.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 #include <solvers/flow_control.h>
@@ -131,6 +132,10 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
   previous_solutions.resize(maximum_number_of_previous_solutions());
+
+  // Pre-allocate memory for intermediary stages if there are any
+  solution_stages.resize(number_of_intermediary_stages(
+    simulation_parameters.simulation_control.method));
 
 
   // Change the behavior of the timer for situations when you don't want
@@ -478,7 +483,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
         false,
         false);
-      this->previous_solutions[1] = present_solution;
+      this->solution_stages[0] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
@@ -494,14 +499,14 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         false,
         false);
 
-      this->previous_solutions[1] = present_solution;
+      this->solution_stages[0] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
         false,
         false);
 
-      this->previous_solutions[2] = present_solution;
+      this->solution_stages[1] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
@@ -543,6 +548,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       simulation_control->set_current_time_step(time_step);
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
@@ -555,6 +564,9 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false);
 
       simulation_control->set_suggested_time_step(timeParameters.dt);
     }
@@ -573,6 +585,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
@@ -582,6 +598,11 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 3 newton iteration using the two
@@ -592,6 +613,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false);
+
       simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 }

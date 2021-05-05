@@ -207,13 +207,15 @@ Tracer<dim>::assemble_system(
                                                    p1_tracer_values);
             }
 
-          if (time_stepping_method_has_two_stages(time_stepping_method))
+          if (time_stepping_method_uses_two_previous_solutions(
+                time_stepping_method))
             {
               fe_values_tracer.get_function_values(previous_solutions[1],
                                                    p2_tracer_values);
             }
 
-          if (time_stepping_method_has_three_stages(time_stepping_method))
+          if (time_stepping_method_uses_three_previous_solutions(
+                time_stepping_method))
             {
               fe_values_tracer.get_function_values(previous_solutions[2],
                                                    p3_tracer_values);

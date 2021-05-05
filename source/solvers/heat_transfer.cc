@@ -259,7 +259,8 @@ HeatTransfer<dim>::assemble_system(
                                                   p1_temperature_gradients);
             }
 
-          if (time_stepping_method_has_two_stages(time_stepping_method))
+          if (time_stepping_method_uses_two_previous_solutions(
+                time_stepping_method))
             {
               fe_values_ht.get_function_values(previous_solutions[1],
                                                p2_temperature_values);
@@ -268,7 +269,8 @@ HeatTransfer<dim>::assemble_system(
                                                   p2_temperature_gradients);
             }
 
-          if (time_stepping_method_has_three_stages(time_stepping_method))
+          if (time_stepping_method_uses_three_previous_solutions(
+                time_stepping_method))
             {
               fe_values_ht.get_function_values(previous_solutions[2],
                                                p3_temperature_values);
@@ -955,8 +957,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  Heat Transfer : " << std::endl
-                  << "  -Tolerance of iterative solver is : "
+      this->pcout << "  -Tolerance of iterative solver is : "
                   << linear_solver_tolerance << std::endl;
     }
 
@@ -994,8 +995,7 @@ HeatTransfer<dim>::solve_linear_system(const bool initial_step,
   if (simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
     {
-      this->pcout << "  Heat Transfer : " << std::endl
-                  << "  -Iterative solver took : " << solver_control.last_step()
+      this->pcout << "  -Iterative solver took : " << solver_control.last_step()
                   << " steps " << std::endl;
     }
 

@@ -186,13 +186,15 @@ FreeSurface<dim>::assemble_system(
                                                p1_phase_values);
             }
 
-          if (time_stepping_method_has_two_stages(time_stepping_method))
+          if (time_stepping_method_uses_two_previous_solutions(
+                time_stepping_method))
             {
               fe_values_fs.get_function_values(previous_solutions[1],
                                                p2_phase_values);
             }
 
-          if (time_stepping_method_has_three_stages(time_stepping_method))
+          if (time_stepping_method_uses_three_previous_solutions(
+                time_stepping_method))
             {
               fe_values_fs.get_function_values(previous_solutions[2],
                                                p3_phase_values);

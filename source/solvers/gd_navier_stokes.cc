@@ -577,7 +577,16 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
+  // Initialize previous solutions
   for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
+  // If SDIRK type of methods are used, initialize solution stages
+  for (auto &solution : this->solution_stages)
     {
       solution.reinit(this->locally_owned_dofs,
                       this->locally_relevant_dofs,
