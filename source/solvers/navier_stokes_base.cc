@@ -128,6 +128,11 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
                                                  triangulation,
                                                  simulation_control);
 
+  // Pre-allocate memory for the previous solutions using the information
+  // of the BDF schemes
+  previous_solutions.resize(maximum_number_of_previous_solutions());
+
+
   // Change the behavior of the timer for situations when you don't want
   // outputs
   if (simulation_parameters.timer.type == Parameters::Timer::Type::none)
@@ -417,6 +422,11 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
 {
+  for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
+    {
+      previous_solutions[i] = previous_solutions[i - 1];
+    }
+
   this->solution_m3 = this->solution_m2;
   this->solution_m2 = this->solution_m1;
   this->solution_m1 = this->present_solution;
@@ -689,6 +699,19 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
     this->dof_handler);
+  std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
+    previous_solutions_transfer;
+  // Important to reserve to prevent pointer dangling
+  previous_solutions_transfer.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions_transfer.push_back(
+        parallel::distributed::SolutionTransfer<dim, VectorType>(
+          this->dof_handler));
+      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
+        previous_solutions[i]);
+    }
+
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
@@ -710,6 +733,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   // Set up the vectors for the transfer
   VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      VectorType tmp_previous_solution(locally_owned_dofs,
+                                       this->mpi_communicator);
+      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+      nonzero_constraints.distribute(tmp_previous_solution);
+      previous_solutions[i] = tmp_previous_solution;
+    }
+
   VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
   VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
   VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
@@ -759,6 +792,20 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
+  std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
+    previous_solutions_transfer;
+  // Important to reserve to prevent pointer dangling
+  previous_solutions_transfer.reserve(previous_solutions.size());
+
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions_transfer.emplace_back(
+        parallel::distributed::SolutionTransfer<dim, VectorType>(
+          this->dof_handler));
+      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
+        previous_solutions[i]);
+    }
+
   multiphysics->prepare_for_mesh_adaptation();
 
   // Refine
@@ -790,6 +837,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
+
+  // Set up the vectors for the transfer
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      VectorType tmp_previous_solution(locally_owned_dofs,
+                                       this->mpi_communicator);
+      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+      nonzero_constraints.distribute(tmp_previous_solution);
+      previous_solutions[i] = tmp_previous_solution;
+    }
 
   multiphysics->post_mesh_adaptation();
 }
