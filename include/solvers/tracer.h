@@ -39,6 +39,7 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <core/bdf.h>
 #include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
@@ -82,6 +83,9 @@ public:
           fe->degree, simulation_parameters.fem_parameters.qmapping_all);
         cell_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 1);
       }
+
+    // Set size of previous solutions using BDF schemes information
+    previous_solutions.resize(maximum_number_of_previous_solutions());
   }
 
   /**
@@ -303,14 +307,15 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix;
 
 
-  // Past solution vectors
-  TrilinosWrappers::MPI::Vector solution_m1;
-  TrilinosWrappers::MPI::Vector solution_m2;
-  TrilinosWrappers::MPI::Vector solution_m3;
+  // Previous solutions vectors
+  std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer;
+  std::vector<
+    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
+    previous_solutions_transfer;
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer_m1;
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
