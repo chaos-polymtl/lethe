@@ -625,15 +625,8 @@ Tracer<dim>::pre_mesh_adaptation()
 {
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
-  // Prepare previous solutions transfer
-  previous_solutions_transfer.clear();
-  previous_solutions_transfer.reserve(previous_solutions.size());
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
-      previous_solutions_transfer.emplace_back(
-        parallel::distributed::SolutionTransfer<dim,
-                                                TrilinosWrappers::MPI::Vector>(
-          this->dof_handler));
       previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
         previous_solutions[i]);
     }

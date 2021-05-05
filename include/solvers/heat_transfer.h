@@ -39,6 +39,7 @@
 #include <deal.II/lac/trilinos_sparse_matrix.h>
 #include <deal.II/lac/trilinos_vector.h>
 
+#include <core/bdf.h>
 #include <core/simulation_control.h>
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
@@ -61,9 +62,6 @@ public:
     , simulation_control(p_simulation_control)
     , dof_handler(*triangulation)
     , solution_transfer(dof_handler)
-    , solution_transfer_m1(dof_handler)
-    , solution_transfer_m2(dof_handler)
-    , solution_transfer_m3(dof_handler)
   {
     if (simulation_parameters.mesh.simplex)
       {
@@ -86,6 +84,19 @@ public:
         cell_quadrature  = std::make_shared<QGauss<dim>>(fe->degree + 1);
         face_quadrature  = std::make_shared<QGauss<dim - 1>>(fe->degree + 1);
         error_quadrature = std::make_shared<QGauss<dim>>(fe->degree + 2);
+      }
+
+    // Set size of previous solutions using BDF schemes information
+    previous_solutions.resize(maximum_number_of_previous_solutions());
+
+    // Prepare previous solutions transfer
+    previous_solutions_transfer.reserve(previous_solutions.size());
+    for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+      {
+        previous_solutions_transfer.emplace_back(
+          parallel::distributed::
+            SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>(
+              this->dof_handler));
       }
   }
 
@@ -287,20 +298,15 @@ private:
   TrilinosWrappers::SparseMatrix system_matrix;
 
 
-  // Past solution vectors
-  TrilinosWrappers::MPI::Vector solution_m1;
-  TrilinosWrappers::MPI::Vector solution_m2;
-  TrilinosWrappers::MPI::Vector solution_m3;
+  // Previous solutions vectors
+  std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
     solution_transfer;
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m1;
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m2;
-  parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
-    solution_transfer_m3;
+  std::vector<
+    parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
+    previous_solutions_transfer;
 
   // Reference for GGLS https://onlinelibrary.wiley.com/doi/abs/10.1002/nme.2324
   // Warning, this GGLS implementation is valid only for Linear elements
