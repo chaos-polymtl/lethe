@@ -180,8 +180,8 @@ GDNavierStokesSolver<dim>::assembleGD()
 
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (scheme ==
                 Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
@@ -584,9 +584,6 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
-  this->solution_m1.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
   this->solution_m2.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
                            this->mpi_communicator);

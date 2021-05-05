@@ -202,9 +202,6 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
-  this->solution_m1.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
   this->solution_m2.reinit(this->locally_owned_dofs,
                            this->locally_relevant_dofs,
                            this->mpi_communicator);
@@ -421,8 +418,8 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           // stages of the time integration scheme
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
             fe_values[velocities].get_function_values(this->solution_m2,
@@ -1033,8 +1030,8 @@ GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
           // of the time integration scheme
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
             fe_values[velocities].get_function_values(this->solution_m2,

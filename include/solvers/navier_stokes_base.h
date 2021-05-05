@@ -471,7 +471,6 @@ protected:
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  VectorType              solution_m1;
   VectorType              solution_m2;
   VectorType              solution_m3;
 

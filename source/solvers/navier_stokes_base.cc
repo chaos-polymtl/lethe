@@ -426,10 +426,10 @@ NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
     {
       previous_solutions[i] = previous_solutions[i - 1];
     }
+  previous_solutions[0] = this->present_solution;
 
   this->solution_m3 = this->solution_m2;
-  this->solution_m2 = this->solution_m1;
-  this->solution_m1 = this->present_solution;
+  this->solution_m2 = previous_solutions[0];
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -719,7 +719,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
@@ -743,26 +742,22 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       previous_solutions[i] = tmp_previous_solution;
     }
 
-  VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
   VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
   VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
   solution_transfer_m2.interpolate(tmp_m2);
   solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
-  nonzero_constraints.distribute(tmp_m1);
   nonzero_constraints.distribute(tmp_m2);
   nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
   present_solution  = tmp;
-  this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
 
@@ -780,15 +775,12 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
     this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
-    this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
   solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
   solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
@@ -821,7 +813,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
   solution_transfer_m2.interpolate(tmp_m2);
   solution_transfer_m3.interpolate(tmp_m3);
 
@@ -834,7 +825,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // Fix on the new mesh
   present_solution  = tmp;
-  this->solution_m1 = tmp_m1;
   this->solution_m2 = tmp_m2;
   this->solution_m3 = tmp_m3;
 
@@ -1095,26 +1085,19 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                              "triangulation stored there."));
     }
   setup_dofs();
-  std::vector<VectorType *> x_system(4);
+  std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
-
-
-  /**
-   * The newton_update vector is used to initialize the x_system to which
-   * the serialized restart data is read. This is a necessary step since the
-   * serialized data must be read into a locally_owned vector. The
-   * present_solution, solution_m1, solution_m2 and solution_m3 vectors are
-   * locally_relevant vector. Consequently, they cannot be written directly to
-   * and these intermediary vectors must be used to store the data.
-   */
   VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
-  VectorType distributed_system_m1(locally_owned_dofs, this->mpi_communicator);
-  VectorType distributed_system_m2(locally_owned_dofs, this->mpi_communicator);
-  VectorType distributed_system_m3(locally_owned_dofs, this->mpi_communicator);
   x_system[0] = &(distributed_system);
-  x_system[1] = &(distributed_system_m1);
-  x_system[2] = &(distributed_system_m2);
-  x_system[3] = &(distributed_system_m3);
+
+  std::vector<VectorType> distributed_previous_solutions;
+  distributed_previous_solutions.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        VectorType(locally_owned_dofs, this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
 
@@ -1128,9 +1111,10 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   system_trans_vectors.deserialize(x_system);
   this->present_solution = distributed_system;
-  this->solution_m1      = distributed_system_m1;
-  this->solution_m2      = distributed_system_m2;
-  this->solution_m3      = distributed_system_m3;
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions[i] = distributed_previous_solutions[i];
+    }
 
   if (simulation_parameters.flow_control.enable_flow_control)
     {
@@ -1372,9 +1356,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
-  sol_set_transfer.push_back(&this->solution_m1);
-  sol_set_transfer.push_back(&this->solution_m2);
-  sol_set_transfer.push_back(&this->solution_m3);
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&previous_solutions[i]);
+    }
 
   if (simulation_parameters.post_processing.calculate_average_velocities)
     {

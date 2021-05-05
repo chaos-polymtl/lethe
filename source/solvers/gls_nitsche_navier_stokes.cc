@@ -836,9 +836,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::write_checkpoint()
   // VectorType = TrilinosWrappers::MPI::Vector
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
-  sol_set_transfer.push_back(&this->solution_m1);
-  sol_set_transfer.push_back(&this->solution_m2);
-  sol_set_transfer.push_back(&this->solution_m3);
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&this->previous_solutions[i]);
+    }
 
   parallel::distributed::SolutionTransfer<spacedim,
                                           TrilinosWrappers::MPI::Vector>
@@ -957,29 +958,29 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 
   // Setup Navier-Stokes trans vectors
   this->setup_dofs();
-  std::vector<TrilinosWrappers::MPI::Vector *> x_system(4);
+
   TrilinosWrappers::MPI::Vector distributed_system(this->locally_owned_dofs,
                                                    this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector distributed_system_m1(this->locally_owned_dofs,
-                                                      this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector distributed_system_m2(this->locally_owned_dofs,
-                                                      this->mpi_communicator);
-  TrilinosWrappers::MPI::Vector distributed_system_m3(this->locally_owned_dofs,
-                                                      this->mpi_communicator);
+  std::vector<TrilinosWrappers::MPI::Vector *> x_system(
+    1 + this->previous_solutions.size());
   x_system[0] = &(distributed_system);
-  x_system[1] = &(distributed_system_m1);
-  x_system[2] = &(distributed_system_m2);
-  x_system[3] = &(distributed_system_m3);
+
+  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+  distributed_previous_solutions.reserve(this->previous_solutions.size());
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(this->locally_owned_dofs,
+                                      this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
+
   parallel::distributed::SolutionTransfer<spacedim,
                                           TrilinosWrappers::MPI::Vector>
     system_trans_vectors(this->dof_handler);
 
   system_trans_vectors.deserialize(x_system);
   this->present_solution = distributed_system;
-  this->solution_m1      = distributed_system_m1;
-  this->solution_m2      = distributed_system_m2;
-  this->solution_m3      = distributed_system_m3;
-
   this->multiphysics->read_checkpoint();
 }
 
