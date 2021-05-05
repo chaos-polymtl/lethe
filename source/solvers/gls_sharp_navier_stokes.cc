@@ -3050,12 +3050,12 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                   this->previous_solutions[0], p1_velocity_values);
 
               if (time_stepping_method_has_two_stages(scheme))
-                fe_values[velocities].get_function_values(this->solution_m2,
-                                                          p2_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->previous_solutions[1], p2_velocity_values);
 
               if (time_stepping_method_has_three_stages(scheme))
-                fe_values[velocities].get_function_values(this->solution_m3,
-                                                          p3_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->previous_solutions[2], p3_velocity_values);
 
               // Loop over the quadrature points
               for (unsigned int q = 0; q < n_q_points; ++q)

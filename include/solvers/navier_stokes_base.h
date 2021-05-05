@@ -471,8 +471,6 @@ protected:
 
   // Previous solutions vectors
   std::vector<VectorType> previous_solutions;
-  VectorType              solution_m2;
-  VectorType              solution_m3;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;

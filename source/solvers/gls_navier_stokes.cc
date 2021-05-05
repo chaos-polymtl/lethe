@@ -202,13 +202,6 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                       this->mpi_communicator);
     }
 
-  this->solution_m2.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m3.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,
@@ -422,12 +415,12 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m2,
-                                                      p2_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[1], p2_velocity_values);
 
           if (time_stepping_method_has_three_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m3,
-                                                      p3_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[2], p3_velocity_values);
 
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1034,12 +1027,12 @@ GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
               this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m2,
-                                                      p2_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[1], p2_velocity_values);
 
           if (time_stepping_method_has_three_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m3,
-                                                      p3_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[2], p3_velocity_values);
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
             {

@@ -427,9 +427,6 @@ NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
       previous_solutions[i] = previous_solutions[i - 1];
     }
   previous_solutions[0] = this->present_solution;
-
-  this->solution_m3 = this->solution_m2;
-  this->solution_m2 = previous_solutions[0];
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -481,7 +478,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
         false,
         false);
-      this->solution_m2 = present_solution;
+      this->previous_solutions[1] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
@@ -497,14 +494,14 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         false,
         false);
 
-      this->solution_m2 = present_solution;
+      this->previous_solutions[1] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
         false,
         false);
 
-      this->solution_m3 = present_solution;
+      this->previous_solutions[2] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
@@ -719,8 +716,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
   multiphysics->prepare_for_mesh_adaptation();
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -733,6 +728,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // Set up the vectors for the transfer
   VectorType tmp(locally_owned_dofs, this->mpi_communicator);
 
+  // Interpolate the solution at time and previous time
+  solution_transfer.interpolate(tmp);
+
+  // Distribute constraints
+  auto &nonzero_constraints = this->nonzero_constraints;
+  nonzero_constraints.distribute(tmp);
+
+  // Fix on the new mesh
+  present_solution = tmp;
+
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)
     {
       VectorType tmp_previous_solution(locally_owned_dofs,
@@ -741,25 +746,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
       nonzero_constraints.distribute(tmp_previous_solution);
       previous_solutions[i] = tmp_previous_solution;
     }
-
-  VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
-
-  // Interpolate the solution at time and previous time
-  solution_transfer.interpolate(tmp);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
-
-  // Distribute constraints
-  auto &nonzero_constraints = this->nonzero_constraints;
-  nonzero_constraints.distribute(tmp);
-  nonzero_constraints.distribute(tmp_m2);
-  nonzero_constraints.distribute(tmp_m3);
-
-  // Fix on the new mesh
-  present_solution  = tmp;
-  this->solution_m2 = tmp_m2;
-  this->solution_m3 = tmp_m3;
 
   multiphysics->post_mesh_adaptation();
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -781,8 +767,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
     this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
   std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
     previous_solutions_transfer;
@@ -807,26 +791,16 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // Set up the vectors for the transfer
   VectorType tmp(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
-  nonzero_constraints.distribute(tmp_m1);
-  nonzero_constraints.distribute(tmp_m2);
-  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
-  present_solution  = tmp;
-  this->solution_m2 = tmp_m2;
-  this->solution_m3 = tmp_m3;
+  present_solution = tmp;
 
   // Set up the vectors for the transfer
   for (unsigned int i = 0; i < previous_solutions.size(); ++i)

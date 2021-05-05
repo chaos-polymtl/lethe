@@ -981,6 +981,10 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::read_checkpoint()
 
   system_trans_vectors.deserialize(x_system);
   this->present_solution = distributed_system;
+  for (unsigned int i = 0; i < this->previous_solutions.size(); ++i)
+    {
+      this->previous_solutions[i] = distributed_previous_solutions[i];
+    }
   this->multiphysics->read_checkpoint();
 }
 
