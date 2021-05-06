@@ -370,10 +370,9 @@ GLSVANSSolver<dim>::first_iteration()
       calculate_void_fraction(intermediate_time);
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      void_fraction_m2  = void_fraction_m1;
-      void_fraction_m1  = nodal_void_fraction_relevant;
+      this->percolate_time_vectors_fd();
+      void_fraction_m2 = void_fraction_m1;
+      void_fraction_m1 = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
@@ -410,10 +409,9 @@ GLSVANSSolver<dim>::first_iteration()
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      void_fraction_m2  = void_fraction_m1;
-      void_fraction_m1  = nodal_void_fraction_relevant;
+      this->percolate_time_vectors_fd();
+      void_fraction_m2 = void_fraction_m1;
+      void_fraction_m1 = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
@@ -425,12 +423,10 @@ GLSVANSSolver<dim>::first_iteration()
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
-      this->solution_m3 = this->solution_m2;
-      this->solution_m2 = this->solution_m1;
-      this->solution_m1 = this->present_solution;
-      void_fraction_m3  = void_fraction_m2;
-      void_fraction_m2  = void_fraction_m1;
-      void_fraction_m1  = nodal_void_fraction_relevant;
+      this->percolate_time_vectors_fd();
+      void_fraction_m3 = void_fraction_m2;
+      void_fraction_m2 = void_fraction_m1;
+      void_fraction_m1 = nodal_void_fraction_relevant;
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step
@@ -634,16 +630,16 @@ GLSVANSSolver<dim>::assembleGLS()
           // of the time integration scheme
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m2,
-                                                      p2_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[1], p2_velocity_values);
 
           if (time_stepping_method_has_three_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m3,
-                                                      p3_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[2], p3_velocity_values);
 
           // Gather the previous time steps depending on the number of stages
           // of the time integration scheme for the void fraction

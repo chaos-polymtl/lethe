@@ -152,8 +152,6 @@ time_stepping_method_has_two_stages(
   const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
@@ -173,11 +171,36 @@ time_stepping_method_has_three_stages(
   const Parameters::SimulationControl::TimeSteppingMethod method)
 {
   return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::bdf3 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
+}
+
+
+/**
+ * @brief Determines if the time integration method requires an additional array
+ *
+ * @param method A time integration method
+ */
+inline bool
+time_stepping_method_uses_two_previous_solutions(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
+          method == Parameters::SimulationControl::TimeSteppingMethod::bdf3);
+}
+
+/**
+ * @brief Determines if the time integration method requires two additional arrays
+ *
+ * @param method A time integration method
+ */
+inline bool
+time_stepping_method_uses_three_previous_solutions(
+  const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method == Parameters::SimulationControl::TimeSteppingMethod::bdf3);
 }
 
 #endif

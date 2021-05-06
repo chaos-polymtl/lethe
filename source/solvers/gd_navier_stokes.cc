@@ -180,18 +180,18 @@ GDNavierStokesSolver<dim>::assembleGD()
 
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (scheme ==
                 Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
               scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-            fe_values[velocities].get_function_values(this->solution_m2,
-                                                      p2_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[1], p2_velocity_values);
 
           if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-            fe_values[velocities].get_function_values(this->solution_m3,
-                                                      p3_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[2], p3_velocity_values);
 
           if (l_forcing_function)
             l_forcing_function->vector_value_list(
@@ -577,15 +577,22 @@ GDNavierStokesSolver<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
-  this->solution_m1.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m2.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m3.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
+  // Initialize previous solutions
+  for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
+  // If SDIRK type of methods are used, initialize solution stages
+  for (auto &solution : this->solution_stages)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->local_evaluation_point.reinit(this->locally_owned_dofs,

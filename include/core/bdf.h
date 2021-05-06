@@ -60,4 +60,19 @@ bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
 Vector<double>
 delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
 
+
+
+/**
+ * @brief Returns the number of previous time steps supposed by the BDF schemes implemented in Lethe.
+ *  At the moment this is hardcoded to 3, but eventually this could be made
+ * larger or smaller depending on the methods used.
+ *
+ */
+inline unsigned int
+maximum_number_of_previous_solutions()
+{
+  return 3;
+}
+
+
 #endif

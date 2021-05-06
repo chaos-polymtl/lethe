@@ -203,19 +203,21 @@ Tracer<dim>::assemble_system(
           if (time_stepping_method !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
-              fe_values_tracer.get_function_values(this->solution_m1,
+              fe_values_tracer.get_function_values(previous_solutions[0],
                                                    p1_tracer_values);
             }
 
-          if (time_stepping_method_has_two_stages(time_stepping_method))
+          if (time_stepping_method_uses_two_previous_solutions(
+                time_stepping_method))
             {
-              fe_values_tracer.get_function_values(this->solution_m2,
+              fe_values_tracer.get_function_values(previous_solutions[1],
                                                    p2_tracer_values);
             }
 
-          if (time_stepping_method_has_three_stages(time_stepping_method))
+          if (time_stepping_method_uses_three_previous_solutions(
+                time_stepping_method))
             {
-              fe_values_tracer.get_function_values(this->solution_m3,
+              fe_values_tracer.get_function_values(previous_solutions[2],
                                                    p3_tracer_values);
             }
 
@@ -474,9 +476,11 @@ template <int dim>
 void
 Tracer<dim>::percolate_time_vectors()
 {
-  solution_m3 = solution_m2;
-  solution_m2 = solution_m1;
-  solution_m1 = present_solution;
+  for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
+    {
+      previous_solutions[i] = previous_solutions[i - 1];
+    }
+  previous_solutions[0] = this->present_solution;
 }
 
 template <int dim>
@@ -622,9 +626,12 @@ void
 Tracer<dim>::pre_mesh_adaptation()
 {
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(solution_m1);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(solution_m3);
+
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
+        previous_solutions[i]);
+    }
 }
 
 template <int dim>
@@ -633,30 +640,27 @@ Tracer<dim>::post_mesh_adaptation()
 {
   auto mpi_communicator = triangulation->get_communicator();
 
-
   // Set up the vectors for the transfer
   TrilinosWrappers::MPI::Vector tmp(locally_owned_dofs, mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m1(locally_owned_dofs, mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m2(locally_owned_dofs, mpi_communicator);
-  TrilinosWrappers::MPI::Vector tmp_m3(locally_owned_dofs, mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
   nonzero_constraints.distribute(tmp);
-  nonzero_constraints.distribute(tmp_m1);
-  nonzero_constraints.distribute(tmp_m2);
-  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
   present_solution = tmp;
-  solution_m1      = tmp_m1;
-  solution_m2      = tmp_m2;
-  solution_m3      = tmp_m3;
+
+  // Transfer previous solutions
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      TrilinosWrappers::MPI::Vector tmp_previous_solution(locally_owned_dofs,
+                                                          mpi_communicator);
+      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+      nonzero_constraints.distribute(tmp_previous_solution);
+      previous_solutions[i] = tmp_previous_solution;
+    }
 }
 
 template <int dim>
@@ -666,9 +670,10 @@ Tracer<dim>::write_checkpoint()
   std::vector<const TrilinosWrappers::MPI::Vector *> sol_set_transfer;
 
   sol_set_transfer.push_back(&present_solution);
-  sol_set_transfer.push_back(&solution_m1);
-  sol_set_transfer.push_back(&solution_m2);
-  sol_set_transfer.push_back(&solution_m3);
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&previous_solutions[i]);
+    }
   solution_transfer.prepare_for_serialization(sol_set_transfer);
 }
 
@@ -679,27 +684,29 @@ Tracer<dim>::read_checkpoint()
   auto mpi_communicator = triangulation->get_communicator();
   this->pcout << "Reading tracer checkpoint" << std::endl;
 
-  std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(4);
+  std::vector<TrilinosWrappers::MPI::Vector *> input_vectors(
+    1 + previous_solutions.size());
   TrilinosWrappers::MPI::Vector distributed_system(locally_owned_dofs,
                                                    mpi_communicator);
-  TrilinosWrappers::MPI::Vector distributed_system_m1(locally_owned_dofs,
-                                                      mpi_communicator);
-  TrilinosWrappers::MPI::Vector distributed_system_m2(locally_owned_dofs,
-                                                      mpi_communicator);
-  TrilinosWrappers::MPI::Vector distributed_system_m3(locally_owned_dofs,
-                                                      mpi_communicator);
-
   input_vectors[0] = &distributed_system;
-  input_vectors[1] = &distributed_system_m1;
-  input_vectors[2] = &distributed_system_m2;
-  input_vectors[3] = &distributed_system_m3;
+
+
+  std::vector<TrilinosWrappers::MPI::Vector> distributed_previous_solutions;
+  distributed_previous_solutions.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        TrilinosWrappers::MPI::Vector(locally_owned_dofs, mpi_communicator));
+      input_vectors[i + 1] = &distributed_previous_solutions[i];
+    }
 
   solution_transfer.deserialize(input_vectors);
 
   present_solution = distributed_system;
-  solution_m1      = distributed_system_m1;
-  solution_m2      = distributed_system_m2;
-  solution_m3      = distributed_system_m3;
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions[i] = distributed_previous_solutions[i];
+    }
 }
 
 
@@ -721,15 +728,12 @@ Tracer<dim>::setup_dofs()
                           mpi_communicator);
 
   // Previous solutions for transient schemes
-  solution_m1.reinit(locally_owned_dofs,
-                     locally_relevant_dofs,
-                     mpi_communicator);
-  solution_m2.reinit(locally_owned_dofs,
-                     locally_relevant_dofs,
-                     mpi_communicator);
-  solution_m3.reinit(locally_owned_dofs,
-                     locally_relevant_dofs,
-                     mpi_communicator);
+  for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(locally_owned_dofs,
+                      locally_relevant_dofs,
+                      mpi_communicator);
+    }
 
   system_rhs.reinit(locally_owned_dofs, mpi_communicator);
 
