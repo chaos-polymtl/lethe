@@ -446,15 +446,17 @@ protected:
   SimulationParameters<dim> simulation_parameters;
   PVDHandler                pvdhandler;
 
+  // Functions used for source term and error analysis
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
 
-  // Inlet flow rate and area
-  std::pair<double, double> flow_rate;
+
 
   // Dynamic flow control
   FlowControl<dim> flow_control;
   Tensor<1, dim>   beta;
+  // Inlet flow rate and area
+  std::pair<double, double> flow_rate;
 
   // Constraints for Dirichlet boundary conditions
   AffineConstraints<double> zero_constraints;
@@ -467,10 +469,11 @@ protected:
   VectorType                system_rhs;
   AffineConstraints<double> nonzero_constraints;
 
-  // Past solution vectors
-  VectorType solution_m1;
-  VectorType solution_m2;
-  VectorType solution_m3;
+  // Previous solutions vectors
+  std::vector<VectorType> previous_solutions;
+
+  // Intermediary solution stages for SDIRK methods
+  std::vector<VectorType> solution_stages;
 
   // Finite element order used
   const unsigned int velocity_fem_degree;
@@ -488,7 +491,6 @@ protected:
 
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;
-  // SimulationControl simulationControl;
 
   // Post-processing variables
   TableHandler enstrophy_table;

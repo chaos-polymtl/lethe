@@ -25,6 +25,7 @@
 #include <deal.II/opencascade/utilities.h>
 
 #include <core/grids.h>
+#include <core/sdirk.h>
 #include <core/solutions_output.h>
 #include <core/utilities.h>
 #include <solvers/flow_control.h>
@@ -127,6 +128,15 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
     std::make_shared<MultiphysicsInterface<dim>>(simulation_parameters,
                                                  triangulation,
                                                  simulation_control);
+
+  // Pre-allocate memory for the previous solutions using the information
+  // of the BDF schemes
+  previous_solutions.resize(maximum_number_of_previous_solutions());
+
+  // Pre-allocate memory for intermediary stages if there are any
+  solution_stages.resize(number_of_intermediary_stages(
+    simulation_parameters.simulation_control.method));
+
 
   // Change the behavior of the timer for situations when you don't want
   // outputs
@@ -417,9 +427,11 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::percolate_time_vectors_fd()
 {
-  this->solution_m3 = this->solution_m2;
-  this->solution_m2 = this->solution_m1;
-  this->solution_m1 = this->present_solution;
+  for (unsigned int i = previous_solutions.size() - 1; i > 0; --i)
+    {
+      previous_solutions[i] = previous_solutions[i - 1];
+    }
+  previous_solutions[0] = this->present_solution;
 }
 
 template <int dim, typename VectorType, typename DofsType>
@@ -471,7 +483,7 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
         false,
         false);
-      this->solution_m2 = present_solution;
+      this->solution_stages[0] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
@@ -487,14 +499,14 @@ NavierStokesBase<dim, VectorType, DofsType>::iterate()
         false,
         false);
 
-      this->solution_m2 = present_solution;
+      this->solution_stages[0] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
         false,
         false);
 
-      this->solution_m3 = present_solution;
+      this->solution_stages[1] = present_solution;
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
@@ -536,6 +548,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
       simulation_control->set_current_time_step(time_step);
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
@@ -548,6 +564,9 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false);
 
       simulation_control->set_suggested_time_step(timeParameters.dt);
     }
@@ -566,6 +585,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
@@ -575,6 +598,11 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
+
       percolate_time_vectors();
 
       // Reset the time step and do a bdf 3 newton iteration using the two
@@ -585,6 +613,10 @@ NavierStokesBase<dim, VectorType, DofsType>::first_iteration()
 
       PhysicsSolver<VectorType>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
+
+      multiphysics->solve(
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false);
+
       simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 }
@@ -689,6 +721,19 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
     this->dof_handler);
+  std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
+    previous_solutions_transfer;
+  // Important to reserve to prevent pointer dangling
+  previous_solutions_transfer.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions_transfer.push_back(
+        parallel::distributed::SolutionTransfer<dim, VectorType>(
+          this->dof_handler));
+      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
+        previous_solutions[i]);
+    }
+
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
@@ -696,9 +741,6 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
 
   multiphysics->prepare_for_mesh_adaptation();
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -710,28 +752,25 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
 
   // Set up the vectors for the transfer
   VectorType tmp(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
-  nonzero_constraints.distribute(tmp_m1);
-  nonzero_constraints.distribute(tmp_m2);
-  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
-  present_solution  = tmp;
-  this->solution_m1 = tmp_m1;
-  this->solution_m2 = tmp_m2;
-  this->solution_m3 = tmp_m3;
+  present_solution = tmp;
+
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      VectorType tmp_previous_solution(locally_owned_dofs,
+                                       this->mpi_communicator);
+      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+      nonzero_constraints.distribute(tmp_previous_solution);
+      previous_solutions[i] = tmp_previous_solution;
+    }
 
   multiphysics->post_mesh_adaptation();
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
@@ -747,17 +786,26 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
   // Solution transfer objects for all the solutions
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
     this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
-    this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
     this->dof_handler);
   parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
     this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(
     this->present_solution);
-  solution_transfer_m1.prepare_for_coarsening_and_refinement(this->solution_m1);
-  solution_transfer_m2.prepare_for_coarsening_and_refinement(this->solution_m2);
-  solution_transfer_m3.prepare_for_coarsening_and_refinement(this->solution_m3);
+
+  std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
+    previous_solutions_transfer;
+  // Important to reserve to prevent pointer dangling
+  previous_solutions_transfer.reserve(previous_solutions.size());
+
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions_transfer.emplace_back(
+        parallel::distributed::SolutionTransfer<dim, VectorType>(
+          this->dof_handler));
+      previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
+        previous_solutions[i]);
+    }
 
   multiphysics->prepare_for_mesh_adaptation();
 
@@ -768,28 +816,26 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_uniform()
 
   // Set up the vectors for the transfer
   VectorType tmp(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m1(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m2(locally_owned_dofs, this->mpi_communicator);
-  VectorType tmp_m3(locally_owned_dofs, this->mpi_communicator);
 
   // Interpolate the solution at time and previous time
   solution_transfer.interpolate(tmp);
-  solution_transfer_m1.interpolate(tmp_m1);
-  solution_transfer_m2.interpolate(tmp_m2);
-  solution_transfer_m3.interpolate(tmp_m3);
 
   // Distribute constraints
   auto &nonzero_constraints = this->nonzero_constraints;
   nonzero_constraints.distribute(tmp);
-  nonzero_constraints.distribute(tmp_m1);
-  nonzero_constraints.distribute(tmp_m2);
-  nonzero_constraints.distribute(tmp_m3);
 
   // Fix on the new mesh
-  present_solution  = tmp;
-  this->solution_m1 = tmp_m1;
-  this->solution_m2 = tmp_m2;
-  this->solution_m3 = tmp_m3;
+  present_solution = tmp;
+
+  // Set up the vectors for the transfer
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      VectorType tmp_previous_solution(locally_owned_dofs,
+                                       this->mpi_communicator);
+      previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+      nonzero_constraints.distribute(tmp_previous_solution);
+      previous_solutions[i] = tmp_previous_solution;
+    }
 
   multiphysics->post_mesh_adaptation();
 }
@@ -1038,26 +1084,19 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
                              "triangulation stored there."));
     }
   setup_dofs();
-  std::vector<VectorType *> x_system(4);
+  std::vector<VectorType *> x_system(1 + previous_solutions.size());
 
-
-
-  /**
-   * The newton_update vector is used to initialize the x_system to which
-   * the serialized restart data is read. This is a necessary step since the
-   * serialized data must be read into a locally_owned vector. The
-   * present_solution, solution_m1, solution_m2 and solution_m3 vectors are
-   * locally_relevant vector. Consequently, they cannot be written directly to
-   * and these intermediary vectors must be used to store the data.
-   */
   VectorType distributed_system(locally_owned_dofs, this->mpi_communicator);
-  VectorType distributed_system_m1(locally_owned_dofs, this->mpi_communicator);
-  VectorType distributed_system_m2(locally_owned_dofs, this->mpi_communicator);
-  VectorType distributed_system_m3(locally_owned_dofs, this->mpi_communicator);
   x_system[0] = &(distributed_system);
-  x_system[1] = &(distributed_system_m1);
-  x_system[2] = &(distributed_system_m2);
-  x_system[3] = &(distributed_system_m3);
+
+  std::vector<VectorType> distributed_previous_solutions;
+  distributed_previous_solutions.reserve(previous_solutions.size());
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      distributed_previous_solutions.emplace_back(
+        VectorType(locally_owned_dofs, this->mpi_communicator));
+      x_system[i + 1] = &distributed_previous_solutions[i];
+    }
   parallel::distributed::SolutionTransfer<dim, VectorType> system_trans_vectors(
     this->dof_handler);
 
@@ -1071,9 +1110,10 @@ NavierStokesBase<dim, VectorType, DofsType>::read_checkpoint()
 
   system_trans_vectors.deserialize(x_system);
   this->present_solution = distributed_system;
-  this->solution_m1      = distributed_system_m1;
-  this->solution_m2      = distributed_system_m2;
-  this->solution_m3      = distributed_system_m3;
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      previous_solutions[i] = distributed_previous_solutions[i];
+    }
 
   if (simulation_parameters.flow_control.enable_flow_control)
     {
@@ -1315,9 +1355,10 @@ NavierStokesBase<dim, VectorType, DofsType>::write_checkpoint()
 
   std::vector<const VectorType *> sol_set_transfer;
   sol_set_transfer.push_back(&this->present_solution);
-  sol_set_transfer.push_back(&this->solution_m1);
-  sol_set_transfer.push_back(&this->solution_m2);
-  sol_set_transfer.push_back(&this->solution_m3);
+  for (unsigned int i = 0; i < previous_solutions.size(); ++i)
+    {
+      sol_set_transfer.push_back(&previous_solutions[i]);
+    }
 
   if (simulation_parameters.post_processing.calculate_average_velocities)
     {

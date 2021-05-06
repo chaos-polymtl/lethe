@@ -51,11 +51,41 @@ using namespace dealii;
  * |   b    1-b-gamma  gamma|
  * --------------------------
  *
- * Intermediary 1 step is at t+0.5 * dt
- * Intermediary 2 step is at t+0.5 * dt
+ * Intermediary 1 step is at
+ * Intermediary 2 step is at
  *
  */
 FullMatrix<double>
 sdirk_coefficients(const unsigned int order, const double time_step);
+
+
+/**
+ * @brief Returns the number of previous time steps supposed by the BDF schemes implemented in Lethe.
+ *  At the moment this is hardcoded to 3, but eventually this could be made
+ * larger or smaller depending on the methods used.
+ *
+ * @param Time-stepping scheme used
+ *
+ */
+inline unsigned int
+number_of_intermediary_stages(
+  Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  unsigned int n_stages = 0;
+
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33)
+    n_stages = 2;
+
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22)
+    n_stages = 1;
+
+  return n_stages;
+}
+
 
 #endif

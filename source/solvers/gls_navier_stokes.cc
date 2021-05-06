@@ -195,15 +195,22 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   this->present_solution.reinit(this->locally_owned_dofs,
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
-  this->solution_m1.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m2.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
-  this->solution_m3.reinit(this->locally_owned_dofs,
-                           this->locally_relevant_dofs,
-                           this->mpi_communicator);
+
+  // Initialize vector of previous solutions
+  for (auto &solution : this->previous_solutions)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
+
+  // If SDIRK type of methods are used, initialize solution stages
+  for (auto &solution : this->solution_stages)
+    {
+      solution.reinit(this->locally_owned_dofs,
+                      this->locally_relevant_dofs,
+                      this->mpi_communicator);
+    }
 
   this->newton_update.reinit(this->locally_owned_dofs, this->mpi_communicator);
   this->system_rhs.reinit(this->locally_owned_dofs, this->mpi_communicator);
@@ -414,16 +421,24 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           // stages of the time integration scheme
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m2,
+            fe_values[velocities].get_function_values(this->solution_stages[0],
                                                       p2_velocity_values);
 
           if (time_stepping_method_has_three_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m3,
+            fe_values[velocities].get_function_values(this->solution_stages[1],
                                                       p3_velocity_values);
+
+          if (time_stepping_method_uses_two_previous_solutions(scheme))
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[1], p2_velocity_values);
+
+          if (time_stepping_method_uses_three_previous_solutions(scheme))
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[2], p3_velocity_values);
 
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -1026,16 +1041,16 @@ GLSNavierStokesSolver<dim>::assembleGLSFreeSurface()
           // of the time integration scheme
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(this->solution_m1,
-                                                      p1_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[0], p1_velocity_values);
 
           if (time_stepping_method_has_two_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m2,
-                                                      p2_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[1], p2_velocity_values);
 
           if (time_stepping_method_has_three_stages(scheme))
-            fe_values[velocities].get_function_values(this->solution_m3,
-                                                      p3_velocity_values);
+            fe_values[velocities].get_function_values(
+              this->previous_solutions[2], p3_velocity_values);
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
