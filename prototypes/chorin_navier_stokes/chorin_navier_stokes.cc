@@ -133,11 +133,12 @@ private:
   void
   calculateL2Error();
   void
-  output_results(const unsigned int cycle) const;
+  output_results() const;
 
   double             viscosity;
   Triangulation<dim> triangulation;
   double             timestep;
+  double             simulation_time;
   std::vector<types::global_dof_index> dofs_per_block;
   const FEValuesExtractors::Vector velocities;
 
@@ -195,7 +196,7 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::make_cube_grid(int refinementLevel)
 {
-  GridGenerator::hyper_cube(triangulation, -1, 1);
+  GridGenerator::hyper_cube(triangulation);
   triangulation.refine_global(refinementLevel);
 }
 
@@ -374,13 +375,14 @@ ChorinNavierStokes<dim>::assemble_eq2()
 
   // Pressure FE system                     
   QGauss<dim> quadrature_pressure(fe_pressure.degree + 1);
-  FEValues<dim> fe_pressure_values(fe_pressure,
+  FEValues<dim> fe_values_pressure(fe_pressure,
                         quadrature_pressure,
                         update_values | update_quadrature_points |
                          update_gradients | update_JxW_values);
   
   const unsigned int dofs_per_cell = fe_pressure.n_dofs_per_cell();
   const unsigned int n_q_pressure  = quadrature_pressure.size();
+  const unsigned int n_q_velocity  = quadrature_velocity.size();
 
   // Initialise cell contribution matrices
   FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
@@ -388,48 +390,60 @@ ChorinNavierStokes<dim>::assemble_eq2()
 
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-  std::vector<double> div_tentative_velocity(n_q_pressure);  
+  std::vector<double> div_tentative_velocity(n_q_velocity);
 
- // Iterate over each cell
- for (const auto &cell : dof_handler_pressure.active_cell_iterators())
+  // Set up iterators over both DoF_handlers
+  typename Triangulation<dim>::active_cell_iterator tria   = triangulation.begin_active();
+  typename DoFHandler<dim>::active_cell_iterator    cell_u = dof_handler_velocity.begin_active();
+  typename DoFHandler<dim>::active_cell_iterator    cell_p = dof_handler_pressure.begin_active();
+
+  // Iterate over each cell
+  while (tria != triangulation.end())
     {
       // Reset each cell contributions
-      fe_pressure_values.reinit(cell);
+      fe_values_velocity.reinit(cell_u);
+      fe_values_pressure.reinit(cell_p);
       cell_matrix = 0;
       cell_rhs    = 0;
 
       // Get function values
       fe_values_velocity[velocities].get_function_divergences(tentative_velocity,
-                                                              div_tentative_velocity);
+                                                              div_tentative_velocity);                                      
 
       // Iterate over quadrature points
-      for (const unsigned int q_pressure : fe_pressure_values.quadrature_point_indices())
+      for (unsigned int q_pressure = 0; q_pressure < n_q_pressure; ++q_pressure)
         {
           // Get equivalant velocity quadrature point                                                 >>>>>> LINE OF CODE NOT CORRECT!   
           //const auto q_velocity = fe_values_velocity.quadrature_point(q_pressure);
 
-          for (const unsigned int i : fe_pressure_values.dof_indices())
-            for (const unsigned int j : fe_pressure_values.dof_indices())
+          for (const unsigned int i : fe_values_pressure.dof_indices())
+            for (const unsigned int j : fe_values_pressure.dof_indices())
               cell_matrix(i, j) +=
-                (fe_pressure_values.shape_grad(i, q_pressure) * // grad phi_i(x_q)
-                 fe_pressure_values.shape_grad(j, q_pressure) * // grad phi_j(x_q)
-                 fe_pressure_values.JxW(q_pressure));           // dx
+                (fe_values_pressure.shape_grad(i, q_pressure) * // grad phi_i(x_q)
+                 fe_values_pressure.shape_grad(j, q_pressure) * // grad phi_j(x_q)
+                 fe_values_pressure.JxW(q_pressure));           // dx
 
-          for (const unsigned int i : fe_pressure_values.dof_indices())
-            cell_rhs(i) += (fe_pressure_values.shape_value(i, q_pressure) * // phi_i(x_q)
+          for (const unsigned int i : fe_values_pressure.dof_indices())
+            cell_rhs(i) += (fe_values_pressure.shape_value(i, q_pressure) * // phi_i(x_q)
                             div_tentative_velocity[q_pressure] *            // div u*                  >>>>>> Needs to be q_velocity
-                            fe_pressure_values.JxW(q_pressure)) / timestep; // dx / k_l
+                            fe_values_pressure.JxW(q_pressure)) / timestep; // dx / k_l
         }
 
       // Transfer cell components to global matrix/vector
-      cell->get_dof_indices(local_dof_indices);
-      for (const unsigned int i : fe_pressure_values.dof_indices())
-        for (const unsigned int j : fe_pressure_values.dof_indices())
+      cell_p->get_dof_indices(local_dof_indices);
+      for (const unsigned int i : fe_values_pressure.dof_indices())
+        for (const unsigned int j : fe_values_pressure.dof_indices())
           eq2_system_matrix.add(local_dof_indices[i],
                             local_dof_indices[j],
                             cell_matrix(i, j));
-      for (const unsigned int i : fe_pressure_values.dof_indices())
+
+      for (const unsigned int i : fe_values_pressure.dof_indices())
         eq2_system_rhs(local_dof_indices[i]) += cell_rhs(i);
+
+      // Move to next cell
+      ++tria;
+      ++cell_u;
+      ++cell_p;
     }
 
   // Add boundary conditions
@@ -495,11 +509,17 @@ ChorinNavierStokes<dim>::assemble_eq3()
 
   std::vector<Tensor<1, dim>> phi_u(velocity_dofs_per_cell);
 
+  // Set up iterators over both DoF_handlers
+  typename Triangulation<dim>::active_cell_iterator tria   = triangulation.begin_active();
+  typename DoFHandler<dim>::active_cell_iterator    cell_u = dof_handler_velocity.begin_active();
+  typename DoFHandler<dim>::active_cell_iterator    cell_p = dof_handler_pressure.begin_active();
+
   // Iterate over each cell
-  for (const auto &cell : dof_handler_velocity.active_cell_iterators())
+  while (tria != triangulation.end())
     {
       // Reset each cell contributions
-      fe_values_velocity.reinit(cell);
+      fe_values_velocity.reinit(cell_u);
+      fe_values_pressure.reinit(cell_p);
       cell_matrix = 0;
       cell_rhs    = 0;
 
@@ -529,7 +549,7 @@ ChorinNavierStokes<dim>::assemble_eq3()
       }
 
       // Transfer cell components to global matrix/vector
-      cell->get_dof_indices(local_dof_indices);
+      cell_u->get_dof_indices(local_dof_indices);
 
       for (unsigned int i=0; i < velocity_dofs_per_cell; ++i)
         for (unsigned int j=0; j < velocity_dofs_per_cell; ++j)
@@ -541,6 +561,11 @@ ChorinNavierStokes<dim>::assemble_eq3()
 
       for (unsigned int i=0; i < velocity_dofs_per_cell; ++i)
         eq3_system_rhs(local_dof_indices[i]) += cell_rhs(i);
+
+      // Move to next cell
+      ++tria;
+      ++cell_u;
+      ++cell_p;
     }
 
   // Add boundary conditions
@@ -579,14 +604,14 @@ ChorinNavierStokes<dim>::refine_mesh_uniform()
 
 template <int dim>
 void
-ChorinNavierStokes<dim>::output_results(const unsigned int cycle) const
+ChorinNavierStokes<dim>::output_results() const
 {
   // Output pressure
   DataOut<dim> data_out_pressure;
   data_out_pressure.attach_dof_handler(dof_handler_pressure);
   data_out_pressure.add_data_vector(pressure_solution, "pressure");
   data_out_pressure.build_patches();
-  std::ofstream output_pressure("output_pressure-" + Utilities::int_to_string(cycle, 4) + ".vtu");
+  std::ofstream output_pressure("output_pressure-" + Utilities::int_to_string(simulation_time, 4) + ".vtu");
   data_out_pressure.write_vtu(output_pressure);
   
   // Output velocity
@@ -594,13 +619,13 @@ ChorinNavierStokes<dim>::output_results(const unsigned int cycle) const
   data_out_velocity.attach_dof_handler(dof_handler_velocity);
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
       data_component_interpretation(dim, DataComponentInterpretation::component_is_part_of_vector);
-  std::vector<std::string> solution_names(dim, "velocity");
+  std::vector<std::string> velocity_solution_names(dim, "velocity");
   data_out_velocity.add_data_vector(velocity_solution,
-                           solution_names,
+                           velocity_solution_names,
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
   data_out_velocity.build_patches();
-  std::ofstream output_velocity("output_velocity-" + Utilities::int_to_string(cycle, 4) + ".vtu");
+  std::ofstream output_velocity("output_velocity-" + Utilities::int_to_string(simulation_time, 4) + ".vtu");
   data_out_velocity.write_vtu(output_velocity);
 }
 
@@ -615,22 +640,33 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::run()
 {
+  // Set time parameters for simulation
   timestep = 0.1;
+  const double end_time = 0.1;
 
-  make_cube_grid(3);
-  refine_grid();
-  setup_dofs();
-  initialize_system();
+    // Increase time
+  for (simulation_time = 0.0; simulation_time < end_time; simulation_time + timestep)
+  {
+    // For first iteration in time
+    if (simulation_time == 0.0)
+    {
+      make_cube_grid(3);
+      refine_grid();
+      setup_dofs();
+      initialize_system();
+    }
 
-  assemble_eq1();
-  solve_eq1();
-  assemble_eq2();
-  solve_eq2();
-  assemble_eq3();
-  solve_eq3();
-  output_results(0);
+    // At each time step
+    assemble_eq1();
+    solve_eq1();
+    assemble_eq2();
+    solve_eq2();
+    assemble_eq3();
+    solve_eq3();
+    output_results();
 
-  velocity_solution = next_velocity;
+    velocity_solution = next_velocity;
+  }
 }
 
 template <int dim>
