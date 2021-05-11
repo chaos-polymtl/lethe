@@ -1852,12 +1852,11 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_ILU()
+GLSNavierStokesSolver<dim>::setup_ILU(int temp_precond_fill_ilu)
 {
   TimerOutput::Scope t(this->computing_timer, "setup_ILU");
 
-  const double ilu_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  const double ilu_fill =temp_precond_fill_ilu;
   const double ilu_atol =
     this->simulation_parameters.linear_solver.ilu_precond_atol;
   const double ilu_rtol =
@@ -1872,7 +1871,7 @@ GLSNavierStokesSolver<dim>::setup_ILU()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_AMG()
+GLSNavierStokesSolver<dim>::setup_AMG(int temp_precond_fill_amg)
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
@@ -1921,8 +1920,7 @@ GLSNavierStokesSolver<dim>::setup_AMG()
   preconditionerOptions.set_parameters(parameter_ml,
                                        distributed_constant_modes,
                                        system_matrix);
-  const double ilu_fill =
-    this->simulation_parameters.linear_solver.amg_precond_ilu_fill;
+  const double ilu_fill =temp_precond_fill_amg;
   const double ilu_atol =
     this->simulation_parameters.linear_solver.amg_precond_ilu_atol;
   const double ilu_rtol =
@@ -1952,9 +1950,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   // the solver crash. if a change happened on the fill level it will go back to
   // it's original value at the end of the restart process.
 
-  unsigned int max_iter = 20;
-  unsigned int original_fill =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
+  unsigned int max_iter = 3;
+  int temp_precond_fill_ilu=this->simulation_parameters.linear_solver.ilu_precond_fill;
   unsigned int iter    = 0;
   bool         success = false;
 
@@ -1995,7 +1992,7 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                solver_parameters);
 
           if (renewed_matrix || !ilu_preconditioner)
-            setup_ILU();
+            setup_ILU(temp_precond_fill_ilu);
 
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
@@ -2020,17 +2017,16 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
         }
       catch (std::exception &e)
         {
-          this->simulation_parameters.linear_solver.ilu_precond_fill += 1;
+          temp_precond_fill_ilu += 1;
           this->pcout
             << " GMRES solver failed! Trying with higher preconditioner fill level. New fill = "
-            << this->simulation_parameters.linear_solver.ilu_precond_fill
+            << temp_precond_fill_ilu
             << std::endl;
           if (iter == max_iter - 1)
             throw e;
         }
       iter += 1;
     }
-  this->simulation_parameters.linear_solver.ilu_precond_fill = original_fill;
 }
 
 template <int dim>
@@ -2042,49 +2038,70 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   const bool   renewed_matrix)
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
-  auto &             system_rhs          = this->system_rhs;
-  auto &             nonzero_constraints = this->nonzero_constraints;
+    unsigned int max_iter = 3;
+    int temp_precond_fill_ilu=this->simulation_parameters.linear_solver.ilu_precond_fill;
+    unsigned int iter    = 0;
+    bool         success = false;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+  while (success == false and iter < max_iter)
     {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
-    }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
+      try {
+          auto &system_rhs = this->system_rhs;
+          auto &nonzero_constraints = this->nonzero_constraints;
 
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
-  TrilinosWrappers::SolverBicgstab solver(solver_control);
+          const AffineConstraints<double> &constraints_used =
+                  initial_step ? nonzero_constraints : this->zero_constraints;
+          const double linear_solver_tolerance =
+                  std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+          if (this->simulation_parameters.linear_solver.verbosity !=
+              Parameters::Verbosity::quiet) {
+              this->pcout << "  -Tolerance of iterative solver is : "
+                          << linear_solver_tolerance << std::endl;
+          }
+          TrilinosWrappers::MPI::Vector completely_distributed_solution(
+                  this->locally_owned_dofs, this->mpi_communicator);
 
-  if (renewed_matrix || !ilu_preconditioner)
-    setup_ILU();
+          SolverControl solver_control(
+                  this->simulation_parameters.linear_solver.max_iterations,
+                  linear_solver_tolerance,
+                  true,
+                  true);
+          TrilinosWrappers::SolverBicgstab solver(solver_control);
 
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+          if (renewed_matrix || !ilu_preconditioner)
+              setup_ILU(temp_precond_fill_ilu);
 
-    solver.solve(system_matrix,
-                 completely_distributed_solution,
-                 system_rhs,
-                 *ilu_preconditioner);
+          {
+              TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
-    if (this->simulation_parameters.linear_solver.verbosity !=
-        Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
+              solver.solve(system_matrix,
+                           completely_distributed_solution,
+                           system_rhs,
+                           *ilu_preconditioner);
+
+              if (this->simulation_parameters.linear_solver.verbosity !=
+                  Parameters::Verbosity::quiet) {
+                  this->pcout << "  -Iterative solver took : "
+                              << solver_control.last_step() << " steps " << std::endl;
+              }
+              constraints_used.distribute(completely_distributed_solution);
+              this->newton_update = completely_distributed_solution;
+
+          }
+          success             = true;
       }
-    constraints_used.distribute(completely_distributed_solution);
-    this->newton_update = completely_distributed_solution;
-  }
+      catch (std::exception &e)
+      {
+          temp_precond_fill_ilu += 1;
+          this->pcout
+                  << " BiCGStab solver failed! Trying with higher preconditioner fill level. New fill = "
+                  << temp_precond_fill_ilu
+                  << std::endl;
+          if (iter == max_iter - 1)
+              throw e;
+      }
+        iter += 1;
+    }
 }
 
 template <int dim>
@@ -2094,9 +2111,8 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const double relative_residual,
                                              const bool   renewed_matrix)
 {
-    unsigned int max_iter = 20;
-    unsigned int original_fill =
-            this->simulation_parameters.linear_solver.ilu_precond_fill;
+    unsigned int max_iter = 3;
+    int temp_precond_fill_amg=this->simulation_parameters.linear_solver.amg_precond_ilu_fill;
     unsigned int iter    = 0;
     bool         success = false;
 
@@ -2133,7 +2149,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
           TrilinosWrappers::SolverGMRES solver(solver_control, solver_parameters);
 
           if (renewed_matrix || !amg_preconditioner)
-            setup_AMG();
+            setup_AMG(temp_precond_fill_amg);
 
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
@@ -2158,17 +2174,16 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
         }
         catch (std::exception &e)
         {
-            this->simulation_parameters.linear_solver.ilu_precond_fill += 1;
+            temp_precond_fill_amg += 1;
             this->pcout
                     << " AMG solver failed! Trying with higher preconditioner fill level. New fill = "
-                    << this->simulation_parameters.linear_solver.ilu_precond_fill
+                    << temp_precond_fill_amg
                     << std::endl;
             if (iter == max_iter - 1)
                 throw e;
         }
         iter += 1;
     }
-    this->simulation_parameters.linear_solver.ilu_precond_fill = original_fill;
 }
 
 
@@ -2179,6 +2194,7 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
                                                 const double relative_residual,
                                                 const bool /*renewed_matrix*/)
 {
+
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
 
@@ -2212,51 +2228,73 @@ GLSNavierStokesSolver<dim>::solve_system_TFQMR(const bool   initial_step,
                                                const double relative_residual,
                                                const bool   renewed_matrix)
 {
-  auto &system_rhs          = this->system_rhs;
-  auto &nonzero_constraints = this->nonzero_constraints;
+    unsigned int max_iter = 3;
+    int temp_precond_fill_ilu=this->simulation_parameters.linear_solver.ilu_precond_fill;
+    unsigned int iter    = 0;
+    bool         success = false;
 
-  const AffineConstraints<double> &constraints_used =
-    initial_step ? nonzero_constraints : this->zero_constraints;
-  const double linear_solver_tolerance =
-    std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
-
-  if (this->simulation_parameters.linear_solver.verbosity !=
-      Parameters::Verbosity::quiet)
+    while (success == false and iter < max_iter)
     {
-      this->pcout << "  -Tolerance of iterative solver is : "
-                  << linear_solver_tolerance << std::endl;
+        try {
+          auto &system_rhs          = this->system_rhs;
+          auto &nonzero_constraints = this->nonzero_constraints;
+
+          const AffineConstraints<double> &constraints_used =
+            initial_step ? nonzero_constraints : this->zero_constraints;
+          const double linear_solver_tolerance =
+            std::max(relative_residual * system_rhs.l2_norm(), absolute_residual);
+
+          if (this->simulation_parameters.linear_solver.verbosity !=
+              Parameters::Verbosity::quiet)
+            {
+              this->pcout << "  -Tolerance of iterative solver is : "
+                          << linear_solver_tolerance << std::endl;
+            }
+          TrilinosWrappers::MPI::Vector completely_distributed_solution(
+            this->locally_owned_dofs, this->mpi_communicator);
+
+          SolverControl solver_control(
+            this->simulation_parameters.linear_solver.max_iterations,
+            linear_solver_tolerance,
+            true,
+            true);
+
+          TrilinosWrappers::SolverTFQMR solver(solver_control);
+
+          if (renewed_matrix || !ilu_preconditioner)
+            setup_ILU(temp_precond_fill_ilu);
+
+          {
+            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
+
+            solver.solve(system_matrix,
+                         completely_distributed_solution,
+                         system_rhs,
+                         *ilu_preconditioner);
+
+            if (this->simulation_parameters.linear_solver.verbosity !=
+                Parameters::Verbosity::quiet)
+              {
+                this->pcout << "  -Iterative solver took : "
+                            << solver_control.last_step() << " steps " << std::endl;
+              }
+          }
+          constraints_used.distribute(completely_distributed_solution);
+          this->newton_update = completely_distributed_solution;
+          success             = true;
+        }
+        catch (std::exception &e)
+        {
+            temp_precond_fill_ilu += 1;
+            this->pcout
+                    << " TFQMR solver failed! Trying with higher preconditioner fill level. New fill = "
+                    << temp_precond_fill_ilu
+                    << std::endl;
+            if (iter == max_iter - 1)
+                throw e;
+        }
+        iter += 1;
     }
-  TrilinosWrappers::MPI::Vector completely_distributed_solution(
-    this->locally_owned_dofs, this->mpi_communicator);
-
-  SolverControl solver_control(
-    this->simulation_parameters.linear_solver.max_iterations,
-    linear_solver_tolerance,
-    true,
-    true);
-
-  TrilinosWrappers::SolverTFQMR solver(solver_control);
-
-  if (renewed_matrix || !ilu_preconditioner)
-    setup_ILU();
-
-  {
-    TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-    solver.solve(system_matrix,
-                 completely_distributed_solution,
-                 system_rhs,
-                 *ilu_preconditioner);
-
-    if (this->simulation_parameters.linear_solver.verbosity !=
-        Parameters::Verbosity::quiet)
-      {
-        this->pcout << "  -Iterative solver took : "
-                    << solver_control.last_step() << " steps " << std::endl;
-      }
-  }
-  constraints_used.distribute(completely_distributed_solution);
-  this->newton_update = completely_distributed_solution;
 }
 
 template <int dim>

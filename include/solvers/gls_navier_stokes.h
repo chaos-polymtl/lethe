@@ -142,13 +142,13 @@ private:
    * Set-up AMG preconditioner
    */
   void
-  setup_AMG();
+  setup_AMG(int temp_precond_fill_amg);
 
   /**
    * Set-up ILU preconditioner
    */
   void
-  setup_ILU();
+  setup_ILU(int temp_precond_fill_ilu);
 
 
   /**
@@ -161,6 +161,8 @@ private:
   SparsityPattern                                    sparsity_pattern;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+
+
 
   const bool   SUPG        = true;
   const double GLS_u_scale = 1;
