@@ -91,13 +91,11 @@ private:
    * @param insertion_points A vector containing insertion locations of particles
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
-   * @param communicator MPI communicator
    */
   virtual void
-  assign_insertion_points(
-    std::vector<Point<dim>> &                    insertion_points,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information,
-    const MPI_Comm &                             communicator) override;
+  assign_insertion_points(std::vector<Point<dim>> &insertion_points,
+                          const Parameters::Lagrangian::InsertionInfo
+                            &insertion_information) override;
 
   unsigned int current_inserting_particle_type;
 

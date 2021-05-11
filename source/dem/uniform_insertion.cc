@@ -47,6 +47,9 @@ UniformInsertion<dim>::insert(
       ConditionalOStream pcout        = {
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0};
 
+      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
+      auto n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
+
       this->calculate_insertion_domain_maximum_particle_number(dem_parameters,
                                                                pcout);
 
@@ -63,24 +66,43 @@ UniformInsertion<dim>::insert(
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
       // Distbuting particles between processors
-      if (Utilities::MPI::this_mpi_process(communicator) !=
-          (Utilities::MPI::n_mpi_processes(communicator) - 1))
+      if (this_mpi_process != (n_mpi_process - 1))
         this->inserted_this_step_this_proc =
-          floor(this->inserted_this_step /
-                Utilities::MPI::n_mpi_processes(communicator));
+          floor(this->inserted_this_step / n_mpi_process);
       else
         this->inserted_this_step_this_proc =
           this->inserted_this_step -
-          (Utilities::MPI::n_mpi_processes(communicator) - 1) *
-            floor(this->inserted_this_step /
-                  Utilities::MPI::n_mpi_processes(communicator));
+          (n_mpi_process - 1) * floor(this->inserted_this_step / n_mpi_process);
 
       // Finding insertion points using assign_insertion_points function
-      std::vector<Point<dim>> insertion_points;
-      insertion_points.reserve(this->inserted_this_step_this_proc);
-      this->assign_insertion_points(insertion_points,
-                                    dem_parameters.insertion_info,
-                                    communicator);
+      std::vector<Point<dim>> global_insertion_points;
+      std::vector<Point<dim>> insertion_points_on_proc;
+      global_insertion_points.reserve(this->inserted_this_step);
+      insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
+
+      this->assign_insertion_points(global_insertion_points,
+                                    dem_parameters.insertion_info);
+
+      // Distributing the insertion points between the processors
+      if (this_mpi_process != (n_mpi_process - 1))
+        {
+          int begin_element =
+            this_mpi_process * this->inserted_this_step_this_proc;
+          int end_element =
+            (this_mpi_process + 1) * this->inserted_this_step_this_proc - 1;
+          insertion_points_on_proc = std::vector<Point<dim>>(
+            global_insertion_points.cbegin() + begin_element,
+            global_insertion_points.cbegin() + end_element + 1);
+        }
+      else
+        {
+          int begin_element =
+            this->inserted_this_step - this->inserted_this_step_this_proc;
+          insertion_points_on_proc =
+            std::vector<Point<dim>>(global_insertion_points.cbegin() +
+                                      begin_element,
+                                    global_insertion_points.cend());
+        }
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
@@ -90,7 +112,7 @@ UniformInsertion<dim>::insert(
                                        this->particle_properties);
 
       // Insert the particles using the points and assigned properties
-      particle_handler.insert_global_particles(insertion_points,
+      particle_handler.insert_global_particles(insertion_points_on_proc,
                                                global_bounding_boxes,
                                                this->particle_properties);
 
@@ -109,12 +131,8 @@ template <int dim>
 void
 UniformInsertion<dim>::assign_insertion_points(
   std::vector<Point<dim>> &                    insertion_positions,
-  const Parameters::Lagrangian::InsertionInfo &insertion_information,
-  const MPI_Comm &                             communicator)
+  const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
-  unsigned int this_mpi_process =
-    Utilities::MPI::this_mpi_process(communicator);
-
   // Creating a particle counter
   unsigned int particle_counter = 0;
 
@@ -126,46 +144,35 @@ UniformInsertion<dim>::assign_insertion_points(
           (dim == 3) ? this->number_of_particles_z_direction : 1;
         for (unsigned int k = 0; k < dim_nz; ++k)
           {
-            if (this->particle_on_processor(i,
-                                            j,
-                                            k,
-                                            this_mpi_process,
-                                            Utilities::MPI::n_mpi_processes(
-                                              communicator)))
+            if (particle_counter < this->inserted_this_step)
               {
-                if (particle_counter < this->inserted_this_step_this_proc)
+                Point<dim> position;
+                // Obtaning position of the inserted particle
+                position[0] =
+                  insertion_information.x_min +
+                  ((i + 0.5) * insertion_information.distance_threshold) *
+                    this->maximum_diameter;
+                position[1] =
+                  insertion_information.y_min +
+                  +((j + 0.5) * insertion_information.distance_threshold) *
+                    this->maximum_diameter;
+
+                // Adding a threshold distance to even rows of insertion
+                if (k % 2 == 0)
                   {
-                    Point<dim> position;
-                    // Obtaning position of the inserted particle
-                    position[0] =
-                      insertion_information.x_min +
-                      ((i + 0.5) * insertion_information.distance_threshold) *
-                        this->maximum_diameter;
-                    position[1] =
-                      insertion_information.y_min +
-                      +((j + 0.5) * insertion_information.distance_threshold) *
-                        this->maximum_diameter;
-
-                    // Adding a threshold distance to even rows of insertion
-                    if (k % 2 == 0)
-                      {
-                        position[0] =
-                          position[0] + (this->maximum_diameter) / 2.0;
-                        position[1] =
-                          position[1] + (this->maximum_diameter) / 2.0;
-                      }
-                    if (dim == 3)
-                      {
-                        position[2] =
-                          insertion_information.z_min +
-                          +((k + 0.5) *
-                            insertion_information.distance_threshold) *
-                            this->maximum_diameter;
-                      }
-
-                    insertion_positions.push_back(position);
-                    particle_counter++;
+                    position[0] = position[0] + (this->maximum_diameter) / 2.0;
+                    position[1] = position[1] + (this->maximum_diameter) / 2.0;
                   }
+                if (dim == 3)
+                  {
+                    position[2] =
+                      insertion_information.z_min +
+                      +((k + 0.5) * insertion_information.distance_threshold) *
+                        this->maximum_diameter;
+                  }
+
+                insertion_positions.push_back(position);
+                particle_counter++;
               }
           }
       }

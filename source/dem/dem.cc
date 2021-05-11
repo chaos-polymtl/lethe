@@ -482,11 +482,12 @@ DEMSolver<dim>::finish_simulation()
            processor_number < n_mpi_processes;
            ++processor_number)
         {
+          MPI_Barrier(MPI_COMM_WORLD);
+
           if (this_mpi_process == processor_number)
             {
               visualization_object.print_xyz(particle_handler, pcout);
             }
-          MPI_Barrier(MPI_COMM_WORLD);
         }
     }
 }
