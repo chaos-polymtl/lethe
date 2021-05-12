@@ -1852,17 +1852,16 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_ILU(int current_ilu_preconditioner_fill_level)
+GLSNavierStokesSolver<dim>::setup_ILU(const int current_ilu_preconditioner_fill_level)
 {
   TimerOutput::Scope t(this->computing_timer, "setup_ILU");
 
-  const double ilu_fill =current_ilu_preconditioner_fill_level;
   const double ilu_atol =
     this->simulation_parameters.linear_solver.ilu_precond_atol;
   const double ilu_rtol =
     this->simulation_parameters.linear_solver.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    ilu_fill, ilu_atol, ilu_rtol, 0);
+          current_ilu_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
 
   ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
@@ -1871,7 +1870,7 @@ GLSNavierStokesSolver<dim>::setup_ILU(int current_ilu_preconditioner_fill_level)
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_AMG(int current_amg_ilu_preconditioner_fill_level)
+GLSNavierStokesSolver<dim>::setup_AMG(const int current_amg_ilu_preconditioner_fill_level)
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
