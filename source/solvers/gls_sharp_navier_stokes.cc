@@ -1562,6 +1562,14 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 template <int dim>
+bool
+GLSSharpNavierStokesSolver<dim>::cell_cut(typename DoFHandler<dim>::active_cell_iterator cell)
+{
+    
+}
+
+
+template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::sharp_edge()
 {

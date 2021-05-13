@@ -103,6 +103,10 @@ private:
   void
   refine_ib();
 
+  // Return a bool to define if a cell is cut by a IB particle
+  bool
+  cell_cut(typename DoFHandler<dim>::active_cell_iterator cell);
+
   // Modified version of assemble_matrix_and_rhs to include the presence of
   // extra steps.
   void
