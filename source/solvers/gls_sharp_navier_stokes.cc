@@ -1562,10 +1562,30 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 template <int dim>
-bool
-GLSSharpNavierStokesSolver<dim>::cell_cut(typename DoFHandler<dim>::active_cell_iterator cell)
+std::tuple<bool,unsigned int,std::vector<types::global_dof_index> >
+GLSSharpNavierStokesSolver<dim>::cell_cut(typename DoFHandler<dim>::active_cell_iterator &cell, std::vector<types::global_dof_index> &local_dof_indices ,std::map<types::global_dof_index, Point<dim>> &support_points)
 {
-    
+    cell->get_dof_indices(local_dof_indices);
+
+    for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+        unsigned int nb_dof_inside = 0;
+        for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+        {
+            // Count the number of dofs that are smaller or larger than
+            // the radius of the particles if all the dofs are on one side
+            // the cell is not cut by the boundary meaning we don’t have
+            // to do anything
+            if ((support_points[local_dof_indices[j]] - particles[p].position)
+                        .norm() <= particles[p].radius)
+                ++nb_dof_inside;
+        }
+        if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size()){
+            // cell is cut
+            return {true,p,local_dof_indices};
+        }
+    }
+    return {false,0,local_dof_indices};
 }
 
 

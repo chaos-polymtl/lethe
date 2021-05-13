@@ -103,9 +103,9 @@ private:
   void
   refine_ib();
 
-  // Return a bool to define if a cell is cut by a IB particle
-  bool
-  cell_cut(typename DoFHandler<dim>::active_cell_iterator cell);
+  // Return a bool to define if a cell is cut by a IB particle, the Id fo the particle that cut it if it's the case and the local dof of the cell for later use
+  std::tuple<bool,unsigned int, std::vector<types::global_dof_index>>
+  cell_cut(typename DoFHandler<dim>::active_cell_iterator &cell,std::vector<types::global_dof_index> &local_dof_indices, std::map<types::global_dof_index, Point<dim>> &support_points);
 
   // Modified version of assemble_matrix_and_rhs to include the presence of
   // extra steps.
