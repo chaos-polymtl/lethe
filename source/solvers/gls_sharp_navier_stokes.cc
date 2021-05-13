@@ -1579,7 +1579,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                    active_neighbors_2;
   const FEValuesExtractors::Scalar pressure(dim);
 
-
+  std::vector<double> time_steps_vector =
+            this->simulation_control->get_time_steps_vector();
   // Define a map to all dofs and their support points
   MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
@@ -1613,7 +1614,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-
+  double dt=time_steps_vector[0];
+  if(Parameters::SimulationControl::TimeSteppingMethod::steady== this->simulation_parameters.simulation_control.method)
+      dt=1;
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1628,6 +1631,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
             sum_line += fe_values.JxW(qf);
+
+          sum_line=sum_line/dt;
 
           // Loop over all particle  to see if one of them is cutting this cell
           for (unsigned int p = 0; p < particles.size(); ++p)
