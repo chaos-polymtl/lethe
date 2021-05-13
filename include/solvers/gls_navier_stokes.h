@@ -142,13 +142,13 @@ private:
    * Set-up AMG preconditioner
    */
   void
-  setup_AMG();
+  setup_AMG(const int current_amg_ilu_preconditioner_fill_level);
 
   /**
    * Set-up ILU preconditioner
    */
   void
-  setup_ILU();
+  setup_ILU(const int current_ilu_preconditioner_fill_level);
 
 
   /**
