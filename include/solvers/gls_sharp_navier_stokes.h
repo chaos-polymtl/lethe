@@ -61,8 +61,6 @@ private:
   // which cell a point fall in vertices_to_cell is a vector of vector of dof
   // handler active cell iterator each element i of the vector is a vector of
   // all the cell in contact with the vertex i.
-  void
-  vertices_cell_mapping();
 
   // Defines the particle structure and value based on the parameter file.
   void
@@ -106,6 +104,20 @@ private:
   // Return a bool to define if a cell is cut by a IB particle, the Id fo the particle that cut it if it's the case and the local dof of the cell for later use
   std::tuple<bool,unsigned int, std::vector<types::global_dof_index>>
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,std::vector<types::global_dof_index> &local_dof_indices, std::map<types::global_dof_index, Point<dim>> &support_points);
+
+  // Return the cell around a point based on a initial guess of a closed cell (look in the neighbors of this cell)
+  typename DoFHandler<dim>::active_cell_iterator
+  find_cell_around_point_with_neighbors(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                     Point<dim>             point);
+
+  // Return a vector of cells around a cell including vertex neighbors
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+  find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell);
+
+  // clear all the line of dof even if the dof is not owned but it is ghost
+  void
+  clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index);
+
 
   // Modified version of assemble_matrix_and_rhs to include the presence of
   // extra steps.

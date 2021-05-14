@@ -36,45 +36,156 @@ template <int dim>
 GLSSharpNavierStokesSolver<dim>::~GLSSharpNavierStokesSolver()
 {}
 
+
+
+
+template <int dim>
+typename DoFHandler<dim>::active_cell_iterator
+GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                                                       Point<dim>             point)
+{
+    //Find the cell around a point based on an initial cell.
+    MappingQ1<dim> map;
+    //Find the cells around the initial cell vertex neighbours ( cells that share a vertex with the original cell)
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+    //loop over that group of cells
+    for (unsigned int i = 0; i < active_neighbors_set.size(); ++i){
+                try
+                {
+                    const Point<dim, double> p_cell =
+                            map.transform_real_to_unit_cell(active_neighbors_set[i], point);
+                    const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+                    // if the cell contains the point, the distance is equal to 0
+                    if (dist == 0)
+                    {
+                        // The cell is found so we return it and exit the function.
+
+                        return active_neighbors_set[i];
+                    }
+                }
+                catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
+                {}
+    }
+    // The cell is not found so we use the cell tree algorithm instead (much slower).
+    std::cout << "cell not found around " << point << std::endl;
+    return find_cell_around_point_with_tree(this->dof_handler,point);
+
+}
+
+
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+{
+    // Return the group of cells around an initial cell (including the initial cell).
+
+    // Defined stuff:
+    const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
+    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+    std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
+    cell->get_dof_indices(local_dof_indices);
+    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch;
+
+    // Defined the group of face neighbors of the initial cell  (patch).
+    patch.push_back(cell);
+    // Loop over the cell that share a face except if the face is at a boundary.
+    for (unsigned int face_number=0; face_number<GeometryInfo<dim>::faces_per_cell; ++face_number) {
+        if (cell->face(face_number)->at_boundary() == false) {
+            if (cell->neighbor(face_number)->has_children() == false) {
+                neighbors_cells.insert(cell->neighbor(face_number));
+                patch.push_back(cell->neighbor(face_number));
+            }
+            else {
+                // If the neighbour’s cell as children loop over them.
+                for (unsigned int subface = 0; subface < cell->face(face_number)->n_children(); ++subface) {
+                    neighbors_cells.insert(cell->neighbor_child_on_subface(face_number, subface));
+                    patch.push_back(cell->neighbor_child_on_subface(face_number, subface));
+                }
+            }
+        }
+    }
+    // Loop over the face neighbours of the face neighbours of the initial cell.
+    // If the cell share DOFs with the initial cell it's a vertex neighbour and it's added to the set of neighbours’ cells.
+
+    //Loop over the neighbours
+     for (unsigned int i = 0; i < patch.size(); ++i)
+    {
+        for (unsigned int face_number=0; face_number<GeometryInfo<dim>::faces_per_cell; ++face_number) {
+            //Loop over the neighbours of neighbours
+            if (patch[i]->face(face_number)->at_boundary() == false) {
+                if (patch[i]->neighbor(face_number)->has_children() == false) {
+                    bool cell_is_neighbors=false;
+                    if(patch[i]->neighbor(face_number)->is_artificial()==false){
+                        //Check if share dof with the initial cell
+                        patch[i]->neighbor(face_number)->get_dof_indices(local_dof_indices_iter);
+                        for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
+                            if (std::find(local_dof_indices.begin(), local_dof_indices.end(), local_dof_indices_iter[j]) !=local_dof_indices.end()) {
+                                cell_is_neighbors=true;
+                                break;
+                            }
+                        }
+                        if (cell_is_neighbors){
+                            neighbors_cells.insert(patch[i]->neighbor(face_number));
+                        }
+                    }
+                }
+                else {
+                    // // Same but for children of the neighbours of the neighbours
+                    for (unsigned int subface = 0; subface < patch[i]->face(face_number)->n_children(); ++subface) {
+                        bool cell_is_neighbors=false;
+                        if(patch[i]->neighbor_child_on_subface(face_number, subface)->is_artificial()==false) {
+                            patch[i]->neighbor_child_on_subface(face_number, subface)->get_dof_indices(
+                                    local_dof_indices_iter);
+                            for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
+                                if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                              local_dof_indices_iter[j]) != local_dof_indices.end()) {
+                                    cell_is_neighbors = true;
+                                    break;
+                                }
+                            }
+                            if (cell_is_neighbors) {
+                                neighbors_cells.insert(patch[i]->neighbor_child_on_subface(face_number, subface));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_2(neighbors_cells.begin(),neighbors_cells.end());
+    return patch_2;
+
+}
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
-{
-  vertices_to_cell.clear();
-  vertices_to_cell.resize(this->dof_handler.n_dofs() / (dim + 1));
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index){
+    // Clear a line in the matrix based on an initial cell that contains the DOF.
+    // This function ensure that if the dof is a ghost all the entry of the matrix will be erased.
 
-  // loop on all the cell and
-  for (const auto &cell : cell_iterator)
+    // Defined the neighbours of the cell
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+
+    const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
+    std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
+    // Loop over the neighbours and erase the entry of the matrix that could be linked to neighbours ghost cells.
+    for (unsigned int m = 0; m < active_neighbors_set.size();m++)
     {
-      if (cell->is_locally_owned() | cell->is_ghost())
+        const auto &cell_3 = active_neighbors_set[m];
+        cell_3->get_dof_indices(local_dof_indices_iter);
+        for (unsigned int o = 0;o < local_dof_indices_iter.size();++o)
         {
-          const unsigned int vertices_per_cell =
-            GeometryInfo<dim>::vertices_per_cell;
-          for (unsigned int i = 0; i < vertices_per_cell; i++)
+            if (std::find(local_dof_indices_iter.begin(),local_dof_indices_iter.end(),dof_index) !=local_dof_indices_iter.end())
             {
-              // First obtain vertex index
-              unsigned int v_index = cell->vertex_index(i);
-
-              // Get the vector of active cell linked to that vertex
-              std::vector<typename DoFHandler<dim>::active_cell_iterator>
-                adjacent = vertices_to_cell[v_index];
-
-              // Insert the cell found within that vector using a set
-              // to prevent key duplication
-              std::set<typename DoFHandler<dim>::active_cell_iterator>
-                adjacent_2(adjacent.begin(), adjacent.end());
-              adjacent_2.insert(cell);
-
-              // Convert back the set to a vector and add it in the
-              // vertices_to_cell;
-              std::vector<typename DoFHandler<dim>::active_cell_iterator>
-                adjacent_3(adjacent_2.begin(), adjacent_2.end());
-              vertices_to_cell[v_index] = adjacent_3;
+                for (unsigned int o = 0;o < local_dof_indices_iter.size();++o)
+                {
+                    this->system_matrix.set(dof_index,local_dof_indices_iter[o],0);
+                }
             }
         }
     }
 }
+
 
 // TO REFACTOR
 template <int dim>
@@ -1648,71 +1759,36 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-        const auto &cell =find_cell_around_point_with_tree(this->dof_handler,
+      const auto &cell =find_cell_around_point_with_tree(this->dof_handler,
                                                  particles[p].pressure_location+particles[p].position);
-        cell->get_dof_indices(local_dof_indices);
-        if (cell->is_locally_owned())
+
+      if (cell->is_locally_owned())
         {
-            double sum_line = 0;
-            fe_values.reinit(cell);
-            std::vector<int> set_pressure_cell;
-            set_pressure_cell.resize(particles.size());
+          cell->get_dof_indices(local_dof_indices);
+          double sum_line = 0;
+          fe_values.reinit(cell);
+          std::vector<int> set_pressure_cell;
+          set_pressure_cell.resize(particles.size());
 
-            // Define the order of magnitude for the stencil.
-            for (unsigned int qf = 0; qf < n_q_points; ++qf)
-                sum_line += fe_values.JxW(qf);
+          // Define the order of magnitude for the stencil.
+          for (unsigned int qf = 0; qf < n_q_points; ++qf)
+              sum_line += fe_values.JxW(qf);
 
-            sum_line=sum_line/dt;
-            // Clear the line in the matrix
-            unsigned int inside_index = local_dof_indices[dim];
-            for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-            {
-                unsigned int v_index = cell->vertex_index(vi);
-                active_neighbors_set = this->vertices_to_cell[v_index];
-                for (unsigned int m = 0; m < active_neighbors_set.size();
-                     m++)
-                {
-                    const auto &cell_3 = active_neighbors_set[m];
-                    cell_3->get_dof_indices(local_dof_indices_3);
-                    for (unsigned int o = 0;
-                         o < local_dof_indices_3.size();
-                         ++o)
-                    {
-                        if (std::find(local_dof_indices_3.begin(),
-                                      local_dof_indices_3.end(),
-                                      inside_index) !=
-                            local_dof_indices_3.end())
-                        {
-                            for (unsigned int o = 0;
-                                 o < local_dof_indices_3.size();
-                                 ++o)
-                            {
-                                this->system_matrix.set(
-                                        inside_index,
-                                        local_dof_indices_3[o],
-                                        0);
-                            }
-                        }
-                    }
-                }
-            }
-            // this->system_matrix.clear_row(inside_index);
+          sum_line=sum_line/dt;
+          // Clear the line in the matrix
+          unsigned int inside_index = local_dof_indices[dim];
+          clear_line_in_matrix(cell, inside_index);
+            // this->system_matrix.clear_row(inside_index) not reliable on edge case;
             // Set the new equation for the first pressure dofs of the
             // cell. this is the new reference pressure inside a
             // particle
+
             this->system_matrix.set(inside_index, inside_index, sum_line);
             auto &system_rhs = this->system_rhs;
             system_rhs(inside_index) =
-                    0 - this->local_evaluation_point(inside_index) * sum_line;
+                    0 - this->evaluation_point(inside_index) * sum_line;
         }
     }
-
-
-
-
-
-
-
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1730,21 +1806,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           // Loop over all particle  to see if one of them is cutting this cell
 
-              // If the cell is cut by the IB the count is not 0 or the
-              // number of total dof in a cell
+          // If the cell is cut by the IB the count is not 0 or the
+          // number of total dof in a cell
 
-              if (cell_is_cut)
-                {
-                  // If we are here, the cell is cut by the IB.
-                  // Loops on the dof that represents the velocity  component
-                  // and pressure separately
-
-                  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-                    {
-                      const unsigned int component_i =
-                        this->fe->system_to_component_index(i).first;
-
-                      if (component_i < dim)
+          if (cell_is_cut)
+          {
+              // If we are here, the cell is cut by the IB.
+              // Loops on the dof that represents the velocity  component
+              // and pressure separately
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+              {
+                  const unsigned int component_i =this->fe->system_to_component_index(i).first;
+                  if (component_i < dim)
                         {
                           // We are working on the velocity of the cell cut
                           // loops on the dof that are for vx or vy separately
@@ -1753,7 +1826,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // define which dof is going to be redefined
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
-
                           // Define the distance vector between the
                           // immersed boundary and the dof support point
                           // for each dof
@@ -1788,9 +1860,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               tp_ratio = 1. / 3.;
                               fp_ratio = 2. / 3.;
                             }
-
-
-
+                          
                           // Define the other points for the stencil
                           // (IB point, original dof and the other
                           // points) this goes up to a 5-point stencil.
@@ -1812,7 +1882,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           Point<dim, double> fifth_point(
                             support_points[local_dof_indices[i]] +
                             vect_dist * length_fraction * 1 / 4);
-
                           double dof_2;
                           double sp_2;
 
@@ -1897,67 +1966,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
 
                           // Define the vertex associated with the dof
-                          unsigned int cell_found = 0;
-                          bool         break_bool = false;
-                          for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                            {
-                              unsigned int v_index = cell->vertex_index(vi);
 
-                              // Get a cell iterator for all the cell
-                              // neighbors of that vertex
-                              active_neighbors_set =
-                                this->vertices_to_cell[v_index];
-                              unsigned int n_active_cells =
-                                active_neighbors_set.size();
 
-                              // Loops on those cells to find in which of
-                              // them contain the new point for or sharp edge
-                              // stencil is
-                              for (unsigned int cell_index = 0;
-                                   cell_index < n_active_cells;
-                                   ++cell_index)
-                                {
-                                  try
-                                    {
-                                      // Define the cell and check if
-                                      // the point is inside of the cell
-                                      const Point<dim, double> p_cell =
-                                        immersed_map
-                                          .transform_real_to_unit_cell(
-                                            active_neighbors_set[cell_index],
-                                            second_point);
-                                      const double dist_2 = GeometryInfo<
-                                        dim>::distance_to_unit_cell(p_cell);
-
-                                      // Define the cell and check if
-                                      // the point is inside of the cell
-
-                                      if (dist_2 == 0)
-                                        {
-                                          // If the point is in this
-                                          // cell then the distance is equal
-                                          // to 0 and we have found our
-                                          // cell
-
-                                          cell_found = cell_index;
-                                          break_bool = true;
-                                          active_neighbors =
-                                            active_neighbors_set;
-                                          break;
-                                        }
-                                    }
-                                  // May cause error if the point is not
-                                  // in cell
-                                  catch (const typename MappingQGeneric<
-                                         dim>::ExcTransformationFailed &)
-                                    {}
-                                }
-                            }
-
-                          auto &cell_2       = active_neighbors[cell_found];
+                          auto  cell_2       = find_cell_around_point_with_neighbors(cell,second_point);
                           bool  skip_stencil = false;
 
-                          if (break_bool == false)
+                          /*if (break_bool == false)
                             {
                               std::cout << "cell not found around point "
                                         << std::endl;
@@ -1972,7 +1986,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 << "dof point  "
                                 << support_points[global_index_overwrite]
                                 << std::endl;
-                            }
+                            }*/
 
 
 
@@ -2003,34 +2017,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Clear the current line of this dof  by
                           // looping on the neighbouring cell of this dof
                           // and clear all the associated dof
-                          for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                            {
-                              unsigned int v_index = cell->vertex_index(vi);
-                              active_neighbors_set =
-                                this->vertices_to_cell[v_index];
-                              for (unsigned int m = 0;
-                                   m < active_neighbors_set.size();
-                                   m++)
-                                {
-                                  const auto &cell_3 = active_neighbors_set[m];
-                                  cell_3->get_dof_indices(local_dof_indices_3);
-                                  if (std::find(local_dof_indices_3.begin(),
-                                                local_dof_indices_3.end(),
-                                                global_index_overwrite) !=
-                                      local_dof_indices_3.end())
-                                    {
-                                      for (unsigned int o = 0;
-                                           o < local_dof_indices_3.size();
-                                           ++o)
-                                        {
-                                          this->system_matrix.set(
-                                            global_index_overwrite,
-                                            local_dof_indices_3[o],
-                                            0);
-                                        }
-                                    }
-                                }
-                            }
+
+                          clear_line_in_matrix(cell,global_index_overwrite);
 
                           // Check if the DOF intersect the IB
                           bool do_rhs          = false;
@@ -2769,15 +2757,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
                           bool dummy_dof = true;
-                          for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                            {
-                              unsigned int v_index = cell->vertex_index(vi);
-                              active_neighbors_set =
-                                this->vertices_to_cell[v_index];
-                              for (unsigned int m = 0;
-                                   m < active_neighbors_set.size();
-                                   m++)
-                                {
+
+
+                          active_neighbors_set =find_cells_around_cell(cell);
+                          for (unsigned int m = 0;m < active_neighbors_set.size();m++)
+                          {
                                   const auto &cell_3 = active_neighbors_set[m];
                                   cell_3->get_dof_indices(local_dof_indices_3);
                                   for (unsigned int o = 0;
@@ -2822,7 +2806,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                         }
                                     }
                                 }
-                            }
+
 
                           if (dummy_dof)
                             {
@@ -3506,7 +3490,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  vertices_cell_mapping();
+  //vertices_cell_mapping();
   sharp_edge();
 }
 template <int dim>
@@ -3624,7 +3608,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  vertices_cell_mapping();
+  //vertices_cell_mapping();
   sharp_edge();
 }
 
