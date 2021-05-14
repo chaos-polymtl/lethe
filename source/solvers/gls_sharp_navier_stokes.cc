@@ -1563,7 +1563,7 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 template <int dim>
 std::tuple<bool,unsigned int,std::vector<types::global_dof_index> >
-GLSSharpNavierStokesSolver<dim>::cell_cut(typename DoFHandler<dim>::active_cell_iterator &cell, std::vector<types::global_dof_index> &local_dof_indices ,std::map<types::global_dof_index, Point<dim>> &support_points)
+GLSSharpNavierStokesSolver<dim>::cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell, std::vector<types::global_dof_index> &local_dof_indices ,std::map<types::global_dof_index, Point<dim>> &support_points)
 {
     cell->get_dof_indices(local_dof_indices);
 
@@ -1645,6 +1645,74 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   double dt=time_steps_vector[0];
   if(Parameters::SimulationControl::TimeSteppingMethod::steady== this->simulation_parameters.simulation_control.method)
       dt=1;
+
+  for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+        const auto &cell =find_cell_around_point_with_tree(this->dof_handler,
+                                                 particles[p].pressure_location+particles[p].position);
+        cell->get_dof_indices(local_dof_indices);
+        if (cell->is_locally_owned())
+        {
+            double sum_line = 0;
+            fe_values.reinit(cell);
+            std::vector<int> set_pressure_cell;
+            set_pressure_cell.resize(particles.size());
+
+            // Define the order of magnitude for the stencil.
+            for (unsigned int qf = 0; qf < n_q_points; ++qf)
+                sum_line += fe_values.JxW(qf);
+
+            sum_line=sum_line/dt;
+            // Clear the line in the matrix
+            unsigned int inside_index = local_dof_indices[dim];
+            for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
+            {
+                unsigned int v_index = cell->vertex_index(vi);
+                active_neighbors_set = this->vertices_to_cell[v_index];
+                for (unsigned int m = 0; m < active_neighbors_set.size();
+                     m++)
+                {
+                    const auto &cell_3 = active_neighbors_set[m];
+                    cell_3->get_dof_indices(local_dof_indices_3);
+                    for (unsigned int o = 0;
+                         o < local_dof_indices_3.size();
+                         ++o)
+                    {
+                        if (std::find(local_dof_indices_3.begin(),
+                                      local_dof_indices_3.end(),
+                                      inside_index) !=
+                            local_dof_indices_3.end())
+                        {
+                            for (unsigned int o = 0;
+                                 o < local_dof_indices_3.size();
+                                 ++o)
+                            {
+                                this->system_matrix.set(
+                                        inside_index,
+                                        local_dof_indices_3[o],
+                                        0);
+                            }
+                        }
+                    }
+                }
+            }
+            // this->system_matrix.clear_row(inside_index);
+            // Set the new equation for the first pressure dofs of the
+            // cell. this is the new reference pressure inside a
+            // particle
+            this->system_matrix.set(inside_index, inside_index, sum_line);
+            auto &system_rhs = this->system_rhs;
+            system_rhs(inside_index) =
+                    0 - this->local_evaluation_point(inside_index) * sum_line;
+        }
+    }
+
+
+
+
+
+
+
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1652,117 +1720,20 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
         {
           double sum_line = 0;
           fe_values.reinit(cell);
-          cell->get_dof_indices(local_dof_indices);
-          std::vector<int> set_pressure_cell;
-          set_pressure_cell.resize(particles.size());
 
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
             sum_line += fe_values.JxW(qf);
 
           sum_line=sum_line/dt;
+          auto [cell_is_cut,p,local_dof_indices]=cell_cut(cell,local_dof_indices_2,support_points);
 
           // Loop over all particle  to see if one of them is cutting this cell
-          for (unsigned int p = 0; p < particles.size(); ++p)
-            {
-              unsigned int count_small = 0;
-              center_immersed          = particles[p].position;
-              pressure_bridge =
-                particles[p].position - particles[p].pressure_location;
-
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                {
-                  // Count the number of dofs that are smaller or larger than
-                  // the radius of the particles if all the dofs are on one side
-                  // the cell is not cut by the boundary meaning we don’t have
-                  // to do anything
-                  if ((support_points[local_dof_indices[j]] - center_immersed)
-                        .norm() <= particles[p].radius)
-                    ++count_small;
-                }
-
-              // Impose the pressure inside the particle if the inside of the
-              // particle is solved
-
-              bool cell_found = false;
-              try
-                {
-                  // Define the cell and check if the point is inside the
-                  // cell
-                  const Point<dim, double> p_cell =
-                    immersed_map.transform_real_to_unit_cell(cell,
-                                                             pressure_bridge);
-                  const double dist_2 =
-                    GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-                  if (dist_2 == 0)
-                    {
-                      // If the point is in this cell then the distance is equal
-                      // to 0 and we have found our cell
-                      cell_found = true;
-                    }
-                }
-              // May cause an error if the point is not in the cell
-              catch (
-                const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-                {}
-
-              if (cell_found)
-                {
-                  // Clear the line in the matrix
-                  unsigned int inside_index = local_dof_indices[dim];
-                  for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                    {
-                      unsigned int v_index = cell->vertex_index(vi);
-                      active_neighbors_set = this->vertices_to_cell[v_index];
-                      for (unsigned int m = 0; m < active_neighbors_set.size();
-                           m++)
-                        {
-                          const auto &cell_3 = active_neighbors_set[m];
-                          cell_3->get_dof_indices(local_dof_indices_3);
-                          for (unsigned int o = 0;
-                               o < local_dof_indices_3.size();
-                               ++o)
-                            {
-                              if (std::find(local_dof_indices_3.begin(),
-                                            local_dof_indices_3.end(),
-                                            inside_index) !=
-                                  local_dof_indices_3.end())
-                                {
-                                  for (unsigned int o = 0;
-                                       o < local_dof_indices_3.size();
-                                       ++o)
-                                    {
-                                      this->system_matrix.set(
-                                        inside_index,
-                                        local_dof_indices_3[o],
-                                        0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                  // this->system_matrix.clear_row(inside_index);
-
-                  // Set the new equation for the first pressure dofs of the
-                  // cell. this is the new reference pressure inside a
-                  // particle
-
-                  this->system_matrix.set(inside_index, inside_index, sum_line);
-
-
-                  auto &system_rhs = this->system_rhs;
-                  system_rhs(inside_index) =
-                    0 - this->local_evaluation_point(inside_index) * sum_line;
-                }
-
-
 
               // If the cell is cut by the IB the count is not 0 or the
               // number of total dof in a cell
 
-              if (count_small != 0 && count_small != local_dof_indices.size())
+              if (cell_is_cut)
                 {
                   // If we are here, the cell is cut by the IB.
                   // Loops on the dof that represents the velocity  component
@@ -1788,18 +1759,18 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // for each dof
                           Tensor<1, dim, double> vect_dist =
                             (support_points[local_dof_indices[i]] -
-                             center_immersed -
+                                    particles[p].position -
                              particles[p].radius *
                                (support_points[local_dof_indices[i]] -
-                                center_immersed) /
+                                       particles[p].position) /
                                (support_points[local_dof_indices[i]] -
-                                center_immersed)
+                                       particles[p].position)
                                  .norm());
                           Tensor<1, dim, double> normal_vect =
                             (support_points[local_dof_indices[i]] -
-                             center_immersed) /
+                                    particles[p].position) /
                             (support_points[local_dof_indices[i]] -
-                             center_immersed)
+                                    particles[p].position)
                               .norm();
 
                           // Define the length ratio that represent the
@@ -2512,10 +2483,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                              particles[p].radius *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[1] +
                                            particles[p].velocity[0];
                                     }
@@ -2524,19 +2495,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       vx = particles[p].omega[1] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[2] *
                                              particles[p].radius -
                                            particles[p].omega[2] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[1] *
                                              particles[p].radius +
                                            particles[p].velocity[0];
@@ -2607,10 +2578,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                              particles[p].radius *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[0] +
                                            particles[p].velocity[1];
                                     }
@@ -2619,19 +2590,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       vy = particles[p].omega[2] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[0] *
                                              particles[p].radius -
                                            particles[p].omega[0] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[2] *
                                              particles[p].radius +
                                            particles[p].velocity[1];
@@ -2696,16 +2667,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   double vz =
                                     particles[p].omega[0] *
                                       ((support_points[local_dof_indices[i]] -
-                                        center_immersed) /
+                                              particles[p].position) /
                                        (support_points[local_dof_indices[i]] -
-                                        center_immersed)
+                                               particles[p].position)
                                          .norm())[1] *
                                       particles[p].radius -
                                     particles[p].omega[1] *
                                       ((support_points[local_dof_indices[i]] -
-                                        center_immersed) /
+                                              particles[p].position) /
                                        (support_points[local_dof_indices[i]] -
-                                        center_immersed)
+                                               particles[p].position)
                                          .norm())[0] *
                                       particles[p].radius +
                                     particles[p].velocity[2];
@@ -2836,7 +2807,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                               // anything
                                               if ((support_points
                                                      [local_dof_indices_3[q]] -
-                                                   center_immersed)
+                                                      particles[p].position)
                                                     .norm() <=
                                                   particles[p].radius)
                                                 {
@@ -2864,7 +2835,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         }
                     }
                 }
-            }
+
         }
     }
 
