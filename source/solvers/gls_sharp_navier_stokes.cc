@@ -68,12 +68,100 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typ
     }
     // The cell is not found so we use the cell tree algorithm instead (much slower).
     std::cout << "cell not found around " << point << std::endl;
+    std::cout << "set size " << active_neighbors_set.size() << std::endl;
     return find_cell_around_point_with_tree(this->dof_handler,point);
 
 }
 
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+GLSSharpNavierStokesSolver<dim>::find_face_neighbors_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+{
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch;
+
+    for (unsigned int face_number=0; face_number<GeometryInfo<dim>::faces_per_cell; ++face_number) {
+        if (cell->face(face_number)->at_boundary() == false) {
+            if (cell->neighbor(face_number)->has_children() == false) {
+                patch.push_back(cell->neighbor(face_number));
+            }
+            else {
+                // If the neighbour’s cell as children loop over them.
+                for (unsigned int subface = 0; subface < cell->face(face_number)->n_children(); ++subface) {
+                    patch.push_back(cell->neighbor_child_on_subface(face_number, subface));
+                }
+            }
+        }
+    }
+    return patch;
+
+}
 
 template <int dim>
+bool
+GLSSharpNavierStokesSolver<dim>::check_if_cells_share_vertex(const typename DoFHandler<dim>::active_cell_iterator &cell_1,const typename DoFHandler<dim>::active_cell_iterator &cell_2)
+{
+
+
+    std::vector<unsigned int> vertices_cell_1(GeometryInfo<dim>::vertices_per_cell);
+    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
+    {
+        vertices_cell_1[i]=cell_1->vertex_index(i);
+    }
+    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
+    {
+        if( std::find(vertices_cell_1.begin(), vertices_cell_1.end(),
+                      cell_2->vertex_index(i)) !=  vertices_cell_1.end())
+            return true;
+    }
+    return false;
+}
+
+
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+{
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_iter;
+    patch=find_face_neighbors_around_cell(cell);
+    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells(patch.begin(),patch.end());
+    if(dim==2) {
+        for (unsigned int i = 0; i < patch.size(); ++i) {
+            patch_iter = find_face_neighbors_around_cell(patch[i]);
+            for (unsigned int j = 0; j < patch_iter.size(); ++j) {
+                bool cell_vertices_neighbors = check_if_cells_share_vertex(cell, patch_iter[j]);
+                if (cell_vertices_neighbors)
+                    neighbors_cells.insert(patch_iter[j]);
+            }
+        }
+    }
+    if(dim==3) {
+        std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_iter_3d;
+        for (unsigned int i = 0; i < patch.size(); ++i) {
+            patch_iter = find_face_neighbors_around_cell(patch[i]);
+            for (unsigned int j = 0; j < patch_iter.size(); ++j) {
+                bool cell_vertices_neighbors = check_if_cells_share_vertex(cell, patch_iter[j]);
+                if (cell_vertices_neighbors) {
+                    neighbors_cells.insert(patch_iter[j]);
+                    patch_iter_3d = find_face_neighbors_around_cell(patch[i]);
+                    for (unsigned int k = 0; k < patch_iter_3d.size(); ++k) {
+                        bool cell_vertices_neighbors = check_if_cells_share_vertex(cell, patch_iter_3d[k]);
+                        if (cell_vertices_neighbors) {
+                            neighbors_cells.insert(patch_iter_3d[k]);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_2(neighbors_cells.begin(),neighbors_cells.end());
+    return patch_2;
+}
+
+
+/*template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
@@ -83,9 +171,12 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
     const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
+    std::vector<types::global_dof_index> local_dof_indices_iter_2(dofs_per_cell);
     cell->get_dof_indices(local_dof_indices);
     std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
     std::vector<typename DoFHandler<dim>::active_cell_iterator> patch;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_iter;
+
 
     // Defined the group of face neighbors of the initial cell  (patch).
     patch.push_back(cell);
@@ -108,35 +199,23 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
     // Loop over the face neighbours of the face neighbours of the initial cell.
     // If the cell share DOFs with the initial cell it's a vertex neighbour and it's added to the set of neighbours’ cells.
 
+    neighbors_cells.insert();
+
+
+
+
+
     //Loop over the neighbours
-     for (unsigned int i = 0; i < patch.size(); ++i)
-    {
-        for (unsigned int face_number=0; face_number<GeometryInfo<dim>::faces_per_cell; ++face_number) {
-            //Loop over the neighbours of neighbours
-            if (patch[i]->face(face_number)->at_boundary() == false) {
-                if (patch[i]->neighbor(face_number)->has_children() == false) {
-                    bool cell_is_neighbors=false;
-                    if(patch[i]->neighbor(face_number)->is_artificial()==false){
-                        //Check if share dof with the initial cell
-                        patch[i]->neighbor(face_number)->get_dof_indices(local_dof_indices_iter);
-                        for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
-                            if (std::find(local_dof_indices.begin(), local_dof_indices.end(), local_dof_indices_iter[j]) !=local_dof_indices.end()) {
-                                cell_is_neighbors=true;
-                                break;
-                            }
-                        }
-                        if (cell_is_neighbors){
-                            neighbors_cells.insert(patch[i]->neighbor(face_number));
-                        }
-                    }
-                }
-                else {
-                    // // Same but for children of the neighbours of the neighbours
-                    for (unsigned int subface = 0; subface < patch[i]->face(face_number)->n_children(); ++subface) {
-                        bool cell_is_neighbors=false;
-                        if(patch[i]->neighbor_child_on_subface(face_number, subface)->is_artificial()==false) {
-                            patch[i]->neighbor_child_on_subface(face_number, subface)->get_dof_indices(
-                                    local_dof_indices_iter);
+    if (dim==3) {
+        for (unsigned int i = 0; i < patch.size(); ++i) {
+            for (unsigned int face_number = 0; face_number < GeometryInfo<dim>::faces_per_cell; ++face_number) {
+                //Loop over the neighbours of neighbours
+                if (patch[i]->face(face_number)->at_boundary() == false) {
+                    if (patch[i]->neighbor(face_number)->has_children() == false) {
+                        bool cell_is_neighbors = false;
+                        if (patch[i]->neighbor(face_number)->is_artificial() == false) {
+                            //Check if share dof with the initial cell
+                            patch[i]->neighbor(face_number)->get_dof_indices(local_dof_indices_iter);
                             for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
                                 if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
                                               local_dof_indices_iter[j]) != local_dof_indices.end()) {
@@ -145,7 +224,149 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
                                 }
                             }
                             if (cell_is_neighbors) {
-                                neighbors_cells.insert(patch[i]->neighbor_child_on_subface(face_number, subface));
+                                neighbors_cells.insert(patch[i]->neighbor(face_number));
+                                for (unsigned int face_number_2=0; face_number_2<GeometryInfo<dim>::faces_per_cell; ++face_number_2) {
+                                    if (patch[i]->neighbor(face_number)->face(face_number_2)->at_boundary() == false) {
+                                        if (patch[i]->neighbor(face_number)->neighbor(face_number_2)->has_children() == false) {
+                                            bool cell_is_neighbors_2 = false;
+                                            if (patch[i]->neighbor(face_number)->neighbor(face_number_2)->is_artificial() == false) {
+                                                patch[i]->neighbor(face_number)->neighbor(face_number_2)->get_dof_indices(local_dof_indices_iter_2);
+                                                for (unsigned int j = 0; j < local_dof_indices_iter_2.size(); ++j) {
+                                                    if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                                                  local_dof_indices_iter_2[j]) != local_dof_indices.end()) {
+                                                        cell_is_neighbors_2 = true;
+                                                        break;
+                                                    }
+                                                }
+                                                if (cell_is_neighbors_2) {
+                                                    neighbors_cells.insert(patch[i]->neighbor(face_number)->neighbor(face_number_2));
+                                                }
+                                            }
+                                        }
+                                        else {
+                                            // If the neighbour’s cell as children loop over them.
+                                            for (unsigned int subface_2 = 0; subface_2 < cell->face(face_number)->n_children(); ++subface_2) {
+                                                bool cell_is_neighbors_2 = false;
+                                                if (patch[i]->neighbor(face_number)->neighbor_child_on_subface(face_number_2, subface_2)->is_artificial() == false) {
+                                                    patch[i]->neighbor(face_number)->neighbor_child_on_subface(face_number_2, subface_2)->get_dof_indices(local_dof_indices_iter_2);
+                                                    for (unsigned int j = 0; j < local_dof_indices_iter_2.size(); ++j) {
+                                                        if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                                                      local_dof_indices_iter_2[j]) != local_dof_indices.end()) {
+                                                            cell_is_neighbors_2 = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (cell_is_neighbors_2) {
+                                                        neighbors_cells.insert(patch[i]->neighbor(face_number)->neighbor_child_on_subface(face_number_2, subface_2));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Same but for children of the neighbours of the neighbours
+                        for (unsigned int subface = 0; subface < patch[i]->face(face_number)->n_children(); ++subface) {
+                            bool cell_is_neighbors = false;
+                            if (patch[i]->neighbor_child_on_subface(face_number, subface)->is_artificial() == false) {
+                                patch[i]->neighbor_child_on_subface(face_number, subface)->get_dof_indices(
+                                        local_dof_indices_iter);
+                                for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
+                                    if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                                  local_dof_indices_iter[j]) != local_dof_indices.end()) {
+                                        cell_is_neighbors = true;
+                                        break;
+                                    }
+                                }
+                                if (cell_is_neighbors) {
+                                    neighbors_cells.insert(patch[i]->neighbor_child_on_subface(face_number, subface));
+                                    for (unsigned int face_number_2=0; face_number_2<GeometryInfo<dim>::faces_per_cell; ++face_number_2) {
+                                        if (patch[i]->neighbor_child_on_subface(face_number, subface)->face(face_number_2)->at_boundary() == false) {
+                                            if (patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor(face_number_2)->has_children() == false) {
+                                                bool cell_is_neighbors_2 = false;
+                                                if (patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor(face_number_2)->is_artificial() == false) {
+                                                    patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor(face_number_2)->get_dof_indices(local_dof_indices_iter_2);
+                                                    for (unsigned int j = 0; j < local_dof_indices_iter_2.size(); ++j) {
+                                                        if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                                                      local_dof_indices_iter_2[j]) != local_dof_indices.end()) {
+                                                            cell_is_neighbors_2 = true;
+                                                            break;
+                                                        }
+                                                    }
+                                                    if (cell_is_neighbors_2) {
+                                                        neighbors_cells.insert(patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor(face_number_2));
+                                                    }
+                                                }
+                                            }
+                                            else {
+                                                // If the neighbour’s cell as children loop over them.
+                                                for (unsigned int subface_2 = 0; subface_2 < cell->face(face_number)->n_children(); ++subface_2) {
+                                                    bool cell_is_neighbors_2 = false;
+                                                    if (patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor_child_on_subface(face_number_2, subface_2)->is_artificial() == false) {
+                                                        patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor_child_on_subface(face_number_2, subface_2)->get_dof_indices(local_dof_indices_iter_2);
+                                                        for (unsigned int j = 0; j < local_dof_indices_iter_2.size(); ++j) {
+                                                            if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                                                          local_dof_indices_iter_2[j]) != local_dof_indices.end()) {
+                                                                cell_is_neighbors_2 = true;
+                                                                break;
+                                                            }
+                                                        }
+                                                        if (cell_is_neighbors_2) {
+                                                            neighbors_cells.insert(patch[i]->neighbor_child_on_subface(face_number, subface)->neighbor_child_on_subface(face_number_2, subface_2));
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (dim==2) {
+        for (unsigned int i = 0; i < patch.size(); ++i) {
+            for (unsigned int face_number = 0; face_number < GeometryInfo<dim>::faces_per_cell; ++face_number) {
+                //Loop over the neighbours of neighbours
+                if (patch[i]->face(face_number)->at_boundary() == false) {
+                    if (patch[i]->neighbor(face_number)->has_children() == false) {
+                        bool cell_is_neighbors = false;
+                        if (patch[i]->neighbor(face_number)->is_artificial() == false) {
+                            //Check if share dof with the initial cell
+                            patch[i]->neighbor(face_number)->get_dof_indices(local_dof_indices_iter);
+                            for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
+                                if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                              local_dof_indices_iter[j]) != local_dof_indices.end()) {
+                                    cell_is_neighbors = true;
+                                    break;
+                                }
+                            }
+                            if (cell_is_neighbors) {
+                                neighbors_cells.insert(patch[i]->neighbor(face_number));
+                            }
+                        }
+                    } else {
+                        // Same but for children of the neighbours of the neighbours
+                        for (unsigned int subface = 0; subface < patch[i]->face(face_number)->n_children(); ++subface) {
+                            bool cell_is_neighbors = false;
+                            if (patch[i]->neighbor_child_on_subface(face_number, subface)->is_artificial() == false) {
+                                patch[i]->neighbor_child_on_subface(face_number, subface)->get_dof_indices(
+                                        local_dof_indices_iter);
+                                for (unsigned int j = 0; j < local_dof_indices_iter.size(); ++j) {
+                                    if (std::find(local_dof_indices.begin(), local_dof_indices.end(),
+                                                  local_dof_indices_iter[j]) != local_dof_indices.end()) {
+                                        cell_is_neighbors = true;
+                                        break;
+                                    }
+                                }
+                                if (cell_is_neighbors) {
+                                    neighbors_cells.insert(patch[i]->neighbor_child_on_subface(face_number, subface));
+                                }
                             }
                         }
                     }
@@ -156,7 +377,8 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
     std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_2(neighbors_cells.begin(),neighbors_cells.end());
     return patch_2;
 
-}
+}*/
+
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index){

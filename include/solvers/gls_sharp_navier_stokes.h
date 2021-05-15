@@ -114,6 +114,12 @@ private:
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
   find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+  find_face_neighbors_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell);
+
+  bool
+  check_if_cells_share_vertex(const typename DoFHandler<dim>::active_cell_iterator &cell_1,const typename DoFHandler<dim>::active_cell_iterator &cell_2);
+
   // clear all the line of dof even if the dof is not owned but it is ghost
   void
   clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index);
