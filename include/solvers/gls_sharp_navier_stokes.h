@@ -61,6 +61,8 @@ private:
   // which cell a point fall in vertices_to_cell is a vector of vector of dof
   // handler active cell iterator each element i of the vector is a vector of
   // all the cell in contact with the vertex i.
+  void
+  vertices_cell_mapping();
 
   // Defines the particle structure and value based on the parameter file.
   void
@@ -140,7 +142,7 @@ private:
    * Members
    */
 private:
-  std::vector<std::vector<typename DoFHandler<dim>::active_cell_iterator>>
+  std::vector<std::set<typename DoFHandler<dim>::active_cell_iterator>>
                                vertices_to_cell;
   const bool                   SUPG        = false;
   const bool                   PSPG        = true;

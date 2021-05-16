@@ -37,13 +37,41 @@ GLSSharpNavierStokesSolver<dim>::~GLSSharpNavierStokesSolver()
 {}
 
 
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
+{
+    TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+    vertices_to_cell.clear();
+    vertices_to_cell.resize(this->dof_handler.n_dofs() / (dim + 1));
+    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
 
+    // loop on all the cell and
+    for (const auto &cell : cell_iterator)
+    {
+        if (cell->is_locally_owned() | cell->is_ghost())
+        {
+            const unsigned int vertices_per_cell =
+                    GeometryInfo<dim>::vertices_per_cell;
+            for (unsigned int i = 0; i < vertices_per_cell; i++)
+            {
+                // First obtain vertex index
+                unsigned int v_index = cell->vertex_index(i);
+
+                // Get the vector of active cell linked to that vertex
+
+                vertices_to_cell[v_index].insert(cell);
+            }
+        }
+    }
+}
 
 template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
 GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typename DoFHandler<dim>::active_cell_iterator &cell,
                                                                        Point<dim>             point)
 {
+   // TimerOutput::Scope t(this->computing_timer, "find_cell_around_point");
     //Find the cell around a point based on an initial cell.
     MappingQ1<dim> map;
     //Find the cells around the initial cell vertex neighbours ( cells that share a vertex with the original cell)
@@ -79,15 +107,18 @@ GLSSharpNavierStokesSolver<dim>::find_face_neighbors_around_cell(const typename 
 {
     std::vector<typename DoFHandler<dim>::active_cell_iterator> patch;
 
+
     for (unsigned int face_number=0; face_number<GeometryInfo<dim>::faces_per_cell; ++face_number) {
         if (cell->face(face_number)->at_boundary() == false) {
             if (cell->neighbor(face_number)->has_children() == false) {
-                patch.push_back(cell->neighbor(face_number));
+                if (cell->neighbor(face_number)->is_artificial() == false)
+                    patch.push_back(cell->neighbor(face_number));
             }
             else {
                 // If the neighbour’s cell as children loop over them.
                 for (unsigned int subface = 0; subface < cell->face(face_number)->n_children(); ++subface) {
-                    patch.push_back(cell->neighbor_child_on_subface(face_number, subface));
+                    if (cell->neighbor(face_number)->is_artificial() == false)
+                        patch.push_back(cell->neighbor_child_on_subface(face_number, subface));
                 }
             }
         }
@@ -117,11 +148,32 @@ GLSSharpNavierStokesSolver<dim>::check_if_cells_share_vertex(const typename DoFH
 }
 
 
+
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
+    //TimerOutput::Scope t(this->computing_timer, "find_cells_around_cell");
 
+
+    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+
+    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
+    {
+        unsigned int v_index=cell->vertex_index(i);
+        neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),this->vertices_to_cell[v_index].end());
+    }
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_2(neighbors_cells.begin(),neighbors_cells.end());
+    return patch_2;
+}
+
+/*
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+{
+TimerOutput::Scope t(this->computing_timer, "find_cells_around_cell");
     std::vector<typename DoFHandler<dim>::active_cell_iterator> patch;
     std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_iter;
     patch=find_face_neighbors_around_cell(cell);
@@ -136,6 +188,7 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
             }
         }
     }
+
     if(dim==3) {
         std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_iter_3d;
         for (unsigned int i = 0; i < patch.size(); ++i) {
@@ -144,10 +197,10 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
                 bool cell_vertices_neighbors = check_if_cells_share_vertex(cell, patch_iter[j]);
                 if (cell_vertices_neighbors) {
                     neighbors_cells.insert(patch_iter[j]);
-                    patch_iter_3d = find_face_neighbors_around_cell(patch[i]);
+                    patch_iter_3d = find_face_neighbors_around_cell(patch_iter[j]);
                     for (unsigned int k = 0; k < patch_iter_3d.size(); ++k) {
-                        bool cell_vertices_neighbors = check_if_cells_share_vertex(cell, patch_iter_3d[k]);
-                        if (cell_vertices_neighbors) {
+                        bool cell_vertices_neighbors_2 = check_if_cells_share_vertex(cell, patch_iter_3d[k]);
+                        if (cell_vertices_neighbors_2) {
                             neighbors_cells.insert(patch_iter_3d[k]);
                         }
                     }
@@ -155,10 +208,12 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
             }
         }
     }
-
     std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_2(neighbors_cells.begin(),neighbors_cells.end());
     return patch_2;
 }
+*/
+
+
 
 
 /*template <int dim>
@@ -386,26 +441,34 @@ GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<
     // This function ensure that if the dof is a ghost all the entry of the matrix will be erased.
 
     // Defined the neighbours of the cell
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
 
-    const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
-    std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
-    // Loop over the neighbours and erase the entry of the matrix that could be linked to neighbours ghost cells.
-    for (unsigned int m = 0; m < active_neighbors_set.size();m++)
-    {
-        const auto &cell_3 = active_neighbors_set[m];
-        cell_3->get_dof_indices(local_dof_indices_iter);
-        for (unsigned int o = 0;o < local_dof_indices_iter.size();++o)
+
+    //TimerOutput::Scope t(this->computing_timer, "clear_line");
+
+    if (this->locally_owned_dofs.is_element(dof_index)){
+        this->system_matrix.clear_row(dof_index);
+    }
+    else
         {
-            if (std::find(local_dof_indices_iter.begin(),local_dof_indices_iter.end(),dof_index) !=local_dof_indices_iter.end())
-            {
-                for (unsigned int o = 0;o < local_dof_indices_iter.size();++o)
-                {
-                    this->system_matrix.set(dof_index,local_dof_indices_iter[o],0);
+        std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+
+        const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+        std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
+        // Loop over the neighbours and erase the entry of the matrix that could be linked to neighbours ghost cells.
+        for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
+            const auto &cell_3 = active_neighbors_set[m];
+            cell_3->get_dof_indices(local_dof_indices_iter);
+            for (unsigned int o = 0; o < local_dof_indices_iter.size(); ++o) {
+                if (std::find(local_dof_indices_iter.begin(), local_dof_indices_iter.end(), dof_index) !=
+                    local_dof_indices_iter.end()) {
+                    for (unsigned int o = 0; o < local_dof_indices_iter.size(); ++o) {
+                        this->system_matrix.set(dof_index, local_dof_indices_iter[o], 0);
+                    }
                 }
             }
         }
     }
+
 }
 
 
@@ -1956,6 +2019,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
   unsigned int       vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
+
 
 
   unsigned int n_q_points = q_formula.size();
@@ -3712,7 +3776,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  //vertices_cell_mapping();
+  vertices_cell_mapping();
   sharp_edge();
 }
 template <int dim>
@@ -3830,7 +3894,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  //vertices_cell_mapping();
+  vertices_cell_mapping();
   sharp_edge();
 }
 
