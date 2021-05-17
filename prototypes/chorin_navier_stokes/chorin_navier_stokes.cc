@@ -134,7 +134,7 @@ private:
   Triangulation<dim>                   triangulation;
   double                               timestep;
   double                               simulation_time;
-  std::vector<types::global_dof_index> dofs_per_block;
+  //std::vector<types::global_dof_index> dofs_per_block;
 
   bool                                 couette_case;
   bool                                 poiseulle_case;
@@ -143,7 +143,7 @@ private:
   // FE system for velocity
   FESystem<dim>        fe_velocity;
   DoFHandler<dim>      dof_handler_velocity;
-  BlockSparsityPattern sparsity_pattern_velocity;
+  SparsityPattern      sparsity_pattern_velocity;
 
   // FE system for pressure
   FESystem<dim>   fe_pressure;
@@ -151,9 +151,9 @@ private:
   SparsityPattern sparsity_pattern_pressure;
 
   // Components required for equation 1
-  BlockSparseMatrix<double> init_velocity_eq_system_matrix;
-  BlockVector<double>       tentative_velocity;
-  BlockVector<double>       init_velocity_eq_system_rhs;
+  SparseMatrix<double> init_velocity_eq_system_matrix;
+  Vector<double>       tentative_velocity;
+  Vector<double>       init_velocity_eq_system_rhs;
 
   // Components required for equation 2
   SparseMatrix<double> pressure_eq_system_matrix;
@@ -161,11 +161,11 @@ private:
   Vector<double>       pressure_eq_system_rhs;
 
   // Components required for equation 3
-  BlockSparseMatrix<double> new_velocity_eq_system_matrix;
-  BlockVector<double>       next_velocity;
-  BlockVector<double>       new_velocity_eq_system_rhs;
+  SparseMatrix<double> new_velocity_eq_system_matrix;
+  Vector<double>       next_velocity;
+  Vector<double>       new_velocity_eq_system_rhs;
 
-  BlockVector<double> velocity_solution;
+  Vector<double>       velocity_solution;
 };
 
 
@@ -200,11 +200,16 @@ ChorinNavierStokes<dim>::make_cube_grid(int refinementLevel)
   if (couette_case)
   {
     for (auto &face : triangulation.active_face_iterators())
+    {
       // if face is on top of cube, set id to 1
       if (std::fabs(face->center()(1) - (1.0)) < 1e-12)
         face->set_boundary_id(1);
+      // bottom left corner as zero pressure point
+      if (std::fabs(face->center()(1) - (-1.0)) < 1e-12 && std::fabs(face->center()(0) - (-1.0)) < 1e-12)
+        face->set_boundary_id(2);
+    }  
   }
-  if (poiseulle_case)
+  else if (poiseulle_case)
   {
     for (auto &face : triangulation.active_face_iterators())
     {
@@ -240,12 +245,6 @@ ChorinNavierStokes<dim>::setup_dofs()
   dof_handler_velocity.distribute_dofs(fe_velocity);
   dof_handler_pressure.distribute_dofs(fe_pressure);
 
-  // Establish dofs_per_block
-  std::vector<unsigned int> block_component(dim, 0);
-  DoFRenumbering::component_wise(dof_handler_velocity, block_component);
-  dofs_per_block =
-    DoFTools::count_dofs_per_fe_block(dof_handler_velocity, block_component);
-
   // Output information
   std::cout << "   Number of active cells: " << triangulation.n_active_cells()
             << std::endl
@@ -260,7 +259,8 @@ void
 ChorinNavierStokes<dim>::initialize_system()
 {
   // Build sparsity patterns
-  BlockDynamicSparsityPattern dsp_velocity(dofs_per_block, dofs_per_block);
+  DynamicSparsityPattern dsp_velocity(dof_handler_velocity.n_dofs(),
+                                      dof_handler_velocity.n_dofs());
   DoFTools::make_sparsity_pattern(dof_handler_velocity, dsp_velocity);
   sparsity_pattern_velocity.copy_from(dsp_velocity);
 
@@ -271,18 +271,18 @@ ChorinNavierStokes<dim>::initialize_system()
 
   // Initialise matrices/vectors for each equation
   init_velocity_eq_system_matrix.reinit(sparsity_pattern_velocity);
-  tentative_velocity.reinit(dofs_per_block);
-  init_velocity_eq_system_rhs.reinit(dofs_per_block);
+  tentative_velocity.reinit(dof_handler_velocity.n_dofs());
+  init_velocity_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
 
   pressure_eq_system_matrix.reinit(sparsity_pattern_pressure);
   pressure_solution.reinit(dof_handler_pressure.n_dofs());
   pressure_eq_system_rhs.reinit(dof_handler_pressure.n_dofs());
 
   new_velocity_eq_system_matrix.reinit(sparsity_pattern_velocity);
-  next_velocity.reinit(dofs_per_block);
-  new_velocity_eq_system_rhs.reinit(dofs_per_block);
+  next_velocity.reinit(dof_handler_velocity.n_dofs());
+  new_velocity_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
 
-  velocity_solution.reinit(dofs_per_block);
+  velocity_solution.reinit(dof_handler_velocity.n_dofs());
 }
 
 template <int dim>
@@ -361,7 +361,7 @@ ChorinNavierStokes<dim>::assemble_init_velocity_eq()
                    fe_values_velocity.JxW(q_index)); // k_l * phi_i * f_l * dx
             }
         }
-
+     
       // Transfer cell components to global matrix/vector
       cell->get_dof_indices(local_dof_indices);
 
@@ -447,14 +447,14 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
 
   const FEValuesExtractors::Vector velocities(0);
 
-  const unsigned int dofs_per_cell = fe_pressure.n_dofs_per_cell();
+  const unsigned int pressure_dofs_per_cell = fe_pressure.n_dofs_per_cell();
   const unsigned int n_q_pressure  = quadrature_pressure.size();
 
   // Initialise cell contribution matrices
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
+  FullMatrix<double> cell_matrix(pressure_dofs_per_cell, pressure_dofs_per_cell);
+  Vector<double>     cell_rhs(pressure_dofs_per_cell);
 
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(pressure_dofs_per_cell);
 
   std::vector<double> div_tentative_velocity(n_q_pressure);
 
@@ -514,7 +514,12 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
   // Add boundary conditions
   std::map<types::global_dof_index, double> boundary_values;
   if (couette_case)
-    return;
+  {
+    VectorTools::interpolate_boundary_values(dof_handler_pressure,
+                                            2,
+                                            Functions::ZeroFunction<dim>(),
+                                            boundary_values);
+  }
 
   else if (poiseulle_case)
   {
@@ -546,21 +551,12 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::solve_pressure_eq()
 {
-  // Solve AU=F using a preconditioned Conjugate Gradient algorithm
-  SolverControl            pressure_eq_solver_control(1000, 1e-12);
-  SolverCG<Vector<double>> pressure_eq_solver(pressure_eq_solver_control);
+  // Solve AU=F directly
+  SparseDirectUMFPACK pressure_eq_direct;
+  pressure_eq_direct.initialize(pressure_eq_system_matrix);
+  pressure_eq_direct.vmult(pressure_solution, pressure_eq_system_rhs);
 
-  // Define Jacobi preconditioner
-  PreconditionJacobi<SparseMatrix<double>> preconditioner;
-  preconditioner.initialize(pressure_eq_system_matrix, 1.2);
-
-  pressure_eq_solver.solve(pressure_eq_system_matrix,
-                   pressure_solution,
-                   pressure_eq_system_rhs,
-                   preconditioner);
-  std::cout << "   " << pressure_eq_solver_control.last_step()
-            << " CG iterations needed to obtain convergence in Pressure Equation (2)."
-            << std::endl;
+  std::cout << "    Pressure Equation (2) directly solved." << std::endl;
 }
 
 template <int dim>
@@ -600,7 +596,7 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
 
   std::vector<Tensor<1, dim>> phi_u(velocity_dofs_per_cell);
 
-  // Set up iterators over both DoF_handlers
+ // Set up iterators over both DoF_handlers
   typename DoFHandler<dim>::active_cell_iterator cell_u =
     dof_handler_velocity.begin_active();
 
@@ -609,7 +605,7 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
   const auto endc = dof_handler_pressure.end();
 
   // Iterate over each cell
-  for (; cell_p != endc; ++cell_p, ++cell_u)
+  for (; cell_p != endc; ++cell_p, ++cell_u)  // should be cell_u
     {
       // Reset each cell contributions
       fe_values_velocity.reinit(cell_u);
@@ -711,7 +707,7 @@ ChorinNavierStokes<dim>::solve_new_velocity_eq()
   new_velocity_eq_direct.initialize(new_velocity_eq_system_matrix);
   new_velocity_eq_direct.vmult(next_velocity, new_velocity_eq_system_rhs);
 
-  std::cout << "    New Velocity Equation (3) directly solved." << std::endl;
+  std::cout << "    New velocity Equation (3) directly solved." << std::endl;
 }
 
 template <int dim>
@@ -773,6 +769,10 @@ ChorinNavierStokes<dim>::run()
   simulation_time       = 0;
   const unsigned int end_cycle = end_time/timestep;
 
+  couette_case            = false;
+  poiseulle_case          = false;
+  MMS_case                = false;
+
   // Increase time
   for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
     {
@@ -803,9 +803,10 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::runMMS()
 {
-  MMS_case = true;
+  couette_case            = false;
+  poiseulle_case          = false;
+  MMS_case                = true;
 }
-
 
 template <int dim>
 void
@@ -821,14 +822,17 @@ ChorinNavierStokes<dim>::runCouette()
   couette_case            = true;
   poiseulle_case          = false;
   MMS_case                = false;
+  std::cout << " Test case: Couette" << std::endl;
 
   // Increase time
   for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
     {
+      std::cout << " Time: " << simulation_time << " seconds" << std::endl;
+
       // For first iteration in time
       if (cycle == 0.0)
         {
-          make_cube_grid(2);
+          make_cube_grid(4);
           refine_grid();
           setup_dofs();
           initialize_system();
@@ -862,10 +866,12 @@ ChorinNavierStokes<dim>::runPoiseulle()
   couette_case            = false;
   poiseulle_case          = true;
   MMS_case                = false;
+  std::cout << " Test case: Poiseulle" << std::endl;
 
   // Increase time
   for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
     {
+      std::cout << " Time: " << simulation_time << " seconds" << std::endl;
       // For first iteration in time
       if (cycle == 0.0)
         {
