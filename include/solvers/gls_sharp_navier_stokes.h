@@ -142,7 +142,7 @@ private:
    * Members
    */
 private:
-  std::vector<std::set<typename DoFHandler<dim>::active_cell_iterator>>
+  std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>>
                                vertices_to_cell;
   const bool                   SUPG        = false;
   const bool                   PSPG        = true;
