@@ -41,15 +41,15 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
-    // Find all the cell around a vertex
+    // Find all the cells around each vertices
     TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
     vertices_to_cell.clear();
     const auto &cell_iterator = this->dof_handler.active_cell_iterators();
 
-    // // Loop on all the cell and find their vertices to fill the map of sets of cells around each vertex
+    // // Loop on all the cells and find their vertices to fill the map of sets of cells around each vertex
     for (const auto &cell : cell_iterator)
     {
-        if (cell->is_locally_owned() | cell->is_ghost())
+        if (cell->is_locally_owned() || cell->is_ghost())
         {
             const unsigned int vertices_per_cell =
                     GeometryInfo<dim>::vertices_per_cell;
@@ -71,15 +71,15 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typ
                                                                        Point<dim>             point)
 {
     //Find the cell around a point based on an initial cell.
-    MappingQ1<dim> map;
-    //Find the cells around the initial cell vertex neighbours ( cells that share a vertex with the original cell)
+
+    //Find the cells around the initial cell ( cells that share a vertex with the original cell).
     std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
-    //loop over that group of cells
+    //Loop over that group of cells
     for (unsigned int i = 0; i < active_neighbors_set.size(); ++i){
                 try
                 {
                     const Point<dim, double> p_cell =
-                            map.transform_real_to_unit_cell(active_neighbors_set[i], point);
+                            this->mapping->transform_real_to_unit_cell(active_neighbors_set[i], point);
                     const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
                     // if the cell contains the point, the distance is equal to 0
                     if (dist == 0)
@@ -93,8 +93,7 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typ
                 {}
     }
     // The cell is not found near the initial cell so we use the cell tree algorithm instead (much slower).
-    std::cout << "cell not found around " << point << std::endl;
-    std::cout << "set size " << active_neighbors_set.size() << std::endl;
+    std::cout << "Cell not found around " << point << std::endl;
     return find_cell_around_point_with_tree(this->dof_handler,point);
 
 }
@@ -105,7 +104,6 @@ std::vector<typename DoFHandler<dim>::active_cell_iterator>
 GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
     // Find all the cells that share a vertex with a reference cell including the initial cell.
-
     std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
     // Loop over the vertices of the initial cell and find all the cells around each vertex and add them to the set of cells around the reference cell.
     for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
@@ -114,8 +112,8 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandle
         neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),this->vertices_to_cell[v_index].end());
     }
     // Transform the set into a vector.
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> patch_2(neighbors_cells.begin(),neighbors_cells.end());
-    return patch_2;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_sharing_vertices(neighbors_cells.begin(),neighbors_cells.end());
+    return cells_sharing_vertices;
 }
 
 
@@ -131,7 +129,7 @@ GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<
         this->system_matrix.clear_row(dof_index);
     }
     else{
-        // This DOf is special, it's at a frontier between two processors. Only one of the processors owned it and if we are here we are not on that processor.
+        // This DOf is special, it's at a frontier between two processors. Only one of the processors owns it. If we have reached this point, we are not on that processor.
         // In this case  the clear_row function doesn't clear the entire row it only clear DOFs that are owned by the row. This is an issue.
         // To fix that we force all DOFs contain in ghost cells to be put to 0.
         std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
@@ -139,15 +137,13 @@ GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<
         const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
         std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
         // Loop over the neighbours cells and erase the entry of the matrix that could be linked to neighbours ghost cells.
-        for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
-            const auto &cell_3 = active_neighbors_set[m];
+        for (unsigned int i = 0; i < active_neighbors_set.size(); ++i) {
+            const auto &cell_3 = active_neighbors_set[i];
             cell_3->get_dof_indices(local_dof_indices_iter);
-            for (unsigned int o = 0; o < local_dof_indices_iter.size(); ++o) {
-                if (std::find(local_dof_indices_iter.begin(), local_dof_indices_iter.end(), dof_index) !=
-                    local_dof_indices_iter.end()) {
-                    for (unsigned int o = 0; o < local_dof_indices_iter.size(); ++o) {
-                        this->system_matrix.set(dof_index, local_dof_indices_iter[o], 0);
-                    }
+            if (std::find(local_dof_indices_iter.begin(), local_dof_indices_iter.end(), dof_index) !=
+            local_dof_indices_iter.end()) {
+                for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k) {
+                    this->system_matrix.set(dof_index, local_dof_indices_iter[k], 0);
                 }
             }
         }
@@ -170,9 +166,8 @@ void
 GLSSharpNavierStokesSolver<dim>::refine_ib()
 {
   Point<dim>                                    center_immersed;
-  MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -223,13 +218,14 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::force_on_ib()
 {
+  TimerOutput::Scope t(this->computing_timer, "force_evaluation");
   // Calculate the torque and force on an immersed boundary
   // The boundary is a circle in 2D or a sphere in 3D
 
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
                                                               active_neighbors_set;
   std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
-  MappingQ1<dim>                                              map;
+
   const double min_cell_diameter =
     GridTools::minimal_cell_diameter(*this->triangulation);
 
@@ -247,9 +243,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
       double mu = this->simulation_parameters.physical_properties.viscosity;
 
-      MappingQ1<dim>                                immersed_map;
       std::map<types::global_dof_index, Point<dim>> support_points;
-      DoFTools::map_dofs_to_support_points(immersed_map,
+      DoFTools::map_dofs_to_support_points(*this->mapping,
                                            this->dof_handler,
                                            support_points);
 
@@ -444,13 +439,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // Used support function of the cell to define the
                   // interpolation of the velocity
                   Point<dim> second_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_2,
+                          this->mapping->transform_real_to_unit_cell(cell_2,
                                                              second_point);
                   Point<dim> third_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_3,
+                          this->mapping->transform_real_to_unit_cell(cell_3,
                                                              third_point);
                   Point<dim> fourth_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_4,
+                          this->mapping->transform_real_to_unit_cell(cell_4,
                                                              fourth_point);
 
                   // Initialize the component of the velocity
@@ -608,9 +603,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       FEValues<dim> fe_values(*this->fe, q_formula, update_quadrature_points);
 
       double mu = this->simulation_parameters.physical_properties.viscosity;
-      MappingQ1<dim>                                immersed_map;
+
       std::map<types::global_dof_index, Point<dim>> support_points;
-      DoFTools::map_dofs_to_support_points(immersed_map,
+      DoFTools::map_dofs_to_support_points(*this->mapping,
                                            this->dof_handler,
                                            support_points);
 
@@ -827,13 +822,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Used support function of the cell to define the
                       // interpolation of the velocity
                       Point<dim> second_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_2,
+                              this->mapping->transform_real_to_unit_cell(cell_2,
                                                                  second_point);
                       Point<dim> third_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_3,
+                              this->mapping->transform_real_to_unit_cell(cell_3,
                                                                  third_point);
                       Point<dim> fourth_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_4,
+                              this->mapping->transform_real_to_unit_cell(cell_4,
                                                                  fourth_point);
 
 
@@ -1154,9 +1149,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   Function<dim> *l_exact_solution = this->exact_solution;
 
   Point<dim>                                    center_immersed;
-  MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -1653,16 +1647,17 @@ GLSSharpNavierStokesSolver<dim>::cell_cut(const typename DoFHandler<dim>::active
         unsigned int nb_dof_inside = 0;
         for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
-            // Count the number of dofs that are smaller or larger than
-            // the radius of the particles if all the dofs are on one side
-            // the cell is not cut by the boundary meaning we don’t have
-            // to do anything
+            // Count the number of DOFs that are inside
+            // of the particles. If all the DOfs are on one side
+            // the cell is not cut by the boundary.
             if ((support_points[local_dof_indices[j]] - particles[p].position)
                         .norm() <= particles[p].radius)
                 ++nb_dof_inside;
         }
         if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size()){
-            // cell is cut
+            //Some of the DOFs are inside the boundary, some are outside.
+            // This mean that the cell is cut so we return that information and the index of the particle that cut the cell
+            // as well as the container containing local DOF of the cell.
             return {true,p,local_dof_indices};
         }
     }
@@ -1691,9 +1686,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   std::vector<double> time_steps_vector =
             this->simulation_control->get_time_steps_vector();
   // Define a map to all dofs and their support points
-  MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -1951,19 +1945,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // used in the stencil for extrapolation.
 
                           Point<dim> first_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, first_point);
                           Point<dim> second_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, second_point);
                           Point<dim> third_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, third_point);
                           Point<dim> fourth_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, fourth_point);
                           Point<dim> fifth_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, fifth_point);
 
                           cell_2->get_dof_indices(local_dof_indices_2);
@@ -1996,9 +1990,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 }
                               else
                                 {
-                                  // Give the dof a approximated value. Help
-                                  // with pressure shock when dof passe from cut
-                                  // to fluid.
+                                  // Give the DOF an approximated value. This help
+                                  // with pressure shock when the DOF passe from part of the boundary
+                                  // to the fluid.
                                   modifed_stencil = true;
                                   second_point =
                                     support_points[local_dof_indices[i]] +
@@ -2836,9 +2830,9 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   // support point
-  MappingQ1<dim>                                immersed_map;
+
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -2900,12 +2894,6 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
           bool cell_is_cut;
           std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices_iter,support_points);
-
-
-
-
-
-
 
 
           if (cell_is_cut == false)
