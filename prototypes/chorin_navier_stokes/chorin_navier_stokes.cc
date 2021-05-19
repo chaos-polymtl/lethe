@@ -193,7 +193,7 @@ private:
 template <int dim>
 ChorinNavierStokes<dim>::ChorinNavierStokes(const unsigned int degreeVelocity,
                                             const unsigned int degreePressure)
-  : viscosity(1.0)
+  : viscosity(10.0)
 
   // Initialise FE system for velocity
   , fe_velocity(FE_Q<dim>(degreeVelocity), dim)
@@ -541,7 +541,7 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
                  fe_values_pressure.JxW(q_pressure));        // dx
 
           for (const unsigned int i : fe_values_pressure.dof_indices())
-            cell_rhs(i) +=
+            cell_rhs(i) -=
               (fe_values_pressure.shape_value(i, q_pressure) * // phi_i(x_q)
                div_tentative_velocity[q_pressure] *            // div u*
                fe_values_pressure.JxW(q_pressure)) /
@@ -985,9 +985,10 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(1, 1); // degreeVelocity, degreePressure
-                                              //      problem_2d.runCouette();
-      problem_2d.runPoiseulle();
-      //      problem_2d.runCavity();
+
+      problem_2d.runCouette();
+      //      problem_2d.runPoiseulle();
+      //            problem_2d.runCavity();
       // problem_2d.runMMS();
     }
   catch (std::exception &exc)
