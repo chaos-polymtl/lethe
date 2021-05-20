@@ -58,18 +58,6 @@ private:
   // and Adjacent_3 needs to be renamed if possible to a clearer notation
 
   /**
-  * @brief Calculate the coefficients required for BDF integration of order n.
-  * The coefficients are determined through a recursion algorithm.
-  * The algorithm is taken from : Hay, Alexander, et al. "hp-Adaptive time
-   * integration based on the BDF for viscous flows." Journal of Computational
-   * Physics 291 (2015): 151-176.
-   *
-   * @param order The order of the BDF method. The BDF method of order n requires n+1 arrays
-   *
-   * @param time_steps a vector containing all the time steps. The time steps should be in reverse order.
-   * For example, if the method is a BDF2, it uses three values for the time : (t)
-   * (t-dt_1) and (t-dt_2). Thus the time step vector should contain dt_1 and
-   * dt_2.
    */
 
     /**
