@@ -77,7 +77,7 @@ private:
 
     /**
     * @brief
-    * Evaluate the forces applied to each of the IB particles.
+    * Evaluate the forces applied on each of the IB particle.
     */
     void
     force_on_ib();
