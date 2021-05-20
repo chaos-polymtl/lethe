@@ -125,7 +125,7 @@ private:
     * @brief
     * Evaluate the L2 error on the computational domain if an analytical solution is given.
     * This function is slightly different from its standard GLS counterpart as the cells that are cut by an immersed boundary
-    * should not be taking into account in the error evaluation. See "computation domain" definition in:
+    * should not be taken into account in the error evaluation. See "computation domain" definition in:
     * L. Barbeau, S. Étienne, C. Béguin & B. Blais,
     * «Development of a high-order continuous Galerkin sharp-interface immersed boundary method and
     * its application to incompressible flow problems,» Computers & Fluids, 2020,
@@ -135,6 +135,11 @@ private:
     calculate_L2_error_particles();
 
 
+
+    /**
+    * @brief
+    * Same function as its standard GLS counterpart but it used the error evaluation that takes into account the particle’s position.
+    */
     virtual void
     postprocess_fd(bool firstIter) override;
 
