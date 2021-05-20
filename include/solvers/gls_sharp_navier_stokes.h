@@ -99,8 +99,8 @@ private:
 
     /**
     * @brief
-    * Write in  file the forces , velocity , position of each of the
-    * particles in the output file
+    * Write in a specifique file for each of the paticles its forces, velocity, position at each time step.
+    * LB - TODO refactor the output format of the file
     */
     void
     write_force_ib();
@@ -123,8 +123,13 @@ private:
 
     /**
     * @brief
-    * Evaluate the L2 error on the computational domain if an analytical solutio
-    * is given.
+    * Evaluate the L2 error on the computational domain if an analytical solution is given.
+    * This function is slightly different from its standard GLS counterpart as the cells that are cut by an immersed boundary
+    * should not be taking into account in the error evaluation. See "computation domain" definition in:
+    * L. Barbeau, S. Étienne, C. Béguin & B. Blais,
+    * «Development of a high-order continuous Galerkin sharp-interface immersed boundary method and
+    * its application to incompressible flow problems,» Computers & Fluids, 2020,
+    * in press, ref. CAF-D-20-0077
     */
     double
     calculate_L2_error_particles();

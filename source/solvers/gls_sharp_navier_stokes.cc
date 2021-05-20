@@ -1167,35 +1167,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
       if (cell->is_locally_owned())
         {
           cell->get_dof_indices(local_dof_indices);
-          bool check_error = true;
-          for (unsigned int p = 0; p < particles.size(); ++p)
-            {
-              unsigned int count_small = 0;
-              center_immersed(0)       = particles[p].position[0];
-              center_immersed(1)       = particles[p].position[1];
-              if (dim == 3)
-                {
-                  center_immersed(2) = particles[p].position[2];
-                }
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                {
-                  // Count the number of dofs that are smaller or larger than
-                  // the radius of the particles if all the dofs are on one side
-                  // the cell is not cut by the boundary meaning we don’t have
-                  // to do anything
-                  if ((support_points[local_dof_indices[j]] - center_immersed)
-                        .norm() <= particles[p].radius)
-                    {
-                      ++count_small;
-                    }
-                }
-              if (count_small != 0 and count_small != local_dof_indices.size())
-                {
-                  check_error = false;
-                }
-            }
 
-          if (check_error)
+          bool cell_is_cut;
+          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices,support_points);
+
+          if (cell_is_cut==false)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
