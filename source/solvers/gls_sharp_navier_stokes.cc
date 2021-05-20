@@ -155,6 +155,7 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
+  // initialized the particles
   particles = this->simulation_parameters.particlesParameters.particles;
   table_f.resize(particles.size());
   table_t.resize(particles.size());

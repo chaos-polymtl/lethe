@@ -71,6 +71,9 @@ private:
     /**
     * @brief
     * Defines the particle structure and value based on the parameter file.
+    * This structure gives access to the position, velocity, force and other proprieties of each IB particle.
+    * All the variables defined for each of the particle are described in the class: IBparticle.
+    * see: \include\core\ib_particle.h
     */
     void
     define_particles();
@@ -104,8 +107,8 @@ private:
 
     /**
     * @brief
-    * Write in  the output file the forces , velocity , position of each of the
-    * particles.
+    * Integrate the particle velocity and position based on the forces and torques
+    * and applies the next value to the particle.
     */
     void
     integrate_particles();
