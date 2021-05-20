@@ -96,8 +96,8 @@ private:
 
     /**
     * @brief
-    * Write in  the output file the forces , velocity , position of each of the
-    * particles.
+    * Write in  file the forces , velocity , position of each of the
+    * particles in the output file
     */
     void
     write_force_ib();
