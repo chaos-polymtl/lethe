@@ -3277,7 +3277,7 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_system");
+
   if (this->simulation_parameters.particlesParameters.integrate_motion)
     {
       force_on_ib();
@@ -3286,6 +3286,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
+      TimerOutput::Scope t(this->computing_timer, "assemble_system");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<true,
@@ -3341,6 +3342,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   else if (this->simulation_parameters.velocitySource.type ==
            Parameters::VelocitySource::VelocitySourceType::srf)
     {
+      TimerOutput::Scope t(this->computing_timer, "assemble_system");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<true,
@@ -3400,11 +3402,12 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+
 
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
+        TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
@@ -3459,6 +3462,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     {
+      TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
