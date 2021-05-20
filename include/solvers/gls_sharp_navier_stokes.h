@@ -146,13 +146,18 @@ private:
     /**
     * @brief
     * Allow a refinement around each of the particles.
+    * The zone where the cells will be refined is defined by a ring in 2D and a shell in 3D.
+    *The outside and inside radius of the ring\shell is defined in relation to the diameter of the particle by the immersed boundaries parameter:
+    * "refine mesh inside radius factor" and "refine mesh outside radius factor".
+    * These factors multiply the radius of the particle to define the outside and inside radius of the ring\shell.
     */
     void
     refine_ib();
 
     /**
     * @brief
-    * Return a bool to define if a cell is cut by a IB particle, the id of the particle that cut it if it's the case and the local dof of the cell for later use
+    * Return a bool to define if a cell is cut by an IB particle and the local DOFs of the cell for later us.
+    * If the cell is cut, the function will return the id of the particle that cut it, else it returns 0.
      *
      * @param cell , the cell that we verify whether it is cut or not.
      *
