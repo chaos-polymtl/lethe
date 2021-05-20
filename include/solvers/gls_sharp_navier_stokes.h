@@ -141,7 +141,7 @@ private:
     * @brief
     * Return a bool to define if a cell is cut by a IB particle, the id of the particle that cut it if it's the case and the local dof of the cell for later use
      *
-     * @param cell , the cell that need to be check to know if it's cut.
+     * @param cell , the cell that we verify whether it is cut or not.
      *
      * @param local_dof_indices, a container for the local dof indices used during the function call.
      *
