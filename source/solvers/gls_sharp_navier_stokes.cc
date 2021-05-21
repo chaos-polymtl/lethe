@@ -36,51 +36,126 @@ template <int dim>
 GLSSharpNavierStokesSolver<dim>::~GLSSharpNavierStokesSolver()
 {}
 
+
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
-  vertices_to_cell.clear();
-  vertices_to_cell.resize(this->dof_handler.n_dofs() / (dim + 1));
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+    // Find all the cells around each vertices
+    TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+    vertices_to_cell.clear();
+    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
 
-  // loop on all the cell and
-  for (const auto &cell : cell_iterator)
+    // // Loop on all the cells and find their vertices to fill the map of sets of cells around each vertex
+    for (const auto &cell : cell_iterator)
     {
-      if (cell->is_locally_owned() | cell->is_ghost())
+        if (cell->is_locally_owned() || cell->is_ghost())
         {
-          const unsigned int vertices_per_cell =
-            GeometryInfo<dim>::vertices_per_cell;
-          for (unsigned int i = 0; i < vertices_per_cell; i++)
+            const unsigned int vertices_per_cell =
+                    GeometryInfo<dim>::vertices_per_cell;
+            for (unsigned int i = 0; i < vertices_per_cell; i++)
             {
-              // First obtain vertex index
-              unsigned int v_index = cell->vertex_index(i);
+                // First obtain vertex index
+                unsigned int v_index = cell->vertex_index(i);
 
-              // Get the vector of active cell linked to that vertex
-              std::vector<typename DoFHandler<dim>::active_cell_iterator>
-                adjacent = vertices_to_cell[v_index];
-
-              // Insert the cell found within that vector using a set
-              // to prevent key duplication
-              std::set<typename DoFHandler<dim>::active_cell_iterator>
-                adjacent_2(adjacent.begin(), adjacent.end());
-              adjacent_2.insert(cell);
-
-              // Convert back the set to a vector and add it in the
-              // vertices_to_cell;
-              std::vector<typename DoFHandler<dim>::active_cell_iterator>
-                adjacent_3(adjacent_2.begin(), adjacent_2.end());
-              vertices_to_cell[v_index] = adjacent_3;
+                // Insert the cell into the set of cell around that vertex.
+                vertices_to_cell[v_index].insert(cell);
             }
         }
     }
 }
 
-// TO REFACTOR
+template <int dim>
+typename DoFHandler<dim>::active_cell_iterator
+GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                                                                       Point<dim>             point)
+{
+    //Find the cell around a point based on an initial cell.
+
+    //Find the cells around the initial cell ( cells that share a vertex with the original cell).
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+    //Loop over that group of cells
+    for (unsigned int i = 0; i < active_neighbors_set.size(); ++i){
+                try
+                {
+                    const Point<dim, double> p_cell =
+                            this->mapping->transform_real_to_unit_cell(active_neighbors_set[i], point);
+                    const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+                    // if the cell contains the point, the distance is equal to 0
+                    if (dist == 0)
+                    {
+                        // The cell is found so we return it and exit the function.
+
+                        return active_neighbors_set[i];
+                    }
+                }
+                catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
+                {}
+    }
+    // The cell is not found near the initial cell so we use the cell tree algorithm instead (much slower).
+    std::cout << "Cell not found around " << point << std::endl;
+    return find_cell_around_point_with_tree(this->dof_handler,point);
+
+}
+
+
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+{
+    // Find all the cells that share a vertex with a reference cell including the initial cell.
+    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+    // Loop over the vertices of the initial cell and find all the cells around each vertex and add them to the set of cells around the reference cell.
+    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
+    {
+        unsigned int v_index=cell->vertex_index(i);
+        neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),this->vertices_to_cell[v_index].end());
+    }
+    // Transform the set into a vector.
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_sharing_vertices(neighbors_cells.begin(),neighbors_cells.end());
+    return cells_sharing_vertices;
+}
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index){
+    // Clear a line in the matrix based on an initial cell that contains the DOF.
+    // This function ensure that if the dof is a ghost all the entry of the matrix will be erased.
+
+
+    // if the dof is locally owned we can use the default function of deal ii for matrix (most of the time this is ok)
+    if (this->locally_owned_dofs.is_element(dof_index)){
+        this->system_matrix.clear_row(dof_index);
+    }
+    else{
+        // This DOf is special, it's at a frontier between two processors. Only one of the processors owns it. If we have reached this point, we are not on that processor.
+        // In this case  the clear_row function doesn't clear the entire row it only clear DOFs that are owned by the row. This is an issue.
+        // To fix that we force all DOFs contain in ghost cells to be put to 0.
+        std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+
+        const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+        std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
+        // Loop over the neighbours cells and erase the entry of the matrix that could be linked to neighbours ghost cells.
+        for (unsigned int i = 0; i < active_neighbors_set.size(); ++i) {
+            const auto &cell_3 = active_neighbors_set[i];
+            cell_3->get_dof_indices(local_dof_indices_iter);
+            if (std::find(local_dof_indices_iter.begin(), local_dof_indices_iter.end(), dof_index) !=
+            local_dof_indices_iter.end()) {
+                for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k) {
+                    this->system_matrix.set(dof_index, local_dof_indices_iter[k], 0);
+                }
+            }
+        }
+    }
+}
+
+
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::define_particles()
 {
+  // initialized the particles
   particles = this->simulation_parameters.particlesParameters.particles;
   table_f.resize(particles.size());
   table_t.resize(particles.size());
@@ -92,9 +167,8 @@ void
 GLSSharpNavierStokesSolver<dim>::refine_ib()
 {
   Point<dim>                                    center_immersed;
-  MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -145,13 +219,14 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::force_on_ib()
 {
+  TimerOutput::Scope t(this->computing_timer, "force_evaluation");
   // Calculate the torque and force on an immersed boundary
   // The boundary is a circle in 2D or a sphere in 3D
 
   std::vector<typename DoFHandler<dim>::active_cell_iterator>
                                                               active_neighbors_set;
   std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
-  MappingQ1<dim>                                              map;
+
   const double min_cell_diameter =
     GridTools::minimal_cell_diameter(*this->triangulation);
 
@@ -169,9 +244,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
       double mu = this->simulation_parameters.physical_properties.viscosity;
 
-      MappingQ1<dim>                                immersed_map;
       std::map<types::global_dof_index, Point<dim>> support_points;
-      DoFTools::map_dofs_to_support_points(immersed_map,
+      DoFTools::map_dofs_to_support_points(*this->mapping,
                                            this->dof_handler,
                                            support_points);
 
@@ -366,13 +440,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // Used support function of the cell to define the
                   // interpolation of the velocity
                   Point<dim> second_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_2,
+                          this->mapping->transform_real_to_unit_cell(cell_2,
                                                              second_point);
                   Point<dim> third_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_3,
+                          this->mapping->transform_real_to_unit_cell(cell_3,
                                                              third_point);
                   Point<dim> fourth_point_v =
-                    immersed_map.transform_real_to_unit_cell(cell_4,
+                          this->mapping->transform_real_to_unit_cell(cell_4,
                                                              fourth_point);
 
                   // Initialize the component of the velocity
@@ -530,9 +604,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       FEValues<dim> fe_values(*this->fe, q_formula, update_quadrature_points);
 
       double mu = this->simulation_parameters.physical_properties.viscosity;
-      MappingQ1<dim>                                immersed_map;
+
       std::map<types::global_dof_index, Point<dim>> support_points;
-      DoFTools::map_dofs_to_support_points(immersed_map,
+      DoFTools::map_dofs_to_support_points(*this->mapping,
                                            this->dof_handler,
                                            support_points);
 
@@ -749,13 +823,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Used support function of the cell to define the
                       // interpolation of the velocity
                       Point<dim> second_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_2,
+                              this->mapping->transform_real_to_unit_cell(cell_2,
                                                                  second_point);
                       Point<dim> third_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_3,
+                              this->mapping->transform_real_to_unit_cell(cell_3,
                                                                  third_point);
                       Point<dim> fourth_point_v =
-                        immersed_map.transform_real_to_unit_cell(cell_4,
+                              this->mapping->transform_real_to_unit_cell(cell_4,
                                                                  fourth_point);
 
 
@@ -1076,9 +1150,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
   Function<dim> *l_exact_solution = this->exact_solution;
 
   Point<dim>                                    center_immersed;
-  MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -1094,35 +1167,11 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
       if (cell->is_locally_owned())
         {
           cell->get_dof_indices(local_dof_indices);
-          bool check_error = true;
-          for (unsigned int p = 0; p < particles.size(); ++p)
-            {
-              unsigned int count_small = 0;
-              center_immersed(0)       = particles[p].position[0];
-              center_immersed(1)       = particles[p].position[1];
-              if (dim == 3)
-                {
-                  center_immersed(2) = particles[p].position[2];
-                }
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                {
-                  // Count the number of dofs that are smaller or larger than
-                  // the radius of the particles if all the dofs are on one side
-                  // the cell is not cut by the boundary meaning we don’t have
-                  // to do anything
-                  if ((support_points[local_dof_indices[j]] - center_immersed)
-                        .norm() <= particles[p].radius)
-                    {
-                      ++count_small;
-                    }
-                }
-              if (count_small != 0 and count_small != local_dof_indices.size())
-                {
-                  check_error = false;
-                }
-            }
 
-          if (check_error)
+          bool cell_is_cut;
+          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices,support_points);
+
+          if (cell_is_cut==false)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
@@ -1562,6 +1611,38 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 template <int dim>
+std::tuple<bool,unsigned int,std::vector<types::global_dof_index> >
+GLSSharpNavierStokesSolver<dim>::cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell, std::vector<types::global_dof_index> &local_dof_indices ,std::map<types::global_dof_index, Point<dim>> &support_points)
+{
+// Check if a cell is cut and if it's rerun the particle by which it's cut and the local DOFs index.
+// The check is done by counting the number of DOFs that is on either side of the boundary define by a particle.
+
+    cell->get_dof_indices(local_dof_indices);
+
+    for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+        unsigned int nb_dof_inside = 0;
+        for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+        {
+            // Count the number of DOFs that are inside
+            // of the particles. If all the DOfs are on one side
+            // the cell is not cut by the boundary.
+            if ((support_points[local_dof_indices[j]] - particles[p].position)
+                        .norm() <= particles[p].radius)
+                ++nb_dof_inside;
+        }
+        if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size()){
+            //Some of the DOFs are inside the boundary, some are outside.
+            // This mean that the cell is cut so we return that information and the index of the particle that cut the cell
+            // as well as the container containing local DOF of the cell.
+            return {true,p,local_dof_indices};
+        }
+    }
+    return {false,0,local_dof_indices};
+}
+
+
+template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::sharp_edge()
 {
@@ -1582,9 +1663,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   std::vector<double> time_steps_vector =
             this->simulation_control->get_time_steps_vector();
   // Define a map to all dofs and their support points
-  MappingQ1<dim>                                immersed_map;
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -1594,7 +1674,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           q_formula,
                           update_quadrature_points | update_JxW_values);
   const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
-  unsigned int       vertex_per_cell = GeometryInfo<dim>::vertices_per_cell;
+
 
 
   unsigned int n_q_points = q_formula.size();
@@ -1617,6 +1697,41 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   double dt=time_steps_vector[0];
   if(Parameters::SimulationControl::TimeSteppingMethod::steady== this->simulation_parameters.simulation_control.method)
       dt=1;
+
+  // impose pressure reference in each of the particle
+  for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+      const auto &cell =find_cell_around_point_with_tree(this->dof_handler,
+                                                 particles[p].pressure_location+particles[p].position);
+
+      if (cell->is_locally_owned())
+        {
+          cell->get_dof_indices(local_dof_indices);
+          double sum_line = 0;
+          fe_values.reinit(cell);
+          std::vector<int> set_pressure_cell;
+          set_pressure_cell.resize(particles.size());
+
+          // Define the order of magnitude for the stencil.
+          for (unsigned int qf = 0; qf < n_q_points; ++qf)
+              sum_line += fe_values.JxW(qf);
+
+          sum_line=sum_line/dt;
+          // Clear the line in the matrix
+          unsigned int inside_index = local_dof_indices[dim];
+          clear_line_in_matrix(cell, inside_index);
+          // this->system_matrix.clear_row(inside_index) is not reliable on edge case
+
+          // Set the new equation for the first pressure dofs of the
+          // cell. this is the new reference pressure inside a
+          // particle
+
+            this->system_matrix.set(inside_index, inside_index, sum_line);
+            auto &system_rhs = this->system_rhs;
+            system_rhs(inside_index) =
+                    0 - this->evaluation_point(inside_index) * sum_line;
+        }
+    }
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1624,128 +1739,28 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
         {
           double sum_line = 0;
           fe_values.reinit(cell);
-          cell->get_dof_indices(local_dof_indices);
-          std::vector<int> set_pressure_cell;
-          set_pressure_cell.resize(particles.size());
 
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
             sum_line += fe_values.JxW(qf);
 
           sum_line=sum_line/dt;
+          auto [cell_is_cut,p,local_dof_indices]=cell_cut(cell,local_dof_indices_2,support_points);
 
           // Loop over all particle  to see if one of them is cutting this cell
-          for (unsigned int p = 0; p < particles.size(); ++p)
-            {
-              unsigned int count_small = 0;
-              center_immersed          = particles[p].position;
-              pressure_bridge =
-                particles[p].position - particles[p].pressure_location;
 
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                {
-                  // Count the number of dofs that are smaller or larger than
-                  // the radius of the particles if all the dofs are on one side
-                  // the cell is not cut by the boundary meaning we don’t have
-                  // to do anything
-                  if ((support_points[local_dof_indices[j]] - center_immersed)
-                        .norm() <= particles[p].radius)
-                    ++count_small;
-                }
+          // If the cell is cut by the IB the count is not 0 or the
+          // number of total dof in a cell
 
-              // Impose the pressure inside the particle if the inside of the
-              // particle is solved
-
-              bool cell_found = false;
-              try
-                {
-                  // Define the cell and check if the point is inside the
-                  // cell
-                  const Point<dim, double> p_cell =
-                    immersed_map.transform_real_to_unit_cell(cell,
-                                                             pressure_bridge);
-                  const double dist_2 =
-                    GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-                  if (dist_2 == 0)
-                    {
-                      // If the point is in this cell then the distance is equal
-                      // to 0 and we have found our cell
-                      cell_found = true;
-                    }
-                }
-              // May cause an error if the point is not in the cell
-              catch (
-                const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-                {}
-
-              if (cell_found)
-                {
-                  // Clear the line in the matrix
-                  unsigned int inside_index = local_dof_indices[dim];
-                  for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                    {
-                      unsigned int v_index = cell->vertex_index(vi);
-                      active_neighbors_set = this->vertices_to_cell[v_index];
-                      for (unsigned int m = 0; m < active_neighbors_set.size();
-                           m++)
-                        {
-                          const auto &cell_3 = active_neighbors_set[m];
-                          cell_3->get_dof_indices(local_dof_indices_3);
-                          for (unsigned int o = 0;
-                               o < local_dof_indices_3.size();
-                               ++o)
-                            {
-                              if (std::find(local_dof_indices_3.begin(),
-                                            local_dof_indices_3.end(),
-                                            inside_index) !=
-                                  local_dof_indices_3.end())
-                                {
-                                  for (unsigned int o = 0;
-                                       o < local_dof_indices_3.size();
-                                       ++o)
-                                    {
-                                      this->system_matrix.set(
-                                        inside_index,
-                                        local_dof_indices_3[o],
-                                        0);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                  // this->system_matrix.clear_row(inside_index);
-
-                  // Set the new equation for the first pressure dofs of the
-                  // cell. this is the new reference pressure inside a
-                  // particle
-
-                  this->system_matrix.set(inside_index, inside_index, sum_line);
-
-
-                  auto &system_rhs = this->system_rhs;
-                  system_rhs(inside_index) =
-                    0 - this->local_evaluation_point(inside_index) * sum_line;
-                }
-
-
-
-              // If the cell is cut by the IB the count is not 0 or the
-              // number of total dof in a cell
-
-              if (count_small != 0 && count_small != local_dof_indices.size())
-                {
-                  // If we are here, the cell is cut by the IB.
-                  // Loops on the dof that represents the velocity  component
-                  // and pressure separately
-
-                  for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-                    {
-                      const unsigned int component_i =
-                        this->fe->system_to_component_index(i).first;
-
-                      if (component_i < dim)
+          if (cell_is_cut)
+          {
+              // If we are here, the cell is cut by the IB.
+              // Loops on the dof that represents the velocity  component
+              // and pressure separately
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+              {
+                  const unsigned int component_i =this->fe->system_to_component_index(i).first;
+                  if (component_i < dim)
                         {
                           // We are working on the velocity of the cell cut
                           // loops on the dof that are for vx or vy separately
@@ -1754,24 +1769,23 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // define which dof is going to be redefined
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
-
                           // Define the distance vector between the
                           // immersed boundary and the dof support point
                           // for each dof
                           Tensor<1, dim, double> vect_dist =
                             (support_points[local_dof_indices[i]] -
-                             center_immersed -
+                                    particles[p].position -
                              particles[p].radius *
                                (support_points[local_dof_indices[i]] -
-                                center_immersed) /
+                                       particles[p].position) /
                                (support_points[local_dof_indices[i]] -
-                                center_immersed)
+                                       particles[p].position)
                                  .norm());
                           Tensor<1, dim, double> normal_vect =
                             (support_points[local_dof_indices[i]] -
-                             center_immersed) /
+                                    particles[p].position) /
                             (support_points[local_dof_indices[i]] -
-                             center_immersed)
+                                    particles[p].position)
                               .norm();
 
                           // Define the length ratio that represent the
@@ -1789,9 +1803,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                               tp_ratio = 1. / 3.;
                               fp_ratio = 2. / 3.;
                             }
-
-
-
+                          
                           // Define the other points for the stencil
                           // (IB point, original dof and the other
                           // points) this goes up to a 5-point stencil.
@@ -1813,7 +1825,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           Point<dim, double> fifth_point(
                             support_points[local_dof_indices[i]] +
                             vect_dist * length_fraction * 1 / 4);
-
                           double dof_2;
                           double sp_2;
 
@@ -1898,83 +1909,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
 
                           // Define the vertex associated with the dof
-                          unsigned int cell_found = 0;
-                          bool         break_bool = false;
-                          for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                            {
-                              unsigned int v_index = cell->vertex_index(vi);
 
-                              // Get a cell iterator for all the cell
-                              // neighbors of that vertex
-                              active_neighbors_set =
-                                this->vertices_to_cell[v_index];
-                              unsigned int n_active_cells =
-                                active_neighbors_set.size();
 
-                              // Loops on those cells to find in which of
-                              // them contain the new point for or sharp edge
-                              // stencil is
-                              for (unsigned int cell_index = 0;
-                                   cell_index < n_active_cells;
-                                   ++cell_index)
-                                {
-                                  try
-                                    {
-                                      // Define the cell and check if
-                                      // the point is inside of the cell
-                                      const Point<dim, double> p_cell =
-                                        immersed_map
-                                          .transform_real_to_unit_cell(
-                                            active_neighbors_set[cell_index],
-                                            second_point);
-                                      const double dist_2 = GeometryInfo<
-                                        dim>::distance_to_unit_cell(p_cell);
-
-                                      // Define the cell and check if
-                                      // the point is inside of the cell
-
-                                      if (dist_2 == 0)
-                                        {
-                                          // If the point is in this
-                                          // cell then the distance is equal
-                                          // to 0 and we have found our
-                                          // cell
-
-                                          cell_found = cell_index;
-                                          break_bool = true;
-                                          active_neighbors =
-                                            active_neighbors_set;
-                                          break;
-                                        }
-                                    }
-                                  // May cause error if the point is not
-                                  // in cell
-                                  catch (const typename MappingQGeneric<
-                                         dim>::ExcTransformationFailed &)
-                                    {}
-                                }
-                            }
-
-                          auto &cell_2       = active_neighbors[cell_found];
+                          auto  cell_2       = find_cell_around_point_with_neighbors(cell,second_point);
                           bool  skip_stencil = false;
-
-                          if (break_bool == false)
-                            {
-                              std::cout << "cell not found around point "
-                                        << std::endl;
-                              std::cout << "cell index " << cell_found
-                                        << std::endl;
-                              std::cout << "second point  " << second_point
-                                        << std::endl;
-                              cell_2 = GridTools::find_active_cell_around_point(
-                                this->dof_handler, second_point);
-                              cell_2->get_dof_indices(local_dof_indices_2);
-                              std::cout
-                                << "dof point  "
-                                << support_points[global_index_overwrite]
-                                << std::endl;
-                            }
-
 
 
                           // We have or next cell needed to complete the
@@ -1984,19 +1922,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // used in the stencil for extrapolation.
 
                           Point<dim> first_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, first_point);
                           Point<dim> second_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, second_point);
                           Point<dim> third_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, third_point);
                           Point<dim> fourth_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, fourth_point);
                           Point<dim> fifth_point_v =
-                            immersed_map.transform_real_to_unit_cell(
+                                  this->mapping->transform_real_to_unit_cell(
                               cell_2, fifth_point);
 
                           cell_2->get_dof_indices(local_dof_indices_2);
@@ -2004,34 +1942,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Clear the current line of this dof  by
                           // looping on the neighbouring cell of this dof
                           // and clear all the associated dof
-                          for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                            {
-                              unsigned int v_index = cell->vertex_index(vi);
-                              active_neighbors_set =
-                                this->vertices_to_cell[v_index];
-                              for (unsigned int m = 0;
-                                   m < active_neighbors_set.size();
-                                   m++)
-                                {
-                                  const auto &cell_3 = active_neighbors_set[m];
-                                  cell_3->get_dof_indices(local_dof_indices_3);
-                                  if (std::find(local_dof_indices_3.begin(),
-                                                local_dof_indices_3.end(),
-                                                global_index_overwrite) !=
-                                      local_dof_indices_3.end())
-                                    {
-                                      for (unsigned int o = 0;
-                                           o < local_dof_indices_3.size();
-                                           ++o)
-                                        {
-                                          this->system_matrix.set(
-                                            global_index_overwrite,
-                                            local_dof_indices_3[o],
-                                            0);
-                                        }
-                                    }
-                                }
-                            }
+
+                          clear_line_in_matrix(cell,global_index_overwrite);
 
                           // Check if the DOF intersect the IB
                           bool do_rhs          = false;
@@ -2055,9 +1967,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                 }
                               else
                                 {
-                                  // Give the dof a approximated value. Help
-                                  // with pressure chock when dof passe from cut
-                                  // to fluid.
+                                  // Give the DOF an approximated value. This help
+                                  // with pressure shock when the DOF passe from part of the boundary
+                                  // to the fluid.
                                   modifed_stencil = true;
                                   second_point =
                                     support_points[local_dof_indices[i]] +
@@ -2484,10 +2396,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                              particles[p].radius *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[1] +
                                            particles[p].velocity[0];
                                     }
@@ -2496,19 +2408,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       vx = particles[p].omega[1] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[2] *
                                              particles[p].radius -
                                            particles[p].omega[2] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[1] *
                                              particles[p].radius +
                                            particles[p].velocity[0];
@@ -2579,10 +2491,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                              particles[p].radius *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[0] +
                                            particles[p].velocity[1];
                                     }
@@ -2591,19 +2503,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       vy = particles[p].omega[2] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[0] *
                                              particles[p].radius -
                                            particles[p].omega[0] *
                                              ((support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed) /
+                                                     particles[p].position) /
                                               (support_points
                                                  [local_dof_indices[i]] -
-                                               center_immersed)
+                                                      particles[p].position)
                                                 .norm())[2] *
                                              particles[p].radius +
                                            particles[p].velocity[1];
@@ -2668,16 +2580,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   double vz =
                                     particles[p].omega[0] *
                                       ((support_points[local_dof_indices[i]] -
-                                        center_immersed) /
+                                              particles[p].position) /
                                        (support_points[local_dof_indices[i]] -
-                                        center_immersed)
+                                               particles[p].position)
                                          .norm())[1] *
                                       particles[p].radius -
                                     particles[p].omega[1] *
                                       ((support_points[local_dof_indices[i]] -
-                                        center_immersed) /
+                                              particles[p].position) /
                                        (support_points[local_dof_indices[i]] -
-                                        center_immersed)
+                                               particles[p].position)
                                          .norm())[0] *
                                       particles[p].radius +
                                     particles[p].velocity[2];
@@ -2764,21 +2676,15 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // defined for them. those DOF become Dummy dof. This
                           // is usefull for high order cells or when a dof is
                           // only element of cells that are cut.
-                          unsigned int vertex_per_cell =
-                            GeometryInfo<dim>::vertices_per_cell;
 
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
                           bool dummy_dof = true;
-                          for (unsigned int vi = 0; vi < vertex_per_cell; ++vi)
-                            {
-                              unsigned int v_index = cell->vertex_index(vi);
-                              active_neighbors_set =
-                                this->vertices_to_cell[v_index];
-                              for (unsigned int m = 0;
-                                   m < active_neighbors_set.size();
-                                   m++)
-                                {
+
+
+                          active_neighbors_set =find_cells_around_cell(cell);
+                          for (unsigned int m = 0;m < active_neighbors_set.size();m++)
+                          {
                                   const auto &cell_3 = active_neighbors_set[m];
                                   cell_3->get_dof_indices(local_dof_indices_3);
                                   for (unsigned int o = 0;
@@ -2808,7 +2714,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                               // anything
                                               if ((support_points
                                                      [local_dof_indices_3[q]] -
-                                                   center_immersed)
+                                                      particles[p].position)
                                                     .norm() <=
                                                   particles[p].radius)
                                                 {
@@ -2823,7 +2729,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                         }
                                     }
                                 }
-                            }
+
 
                           if (dummy_dof)
                             {
@@ -2836,7 +2742,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         }
                     }
                 }
-            }
+
         }
     }
 
@@ -2875,6 +2781,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   Vector<double>                   local_rhs(dofs_per_cell);
   std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
   std::vector<Tensor<1, dim>>          present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>>          present_velocity_gradients(n_q_points);
   std::vector<double>                  present_pressure_values(n_q_points);
@@ -2900,9 +2807,9 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   // support point
-  MappingQ1<dim>                                immersed_map;
+
   std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(immersed_map,
+  DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
 
@@ -2957,61 +2864,16 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                                                  endc = this->dof_handler.end();
   for (; cell != endc; ++cell)
     {
-      bool assemble_bool = true;
       if (cell->is_locally_owned())
         {
           cell->get_dof_indices(local_dof_indices);
-          for (unsigned int k = 0; k < particles.size(); ++k)
-            {
-              unsigned int count_small = 0;
-              if (dim == 2)
-                {
-                  center_immersed(0) = particles[k].position[0];
-                  center_immersed(1) = particles[k].position[1];
-                  // define arbitrary point on the boundary where the pressure
-                  // will be link between the 2 domain
-                  pressure_bridge(0) = particles[k].position[0] -
-                                       particles[k].pressure_location[0];
-                  pressure_bridge(1) = particles[k].position[1] -
-                                       particles[k].pressure_location[1];
-                }
-              else if (dim == 3)
-                {
-                  center_immersed(0) = particles[k].position[0];
-                  center_immersed(1) = particles[k].position[1];
-                  center_immersed(2) = particles[k].position[2];
-                  // define arbitrary point on the boundary where the pressure
-                  // will be link between the 2 domain
-                  pressure_bridge(0) = particles[k].position[0] -
-                                       particles[k].pressure_location[0];
-                  pressure_bridge(1) = particles[k].position[1] -
-                                       particles[k].pressure_location[1];
-                  pressure_bridge(2) = particles[k].position[2] -
-                                       particles[k].pressure_location[2];
-                }
-
-              for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
-                {
-                  // Count the number of dofs that are smaller or larger than
-                  // the radius of the particles if all the dofs are on one side
-                  // the cell is not cut by the boundary meaning we don’t have
-                  // to do anything
-                  if ((support_points[local_dof_indices[j]] - center_immersed)
-                        .norm() <= particles[k].radius)
-                    {
-                      ++count_small;
-                    }
-                }
-
-              if (count_small != 0 and count_small != local_dof_indices.size())
-                {
-                  assemble_bool = false;
-                  break;
-                }
-            }
 
 
-          if (assemble_bool == true)
+          bool cell_is_cut;
+          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices_iter,support_points);
+
+
+          if (cell_is_cut == false)
             {
               fe_values.reinit(cell);
 
@@ -3392,7 +3254,7 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_system");
+
   if (this->simulation_parameters.particlesParameters.integrate_motion)
     {
       force_on_ib();
@@ -3401,6 +3263,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
+      TimerOutput::Scope t(this->computing_timer, "assemble_system");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<true,
@@ -3456,6 +3319,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   else if (this->simulation_parameters.velocitySource.type ==
            Parameters::VelocitySource::VelocitySourceType::srf)
     {
+      TimerOutput::Scope t(this->computing_timer, "assemble_system");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<true,
@@ -3507,7 +3371,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  vertices_cell_mapping();
+
   sharp_edge();
 }
 template <int dim>
@@ -3515,11 +3379,12 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+
 
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
+        TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
@@ -3574,6 +3439,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     {
+      TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
@@ -3625,7 +3491,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
     }
-  vertices_cell_mapping();
   sharp_edge();
 }
 
@@ -3659,7 +3524,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
     }
-
+  vertices_cell_mapping();
   this->simulation_parameters.mesh_adaptation.refinement_fraction = temp_refine;
   this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
 
@@ -3682,6 +3547,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
+          vertices_cell_mapping();
           this->iterate();
         }
 
