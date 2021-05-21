@@ -71,7 +71,7 @@ subsection insertion info
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.04
+    set insertion box minimum z            	        = -0.05
     set insertion box maximum x            	        = 0.05
     set insertion box maximum y           	 	= 0.05
     set insertion box maximum z            	        = 0.03

@@ -75,7 +75,7 @@ NonUniformInsertion<dim>::insert(
 
       // Call random number generator
       std::vector<double> random_number_vector;
-      random_number_vector.reserve(this->inserted_this_step);
+      random_number_vector.reserve(this->inserted_this_step_this_proc);
       this->create_random_number_container(
         random_number_vector,
         dem_parameters.insertion_info.random_number_range,
@@ -88,32 +88,36 @@ NonUniformInsertion<dim>::insert(
       // Find insertion locations
       if (this_mpi_process == (n_mpi_process - 1))
         {
+          unsigned int particle_counter = 0;
           for (unsigned int id =
                  this->inserted_this_step - this->inserted_this_step_this_proc;
                id < this->inserted_this_step;
-               ++id)
+               ++id, ++particle_counter)
             {
               find_insertion_location_nonuniform(
                 insertion_location,
                 id,
-                random_number_vector[id],
-                random_number_vector[this->inserted_this_step - id - 1],
+                random_number_vector[particle_counter],
+                random_number_vector[this->inserted_this_step -
+                                     particle_counter - 1],
                 dem_parameters.insertion_info);
               insertion_points_on_proc.push_back(insertion_location);
             }
         }
       else
         {
+          unsigned int particle_counter = 0;
           for (unsigned int id =
                  this_mpi_process * this->inserted_this_step_this_proc;
                id < (this_mpi_process + 1) * this->inserted_this_step_this_proc;
-               ++id)
+               ++id, ++particle_counter)
             {
               find_insertion_location_nonuniform(
                 insertion_location,
                 id,
-                random_number_vector[id],
-                random_number_vector[this->inserted_this_step - id - 1],
+                random_number_vector[particle_counter],
+                random_number_vector[this->inserted_this_step -
+                                     particle_counter - 1],
                 dem_parameters.insertion_info);
               insertion_points_on_proc.push_back(insertion_location);
             }
