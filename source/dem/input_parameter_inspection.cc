@@ -60,8 +60,10 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
     }
 
   // Insertion parameters checking
-  if (parameters.insertion_info.random_number_range >=
-      (0.5 * (parameters.insertion_info.distance_threshold - 1)))
+  if (parameters.insertion_info.insertion_method ==
+        Parameters::Lagrangian::InsertionInfo::InsertionMethod::non_uniform &&
+      parameters.insertion_info.random_number_range >=
+        (0.5 * (parameters.insertion_info.distance_threshold - 1)))
     pcout
       << "Warning: Particles may have collision at the insertion step. This can lead"
          " to high initial velocities (due to initial overlap) or errors when using "
