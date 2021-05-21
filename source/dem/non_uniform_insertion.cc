@@ -81,8 +81,6 @@ NonUniformInsertion<dim>::insert(
         dem_parameters.insertion_info.random_number_range,
         dem_parameters.insertion_info.random_number_seed);
 
-
-
       Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
       insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
@@ -99,7 +97,7 @@ NonUniformInsertion<dim>::insert(
                 insertion_location,
                 id,
                 random_number_vector[id],
-                random_number_vector[this->inserted_this_step - id],
+                random_number_vector[this->inserted_this_step - id - 1],
                 dem_parameters.insertion_info);
               insertion_points_on_proc.push_back(insertion_location);
             }
@@ -115,7 +113,7 @@ NonUniformInsertion<dim>::insert(
                 insertion_location,
                 id,
                 random_number_vector[id],
-                random_number_vector[this->inserted_this_step - id],
+                random_number_vector[this->inserted_this_step - id - 1],
                 dem_parameters.insertion_info);
               insertion_points_on_proc.push_back(insertion_location);
             }
