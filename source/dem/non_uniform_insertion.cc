@@ -66,42 +66,59 @@ NonUniformInsertion<dim>::insert(
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
       // Distbuting particles between processors
-      if (this_mpi_process != (n_mpi_process - 1))
-        this->inserted_this_step_this_proc =
-          floor(this->inserted_this_step / n_mpi_process);
-      else
+      this->inserted_this_step_this_proc =
+        floor(this->inserted_this_step / n_mpi_process);
+      if (this_mpi_process == (n_mpi_process - 1))
         this->inserted_this_step_this_proc =
           this->inserted_this_step -
           (n_mpi_process - 1) * floor(this->inserted_this_step / n_mpi_process);
 
-      // Finding insertion points using assign_insertion_points function
-      std::vector<Point<dim>> global_insertion_points;
+      // Call random number generator
+      std::vector<double> random_number_vector;
+      random_number_vector.reserve(this->inserted_this_step);
+      this->create_random_number_container(
+        random_number_vector,
+        dem_parameters.insertion_info.random_number_range,
+        dem_parameters.insertion_info.random_number_seed);
+
+
+
+      Point<dim>              insertion_location;
       std::vector<Point<dim>> insertion_points_on_proc;
-      global_insertion_points.reserve(this->inserted_this_step);
       insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
 
-      this->assign_insertion_points(global_insertion_points,
-                                    dem_parameters.insertion_info);
-
-      // Distributing the insertion points between the processors
-      if (this_mpi_process != (n_mpi_process - 1))
+      // Find insertion locations
+      if (this_mpi_process == (n_mpi_process - 1))
         {
-          int begin_element =
-            this_mpi_process * this->inserted_this_step_this_proc;
-          int end_element =
-            (this_mpi_process + 1) * this->inserted_this_step_this_proc - 1;
-          insertion_points_on_proc = std::vector<Point<dim>>(
-            global_insertion_points.cbegin() + begin_element,
-            global_insertion_points.cbegin() + end_element + 1);
+          for (unsigned int id =
+                 this->inserted_this_step - this->inserted_this_step_this_proc;
+               id < this->inserted_this_step;
+               ++id)
+            {
+              find_insertion_location_nonuniform(
+                insertion_location,
+                id,
+                random_number_vector[id],
+                random_number_vector[this->inserted_this_step - id],
+                dem_parameters.insertion_info);
+              insertion_points_on_proc.push_back(insertion_location);
+            }
         }
       else
         {
-          int begin_element =
-            this->inserted_this_step - this->inserted_this_step_this_proc;
-          insertion_points_on_proc =
-            std::vector<Point<dim>>(global_insertion_points.cbegin() +
-                                      begin_element,
-                                    global_insertion_points.cend());
+          for (unsigned int id =
+                 this_mpi_process * this->inserted_this_step_this_proc;
+               id < (this_mpi_process + 1) * this->inserted_this_step_this_proc;
+               ++id)
+            {
+              find_insertion_location_nonuniform(
+                insertion_location,
+                id,
+                random_number_vector[id],
+                random_number_vector[this->inserted_this_step - id],
+                dem_parameters.insertion_info);
+              insertion_points_on_proc.push_back(insertion_location);
+            }
         }
 
       // Assigning inserted particles properties using
@@ -144,69 +161,65 @@ NonUniformInsertion<dim>::create_random_number_container(
 }
 
 // This function assigns the insertion points of the inserted particles
-template <int dim>
-void
-NonUniformInsertion<dim>::assign_insertion_points(
-  std::vector<Point<dim>> &                    insertion_positions,
+template <>
+void NonUniformInsertion<2>::find_insertion_location_nonuniform(
+  Point<2> &                                   insertion_location,
+  const unsigned int &                         id,
+  const double &                               random_number1,
+  const double &                               random_number2,
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
-  // Calling random number generator
-  std::vector<double> random_number_vector;
-  random_number_vector.reserve(this->inserted_this_step);
-  this->create_random_number_container(
-    random_number_vector,
-    insertion_information.random_number_range,
-    insertion_information.random_number_seed);
+  std::vector<int> insertion_index;
+  insertion_index.reserve(2);
 
-  // Creating a particle counter
-  unsigned int particle_counter = 0;
+  insertion_index[0] = id % this->number_of_particles_x_direction;
+  insertion_index[1] = (int)id / this->number_of_particles_x_direction;
 
-  for (unsigned int i = 0; i < this->number_of_particles_x_direction; ++i)
-    for (unsigned int j = 0; j < this->number_of_particles_y_direction; ++j)
-      {
-        // Adapt the last index to the dimensionality of the problem
-        unsigned int dim_nz =
-          (dim == 3) ? this->number_of_particles_z_direction : 1;
-        for (unsigned int k = 0; k < dim_nz; ++k)
-          {
-            // We need to check if the number of inserted particles so far
-            // at this step (particle_counter) reached the total desired
-            // number of inserted particles at this step
+  insertion_location[0] =
+    insertion_information.x_min +
+    ((insertion_index[0] + 0.5) * insertion_information.distance_threshold -
+     random_number1) *
+      this->maximum_diameter;
+  insertion_location[1] =
+    insertion_information.y_min +
+    ((insertion_index[1] + 0.5) * insertion_information.distance_threshold -
+     random_number2) *
+      this->maximum_diameter;
+}
 
-            if (particle_counter < this->inserted_this_step)
-              {
-                Point<dim> position;
-                // Obtaning position of the inserted particle
-                // In non-uniform insertion, random numbers were created and
-                // are added to the position of particles. In order to
-                // create more randomness, the random vector is read once
-                // from the beginning and once from the end to be used in
-                // positions [0] and [1]
-                position[0] =
-                  insertion_information.x_min +
-                  ((i + 0.5) * insertion_information.distance_threshold -
-                   random_number_vector[particle_counter]) *
-                    this->maximum_diameter;
-                position[1] =
-                  insertion_information.y_min +
-                  ((j + 0.5) * insertion_information.distance_threshold -
-                   random_number_vector[this->inserted_this_step -
-                                        particle_counter - 1]) *
-                    this->maximum_diameter;
-                if (dim == 3)
-                  {
-                    position[2] =
-                      insertion_information.z_min +
-                      ((k + 0.5) * insertion_information.distance_threshold -
-                       random_number_vector[particle_counter]) *
-                        this->maximum_diameter;
-                  }
+template <>
+void NonUniformInsertion<3>::find_insertion_location_nonuniform(
+  Point<3> &                                   insertion_location,
+  const unsigned int &                         id,
+  const double &                               random_number1,
+  const double &                               random_number2,
+  const Parameters::Lagrangian::InsertionInfo &insertion_information)
+{
+  std::vector<int> insertion_index;
+  insertion_index.reserve(3);
 
-                insertion_positions.push_back(position);
-                particle_counter++;
-              }
-          }
-      }
+  insertion_index[0] = id % this->number_of_particles_x_direction;
+  insertion_index[1] = (int)(id % (this->number_of_particles_x_direction *
+                                   this->number_of_particles_y_direction)) /
+                       (this->number_of_particles_x_direction);
+  insertion_index[2] = (int)id / (this->number_of_particles_x_direction *
+                                  this->number_of_particles_y_direction);
+
+  insertion_location[0] =
+    insertion_information.x_min +
+    ((insertion_index[0] + 0.5) * insertion_information.distance_threshold -
+     random_number1) *
+      this->maximum_diameter;
+  insertion_location[1] =
+    insertion_information.y_min +
+    ((insertion_index[1] + 0.5) * insertion_information.distance_threshold -
+     random_number2) *
+      this->maximum_diameter;
+  insertion_location[2] =
+    insertion_information.z_min +
+    ((insertion_index[2] + 0.5) * insertion_information.distance_threshold -
+     random_number1) *
+      this->maximum_diameter;
 }
 
 template class NonUniformInsertion<2>;

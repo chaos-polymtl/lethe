@@ -85,17 +85,22 @@ private:
                                  const int &          random_number_seed);
 
   /**
-   * Creates a vector of insertion points for non-uniform insertion. The output
-   * of this function is used as input argument in insert_global_particles
+   * Converts id of particles to non-uniform insertion location
    *
-   * @param insertion_points A vector containing insertion locations of particles
+   * @param insertion_location Insertion location of the particle
+   * @param id Particle_id
+   * @param random_number1 A random number to create randomness in non-uniform insertion
+   * @param random_number2 A random number to create randomness in non-uniform insertion
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
    */
-  virtual void
-  assign_insertion_points(std::vector<Point<dim>> &insertion_points,
-                          const Parameters::Lagrangian::InsertionInfo
-                            &insertion_information) override;
+  void
+  find_insertion_location_nonuniform(
+    Point<dim> &                                 insertion_location,
+    const unsigned int &                         id,
+    const double &                               random_number1,
+    const double &                               random_number2,
+    const Parameters::Lagrangian::InsertionInfo &insertion_information);
 
   unsigned int current_inserting_particle_type;
 

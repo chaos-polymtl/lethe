@@ -106,18 +106,6 @@ protected:
     std::vector<std::vector<double>> &particle_properties);
 
   /**
-   * Carries out finding the insertion points of inserted particles.
-   *
-   * @param insertion_points A vector containing insertion locations of particles
-   * @param insertion_information DEM insertion parameters declared in the .prm
-   * file
-   */
-  virtual void
-  assign_insertion_points(
-    std::vector<Point<dim>> &                    insertion_points,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information) = 0;
-
-  /**
    * @brief Carries out finding the maximum number of inserted particles based on the
    * insertion box size. If the requested number of particles for insertion in
    * each insertion step is larger than this maximum, it is limited to this
