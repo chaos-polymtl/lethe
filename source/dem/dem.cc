@@ -488,6 +488,7 @@ DEMSolver<dim>::finish_simulation()
             {
               visualization_object.print_xyz(particle_handler, pcout);
             }
+          MPI_Barrier(MPI_COMM_WORLD);
         }
     }
 }
