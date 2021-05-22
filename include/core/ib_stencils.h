@@ -26,7 +26,23 @@
 using namespace dealii;
 
 
+template<int dim>
+class IBStencils {
 
+public:
+
+    virtual unsigned int nb_points(unsigned int order);
+
+    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(unsigned int order,IBParticle<dim> p,Point<dim> dof_point);
+
+    virtual std::vector<double> coefficients(unsigned int order);
+
+
+
+
+};
+
+/*
 template<int dim>
 class IBStencilsS1 {
 
@@ -108,5 +124,6 @@ public:
 
 
 };
+ */
 
 #endif //LETHE_IB_STENCILS_H
