@@ -1775,326 +1775,163 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
               // If we are here, the cell is cut by the IB.
               // Loops on the dof that represents the velocity  component
               // and pressure separately
-              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-              {
-                  const unsigned int component_i =this->fe->system_to_component_index(i).first;
-                  if (component_i < dim)
-                        {
-                          // We are working on the velocity of the cell cut
-                          // loops on the dof that are for vx or vy separately
-                          // loops on all the dof of the cell that represent
-                          // a specific component
-                          // define which dof is going to be redefined
-                          unsigned int global_index_overwrite =
-                            local_dof_indices[i];
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i) {
+                  const unsigned int component_i = this->fe->system_to_component_index(i).first;
+                  if (component_i < dim) {
+                      // We are working on the velocity of the cell cut
+                      // loops on the dof that are for vx or vy separately
+                      // loops on all the dof of the cell that represent
+                      // a specific component
+
+                      // define which dof is going to be redefined
+                      unsigned int global_index_overwrite =
+                              local_dof_indices[i];
+
+                      // Clear the current line of this dof  by
+                      // looping on the neighbouring cell of this dof
+                      // and clear all the associated dof
+
+                      clear_line_in_matrix(cell, global_index_overwrite);
 
 
+                      // Define the distance vector between the
+                      // immersed boundary and the dof support point
+                      // for each dof
 
-                          // Clear the current line of this dof  by
-                          // looping on the neighbouring cell of this dof
-                          // and clear all the associated dof
+                      auto[point, interpolation_points]=stencil.points(order, particles[p],
+                                                                       support_points[local_dof_indices[i]]);
 
-                          clear_line_in_matrix(cell,global_index_overwrite);
+                      auto cell_2 = find_cell_around_point_with_neighbors(cell, interpolation_points[
+                              stencil.nb_points(order) - 1]);
+                      cell_2->get_dof_indices(local_dof_indices_2);
 
+                      bool skip_stencil = false;
 
-                          // Define the distance vector between the
-                          // immersed boundary and the dof support point
-                          // for each dof
+                      // We have or next cell needed to complete the
+                      // stencil
 
-                          auto [point,interpolation_points]=stencil.points(order,particles[p],support_points[local_dof_indices[i]]);
+                      // Define the unit cell points for the points
+                      // used in the stencil for extrapolation.
 
+                      // Check if the DOF intersect the IB
+                      bool do_rhs = false;
+                      bool modifed_stencil = false;
+                      // Check if this dof is a dummy dof or directly on IB
+                      if (cell_2 == cell) {
+                          this->system_matrix.set(global_index_overwrite,
+                                                  global_index_overwrite,
+                                                  sum_line);
+                          do_rhs = true;
+                          // Tolerence to define a intersection of
+                          // the DOF and IB
+                          if (abs((support_points[local_dof_indices[i]] - particles[p].position).norm() -
+                                  particles[p].radius) <= 1e-12 * dr) {
+                              skip_stencil = true;
+                          } else // RE work
+                          {
+                              // Give the DOF an approximated value. This help
+                              // with pressure shock when the DOF passe from part of the boundary
+                              // to the fluid.
+                              modifed_stencil = true;
+                          }
+                      }
+                      // Define the variable used for the
+                      // extrapolation of the actual solution at the
+                      // boundaries in order to define the correction
 
-                          auto  cell_2       = find_cell_around_point_with_neighbors(cell,interpolation_points[stencil.nb_points(order)-1]);
-                          cell_2->get_dof_indices(local_dof_indices_2);
+                      // Define the unit cell points for the points
+                      // used in the stencil for extrapolation.
+                      std::vector<Point<dim>> unite_cell_interpolation_points(ib_coef.size());
 
-                          bool  skip_stencil = false;
+                      unite_cell_interpolation_points[0] = this->mapping->transform_real_to_unit_cell(cell_2, point);
+                      for (unsigned int j = 1;
+                           j < ib_coef.size();
+                           ++j) {
+                          unite_cell_interpolation_points[j] =
+                                  this->mapping->transform_real_to_unit_cell(cell_2, interpolation_points[j - 1]);
+                      }
 
-                          // We have or next cell needed to complete the
-                          // stencil
+                      std::vector<double> local_interp_sol(ib_coef.size());
 
-                          // Define the unit cell points for the points
-                          // used in the stencil for extrapolation.
-
-                          // Check if the DOF intersect the IB
-                          bool do_rhs          = false;
-                          bool modifed_stencil = false;
-                          // Check if this dof is a dummy dof or directly on IB
-                          if (cell_2 == cell)
-                            {
-                              this->system_matrix.set(global_index_overwrite,
-                                                      global_index_overwrite,
-                                                      sum_line);
-                              do_rhs = true;
-                              // Tolerence to define a intersection of
-                              // the DOF and IB
-                              if (abs((support_points[local_dof_indices[i]]-particles[p].position).norm()-particles[p].radius)<= 1e-12 * dr)
-                                {
-                                  skip_stencil = true;
-                                }
-                              else // RE work
-                                {
-                                  // Give the DOF an approximated value. This help
-                                  // with pressure shock when the DOF passe from part of the boundary
-                                  // to the fluid.
-                                  modifed_stencil = true;
-                                }
-                            }
-                          // Define the variable used for the
-                          // extrapolation of the actual solution at the
-                          // boundaries in order to define the correction
-
-                          // Define the unit cell points for the points
-                          // used in the stencil for extrapolation.
-                          std::vector<Point<dim>> unite_cell_interpolation_points(ib_coef.size());
-
-                          unite_cell_interpolation_points[0]=this->mapping->transform_real_to_unit_cell(cell_2, point);
-                          for (unsigned int j = 1;
-                                 j < ib_coef.size();
-                                 ++j)
-                            {
-                                unite_cell_interpolation_points[j]=
-                                        this->mapping->transform_real_to_unit_cell(cell_2, interpolation_points[j-1]);
-                            }
-
-                          std::vector<double> local_interp_sol(ib_coef.size());
-
-                          // Define the new matrix entry for this dof
-                          if (skip_stencil == false)
-                            {
+                      // Define the new matrix entry for this dof
+                      if (skip_stencil == false) {
+                          // First the dof itself
+                          for (unsigned int j = 0;
+                               j < local_dof_indices_2.size();
+                               ++j) {
                               // First the dof itself
-                              for (unsigned int j = 0;
-                                   j < local_dof_indices_2.size();
-                                   ++j)
-                                {
-                                  // First the dof itself
-                                  const unsigned int component_j =
-                                    this->fe->system_to_component_index(j)
-                                      .first;
-                                  if (component_j == component_i)
-                                    {
-                                      if (modifed_stencil==false)
-                                        {
-                                          // Define the solution at each
-                                          // point used for the stencil and
-                                          // applied the stencil for the
-                                          // specfic dof. for stencil with
-                                          // order of convergence higher
-                                          // then 5 the stencil is define
-                                          // trough direct extrapolation of
-                                          // the cell
-                                          auto &evaluation_point =this->evaluation_point;
+                              const unsigned int component_j =
+                                      this->fe->system_to_component_index(j)
+                                              .first;
+                              if (component_j == component_i) {
+                                  if (modifed_stencil == false) {
+                                      // Define the solution at each
+                                      // point used for the stencil and
+                                      // applied the stencil for the
+                                      // specfic dof. for stencil with
+                                      // order of convergence higher
+                                      // then 5 the stencil is define
+                                      // trough direct extrapolation of
+                                      // the cell
+                                      auto &evaluation_point = this->evaluation_point;
 
-                                          double local_matrix_entry=0;
-                                              for (unsigned int k = 0;
-                                                     k< ib_coef.size();
-                                                     ++k)
-                                                {
-                                                  local_matrix_entry+=this->fe->shape_value(
-                                                          j, unite_cell_interpolation_points[k])*ib_coef[k] ;
-                                                  local_interp_sol[k]+=this->fe->shape_value(
-                                                          j, unite_cell_interpolation_points[k])*evaluation_point(
-                                                          local_dof_indices_2[j]);
+                                      double local_matrix_entry = 0;
+                                      for (unsigned int k = 0;
+                                           k < ib_coef.size();
+                                           ++k) {
+                                          local_matrix_entry += this->fe->shape_value(
+                                                  j, unite_cell_interpolation_points[k]) * ib_coef[k];
+                                          local_interp_sol[k] += this->fe->shape_value(
+                                                  j, unite_cell_interpolation_points[k]) * evaluation_point(
+                                                  local_dof_indices_2[j]);
 
-                                                }
-                                                this->system_matrix.set(
-                                                        global_index_overwrite,
-                                                        local_dof_indices_2[j], local_matrix_entry *
-                                                                                sum_line );
-                                        }
-                                    }
-                                }
-                            }
+                                      }
+                                      this->system_matrix.set(
+                                              global_index_overwrite,
+                                              local_dof_indices_2[j], local_matrix_entry *
+                                                                      sum_line);
+                                  }
+                              }
+                          }
+                      }
 
+                      // Define the RHS of the stencil used for the
+                      // IB
+                      if (skip_stencil == false || do_rhs) {
+                          double rhs_add = 0;
+                          // Different boundary conditions depending
+                          // if the dof is vx ,vy or vz and if the
+                          // problem we are solving is in 2d or 3d.
+                          double v_ib = stencil.vitesse_ib(particles[p], support_points[local_dof_indices[i]],
+                                                           component_i);
+                          auto &evaluation_point =
+                                  this->evaluation_point;
+                          for (unsigned int k = 0;
+                               k < ib_coef.size();
+                               ++k) {
+                              rhs_add += -local_interp_sol[k] * ib_coef[k] * sum_line;
 
-                          // Define the RHS of the stencil used for the
-                          // IB
-                          if (skip_stencil == false || do_rhs)
-                            {
-                              // Different boundary conditions depending
-                              // if the dof is vx ,vy or vz and if the
-                              // problem we are solving is in 2d or 3d.
-
-                              double v_ib = 0;
-                              if (component_i == 0)
-                                {
-                                  double vx      = 0;
-                                  double rhs_add = 0;
-                                  if (dim == 2)
-                                    {
-                                      vx = -particles[p].omega[2] *
-                                             particles[p].radius *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[1] +
-                                           particles[p].velocity[0];
-                                    }
-                                  if (dim == 3)
-                                    {
-                                      vx = particles[p].omega[1] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[2] *
-                                             particles[p].radius -
-                                           particles[p].omega[2] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[1] *
-                                             particles[p].radius +
-                                           particles[p].velocity[0];
-                                    }
-                                  v_ib = vx;
-
-                                  auto &evaluation_point =
-                                    this->evaluation_point;
-                                  for (unsigned int k = 0;
-                                         k< ib_coef.size();
-                                         ++k)
-                                    {
-                                        rhs_add+=-local_interp_sol[k]*ib_coef[k]*sum_line ;
-
-                                    }
-
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) =
-                                    vx * sum_line + rhs_add;
-                                  if (do_rhs)
-                                    system_rhs(global_index_overwrite) =
-                                      vx * sum_line -
+                          }
+                          this->system_rhs(global_index_overwrite) =
+                                  v_ib * sum_line + rhs_add;
+                          if (do_rhs)
+                              this->system_rhs(global_index_overwrite) =
+                                      v_ib * sum_line -
                                       evaluation_point(global_index_overwrite) *
-                                        sum_line;
-                                }
-                              else if (component_i == 1)
-                                {
-                                  double vy      = 0;
-                                  double rhs_add = 0;
-                                  if (dim == 2)
-                                    {
-                                      vy = particles[p].omega[2] *
-                                             particles[p].radius *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[0] +
-                                           particles[p].velocity[1];
-                                    }
-                                  if (dim == 3)
-                                    {
-                                      vy = particles[p].omega[2] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[0] *
-                                             particles[p].radius -
-                                           particles[p].omega[0] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[2] *
-                                             particles[p].radius +
-                                           particles[p].velocity[1];
-                                    }
-                                  v_ib = vy;
-                                  auto &evaluation_point =
-                                    this->evaluation_point;
-                                  for (unsigned int k = 0;
-                                         k< ib_coef.size();
-                                         ++k)
-                                    {
-                                        rhs_add+=-local_interp_sol[k]*ib_coef[k]*sum_line ;
-                                    }
+                                      sum_line;
 
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) =
-                                    vy * sum_line + rhs_add;
-                                  if (do_rhs)
-                                    system_rhs(global_index_overwrite) =
-                                      vy * sum_line -
-                                      evaluation_point(global_index_overwrite) *
-                                        sum_line;
-                                }
-
-                              else if (component_i == 2 && dim == 3)
-                                {
-                                  double vz =
-                                    particles[p].omega[0] *
-                                      ((support_points[local_dof_indices[i]] -
-                                              particles[p].position) /
-                                       (support_points[local_dof_indices[i]] -
-                                               particles[p].position)
-                                         .norm())[1] *
-                                      particles[p].radius -
-                                    particles[p].omega[1] *
-                                      ((support_points[local_dof_indices[i]] -
-                                              particles[p].position) /
-                                       (support_points[local_dof_indices[i]] -
-                                               particles[p].position)
-                                         .norm())[0] *
-                                      particles[p].radius +
-                                    particles[p].velocity[2];
-                                  v_ib           = vz;
-                                  double rhs_add = 0;
-                                  auto & evaluation_point =
-                                    this->evaluation_point;
-                                  for (unsigned int k = 0;
-                                         k< ib_coef.size();
-                                         ++k)
-                                    {
-                                        rhs_add+=-local_interp_sol[k]*ib_coef[k]*sum_line ;
-                                    }
-
-
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) =
-                                    vz * sum_line + rhs_add;
-                                  if (do_rhs)
-                                    system_rhs(global_index_overwrite) =
-                                      vz * sum_line -
-                                      evaluation_point(global_index_overwrite) *
-                                        sum_line;
-                                }
-                              if (modifed_stencil)
-                                // Impose the value of the dummy dof. This help
-                                // with pressure variation when the IB is
-                                // moving.
-                                /*this->system_rhs(global_index_overwrite) =
-                                  (sum_line * v_ib *
-                                     (1 - vect_dist.norm() /
-                                            (vect_dist.norm() + dr)) +
-                                   local_interp_sol * vect_dist.norm() /
-                                     (vect_dist.norm() + dr)) -
-                                  this->evaluation_point(
-                                    global_index_overwrite) *
-                                    sum_line;
-                                    */
-                                this->system_rhs(global_index_overwrite) =
-                                  sum_line * v_ib - this->evaluation_point(
-                                                      global_index_overwrite) *
-                                                      sum_line;
-                            }
-                        }
-
-                      if (component_i == dim)
+                          if (modifed_stencil)
+                              // Impose the value of the dummy dof. This help
+                              // with pressure variation when the IB is
+                              // moving.
+                              this->system_rhs(global_index_overwrite) =
+                                      sum_line * v_ib - this->evaluation_point(
+                                              global_index_overwrite) *
+                                                        sum_line;
+                      }
+                  }
+                  
+                  if (component_i == dim)
                         {
                           // Applied equation on dof that have no equation
                           // defined for them. those DOF become Dummy dof. This
@@ -2104,7 +1941,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
                           bool dummy_dof = true;
-
 
                           active_neighbors_set =find_cells_around_cell(cell);
                           for (unsigned int m = 0;m < active_neighbors_set.size();m++)
