@@ -1,11 +1,11 @@
 
-DEAL::Particle 1 is inserted at: -0.0460884 -0.0450000 -0.0460884 
-DEAL::Particle 2 is inserted at: -0.0372433 -0.0452648 -0.0472433 
-DEAL::Particle 3 is inserted at: -0.0284168 -0.0460024 -0.0484168 
-DEAL::Particle 4 is inserted at: -0.0158204 -0.0467108 -0.0458204 
-DEAL::Particle 5 is inserted at: -0.00696932 -0.0474389 -0.0469693 
-DEAL::Particle 6 is inserted at: 0.00186538 -0.0481346 -0.0481346 
-DEAL::Particle 7 is inserted at: 0.0125611 -0.0469693 -0.0474389 
-DEAL::Particle 8 is inserted at: 0.0232892 -0.0458204 -0.0467108 
-DEAL::Particle 9 is inserted at: 0.0339976 -0.0484168 -0.0460024 
-DEAL::Particle 10 is inserted at: 0.0447352 -0.0472433 -0.0452648 
+DEAL::Particle 1 is inserted at: -0.0460884 -0.0452648 -0.0460884 
+DEAL::Particle 2 is inserted at: -0.0372433 -0.0460024 -0.0472433 
+DEAL::Particle 3 is inserted at: -0.0284168 -0.0467108 -0.0484168 
+DEAL::Particle 4 is inserted at: -0.0158204 -0.0474389 -0.0458204 
+DEAL::Particle 5 is inserted at: -0.00696932 -0.0481346 -0.0469693 
+DEAL::Particle 6 is inserted at: 0.00186538 -0.0469693 -0.0481346 
+DEAL::Particle 7 is inserted at: 0.0125611 -0.0458204 -0.0474389 
+DEAL::Particle 8 is inserted at: 0.0232892 -0.0484168 -0.0467108 
+DEAL::Particle 9 is inserted at: 0.0339976 -0.0472433 -0.0460024 
+DEAL::Particle 10 is inserted at: 0.0447352 -0.0460884 -0.0452648 

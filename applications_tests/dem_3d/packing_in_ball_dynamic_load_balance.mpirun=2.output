@@ -9,37 +9,29 @@ Starting simulation with Lethe/DEM on 2 processors
 -->Repartitionning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
-Minimum and maximum number of cells owned by the processors are 2898 and 3108
+Minimum and maximum number of cells owned by the processors are 364 and 448
 -->Repartitionning triangulation
 Load balance finished 
 Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
-Minimum and maximum number of cells owned by the processors are 2898 and 3108
--->Repartitionning triangulation
-Load balance finished 
-Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
-Minimum and maximum number of cells owned by the processors are 2898 and 3108
--->Repartitionning triangulation
-Load balance finished 
-Average, minimum and maximum number of particles on the processors are 10 , 0 and 20
-Minimum and maximum number of cells owned by the processors are 2898 and 3108
+Minimum and maximum number of cells owned by the processors are 364 and 448
 id, type, dp, x, y, z 
-0 0 0.00500 -0.0092 -0.0065 -0.0910
-1 0 0.00500 -0.0072 -0.0116 -0.0916
-2 0 0.00500 -0.0093 0.0001 -0.0891
-3 0 0.00500 -0.0085 -0.0169 -0.0926
-4 0 0.00500 -0.0038 -0.0191 -0.0879
-5 0 0.00500 0.0011 -0.0164 -0.0940
-6 0 0.00500 0.0100 -0.0166 -0.0931
-7 0 0.00500 -0.0026 -0.0051 -0.0961
-8 0 0.00500 0.0015 0.0018 -0.0958
-9 0 0.00500 0.0051 -0.0013 -0.0909
-10 0 0.00500 0.0092 0.0002 -0.0936
-11 0 0.00500 0.0051 -0.0069 -0.0888
-12 0 0.00500 0.0175 -0.0054 -0.0912
-13 0 0.00500 -0.0105 0.0007 -0.0959
-14 0 0.00500 -0.0050 0.0034 -0.0924
-15 0 0.00500 -0.0096 0.0097 -0.0952
-16 0 0.00500 -0.0031 0.0118 -0.0945
-17 0 0.00500 -0.0013 0.0069 -0.0885
-18 0 0.00500 0.0098 0.0101 -0.0906
-19 0 0.00500 0.0134 0.0092 -0.0944
+0 0 0.00500 -0.0355 -0.0355 -0.0729
+1 0 0.00500 -0.0313 -0.0371 -0.0764
+2 0 0.00500 -0.0248 -0.0367 -0.0772
+3 0 0.00500 -0.0193 -0.0381 -0.0781
+4 0 0.00500 -0.0120 -0.0381 -0.0803
+5 0 0.00500 -0.0048 -0.0388 -0.0820
+6 0 0.00500 -0.0001 -0.0392 -0.0832
+7 0 0.00500 0.0071 -0.0385 -0.0814
+8 0 0.00500 0.0144 -0.0379 -0.0797
+9 0 0.00500 0.0218 -0.0373 -0.0780
+10 0 0.00500 0.0273 -0.0365 -0.0772
+11 0 0.00500 0.0333 -0.0366 -0.0745
+12 0 0.00500 0.0376 -0.0351 -0.0717
+13 0 0.00500 -0.0370 -0.0295 -0.0767
+14 0 0.00500 -0.0318 -0.0311 -0.0811
+15 0 0.00500 -0.0266 -0.0314 -0.0826
+16 0 0.00500 -0.0199 -0.0342 -0.0818
+17 0 0.00500 -0.0126 -0.0350 -0.0840
+18 0 0.00500 -0.0053 -0.0353 -0.0862
+19 0 0.00500 0.0005 -0.0355 -0.0877

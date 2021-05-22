@@ -67,13 +67,13 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 100
+    set inserted number of particles at each time step  = 50
     set insertion frequency            		 	= 20000
     set insertion box minimum x            	 	= -0.05
     set insertion box minimum y            	        = -0.05
     set insertion box minimum z            	        = -0.05
     set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
+    set insertion box maximum y           	 	= 0
     set insertion box maximum z            	        = 0.03
     set insertion distance threshold			= 3
     set insertion random number range			= 0.2
@@ -108,5 +108,5 @@ subsection mesh
     set type                 				= dealii
     set grid type      	     				= hyper_ball
     set grid arguments       				= 0.0, 0.0, 0.0 : 0.1 : false
-    set initial refinement   				= 3
+    set initial refinement   				= 2
 end
