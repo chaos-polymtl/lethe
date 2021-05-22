@@ -1681,24 +1681,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           .order;
 
 
-
-
-
-  std::vector<boost::variant<IBStencilsS1<dim>,IBStencilsS2<dim>,IBStencilsS3<dim>,IBStencilsS4<dim>,IBStencilsCell<dim>>> stencils;
-
-  stencils.push_back(IBStencilsS1<dim>{});
-  stencils.push_back(IBStencilsS2<dim>{});
-  stencils.push_back(IBStencilsS3<dim>{});
-  stencils.push_back(IBStencilsS4<dim>{});
-  stencils.push_back(IBStencilsCell<dim>{});
-
-
-
-
  // auto& stencil=std::get<order>(stencils[0]);
-  IBStencilsS1<dim> stencil;
+  IBStencils<dim> stencil;
 
-
+  std::vector<double> ib_coef=stencil.coefficients(order);
 
 
 
@@ -1802,12 +1788,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
 
-                          Tensor<1, dim, double> normal_vect =
-                                    (support_points[local_dof_indices[i]] -
-                                     center_immersed) /
-                                    (support_points[local_dof_indices[i]] -
-                                     center_immersed)
-                                            .norm();
 
 
                           // Clear the current line of this dof  by
@@ -1821,25 +1801,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // immersed boundary and the dof support point
                           // for each dof
 
-                          auto [ib_point,interpolation_points]=stencil.points(particles[p],support_points[local_dof_indices[i]]);
+                          auto [point,interpolation_points]=stencil.points(order,particles[p],support_points[local_dof_indices[i]]);
 
 
-                          auto  cell_2       = find_cell_around_point_with_neighbors(cell,interpolation_points[stencil.nb_points()-1]);
+                          auto  cell_2       = find_cell_around_point_with_neighbors(cell,interpolation_points[stencil.nb_points(order)-1]);
                           cell_2->get_dof_indices(local_dof_indices_2);
 
                           bool  skip_stencil = false;
-
 
                           // We have or next cell needed to complete the
                           // stencil
 
                           // Define the unit cell points for the points
                           // used in the stencil for extrapolation.
-
-
-                          std::vector<double> coef=stencil.coefficients();
-
-
 
                           // Check if the DOF intersect the IB
                           bool do_rhs          = false;
@@ -1863,29 +1837,26 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   // with pressure shock when the DOF passe from part of the boundary
                                   // to the fluid.
                                   modifed_stencil = true;
-
                                 }
                             }
-
-
                           // Define the variable used for the
                           // extrapolation of the actual solution at the
                           // boundaries in order to define the correction
 
+                          // Define the unit cell points for the points
+                          // used in the stencil for extrapolation.
+                          std::vector<Point<dim>> unite_cell_interpolation_points(ib_coef.size());
 
-                          std::vector<Point<dim>> unite_cell_interpolation_points(coef.size());
-
-                          unite_cell_interpolation_points[0]=this->mapping->transform_real_to_unit_cell(cell_2, support_points[local_dof_indices[i]]);
+                          unite_cell_interpolation_points[0]=this->mapping->transform_real_to_unit_cell(cell_2, point);
                           for (unsigned int j = 1;
-                                 j < coef.size();
+                                 j < ib_coef.size();
                                  ++j)
                             {
                                 unite_cell_interpolation_points[j]=
                                         this->mapping->transform_real_to_unit_cell(cell_2, interpolation_points[j-1]);
                             }
 
-                          std::vector<double> local_interp_sol(coef.size());
-
+                          std::vector<double> local_interp_sol(ib_coef.size());
 
                           // Define the new matrix entry for this dof
                           if (skip_stencil == false)
@@ -1915,11 +1886,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                                           double local_matrix_entry=0;
                                               for (unsigned int k = 0;
-                                                     k< coef.size();
+                                                     k< ib_coef.size();
                                                      ++k)
                                                 {
                                                   local_matrix_entry+=this->fe->shape_value(
-                                                          j, unite_cell_interpolation_points[k])*coef[k] ;
+                                                          j, unite_cell_interpolation_points[k])*ib_coef[k] ;
                                                   local_interp_sol[k]+=this->fe->shape_value(
                                                           j, unite_cell_interpolation_points[k])*evaluation_point(
                                                           local_dof_indices_2[j]);
@@ -1988,10 +1959,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   auto &evaluation_point =
                                     this->evaluation_point;
                                   for (unsigned int k = 0;
-                                         k< coef.size();
+                                         k< ib_coef.size();
                                          ++k)
                                     {
-                                        rhs_add+=-local_interp_sol[k]*coef[k]*sum_line ;
+                                        rhs_add+=-local_interp_sol[k]*ib_coef[k]*sum_line ;
 
                                     }
 
@@ -2047,10 +2018,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   auto &evaluation_point =
                                     this->evaluation_point;
                                   for (unsigned int k = 0;
-                                         k< coef.size();
+                                         k< ib_coef.size();
                                          ++k)
                                     {
-                                        rhs_add+=-local_interp_sol[k]*coef[k]*sum_line ;
+                                        rhs_add+=-local_interp_sol[k]*ib_coef[k]*sum_line ;
                                     }
 
                                   auto &system_rhs = this->system_rhs;
@@ -2086,10 +2057,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   auto & evaluation_point =
                                     this->evaluation_point;
                                   for (unsigned int k = 0;
-                                         k< coef.size();
+                                         k< ib_coef.size();
                                          ++k)
                                     {
-                                        rhs_add+=-local_interp_sol[k]*coef[k]*sum_line ;
+                                        rhs_add+=-local_interp_sol[k]*ib_coef[k]*sum_line ;
                                     }
 
 
