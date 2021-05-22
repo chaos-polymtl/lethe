@@ -37,6 +37,8 @@ public:
 
     virtual std::vector<double> coefficients(unsigned int order);
 
+    virtual double vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int component);
+
 
 
 
