@@ -76,21 +76,12 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typ
     std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
     //Loop over that group of cells
     for (unsigned int i = 0; i < active_neighbors_set.size(); ++i){
-                try
-                {
-                    const Point<dim, double> p_cell =
-                            this->mapping->transform_real_to_unit_cell(active_neighbors_set[i], point);
-                    const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-                    // if the cell contains the point, the distance is equal to 0
-                    if (dist == 0)
-                    {
-                        // The cell is found so we return it and exit the function.
-
-                        return active_neighbors_set[i];
-                    }
+        bool inside_cell=point_inside_cell(active_neighbors_set[i], point);
+            if(inside_cell) {
+                return active_neighbors_set[i];
                 }
-                catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-                {}
+
+
     }
     // The cell is not found near the initial cell so we use the cell tree algorithm instead (much slower).
     std::cout << "Cell not found around " << point << std::endl;
@@ -98,6 +89,27 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typ
 
 }
 
+template <int dim>
+bool
+GLSSharpNavierStokesSolver<dim>::point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim>             point)
+{
+    try
+    {
+        const Point<dim, double> p_cell =
+                this->mapping->transform_real_to_unit_cell(cell, point);
+        const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+        // if the cell contains the point, the distance is equal to 0
+        if (dist == 0)
+        {
+            // The cell is found so we return it and exit the function.
+
+            return true;
+        }
+    }
+    catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
+    {}
+    return false;
+}
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -1683,15 +1695,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
  // auto& stencil=std::get<order>(stencils[0]);
   IBStencils<dim> stencil;
-
   std::vector<double> ib_coef=stencil.coefficients(order);
 
-
-
-
-
-
-    unsigned int n_q_points = q_formula.size();
+  unsigned int n_q_points = q_formula.size();
 
   // Define multiple local_dof_indices one for the cell iterator one for the
   // cell with the second point for the sharp edge stencil and one for
@@ -1793,7 +1799,12 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                       clear_line_in_matrix(cell, global_index_overwrite);
 
-
+                      Tensor<1, dim, double> normal_vect =
+                              (support_points[local_dof_indices[i]] -
+                               particles[p].position) /
+                              (support_points[local_dof_indices[i]] -
+                               particles[p].position)
+                                      .norm();
                       // Define the distance vector between the
                       // immersed boundary and the dof support point
                       // for each dof
@@ -1817,22 +1828,22 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       bool do_rhs = false;
                       bool modifed_stencil = false;
                       // Check if this dof is a dummy dof or directly on IB
-                      if (cell_2 == cell) {
+                      bool point_in_cell=point_inside_cell(cell,interpolation_points[
+                              stencil.nb_points(order) - 1]);
+                      if (cell_2 == cell || point_in_cell) {
+                          // Give the DOF an approximated value. This help
+                          // with pressure shock when the DOF passe from part of the boundary
+                          // to the fluid.
                           this->system_matrix.set(global_index_overwrite,
                                                   global_index_overwrite,
                                                   sum_line);
                           do_rhs = true;
+                          modifed_stencil = true;
                           // Tolerence to define a intersection of
                           // the DOF and IB
                           if (abs((support_points[local_dof_indices[i]] - particles[p].position).norm() -
                                   particles[p].radius) <= 1e-12 * dr) {
                               skip_stencil = true;
-                          } else // RE work
-                          {
-                              // Give the DOF an approximated value. This help
-                              // with pressure shock when the DOF passe from part of the boundary
-                              // to the fluid.
-                              modifed_stencil = true;
                           }
                       }
                       // Define the variable used for the
@@ -1930,7 +1941,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                         sum_line;
                       }
                   }
-                  
+
                   if (component_i == dim)
                         {
                           // Applied equation on dof that have no equation

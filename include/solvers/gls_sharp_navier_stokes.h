@@ -185,6 +185,17 @@ private:
 
     /**
     * @brief
+    Return a bool that describes  if a cell contains a specific point
+    *
+    * @param cell , The initial cell. We want to check if the point is inside.
+    *
+    * @param point, The point that we check
+    */
+    bool
+    point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim>  point);
+
+    /**
+    * @brief
     *Return a vector of cells around a cell including vertex neighbors
      *
      * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
