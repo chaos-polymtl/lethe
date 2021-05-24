@@ -107,9 +107,7 @@ private:
   {
     Tensor<1, dim> rolling_resistance;
     for (int d = 0; d < dim; ++d)
-      {
-        rolling_resistance[d] = 0;
-      }
+      rolling_resistance[d] = 0;
 
     return rolling_resistance;
   }

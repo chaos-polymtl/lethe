@@ -77,34 +77,32 @@ UniformInsertion<dim>::insert(
       std::vector<Point<dim>> insertion_points_on_proc;
       insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
 
-      // Find insertion locations
+      // Find the first and the last particle id for each process
+      // The number of particles on the last process is different
+      unsigned int first_id;
+      unsigned int last_id;
       if (this_mpi_process == (n_mpi_process - 1))
         {
-          for (unsigned int id =
-                 this->inserted_this_step - this->inserted_this_step_this_proc;
-               id < this->inserted_this_step;
-               ++id)
-            {
-              find_insertion_location_uniform(insertion_location,
-                                              id,
-                                              dem_parameters.insertion_info);
-              insertion_points_on_proc.push_back(insertion_location);
-            }
+          first_id =
+            this->inserted_this_step - this->inserted_this_step_this_proc;
+          last_id = this->inserted_this_step;
         }
+      // For the processes 1 : n-1
       else
         {
-          for (unsigned int id =
-                 this_mpi_process * this->inserted_this_step_this_proc;
-               id < (this_mpi_process + 1) * this->inserted_this_step_this_proc;
-               ++id)
-            {
-              find_insertion_location_uniform(insertion_location,
-                                              id,
-                                              dem_parameters.insertion_info);
-              insertion_points_on_proc.push_back(insertion_location);
-            }
+          first_id = this_mpi_process * this->inserted_this_step_this_proc;
+          last_id = (this_mpi_process + 1) * this->inserted_this_step_this_proc;
         }
 
+      // Looping through the particles on each process and finding their
+      // insertion location
+      for (unsigned int id = first_id; id < last_id; ++id)
+        {
+          find_insertion_location_uniform(insertion_location,
+                                          id,
+                                          dem_parameters.insertion_info);
+          insertion_points_on_proc.push_back(insertion_location);
+        }
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
@@ -136,7 +134,7 @@ void UniformInsertion<2>::find_insertion_location_uniform(
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;
-  insertion_index.reserve(2);
+  insertion_index.resize(2);
 
   insertion_index[0] = id % this->number_of_particles_x_direction;
   insertion_index[1] = (int)id / this->number_of_particles_x_direction;
@@ -158,7 +156,7 @@ void UniformInsertion<3>::find_insertion_location_uniform(
   const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
   std::vector<int> insertion_index;
-  insertion_index.reserve(3);
+  insertion_index.resize(3);
 
   insertion_index[0] = id % this->number_of_particles_x_direction;
   insertion_index[1] = (int)(id % (this->number_of_particles_x_direction *
