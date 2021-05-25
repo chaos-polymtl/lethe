@@ -106,9 +106,8 @@ private:
                 const Tensor<1, dim> & /*normal_contact_vector*/)
   {
     Tensor<1, dim> rolling_resistance;
-    rolling_resistance[0] = 0;
-    rolling_resistance[1] = 0;
-    rolling_resistance[2] = 0;
+    for (int d = 0; d < dim; ++d)
+      rolling_resistance[d] = 0;
 
     return rolling_resistance;
   }

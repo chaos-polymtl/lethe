@@ -62,19 +62,18 @@ public:
 
 private:
   /**
-   * Creates a vector of insertion points for uniform insertion. The output
-   * of this function is used as input argument in insert_global_particles
+   * Converts id of particles to uniform insertion location
    *
-   * @param insertion_points A vector containing insertion locations of particles
+   * @param insertion_location Insertion location of the particle
+   * @param id Particle_id
    * @param insertion_information DEM insertion parameters declared in the .prm
    * file
-   * @param communicator MPI communicator
    */
-  virtual void
-  assign_insertion_points(
-    std::vector<Point<dim>> &                    insertion_points,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information,
-    const MPI_Comm &                             communicator) override;
+  void
+  find_insertion_location_uniform(
+    Point<dim> &                                 insertion_location,
+    const unsigned int &                         id,
+    const Parameters::Lagrangian::InsertionInfo &insertion_information);
 
   // Number of remained particles of each type that should be inserted in the
   // upcoming insertion steps

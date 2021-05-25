@@ -47,6 +47,9 @@ UniformInsertion<dim>::insert(
       ConditionalOStream pcout        = {
         std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0};
 
+      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
+      auto n_mpi_process    = Utilities::MPI::n_mpi_processes(communicator);
+
       this->calculate_insertion_domain_maximum_particle_number(dem_parameters,
                                                                pcout);
 
@@ -63,24 +66,43 @@ UniformInsertion<dim>::insert(
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
       // Distbuting particles between processors
-      if (Utilities::MPI::this_mpi_process(communicator) !=
-          (Utilities::MPI::n_mpi_processes(communicator) - 1))
-        this->inserted_this_step_this_proc =
-          floor(this->inserted_this_step /
-                Utilities::MPI::n_mpi_processes(communicator));
-      else
+      this->inserted_this_step_this_proc =
+        floor(this->inserted_this_step / n_mpi_process);
+      if (this_mpi_process == (n_mpi_process - 1))
         this->inserted_this_step_this_proc =
           this->inserted_this_step -
-          (Utilities::MPI::n_mpi_processes(communicator) - 1) *
-            floor(this->inserted_this_step /
-                  Utilities::MPI::n_mpi_processes(communicator));
+          (n_mpi_process - 1) * floor(this->inserted_this_step / n_mpi_process);
 
-      // Finding insertion points using assign_insertion_points function
-      std::vector<Point<dim>> insertion_points;
-      insertion_points.reserve(this->inserted_this_step_this_proc);
-      this->assign_insertion_points(insertion_points,
-                                    dem_parameters.insertion_info,
-                                    communicator);
+      Point<dim>              insertion_location;
+      std::vector<Point<dim>> insertion_points_on_proc;
+      insertion_points_on_proc.reserve(this->inserted_this_step_this_proc);
+
+      // Find the first and the last particle id for each process
+      // The number of particles on the last process is different
+      unsigned int first_id;
+      unsigned int last_id;
+      if (this_mpi_process == (n_mpi_process - 1))
+        {
+          first_id =
+            this->inserted_this_step - this->inserted_this_step_this_proc;
+          last_id = this->inserted_this_step;
+        }
+      // For the processes 1 : n-1
+      else
+        {
+          first_id = this_mpi_process * this->inserted_this_step_this_proc;
+          last_id = (this_mpi_process + 1) * this->inserted_this_step_this_proc;
+        }
+
+      // Looping through the particles on each process and finding their
+      // insertion location
+      for (unsigned int id = first_id; id < last_id; ++id)
+        {
+          find_insertion_location_uniform(insertion_location,
+                                          id,
+                                          dem_parameters.insertion_info);
+          insertion_points_on_proc.push_back(insertion_location);
+        }
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
@@ -90,7 +112,7 @@ UniformInsertion<dim>::insert(
                                        this->particle_properties);
 
       // Insert the particles using the points and assigned properties
-      particle_handler.insert_global_particles(insertion_points,
+      particle_handler.insert_global_particles(insertion_points_on_proc,
                                                global_bounding_boxes,
                                                this->particle_properties);
 
@@ -105,70 +127,64 @@ UniformInsertion<dim>::insert(
 }
 
 // This function assigns the insertion points of the inserted particles
-template <int dim>
-void
-UniformInsertion<dim>::assign_insertion_points(
-  std::vector<Point<dim>> &                    insertion_positions,
-  const Parameters::Lagrangian::InsertionInfo &insertion_information,
-  const MPI_Comm &                             communicator)
+template <>
+void UniformInsertion<2>::find_insertion_location_uniform(
+  Point<2> &                                   insertion_location,
+  const unsigned int &                         id,
+  const Parameters::Lagrangian::InsertionInfo &insertion_information)
 {
-  unsigned int this_mpi_process =
-    Utilities::MPI::this_mpi_process(communicator);
+  std::vector<int> insertion_index;
+  insertion_index.resize(2);
 
-  // Creating a particle counter
-  unsigned int particle_counter = 0;
+  insertion_index[0] = id % this->number_of_particles_x_direction;
+  insertion_index[1] = (int)id / this->number_of_particles_x_direction;
 
-  for (unsigned int i = 0; i < this->number_of_particles_x_direction; ++i)
-    for (unsigned int j = 0; j < this->number_of_particles_y_direction; ++j)
-      {
-        // Adapt the last index to the dimensionality of the problem
-        unsigned int dim_nz =
-          (dim == 3) ? this->number_of_particles_z_direction : 1;
-        for (unsigned int k = 0; k < dim_nz; ++k)
-          {
-            if (this->particle_on_processor(i,
-                                            j,
-                                            k,
-                                            this_mpi_process,
-                                            Utilities::MPI::n_mpi_processes(
-                                              communicator)))
-              {
-                if (particle_counter < this->inserted_this_step_this_proc)
-                  {
-                    Point<dim> position;
-                    // Obtaning position of the inserted particle
-                    position[0] =
-                      insertion_information.x_min +
-                      ((i + 0.5) * insertion_information.distance_threshold) *
-                        this->maximum_diameter;
-                    position[1] =
-                      insertion_information.y_min +
-                      +((j + 0.5) * insertion_information.distance_threshold) *
-                        this->maximum_diameter;
+  insertion_location[0] =
+    insertion_information.x_min +
+    ((insertion_index[0] + 0.5) * insertion_information.distance_threshold) *
+      this->maximum_diameter;
+  insertion_location[1] =
+    insertion_information.y_min +
+    +((insertion_index[1] + 0.5) * insertion_information.distance_threshold) *
+      this->maximum_diameter;
+}
 
-                    // Adding a threshold distance to even rows of insertion
-                    if (k % 2 == 0)
-                      {
-                        position[0] =
-                          position[0] + (this->maximum_diameter) / 2.0;
-                        position[1] =
-                          position[1] + (this->maximum_diameter) / 2.0;
-                      }
-                    if (dim == 3)
-                      {
-                        position[2] =
-                          insertion_information.z_min +
-                          +((k + 0.5) *
-                            insertion_information.distance_threshold) *
-                            this->maximum_diameter;
-                      }
+template <>
+void UniformInsertion<3>::find_insertion_location_uniform(
+  Point<3> &                                   insertion_location,
+  const unsigned int &                         id,
+  const Parameters::Lagrangian::InsertionInfo &insertion_information)
+{
+  std::vector<int> insertion_index;
+  insertion_index.resize(3);
 
-                    insertion_positions.push_back(position);
-                    particle_counter++;
-                  }
-              }
-          }
-      }
+  insertion_index[0] = id % this->number_of_particles_x_direction;
+  insertion_index[1] = (int)(id % (this->number_of_particles_x_direction *
+                                   this->number_of_particles_y_direction)) /
+                       (this->number_of_particles_x_direction);
+  insertion_index[2] = (int)id / (this->number_of_particles_x_direction *
+                                  this->number_of_particles_y_direction);
+
+  insertion_location[0] =
+    insertion_information.x_min +
+    ((insertion_index[0] + 0.5) * insertion_information.distance_threshold) *
+      this->maximum_diameter;
+  insertion_location[1] =
+    insertion_information.y_min +
+    +((insertion_index[1] + 0.5) * insertion_information.distance_threshold) *
+      this->maximum_diameter;
+
+  // Adding an extra distance to even rows of insertion
+  if (insertion_index[2] % 2 == 0)
+    {
+      insertion_location[0] += this->maximum_diameter * 0.5;
+      insertion_location[1] += this->maximum_diameter * 0.5;
+    }
+
+  insertion_location[2] =
+    insertion_information.z_min +
+    +((insertion_index[2] + 0.5) * insertion_information.distance_threshold) *
+      this->maximum_diameter;
 }
 
 template class UniformInsertion<2>;

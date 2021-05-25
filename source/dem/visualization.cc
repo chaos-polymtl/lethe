@@ -102,13 +102,12 @@ Visualization<dim>::print_xyz(
       auto         particle_properties = particle->get_properties();
       auto         particle_location   = particle->get_location();
 
-      // Writing ID
-      pcout << std::fixed << std::setprecision(0) << id << " "
-            << std::setprecision(0)
-            << particle_properties[DEM::PropertiesIndex::type] << " "
-            << std::setprecision(5)
-            << particle_properties[DEM::PropertiesIndex::dp] << " "
-            << std::setprecision(4) << particle_location << std::endl;
+      std::cout << std::fixed << std::setprecision(0) << id << " "
+                << std::setprecision(0)
+                << particle_properties[DEM::PropertiesIndex::type] << " "
+                << std::setprecision(5)
+                << particle_properties[DEM::PropertiesIndex::dp] << " "
+                << std::setprecision(4) << particle_location << std::endl;
     }
 }
 
