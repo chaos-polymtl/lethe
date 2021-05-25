@@ -17,9 +17,12 @@
 * Author: Bruno Blais, Polytechnique Montreal, 2019-
 */
 
+#include <rpt/rpt.h>
+#include <rpt/rpt_calculating_parameters.h>
+
 #include <iostream>
 
-#include "rpt/rpt.h"
+using namespace dealii;
 
 int
 main(int argc, char *argv[])
@@ -31,8 +34,17 @@ main(int argc, char *argv[])
           std::cout << "Usage:" << argv[0] << " input_file" << std::endl;
           std::exit(1);
         }
-      RPT<3> rpt;
-      rpt.dummy_function();
+
+      ParameterHandler            prm;
+      RPTCalculatingParameters<3> rpt_parameters;
+      rpt_parameters.declare(prm);
+
+      // Parsing of the file
+      prm.parse_input(argv[1]);
+      rpt_parameters.parse(prm);
+
+      RPT<3> rpt(rpt_parameters);
+      rpt.calculate();
     }
   catch (std::exception &exc)
     {

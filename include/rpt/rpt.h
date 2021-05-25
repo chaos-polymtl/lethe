@@ -14,25 +14,46 @@
  * ---------------------------------------------------------------------
 
 *
-* Author: Bruno Blais, Ghazaleh Mirakhori Polytechnique Montreal, 2020-
+* Authors: Bruno Blais, Ghazaleh Mirakhori, Audrey Collard-Daigneault
+Polytechnique Montreal, 2020-
 */
+
+
+#ifndef lethe_rpt_h
+#define lethe_rpt_h
 
 // deal.II includes
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/utilities.h>
 
-#ifndef lethe_rpt_h
-#  define lethe_rpt_h
+#include <rpt/detector.h>
+#include <rpt/parameters_rpt.h>
+#include <rpt/radioactive_particle.h>
+#include <rpt/rpt_calculating_parameters.h>
+
+using namespace dealii;
 
 template <int dim>
 class RPT
 {
 public:
+  RPT(RPTCalculatingParameters<dim> &RPTparameters);
+
   void
-  dummy_function();
+  calculate();
+
+  void
+  assign_particle_positions();
+
+  void
+  assign_detector_positions();
 
 private:
+  RPTCalculatingParameters<dim> rpt_parameters;
+
+  std::vector<RadioParticle<dim>> particle_positions;
+  std::vector<Detector<dim>>      detector_positions;
 };
 
 #endif
