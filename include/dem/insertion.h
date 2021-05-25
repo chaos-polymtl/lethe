@@ -73,24 +73,6 @@ public:
 
 protected:
   /**
-   * Carries out checking whether the processor is responsible for finding
-   * the insertion point
-   *
-   * @param i Discretization element in x direction
-   * @param i Discretization element in x direction
-   * @param i Discretization element in x direction
-   * @param this_mpi_process Processor
-   * @param number_of_processors Total number of processors in the simulation
-   * @return Returns true if the processor should handle this insertion point
-   */
-  bool
-  particle_on_processor(const unsigned int &i,
-                        const unsigned int &j,
-                        const unsigned int &k,
-                        const unsigned int &this_mpi_process,
-                        const unsigned int &number_of_processors);
-
-  /**
    * Carries out assigning the properties of inserted particles.
    *
    * @param inserted_this_step Number of particles that are inserted
@@ -122,20 +104,6 @@ protected:
     const unsigned int &              inserted_this_step_this_proc,
     const unsigned int &              current_inserting_particle_type,
     std::vector<std::vector<double>> &particle_properties);
-
-  /**
-   * Carries out finding the insertion points of inserted particles.
-   *
-   * @param insertion_points A vector containing insertion locations of particles
-   * @param insertion_information DEM insertion parameters declared in the .prm
-   * file
-   * @param communicator MPI communicator
-   */
-  virtual void
-  assign_insertion_points(
-    std::vector<Point<dim>> &                    insertion_points,
-    const Parameters::Lagrangian::InsertionInfo &insertion_information,
-    const MPI_Comm &                             communicator) = 0;
 
   /**
    * @brief Carries out finding the maximum number of inserted particles based on the

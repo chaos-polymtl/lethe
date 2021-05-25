@@ -1661,7 +1661,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   const FEValuesExtractors::Scalar pressure(dim);
 
   std::vector<double> time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
   // Define a map to all dofs and their support points
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*this->mapping,

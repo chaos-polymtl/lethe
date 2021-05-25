@@ -172,49 +172,5 @@ Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
     }
 }
 
-template <>
-bool
-Insertion<3>::particle_on_processor(const unsigned int &i,
-                                    const unsigned int &j,
-                                    const unsigned int &k,
-                                    const unsigned int &this_mpi_process,
-                                    const unsigned int &number_of_processors)
-{
-  if (this_mpi_process == number_of_processors - 1)
-    return (std::floor((i * this->number_of_particles_y_direction *
-                          this->number_of_particles_z_direction +
-                        j * this->number_of_particles_z_direction + k) /
-                       std::floor(double(this->inserted_this_step) /
-                                  double(number_of_processors))) >=
-            this_mpi_process);
-  else
-    return (std::floor((i * this->number_of_particles_y_direction *
-                          this->number_of_particles_z_direction +
-                        j * this->number_of_particles_z_direction + k) /
-                       std::floor(double(this->inserted_this_step) /
-                                  double(number_of_processors))) ==
-            this_mpi_process);
-}
-
-template <>
-bool
-Insertion<2>::particle_on_processor(const unsigned int &i,
-                                    const unsigned int &j,
-                                    const unsigned int & /*k*/,
-                                    const unsigned int &this_mpi_process,
-                                    const unsigned int &number_of_processors)
-{
-  if (this_mpi_process == number_of_processors - 1)
-    return (std::floor((i * this->number_of_particles_y_direction + j) /
-                       std::floor(double(this->inserted_this_step) /
-                                  double(number_of_processors))) >=
-            this_mpi_process);
-  else
-    return (std::floor((i * this->number_of_particles_y_direction + j) /
-                       std::floor(double(this->inserted_this_step) /
-                                  double(number_of_processors))) ==
-            this_mpi_process);
-}
-
 template class Insertion<2>;
 template class Insertion<3>;
