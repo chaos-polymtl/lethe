@@ -58,6 +58,7 @@ private:
   double                           efficency;
   double                           alpha;
   double                           theta;
+  double                           theta_cri;
   double                           weighting_factor_alpha;
   double                           weighting_factor_theta;
   double                           non_interaction_probability;

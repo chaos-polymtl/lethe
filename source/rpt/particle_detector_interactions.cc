@@ -42,7 +42,7 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
                                                          double n_theta)
 {
   double alpha_max;
-  double theta_max, theta_min, theta_cri;
+  double theta_max, theta_min;
   double r = detector_radius;
   double l = detector_length;
 
@@ -81,9 +81,12 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
           theta_max = M_PI_2 + std::atan(std::abs(h) / OB_distance);
           theta_cri = M_PI_2 + std::atan(std::abs(h) / OB_distance);
           theta_min = std::atan(OB_distance / (l - std::abs(h)));
+          std::cout
+            << "For now, it is now possible to calculate count for particle position on the side of the detector."
+            << std::endl;
+          // This warning should be change to assert
         }
-
-      // Calculate theta angle and its weigthting factor for the Monte Carlo
+      // Calculate theta angle and its weighting factor for the Monte Carlo
       // iteration
       theta                  = std::acos(std::cos(theta_min) -
                         n_theta * (std::cos(theta_min) - std::cos(theta_max)));
@@ -122,7 +125,38 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
 template <int dim>
 void
 ParticleDetectorInteractions<dim>::calculate_detector_path_length()
-{}
+{
+  double l       = detector_length;
+  double theta_1 = std::atan(OA_distance / (h + l));
+
+  // Case 1 : S1  (Tracer views the detector from both top and lateral side of
+  // the detector)
+  if (rho > detector_radius)
+    {
+      if (theta <= theta_cri && theta <= theta_1)
+        detector_path_length =
+          (h + l) / std::cos(theta) - OB_distance / std::sin(theta);
+      else if (theta <= theta_cri && theta > theta_1)
+        detector_path_length = (OA_distance - OB_distance) / std::sin(theta);
+      else if (theta > theta_cri && theta <= theta_1)
+        detector_path_length = l / std::cos(theta);
+      else if (theta > theta_cri && theta > theta_1)
+        detector_path_length =
+          OA_distance / std::sin(theta) - h / std::cos(theta);
+    }
+  // Case 3 : S3 (Tracer views the detector only from the top surface)
+  else
+    {
+      double theta_2 = std::atan(OA_distance / (h));
+
+      if (theta <= theta_1)
+        detector_path_length = l / std::cos(theta);
+      else if (theta > theta_1 && theta <= theta_2)
+        detector_path_length =
+          OA_distance / std::sin(theta) - h / std::cos(theta);
+    }
+}
+
 
 template <int dim>
 void
@@ -132,7 +166,12 @@ ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
 template <int dim>
 void
 ParticleDetectorInteractions<dim>::calculate_detector_interaction_probability()
-{}
+{
+  calculate_detector_path_length();
+
+  double mu_d = initial_parameters.attenuation_coefficient_detector;
+  detector_interaction_probability = 1 - std::exp(-mu_d * detector_path_length);
+}
 
 template <int dim>
 void
@@ -155,9 +194,13 @@ ParticleDetectorInteractions<dim>::calculate_count()
   double n_alpha = (double)rand() / RAND_MAX;
   double n_theta = (double)rand() / RAND_MAX;
 
+  double n_alpha_test = 0.75;
+  double n_theta_test = 0.75;
+
 
   calculate_position_parameters();
-  calculate_solid_angle(n_alpha, n_theta);
+  calculate_solid_angle(n_alpha_test, n_theta_test);
+  calculate_detector_interaction_probability();
 
   double dummy = 0;
   return dummy;
