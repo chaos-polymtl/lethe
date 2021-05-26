@@ -35,8 +35,8 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
-      ParameterHandler            prm;
-      RPTCalculatingParameters<3> rpt_parameters;
+      ParameterHandler         prm;
+      RPTCalculatingParameters rpt_parameters;
       rpt_parameters.declare(prm);
 
       // Parsing of the file

@@ -37,9 +37,21 @@ public:
     , id(n)
   {}
 
+  Point<dim>
+  get_position()
+  {
+    return position;
+  }
+
+  Point<dim>
+  get_id()
+  {
+    return id;
+  }
+
+private:
   Point<dim> position;
   int        id;
 };
-
 
 #endif // lethe_radioactive_particle_h

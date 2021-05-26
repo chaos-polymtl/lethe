@@ -29,7 +29,6 @@
 #include <core/parameters.h>
 #include <rpt/parameters_rpt.h>
 
-template <int dim>
 class RPTCalculatingParameters
 {
 public:

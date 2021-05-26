@@ -29,6 +29,7 @@ Polytechnique Montreal, 2020-
 
 #include <rpt/detector.h>
 #include <rpt/parameters_rpt.h>
+#include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
 
@@ -38,7 +39,7 @@ template <int dim>
 class RPT
 {
 public:
-  RPT(RPTCalculatingParameters<dim> &RPTparameters);
+  RPT(RPTCalculatingParameters &RPTparameters);
 
   void
   calculate();
@@ -50,10 +51,12 @@ public:
   assign_detector_positions();
 
 private:
-  RPTCalculatingParameters<dim> rpt_parameters;
+  RPTCalculatingParameters rpt_parameters;
 
   std::vector<RadioParticle<dim>> particle_positions;
   std::vector<Detector<dim>>      detector_positions;
+
+  ParticleDetectorInteractions<dim> count;
 };
 
 #endif

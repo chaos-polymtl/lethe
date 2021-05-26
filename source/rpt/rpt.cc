@@ -19,17 +19,14 @@
 
 #include <deal.II/base/point.h>
 
-#include <rpt/parameters_rpt.h>
-#include <rpt/radioactive_particle.h>
 #include <rpt/rpt.h>
-#include <rpt/rpt_calculating_parameters.h>
 
 #include <fstream>
 #include <iostream>
 #include <iterator>
 
 template <int dim>
-RPT<dim>::RPT(RPTCalculatingParameters<dim> &RPTparameters)
+RPT<dim>::RPT(RPTCalculatingParameters &RPTparameters)
   : rpt_parameters(RPTparameters)
 {}
 
@@ -64,12 +61,14 @@ RPT<dim>::calculate()
   */
 
   assign_particle_positions();
-  std::cout << particle_positions.size() << std::endl;
-  std::cout << particle_positions[0].position[0] << std::endl;
-
   assign_detector_positions();
-  std::cout << detector_positions.size() << std::endl;
-  std::cout << detector_positions[0].face_position[0] << std::endl;
+
+
+  ParticleDetectorInteractions<dim> count_test(particle_positions[0],
+                                               detector_positions[0],
+                                               rpt_parameters);
+  count = count_test;
+  count.calculate_count();
 }
 
 template <int dim>
@@ -133,7 +132,6 @@ RPT<dim>::assign_detector_positions()
       detector_positions.push_back(detector);
     }
 }
-
 
 
 template class RPT<3>;

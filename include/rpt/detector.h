@@ -45,6 +45,37 @@ public:
     , middle_position(middle_point)
   {}
 
+  double
+  get_radius()
+  {
+    return radius;
+  }
+
+  double
+  get_length()
+  {
+    return length;
+  }
+
+  int
+  get_id()
+  {
+    return id;
+  }
+
+  Point<dim>
+  get_face_position()
+  {
+    return face_position;
+  }
+
+  Point<dim>
+  get_middle_position()
+  {
+    return middle_position;
+  }
+
+private:
   double     radius;
   double     length;
   int        id;
