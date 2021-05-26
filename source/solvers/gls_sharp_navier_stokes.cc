@@ -1693,7 +1693,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           .order;
 
 
- // auto& stencil=std::get<order>(stencils[0]);
+
   IBStencils<dim> stencil;
   std::vector<double> ib_coef=stencil.coefficients(order);
 
@@ -1719,9 +1719,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
       dt=1;
 
 
-
-
-
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
@@ -1744,7 +1741,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
           clear_line_in_matrix(cell, inside_index);
-          // this->system_matrix.clear_row(inside_index) is not reliable on edge case
+          // this->system_matrix.clear_row(inside_index)
+          // is not reliable on edge case
 
           // Set the new equation for the first pressure dofs of the
           // cell. this is the new reference pressure inside a
@@ -1754,6 +1752,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
             this->system_rhs(inside_index) = 0 - this->evaluation_point(inside_index) * sum_line;
         }
     }
+
+
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1767,12 +1767,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
             sum_line += fe_values.JxW(qf);
 
           sum_line=sum_line/dt;
+
+          // Check if the cell is cut or not by the IB
           auto [cell_is_cut,p,local_dof_indices]=cell_cut(cell,local_dof_indices_2,support_points);
-
-          // Loop over all particle  to see if one of them is cutting this cell
-
-          // If the cell is cut by the IB the count is not 0 or the
-          // number of total dof in a cell
 
           if (cell_is_cut)
           {
@@ -1791,35 +1788,31 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       unsigned int global_index_overwrite =
                               local_dof_indices[i];
 
-                      // Clear the current line of this dof  by
-                      // looping on the neighbouring cell of this dof
-                      // and clear all the associated dof
-
+                      // Clear the current line of this dof
                       clear_line_in_matrix(cell, global_index_overwrite);
 
-                      // Define the distance vector between the
-                      // immersed boundary and the dof support point
-                      // for each dof
+                      // Define the points for the IB stencil, based on the order and the particle position as well as the DOF position.
+                      // Depending on the order, the output variable "point" change definition. In the case of stencil orders 1 to 4 the variable point returns the position of the DOF directly.
+                      // In the case of high order stencil, it returns the position of the point that is on the IB.
+                      // The variable "interpolation points" return the points used to define the cell used for the stencil definition and
+                      // the locations of the points use in the stencil calculation.
 
                       auto[point, interpolation_points]=stencil.points(order, particles[p],
                                                                        support_points[local_dof_indices[i]]);
 
+                      // Find the cell used for the stencil definition.
                       auto cell_2 = find_cell_around_point_with_neighbors(cell, interpolation_points[
                               stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
 
                       bool skip_stencil = false;
 
-                      // We have or next cell needed to complete the
-                      // stencil
-
-                      // Define the unit cell points for the points
-                      // used in the stencil for extrapolation.
-
                       // Check if the DOF intersect the IB
-                      bool do_rhs = false;
-                      bool modifed_stencil = false;
-                      // Check if this dof is a dummy dof or directly on IB
+                      bool dof_on_ib = false;
+
+                      // Check if this dof is a dummy dof or directly on IB and
+                      // Check if the point used to define the cell used for the definition of the stencil ("cell_2") is on
+                      // a face between the cell that is cut ("cell") and the "cell_2".
                       bool point_in_cell=point_inside_cell(cell,interpolation_points[
                               stencil.nb_points(order) - 1]);
                       if (cell_2 == cell || point_in_cell) {
@@ -1829,13 +1822,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           this->system_matrix.set(global_index_overwrite,
                                                   global_index_overwrite,
                                                   sum_line);
-                          do_rhs = true;
-                          modifed_stencil = true;
+                          skip_stencil = true;
+
                           // Tolerence to define a intersection of
                           // the DOF and IB
                           if (abs((support_points[local_dof_indices[i]] - particles[p].position).norm() -
                                   particles[p].radius) <= 1e-12 * dr) {
-                              skip_stencil = true;
+                              dof_on_ib = true;
                           }
                       }
                       // Define the variable used for the
@@ -1843,9 +1836,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // boundaries in order to define the correction
 
                       // Define the unit cell points for the points
-                      // used in the stencil for extrapolation.
+                      // used in the stencil.
                       std::vector<Point<dim>> unite_cell_interpolation_points(ib_coef.size());
-
                       unite_cell_interpolation_points[0] = this->mapping->transform_real_to_unit_cell(cell_2, point);
                       for (unsigned int j = 1;
                            j < ib_coef.size();
@@ -1858,72 +1850,63 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                       // Define the new matrix entry for this dof
                       if (skip_stencil == false) {
-                          // First the dof itself
                           for (unsigned int j = 0;
                                j < local_dof_indices_2.size();
                                ++j) {
-                              // First the dof itself
                               const unsigned int component_j =
                                       this->fe->system_to_component_index(j)
                                               .first;
                               if (component_j == component_i) {
-                                  if (modifed_stencil == false) {
-                                      // Define the solution at each
-                                      // point used for the stencil and
-                                      // applied the stencil for the
-                                      // specfic dof. for stencil with
-                                      // order of convergence higher
-                                      // then 5 the stencil is define
-                                      // trough direct extrapolation of
-                                      // the cell
-                                      auto &evaluation_point = this->evaluation_point;
 
-                                      double local_matrix_entry = 0;
-                                      for (unsigned int k = 0;
-                                           k < ib_coef.size();
-                                           ++k) {
-                                          local_matrix_entry += this->fe->shape_value(
-                                                  j, unite_cell_interpolation_points[k]) * ib_coef[k];
-                                          local_interp_sol[k] += this->fe->shape_value(
-                                                  j, unite_cell_interpolation_points[k]) * evaluation_point(
-                                                  local_dof_indices_2[j]);
+                                  //  Define the solution at each point used for the stencil and applied the stencil for the specific DOF.
+                                  //  For stencils of order 4 or higher, the stencil is defined
+                                  //  through direct extrapolation of the cell. This can only be done when using a structured mesh
+                                  //  as this required a mapping of a point outside of a cell.
 
+                                  // Define the local matrix entries of this DOF based on its contribution of each of the points used in
+                                  // the stencil definition and the coefficient associated with this point.
+                                  // This loop defined the current solution at the boundary using the same stencil. This is needed to define the residual.
+                                  double local_matrix_entry = 0;
+                                  for (unsigned int k = 0;
+                                  k < ib_coef.size();++k) {
+                                      local_matrix_entry += this->fe->shape_value(
+                                              j, unite_cell_interpolation_points[k]) * ib_coef[k];
+                                      local_interp_sol[k] += this->fe->shape_value(
+                                              j, unite_cell_interpolation_points[k]) * this->evaluation_point(local_dof_indices_2[j]);
                                       }
-                                      this->system_matrix.set(
-                                              global_index_overwrite,
-                                              local_dof_indices_2[j], local_matrix_entry *
-                                                                      sum_line);
-                                  }
+                                  // update the matrix.
+                                  this->system_matrix.set(
+                                          global_index_overwrite,
+                                          local_dof_indices_2[j], local_matrix_entry *
+                                          sum_line);
+
                               }
                           }
                       }
 
-                      // Define the RHS of the stencil used for the
-                      // IB
-                      if (skip_stencil == false || do_rhs) {
-                          double rhs_add = 0;
-                          // Different boundary conditions depending
-                          // if the dof is vx ,vy or vz and if the
-                          // problem we are solving is in 2d or 3d.
-                          double v_ib = stencil.vitesse_ib(particles[p], support_points[local_dof_indices[i]],
+                      // Define the RHS of the equation.
+
+                      double rhs_add = 0;
+                      // Different boundary conditions depending
+                      // on the component index of the DOF and
+                      // the dimension.
+                      double v_ib = stencil.vitesse_ib(particles[p], support_points[local_dof_indices[i]],
                                                            component_i);
-                          auto &evaluation_point =
-                                  this->evaluation_point;
-                          for (unsigned int k = 0;
-                               k < ib_coef.size();
-                               ++k) {
-                              rhs_add += -local_interp_sol[k] * ib_coef[k] * sum_line;
 
-                          }
-                          this->system_rhs(global_index_overwrite) =
+                      for (unsigned int k = 0;k < ib_coef.size();++k) {
+                          rhs_add += -local_interp_sol[k] * ib_coef[k] * sum_line;
+                      }
+                      this->system_rhs(global_index_overwrite) =
                                   v_ib * sum_line + rhs_add;
-                          if (do_rhs)
-                              this->system_rhs(global_index_overwrite) =
-                                      v_ib * sum_line -
-                                      evaluation_point(global_index_overwrite) *
-                                      sum_line;
 
-                          if (modifed_stencil)
+                      if (dof_on_ib)
+                          // Dof is on the immersed boundary
+                          this->system_rhs(global_index_overwrite) =
+                                  v_ib * sum_line -
+                                  this->evaluation_point(global_index_overwrite) *
+                                  sum_line;
+
+                      if (skip_stencil && dof_on_ib==false)
                               // Impose the value of the dummy dof. This help
                               // with pressure variation when the IB is
                               // moving.
@@ -1931,8 +1914,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       sum_line * v_ib - this->evaluation_point(
                                               global_index_overwrite) *
                                                         sum_line;
-                      }
                   }
+
 
                   if (component_i == dim)
                         {
@@ -1940,13 +1923,15 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // defined for them. those DOF become Dummy dof. This
                           // is usefull for high order cells or when a dof is
                           // only element of cells that are cut.
-
                           unsigned int global_index_overwrite =
                             local_dof_indices[i];
                           bool dummy_dof = true;
 
-                          if(this->system_matrix.el(global_index_overwrite,
-                                                     global_index_overwrite)==0) {
+                          // To check if the pressure dof is a dummy. first check if the matrix entry is close to 0.
+                          if(abs(this->system_matrix.el(global_index_overwrite,
+                                                     global_index_overwrite))<=1e-16 * dr) {
+                              // If the matrix entry on the diagonal of this DOF is close to zero, check if all the cells close are cut.
+                              // If it's the case, the DOF is a dummy DOF.
                               active_neighbors_set = find_cells_around_cell(cell);
                               for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
                                   const auto &cell_3 = active_neighbors_set[m];
@@ -1966,25 +1951,17 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                                                                                      support_points);
 
                                           if (cell_is_cut == false) {
-                                              /*if(this->system_matrix.el(global_index_overwrite,global_index_overwrite)==0){
-                                                 // std::cout << "this entry is zero but if not dummy" << this->system_matrix.el(global_index_overwrite,global_index_overwrite) << std::endl;
-
-                                              }*/
                                               dummy_dof = false;
-
+                                              break;
                                           }
                                       }
                                   }
+                                  if (dummy_dof == false)
+                                      break;
                               }
 
-
-
-                              //PSPG allow this to check if the dof is a dummy dof
                               if (dummy_dof) {
-                                  /*if(this->system_matrix.el(global_index_overwrite,global_index_overwrite)!=0){
-                                        std::cout << "this entry was not zero but is dummy " << this->system_matrix.el(global_index_overwrite,global_index_overwrite) << std::endl;
-
-                                    }*/
+                                  // The DOF is dummy
                                   this->system_matrix.set(global_index_overwrite,
                                                           global_index_overwrite,
                                                           sum_line);

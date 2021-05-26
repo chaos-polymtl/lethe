@@ -10,7 +10,9 @@ template<int dim>
 unsigned int
 IBStencils<dim>::nb_points(unsigned int order)
 {
+    // The number of points used in the stencil excluding the DOF is equal to the order.
     unsigned int nb_points=order;
+    // In the case where the cell is used directly a=to to find the solution at the IB only one point is needed.
     if(order>4)
         nb_points=1;
     return nb_points;
@@ -20,6 +22,9 @@ template<int dim>
 std::vector<double>
 IBStencils<dim>::coefficients(unsigned int order)
 {
+    // The coefficients of the IB stencil assume a ratio of length between the distance of
+    // the farthest interpolation point and the DOF and the distance between the IB and the DOF of 1/8.
+    // The coefficient order goes from the coefficient of the DOF to the coefficient of the farthest interpolation point.
     if (order==1) {
         std::vector<double> coef(2);
         coef[0] = 9;
@@ -32,7 +37,6 @@ IBStencils<dim>::coefficients(unsigned int order)
         coef[0]=153;;
         coef[1]=-288;
         coef[2]=136;
-
 
         return coef;
     }
@@ -56,6 +60,7 @@ IBStencils<dim>::coefficients(unsigned int order)
         return coef;
     }
     if (order>4) {
+        // In this case the cell is directly used to find the solution at the IB position. In this case only one point is needed (the position of the point on the IB) and its coefficient is 1.
         std::vector<double> coef(1);
         coef[0] = 1;
 
@@ -74,12 +79,11 @@ template<int dim>
 std::tuple<Point<dim>,std::vector<Point<dim>>>
 IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_point)
 {
+    // Create the vector of points used for the stencil based on the order of the stencil.
+    // Also return the DOF position or the position of the point on the IB depending if the cell is used directly.
     if (order==1) {
         Tensor<1, dim, double> vect_ib = (dof_point - p.position -
                                           p.radius * (dof_point - p.position) / (dof_point - p.position).norm());
-
-
-
 
         Point<dim, double> interpolation_point_1(dof_point + vect_ib * 1 / 8);
 
@@ -140,6 +144,7 @@ IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_poin
         return {dof_point,interpolation_points};
     }
     if (order>4) {
+        // In this case the cell is directly used to find the solution at the IB position. In this case only one point is needed (the position of the point on the IB).
         Tensor<1, dim, double> vect_ib =(dof_point - p.position -p.radius *(dof_point-p.position)/(dof_point-p.position).norm());
 
         Point<dim, double> ib_point(dof_point - vect_ib);
@@ -170,10 +175,11 @@ IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_poin
 template<int dim>
 double
 IBStencils<dim>::vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int component) {
-
+    // Return the value of the IB condition for that specific stencil.
     double v_ib=0;
     if (dim == 2) {
         if (component == 0) {
+            //vx in 2D
             v_ib = -p.omega[2] *
                  p.radius *
                  ((dof_point -
@@ -184,6 +190,7 @@ IBStencils<dim>::vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int 
                     p.velocity[0];
         }
         if (component == 1) {
+            //vy in 2D
             v_ib = p.omega[2] *
                  p.radius *
                  ((dof_point -
@@ -197,6 +204,7 @@ IBStencils<dim>::vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int 
     }
     if (dim == 3) {
         if (component == 0) {
+            //vx in 3D
             v_ib = p.omega[1] *
                  ((dof_point -
                    p.position) /
@@ -215,6 +223,7 @@ IBStencils<dim>::vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int 
 
         }
         if (component == 1) {
+            //vy in 3D
             v_ib = p.omega[2] *
                  ((dof_point -
                    p.position) /
@@ -233,6 +242,7 @@ IBStencils<dim>::vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int 
 
         }
         if (component == 2) {
+            //vz in 3D
             v_ib=p.omega[0] *
                 ((dof_point -
                   p.position) /
