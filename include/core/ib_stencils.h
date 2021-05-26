@@ -31,12 +31,44 @@ class IBStencils {
 
 public:
 
+    /**
+    * @brief
+    Return the number of point use in the interpolation excluding the dof itself base on the order of the stencil.
+    *
+    * @param order, the stencil order.
+    */
     virtual unsigned int nb_points(unsigned int order);
 
+    /**
+    * @brief
+     * Define the points for the IB stencil, based on the order and the particle position as well as the DOF position
+     * Depending on the order, the output variable "point" change definition. In the case of stencil orders 1 to 4 the variable point returns the position of the DOF directly.
+     * In the case of high order stencil, it returns the position of the point that is on the IB.
+     * The variable "interpolation points" return the points used to define the cell used for the stencil definition and
+     * the locations of the points use in the stencil calculation.
+    *
+    * @param order, the stencil order.
+    * @param p, the IB particule that cut the cell.
+    * @param dof_point, the support point of the DOF.
+    */
     virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(unsigned int order,IBParticle<dim> p,Point<dim> dof_point);
 
+    /**
+    * @brief
+     * Return the coefficient of the stencil. based on the order.
+    *
+    * @param order, the stencil order.
+    */
     virtual std::vector<double> coefficients(unsigned int order);
 
+    /**
+    * @brief
+     * Return the velocity of the IB used in the RHS of the equation
+    *
+    * @param p, the IB particule that cut the cell.
+    * @param dof_point, the support point of the DOF.
+    * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
+    */
     virtual double vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int component);
 
 
@@ -44,88 +76,5 @@ public:
 
 };
 
-/*
-template<int dim>
-class IBStencilsS1 {
-
-public:
-
-    virtual unsigned int nb_points();
-
-    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(IBParticle<dim> p,Point<dim> dof_point);
-
-    virtual std::vector<double> coefficients();
-
-
-
-
-};
-
-
-template<int dim>
-class IBStencilsS2 {
-
-public:
-
-    virtual unsigned int nb_points();
-
-    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(IBParticle<dim> p,Point<dim> dof_point);
-
-    virtual std::vector<double> coefficients();
-
-
-
-
-};
-
-template<int dim>
-class IBStencilsS3{
-
-public:
-
-    virtual unsigned int nb_points();
-
-    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(IBParticle<dim> p,Point<dim> dof_point);
-
-    virtual std::vector<double> coefficients();
-
-
-
-
-};
-
-template<int dim>
-class IBStencilsS4{
-
-public:
-
-    virtual unsigned int nb_points();
-
-    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(IBParticle<dim> p,Point<dim> dof_point);
-
-    virtual std::vector<double> coefficients();
-
-
-
-
-};
-
-template<int dim>
-class IBStencilsCell{
-
-public:
-
-    virtual unsigned int nb_points();
-
-    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(IBParticle<dim> p,Point<dim> dof_point);
-
-    virtual std::vector<double> coefficients();
-
-
-
-
-
-};
- */
 
 #endif //LETHE_IB_STENCILS_H
