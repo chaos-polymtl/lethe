@@ -24,12 +24,10 @@ template <int dim>
 std::vector<double>
 IBStencils<dim>::coefficients(unsigned int order)
 {
-  // The coefficients of the IB stencil assume a ratio of length between the
-  // distance of the farthest interpolation point and the DOF and the distance
-  // between the IB and the DOF of 1/8. The coefficient order goes from the
-  // coefficient of the DOF to the coefficient of the farthest interpolation
-  // point.
+  // Initialize the coefficient vector
   std::vector<double> coef;
+
+  // Fill the coefficient vector based on the order.
   if (order == 1)
     {
       coef.resize(2);
