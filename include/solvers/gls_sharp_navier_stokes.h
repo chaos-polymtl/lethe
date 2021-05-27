@@ -189,7 +189,7 @@ private:
     *
     * @param cell , The initial cell. We want to check if the point is inside.
     *
-    * @param point, The point that we check
+    * @param point, The point that we wish to check
     */
     bool
     point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim>  point);
