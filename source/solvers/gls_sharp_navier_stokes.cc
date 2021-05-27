@@ -41,25 +41,26 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
-    // Find all the cells around each vertices
-    TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
-    vertices_to_cell.clear();
-    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  // Find all the cells around each vertices
+  TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+  vertices_to_cell.clear();
+  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
 
-    // // Loop on all the cells and find their vertices to fill the map of sets of cells around each vertex
-    for (const auto &cell : cell_iterator)
+  // // Loop on all the cells and find their vertices to fill the map of sets of
+  // cells around each vertex
+  for (const auto &cell : cell_iterator)
     {
-        if (cell->is_locally_owned() || cell->is_ghost())
+      if (cell->is_locally_owned() || cell->is_ghost())
         {
-            const unsigned int vertices_per_cell =
-                    GeometryInfo<dim>::vertices_per_cell;
-            for (unsigned int i = 0; i < vertices_per_cell; i++)
+          const unsigned int vertices_per_cell =
+            GeometryInfo<dim>::vertices_per_cell;
+          for (unsigned int i = 0; i < vertices_per_cell; i++)
             {
-                // First obtain vertex index
-                unsigned int v_index = cell->vertex_index(i);
+              // First obtain vertex index
+              unsigned int v_index = cell->vertex_index(i);
 
-                // Insert the cell into the set of cell around that vertex.
-                vertices_to_cell[v_index].insert(cell);
+              // Insert the cell into the set of cell around that vertex.
+              vertices_to_cell[v_index].insert(cell);
             }
         }
     }
@@ -67,95 +68,124 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
-GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                                                                       Point<dim>             point)
+GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  Point<dim>                                            point)
 {
-    //Find the cell around a point based on an initial cell.
+  // Find the cell around a point based on an initial cell.
 
-    //Find the cells around the initial cell ( cells that share a vertex with the original cell).
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
-    //Loop over that group of cells
-    for (unsigned int i = 0; i < active_neighbors_set.size(); ++i){
-        bool inside_cell=point_inside_cell(active_neighbors_set[i], point);
-            if(inside_cell) {
-                return active_neighbors_set[i];
-                }
-
-
+  // Find the cells around the initial cell ( cells that share a vertex with the
+  // original cell).
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    active_neighbors_set = find_cells_around_cell(cell);
+  // Loop over that group of cells
+  for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
+    {
+      bool inside_cell = point_inside_cell(active_neighbors_set[i], point);
+      if (inside_cell)
+        {
+          return active_neighbors_set[i];
+        }
     }
-    // The cell is not found near the initial cell so we use the cell tree algorithm instead (much slower).
-    std::cout << "Cell not found around " << point << std::endl;
-    return find_cell_around_point_with_tree(this->dof_handler,point);
-
+  // The cell is not found near the initial cell so we use the cell tree
+  // algorithm instead (much slower).
+  std::cout << "Cell not found around " << point << std::endl;
+  return find_cell_around_point_with_tree(this->dof_handler, point);
 }
 
 template <int dim>
 bool
-GLSSharpNavierStokesSolver<dim>::point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim>             point)
+GLSSharpNavierStokesSolver<dim>::point_inside_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  Point<dim>                                            point)
 {
-    try
+  try
     {
-        const Point<dim, double> p_cell =
-                this->mapping->transform_real_to_unit_cell(cell, point);
-        const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-        // if the cell contains the point, the distance is equal to 0
-        if (dist == 0)
+      const Point<dim, double> p_cell =
+        this->mapping->transform_real_to_unit_cell(cell, point);
+      const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+      // if the cell contains the point, the distance is equal to 0
+      if (dist == 0)
         {
-            // The cell is found so we return it and exit the function.
+          // The cell is found so we return it and exit the function.
 
-            return true;
+          return true;
         }
     }
-    catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
+  catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
     {}
-    return false;
+  return false;
 }
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
-    // Find all the cells that share a vertex with a reference cell including the initial cell.
-    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
-    // Loop over the vertices of the initial cell and find all the cells around each vertex and add them to the set of cells around the reference cell.
-    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
+  // Find all the cells that share a vertex with a reference cell including the
+  // initial cell.
+  std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+  // Loop over the vertices of the initial cell and find all the cells around
+  // each vertex and add them to the set of cells around the reference cell.
+  for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
     {
-        unsigned int v_index=cell->vertex_index(i);
-        neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),this->vertices_to_cell[v_index].end());
+      unsigned int v_index = cell->vertex_index(i);
+      neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),
+                             this->vertices_to_cell[v_index].end());
     }
-    // Transform the set into a vector.
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_sharing_vertices(neighbors_cells.begin(),neighbors_cells.end());
-    return cells_sharing_vertices;
+  // Transform the set into a vector.
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
+  return cells_sharing_vertices;
 }
 
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index){
-    // Clear a line in the matrix based on an initial cell that contains the DOF.
-    // This function ensure that if the dof is a ghost all the entry of the matrix will be erased.
+GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  unsigned int                                          dof_index)
+{
+  // Clear a line in the matrix based on an initial cell that contains the DOF.
+  // This function ensure that if the dof is a ghost all the entry of the matrix
+  // will be erased.
 
 
-    // if the dof is locally owned we can use the default function of deal ii for matrix (most of the time this is ok)
-    if (this->locally_owned_dofs.is_element(dof_index)){
-        this->system_matrix.clear_row(dof_index);
+  // if the dof is locally owned we can use the default function of deal ii for
+  // matrix (most of the time this is ok)
+  if (this->locally_owned_dofs.is_element(dof_index))
+    {
+      this->system_matrix.clear_row(dof_index);
     }
-    else{
-        // This DOf is special, it's at a frontier between two processors. Only one of the processors owns it. If we have reached this point, we are not on that processor.
-        // In this case  the clear_row function doesn't clear the entire row it only clear DOFs that are owned by the row. This is an issue.
-        // To fix that we force all DOFs contain in ghost cells to be put to 0.
-        std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+  else
+    {
+      // This DOf is special, it's at a frontier between two processors. Only
+      // one of the processors owns it. If we have reached this point, we are
+      // not on that processor. In this case  the clear_row function doesn't
+      // clear the entire row it only clear DOFs that are owned by the row. This
+      // is an issue. To fix that we force all DOFs contain in ghost cells to be
+      // put to 0.
+      std::vector<typename DoFHandler<dim>::active_cell_iterator>
+        active_neighbors_set = find_cells_around_cell(cell);
 
-        const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-        std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
-        // Loop over the neighbours cells and erase the entry of the matrix that could be linked to neighbours ghost cells.
-        for (unsigned int i = 0; i < active_neighbors_set.size(); ++i) {
-            const auto &cell_3 = active_neighbors_set[i];
-            cell_3->get_dof_indices(local_dof_indices_iter);
-            if (std::find(local_dof_indices_iter.begin(), local_dof_indices_iter.end(), dof_index) !=
-            local_dof_indices_iter.end()) {
-                for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k) {
-                    this->system_matrix.set(dof_index, local_dof_indices_iter[k], 0);
+      const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+      std::vector<types::global_dof_index> local_dof_indices_iter(
+        dofs_per_cell);
+      // Loop over the neighbours cells and erase the entry of the matrix that
+      // could be linked to neighbours ghost cells.
+      for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
+        {
+          const auto &cell_3 = active_neighbors_set[i];
+          cell_3->get_dof_indices(local_dof_indices_iter);
+          if (std::find(local_dof_indices_iter.begin(),
+                        local_dof_indices_iter.end(),
+                        dof_index) != local_dof_indices_iter.end())
+            {
+              for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k)
+                {
+                  this->system_matrix.set(dof_index,
+                                          local_dof_indices_iter[k],
+                                          0);
                 }
             }
         }
@@ -452,14 +482,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // Used support function of the cell to define the
                   // interpolation of the velocity
                   Point<dim> second_point_v =
-                          this->mapping->transform_real_to_unit_cell(cell_2,
-                                                             second_point);
+                    this->mapping->transform_real_to_unit_cell(cell_2,
+                                                               second_point);
                   Point<dim> third_point_v =
-                          this->mapping->transform_real_to_unit_cell(cell_3,
-                                                             third_point);
+                    this->mapping->transform_real_to_unit_cell(cell_3,
+                                                               third_point);
                   Point<dim> fourth_point_v =
-                          this->mapping->transform_real_to_unit_cell(cell_4,
-                                                             fourth_point);
+                    this->mapping->transform_real_to_unit_cell(cell_4,
+                                                               fourth_point);
 
                   // Initialize the component of the velocity
                   u_2[0] = 0;
@@ -835,14 +865,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Used support function of the cell to define the
                       // interpolation of the velocity
                       Point<dim> second_point_v =
-                              this->mapping->transform_real_to_unit_cell(cell_2,
-                                                                 second_point);
+                        this->mapping->transform_real_to_unit_cell(
+                          cell_2, second_point);
                       Point<dim> third_point_v =
-                              this->mapping->transform_real_to_unit_cell(cell_3,
-                                                                 third_point);
+                        this->mapping->transform_real_to_unit_cell(cell_3,
+                                                                   third_point);
                       Point<dim> fourth_point_v =
-                              this->mapping->transform_real_to_unit_cell(cell_4,
-                                                                 fourth_point);
+                        this->mapping->transform_real_to_unit_cell(
+                          cell_4, fourth_point);
 
 
                       cell_3->get_dof_indices(local_dof_indices_2);
@@ -1181,9 +1211,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices,support_points);
+          std::tie(cell_is_cut, std::ignore, local_dof_indices) =
+            cell_cut(cell, local_dof_indices, support_points);
 
-          if (cell_is_cut==false)
+          if (cell_is_cut == false)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
@@ -1623,34 +1654,40 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 template <int dim>
-std::tuple<bool,unsigned int,std::vector<types::global_dof_index> >
-GLSSharpNavierStokesSolver<dim>::cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell, std::vector<types::global_dof_index> &local_dof_indices ,std::map<types::global_dof_index, Point<dim>> &support_points)
+std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+GLSSharpNavierStokesSolver<dim>::cell_cut(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  std::vector<types::global_dof_index> &                local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>> &       support_points)
 {
-// Check if a cell is cut and if it's rerun the particle by which it's cut and the local DOFs index.
-// The check is done by counting the number of DOFs that is on either side of the boundary define by a particle.
+  // Check if a cell is cut and if it's rerun the particle by which it's cut and
+  // the local DOFs index. The check is done by counting the number of DOFs that
+  // is on either side of the boundary define by a particle.
 
-    cell->get_dof_indices(local_dof_indices);
+  cell->get_dof_indices(local_dof_indices);
 
-    for (unsigned int p = 0; p < particles.size(); ++p)
+  for (unsigned int p = 0; p < particles.size(); ++p)
     {
-        unsigned int nb_dof_inside = 0;
-        for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+      unsigned int nb_dof_inside = 0;
+      for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
-            // Count the number of DOFs that are inside
-            // of the particles. If all the DOfs are on one side
-            // the cell is not cut by the boundary.
-            if ((support_points[local_dof_indices[j]] - particles[p].position)
-                        .norm() <= particles[p].radius)
-                ++nb_dof_inside;
+          // Count the number of DOFs that are inside
+          // of the particles. If all the DOfs are on one side
+          // the cell is not cut by the boundary.
+          if ((support_points[local_dof_indices[j]] - particles[p].position)
+                .norm() <= particles[p].radius)
+            ++nb_dof_inside;
         }
-        if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size()){
-            //Some of the DOFs are inside the boundary, some are outside.
-            // This mean that the cell is cut so we return that information and the index of the particle that cut the cell
-            // as well as the container containing local DOF of the cell.
-            return {true,p,local_dof_indices};
+      if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size())
+        {
+          // Some of the DOFs are inside the boundary, some are outside.
+          // This mean that the cell is cut so we return that information and
+          // the index of the particle that cut the cell as well as the
+          // container containing local DOF of the cell.
+          return {true, p, local_dof_indices};
         }
     }
-    return {false,0,local_dof_indices};
+  return {false, 0, local_dof_indices};
 }
 
 
@@ -1674,7 +1711,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   const FEValuesExtractors::Scalar pressure(dim);
 
   std::vector<double> time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
+    this->simulation_control->get_time_steps_vector();
   // Define a map to all dofs and their support points
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*this->mapping,
@@ -1686,16 +1723,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   FEValues<dim>      fe_values(*this->fe,
                           q_formula,
                           update_quadrature_points | update_JxW_values);
-  const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
 
-  int order=this->simulation_parameters
-          .particlesParameters
-          .order;
+  int order = this->simulation_parameters.particlesParameters.order;
 
 
 
-  IBStencils<dim> stencil;
-  std::vector<double> ib_coef=stencil.coefficients(order);
+  IBStencils<dim>     stencil;
+  std::vector<double> ib_coef = stencil.coefficients(order);
 
   unsigned int n_q_points = q_formula.size();
 
@@ -1714,16 +1749,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-  double dt=time_steps_vector[0];
-  if(Parameters::SimulationControl::TimeSteppingMethod::steady== this->simulation_parameters.simulation_control.method)
-      dt=1;
+  double      dt            = time_steps_vector[0];
+  if (Parameters::SimulationControl::TimeSteppingMethod::steady ==
+      this->simulation_parameters.simulation_control.method)
+    dt = 1;
 
 
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      const auto &cell =find_cell_around_point_with_tree(this->dof_handler,
-                                                 particles[p].pressure_location+particles[p].position);
+      const auto &cell =
+        find_cell_around_point_with_tree(this->dof_handler,
+                                         particles[p].pressure_location +
+                                           particles[p].position);
 
       if (cell->is_locally_owned())
         {
@@ -1735,9 +1773,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
-              sum_line += fe_values.JxW(qf);
+            sum_line += fe_values.JxW(qf);
 
-          sum_line=sum_line/dt;
+          sum_line = sum_line / dt;
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
           clear_line_in_matrix(cell, inside_index);
@@ -1748,8 +1786,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // cell. this is the new reference pressure inside a
           // particle
 
-            this->system_matrix.set(inside_index, inside_index, sum_line);
-            this->system_rhs(inside_index) = 0 - this->evaluation_point(inside_index) * sum_line;
+          this->system_matrix.set(inside_index, inside_index, sum_line);
+          this->system_rhs(inside_index) =
+            0 - this->evaluation_point(inside_index) * sum_line;
         }
     }
 
@@ -1766,19 +1805,23 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
             sum_line += fe_values.JxW(qf);
 
-          sum_line=sum_line/dt;
+          sum_line = sum_line / dt;
 
           // Check if the cell is cut or not by the IB
-          auto [cell_is_cut,p,local_dof_indices]=cell_cut(cell,local_dof_indices_2,support_points);
+          auto [cell_is_cut, p, local_dof_indices] =
+            cell_cut(cell, local_dof_indices_2, support_points);
 
           if (cell_is_cut)
-          {
+            {
               // If we are here, the cell is cut by the IB.
               // Loops on the dof that represents the velocity  component
               // and pressure separately
-              for (unsigned int i = 0; i < local_dof_indices.size(); ++i) {
-                  const unsigned int component_i = this->fe->system_to_component_index(i).first;
-                  if (component_i < dim) {
+              for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+                {
+                  const unsigned int component_i =
+                    this->fe->system_to_component_index(i).first;
+                  if (component_i < dim)
+                    {
                       // We are working on the velocity of the cell cut
                       // loops on the dof that are for vx or vy separately
                       // loops on all the dof of the cell that represent
@@ -1786,23 +1829,32 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                       // define which dof is going to be redefined
                       unsigned int global_index_overwrite =
-                              local_dof_indices[i];
+                        local_dof_indices[i];
 
                       // Clear the current line of this dof
                       clear_line_in_matrix(cell, global_index_overwrite);
 
-                      // Define the points for the IB stencil, based on the order and the particle position as well as the DOF position.
-                      // Depending on the order, the output variable "point" change definition. In the case of stencil orders 1 to 4 the variable point returns the position of the DOF directly.
-                      // In the case of high order stencil, it returns the position of the point that is on the IB.
-                      // The variable "interpolation points" return the points used to define the cell used for the stencil definition and
-                      // the locations of the points use in the stencil calculation.
+                      // Define the points for the IB stencil, based on the
+                      // order and the particle position as well as the DOF
+                      // position. Depending on the order, the output variable
+                      // "point" change definition. In the case of stencil
+                      // orders 1 to 4 the variable point returns the position
+                      // of the DOF directly. In the case of high order stencil,
+                      // it returns the position of the point that is on the IB.
+                      // The variable "interpolation points" return the points
+                      // used to define the cell used for the stencil definition
+                      // and the locations of the points use in the stencil
+                      // calculation.
 
-                      auto[point, interpolation_points]=stencil.points(order, particles[p],
-                                                                       support_points[local_dof_indices[i]]);
+                      auto [point, interpolation_points] =
+                        stencil.points(order,
+                                       particles[p],
+                                       support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
-                      auto cell_2 = find_cell_around_point_with_neighbors(cell, interpolation_points[
-                              stencil.nb_points(order) - 1]);
+                      auto cell_2 = find_cell_around_point_with_neighbors(
+                        cell,
+                        interpolation_points[stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
 
                       bool skip_stencil = false;
@@ -1811,14 +1863,17 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       bool dof_on_ib = false;
 
                       // Check if this dof is a dummy dof or directly on IB and
-                      // Check if the point used to define the cell used for the definition of the stencil ("cell_2") is on
-                      // a face between the cell that is cut ("cell") and the "cell_2".
-                      bool point_in_cell=point_inside_cell(cell,interpolation_points[
-                              stencil.nb_points(order) - 1]);
-                      if (cell_2 == cell || point_in_cell) {
+                      // Check if the point used to define the cell used for the
+                      // definition of the stencil ("cell_2") is on a face
+                      // between the cell that is cut ("cell") and the "cell_2".
+                      bool point_in_cell = point_inside_cell(
+                        cell,
+                        interpolation_points[stencil.nb_points(order) - 1]);
+                      if (cell_2 == cell || point_in_cell)
+                        {
                           // Give the DOF an approximated value. This help
-                          // with pressure shock when the DOF passe from part of the boundary
-                          // to the fluid.
+                          // with pressure shock when the DOF passe from part of
+                          // the boundary to the fluid.
                           this->system_matrix.set(global_index_overwrite,
                                                   global_index_overwrite,
                                                   sum_line);
@@ -1826,63 +1881,85 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                           // Tolerence to define a intersection of
                           // the DOF and IB
-                          if (abs((support_points[local_dof_indices[i]] - particles[p].position).norm() -
-                                  particles[p].radius) <= 1e-12 * dr) {
+                          if (abs((support_points[local_dof_indices[i]] -
+                                   particles[p].position)
+                                    .norm() -
+                                  particles[p].radius) <= 1e-12 * dr)
+                            {
                               dof_on_ib = true;
-                          }
-                      }
+                            }
+                        }
                       // Define the variable used for the
                       // extrapolation of the actual solution at the
                       // boundaries in order to define the correction
 
                       // Define the unit cell points for the points
                       // used in the stencil.
-                      std::vector<Point<dim>> unite_cell_interpolation_points(ib_coef.size());
-                      unite_cell_interpolation_points[0] = this->mapping->transform_real_to_unit_cell(cell_2, point);
-                      for (unsigned int j = 1;
-                           j < ib_coef.size();
-                           ++j) {
+                      std::vector<Point<dim>> unite_cell_interpolation_points(
+                        ib_coef.size());
+                      unite_cell_interpolation_points[0] =
+                        this->mapping->transform_real_to_unit_cell(cell_2,
+                                                                   point);
+                      for (unsigned int j = 1; j < ib_coef.size(); ++j)
+                        {
                           unite_cell_interpolation_points[j] =
-                                  this->mapping->transform_real_to_unit_cell(cell_2, interpolation_points[j - 1]);
-                      }
+                            this->mapping->transform_real_to_unit_cell(
+                              cell_2, interpolation_points[j - 1]);
+                        }
 
                       std::vector<double> local_interp_sol(ib_coef.size());
 
                       // Define the new matrix entry for this dof
-                      if (skip_stencil == false) {
+                      if (skip_stencil == false)
+                        {
                           for (unsigned int j = 0;
                                j < local_dof_indices_2.size();
-                               ++j) {
+                               ++j)
+                            {
                               const unsigned int component_j =
-                                      this->fe->system_to_component_index(j)
-                                              .first;
-                              if (component_j == component_i) {
+                                this->fe->system_to_component_index(j).first;
+                              if (component_j == component_i)
+                                {
+                                  //  Define the solution at each point used for
+                                  //  the stencil and applied the stencil for
+                                  //  the specific DOF. For stencils of order 4
+                                  //  or higher, the stencil is defined through
+                                  //  direct extrapolation of the cell. This can
+                                  //  only be done when using a structured mesh
+                                  //  as this required a mapping of a point
+                                  //  outside of a cell.
 
-                                  //  Define the solution at each point used for the stencil and applied the stencil for the specific DOF.
-                                  //  For stencils of order 4 or higher, the stencil is defined
-                                  //  through direct extrapolation of the cell. This can only be done when using a structured mesh
-                                  //  as this required a mapping of a point outside of a cell.
-
-                                  // Define the local matrix entries of this DOF based on its contribution of each of the points used in
-                                  // the stencil definition and the coefficient associated with this point.
-                                  // This loop defined the current solution at the boundary using the same stencil. This is needed to define the residual.
+                                  // Define the local matrix entries of this DOF
+                                  // based on its contribution of each of the
+                                  // points used in the stencil definition and
+                                  // the coefficient associated with this point.
+                                  // This loop defined the current solution at
+                                  // the boundary using the same stencil. This
+                                  // is needed to define the residual.
                                   double local_matrix_entry = 0;
-                                  for (unsigned int k = 0;
-                                  k < ib_coef.size();++k) {
-                                      local_matrix_entry += this->fe->shape_value(
-                                              j, unite_cell_interpolation_points[k]) * ib_coef[k];
-                                      local_interp_sol[k] += this->fe->shape_value(
-                                              j, unite_cell_interpolation_points[k]) * this->evaluation_point(local_dof_indices_2[j]);
-                                      }
+                                  for (unsigned int k = 0; k < ib_coef.size();
+                                       ++k)
+                                    {
+                                      local_matrix_entry +=
+                                        this->fe->shape_value(
+                                          j,
+                                          unite_cell_interpolation_points[k]) *
+                                        ib_coef[k];
+                                      local_interp_sol[k] +=
+                                        this->fe->shape_value(
+                                          j,
+                                          unite_cell_interpolation_points[k]) *
+                                        this->evaluation_point(
+                                          local_dof_indices_2[j]);
+                                    }
                                   // update the matrix.
                                   this->system_matrix.set(
-                                          global_index_overwrite,
-                                          local_dof_indices_2[j], local_matrix_entry *
-                                          sum_line);
-
-                              }
-                          }
-                      }
+                                    global_index_overwrite,
+                                    local_dof_indices_2[j],
+                                    local_matrix_entry * sum_line);
+                                }
+                            }
+                        }
 
                       // Define the RHS of the equation.
 
@@ -1890,89 +1967,106 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Different boundary conditions depending
                       // on the component index of the DOF and
                       // the dimension.
-                      double v_ib = stencil.ib_velocity(particles[p], support_points[local_dof_indices[i]],
-                                                           component_i);
+                      double v_ib = stencil.ib_velocity(
+                        particles[p],
+                        support_points[local_dof_indices[i]],
+                        component_i);
 
-                      for (unsigned int k = 0;k < ib_coef.size();++k) {
-                          rhs_add += -local_interp_sol[k] * ib_coef[k] * sum_line;
-                      }
+                      for (unsigned int k = 0; k < ib_coef.size(); ++k)
+                        {
+                          rhs_add +=
+                            -local_interp_sol[k] * ib_coef[k] * sum_line;
+                        }
                       this->system_rhs(global_index_overwrite) =
-                                  v_ib * sum_line + rhs_add;
+                        v_ib * sum_line + rhs_add;
 
                       if (dof_on_ib)
-                          // Dof is on the immersed boundary
-                          this->system_rhs(global_index_overwrite) =
-                                  v_ib * sum_line -
-                                  this->evaluation_point(global_index_overwrite) *
-                                  sum_line;
+                        // Dof is on the immersed boundary
+                        this->system_rhs(global_index_overwrite) =
+                          v_ib * sum_line -
+                          this->evaluation_point(global_index_overwrite) *
+                            sum_line;
 
-                      if (skip_stencil && dof_on_ib==false)
-                              // Impose the value of the dummy dof. This help
-                              // with pressure variation when the IB is
-                              // moving.
-                              this->system_rhs(global_index_overwrite) =
-                                      sum_line * v_ib - this->evaluation_point(
-                                              global_index_overwrite) *
-                                                        sum_line;
-                  }
+                      if (skip_stencil && dof_on_ib == false)
+                        // Impose the value of the dummy dof. This help
+                        // with pressure variation when the IB is
+                        // moving.
+                        this->system_rhs(global_index_overwrite) =
+                          sum_line * v_ib -
+                          this->evaluation_point(global_index_overwrite) *
+                            sum_line;
+                    }
 
 
                   if (component_i == dim)
+                    {
+                      // Applied equation on dof that have no equation
+                      // defined for them. those DOF become Dummy dof. This
+                      // is usefull for high order cells or when a dof is
+                      // only element of cells that are cut.
+                      unsigned int global_index_overwrite =
+                        local_dof_indices[i];
+                      bool dummy_dof = true;
+
+                      // To check if the pressure dof is a dummy. first check if
+                      // the matrix entry is close to 0.
+                      if (abs(this->system_matrix.el(global_index_overwrite,
+                                                     global_index_overwrite)) <=
+                          1e-16 * dr)
                         {
-                          // Applied equation on dof that have no equation
-                          // defined for them. those DOF become Dummy dof. This
-                          // is usefull for high order cells or when a dof is
-                          // only element of cells that are cut.
-                          unsigned int global_index_overwrite =
-                            local_dof_indices[i];
-                          bool dummy_dof = true;
+                          // If the matrix entry on the diagonal of this DOF is
+                          // close to zero, check if all the cells close are
+                          // cut. If it's the case, the DOF is a dummy DOF.
+                          active_neighbors_set = find_cells_around_cell(cell);
+                          for (unsigned int m = 0;
+                               m < active_neighbors_set.size();
+                               m++)
+                            {
+                              const auto &cell_3 = active_neighbors_set[m];
+                              cell_3->get_dof_indices(local_dof_indices_3);
+                              for (unsigned int o = 0;
+                                   o < local_dof_indices_3.size();
+                                   ++o)
+                                {
+                                  if (global_index_overwrite ==
+                                      local_dof_indices_3[o])
+                                    {
+                                      // cell_3 contain the same dof
+                                      // check if this cell is cut if
+                                      // it's not cut this dof must not
+                                      // be overwritten
+                                      bool cell_is_cut;
+                                      std::tie(cell_is_cut,
+                                               std::ignore,
+                                               std::ignore) =
+                                        cell_cut(cell_3,
+                                                 local_dof_indices_3,
+                                                 support_points);
 
-                          // To check if the pressure dof is a dummy. first check if the matrix entry is close to 0.
-                          if(abs(this->system_matrix.el(global_index_overwrite,
-                                                     global_index_overwrite))<=1e-16 * dr) {
-                              // If the matrix entry on the diagonal of this DOF is close to zero, check if all the cells close are cut.
-                              // If it's the case, the DOF is a dummy DOF.
-                              active_neighbors_set = find_cells_around_cell(cell);
-                              for (unsigned int m = 0; m < active_neighbors_set.size(); m++) {
-                                  const auto &cell_3 = active_neighbors_set[m];
-                                  cell_3->get_dof_indices(local_dof_indices_3);
-                                  for (unsigned int o = 0;
-                                       o < local_dof_indices_3.size();
-                                       ++o) {
-                                      if (global_index_overwrite ==
-                                          local_dof_indices_3[o]) {
-                                          // cell_3 contain the same dof
-                                          // check if this cell is cut if
-                                          // it's not cut this dof must not
-                                          // be overwritten
-                                          bool cell_is_cut;
-                                          std::tie(cell_is_cut, std::ignore, std::ignore) = cell_cut(cell_3,
-                                                                                                     local_dof_indices_3,
-                                                                                                     support_points);
+                                      if (cell_is_cut == false)
+                                        {
+                                          dummy_dof = false;
+                                          break;
+                                        }
+                                    }
+                                }
+                              if (dummy_dof == false)
+                                break;
+                            }
 
-                                          if (cell_is_cut == false) {
-                                              dummy_dof = false;
-                                              break;
-                                          }
-                                      }
-                                  }
-                                  if (dummy_dof == false)
-                                      break;
-                              }
-
-                              if (dummy_dof) {
-                                  // The DOF is dummy
-                                  this->system_matrix.set(global_index_overwrite,
-                                                          global_index_overwrite,
-                                                          sum_line);
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) = 0;
-                              }
-                          }
+                          if (dummy_dof)
+                            {
+                              // The DOF is dummy
+                              this->system_matrix.set(global_index_overwrite,
+                                                      global_index_overwrite,
+                                                      sum_line);
+                              auto &system_rhs = this->system_rhs;
+                              system_rhs(global_index_overwrite) = 0;
+                            }
                         }
                     }
                 }
-
+            }
         }
     }
 
@@ -2032,7 +2126,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   omega_vector[0] = this->simulation_parameters.velocitySource.omega_x;
   omega_vector[1] = this->simulation_parameters.velocitySource.omega_y;
   if (dim == 3)
-      omega_vector[2] = this->simulation_parameters.velocitySource.omega_z;
+    omega_vector[2] = this->simulation_parameters.velocitySource.omega_z;
 
   std::vector<double>         div_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
@@ -2105,7 +2199,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
                                                           .begin_active(),
                                                  endc = this->dof_handler.end();
-  auto & evaluation_point = this->evaluation_point;
+  auto &evaluation_point                              = this->evaluation_point;
   for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
@@ -2114,76 +2208,78 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
 
           bool cell_is_cut;
-          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices_iter,support_points);
+          std::tie(cell_is_cut, std::ignore, local_dof_indices) =
+            cell_cut(cell, local_dof_indices_iter, support_points);
 
 
           if (cell_is_cut == false)
-          {
+            {
               fe_values.reinit(cell);
 
               if (dim == 2)
-                  h = std::sqrt(4. * cell->measure() / M_PI) /
-                      this->velocity_fem_degree;
+                h = std::sqrt(4. * cell->measure() / M_PI) /
+                    this->velocity_fem_degree;
               else if (dim == 3)
-                  h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                      this->velocity_fem_degree;
+                h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
+                    this->velocity_fem_degree;
 
               local_matrix = 0;
               local_rhs    = 0;
 
               // Gather velocity (values, gradient and laplacian)
-              fe_values[velocities].get_function_values(evaluation_point,
-                                                        present_velocity_values);
+              fe_values[velocities].get_function_values(
+                evaluation_point, present_velocity_values);
               fe_values[velocities].get_function_gradients(
-                      evaluation_point, present_velocity_gradients);
+                evaluation_point, present_velocity_gradients);
               fe_values[velocities].get_function_laplacians(
-                      evaluation_point, present_velocity_laplacians);
+                evaluation_point, present_velocity_laplacians);
 
               // Gather pressure (values, gradient)
               fe_values[pressure].get_function_values(evaluation_point,
                                                       present_pressure_values);
               fe_values[pressure].get_function_gradients(
-                      evaluation_point, present_pressure_gradients);
+                evaluation_point, present_pressure_gradients);
 
               std::vector<Point<dim>> quadrature_points =
-                      fe_values.get_quadrature_points();
+                fe_values.get_quadrature_points();
 
               // Calculate forcing term if there is a forcing function
               if (l_forcing_function)
-                  l_forcing_function->vector_value_list(quadrature_points, rhs_force);
+                l_forcing_function->vector_value_list(quadrature_points,
+                                                      rhs_force);
 
               // Gather the previous time steps depending on the number of
               // stages of the time integration scheme
               if (scheme !=
                   Parameters::SimulationControl::TimeSteppingMethod::steady)
-                  fe_values[velocities].get_function_values(
-                          this->previous_solutions[0], p1_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->previous_solutions[0], p1_velocity_values);
 
               if (time_stepping_method_has_two_stages(scheme))
-                  fe_values[velocities].get_function_values(this->solution_stages[0],
-                                                            p2_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->solution_stages[0], p2_velocity_values);
 
               if (time_stepping_method_has_three_stages(scheme))
-                  fe_values[velocities].get_function_values(this->solution_stages[1],
-                                                            p3_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->solution_stages[1], p3_velocity_values);
 
               if (time_stepping_method_uses_two_previous_solutions(scheme))
-                  fe_values[velocities].get_function_values(
-                          this->previous_solutions[1], p2_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->previous_solutions[1], p2_velocity_values);
 
               if (time_stepping_method_uses_three_previous_solutions(scheme))
-                  fe_values[velocities].get_function_values(
-                          this->previous_solutions[2], p3_velocity_values);
+                fe_values[velocities].get_function_values(
+                  this->previous_solutions[2], p3_velocity_values);
 
               // Loop over the quadrature points
               for (unsigned int q = 0; q < n_q_points; ++q)
-              {
+                {
                   // Gather into local variables the relevant fields
                   const Tensor<1, dim> velocity = present_velocity_values[q];
                   const Tensor<2, dim> velocity_gradient =
-                          present_velocity_gradients[q];
+                    present_velocity_gradients[q];
                   const double present_velocity_divergence =
-                          trace(velocity_gradient);
+                    trace(velocity_gradient);
                   const Tensor<1, dim> p1_velocity = p1_velocity_values[q];
                   const Tensor<1, dim> p2_velocity = p2_velocity_values[q];
                   const Tensor<1, dim> p3_velocity = p3_velocity_values[q];
@@ -2194,7 +2290,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                   // Calculation of the magnitude of the velocity for the
                   // stabilization parameter
                   const double u_mag =
-                          std::max(velocity.norm(), 1e-12 * GLS_u_scale);
+                    std::max(velocity.norm(), 1e-12 * GLS_u_scale);
 
                   // Store JxW in local variable for faster access;
                   const double JxW = fe_values.JxW(q);
@@ -2204,17 +2300,17 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                   // is steady or unsteady. In the unsteady case it includes the
                   // value of the time-step
                   const double tau =
-                          is_steady(scheme) ?
-                          1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                                         9 * std::pow(4 * viscosity / (h * h), 2)) :
-                          1. /
-                          std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                                    9 * std::pow(4 * viscosity / (h * h), 2));
+                    is_steady(scheme) ?
+                      1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                                     9 * std::pow(4 * viscosity / (h * h), 2)) :
+                      1. / std::sqrt(std::pow(sdt, 2) +
+                                     std::pow(2. * u_mag / h, 2) +
+                                     9 * std::pow(4 * viscosity / (h * h), 2));
 
                   // Gather the shape functions, their gradient and their
                   // laplacian for the velocity and the pressure
                   for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                  {
+                    {
                       div_phi_u[k]  = fe_values[velocities].divergence(k, q);
                       grad_phi_u[k] = fe_values[velocities].gradient(k, q);
                       phi_u[k]      = fe_values[velocities].value(k, q);
@@ -2223,48 +2319,50 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                       grad_phi_p[k] = fe_values[pressure].gradient(k, q);
 
                       for (int d = 0; d < dim; ++d)
-                          laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
-                  }
+                        laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
+                    }
 
                   // Establish the force vector
                   for (int i = 0; i < dim; ++i)
-                  {
+                    {
                       const unsigned int component_i =
-                              this->fe->system_to_component_index(i).first;
+                        this->fe->system_to_component_index(i).first;
                       force[i] = rhs_force[q](component_i);
-                  }
+                    }
                   // Correct force to include the dynamic forcing term for flow
                   // control
                   force = force + beta_force;
 
                   // Calculate the strong residual for GLS stabilization
                   auto strong_residual =
-                          velocity_gradient * velocity + present_pressure_gradients[q] -
-                          viscosity * present_velocity_laplacians[q] - force;
+                    velocity_gradient * velocity +
+                    present_pressure_gradients[q] -
+                    viscosity * present_velocity_laplacians[q] - force;
 
                   if (velocity_source ==
                       Parameters::VelocitySource::VelocitySourceType::srf)
-                  {
+                    {
                       if (dim == 2)
-                      {
+                        {
                           strong_residual +=
-                                  2 * omega_z * (-1.) * cross_product_2d(velocity);
+                            2 * omega_z * (-1.) * cross_product_2d(velocity);
                           auto centrifugal =
-                                  omega_z * (-1.) *
-                                  cross_product_2d(
-                                          omega_z * (-1.) *
-                                          cross_product_2d(quadrature_points[q]));
+                            omega_z * (-1.) *
+                            cross_product_2d(
+                              omega_z * (-1.) *
+                              cross_product_2d(quadrature_points[q]));
                           strong_residual += centrifugal;
-                      }
+                        }
                       else // dim == 3
-                      {
+                        {
                           strong_residual +=
-                                  2 * cross_product_3d(omega_vector, velocity);
+                            2 * cross_product_3d(omega_vector, velocity);
                           strong_residual += cross_product_3d(
-                                  omega_vector,
-                                  cross_product_3d(omega_vector, quadrature_points[q]));
-                      }
-                  }
+                            omega_vector,
+                            cross_product_3d(omega_vector,
+                                             quadrature_points[q]));
+                        }
+                    }
 
                   /* Adjust the strong residual in cases where the scheme is
                    transient.
@@ -2274,52 +2372,52 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                    stored in the same arrays.
                    */
 
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-                      scheme == Parameters::SimulationControl::TimeSteppingMethod::
-                      steady_bdf)
-                      strong_residual += bdf_coefs[0] * velocity +
-                                         bdf_coefs[1] * p1_velocity_values[q];
+                  if (scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::bdf1 ||
+                      scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::steady_bdf)
+                    strong_residual += bdf_coefs[0] * velocity +
+                                       bdf_coefs[1] * p1_velocity_values[q];
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                      strong_residual += bdf_coefs[0] * velocity +
-                                         bdf_coefs[1] * p1_velocity +
-                                         bdf_coefs[2] * p2_velocity;
+                    strong_residual += bdf_coefs[0] * velocity +
+                                       bdf_coefs[1] * p1_velocity +
+                                       bdf_coefs[2] * p2_velocity;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                      strong_residual +=
-                              bdf_coefs[0] * velocity + bdf_coefs[1] * p1_velocity +
-                              bdf_coefs[2] * p2_velocity + bdf_coefs[3] * p3_velocity;
+                    strong_residual +=
+                      bdf_coefs[0] * velocity + bdf_coefs[1] * p1_velocity +
+                      bdf_coefs[2] * p2_velocity + bdf_coefs[3] * p3_velocity;
 
 
                   if (is_sdirk_step1(scheme))
-                      strong_residual += sdirk_coefs[0][0] * velocity +
-                                         sdirk_coefs[0][1] * p1_velocity;
+                    strong_residual += sdirk_coefs[0][0] * velocity +
+                                       sdirk_coefs[0][1] * p1_velocity;
 
                   if (is_sdirk_step2(scheme))
-                  {
+                    {
                       strong_residual += sdirk_coefs[1][0] * velocity +
                                          sdirk_coefs[1][1] * p1_velocity +
                                          sdirk_coefs[1][2] * p2_velocity;
-                  }
+                    }
 
                   if (is_sdirk_step3(scheme))
-                  {
+                    {
                       strong_residual += sdirk_coefs[2][0] * velocity +
                                          sdirk_coefs[2][1] * p1_velocity +
                                          sdirk_coefs[2][2] * p2_velocity +
                                          sdirk_coefs[2][3] * p3_velocity;
-                  }
+                    }
 
                   // Matrix assembly
                   if (assemble_matrix)
-                  {
+                    {
                       // We loop over the column first to prevent recalculation
                       // of the strong jacobian in the inner loop
                       for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                      {
+                        {
                           const auto phi_u_j      = phi_u[j];
                           const auto grad_phi_u_j = grad_phi_u[j];
                           const auto phi_p_j      = phi_p[j];
@@ -2328,27 +2426,28 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
 
                           auto strong_jac =
-                                  (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
-                                   grad_phi_p_j - viscosity * laplacian_phi_u[j]);
+                            (velocity_gradient * phi_u_j +
+                             grad_phi_u_j * velocity + grad_phi_p_j -
+                             viscosity * laplacian_phi_u[j]);
 
                           if (is_bdf(scheme))
-                              strong_jac += phi_u_j * bdf_coefs[0];
+                            strong_jac += phi_u_j * bdf_coefs[0];
                           if (is_sdirk(scheme))
-                              strong_jac += phi_u_j * sdirk_coefs[0][0];
+                            strong_jac += phi_u_j * sdirk_coefs[0][0];
 
-                          if (velocity_source ==
-                              Parameters::VelocitySource::VelocitySourceType::srf)
-                          {
+                          if (velocity_source == Parameters::VelocitySource::
+                                                   VelocitySourceType::srf)
+                            {
                               if (dim == 2)
-                                  strong_jac +=
-                                          2 * omega_z * (-1.) * cross_product_2d(phi_u_j);
+                                strong_jac += 2 * omega_z * (-1.) *
+                                              cross_product_2d(phi_u_j);
                               else if (dim == 3)
-                                  strong_jac +=
-                                          2 * cross_product_3d(omega_vector, phi_u_j);
-                          }
+                                strong_jac +=
+                                  2 * cross_product_3d(omega_vector, phi_u_j);
+                            }
 
                           for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                          {
+                            {
                               const auto phi_u_i      = phi_u[i];
                               const auto grad_phi_u_i = grad_phi_u[i];
                               const auto phi_p_i      = phi_p[i];
@@ -2356,43 +2455,45 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
 
                               local_matrix(i, j) +=
-                                      (
-                                              // Momentum terms
-                                              viscosity *
-                                              scalar_product(grad_phi_u_j, grad_phi_u_i) +
-                                              velocity_gradient * phi_u_j * phi_u_i +
-                                              grad_phi_u_j * velocity * phi_u_i -
-                                              div_phi_u[i] * phi_p_j +
-                                              // Continuity
-                                              phi_p_i * div_phi_u[j]) *
-                                      JxW;
+                                (
+                                  // Momentum terms
+                                  viscosity *
+                                    scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                                  velocity_gradient * phi_u_j * phi_u_i +
+                                  grad_phi_u_j * velocity * phi_u_i -
+                                  div_phi_u[i] * phi_p_j +
+                                  // Continuity
+                                  phi_p_i * div_phi_u[j]) *
+                                JxW;
 
                               // Mass matrix
                               if (is_bdf(scheme))
-                                  local_matrix(i, j) +=
-                                          phi_u_j * phi_u_i * bdf_coefs[0] * JxW;
+                                local_matrix(i, j) +=
+                                  phi_u_j * phi_u_i * bdf_coefs[0] * JxW;
 
                               if (is_sdirk(scheme))
-                                  local_matrix(i, j) +=
-                                          phi_u_j * phi_u_i * sdirk_coefs[0][0] * JxW;
+                                local_matrix(i, j) +=
+                                  phi_u_j * phi_u_i * sdirk_coefs[0][0] * JxW;
 
                               // PSPG GLS term
                               local_matrix(i, j) +=
-                                      tau * (strong_jac * grad_phi_p_i) * JxW;
+                                tau * (strong_jac * grad_phi_p_i) * JxW;
 
-                              if (velocity_source == Parameters::VelocitySource::
-                              VelocitySourceType::srf)
-                              {
+                              if (velocity_source ==
+                                  Parameters::VelocitySource::
+                                    VelocitySourceType::srf)
+                                {
                                   if (dim == 2)
-                                      local_matrix(i, j) +=
-                                              2 * omega_z * (-1.) *
-                                              cross_product_2d(phi_u_j) * phi_u_i * JxW;
+                                    local_matrix(i, j) +=
+                                      2 * omega_z * (-1.) *
+                                      cross_product_2d(phi_u_j) * phi_u_i * JxW;
 
                                   else if (dim == 3)
-                                      local_matrix(i, j) +=
-                                              2 * cross_product_3d(omega_vector, phi_u_j) *
-                                              phi_u_i * JxW;
-                              }
+                                    local_matrix(i, j) +=
+                                      2 *
+                                      cross_product_3d(omega_vector, phi_u_j) *
+                                      phi_u_i * JxW;
+                                }
 
 
                               // PSPG TAU term is currently disabled because it
@@ -2405,12 +2506,13 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
                               // Jacobian is currently incomplete
                               if (SUPG)
-                              {
+                                {
                                   local_matrix(i, j) +=
-                                          tau *
-                                          (strong_jac * (grad_phi_u_i * velocity) +
-                                           strong_residual * (grad_phi_u_i * phi_u_j)) *
-                                          JxW;
+                                    tau *
+                                    (strong_jac * (grad_phi_u_i * velocity) +
+                                     strong_residual *
+                                       (grad_phi_u_i * phi_u_j)) *
+                                    JxW;
 
                                   // SUPG TAU term is currently disabled because
                                   // it does not alter the matrix sufficiently
@@ -2426,14 +2528,14 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                                   //   (velocity
                                   //   *phi_u_j) *
                                   //   fe_values.JxW(q);
-                              }
-                          }
-                      }
-                  }
+                                }
+                            }
+                        }
+                    }
 
                   // Assembly of the right-hand side
                   for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                  {
+                    {
                       const auto phi_u_i      = phi_u[i];
                       const auto grad_phi_u_i = grad_phi_u[i];
                       const auto phi_p_i      = phi_p[i];
@@ -2443,130 +2545,135 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
                       // Navier-Stokes Residual
                       local_rhs(i) +=
-                              (
-                                      // Momentum
-                                      -viscosity *
-                                      scalar_product(velocity_gradient, grad_phi_u_i) -
-                                      velocity_gradient * velocity * phi_u_i +
-                                      current_pressure * div_phi_u_i + force * phi_u_i -
-                                      // Continuity
-                                      present_velocity_divergence * phi_p_i) *
-                              JxW;
+                        (
+                          // Momentum
+                          -viscosity *
+                            scalar_product(velocity_gradient, grad_phi_u_i) -
+                          velocity_gradient * velocity * phi_u_i +
+                          current_pressure * div_phi_u_i + force * phi_u_i -
+                          // Continuity
+                          present_velocity_divergence * phi_p_i) *
+                        JxW;
 
                       // Residual associated with BDF schemes
                       if (scheme == Parameters::SimulationControl::
-                      TimeSteppingMethod::bdf1 ||
+                                      TimeSteppingMethod::bdf1 ||
                           scheme == Parameters::SimulationControl::
-                          TimeSteppingMethod::steady_bdf)
-                          local_rhs(i) -=
-                                  bdf_coefs[0] * (velocity - p1_velocity) * phi_u_i * JxW;
+                                      TimeSteppingMethod::steady_bdf)
+                        local_rhs(i) -= bdf_coefs[0] *
+                                        (velocity - p1_velocity) * phi_u_i *
+                                        JxW;
 
-                      if (scheme ==
-                          Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                          local_rhs(i) -= (bdf_coefs[0] * (velocity * phi_u_i) +
-                                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
-                                           bdf_coefs[2] * (p2_velocity * phi_u_i)) *
-                                          JxW;
+                      if (scheme == Parameters::SimulationControl::
+                                      TimeSteppingMethod::bdf2)
+                        local_rhs(i) -=
+                          (bdf_coefs[0] * (velocity * phi_u_i) +
+                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
+                           bdf_coefs[2] * (p2_velocity * phi_u_i)) *
+                          JxW;
 
-                      if (scheme ==
-                          Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                          local_rhs(i) -= (bdf_coefs[0] * (velocity * phi_u_i) +
-                                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
-                                           bdf_coefs[2] * (p2_velocity * phi_u_i) +
-                                           bdf_coefs[3] * (p3_velocity * phi_u_i)) *
-                                          JxW;
+                      if (scheme == Parameters::SimulationControl::
+                                      TimeSteppingMethod::bdf3)
+                        local_rhs(i) -=
+                          (bdf_coefs[0] * (velocity * phi_u_i) +
+                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
+                           bdf_coefs[2] * (p2_velocity * phi_u_i) +
+                           bdf_coefs[3] * (p3_velocity * phi_u_i)) *
+                          JxW;
 
                       // Residuals associated with SDIRK schemes
                       if (is_sdirk_step1(scheme))
-                          local_rhs(i) -=
-                                  (sdirk_coefs[0][0] * (velocity * phi_u_i) +
-                                   sdirk_coefs[0][1] * (p1_velocity * phi_u_i)) *
-                                  JxW;
+                        local_rhs(i) -=
+                          (sdirk_coefs[0][0] * (velocity * phi_u_i) +
+                           sdirk_coefs[0][1] * (p1_velocity * phi_u_i)) *
+                          JxW;
 
                       if (is_sdirk_step2(scheme))
-                      {
+                        {
                           local_rhs(i) -=
-                                  (sdirk_coefs[1][0] * (velocity * phi_u_i) +
-                                   sdirk_coefs[1][1] * (p1_velocity * phi_u_i) +
-                                   sdirk_coefs[1][2] *
-                                   (p2_velocity_values[q] * phi_u_i)) *
-                                  JxW;
-                      }
+                            (sdirk_coefs[1][0] * (velocity * phi_u_i) +
+                             sdirk_coefs[1][1] * (p1_velocity * phi_u_i) +
+                             sdirk_coefs[1][2] *
+                               (p2_velocity_values[q] * phi_u_i)) *
+                            JxW;
+                        }
 
                       if (is_sdirk_step3(scheme))
-                      {
+                        {
                           local_rhs(i) -=
-                                  (sdirk_coefs[2][0] * (velocity * phi_u_i) +
-                                   sdirk_coefs[2][1] * (p1_velocity * phi_u_i) +
-                                   sdirk_coefs[2][2] * (p2_velocity * phi_u_i) +
-                                   sdirk_coefs[2][3] * (p3_velocity * phi_u_i)) *
-                                  JxW;
-                      }
+                            (sdirk_coefs[2][0] * (velocity * phi_u_i) +
+                             sdirk_coefs[2][1] * (p1_velocity * phi_u_i) +
+                             sdirk_coefs[2][2] * (p2_velocity * phi_u_i) +
+                             sdirk_coefs[2][3] * (p3_velocity * phi_u_i)) *
+                            JxW;
+                        }
 
                       if (velocity_source ==
                           Parameters::VelocitySource::VelocitySourceType::srf)
-                      {
+                        {
                           if (dim == 2)
-                          {
+                            {
                               local_rhs(i) += -2 * omega_z * (-1.) *
-                                              cross_product_2d(velocity) * phi_u_i *
-                                              JxW;
+                                              cross_product_2d(velocity) *
+                                              phi_u_i * JxW;
                               auto centrifugal =
-                                      omega_z * (-1.) *
-                                      cross_product_2d(
-                                              omega_z * (-1.) *
-                                              cross_product_2d(quadrature_points[q]));
+                                omega_z * (-1.) *
+                                cross_product_2d(
+                                  omega_z * (-1.) *
+                                  cross_product_2d(quadrature_points[q]));
                               local_rhs(i) += -centrifugal * phi_u_i * JxW;
-                          }
+                            }
                           else if (dim == 3)
-                          {
+                            {
                               local_rhs(i) +=
-                                      -2 * cross_product_3d(omega_vector, velocity) *
-                                      phi_u_i * JxW;
+                                -2 * cross_product_3d(omega_vector, velocity) *
+                                phi_u_i * JxW;
                               local_rhs(i) +=
-                                      -cross_product_3d(
-                                              omega_vector,
-                                              cross_product_3d(omega_vector,
-                                                               quadrature_points[q])) *
-                                      phi_u_i * JxW;
-                          }
-                      }
+                                -cross_product_3d(
+                                  omega_vector,
+                                  cross_product_3d(omega_vector,
+                                                   quadrature_points[q])) *
+                                phi_u_i * JxW;
+                            }
+                        }
 
                       // PSPG GLS term
-                      local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+                      local_rhs(i) +=
+                        -tau * (strong_residual * grad_phi_p_i) * JxW;
 
                       // SUPG GLS term
                       if (SUPG)
-                      {
+                        {
                           local_rhs(i) +=
-                                  -tau * (strong_residual * (grad_phi_u_i * velocity)) *
-                                  JxW;
-                      }
-                  }
-              }
+                            -tau *
+                            (strong_residual * (grad_phi_u_i * velocity)) * JxW;
+                        }
+                    }
+                }
 
               cell->get_dof_indices(local_dof_indices);
 
               // The non-linear solver assumes that the nonzero constraints have
               // already been applied to the solution
               const AffineConstraints<double> &constraints_used =
-                      this->zero_constraints;
+                this->zero_constraints;
               // initial_step ? nonzero_constraints : zero_constraints;
               if (assemble_matrix)
-              {
-                  constraints_used.distribute_local_to_global(local_matrix,
-                                                              local_rhs,
-                                                              local_dof_indices,
-                                                              this->system_matrix,
-                                                              this->system_rhs);
-              }
+                {
+                  constraints_used.distribute_local_to_global(
+                    local_matrix,
+                    local_rhs,
+                    local_dof_indices,
+                    this->system_matrix,
+                    this->system_rhs);
+                }
               else
-              {
+                {
                   constraints_used.distribute_local_to_global(local_rhs,
                                                               local_dof_indices,
                                                               this->system_rhs);
-              }
-          }
+                }
+            }
         }
     }
 
@@ -2581,7 +2688,6 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-
   if (this->simulation_parameters.particlesParameters.integrate_motion)
     {
       force_on_ib();
@@ -2706,12 +2812,10 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-
-
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
-        TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+      TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,

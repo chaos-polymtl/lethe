@@ -5,10 +5,11 @@
 
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
-#include <deal.II/fe/fe.h>
-#include <deal.II/fe/mapping.h>
+
 #include <deal.II/dofs/dof_handler.h>
 
+#include <deal.II/fe/fe.h>
+#include <deal.II/fe/mapping.h>
 #include <deal.II/fe/mapping_manifold.h>
 #include <deal.II/fe/mapping_q1.h>
 
@@ -19,62 +20,65 @@
 
 
 #ifndef LETHE_IB_STENCILS_H
-#define LETHE_IB_STENCILS_H
+#  define LETHE_IB_STENCILS_H
 
 
 
 using namespace dealii;
 
 
-template<int dim>
-class IBStencils {
-
+template <int dim>
+class IBStencils
+{
 public:
+  /**
+  * @brief
+  Return the number of points used by the interpolation stencil excluding the
+  dof itself for a stencil of a given order.
+  *
+  * @param order, the stencil order.
+  */
+  virtual unsigned int
+  nb_points(unsigned int order);
 
-    /**
-    * @brief
-    Return the number of points used by the interpolation stencil excluding the dof itself for a stencil of a given order.
-    *
-    * @param order, the stencil order.
-    */
-    virtual unsigned int nb_points(unsigned int order);
+  /**
+   * @brief
+   * Define the points for the IB stencil, based on the order and the particle
+   * position as well as the DOF position Depending on the order, the output
+   * variable "point" change definition. In the case of stencil orders 1 to 4
+   * the variable point returns the position of the DOF directly. In the case of
+   * high order stencil, it returns the position of the point that is on the IB.
+   * The variable "interpolation points" return the points used to define the
+   * cell used for the stencil definition and the locations of the points use in
+   * the stencil calculation.
+   *
+   * @param order, the stencil order.
+   * @param p, the IB particle that cuts the cell.
+   * @param dof_point, the support point of the DOF.
+   */
+  virtual std::tuple<Point<dim>, std::vector<Point<dim>>>
+  points(unsigned int order, IBParticle<dim> p, Point<dim> dof_point);
 
-    /**
-    * @brief
-     * Define the points for the IB stencil, based on the order and the particle position as well as the DOF position
-     * Depending on the order, the output variable "point" change definition. In the case of stencil orders 1 to 4 the variable point returns the position of the DOF directly.
-     * In the case of high order stencil, it returns the position of the point that is on the IB.
-     * The variable "interpolation points" return the points used to define the cell used for the stencil definition and
-     * the locations of the points use in the stencil calculation.
-    *
-    * @param order, the stencil order.
-    * @param p, the IB particle that cuts the cell.
-    * @param dof_point, the support point of the DOF.
-    */
-    virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(unsigned int order,IBParticle<dim> p,Point<dim> dof_point);
+  /**
+   * @brief
+   * Return the coefficient of the stencil. based on the order.
+   *
+   * @param order, the stencil order.
+   */
+  virtual std::vector<double>
+  coefficients(unsigned int order);
 
-    /**
-    * @brief
-     * Return the coefficient of the stencil. based on the order.
-    *
-    * @param order, the stencil order.
-    */
-    virtual std::vector<double> coefficients(unsigned int order);
-
-    /**
-    * @brief
-     * Return the velocity of the IB used in the RHS of the equation
-    *
-    * @param p, the IB particule that cut the cell.
-    * @param dof_point, the support point of the DOF.
-    * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
-    */
-    virtual double ib_velocity(IBParticle<dim> p,Point<dim> dof_point,unsigned int component);
-
-
-
-
+  /**
+   * @brief
+   * Return the velocity of the IB used in the RHS of the equation
+   *
+   * @param p, the IB particule that cut the cell.
+   * @param dof_point, the support point of the DOF.
+   * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
+   */
+  virtual double
+  ib_velocity(IBParticle<dim> p, Point<dim> dof_point, unsigned int component);
 };
 
 
-#endif //LETHE_IB_STENCILS_H
+#endif // LETHE_IB_STENCILS_H
