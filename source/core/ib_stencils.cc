@@ -58,7 +58,6 @@ IBStencils<dim>::coefficients(unsigned int order)
         coef[0] = 1;
     }
 
-
     return coef;
 }
 
@@ -148,90 +147,49 @@ double
 IBStencils<dim>::ib_velocity(IBParticle<dim> p,Point<dim> dof_point,unsigned int component) {
     // Return the value of the IB condition for that specific stencil.
     double v_ib=0;
+
+    Tensor<1, 3, double> radius;
     if (dim == 2) {
+
+        // have to do that conversion as there is no proper conversion from tensor of dim 2 to 3.
+        radius[0]=p.radius *((dof_point -p.position) /(dof_point -p.position).norm())[0];
+        radius[1]=p.radius *((dof_point -p.position) /(dof_point -p.position).norm())[1];
+        radius[2]=0;
+        Tensor<1, 3> v_rot=cross_product_3d(p.omega, radius);
         if (component == 0) {
             //vx in 2D
-            v_ib = -p.omega[2] *
-                 p.radius *
-                 ((dof_point -
-                  p.position) /
-                 (dof_point -
-                  p.position)
-                         .norm())[1] +
+            v_ib = v_rot[0] +
                     p.velocity[0];
         }
         if (component == 1) {
             //vy in 2D
-            v_ib = p.omega[2] *
-                 p.radius *
-                 ((dof_point -
-                   p.position) /
-                  (dof_point -
-                   p.position)
-                          .norm())[0] +
+            v_ib = v_rot[1] +
                  p.velocity[1];
 
         }
     }
-    if (dim == 3) {
+    if (dim == 3) {;
+        radius[0]=p.radius *((dof_point -p.position) /(dof_point -p.position).norm())[0];
+        radius[1]=p.radius *((dof_point -p.position) /(dof_point -p.position).norm())[1];
+        radius[2]=p.radius *((dof_point -p.position) /(dof_point -p.position).norm())[2];
+        Tensor<1, 3> v_rot=cross_product_3d(p.omega, radius);
         if (component == 0) {
             //vx in 3D
-            v_ib = p.omega[1] *
-                 ((dof_point -
-                   p.position) /
-                  (dof_point -
-                   p.position)
-                          .norm())[2] *
-                 p.radius -
-                 p.omega[2] *
-                 ((dof_point -
-                   p.position) /
-                  (dof_point -
-                   p.position)
-                          .norm())[1] *
-                 p.radius +
+            v_ib = v_rot[0]+
                  p.velocity[0];
-
         }
         if (component == 1) {
             //vy in 3D
-            v_ib = p.omega[2] *
-                 ((dof_point -
-                   p.position) /
-                  (dof_point -
-                   p.position)
-                          .norm())[0] *
-                 p.radius -
-                 p.omega[0] *
-                 ((dof_point -
-                   p.position) /
-                  (dof_point -
-                   p.position)
-                          .norm())[2] *
-                 p.radius +
+            v_ib = v_rot[1] +
                  p.velocity[1];
 
         }
         if (component == 2) {
             //vz in 3D
-            v_ib=p.omega[0] *
-                ((dof_point -
-                  p.position) /
-                 (dof_point -
-                  p.position)
-                         .norm())[1] *
-                p.radius -
-                p.omega[1] *
-                ((dof_point-
-                  p.position) /
-                 (dof_point-
-                  p.position)
-                         .norm())[0] *
-                p.radius +
+            v_ib=v_rot[2] +
                 p.velocity[2];
 
         }
-
     }
 
     return v_ib;
