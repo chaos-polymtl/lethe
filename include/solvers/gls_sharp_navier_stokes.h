@@ -230,9 +230,10 @@ private:
     unsigned int                                          dof_index);
 
 
-  // Modified version of assemble_matrix_and_rhs to include the presence of
-  // extra steps. For more detail see the same function in the
-  // gls_navier_stokes.h solver.
+  /*Modified version of assemble_matrix_and_rhs to include the presence of
+   extra steps. For more detail see the same function in the
+   gls_navier_stokes.h solver.
+   */
   void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
