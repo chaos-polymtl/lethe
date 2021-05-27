@@ -56,8 +56,6 @@ using namespace dealii;
  * @author Toni EL Geitani, 2020
  */
 
-
-
 template <int dim>
 class GLSVANSSolver : public GLSNavierStokesSolver<dim>
 {
@@ -70,6 +68,12 @@ public:
   solve() override;
 
 private:
+  void
+  assemble_mass_matrix_diagonal(TrilinosWrappers::SparseMatrix &mass_matrix);
+
+  void
+  update_solution_and_constraints();
+
   void
   initialize_void_fraction();
 
@@ -158,14 +162,24 @@ private:
 
   TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
   TrilinosWrappers::MPI::Vector  system_rhs_void_fraction;
+  TrilinosWrappers::SparseMatrix complete_system_matrix_void_fraction;
+  TrilinosWrappers::MPI::Vector  complete_system_rhs_void_fraction;
+  TrilinosWrappers::SparseMatrix mass_matrix;
+  TrilinosWrappers::MPI::Vector  diagonal_of_mass_matrix;
+  // TrilinosWrappers::MPI::Vector  lambda;
+  IndexSet active_set;
+
+  // Vectors for drag calculation
+
+  TrilinosWrappers::SparseMatrix system_matrix_drag;
+  TrilinosWrappers::MPI::Vector  system_rhs_drag;
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   AffineConstraints<double>                          void_fraction_constraints;
 
-
-
   const bool   PSPG        = true;
   const bool   SUPG        = true;
+  const bool   DCDD        = true;
   const double GLS_u_scale = 1;
 };
 
