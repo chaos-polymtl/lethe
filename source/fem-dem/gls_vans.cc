@@ -808,36 +808,41 @@ GLSVANSSolver<dim>::assembleGLS()
               //**************************************************************************************************
               // Drag Force Calculation
               //**************************************************************************************************
-
-              // Particle's Reynolds number
-              double re = 1e-1 + cell_void_fraction *
-                                   present_velocity_values[q].norm() * 0.001 /
-                                   viscosity;
-
-              // Drag Coefficient Calculation
-              if (re < 1000)
+              if (this->simulation_parameters.void_fraction->mode ==
+                  Parameters::VoidFractionMode::dem)
                 {
-                  c_d = (24 / re) * (1 + 0.15 * pow(re, 0.687));
-                }
-              else if (re >= 1000)
-                {
-                  c_d = 0.44;
-                }
+                  // Particle's Reynolds number
+                  double re = 1e-1 + cell_void_fraction *
+                                       present_velocity_values[q].norm() *
+                                       0.001 / viscosity;
 
-              if (cell_void_fraction < 0.8)
-                {
-                  beta = (150 * pow((1 - cell_void_fraction), 2) * viscosity /
-                            (cell_void_fraction * pow(0.001, 2)) +
-                          1.75 * (1 - cell_void_fraction) *
-                            present_velocity_values[q].norm() / 0.001);
-                }
-              else if (cell_void_fraction >= 0.8)
+                  // Drag Coefficient Calculation
+                  if (re < 1000)
+                    {
+                      c_d = (24 / re) * (1 + 0.15 * pow(re, 0.687));
+                    }
+                  else if (re >= 1000)
+                    {
+                      c_d = 0.44;
+                    }
 
-                {
-                  beta = ((3.0 / 4) * c_d * present_velocity_values[q].norm() *
-                          cell_void_fraction * (1 - cell_void_fraction) *
-                          pow(cell_void_fraction, -2.65)) /
-                         0.001;
+                  if (cell_void_fraction < 0.8)
+                    {
+                      beta =
+                        (150 * pow((1 - cell_void_fraction), 2) * viscosity /
+                           (cell_void_fraction * pow(0.001, 2)) +
+                         1.75 * (1 - cell_void_fraction) *
+                           present_velocity_values[q].norm() / 0.001);
+                    }
+                  else if (cell_void_fraction >= 0.8)
+
+                    {
+                      beta =
+                        ((3.0 / 4) * c_d * present_velocity_values[q].norm() *
+                         cell_void_fraction * (1 - cell_void_fraction) *
+                         pow(cell_void_fraction, -2.65)) /
+                        0.001;
+                    }
                 }
 
               //**************************************************************************************************
