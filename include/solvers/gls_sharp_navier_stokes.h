@@ -58,8 +58,6 @@ private:
   // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
   // and Adjacent_3 needs to be renamed if possible to a clearer notation
 
-  /**
-   */
 
   /**
    * @brief
@@ -230,7 +228,8 @@ private:
     unsigned int                                          dof_index);
 
 
-  /*Modified version of assemble_matrix_and_rhs to include the presence of
+  /*
+   Modified version of assemble_matrix_and_rhs to include the presence of
    extra steps. For more detail see the same function in the
    gls_navier_stokes.h solver.
    */

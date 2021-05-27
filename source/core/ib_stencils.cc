@@ -25,26 +25,22 @@ std::vector<double>
 IBStencils<dim>::coefficients(unsigned int order)
 {
   // Initialize the coefficient vector
-  std::vector<double> coef;
+  std::vector<double> coef(order+1);
 
   // Fill the coefficient vector based on the order.
   if (order == 1)
     {
-      coef.resize(2);
       coef[0] = 9;
       coef[1] = -8;
     }
   if (order == 2)
     {
-      coef.resize(3);
       coef[0] = 153;
-      ;
       coef[1] = -288;
       coef[2] = 136;
     }
   if (order == 3)
     {
-      coef.resize(4);
       coef[0] = 2925;
       coef[1] = -8424;
       coef[2] = 8100;
@@ -52,7 +48,6 @@ IBStencils<dim>::coefficients(unsigned int order)
     }
   if (order == 4)
     {
-      coef.resize(5);
       coef[0] = 58905;
       coef[1] = -228480;
       coef[2] = 332640;
