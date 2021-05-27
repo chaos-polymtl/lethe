@@ -69,7 +69,7 @@ public:
     * @param dof_point, the support point of the DOF.
     * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
     */
-    virtual double vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int component);
+    virtual double ib_velocity(IBParticle<dim> p,Point<dim> dof_point,unsigned int component);
 
 
 
