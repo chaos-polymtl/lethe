@@ -25,52 +25,39 @@ IBStencils<dim>::coefficients(unsigned int order)
     // The coefficients of the IB stencil assume a ratio of length between the distance of
     // the farthest interpolation point and the DOF and the distance between the IB and the DOF of 1/8.
     // The coefficient order goes from the coefficient of the DOF to the coefficient of the farthest interpolation point.
+    std::vector<double> coef;
     if (order==1) {
-        std::vector<double> coef(2);
+        coef.resize(2);
         coef[0] = 9;
         coef[1] = -8;
-
-        return coef;
     }
     if (order==2) {
-        std::vector<double> coef(3);
+        coef.resize(3);
         coef[0]=153;;
         coef[1]=-288;
         coef[2]=136;
-
-        return coef;
     }
     if (order==3) {
-        std::vector<double> coef(4);
+        coef.resize(4);
         coef[0]=2925;
         coef[1]=-8424;
         coef[2]=8100;
         coef[3]=-2600;
-
-        return coef;
     }
     if (order==4) {
-        std::vector<double> coef(5);
+        coef.resize(5);
         coef[0]=58905;
         coef[1]=-228480;
         coef[2]=332640;
         coef[3]=-215424;
         coef[4]=52360;
-
-        return coef;
     }
     if (order>4) {
         // In this case the cell is directly used to find the solution at the IB position. In this case only one point is needed (the position of the point on the IB) and its coefficient is 1.
-        std::vector<double> coef(1);
+        coef.resize(1);
         coef[0] = 1;
-
-
-        return coef;
     }
 
-    std::vector<double> coef(2);
-    coef[0] = 9;
-    coef[1] = -8;
 
     return coef;
 }
@@ -80,21 +67,22 @@ std::tuple<Point<dim>,std::vector<Point<dim>>>
 IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_point)
 {
     // Create the vector of points used for the stencil based on the order of the stencil.
-    // Also return the DOF position or the position of the point on the IB depending if the cell is used directly.
+    // Also return the DOF position or the position of the point on the IB depending if the cell is used directly
+    Point<dim> point;
+    std::vector<Point < dim>> interpolation_points;
+
     if (order==1) {
+        point=dof_point;
         Tensor<1, dim, double> vect_ib = (dof_point - p.position -
                                           p.radius * (dof_point - p.position) / (dof_point - p.position).norm());
 
         Point<dim, double> interpolation_point_1(dof_point + vect_ib * 1 / 8);
 
-        std::vector<Point < dim>>interpolation_points(1);
+        interpolation_points.resize(1);
         interpolation_points[0]=interpolation_point_1;
-
-
-        return {dof_point,interpolation_points};
-
     }
     if (order==2) {
+        point=dof_point;
         Tensor<1, dim, double> vect_ib =(dof_point - p.position -p.radius *(dof_point-p.position)/(dof_point-p.position).norm());
 
 
@@ -102,13 +90,12 @@ IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_poin
 
         Point<dim, double> interpolation_point_2(dof_point+vect_ib* 1./8.);
 
-        std::vector<Point<dim>> interpolation_points(2);
+        interpolation_points.resize(2);
         interpolation_points[0]=interpolation_point_1;
         interpolation_points[1]=interpolation_point_2;
-
-        return {dof_point,interpolation_points};
     }
     if (order==3) {
+        point=dof_point;
         Tensor<1, dim, double> vect_ib =(dof_point - p.position -p.radius *(dof_point-p.position)/(dof_point-p.position).norm());
 
         Point<dim, double> interpolation_point_1(dof_point+vect_ib* 1./24.);
@@ -117,14 +104,14 @@ IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_poin
 
         Point<dim, double> interpolation_point_3(dof_point+vect_ib* 1./8.);
 
-        std::vector<Point<dim>> interpolation_points(3);
+        interpolation_points.resize(3);
         interpolation_points[0]=interpolation_point_1;
         interpolation_points[1]=interpolation_point_2;
         interpolation_points[2]=interpolation_point_3;
 
-        return {dof_point,interpolation_points};
     }
     if (order==4) {
+        point=dof_point;
         Tensor<1, dim, double> vect_ib =(dof_point - p.position -p.radius *(dof_point-p.position)/(dof_point-p.position).norm());
 
         Point<dim, double> interpolation_point_1(dof_point+vect_ib* 1./32.);
@@ -135,46 +122,30 @@ IBStencils<dim>::points(unsigned int order,IBParticle<dim> p,Point<dim> dof_poin
 
         Point<dim, double> interpolation_point_4(dof_point+vect_ib* 1./8.);
 
-        std::vector<Point<dim>> interpolation_points(4);
+        interpolation_points.resize(4);
         interpolation_points[0]=interpolation_point_1;
         interpolation_points[1]=interpolation_point_2;
         interpolation_points[2]=interpolation_point_3;
         interpolation_points[3]=interpolation_point_4;
-
-        return {dof_point,interpolation_points};
     }
     if (order>4) {
         // In this case the cell is directly used to find the solution at the IB position. In this case only one point is needed (the position of the point on the IB).
         Tensor<1, dim, double> vect_ib =(dof_point - p.position -p.radius *(dof_point-p.position)/(dof_point-p.position).norm());
 
-        Point<dim, double> ib_point(dof_point - vect_ib);
+        point=dof_point - vect_ib;
 
         Point<dim, double> interpolation_point_1(dof_point+vect_ib* 1./8.);
 
-        std::vector<Point<dim>> interpolation_points(1);
+        interpolation_points.resize(1);
         interpolation_points[0]=interpolation_point_1;
-
-        return {ib_point,interpolation_points};
     }
-
-    Tensor<1, dim, double> vect_ib = (dof_point - p.position -
-                                      p.radius * (dof_point - p.position) / (dof_point - p.position).norm());
-
-
-    Point<dim, double> ib_point(dof_point - vect_ib);
-
-    Point<dim, double> interpolation_point_1(dof_point + vect_ib * 1 / 8);
-
-    std::vector<Point < dim>>interpolation_points(1);
-    interpolation_points[0]=interpolation_point_1;
-
-    return {ib_point,interpolation_points};
+    return {point,interpolation_points};
 }
 
 
 template<int dim>
 double
-IBStencils<dim>::vitesse_ib(IBParticle<dim> p,Point<dim> dof_point,unsigned int component) {
+IBStencils<dim>::ib_velocity(IBParticle<dim> p,Point<dim> dof_point,unsigned int component) {
     // Return the value of the IB condition for that specific stencil.
     double v_ib=0;
     if (dim == 2) {
