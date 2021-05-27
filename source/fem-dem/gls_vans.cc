@@ -19,13 +19,13 @@ GLSVANSSolver<dim>::~GLSVANSSolver()
   void_fraction_dof_handler.clear();
 }
 
+
 template <int dim>
 void
 GLSVANSSolver<dim>::setup_dofs()
 {
   GLSNavierStokesSolver<dim>::setup_dofs();
   void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
-
   const IndexSet locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
   IndexSet locally_relevant_dofs_voidfraction;
@@ -39,6 +39,8 @@ GLSVANSSolver<dim>::setup_dofs()
   DoFTools::make_hanging_node_constraints(void_fraction_dof_handler,
                                           void_fraction_constraints);
   void_fraction_constraints.close();
+
+
 
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
@@ -66,15 +68,40 @@ GLSVANSSolver<dim>::setup_dofs()
     this->mpi_communicator,
     locally_relevant_dofs_voidfraction);
 
+
   system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
                                      locally_owned_dofs_voidfraction,
                                      dsp,
                                      this->mpi_communicator);
 
+  complete_system_matrix_void_fraction.reinit(locally_owned_dofs_voidfraction,
+                                              locally_owned_dofs_voidfraction,
+                                              dsp,
+                                              this->mpi_communicator);
+
 
   system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
                                   this->mpi_communicator);
+
+  complete_system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
+                                           this->mpi_communicator);
+
+  // lambda.reinit(locally_owned_dofs_voidfraction, this->mpi_communicator);
+
+  active_set.set_size(void_fraction_dof_handler.n_dofs());
+
+  mass_matrix.reinit(locally_owned_dofs_voidfraction,
+                     locally_owned_dofs_voidfraction,
+                     dsp,
+                     this->mpi_communicator);
+
+  assemble_mass_matrix_diagonal(mass_matrix);
+
+  diagonal_of_mass_matrix.reinit(locally_owned_dofs_voidfraction);
+  for (unsigned int j = 0; j < nodal_void_fraction_relevant.size(); j++)
+    diagonal_of_mass_matrix(j) = mass_matrix.diag_element(j);
 }
+
 
 template <int dim>
 void
@@ -180,6 +207,103 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
     {
       assemble_L2_projection_void_fraction();
       solve_L2_system_void_fraction();
+      // update_solution_and_constraints();
+    }
+}
+
+template <int dim>
+void
+GLSVANSSolver<dim>::assemble_mass_matrix_diagonal(
+  TrilinosWrappers::SparseMatrix &mass_matrix)
+{
+  Assert(fe_void_fraction.degree == 1, ExcNotImplemented());
+  // const QTrapez<dim> quadrature_formula;
+  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
+  FEValues<dim>      fe_void_fraction_values(fe_void_fraction,
+                                        quadrature_formula,
+                                        update_values | update_JxW_values);
+  const unsigned int dofs_per_cell = fe_void_fraction.dofs_per_cell;
+  const unsigned int n_qpoints     = quadrature_formula.size();
+  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          fe_void_fraction_values.reinit(cell);
+          cell_matrix = 0;
+          for (unsigned int q = 0; q < n_qpoints; ++q)
+            for (unsigned int i = 0; i < dofs_per_cell; ++i)
+              cell_matrix(i, i) += (fe_void_fraction_values.shape_value(i, q) *
+                                    fe_void_fraction_values.shape_value(i, q) *
+                                    fe_void_fraction_values.JxW(q));
+          cell->get_dof_indices(local_dof_indices);
+          void_fraction_constraints.distribute_local_to_global(
+            cell_matrix, local_dof_indices, mass_matrix);
+        }
+    }
+}
+
+template <int dim>
+void
+GLSVANSSolver<dim>::update_solution_and_constraints()
+{
+  const double penalty_parameter = 100;
+
+  TrilinosWrappers::MPI::Vector lambda(
+    complete_index_set(void_fraction_dof_handler.n_dofs()));
+
+  complete_system_matrix_void_fraction.residual(
+    lambda, nodal_void_fraction_relevant, complete_system_rhs_void_fraction);
+
+  void_fraction_constraints.clear();
+  active_set.clear();
+  std::vector<bool> dof_touched(void_fraction_dof_handler.n_dofs(), false);
+
+  for (const auto &cell : void_fraction_dof_handler.active_cell_iterators())
+    {
+      if (cell->is_locally_owned())
+        {
+          for (unsigned int v = 0; v < GeometryInfo<dim>::vertices_per_cell;
+               ++v)
+            {
+              Assert(void_fraction_dof_handler.get_fe().dofs_per_cell ==
+                       GeometryInfo<dim>::vertices_per_cell,
+                     ExcNotImplemented());
+              const unsigned int dof_index = cell->vertex_dof_index(v, 0);
+              if (dof_touched[dof_index] == false)
+                dof_touched[dof_index] = true;
+              else
+                continue;
+              const double solution_value =
+                nodal_void_fraction_relevant(dof_index);
+              if (lambda(dof_index) + penalty_parameter *
+                                        diagonal_of_mass_matrix(dof_index) *
+                                        (solution_value - 1) >
+                  0)
+                {
+                  active_set.add_index(dof_index);
+                  void_fraction_constraints.add_line(dof_index);
+                  void_fraction_constraints.set_inhomogeneity(dof_index, 1);
+                  nodal_void_fraction_relevant(dof_index) = 1;
+                  lambda(dof_index)                       = 0;
+                }
+              else if (lambda(dof_index) +
+                         penalty_parameter *
+                           diagonal_of_mass_matrix(dof_index) *
+                           (solution_value - 0.38) <
+                       0)
+                {
+                  active_set.add_index(dof_index);
+                  void_fraction_constraints.add_line(dof_index);
+                  void_fraction_constraints.set_inhomogeneity(dof_index, 0.38);
+                  nodal_void_fraction_relevant(dof_index) = 0.38;
+                  lambda(dof_index)                       = 0;
+                }
+            }
+
+          void_fraction_constraints.close();
+        }
     }
 }
 
@@ -276,8 +400,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 {
   // Solve the L2 projection system
   const double linear_solver_tolerance = 1e-15;
-  // std::max(relative_residual * system_rhs_void_fraction.l2_norm(),
-  //         absolute_residual);
 
   if (this->simulation_parameters.linear_solver.verbosity !=
       Parameters::Verbosity::quiet)
@@ -338,7 +460,6 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
 }
 
 
-
 // Do an iteration with the NavierStokes Solver
 // Handles the fact that we may or may not be at a first
 // iteration with the solver and sets the initial conditions
@@ -368,6 +489,8 @@ GLSVANSSolver<dim>::first_iteration()
         this->simulation_control->get_current_time() + time_step;
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
+
+
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->percolate_time_vectors_fd();
@@ -384,6 +507,7 @@ GLSVANSSolver<dim>::first_iteration()
       intermediate_time += time_step;
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
+
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
@@ -407,6 +531,7 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
+
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->percolate_time_vectors_fd();
@@ -420,6 +545,7 @@ GLSVANSSolver<dim>::first_iteration()
       intermediate_time += time_step;
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
+
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
@@ -437,6 +563,7 @@ GLSVANSSolver<dim>::first_iteration()
       this->forcing_function->set_time(intermediate_time);
       calculate_void_fraction(intermediate_time);
 
+
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
@@ -451,6 +578,10 @@ void
 GLSVANSSolver<dim>::iterate()
 {
   calculate_void_fraction(this->simulation_control->get_current_time());
+
+  // assemble_L2_projection_drag();
+  // solve_L2_system_drag();
+
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
   PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
@@ -507,17 +638,14 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<double>         present_void_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_void_fraction_gradients(n_q_points);
 
+  // Data storage vector for drag
+  std::vector<double> momentum_coefficient(n_q_points);
+
   Tensor<1, dim> force;
-  //----------------------------------
-  // Variables for drag calculation
-  //----------------------------------
-  double         reference_area;
-  double         re;
-  double         c_d;
-  Tensor<1, dim> particle_velocity;
-  Tensor<1, dim> relative_velocity;
-  Tensor<1, dim> velocity;
-  Tensor<1, dim> p_velocity;
+
+  // Interphase Momentum transfer coefficent
+  double beta = 0;
+  double c_d  = 0;
 
   // Velocity dependent source term
   //----------------------------------
@@ -538,6 +666,9 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<2, dim>> grad_phi_u(dofs_per_cell);
   std::vector<double>         phi_p(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_p(dofs_per_cell);
+
+  // Shape Function tensor for drag calculation
+  std::vector<Tensor<1, dim>> shape_function(dofs_per_cell);
 
   // Values at previous time step for transient schemes
   std::vector<Tensor<1, dim>> p1_velocity_values(n_q_points);
@@ -658,11 +789,59 @@ GLSVANSSolver<dim>::assembleGLS()
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m3, p3_void_fraction_values);
             }
+          double     particles_volume_in_cell = 0;
+          const auto pic = particle_handler.particles_in_cell(cell);
+          for (auto &particle : pic)
+            {
+              auto particle_properties = particle.get_properties();
+              particles_volume_in_cell +=
+                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                (2 * dim);
+            }
 
 
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
+              double cell_void_fraction = present_void_fraction_values[q];
+
+              //**************************************************************************************************
+              // Drag Force Calculation
+              //**************************************************************************************************
+
+              // Particle's Reynolds number
+              double re = 1e-1 + cell_void_fraction *
+                                   present_velocity_values[q].norm() * 0.001 /
+                                   viscosity;
+
+              // Drag Coefficient Calculation
+              if (re < 1000)
+                {
+                  c_d = (24 / re) * (1 + 0.15 * pow(re, 0.687));
+                }
+              else if (re >= 1000)
+                {
+                  c_d = 0.44;
+                }
+
+              if (cell_void_fraction < 0.8)
+                {
+                  beta = (150 * pow((1 - cell_void_fraction), 2) * viscosity /
+                            (cell_void_fraction * pow(0.001, 2)) +
+                          1.75 * (1 - cell_void_fraction) *
+                            present_velocity_values[q].norm() / 0.001);
+                }
+              else if (cell_void_fraction >= 0.8)
+
+                {
+                  beta = ((3.0 / 4) * c_d * present_velocity_values[q].norm() *
+                          cell_void_fraction * (1 - cell_void_fraction) *
+                          pow(cell_void_fraction, -2.65)) /
+                         0.001;
+                }
+
+              //**************************************************************************************************
+
               // Calculation of the magnitude of the velocity for the
               // stabilization parameter
               const double u_mag = std::max(present_velocity_values[q].norm(),
@@ -675,7 +854,7 @@ GLSVANSSolver<dim>::assembleGLS()
               // stabilization parameter used is different if the simulation
               // is steady or unsteady. In the unsteady case it includes the
               // value of the time-step
-              const double tau =
+              double tau =
                 scheme ==
                     Parameters::SimulationControl::TimeSteppingMethod::steady ?
                   1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
@@ -684,9 +863,17 @@ GLSVANSSolver<dim>::assembleGLS()
                     std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                               9 * std::pow(4 * viscosity / (h * h), 2));
 
+              // Calcukation of the shock capturing viscosity term
+              double vdcdd =
+                (h / (2 * 1)) *
+                pow(present_velocity_gradients[q].norm() * h / (1),
+                    this->simulation_parameters.fem_parameters.velocity_order) *
+                pow((1 / 0.4), 2);
+
               // Gather the shape functions, their gradient and their
               // laplacian for the velocity and the pressure
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
+
                 {
                   div_phi_u[k]  = fe_values[velocities].divergence(k, q);
                   grad_phi_u[k] = fe_values[velocities].gradient(k, q);
@@ -720,6 +907,7 @@ GLSVANSSolver<dim>::assembleGLS()
                   present_void_fraction_values[q]
                 // Mass source term
                 + mass_source * present_velocity_values[q] +
+                beta * present_velocity_values[q] +
                 present_pressure_gradients[q] -
                 viscosity * present_velocity_laplacians[q] -
                 force * present_void_fraction_values[q];
@@ -750,10 +938,13 @@ GLSVANSSolver<dim>::assembleGLS()
                     }
                 }
 
+              if (DCDD)
+                strong_residual += -vdcdd * present_velocity_laplacians[q];
+
               /* Adjust the strong residual in cases where the scheme is
                transient.
-               The BDF schemes require values at previous time steps which are
-               stored in the p1, p2 and p3 vectors.
+               The BDF schemes require values at previous time steps which
+               are stored in the p1, p2 and p3 vectors.
                */
 
               if (scheme ==
@@ -784,8 +975,8 @@ GLSVANSSolver<dim>::assembleGLS()
               // Matrix assembly
               if (assemble_matrix)
                 {
-                  // We loop over the column first to prevent recalculation of
-                  // the strong jacobian in the inner loop
+                  // We loop over the column first to prevent recalculation
+                  // of the strong jacobian in the inner loop
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
                       auto strong_jac =
@@ -794,8 +985,8 @@ GLSVANSSolver<dim>::assembleGLS()
                          grad_phi_u[j] * present_velocity_values[q] *
                            present_void_fraction_values[q]
                          // Mass source term
-                         + mass_source * phi_u[j] + grad_phi_p[j] -
-                         viscosity * laplacian_phi_u[j]);
+                         + mass_source * phi_u[j] + beta * phi_u[j] +
+                         grad_phi_p[j] - viscosity * laplacian_phi_u[j]);
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
@@ -811,6 +1002,8 @@ GLSVANSSolver<dim>::assembleGLS()
                             strong_jac +=
                               2 * cross_product_3d(omega_vector, phi_u[j]);
                         }
+                      if (DCDD)
+                        strong_jac += -vdcdd * laplacian_phi_u[j];
 
                       for (unsigned int i = 0; i < dofs_per_cell; ++i)
                         {
@@ -829,6 +1022,8 @@ GLSVANSSolver<dim>::assembleGLS()
                               + mass_source * phi_u[j] * phi_u[i]
                               // Pressure
                               - (div_phi_u[i] * phi_p[j]) +
+                              // Drag force
+                              beta * phi_u[j] * phi_u[i] +
                               // Continuity
                               phi_p[i] *
                                 ((present_void_fraction_values[q] *
@@ -896,6 +1091,14 @@ GLSVANSSolver<dim>::assembleGLS()
                               //   * phi_u[j]) *
                               //   fe_values.JxW(q);
                             }
+
+                          if (DCDD)
+                            {
+                              local_matrix(i, j) +=
+                                vdcdd *
+                                scalar_product(grad_phi_u[j], grad_phi_u[i]) *
+                                JxW;
+                            }
                         }
                     }
                 }
@@ -918,6 +1121,8 @@ GLSVANSSolver<dim>::assembleGLS()
                       // Pressure and force
                       + present_pressure_values[q] * div_phi_u[i] +
                       force * present_void_fraction_values[q] * phi_u[i] -
+                      // Drag force
+                      beta * present_velocity_values[q] * phi_u[i] -
                       // Continuity
                       (present_velocity_divergence *
                          present_void_fraction_values[q] +
@@ -1027,124 +1232,13 @@ GLSVANSSolver<dim>::assembleGLS()
                          (grad_phi_u[i] * present_velocity_values[q])) *
                         JxW;
                     }
-                }
-            }
-        }
-      //***********************************************************************
-      // Addition of particle dependent forces (drag)
-      //***********************************************************************
 
-      if (cell->is_locally_owned())
-        {
-          if (this->simulation_parameters.void_fraction->mode ==
-              Parameters::VoidFractionMode::dem)
-            {
-              fe_values.reinit(cell);
-
-              const double density_inv =
-                1. / this->simulation_parameters.physical_properties.density;
-
-              if (dim == 2)
-                h = std::sqrt(4. * cell->measure() / M_PI) /
-                    this->velocity_fem_degree;
-              else if (dim == 3)
-                h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                    this->velocity_fem_degree;
-
-              const auto &dh_cell =
-                typename DoFHandler<dim>::cell_iterator(*cell,
-                                                        &this->dof_handler);
-              dh_cell->get_dof_indices(local_dof_indices);
-
-              // Loop over particles in cell
-              // Begin and end iterator for particles in cell
-              const auto pic = particle_handler.particles_in_cell(cell);
-              for (auto &particle : pic)
-                {
-                  auto particle_properties = particle.get_properties();
-
-                  // Reference location of the particle
-                  const auto &reference_location =
-                    particle.get_reference_location();
-
-                  velocity   = 0;
-                  p_velocity = 0;
-
-                  // Reference area for drag coefficient calculation
-                  reference_area =
-                    M_PI *
-                    pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4;
-
-                  // Store the values of particle velocity in a
-                  // tensor
-
-                  particle_velocity[0] =
-                    particle_properties[DEM::PropertiesIndex::v_x];
-                  particle_velocity[1] =
-                    particle_properties[DEM::PropertiesIndex::v_y];
-                  if (dim == 3)
-                    particle_velocity[2] =
-                      particle_properties[DEM::PropertiesIndex::v_z];
-
-
-                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                    {
-                      const auto comp_k =
-                        this->fe->system_to_component_index(k).first;
-                      if (comp_k < dim)
-                        {
-                          auto &evaluation_point = this->evaluation_point;
-
-                          velocity[comp_k] +=
-                            evaluation_point[local_dof_indices[k]] *
-                            this->fe->shape_value(k, reference_location);
-                        }
-                    }
-
-                  relative_velocity = velocity - particle_velocity;
-
-                  // Particle's Reynolds number
-                  re = 1e-1 + relative_velocity.norm() *
-                                particle_properties[DEM::PropertiesIndex::dp] /
-                                viscosity;
-
-                  // Drag Coefficient (Modified form valied for Re_p
-                  // < 200,000)
-                  c_d = 24 / re + 0.44;
-
-                  // We loop over the column first to prevent
-                  // recalculation of the strong jacobian in the
-                  // inner loop
-                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                    {
-                      const auto comp_i =
-                        this->fe->system_to_component_index(i).first;
-                      if (comp_i < dim)
-                        {
-                          for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                            {
-                              const auto comp_j =
-                                this->fe->system_to_component_index(j).first;
-                              if (comp_i == comp_j)
-                                local_matrix(i, j) +=
-                                  0.5 * c_d * reference_area *
-                                  relative_velocity.norm() *
-                                  this->fe->shape_value(i, reference_location) *
-                                  this->fe->shape_value(j, reference_location);
-                            }
-
-                          local_rhs(i) -=
-                            0.5 * c_d * reference_area *
-                            relative_velocity.norm() *
-                            (velocity[comp_i] - p_velocity[comp_i]) *
-                            this->fe->shape_value(i, reference_location);
-                        }
-                    }
-                  // std::cout
-                  //   << -0.5 * c_d * reference_area * relative_velocity.norm()
-                  //   *
-                  //        (velocity - p_velocity)
-                  //   << std::endl;
+                  if (DCDD)
+                    local_rhs(i) +=
+                      -vdcdd *
+                      scalar_product(present_velocity_gradients[q],
+                                     grad_phi_u[i]) *
+                      JxW;
                 }
             }
 
@@ -1175,6 +1269,8 @@ GLSVANSSolver<dim>::assembleGLS()
     this->system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
 }
+
+
 
 template <int dim>
 void
@@ -1378,8 +1474,8 @@ GLSVANSSolver<dim>::solve()
   this->finish_simulation();
 }
 
-// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library
-// is valid before we actually compile the solver This greatly helps with
-// debugging
+// Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the
+// library is valid before we actually compile the solver This greatly
+// helps with debugging
 template class GLSVANSSolver<2>;
 template class GLSVANSSolver<3>;
