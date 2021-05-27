@@ -77,7 +77,7 @@ public:
    * @brief
    * Return the velocity of the IB used in the RHS of the equation
    *
-   * @param p, the IB particule that cut the cell.
+   * @param p, the IB particle that cuts the cell.
    * @param dof_point, the support point of the DOF.
    * @param component, the stencil component of the dof (vx=0,vy=1,vz=2).
    */
