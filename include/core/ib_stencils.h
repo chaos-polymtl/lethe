@@ -33,7 +33,7 @@ public:
 
     /**
     * @brief
-    Return the number of point use in the interpolation excluding the dof itself base on the order of the stencil.
+    Return the number of points used by the interpolation stencil excluding the dof itself for a stencil of a given order.
     *
     * @param order, the stencil order.
     */
