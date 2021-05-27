@@ -13,7 +13,7 @@ IBStencils<dim>::nb_points(unsigned int order)
   // The number of points used in the stencil excluding the DOF is equal to the
   // order.
   unsigned int nb_points = order;
-  // In the case where the cell is used directly a=to to find the solution at
+  // In the case where the cell is used directly to to find the solution at
   // the IB only one point is needed.
   if (order > 4)
     nb_points = 1;
