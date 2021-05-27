@@ -187,7 +187,7 @@ private:
     * @brief
     Return a bool that describes  if a cell contains a specific point
     *
-    * @param cell , The initial cell. We want to check if the point is inside.
+    * @param cell , The initial cell for which we want to check if the point is inside.
     *
     * @param point, The point that we wish to check
     */
