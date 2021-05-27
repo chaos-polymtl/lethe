@@ -1890,7 +1890,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Different boundary conditions depending
                       // on the component index of the DOF and
                       // the dimension.
-                      double v_ib = stencil.vitesse_ib(particles[p], support_points[local_dof_indices[i]],
+                      double v_ib = stencil.ib_velocity(particles[p], support_points[local_dof_indices[i]],
                                                            component_i);
 
                       for (unsigned int k = 0;k < ib_coef.size();++k) {
