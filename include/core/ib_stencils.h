@@ -19,8 +19,8 @@
 #include <core/ib_particle.h>
 
 
-#ifndef LETHE_IB_STENCILS_H
-#  define LETHE_IB_STENCILS_H
+#ifndef lethe_ib_stencils_h
+#  define lethe_ib_stencils_h
 
 
 
