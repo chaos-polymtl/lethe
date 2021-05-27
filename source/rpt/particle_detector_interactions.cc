@@ -157,11 +157,126 @@ ParticleDetectorInteractions<dim>::calculate_detector_path_length()
     }
 }
 
+template <int dim>
+std::vector<double>
+ParticleDetectorInteractions<dim>::solve_t(
+  Tensor<2, dim> e_inverse,
+  Tensor<1, dim> detector_particle_origin,
+  Tensor<1, dim> particle_position_rotation)
+{
+  double R = fixed_parameters.reactor_radius;
+
+  // Function value when evaluate with t (circle equation)
+  auto F = [&](double t) {
+    Tensor<1, dim> line_equations(
+      {particle_position_rotation[0] + t * std::sin(theta) * std::cos(alpha),
+       particle_position_rotation[1] + t * std::sin(theta) * std::sin(alpha),
+       particle_position_rotation[2] + t * std::cos(M_PI - theta)});
+
+    return std::pow((e_inverse * (line_equations) +
+                     detector_particle_origin)[0],
+                    2) +
+           std::pow((e_inverse * (line_equations) +
+                     detector_particle_origin)[1],
+                    2) -
+           std::pow(R, 2);
+  };
+
+  // Numerical derivative of the function value when evaluate with t
+  auto dF = [&](double t) {
+    double dt = 0.0001;
+
+    return (F(t + dt) - F(t - dt)) / (2 * dt);
+  };
+
+  // Values for solving (positive/negative)
+  std::vector<double> t0 = {-1, 1};
+  double              tolerance, dt0, max_iteration;
+  tolerance     = 1e-6;
+  max_iteration = 1000;
+  dt0           = 1;
+
+  // Newton method
+  unsigned int        i;
+  double              t, dtn;
+  std::vector<double> t_solutions(t0.size(), 0);
+
+  for (unsigned int n = 0; n < t0.size(); n++)
+    {
+      i   = 0;
+      dtn = dt0;
+      t   = t0[n];
+
+      while (std::abs(dtn) > tolerance && i < max_iteration)
+        {
+          dtn = -F(t) / dF(t);
+          t += dtn;
+          i++;
+        }
+
+      t_solutions[n] = t;
+    }
+
+  return t_solutions;
+}
 
 template <int dim>
 void
 ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
-{}
+{
+  Tensor<1, dim> h_vector, detector_particle_origin,
+    particle_position_translation, particle_position_rotation;
+  Point<dim> intersection_position;
+
+  // Calculate translated particle position (eq 59 - 63)
+  h_vector                      = h * detector_orientation_z;
+  detector_particle_origin      = particle_position - h_vector;
+  particle_position_translation = particle_position - detector_particle_origin;
+
+  // Calculate rotated particle position (eq 64)
+  Tensor<1, dim, Tensor<1, dim>> detector_orientation_vector(
+    {detector_orientation_x, detector_orientation_y, detector_orientation_z});
+  Tensor<2, dim> detector_orientation_matrix(detector_orientation_vector);
+  particle_position_rotation =
+    detector_orientation_matrix * particle_position_translation;
+
+  // Find t value of the parametric equation, evaluate and determinate the
+  // intersection point closer to the detector
+  std::vector<double> t = solve_t(invert(detector_orientation_matrix),
+                                  detector_particle_origin,
+                                  particle_position_rotation);
+
+
+  std::vector<Point<dim>>     intersection_point(t.size());
+  std::vector<Tensor<1, dim>> intersection_detector_distance_vector(t.size());
+  std::vector<double>         intersection_detector_distance(t.size());
+
+  for (unsigned int i = 0; i < t.size(); i++)
+    {
+      Tensor<1, dim> line_equations(
+        {particle_position_rotation[0] +
+           t[i] * std::sin(theta) * std::cos(alpha),
+         particle_position_rotation[1] +
+           t[i] * std::sin(theta) * std::sin(alpha),
+         particle_position_rotation[2] + t[i] * std::cos(M_PI - theta)});
+
+      intersection_point[i] =
+        detector_particle_origin +
+        invert(detector_orientation_matrix) * line_equations;
+
+      intersection_detector_distance_vector[i] =
+        detector_face_position - intersection_point[i];
+      intersection_detector_distance[i] =
+        std::abs(intersection_detector_distance_vector[i].norm());
+    }
+
+  if (intersection_detector_distance[0] < intersection_detector_distance[1])
+    reactor_path_length =
+      std::abs((particle_position - intersection_point[0]).norm());
+  else
+    reactor_path_length =
+      std::abs((particle_position - intersection_point[1]).norm());
+}
 
 template <int dim>
 void
@@ -176,34 +291,61 @@ ParticleDetectorInteractions<dim>::calculate_detector_interaction_probability()
 template <int dim>
 void
 ParticleDetectorInteractions<dim>::calculate_non_interaction_probability()
-{}
+{
+  calculate_reactor_path_length();
+
+  double mu_a = initial_parameters.attenuation_coefficient_reactor;
+  non_interaction_probability = std::exp(-mu_a * reactor_path_length);
+}
 
 template <int dim>
 void
 ParticleDetectorInteractions<dim>::calculate_efficiency()
-{}
+{
+  unsigned int iteration_number = fixed_parameters.iteration_number;
+
+  for (unsigned int i = 0; i < iteration_number; i++)
+    {
+      // Generate random values for Monte Carlo
+      srand(time(NULL));
+      double n_alpha = (double)rand() / RAND_MAX;
+      double n_theta = (double)rand() / RAND_MAX;
+
+      // Calculate all parameters and distances for efficiency
+      calculate_position_parameters();
+      calculate_solid_angle(n_alpha, n_theta);
+      calculate_detector_path_length();
+      calculate_detector_interaction_probability();
+      calculate_reactor_path_length();
+      calculate_non_interaction_probability();
+
+      efficiency += weighting_factor_alpha * weighting_factor_theta *
+                    detector_interaction_probability *
+                    non_interaction_probability;
+    }
+
+  efficiency /= iteration_number;
+}
 
 template <int dim>
 double
 ParticleDetectorInteractions<dim>::calculate_count()
 {
-  // Loop for Monte Carlo here
+  double T, nu, R, phi, tau, count;
 
-  // Generate random values for Monte Carlo
-  srand(time(NULL));
-  double n_alpha = (double)rand() / RAND_MAX;
-  double n_theta = (double)rand() / RAND_MAX;
+  T   = fixed_parameters.sampling_time;
+  nu  = initial_parameters.gamma_rays_emitted;
+  R   = initial_parameters.activity;
+  phi = fixed_parameters.peak_to_total_ratio;
+  tau = initial_parameters.dead_time;
 
-  double n_alpha_test = 0.75;
-  double n_theta_test = 0.75;
+  calculate_efficiency();
 
+  // Calculate count for a particle position and one detector
+  count =
+    (T * nu * R * phi * efficiency) / (1 + tau * nu * R * phi * efficiency);
 
-  calculate_position_parameters();
-  calculate_solid_angle(n_alpha_test, n_theta_test);
-  calculate_detector_interaction_probability();
-
-  double dummy = 0;
-  return dummy;
+  return count;
 }
 
 

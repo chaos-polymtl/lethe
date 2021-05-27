@@ -34,41 +34,26 @@ template <int dim>
 void
 RPT<dim>::calculate()
 {
-  /*
-  Point<dim> pt_1;
-  pt_1[0] = 1.;
-  pt_1[1] = 0.;
-  pt_1[2] = 3.;
-
-  Point<dim> pt_2;
-  pt_2[0] = 1.;
-  pt_2[1] = 0.;
-  pt_2[2] = 1.;
-
-  std::cout << "Point 1 is : " << pt_1 << std::endl;
-  std::cout << "Point 2 is : " << pt_2 << std::endl;
-  std::cout << "Distance between two points : " << pt_1.distance(pt_2)
-            << std::endl;
-  std::cout << "Vector from 1 to 2 : " << pt_2 - pt_1 << std::endl;
-
-
-  Tensor<1, dim> v_1({1, 0, 0});
-  Tensor<1, dim> v_2({0, 1, 0});
-
-  std::cout << " v_1 : " << v_1 << " v_2 : " << v_2 << std::endl;
-
-  std::cout << " cross-product : " << cross_product_3d(v_1, v_2) << std::endl;
-  */
-
   assign_particle_positions();
   assign_detector_positions();
 
-
-  ParticleDetectorInteractions<dim> count_test(particle_positions[0],
-                                               detector_positions[0],
-                                               rpt_parameters);
-  count = count_test;
-  count.calculate_count();
+  for (unsigned int i_particle = 0; i_particle < particle_positions.size();
+       i_particle++)
+    {
+      for (unsigned int i_detector = 0; i_detector < detector_positions.size();
+           i_detector++)
+        {
+          ParticleDetectorInteractions<dim> count_test(
+            particle_positions[i_particle],
+            detector_positions[i_detector],
+            rpt_parameters);
+          count = count_test;
+          count.calculate_count();
+          std::cout << "Count for particle position " << i_particle
+                    << " and detector " << i_detector << " : "
+                    << count.calculate_count() << std::endl;
+        }
+    }
 }
 
 template <int dim>

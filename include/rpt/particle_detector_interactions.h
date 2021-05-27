@@ -54,8 +54,12 @@ private:
   void
   calculate_efficiency();
 
-  unsigned int                     iteration_number;
-  double                           efficency;
+  std::vector<double>
+  solve_t(Tensor<2, dim> e_inverse,
+          Tensor<1, dim> detector_particle_origin,
+          Tensor<1, dim> particle_position_rotation);
+
+  double                           efficiency = 0;
   double                           alpha;
   double                           theta;
   double                           theta_cri;
