@@ -48,7 +48,7 @@ public:
      * the locations of the points use in the stencil calculation.
     *
     * @param order, the stencil order.
-    * @param p, the IB particule that cut the cell.
+    * @param p, the IB particle that cuts the cell.
     * @param dof_point, the support point of the DOF.
     */
     virtual std::tuple<Point<dim>,std::vector<Point<dim>>> points(unsigned int order,IBParticle<dim> p,Point<dim> dof_point);
