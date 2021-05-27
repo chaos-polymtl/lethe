@@ -61,7 +61,12 @@ public:
 
   /**
    * @brief
-   * Return the coefficient of the stencil. based on the order.
+   * Return the coefficient of the stencil based on the order.
+   * The coefficients of the IB stencil assume a ratio of length between the
+   * distance of the farthest interpolation point and the DOF and the distance
+   * between the IB and the DOF of 1/8. The coefficient order goes from the
+   * coefficient of the DOF to the coefficient of the farthest interpolation
+   * point.
    *
    * @param order, the stencil order.
    */
