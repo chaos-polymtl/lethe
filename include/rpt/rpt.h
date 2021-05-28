@@ -54,7 +54,7 @@ private:
   RPTCalculatingParameters rpt_parameters;
 
   std::vector<RadioParticle<dim>> particle_positions;
-  std::vector<Detector<dim>>      detector_positions;
+  std::vector<Detector<dim>>      detectors;
 
   ParticleDetectorInteractions<dim> count;
 };

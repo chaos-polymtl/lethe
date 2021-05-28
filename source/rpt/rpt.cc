@@ -40,12 +40,12 @@ RPT<dim>::calculate()
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();
        i_particle++)
     {
-      for (unsigned int i_detector = 0; i_detector < detector_positions.size();
+      for (unsigned int i_detector = 0; i_detector < detectors.size();
            i_detector++)
         {
           ParticleDetectorInteractions<dim> count_test(
             particle_positions[i_particle],
-            detector_positions[i_detector],
+            detectors[i_detector],
             rpt_parameters);
           count = count_test;
           count.calculate_count();
@@ -114,7 +114,7 @@ RPT<dim>::assign_detector_positions()
                              i,
                              face_point,
                              middle_point);
-      detector_positions.push_back(detector);
+      detectors.push_back(detector);
     }
 }
 

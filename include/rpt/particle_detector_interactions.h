@@ -59,7 +59,7 @@ private:
           Tensor<1, dim> detector_particle_origin,
           Tensor<1, dim> particle_position_rotation);
 
-  double                           efficiency = 0;
+  double                           efficiency;
   double                           alpha;
   double                           theta;
   double                           theta_cri;

@@ -46,6 +46,12 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
   double r = detector_radius;
   double l = detector_length;
 
+  // Calculate relevant distances prior other calculations
+  OB_distance = rho * std::cos(alpha) -
+                std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
+  OA_distance = rho * std::cos(alpha) +
+                std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
+
   // Case 1 or 2: S1 or S2 (Tracer views the detector from both top and/or
   // lateral side of the detector)
   if (rho > detector_radius)
@@ -55,14 +61,6 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
       alpha_max              = std::asin(r / rho);
       alpha                  = alpha_max * (2 * n_alpha - 1);
       weighting_factor_alpha = alpha_max / M_PI;
-
-      // Calculate relevant distances prior other calculations
-      OB_distance =
-        rho * std::cos(alpha) -
-        std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
-      OA_distance =
-        rho * std::cos(alpha) +
-        std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
 
       if (h > 0) // Case 1 : S1 (h > 0)
         {
@@ -167,7 +165,7 @@ ParticleDetectorInteractions<dim>::solve_t(
   double R = fixed_parameters.reactor_radius;
 
   // Function value when evaluate with t (circle equation)
-  auto F = [&](double t) {
+  auto F = [=](double t) {
     Tensor<1, dim> line_equations(
       {particle_position_rotation[0] + t * std::sin(theta) * std::cos(alpha),
        particle_position_rotation[1] + t * std::sin(theta) * std::sin(alpha),
@@ -183,7 +181,7 @@ ParticleDetectorInteractions<dim>::solve_t(
   };
 
   // Numerical derivative of the function value when evaluate with t
-  auto dF = [&](double t) {
+  auto dF = [=](double t) {
     double dt = 0.0001;
 
     return (F(t + dt) - F(t - dt)) / (2 * dt);
@@ -212,6 +210,9 @@ ParticleDetectorInteractions<dim>::solve_t(
           dtn = -F(t) / dF(t);
           t += dtn;
           i++;
+
+          if (i == max_iteration - 1)
+            std::cout << "Solving t didn't work" << std::endl;
         }
 
       t_solutions[n] = t;
@@ -304,10 +305,13 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
 {
   unsigned int iteration_number = fixed_parameters.iteration_number;
 
+  // Initialize efficiency and randomness
+  efficiency = 0;
+  srand(time(NULL));
+
   for (unsigned int i = 0; i < iteration_number; i++)
     {
       // Generate random values for Monte Carlo
-      srand(time(NULL));
       double n_alpha = (double)rand() / RAND_MAX;
       double n_theta = (double)rand() / RAND_MAX;
 
