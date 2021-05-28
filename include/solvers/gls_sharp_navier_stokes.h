@@ -21,7 +21,7 @@
 #define LETHE_GLSSHARPNS_H
 
 #include <core/ib_particle.h>
-#include <core/ib_stencils.h>
+#include <core/ib_stencil.h>
 #include <solvers/gls_navier_stokes.h>
 
 using namespace dealii;

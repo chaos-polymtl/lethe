@@ -28,7 +28,7 @@ using namespace dealii;
 
 
 template <int dim>
-class IBStencils
+class IBStencil
 {
 public:
   /**

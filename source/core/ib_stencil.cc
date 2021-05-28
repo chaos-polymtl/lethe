@@ -2,13 +2,13 @@
 // Created by lucka on 2021-05-21.
 //
 
-#include <core/ib_stencils.h>
+#include <core/ib_stencil.h>
 
 
 
 template <int dim>
 unsigned int
-IBStencils<dim>::nb_points(unsigned int order)
+IBStencil<dim>::nb_points(unsigned int order)
 {
   // The number of points used in the stencil excluding the DOF is equal to the
   // order.
@@ -22,7 +22,7 @@ IBStencils<dim>::nb_points(unsigned int order)
 
 template <int dim>
 std::vector<double>
-IBStencils<dim>::coefficients(unsigned int order)
+IBStencil<dim>::coefficients(unsigned int order)
 {
   // Initialize the coefficient vector
   std::vector<double> coef(order+1);
@@ -68,7 +68,7 @@ IBStencils<dim>::coefficients(unsigned int order)
 
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
-IBStencils<dim>::points(unsigned int    order,
+IBStencil<dim>::points(unsigned int    order,
                         IBParticle<dim> p,
                         Point<dim>      dof_point)
 {
@@ -167,7 +167,7 @@ IBStencils<dim>::points(unsigned int    order,
 
 template <int dim>
 double
-IBStencils<dim>::ib_velocity(IBParticle<dim> p,
+IBStencil<dim>::ib_velocity(IBParticle<dim> p,
                              Point<dim>      dof_point,
                              unsigned int    component)
 {
@@ -226,5 +226,5 @@ IBStencils<dim>::ib_velocity(IBParticle<dim> p,
   return v_ib;
 }
 
-template class IBStencils<2>;
-template class IBStencils<3>;
+template class IBStencil<2>;
+template class IBStencil<3>;
