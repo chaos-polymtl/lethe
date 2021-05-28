@@ -710,8 +710,6 @@ GLSVANSSolver<dim>::assembleGLS()
       d_p                       = particle_properties[DEM::PropertiesIndex::dp];
     }
 
-  std::cout << d_p << std::endl;
-
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
