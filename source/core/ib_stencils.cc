@@ -198,7 +198,7 @@ IBStencils<dim>::ib_velocity(IBParticle<dim> p,
     }
   if (dim == 3)
     {
-      ;
+      
       radius[0]          = p.radius * ((dof_point - p.position) /
                               (dof_point - p.position).norm())[0];
       radius[1]          = p.radius * ((dof_point - p.position) /
