@@ -217,7 +217,6 @@ GLSVANSSolver<dim>::assemble_mass_matrix_diagonal(
   TrilinosWrappers::SparseMatrix &mass_matrix)
 {
   Assert(fe_void_fraction.degree == 1, ExcNotImplemented());
-  // const QTrapez<dim> quadrature_formula;
   QGauss<dim>        quadrature_formula(this->number_quadrature_points);
   FEValues<dim>      fe_void_fraction_values(fe_void_fraction,
                                         quadrature_formula,
@@ -578,10 +577,6 @@ void
 GLSVANSSolver<dim>::iterate()
 {
   calculate_void_fraction(this->simulation_control->get_current_time());
-
-  // assemble_L2_projection_drag();
-  // solve_L2_system_drag();
-
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
   PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
@@ -707,6 +702,16 @@ GLSVANSSolver<dim>::assembleGLS()
   // Element size
   double h;
 
+  // Diameter of particle
+  double d_p = 0;
+  for (auto &particle : particle_handler)
+    {
+      auto &particle_properties = particle.get_properties();
+      d_p                       = particle_properties[DEM::PropertiesIndex::dp];
+    }
+
+  std::cout << d_p << std::endl;
+
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -789,16 +794,6 @@ GLSVANSSolver<dim>::assembleGLS()
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m3, p3_void_fraction_values);
             }
-          double     particles_volume_in_cell = 0;
-          const auto pic = particle_handler.particles_in_cell(cell);
-          for (auto &particle : pic)
-            {
-              auto particle_properties = particle.get_properties();
-              particles_volume_in_cell +=
-                M_PI * pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
-                (2 * dim);
-            }
-
 
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
@@ -813,8 +808,8 @@ GLSVANSSolver<dim>::assembleGLS()
                 {
                   // Particle's Reynolds number
                   double re = 1e-1 + cell_void_fraction *
-                                       present_velocity_values[q].norm() *
-                                       0.001 / viscosity;
+                                       present_velocity_values[q].norm() * d_p /
+                                       viscosity;
 
                   // Drag Coefficient Calculation
                   if (re < 1000)
@@ -828,11 +823,10 @@ GLSVANSSolver<dim>::assembleGLS()
 
                   if (cell_void_fraction < 0.8)
                     {
-                      beta =
-                        (150 * pow((1 - cell_void_fraction), 2) * viscosity /
-                           (cell_void_fraction * pow(0.001, 2)) +
-                         1.75 * (1 - cell_void_fraction) *
-                           present_velocity_values[q].norm() / 0.001);
+                      beta = (150 * pow((1 - cell_void_fraction), 2) *
+                                viscosity / (cell_void_fraction * pow(d_p, 2)) +
+                              1.75 * (1 - cell_void_fraction) *
+                                present_velocity_values[q].norm() / d_p);
                     }
                   else if (cell_void_fraction >= 0.8)
 
@@ -841,7 +835,7 @@ GLSVANSSolver<dim>::assembleGLS()
                         ((3.0 / 4) * c_d * present_velocity_values[q].norm() *
                          cell_void_fraction * (1 - cell_void_fraction) *
                          pow(cell_void_fraction, -2.65)) /
-                        0.001;
+                        d_p;
                     }
                 }
 
@@ -859,7 +853,7 @@ GLSVANSSolver<dim>::assembleGLS()
               // stabilization parameter used is different if the simulation
               // is steady or unsteady. In the unsteady case it includes the
               // value of the time-step
-              double tau =
+              const double tau =
                 scheme ==
                     Parameters::SimulationControl::TimeSteppingMethod::steady ?
                   1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
@@ -869,7 +863,7 @@ GLSVANSSolver<dim>::assembleGLS()
                               9 * std::pow(4 * viscosity / (h * h), 2));
 
               // Calcukation of the shock capturing viscosity term
-              double vdcdd =
+              const double vdcdd =
                 (h / (2 * 1)) *
                 pow(present_velocity_gradients[q].norm() * h / (1),
                     this->simulation_parameters.fem_parameters.velocity_order) *
