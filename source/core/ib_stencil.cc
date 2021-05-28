@@ -25,7 +25,7 @@ std::vector<double>
 IBStencil<dim>::coefficients(unsigned int order)
 {
   // Initialize the coefficient vector
-  std::vector<double> coef(order+1);
+  std::vector<double> coef(order + 1);
 
   // Fill the coefficient vector based on the order.
   if (order == 1)
@@ -69,8 +69,8 @@ IBStencil<dim>::coefficients(unsigned int order)
 template <int dim>
 std::tuple<Point<dim>, std::vector<Point<dim>>>
 IBStencil<dim>::points(unsigned int    order,
-                        IBParticle<dim> p,
-                        Point<dim>      dof_point)
+                       IBParticle<dim> p,
+                       Point<dim>      dof_point)
 {
   // Create the vector of points used for the stencil based on the order of the
   // stencil. Also return the DOF position or the position of the point on the
@@ -168,8 +168,8 @@ IBStencil<dim>::points(unsigned int    order,
 template <int dim>
 double
 IBStencil<dim>::ib_velocity(IBParticle<dim> p,
-                             Point<dim>      dof_point,
-                             unsigned int    component)
+                            Point<dim>      dof_point,
+                            unsigned int    component)
 {
   // Return the value of the IB condition for that specific stencil.
   double v_ib = 0;
@@ -179,11 +179,11 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> p,
     {
       // have to do that conversion as there is no proper conversion from tensor
       // of dim 2 to 3.
-      radial_vector[0]          = p.radius * ((dof_point - p.position) /
-                              (dof_point - p.position).norm())[0];
-      radial_vector[1]          = p.radius * ((dof_point - p.position) /
-                              (dof_point - p.position).norm())[1];
-      radial_vector[2]          = 0;
+      radial_vector[0]   = p.radius * ((dof_point - p.position) /
+                                     (dof_point - p.position).norm())[0];
+      radial_vector[1]   = p.radius * ((dof_point - p.position) /
+                                     (dof_point - p.position).norm())[1];
+      radial_vector[2]   = 0;
       Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
@@ -198,13 +198,12 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> p,
     }
   if (dim == 3)
     {
-
-      radial_vector[0]          = p.radius * ((dof_point - p.position) /
-                              (dof_point - p.position).norm())[0];
-      radial_vector[1]          = p.radius * ((dof_point - p.position) /
-                              (dof_point - p.position).norm())[1];
-      radial_vector[2]          = p.radius * ((dof_point - p.position) /
-                              (dof_point - p.position).norm())[2];
+      radial_vector[0]   = p.radius * ((dof_point - p.position) /
+                                     (dof_point - p.position).norm())[0];
+      radial_vector[1]   = p.radius * ((dof_point - p.position) /
+                                     (dof_point - p.position).norm())[1];
+      radial_vector[2]   = p.radius * ((dof_point - p.position) /
+                                     (dof_point - p.position).norm())[2];
       Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {

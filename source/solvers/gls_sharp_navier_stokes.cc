@@ -1728,7 +1728,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
 
 
-  IBStencil<dim>     stencil;
+  IBStencil<dim>      stencil;
   std::vector<double> ib_coef = stencil.coefficients(order);
 
   unsigned int n_q_points = q_formula.size();
