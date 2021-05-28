@@ -174,17 +174,17 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> p,
   // Return the value of the IB condition for that specific stencil.
   double v_ib = 0;
 
-  Tensor<1, 3, double> radius;
+  Tensor<1, 3, double> radial_vector;
   if (dim == 2)
     {
       // have to do that conversion as there is no proper conversion from tensor
       // of dim 2 to 3.
-      radius[0]          = p.radius * ((dof_point - p.position) /
+      radial_vector[0]          = p.radius * ((dof_point - p.position) /
                               (dof_point - p.position).norm())[0];
-      radius[1]          = p.radius * ((dof_point - p.position) /
+      radial_vector[1]          = p.radius * ((dof_point - p.position) /
                               (dof_point - p.position).norm())[1];
-      radius[2]          = 0;
-      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radius);
+      radial_vector[2]          = 0;
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
           // vx in 2D
@@ -198,14 +198,14 @@ IBStencil<dim>::ib_velocity(IBParticle<dim> p,
     }
   if (dim == 3)
     {
-      
-      radius[0]          = p.radius * ((dof_point - p.position) /
+
+      radial_vector[0]          = p.radius * ((dof_point - p.position) /
                               (dof_point - p.position).norm())[0];
-      radius[1]          = p.radius * ((dof_point - p.position) /
+      radial_vector[1]          = p.radius * ((dof_point - p.position) /
                               (dof_point - p.position).norm())[1];
-      radius[2]          = p.radius * ((dof_point - p.position) /
+      radial_vector[2]          = p.radius * ((dof_point - p.position) /
                               (dof_point - p.position).norm())[2];
-      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radius);
+      Tensor<1, 3> v_rot = cross_product_3d(p.omega, radial_vector);
       if (component == 0)
         {
           // vx in 3D

@@ -1053,7 +1053,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     surf_normal.norm() * particles[p].radius;
                       // nb_eval+=1;
                     }
-                  //}
                 }
             }
           double t_torque_x =
