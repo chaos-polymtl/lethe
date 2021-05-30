@@ -1029,6 +1029,13 @@ GLSVANSSolver<dim>::assembleGLS()
                                   present_void_fraction_gradients[q]))) *
                             JxW;
 
+                          // Grad-div stabilization - Bruno test
+                          local_matrix(i, j) +=
+
+                            (div_phi_u[j] * present_void_fraction_values[q] +
+                             phi_u[j] * present_void_fraction_gradients[q]) *
+                            div_phi_u[i] * JxW;
+
                           // Mass matrix
                           if (is_bdf(scheme))
                             local_matrix(i, j) +=
@@ -1128,6 +1135,13 @@ GLSVANSSolver<dim>::assembleGLS()
                        mass_source) *
                         phi_p[i]) *
                     JxW;
+
+                  // Grad-div stabilization
+                  local_rhs(i) -= (present_void_fraction_values[q] *
+                                     present_velocity_divergence +
+                                   present_velocity_values[q] *
+                                     present_void_fraction_gradients[q]) *
+                                  div_phi_u[i] * JxW;
 
                   // Residual associated with BDF schemes
                   if (scheme == Parameters::SimulationControl::
