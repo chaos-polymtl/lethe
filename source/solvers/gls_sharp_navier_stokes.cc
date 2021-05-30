@@ -41,25 +41,26 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
-    // Find all the cells around each vertices
-    TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
-    vertices_to_cell.clear();
-    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  // Find all the cells around each vertices
+  TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+  vertices_to_cell.clear();
+  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
 
-    // // Loop on all the cells and find their vertices to fill the map of sets of cells around each vertex
-    for (const auto &cell : cell_iterator)
+  // // Loop on all the cells and find their vertices to fill the map of sets of
+  // cells around each vertex
+  for (const auto &cell : cell_iterator)
     {
-        if (cell->is_locally_owned() || cell->is_ghost())
+      if (cell->is_locally_owned() || cell->is_ghost())
         {
-            const unsigned int vertices_per_cell =
-                    GeometryInfo<dim>::vertices_per_cell;
-            for (unsigned int i = 0; i < vertices_per_cell; i++)
+          const unsigned int vertices_per_cell =
+            GeometryInfo<dim>::vertices_per_cell;
+          for (unsigned int i = 0; i < vertices_per_cell; i++)
             {
-                // First obtain vertex index
-                unsigned int v_index = cell->vertex_index(i);
+              // First obtain vertex index
+              unsigned int v_index = cell->vertex_index(i);
 
-                // Insert the cell into the set of cell around that vertex.
-                vertices_to_cell[v_index].insert(cell);
+              // Insert the cell into the set of cell around that vertex.
+              vertices_to_cell[v_index].insert(cell);
             }
         }
     }
@@ -67,83 +68,124 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
-GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                                                                       Point<dim>             point)
+GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  Point<dim>                                            point)
 {
-    //Find the cell around a point based on an initial cell.
+  // Find the cell around a point based on an initial cell.
 
-    //Find the cells around the initial cell ( cells that share a vertex with the original cell).
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
-    //Loop over that group of cells
-    for (unsigned int i = 0; i < active_neighbors_set.size(); ++i){
-                try
-                {
-                    const Point<dim, double> p_cell =
-                            this->mapping->transform_real_to_unit_cell(active_neighbors_set[i], point);
-                    const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-                    // if the cell contains the point, the distance is equal to 0
-                    if (dist == 0)
-                    {
-                        // The cell is found so we return it and exit the function.
-
-                        return active_neighbors_set[i];
-                    }
-                }
-                catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-                {}
+  // Find the cells around the initial cell ( cells that share a vertex with the
+  // original cell).
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    active_neighbors_set = find_cells_around_cell(cell);
+  // Loop over that group of cells
+  for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
+    {
+      bool inside_cell = point_inside_cell(active_neighbors_set[i], point);
+      if (inside_cell)
+        {
+          return active_neighbors_set[i];
+        }
     }
-    // The cell is not found near the initial cell so we use the cell tree algorithm instead (much slower).
-    std::cout << "Cell not found around " << point << std::endl;
-    return find_cell_around_point_with_tree(this->dof_handler,point);
-
+  // The cell is not found near the initial cell so we use the cell tree
+  // algorithm instead (much slower).
+  std::cout << "Cell not found around " << point << std::endl;
+  return find_cell_around_point_with_tree(this->dof_handler, point);
 }
 
+template <int dim>
+bool
+GLSSharpNavierStokesSolver<dim>::point_inside_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  Point<dim>                                            point)
+{
+  try
+    {
+      const Point<dim, double> p_cell =
+        this->mapping->transform_real_to_unit_cell(cell, point);
+      const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
+      // if the cell contains the point, the distance is equal to 0
+      if (dist == 0)
+        {
+          // The cell is found so we return it and exit the function.
+
+          return true;
+        }
+    }
+  catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
+    {}
+  return false;
+}
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(const typename DoFHandler<dim>::active_cell_iterator &cell)
+GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(
+  const typename DoFHandler<dim>::active_cell_iterator &cell)
 {
-    // Find all the cells that share a vertex with a reference cell including the initial cell.
-    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
-    // Loop over the vertices of the initial cell and find all the cells around each vertex and add them to the set of cells around the reference cell.
-    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
+  // Find all the cells that share a vertex with a reference cell including the
+  // initial cell.
+  std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+  // Loop over the vertices of the initial cell and find all the cells around
+  // each vertex and add them to the set of cells around the reference cell.
+  for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
     {
-        unsigned int v_index=cell->vertex_index(i);
-        neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),this->vertices_to_cell[v_index].end());
+      unsigned int v_index = cell->vertex_index(i);
+      neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),
+                             this->vertices_to_cell[v_index].end());
     }
-    // Transform the set into a vector.
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_sharing_vertices(neighbors_cells.begin(),neighbors_cells.end());
-    return cells_sharing_vertices;
+  // Transform the set into a vector.
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
+  return cells_sharing_vertices;
 }
 
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(const typename DoFHandler<dim>::active_cell_iterator &cell, unsigned int dof_index){
-    // Clear a line in the matrix based on an initial cell that contains the DOF.
-    // This function ensure that if the dof is a ghost all the entry of the matrix will be erased.
+GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  unsigned int                                          dof_index)
+{
+  // Clear a line in the matrix based on an initial cell that contains the DOF.
+  // This function ensure that if the dof is a ghost all the entry of the matrix
+  // will be erased.
 
 
-    // if the dof is locally owned we can use the default function of deal ii for matrix (most of the time this is ok)
-    if (this->locally_owned_dofs.is_element(dof_index)){
-        this->system_matrix.clear_row(dof_index);
+  // if the dof is locally owned we can use the default function of deal ii for
+  // matrix (most of the time this is ok)
+  if (this->locally_owned_dofs.is_element(dof_index))
+    {
+      this->system_matrix.clear_row(dof_index);
     }
-    else{
-        // This DOf is special, it's at a frontier between two processors. Only one of the processors owns it. If we have reached this point, we are not on that processor.
-        // In this case  the clear_row function doesn't clear the entire row it only clear DOFs that are owned by the row. This is an issue.
-        // To fix that we force all DOFs contain in ghost cells to be put to 0.
-        std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors_set = find_cells_around_cell(cell);
+  else
+    {
+      // This DOf is special, it's at a frontier between two processors. Only
+      // one of the processors owns it. If we have reached this point, we are
+      // not on that processor. In this case  the clear_row function doesn't
+      // clear the entire row it only clear DOFs that are owned by the row. This
+      // is an issue. To fix that we force all DOFs contain in ghost cells to be
+      // put to 0.
+      std::vector<typename DoFHandler<dim>::active_cell_iterator>
+        active_neighbors_set = find_cells_around_cell(cell);
 
-        const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-        std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
-        // Loop over the neighbours cells and erase the entry of the matrix that could be linked to neighbours ghost cells.
-        for (unsigned int i = 0; i < active_neighbors_set.size(); ++i) {
-            const auto &cell_3 = active_neighbors_set[i];
-            cell_3->get_dof_indices(local_dof_indices_iter);
-            if (std::find(local_dof_indices_iter.begin(), local_dof_indices_iter.end(), dof_index) !=
-            local_dof_indices_iter.end()) {
-                for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k) {
-                    this->system_matrix.set(dof_index, local_dof_indices_iter[k], 0);
+      const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+      std::vector<types::global_dof_index> local_dof_indices_iter(
+        dofs_per_cell);
+      // Loop over the neighbours cells and erase the entry of the matrix that
+      // could be linked to neighbours ghost cells.
+      for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
+        {
+          const auto &cell_3 = active_neighbors_set[i];
+          cell_3->get_dof_indices(local_dof_indices_iter);
+          if (std::find(local_dof_indices_iter.begin(),
+                        local_dof_indices_iter.end(),
+                        dof_index) != local_dof_indices_iter.end())
+            {
+              for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k)
+                {
+                  this->system_matrix.set(dof_index,
+                                          local_dof_indices_iter[k],
+                                          0);
                 }
             }
         }
@@ -440,14 +482,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                   // Used support function of the cell to define the
                   // interpolation of the velocity
                   Point<dim> second_point_v =
-                          this->mapping->transform_real_to_unit_cell(cell_2,
-                                                             second_point);
+                    this->mapping->transform_real_to_unit_cell(cell_2,
+                                                               second_point);
                   Point<dim> third_point_v =
-                          this->mapping->transform_real_to_unit_cell(cell_3,
-                                                             third_point);
+                    this->mapping->transform_real_to_unit_cell(cell_3,
+                                                               third_point);
                   Point<dim> fourth_point_v =
-                          this->mapping->transform_real_to_unit_cell(cell_4,
-                                                             fourth_point);
+                    this->mapping->transform_real_to_unit_cell(cell_4,
+                                                               fourth_point);
 
                   // Initialize the component of the velocity
                   u_2[0] = 0;
@@ -823,14 +865,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                       // Used support function of the cell to define the
                       // interpolation of the velocity
                       Point<dim> second_point_v =
-                              this->mapping->transform_real_to_unit_cell(cell_2,
-                                                                 second_point);
+                        this->mapping->transform_real_to_unit_cell(
+                          cell_2, second_point);
                       Point<dim> third_point_v =
-                              this->mapping->transform_real_to_unit_cell(cell_3,
-                                                                 third_point);
+                        this->mapping->transform_real_to_unit_cell(cell_3,
+                                                                   third_point);
                       Point<dim> fourth_point_v =
-                              this->mapping->transform_real_to_unit_cell(cell_4,
-                                                                 fourth_point);
+                        this->mapping->transform_real_to_unit_cell(
+                          cell_4, fourth_point);
 
 
                       cell_3->get_dof_indices(local_dof_indices_2);
@@ -1011,7 +1053,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     surf_normal.norm() * particles[p].radius;
                       // nb_eval+=1;
                     }
-                  //}
                 }
             }
           double t_torque_x =
@@ -1169,9 +1210,10 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices,support_points);
+          std::tie(cell_is_cut, std::ignore, local_dof_indices) =
+            cell_cut(cell, local_dof_indices, support_points);
 
-          if (cell_is_cut==false)
+          if (cell_is_cut == false)
             {
               auto &evaluation_point = this->evaluation_point;
               auto &present_solution = this->present_solution;
@@ -1611,35 +1653,42 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 
 
 template <int dim>
-std::tuple<bool,unsigned int,std::vector<types::global_dof_index> >
-GLSSharpNavierStokesSolver<dim>::cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell, std::vector<types::global_dof_index> &local_dof_indices ,std::map<types::global_dof_index, Point<dim>> &support_points)
+std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+GLSSharpNavierStokesSolver<dim>::cell_cut(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  std::vector<types::global_dof_index> &                local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>> &       support_points)
 {
-// Check if a cell is cut and if it's rerun the particle by which it's cut and the local DOFs index.
-// The check is done by counting the number of DOFs that is on either side of the boundary define by a particle.
+  // Check if a cell is cut and if it's rerun the particle by which it's cut and
+  // the local DOFs index. The check is done by counting the number of DOFs that
+  // is on either side of the boundary define by a particle.
 
-    cell->get_dof_indices(local_dof_indices);
+  cell->get_dof_indices(local_dof_indices);
 
-    for (unsigned int p = 0; p < particles.size(); ++p)
+  for (unsigned int p = 0; p < particles.size(); ++p)
     {
-        unsigned int nb_dof_inside = 0;
-        for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+      unsigned int nb_dof_inside = 0;
+      for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
-            // Count the number of DOFs that are inside
-            // of the particles. If all the DOfs are on one side
-            // the cell is not cut by the boundary.
-            if ((support_points[local_dof_indices[j]] - particles[p].position)
-                        .norm() <= particles[p].radius)
-                ++nb_dof_inside;
+          // Count the number of DOFs that are inside
+          // of the particles. If all the DOfs are on one side
+          // the cell is not cut by the boundary.
+          if ((support_points[local_dof_indices[j]] - particles[p].position)
+                .norm() <= particles[p].radius)
+            ++nb_dof_inside;
         }
-        if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size()){
-            //Some of the DOFs are inside the boundary, some are outside.
-            // This mean that the cell is cut so we return that information and the index of the particle that cut the cell
-            // as well as the container containing local DOF of the cell.
-            return {true,p,local_dof_indices};
+      if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size())
+        {
+          // Some of the DOFs are inside the boundary, some are outside.
+          // This mean that the cell is cut so we return that information and
+          // the index of the particle that cut the cell as well as the
+          // container containing local DOF of the cell.
+          return {true, p, local_dof_indices};
         }
     }
-    return {false,0,local_dof_indices};
+  return {false, 0, local_dof_indices};
 }
+
 
 
 template <int dim>
@@ -1673,9 +1722,14 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   FEValues<dim>      fe_values(*this->fe,
                           q_formula,
                           update_quadrature_points | update_JxW_values);
-  const unsigned int dofs_per_cell   = this->fe->dofs_per_cell;
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+
+  int order = this->simulation_parameters.particlesParameters.order;
 
 
+
+  IBStencil<dim>      stencil;
+  std::vector<double> ib_coef = stencil.coefficients(order);
 
   unsigned int n_q_points = q_formula.size();
 
@@ -1694,15 +1748,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
   // Define cell iterator
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-  double dt=time_steps_vector[0];
-  if(Parameters::SimulationControl::TimeSteppingMethod::steady== this->simulation_parameters.simulation_control.method)
-      dt=1;
+  double      dt            = time_steps_vector[0];
+  if (Parameters::SimulationControl::TimeSteppingMethod::steady ==
+      this->simulation_parameters.simulation_control.method)
+    dt = 1;
+
 
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      const auto &cell =find_cell_around_point_with_tree(this->dof_handler,
-                                                 particles[p].pressure_location+particles[p].position);
+      const auto &cell =
+        find_cell_around_point_with_tree(this->dof_handler,
+                                         particles[p].pressure_location +
+                                           particles[p].position);
 
       if (cell->is_locally_owned())
         {
@@ -1714,24 +1772,26 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           // Define the order of magnitude for the stencil.
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
-              sum_line += fe_values.JxW(qf);
+            sum_line += fe_values.JxW(qf);
 
-          sum_line=sum_line/dt;
+          sum_line = sum_line / dt;
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
           clear_line_in_matrix(cell, inside_index);
-          // this->system_matrix.clear_row(inside_index) is not reliable on edge case
+          // this->system_matrix.clear_row(inside_index)
+          // is not reliable on edge case
 
           // Set the new equation for the first pressure dofs of the
           // cell. this is the new reference pressure inside a
           // particle
 
-            this->system_matrix.set(inside_index, inside_index, sum_line);
-            auto &system_rhs = this->system_rhs;
-            system_rhs(inside_index) =
-                    0 - this->evaluation_point(inside_index) * sum_line;
+          this->system_matrix.set(inside_index, inside_index, sum_line);
+          this->system_rhs(inside_index) =
+            0 - this->evaluation_point(inside_index) * sum_line;
         }
     }
+
+
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1744,995 +1804,258 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           for (unsigned int qf = 0; qf < n_q_points; ++qf)
             sum_line += fe_values.JxW(qf);
 
-          sum_line=sum_line/dt;
-          auto [cell_is_cut,p,local_dof_indices]=cell_cut(cell,local_dof_indices_2,support_points);
+          sum_line = sum_line / dt;
 
-          // Loop over all particle  to see if one of them is cutting this cell
-
-          // If the cell is cut by the IB the count is not 0 or the
-          // number of total dof in a cell
+          // Check if the cell is cut or not by the IB
+          auto [cell_is_cut, p, local_dof_indices] =
+            cell_cut(cell, local_dof_indices_2, support_points);
 
           if (cell_is_cut)
-          {
+            {
               // If we are here, the cell is cut by the IB.
               // Loops on the dof that represents the velocity  component
               // and pressure separately
               for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
-              {
-                  const unsigned int component_i =this->fe->system_to_component_index(i).first;
+                {
+                  const unsigned int component_i =
+                    this->fe->system_to_component_index(i).first;
                   if (component_i < dim)
+                    {
+                      // We are working on the velocity of the cell cut
+                      // loops on the dof that are for vx or vy separately
+                      // loops on all the dof of the cell that represent
+                      // a specific component
+
+                      // define which dof is going to be redefined
+                      unsigned int global_index_overwrite =
+                        local_dof_indices[i];
+
+                      // Clear the current line of this dof
+                      clear_line_in_matrix(cell, global_index_overwrite);
+
+                      // Define the points for the IB stencil, based on the
+                      // order and the particle position as well as the DOF
+                      // position. Depending on the order, the output variable
+                      // "point" change definition. In the case of stencil
+                      // orders 1 to 4 the variable point returns the position
+                      // of the DOF directly. In the case of high order stencil,
+                      // it returns the position of the point that is on the IB.
+                      // The variable "interpolation points" return the points
+                      // used to define the cell used for the stencil definition
+                      // and the locations of the points use in the stencil
+                      // calculation.
+
+                      auto [point, interpolation_points] =
+                        stencil.points(order,
+                                       particles[p],
+                                       support_points[local_dof_indices[i]]);
+
+                      // Find the cell used for the stencil definition.
+                      auto cell_2 = find_cell_around_point_with_neighbors(
+                        cell,
+                        interpolation_points[stencil.nb_points(order) - 1]);
+                      cell_2->get_dof_indices(local_dof_indices_2);
+
+                      bool skip_stencil = false;
+
+                      // Check if the DOF intersect the IB
+                      bool dof_on_ib = false;
+
+                      // Check if this dof is a dummy dof or directly on IB and
+                      // Check if the point used to define the cell used for the
+                      // definition of the stencil ("cell_2") is on a face
+                      // between the cell that is cut ("cell") and the "cell_2".
+                      bool point_in_cell = point_inside_cell(
+                        cell,
+                        interpolation_points[stencil.nb_points(order) - 1]);
+                      if (cell_2 == cell || point_in_cell)
                         {
-                          // We are working on the velocity of the cell cut
-                          // loops on the dof that are for vx or vy separately
-                          // loops on all the dof of the cell that represent
-                          // a specific component
-                          // define which dof is going to be redefined
-                          unsigned int global_index_overwrite =
-                            local_dof_indices[i];
-                          // Define the distance vector between the
-                          // immersed boundary and the dof support point
-                          // for each dof
-                          Tensor<1, dim, double> vect_dist =
-                            (support_points[local_dof_indices[i]] -
-                                    particles[p].position -
-                             particles[p].radius *
-                               (support_points[local_dof_indices[i]] -
-                                       particles[p].position) /
-                               (support_points[local_dof_indices[i]] -
-                                       particles[p].position)
-                                 .norm());
-                          Tensor<1, dim, double> normal_vect =
-                            (support_points[local_dof_indices[i]] -
-                                    particles[p].position) /
-                            (support_points[local_dof_indices[i]] -
-                                    particles[p].position)
-                              .norm();
+                          // Give the DOF an approximated value. This help
+                          // with pressure shock when the DOF passe from part of
+                          // the boundary to the fluid.
+                          this->system_matrix.set(global_index_overwrite,
+                                                  global_index_overwrite,
+                                                  sum_line);
+                          skip_stencil = true;
 
-                          // Define the length ratio that represent the
-                          // zone used for the stencil. The length is
-                          // defined as the length between the dof and
-                          // the IB
-                          unsigned int length_ratio    = 8;
-                          double       length_fraction = 1. / length_ratio;
-                          double       tp_ratio        = 1. / 2.;
-                          double       fp_ratio        = 3. / 4.;
-
-                          if (this->simulation_parameters.particlesParameters
-                                .order == 3)
+                          // Tolerence to define a intersection of
+                          // the DOF and IB
+                          if (abs((support_points[local_dof_indices[i]] -
+                                   particles[p].position)
+                                    .norm() -
+                                  particles[p].radius) <= 1e-12 * dr)
                             {
-                              tp_ratio = 1. / 3.;
-                              fp_ratio = 2. / 3.;
+                              dof_on_ib = true;
                             }
-                          
-                          // Define the other points for the stencil
-                          // (IB point, original dof and the other
-                          // points) this goes up to a 5-point stencil.
-                          Point<dim, double> first_point(
-                            support_points[local_dof_indices[i]] - vect_dist);
+                        }
+                      // Define the variable used for the
+                      // extrapolation of the actual solution at the
+                      // boundaries in order to define the correction
 
-                          Point<dim, double> second_point(
-                            support_points[local_dof_indices[i]] +
-                            vect_dist * length_fraction);
+                      // Define the unit cell points for the points
+                      // used in the stencil.
+                      std::vector<Point<dim>> unite_cell_interpolation_points(
+                        ib_coef.size());
+                      unite_cell_interpolation_points[0] =
+                        this->mapping->transform_real_to_unit_cell(cell_2,
+                                                                   point);
+                      for (unsigned int j = 1; j < ib_coef.size(); ++j)
+                        {
+                          unite_cell_interpolation_points[j] =
+                            this->mapping->transform_real_to_unit_cell(
+                              cell_2, interpolation_points[j - 1]);
+                        }
 
-                          Point<dim, double> third_point(
-                            support_points[local_dof_indices[i]] +
-                            vect_dist * length_fraction * tp_ratio);
+                      std::vector<double> local_interp_sol(ib_coef.size());
 
-                          Point<dim, double> fourth_point(
-                            support_points[local_dof_indices[i]] +
-                            vect_dist * length_fraction * fp_ratio);
-
-                          Point<dim, double> fifth_point(
-                            support_points[local_dof_indices[i]] +
-                            vect_dist * length_fraction * 1 / 4);
-                          double dof_2;
-                          double sp_2;
-
-                          double dof_3;
-                          double sp_3;
-                          double tp_3;
-
-                          double dof_4;
-                          double sp_4;
-                          double tp_4;
-                          double fp_4;
-
-                          double dof_5;
-                          double fp2_5;
-                          double tp_5;
-                          double fp1_5;
-                          double sp_5;
-
-                          // Define the stencil coefficient in function
-                          // of the length ratio. This will be
-                          // automatically generated in future version
-                          if (length_ratio == 4)
+                      // Define the new matrix entry for this dof
+                      if (skip_stencil == false)
+                        {
+                          for (unsigned int j = 0;
+                               j < local_dof_indices_2.size();
+                               ++j)
                             {
-                              dof_2 = 5;
-                              sp_2  = -4;
-
-                              dof_3 = 45;
-                              sp_3  = 36;
-                              tp_3  = -80;
-
-                              dof_4 = 455;
-                              sp_4  = -364;
-                              tp_4  = -1260;
-                              fp_4  = 1170;
-
-                              dof_5 = 4845;
-                              fp2_5 = -18240;
-                              tp_5  = 25840;
-                              fp1_5 = -16320;
-                              sp_5  = 3876;
-                            }
-                          else if (length_ratio == 2)
-                            {
-                              dof_2 = 3;
-                              sp_2  = -2;
-
-                              dof_3 = 15;
-                              sp_3  = 10;
-                              tp_3  = -24;
-
-                              dof_4 = 84;
-                              sp_4  = -56;
-                              tp_4  = -216;
-                              fp_4  = 189;
-
-                              dof_5 = 495;
-                              fp2_5 = -1760;
-                              tp_5  = 2376;
-                              fp1_5 = -1440;
-                              sp_5  = 330;
-                            }
-                          else if (length_ratio == 8)
-                            {
-                              dof_2 = 9;
-                              sp_2  = -8;
-
-                              dof_3 = 153;
-                              sp_3  = 136;
-                              tp_3  = -288;
-
-                              dof_4 = 2925;
-                              sp_4  = -2600;
-                              tp_4  = -8424;
-                              fp_4  = 8100;
-
-                              dof_5 = 58905;
-                              fp2_5 = -228480;
-                              tp_5  = 332640;
-                              fp1_5 = -215424;
-                              sp_5  = 52360;
-                            }
-
-
-                          // Define the vertex associated with the dof
-
-
-                          auto  cell_2       = find_cell_around_point_with_neighbors(cell,second_point);
-                          bool  skip_stencil = false;
-
-
-                          // We have or next cell needed to complete the
-                          // stencil
-
-                          // Define the unit cell points for the points
-                          // used in the stencil for extrapolation.
-
-                          Point<dim> first_point_v =
-                                  this->mapping->transform_real_to_unit_cell(
-                              cell_2, first_point);
-                          Point<dim> second_point_v =
-                                  this->mapping->transform_real_to_unit_cell(
-                              cell_2, second_point);
-                          Point<dim> third_point_v =
-                                  this->mapping->transform_real_to_unit_cell(
-                              cell_2, third_point);
-                          Point<dim> fourth_point_v =
-                                  this->mapping->transform_real_to_unit_cell(
-                              cell_2, fourth_point);
-                          Point<dim> fifth_point_v =
-                                  this->mapping->transform_real_to_unit_cell(
-                              cell_2, fifth_point);
-
-                          cell_2->get_dof_indices(local_dof_indices_2);
-
-                          // Clear the current line of this dof  by
-                          // looping on the neighbouring cell of this dof
-                          // and clear all the associated dof
-
-                          clear_line_in_matrix(cell,global_index_overwrite);
-
-                          // Check if the DOF intersect the IB
-                          bool do_rhs          = false;
-                          bool modifed_stencil = false;
-                          // Check if this dof is a dummy dof or directly on IB
-                          if (cell_2 == cell)
-                            {
-                              this->system_matrix.set(global_index_overwrite,
-                                                      global_index_overwrite,
-                                                      sum_line);
-                              do_rhs = true;
-                              // Tolerence to define a intersection of
-                              // the DOF and IB
-                              if (vect_dist.norm() <= 1e-12 * dr)
+                              const unsigned int component_j =
+                                this->fe->system_to_component_index(j).first;
+                              if (component_j == component_i)
                                 {
-                                  skip_stencil = true;
+                                  //  Define the solution at each point used for
+                                  //  the stencil and applied the stencil for
+                                  //  the specific DOF. For stencils of order 4
+                                  //  or higher, the stencil is defined through
+                                  //  direct extrapolation of the cell. This can
+                                  //  only be done when using a structured mesh
+                                  //  as this required a mapping of a point
+                                  //  outside of a cell.
+
+                                  // Define the local matrix entries of this DOF
+                                  // based on its contribution of each of the
+                                  // points used in the stencil definition and
+                                  // the coefficient associated with this point.
+                                  // This loop defined the current solution at
+                                  // the boundary using the same stencil. This
+                                  // is needed to define the residual.
+                                  double local_matrix_entry = 0;
+                                  for (unsigned int k = 0; k < ib_coef.size();
+                                       ++k)
+                                    {
+                                      local_matrix_entry +=
+                                        this->fe->shape_value(
+                                          j,
+                                          unite_cell_interpolation_points[k]) *
+                                        ib_coef[k];
+                                      local_interp_sol[k] +=
+                                        this->fe->shape_value(
+                                          j,
+                                          unite_cell_interpolation_points[k]) *
+                                        this->evaluation_point(
+                                          local_dof_indices_2[j]);
+                                    }
+                                  // update the matrix.
                                   this->system_matrix.set(
                                     global_index_overwrite,
-                                    global_index_overwrite,
-                                    sum_line);
+                                    local_dof_indices_2[j],
+                                    local_matrix_entry * sum_line);
                                 }
-                              else
-                                {
-                                  // Give the DOF an approximated value. This help
-                                  // with pressure shock when the DOF passe from part of the boundary
-                                  // to the fluid.
-                                  modifed_stencil = true;
-                                  second_point =
-                                    support_points[local_dof_indices[i]] +
-                                    normal_vect * dr * 1;
-                                  cell_2 = find_cell_around_point_with_tree(
-                                    this->dof_handler, second_point);
-                                  cell_2->get_dof_indices(local_dof_indices_2);
-                                }
-                            }
-
-
-                          // Define the variable used for the
-                          // extrapolation of the actual solution at the
-                          // boundaries in order to define the correction
-                          double local_interp_sol   = 0;
-                          double local_interp_sol_2 = 0;
-                          double local_interp_sol_3 = 0;
-                          double local_interp_sol_4 = 0;
-
-                          // Define the new matrix entry for this dof
-                          if (skip_stencil == false)
-                            {
-                              // First the dof itself
-                              for (unsigned int j = 0;
-                                   j < local_dof_indices_2.size();
-                                   ++j)
-                                {
-                                  // First the dof itself
-                                  const unsigned int component_j =
-                                    this->fe->system_to_component_index(j)
-                                      .first;
-                                  if (component_j == component_i)
-                                    {
-                                      if (modifed_stencil)
-                                        {
-                                          local_interp_sol +=
-                                            this->fe->shape_value(
-                                              sum_line * j, second_point_v) *
-                                            this->evaluation_point(
-                                              local_dof_indices_2[j]);
-                                        }
-                                      else
-                                        {
-                                          if (global_index_overwrite ==
-                                              local_dof_indices_2[j])
-                                            {
-                                              // Define the solution at each
-                                              // point used for the stencil and
-                                              // applied the stencil for the
-                                              // specfic dof. for stencil with
-                                              // order of convergence higher
-                                              // then 5 the stencil is define
-                                              // trough direct extrapolation of
-                                              // the cell
-                                              auto &evaluation_point =
-                                                this->evaluation_point;
-
-
-
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 1)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_2 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      dof_2 * sum_line);
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 2)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_3 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      dof_3 * sum_line +
-                                                      tp_3 *
-                                                        this->fe->shape_value(
-                                                          j, third_point_v) *
-                                                        sum_line);
-
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_2 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, third_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 3)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_4 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      dof_4 * sum_line +
-                                                      tp_4 *
-                                                        this->fe->shape_value(
-                                                          j, third_point_v) *
-                                                        sum_line +
-                                                      fp_4 *
-                                                        this->fe->shape_value(
-                                                          j, fourth_point_v) *
-                                                        sum_line);
-
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_2 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, third_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_3 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, fourth_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                              if (this->simulation_parameters
-                                                    .particlesParameters.order >
-                                                  4)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    this->fe->shape_value(
-                                                      j, first_point_v) *
-                                                      sum_line);
-                                                  local_interp_sol +=
-                                                    this->fe->shape_value(
-                                                      j, first_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 4)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    dof_5 * sum_line +
-                                                      sp_5 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      tp_5 *
-                                                        this->fe->shape_value(
-                                                          j, third_point_v) *
-                                                        sum_line +
-                                                      fp1_5 *
-                                                        this->fe->shape_value(
-                                                          j, fourth_point_v) *
-                                                        sum_line +
-                                                      fp2_5 *
-                                                        this->fe->shape_value(
-                                                          j, fifth_point_v) *
-                                                        sum_line);
-
-
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_2 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, third_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_3 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, fourth_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_4 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, fifth_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                            }
-                                          // Then the third point trough
-                                          // interpolation from the dof of the
-                                          // cell in which the third point is
-                                          else
-                                            {
-                                              auto &evaluation_point =
-                                                this->evaluation_point;
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 1)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_2 *
-                                                      this->fe->shape_value(
-                                                        j, second_point_v) *
-                                                      sum_line);
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 2)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_3 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      tp_3 *
-                                                        this->fe->shape_value(
-                                                          j, third_point_v) *
-                                                        sum_line);
-
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_2 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, third_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 3)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_4 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      tp_4 *
-                                                        this->fe->shape_value(
-                                                          j, third_point_v) *
-                                                        sum_line +
-                                                      fp_4 *
-                                                        this->fe->shape_value(
-                                                          j, fourth_point_v) *
-                                                        sum_line);
-
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_2 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, third_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_3 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, fourth_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                              if (this->simulation_parameters
-                                                    .particlesParameters.order >
-                                                  4)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    this->fe->shape_value(
-                                                      j, first_point_v) *
-                                                      sum_line);
-                                                  local_interp_sol +=
-                                                    this->fe->shape_value(
-                                                      j, first_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                              if (this->simulation_parameters
-                                                    .particlesParameters
-                                                    .order == 4)
-                                                {
-                                                  this->system_matrix.set(
-                                                    global_index_overwrite,
-                                                    local_dof_indices_2[j],
-                                                    sp_5 *
-                                                        this->fe->shape_value(
-                                                          j, second_point_v) *
-                                                        sum_line +
-                                                      tp_5 *
-                                                        this->fe->shape_value(
-                                                          j, third_point_v) *
-                                                        sum_line +
-                                                      fp1_5 *
-                                                        this->fe->shape_value(
-                                                          j, fourth_point_v) *
-                                                        sum_line +
-                                                      fp2_5 *
-                                                        this->fe->shape_value(
-                                                          j, fifth_point_v) *
-                                                        sum_line);
-
-                                                  local_interp_sol +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, second_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_2 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, third_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_3 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, fourth_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                  local_interp_sol_4 +=
-                                                    1 *
-                                                    this->fe->shape_value(
-                                                      j, fifth_point_v) *
-                                                    sum_line *
-                                                    evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-
-
-                          // Define the RHS of the stencil used for the
-                          // IB
-                          if (skip_stencil == false || do_rhs)
-                            {
-                              // Different boundary conditions depending
-                              // if the dof is vx ,vy or vz and if the
-                              // problem we are solving is in 2d or 3d.
-
-                              double v_ib = 0;
-                              if (component_i == 0)
-                                {
-                                  double vx      = 0;
-                                  double rhs_add = 0;
-                                  if (dim == 2)
-                                    {
-                                      vx = -particles[p].omega[2] *
-                                             particles[p].radius *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[1] +
-                                           particles[p].velocity[0];
-                                    }
-                                  if (dim == 3)
-                                    {
-                                      vx = particles[p].omega[1] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[2] *
-                                             particles[p].radius -
-                                           particles[p].omega[2] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[1] *
-                                             particles[p].radius +
-                                           particles[p].velocity[0];
-                                    }
-                                  v_ib = vx;
-
-                                  auto &evaluation_point =
-                                    this->evaluation_point;
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 1)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_2 -
-                                                local_interp_sol * sp_2;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 2)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_3 -
-                                                local_interp_sol * sp_3 -
-                                                local_interp_sol_2 * tp_3;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 3)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_4 -
-                                                local_interp_sol * sp_4 -
-                                                local_interp_sol_2 * tp_4 -
-                                                local_interp_sol_3 * fp_4;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order > 4)
-                                    rhs_add = -local_interp_sol;
-
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 4)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_5 -
-                                                local_interp_sol * sp_5 -
-                                                local_interp_sol_2 * tp_5 -
-                                                local_interp_sol_3 * fp1_5 -
-                                                local_interp_sol_4 * fp2_5;
-                                    }
-
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) =
-                                    vx * sum_line + rhs_add;
-                                  if (do_rhs)
-                                    system_rhs(global_index_overwrite) =
-                                      vx * sum_line -
-                                      evaluation_point(global_index_overwrite) *
-                                        sum_line;
-                                }
-                              else if (component_i == 1)
-                                {
-                                  double vy      = 0;
-                                  double rhs_add = 0;
-                                  if (dim == 2)
-                                    {
-                                      vy = particles[p].omega[2] *
-                                             particles[p].radius *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[0] +
-                                           particles[p].velocity[1];
-                                    }
-                                  if (dim == 3)
-                                    {
-                                      vy = particles[p].omega[2] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[0] *
-                                             particles[p].radius -
-                                           particles[p].omega[0] *
-                                             ((support_points
-                                                 [local_dof_indices[i]] -
-                                                     particles[p].position) /
-                                              (support_points
-                                                 [local_dof_indices[i]] -
-                                                      particles[p].position)
-                                                .norm())[2] *
-                                             particles[p].radius +
-                                           particles[p].velocity[1];
-                                    }
-                                  v_ib = vy;
-                                  auto &evaluation_point =
-                                    this->evaluation_point;
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 1)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_2 -
-                                                local_interp_sol * sp_2;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 2)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_3 -
-                                                local_interp_sol * sp_3 -
-                                                local_interp_sol_2 * tp_3;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 3)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_4 -
-                                                local_interp_sol * sp_4 -
-                                                local_interp_sol_2 * tp_4 -
-                                                local_interp_sol_3 * fp_4;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order > 4)
-                                    rhs_add = -local_interp_sol;
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 4)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_5 -
-                                                local_interp_sol * sp_5 -
-                                                local_interp_sol_2 * tp_5 -
-                                                local_interp_sol_3 * fp1_5 -
-                                                local_interp_sol_4 * fp2_5;
-                                    }
-
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) =
-                                    vy * sum_line + rhs_add;
-                                  if (do_rhs)
-                                    system_rhs(global_index_overwrite) =
-                                      vy * sum_line -
-                                      evaluation_point(global_index_overwrite) *
-                                        sum_line;
-                                }
-
-                              else if (component_i == 2 && dim == 3)
-                                {
-                                  double vz =
-                                    particles[p].omega[0] *
-                                      ((support_points[local_dof_indices[i]] -
-                                              particles[p].position) /
-                                       (support_points[local_dof_indices[i]] -
-                                               particles[p].position)
-                                         .norm())[1] *
-                                      particles[p].radius -
-                                    particles[p].omega[1] *
-                                      ((support_points[local_dof_indices[i]] -
-                                              particles[p].position) /
-                                       (support_points[local_dof_indices[i]] -
-                                               particles[p].position)
-                                         .norm())[0] *
-                                      particles[p].radius +
-                                    particles[p].velocity[2];
-                                  v_ib           = vz;
-                                  double rhs_add = 0;
-                                  auto & evaluation_point =
-                                    this->evaluation_point;
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 1)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_2 -
-                                                local_interp_sol * sp_2;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 2)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_3 -
-                                                local_interp_sol * sp_3 -
-                                                local_interp_sol_2 * tp_3;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 3)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_4 -
-                                                local_interp_sol * sp_4 -
-                                                local_interp_sol_2 * tp_4 -
-                                                local_interp_sol_3 * fp_4;
-                                    }
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order > 4)
-                                    rhs_add = -local_interp_sol;
-                                  if (this->simulation_parameters
-                                        .particlesParameters.order == 4)
-                                    {
-                                      rhs_add = -evaluation_point(
-                                                  global_index_overwrite) *
-                                                  sum_line * dof_5 -
-                                                local_interp_sol * sp_5 -
-                                                local_interp_sol_2 * tp_5 -
-                                                local_interp_sol_3 * fp1_5 -
-                                                local_interp_sol_4 * fp2_5;
-                                    }
-
-
-                                  auto &system_rhs = this->system_rhs;
-                                  system_rhs(global_index_overwrite) =
-                                    vz * sum_line + rhs_add;
-                                  if (do_rhs)
-                                    system_rhs(global_index_overwrite) =
-                                      vz * sum_line -
-                                      evaluation_point(global_index_overwrite) *
-                                        sum_line;
-                                }
-                              if (modifed_stencil)
-                                // Impose the value of the dummy dof. This help
-                                // with pressure variation when the IB is
-                                // moving.
-                                /*this->system_rhs(global_index_overwrite) =
-                                  (sum_line * v_ib *
-                                     (1 - vect_dist.norm() /
-                                            (vect_dist.norm() + dr)) +
-                                   local_interp_sol * vect_dist.norm() /
-                                     (vect_dist.norm() + dr)) -
-                                  this->evaluation_point(
-                                    global_index_overwrite) *
-                                    sum_line;
-                                    */
-                                this->system_rhs(global_index_overwrite) =
-                                  sum_line * v_ib - this->evaluation_point(
-                                                      global_index_overwrite) *
-                                                      sum_line;
                             }
                         }
 
-                      if (component_i == dim)
+                      // Define the RHS of the equation.
+
+                      double rhs_add = 0;
+                      // Different boundary conditions depending
+                      // on the component index of the DOF and
+                      // the dimension.
+                      double v_ib = stencil.ib_velocity(
+                        particles[p],
+                        support_points[local_dof_indices[i]],
+                        component_i);
+
+                      for (unsigned int k = 0; k < ib_coef.size(); ++k)
                         {
-                          // Applied equation on dof that have no equation
-                          // defined for them. those DOF become Dummy dof. This
-                          // is usefull for high order cells or when a dof is
-                          // only element of cells that are cut.
+                          rhs_add +=
+                            -local_interp_sol[k] * ib_coef[k] * sum_line;
+                        }
+                      this->system_rhs(global_index_overwrite) =
+                        v_ib * sum_line + rhs_add;
 
-                          unsigned int global_index_overwrite =
-                            local_dof_indices[i];
-                          bool dummy_dof = true;
+                      if (dof_on_ib)
+                        // Dof is on the immersed boundary
+                        this->system_rhs(global_index_overwrite) =
+                          v_ib * sum_line -
+                          this->evaluation_point(global_index_overwrite) *
+                            sum_line;
+
+                      if (skip_stencil && dof_on_ib == false)
+                        // Impose the value of the dummy dof. This help
+                        // with pressure variation when the IB is
+                        // moving.
+                        this->system_rhs(global_index_overwrite) =
+                          sum_line * v_ib -
+                          this->evaluation_point(global_index_overwrite) *
+                            sum_line;
+                    }
 
 
-                          active_neighbors_set =find_cells_around_cell(cell);
-                          for (unsigned int m = 0;m < active_neighbors_set.size();m++)
-                          {
-                                  const auto &cell_3 = active_neighbors_set[m];
-                                  cell_3->get_dof_indices(local_dof_indices_3);
-                                  for (unsigned int o = 0;
-                                       o < local_dof_indices_3.size();
-                                       ++o)
+                  if (component_i == dim)
+                    {
+                      // Applied equation on dof that have no equation
+                      // defined for them. those DOF become Dummy dof. This
+                      // is usefull for high order cells or when a dof is
+                      // only element of cells that are cut.
+                      unsigned int global_index_overwrite =
+                        local_dof_indices[i];
+                      bool dummy_dof = true;
+
+                      // To check if the pressure dof is a dummy. first check if
+                      // the matrix entry is close to 0.
+                      if (abs(this->system_matrix.el(global_index_overwrite,
+                                                     global_index_overwrite)) <=
+                          1e-16 * dr)
+                        {
+                          // If the matrix entry on the diagonal of this DOF is
+                          // close to zero, check if all the cells close are
+                          // cut. If it's the case, the DOF is a dummy DOF.
+                          active_neighbors_set = find_cells_around_cell(cell);
+                          for (unsigned int m = 0;
+                               m < active_neighbors_set.size();
+                               m++)
+                            {
+                              const auto &cell_3 = active_neighbors_set[m];
+                              cell_3->get_dof_indices(local_dof_indices_3);
+                              for (unsigned int o = 0;
+                                   o < local_dof_indices_3.size();
+                                   ++o)
+                                {
+                                  if (global_index_overwrite ==
+                                      local_dof_indices_3[o])
                                     {
-                                      if (global_index_overwrite ==
-                                          local_dof_indices_3[o])
-                                        {
-                                          // cell_3 contain the same dof
-                                          // check if this cell is cut if
-                                          // it's not cut this dof must not
-                                          // be overwritten
-                                          unsigned int count_small_1 = 0;
-                                          for (unsigned int q = 0;
-                                               q < local_dof_indices_3.size();
-                                               ++q)
-                                            {
-                                              // Count the number of dof
-                                              // that are smaller or
-                                              // larger then the radius
-                                              // of the particles if all
-                                              // the dof are on one side
-                                              // the cell is not cut by
-                                              // the boundary meaning we
-                                              // don’t have to do
-                                              // anything
-                                              if ((support_points
-                                                     [local_dof_indices_3[q]] -
-                                                      particles[p].position)
-                                                    .norm() <=
-                                                  particles[p].radius)
-                                                {
-                                                  ++count_small_1;
-                                                }
-                                            }
+                                      // cell_3 contain the same dof
+                                      // check if this cell is cut if
+                                      // it's not cut this dof must not
+                                      // be overwritten
+                                      bool cell_is_cut;
+                                      std::tie(cell_is_cut,
+                                               std::ignore,
+                                               std::ignore) =
+                                        cell_cut(cell_3,
+                                                 local_dof_indices_3,
+                                                 support_points);
 
-                                          if (count_small_1 == 0 or
-                                              count_small_1 ==
-                                                local_dof_indices_3.size())
-                                            dummy_dof = false;
+                                      if (cell_is_cut == false)
+                                        {
+                                          dummy_dof = false;
+                                          break;
                                         }
                                     }
                                 }
-
+                              if (dummy_dof == false)
+                                break;
+                            }
 
                           if (dummy_dof)
                             {
+                              // The DOF is dummy
                               this->system_matrix.set(global_index_overwrite,
                                                       global_index_overwrite,
                                                       sum_line);
@@ -2742,7 +2065,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         }
                     }
                 }
-
+            }
         }
     }
 
@@ -2763,7 +2086,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
     this->system_matrix = 0;
   system_rhs = 0;
   // erase_inertia();
-  double viscosity_ = this->simulation_parameters.physical_properties.viscosity;
+  double viscosity = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
   QGauss<dim>        quadrature_formula(this->number_quadrature_points);
@@ -2790,6 +2113,19 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
 
   Tensor<1, dim> force;
+  Tensor<1, dim> beta_force = this->beta;
+
+  // Velocity dependent source term
+  //----------------------------------
+  // Angular velocity of the rotating frame. This is always a 3D vector even
+  // in 2D.
+  Tensor<1, dim> omega_vector;
+
+  double omega_z  = this->simulation_parameters.velocitySource.omega_z;
+  omega_vector[0] = this->simulation_parameters.velocitySource.omega_x;
+  omega_vector[1] = this->simulation_parameters.velocitySource.omega_y;
+  if (dim == 3)
+    omega_vector[2] = this->simulation_parameters.velocitySource.omega_z;
 
   std::vector<double>         div_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
@@ -2862,6 +2198,7 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
                                                           .begin_active(),
                                                  endc = this->dof_handler.end();
+  auto &evaluation_point                              = this->evaluation_point;
   for (; cell != endc; ++cell)
     {
       if (cell->is_locally_owned())
@@ -2870,7 +2207,8 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
 
           bool cell_is_cut;
-          std::tie(cell_is_cut,std::ignore,local_dof_indices)=cell_cut(cell,local_dof_indices_iter,support_points);
+          std::tie(cell_is_cut, std::ignore, local_dof_indices) =
+            cell_cut(cell, local_dof_indices_iter, support_points);
 
 
           if (cell_is_cut == false)
@@ -2888,7 +2226,6 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
               local_rhs    = 0;
 
               // Gather velocity (values, gradient and laplacian)
-              auto &evaluation_point = this->evaluation_point;
               fe_values[velocities].get_function_values(
                 evaluation_point, present_velocity_values);
               fe_values[velocities].get_function_gradients(
@@ -2896,18 +2233,19 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
               fe_values[velocities].get_function_laplacians(
                 evaluation_point, present_velocity_laplacians);
 
-
               // Gather pressure (values, gradient)
               fe_values[pressure].get_function_values(evaluation_point,
                                                       present_pressure_values);
               fe_values[pressure].get_function_gradients(
                 evaluation_point, present_pressure_gradients);
 
+              std::vector<Point<dim>> quadrature_points =
+                fe_values.get_quadrature_points();
 
               // Calculate forcing term if there is a forcing function
               if (l_forcing_function)
-                l_forcing_function->vector_value_list(
-                  fe_values.get_quadrature_points(), rhs_force);
+                l_forcing_function->vector_value_list(quadrature_points,
+                                                      rhs_force);
 
               // Gather the previous time steps depending on the number of
               // stages of the time integration scheme
@@ -2918,39 +2256,56 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
               if (time_stepping_method_has_two_stages(scheme))
                 fe_values[velocities].get_function_values(
-                  this->previous_solutions[1], p2_velocity_values);
+                  this->solution_stages[0], p2_velocity_values);
 
               if (time_stepping_method_has_three_stages(scheme))
+                fe_values[velocities].get_function_values(
+                  this->solution_stages[1], p3_velocity_values);
+
+              if (time_stepping_method_uses_two_previous_solutions(scheme))
+                fe_values[velocities].get_function_values(
+                  this->previous_solutions[1], p2_velocity_values);
+
+              if (time_stepping_method_uses_three_previous_solutions(scheme))
                 fe_values[velocities].get_function_values(
                   this->previous_solutions[2], p3_velocity_values);
 
               // Loop over the quadrature points
               for (unsigned int q = 0; q < n_q_points; ++q)
                 {
+                  // Gather into local variables the relevant fields
+                  const Tensor<1, dim> velocity = present_velocity_values[q];
+                  const Tensor<2, dim> velocity_gradient =
+                    present_velocity_gradients[q];
+                  const double present_velocity_divergence =
+                    trace(velocity_gradient);
+                  const Tensor<1, dim> p1_velocity = p1_velocity_values[q];
+                  const Tensor<1, dim> p2_velocity = p2_velocity_values[q];
+                  const Tensor<1, dim> p3_velocity = p3_velocity_values[q];
+                  const double current_pressure    = present_pressure_values[q];
+
+
+
                   // Calculation of the magnitude of the velocity for the
                   // stabilization parameter
                   const double u_mag =
-                    std::max(present_velocity_values[q].norm(),
-                             1e-12 * GLS_u_scale);
+                    std::max(velocity.norm(), 1e-12 * GLS_u_scale);
+
+                  // Store JxW in local variable for faster access;
+                  const double JxW = fe_values.JxW(q);
 
                   // Calculation of the GLS stabilization parameter. The
                   // stabilization parameter used is different if the simulation
                   // is steady or unsteady. In the unsteady case it includes the
                   // value of the time-step
-                  double tau;
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::steady)
-                    tau =
+                  const double tau =
+                    is_steady(scheme) ?
                       1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                                     9 * std::pow(4 * viscosity_ / (h * h), 2));
-                  else
-                    tau =
-                      1. /
-                      std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                                9 * std::pow(4 * viscosity_ / (h * h), 2));
+                                     9 * std::pow(4 * viscosity / (h * h), 2)) :
+                      1. / std::sqrt(std::pow(sdt, 2) +
+                                     std::pow(2. * u_mag / h, 2) +
+                                     9 * std::pow(4 * viscosity / (h * h), 2));
 
-                  if (PSPG == false)
-                    tau = 0;
                   // Gather the shape functions, their gradient and their
                   // laplacian for the velocity and the pressure
                   for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -2973,16 +2328,40 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                         this->fe->system_to_component_index(i).first;
                       force[i] = rhs_force[q](component_i);
                     }
-
-                  // Calculate the divergence of the velocity
-                  double present_velocity_divergence =
-                    trace(present_velocity_gradients[q]);
+                  // Correct force to include the dynamic forcing term for flow
+                  // control
+                  force = force + beta_force;
 
                   // Calculate the strong residual for GLS stabilization
                   auto strong_residual =
-                    present_velocity_gradients[q] * present_velocity_values[q] +
+                    velocity_gradient * velocity +
                     present_pressure_gradients[q] -
-                    viscosity_ * present_velocity_laplacians[q] - force;
+                    viscosity * present_velocity_laplacians[q] - force;
+
+                  if (velocity_source ==
+                      Parameters::VelocitySource::VelocitySourceType::srf)
+                    {
+                      if (dim == 2)
+                        {
+                          strong_residual +=
+                            2 * omega_z * (-1.) * cross_product_2d(velocity);
+                          auto centrifugal =
+                            omega_z * (-1.) *
+                            cross_product_2d(
+                              omega_z * (-1.) *
+                              cross_product_2d(quadrature_points[q]));
+                          strong_residual += centrifugal;
+                        }
+                      else // dim == 3
+                        {
+                          strong_residual +=
+                            2 * cross_product_3d(omega_vector, velocity);
+                          strong_residual += cross_product_3d(
+                            omega_vector,
+                            cross_product_3d(omega_vector,
+                                             quadrature_points[q]));
+                        }
+                    }
 
                   /* Adjust the strong residual in cases where the scheme is
                    transient.
@@ -2992,48 +2371,43 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                    stored in the same arrays.
                    */
 
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-                    strong_residual +=
-                      bdf_coefs[0] * present_velocity_values[q] +
-                      bdf_coefs[1] * p1_velocity_values[q];
+                  if (scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::bdf1 ||
+                      scheme == Parameters::SimulationControl::
+                                  TimeSteppingMethod::steady_bdf)
+                    strong_residual += bdf_coefs[0] * velocity +
+                                       bdf_coefs[1] * p1_velocity_values[q];
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    strong_residual +=
-                      bdf_coefs[0] * present_velocity_values[q] +
-                      bdf_coefs[1] * p1_velocity_values[q] +
-                      bdf_coefs[2] * p2_velocity_values[q];
+                    strong_residual += bdf_coefs[0] * velocity +
+                                       bdf_coefs[1] * p1_velocity +
+                                       bdf_coefs[2] * p2_velocity;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     strong_residual +=
-                      bdf_coefs[0] * present_velocity_values[q] +
-                      bdf_coefs[1] * p1_velocity_values[q] +
-                      bdf_coefs[2] * p2_velocity_values[q] +
-                      bdf_coefs[3] * p3_velocity_values[q];
+                      bdf_coefs[0] * velocity + bdf_coefs[1] * p1_velocity +
+                      bdf_coefs[2] * p2_velocity + bdf_coefs[3] * p3_velocity;
 
 
                   if (is_sdirk_step1(scheme))
-                    strong_residual +=
-                      sdirk_coefs[0][0] * present_velocity_values[q] +
-                      sdirk_coefs[0][1] * p1_velocity_values[q];
+                    strong_residual += sdirk_coefs[0][0] * velocity +
+                                       sdirk_coefs[0][1] * p1_velocity;
 
                   if (is_sdirk_step2(scheme))
                     {
-                      strong_residual +=
-                        sdirk_coefs[1][0] * present_velocity_values[q] +
-                        sdirk_coefs[1][1] * p1_velocity_values[q] +
-                        sdirk_coefs[1][2] * p2_velocity_values[q];
+                      strong_residual += sdirk_coefs[1][0] * velocity +
+                                         sdirk_coefs[1][1] * p1_velocity +
+                                         sdirk_coefs[1][2] * p2_velocity;
                     }
 
                   if (is_sdirk_step3(scheme))
                     {
-                      strong_residual +=
-                        sdirk_coefs[2][0] * present_velocity_values[q] +
-                        sdirk_coefs[2][1] * p1_velocity_values[q] +
-                        sdirk_coefs[2][2] * p2_velocity_values[q] +
-                        sdirk_coefs[2][3] * p3_velocity_values[q];
+                      strong_residual += sdirk_coefs[2][0] * velocity +
+                                         sdirk_coefs[2][1] * p1_velocity +
+                                         sdirk_coefs[2][2] * p2_velocity +
+                                         sdirk_coefs[2][3] * p3_velocity;
                     }
 
                   // Matrix assembly
@@ -3043,78 +2417,116 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                       // of the strong jacobian in the inner loop
                       for (unsigned int j = 0; j < dofs_per_cell; ++j)
                         {
+                          const auto phi_u_j      = phi_u[j];
+                          const auto grad_phi_u_j = grad_phi_u[j];
+                          const auto phi_p_j      = phi_p[j];
+                          const auto grad_phi_p_j = grad_phi_p[j];
+
+
+
                           auto strong_jac =
-                            (present_velocity_gradients[q] * phi_u[j] +
-                             grad_phi_u[j] * present_velocity_values[q] +
-                             grad_phi_p[j] - viscosity_ * laplacian_phi_u[j]);
+                            (velocity_gradient * phi_u_j +
+                             grad_phi_u_j * velocity + grad_phi_p_j -
+                             viscosity * laplacian_phi_u[j]);
 
                           if (is_bdf(scheme))
-                            strong_jac += phi_u[j] * bdf_coefs[0];
+                            strong_jac += phi_u_j * bdf_coefs[0];
                           if (is_sdirk(scheme))
-                            strong_jac += phi_u[j] * sdirk_coefs[0][0];
+                            strong_jac += phi_u_j * sdirk_coefs[0][0];
+
+                          if (velocity_source == Parameters::VelocitySource::
+                                                   VelocitySourceType::srf)
+                            {
+                              if (dim == 2)
+                                strong_jac += 2 * omega_z * (-1.) *
+                                              cross_product_2d(phi_u_j);
+                              else if (dim == 3)
+                                strong_jac +=
+                                  2 * cross_product_3d(omega_vector, phi_u_j);
+                            }
 
                           for (unsigned int i = 0; i < dofs_per_cell; ++i)
                             {
+                              const auto phi_u_i      = phi_u[i];
+                              const auto grad_phi_u_i = grad_phi_u[i];
+                              const auto phi_p_i      = phi_p[i];
+                              const auto grad_phi_p_i = grad_phi_p[i];
+
+
                               local_matrix(i, j) +=
-                                ( // Momentum terms
-                                  viscosity_ * scalar_product(grad_phi_u[j],
-                                                              grad_phi_u[i]) +
-                                  present_velocity_gradients[q] * phi_u[j] *
-                                    phi_u[i] +
-                                  grad_phi_u[j] * present_velocity_values[q] *
-                                    phi_u[i] -
-                                  div_phi_u[i] * phi_p[j] +
+                                (
+                                  // Momentum terms
+                                  viscosity *
+                                    scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                                  velocity_gradient * phi_u_j * phi_u_i +
+                                  grad_phi_u_j * velocity * phi_u_i -
+                                  div_phi_u[i] * phi_p_j +
                                   // Continuity
-                                  phi_p[i] * div_phi_u[j]) *
-                                fe_values.JxW(q);
+                                  phi_p_i * div_phi_u[j]) *
+                                JxW;
 
                               // Mass matrix
                               if (is_bdf(scheme))
-                                local_matrix(i, j) += phi_u[j] * phi_u[i] *
-                                                      bdf_coefs[0] *
-                                                      fe_values.JxW(q);
+                                local_matrix(i, j) +=
+                                  phi_u_j * phi_u_i * bdf_coefs[0] * JxW;
 
                               if (is_sdirk(scheme))
-                                local_matrix(i, j) += phi_u[j] * phi_u[i] *
-                                                      sdirk_coefs[0][0] *
-                                                      fe_values.JxW(q);
+                                local_matrix(i, j) +=
+                                  phi_u_j * phi_u_i * sdirk_coefs[0][0] * JxW;
 
+                              // PSPG GLS term
+                              local_matrix(i, j) +=
+                                tau * (strong_jac * grad_phi_p_i) * JxW;
 
-                              local_matrix(i, j) += tau * strong_jac *
-                                                    grad_phi_p[i] *
-                                                    fe_values.JxW(q);
-
-                              if (PSPG)
+                              if (velocity_source ==
+                                  Parameters::VelocitySource::
+                                    VelocitySourceType::srf)
                                 {
-                                  // PSPG TAU term is currently disabled because
-                                  // it does not alter the matrix sufficiently
-                                  local_matrix(i, j) +=
-                                    -tau * tau * tau * 4 / h / h *
-                                    (present_velocity_values[q] * phi_u[j]) *
-                                    strong_residual * grad_phi_p[i] *
-                                    fe_values.JxW(q);
+                                  if (dim == 2)
+                                    local_matrix(i, j) +=
+                                      2 * omega_z * (-1.) *
+                                      cross_product_2d(phi_u_j) * phi_u_i * JxW;
+
+                                  else if (dim == 3)
+                                    local_matrix(i, j) +=
+                                      2 *
+                                      cross_product_3d(omega_vector, phi_u_j) *
+                                      phi_u_i * JxW;
                                 }
+
+
+                              // PSPG TAU term is currently disabled because it
+                              // does not alter the matrix sufficiently
+                              // local_matrix(i, j) +=
+                              //  -tau * tau * tau * 4 / h / h *
+                              //  (velocity *phi_u_j) *
+                              //  strong_residual * grad_phi_p_i *
+                              //  fe_values.JxW(q);
 
                               // Jacobian is currently incomplete
                               if (SUPG)
                                 {
                                   local_matrix(i, j) +=
                                     tau *
-                                    (strong_jac * (grad_phi_u[i] *
-                                                   present_velocity_values[q]) +
+                                    (strong_jac * (grad_phi_u_i * velocity) +
                                      strong_residual *
-                                       (grad_phi_u[i] * phi_u[j])) *
-                                    fe_values.JxW(q);
+                                       (grad_phi_u_i * phi_u_j)) *
+                                    JxW;
 
                                   // SUPG TAU term is currently disabled because
                                   // it does not alter the matrix sufficiently
-                                  local_matrix(i, j) +=
-                                    -strong_residual *
-                                    (grad_phi_u[i] *
-                                     present_velocity_values[q]) *
-                                    tau * tau * tau * 4 / h / h *
-                                    (present_velocity_values[q] * phi_u[j]) *
-                                    fe_values.JxW(q);
+                                  // local_matrix(i, j)
+                                  // +=
+                                  //   -strong_residual
+                                  //   * (grad_phi_u_i
+                                  //   *
+                                  //   velocity)
+                                  //   * tau * tau *
+                                  //   tau * 4 / h / h
+                                  //   *
+                                  //   (velocity
+                                  //   *phi_u_j) *
+                                  //   fe_values.JxW(q);
                                 }
                             }
                         }
@@ -3123,96 +2535,117 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                   // Assembly of the right-hand side
                   for (unsigned int i = 0; i < dofs_per_cell; ++i)
                     {
+                      const auto phi_u_i      = phi_u[i];
+                      const auto grad_phi_u_i = grad_phi_u[i];
+                      const auto phi_p_i      = phi_p[i];
+                      const auto grad_phi_p_i = grad_phi_p[i];
+                      const auto div_phi_u_i  = div_phi_u[i];
+
+
                       // Navier-Stokes Residual
                       local_rhs(i) +=
-                        ( // Momentum
-                          -viscosity_ *
-                            scalar_product(present_velocity_gradients[q],
-                                           grad_phi_u[i]) -
-                          present_velocity_gradients[q] *
-                            present_velocity_values[q] * phi_u[i] +
-                          present_pressure_values[q] * div_phi_u[i] +
-                          force * phi_u[i] -
+                        (
+                          // Momentum
+                          -viscosity *
+                            scalar_product(velocity_gradient, grad_phi_u_i) -
+                          velocity_gradient * velocity * phi_u_i +
+                          current_pressure * div_phi_u_i + force * phi_u_i -
                           // Continuity
-                          present_velocity_divergence * phi_p[i]) *
-                        fe_values.JxW(q);
+                          present_velocity_divergence * phi_p_i) *
+                        JxW;
 
                       // Residual associated with BDF schemes
                       if (scheme == Parameters::SimulationControl::
-                                      TimeSteppingMethod::bdf1)
-                        local_rhs(i) -=
-                          bdf_coefs[0] *
-                          (present_velocity_values[q] - p1_velocity_values[q]) *
-                          phi_u[i] * fe_values.JxW(q);
+                                      TimeSteppingMethod::bdf1 ||
+                          scheme == Parameters::SimulationControl::
+                                      TimeSteppingMethod::steady_bdf)
+                        local_rhs(i) -= bdf_coefs[0] *
+                                        (velocity - p1_velocity) * phi_u_i *
+                                        JxW;
 
                       if (scheme == Parameters::SimulationControl::
                                       TimeSteppingMethod::bdf2)
                         local_rhs(i) -=
-                          (bdf_coefs[0] *
-                             (present_velocity_values[q] * phi_u[i]) +
-                           bdf_coefs[1] * (p1_velocity_values[q] * phi_u[i]) +
-                           bdf_coefs[2] * (p2_velocity_values[q] * phi_u[i])) *
-                          fe_values.JxW(q);
+                          (bdf_coefs[0] * (velocity * phi_u_i) +
+                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
+                           bdf_coefs[2] * (p2_velocity * phi_u_i)) *
+                          JxW;
 
                       if (scheme == Parameters::SimulationControl::
                                       TimeSteppingMethod::bdf3)
                         local_rhs(i) -=
-                          (bdf_coefs[0] *
-                             (present_velocity_values[q] * phi_u[i]) +
-                           bdf_coefs[1] * (p1_velocity_values[q] * phi_u[i]) +
-                           bdf_coefs[2] * (p2_velocity_values[q] * phi_u[i]) +
-                           bdf_coefs[3] * (p3_velocity_values[q] * phi_u[i])) *
-                          fe_values.JxW(q);
+                          (bdf_coefs[0] * (velocity * phi_u_i) +
+                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
+                           bdf_coefs[2] * (p2_velocity * phi_u_i) +
+                           bdf_coefs[3] * (p3_velocity * phi_u_i)) *
+                          JxW;
 
                       // Residuals associated with SDIRK schemes
                       if (is_sdirk_step1(scheme))
                         local_rhs(i) -=
-                          (sdirk_coefs[0][0] *
-                             (present_velocity_values[q] * phi_u[i]) +
-                           sdirk_coefs[0][1] *
-                             (p1_velocity_values[q] * phi_u[i])) *
-                          fe_values.JxW(q);
+                          (sdirk_coefs[0][0] * (velocity * phi_u_i) +
+                           sdirk_coefs[0][1] * (p1_velocity * phi_u_i)) *
+                          JxW;
 
                       if (is_sdirk_step2(scheme))
                         {
                           local_rhs(i) -=
-                            (sdirk_coefs[1][0] *
-                               (present_velocity_values[q] * phi_u[i]) +
-                             sdirk_coefs[1][1] *
-                               (p1_velocity_values[q] * phi_u[i]) +
+                            (sdirk_coefs[1][0] * (velocity * phi_u_i) +
+                             sdirk_coefs[1][1] * (p1_velocity * phi_u_i) +
                              sdirk_coefs[1][2] *
-                               (p2_velocity_values[q] * phi_u[i])) *
-                            fe_values.JxW(q);
+                               (p2_velocity_values[q] * phi_u_i)) *
+                            JxW;
                         }
 
                       if (is_sdirk_step3(scheme))
                         {
                           local_rhs(i) -=
-                            (sdirk_coefs[2][0] *
-                               (present_velocity_values[q] * phi_u[i]) +
-                             sdirk_coefs[2][1] *
-                               (p1_velocity_values[q] * phi_u[i]) +
-                             sdirk_coefs[2][2] *
-                               (p2_velocity_values[q] * phi_u[i]) +
-                             sdirk_coefs[2][3] *
-                               (p3_velocity_values[q] * phi_u[i])) *
-                            fe_values.JxW(q);
+                            (sdirk_coefs[2][0] * (velocity * phi_u_i) +
+                             sdirk_coefs[2][1] * (p1_velocity * phi_u_i) +
+                             sdirk_coefs[2][2] * (p2_velocity * phi_u_i) +
+                             sdirk_coefs[2][3] * (p3_velocity * phi_u_i)) *
+                            JxW;
+                        }
+
+                      if (velocity_source ==
+                          Parameters::VelocitySource::VelocitySourceType::srf)
+                        {
+                          if (dim == 2)
+                            {
+                              local_rhs(i) += -2 * omega_z * (-1.) *
+                                              cross_product_2d(velocity) *
+                                              phi_u_i * JxW;
+                              auto centrifugal =
+                                omega_z * (-1.) *
+                                cross_product_2d(
+                                  omega_z * (-1.) *
+                                  cross_product_2d(quadrature_points[q]));
+                              local_rhs(i) += -centrifugal * phi_u_i * JxW;
+                            }
+                          else if (dim == 3)
+                            {
+                              local_rhs(i) +=
+                                -2 * cross_product_3d(omega_vector, velocity) *
+                                phi_u_i * JxW;
+                              local_rhs(i) +=
+                                -cross_product_3d(
+                                  omega_vector,
+                                  cross_product_3d(omega_vector,
+                                                   quadrature_points[q])) *
+                                phi_u_i * JxW;
+                            }
                         }
 
                       // PSPG GLS term
-                      if (PSPG)
-                        local_rhs(i) += -tau *
-                                        (strong_residual * grad_phi_p[i]) *
-                                        fe_values.JxW(q);
+                      local_rhs(i) +=
+                        -tau * (strong_residual * grad_phi_p_i) * JxW;
 
                       // SUPG GLS term
                       if (SUPG)
                         {
                           local_rhs(i) +=
                             -tau *
-                            (strong_residual *
-                             (grad_phi_u[i] * present_velocity_values[q])) *
-                            fe_values.JxW(q);
+                            (strong_residual * (grad_phi_u_i * velocity)) * JxW;
                         }
                     }
                 }
@@ -3231,13 +2664,13 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                     local_rhs,
                     local_dof_indices,
                     this->system_matrix,
-                    system_rhs);
+                    this->system_rhs);
                 }
               else
                 {
                   constraints_used.distribute_local_to_global(local_rhs,
                                                               local_dof_indices,
-                                                              system_rhs);
+                                                              this->system_rhs);
                 }
             }
         }
@@ -3254,7 +2687,6 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-
   if (this->simulation_parameters.particlesParameters.integrate_motion)
     {
       force_on_ib();
@@ -3379,12 +2811,10 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-
-
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
-        TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+      TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
       if (time_stepping_method ==
           Parameters::SimulationControl::TimeSteppingMethod::bdf1)
         assembleGLS<false,
