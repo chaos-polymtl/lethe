@@ -14,12 +14,9 @@ template <int dim>
 class ParticleDetectorInteractions
 {
 public:
-  ParticleDetectorInteractions()
-  {}
-
-  ParticleDetectorInteractions(RadioParticle<dim>       particle,
-                               Detector<dim>            detector,
-                               RPTCalculatingParameters rpt_parameters)
+  ParticleDetectorInteractions(RadioParticle<dim> &      particle,
+                               Detector<dim> &           detector,
+                               RPTCalculatingParameters &rpt_parameters)
     : particle_position(particle.get_position())
     , detector_face_position(detector.get_face_position())
     , detector_middle_position(detector.get_middle_position())
@@ -32,6 +29,42 @@ public:
   double
   calculate_count();
 
+  double
+  get_h()
+  {
+    calculate_position_parameters();
+
+    return h;
+  }
+
+  double
+  get_rho()
+  {
+    calculate_position_parameters();
+
+    return rho;
+  }
+
+  double
+  get_alpha(double n_alpha, double n_theta)
+  {
+    calculate_position_parameters();
+    calculate_solid_angle(n_alpha, n_theta);
+
+    return alpha;
+  }
+
+  double
+  get_theta(double n_alpha, double n_theta)
+  {
+    calculate_position_parameters();
+    calculate_solid_angle(n_alpha, n_theta);
+
+    return theta;
+  }
+
+
+
 private:
   void
   calculate_position_parameters();
@@ -39,17 +72,17 @@ private:
   void
   calculate_solid_angle(double n_alpha, double n_theta);
 
-  void
+  double
   calculate_detector_path_length();
 
-  void
+  double
   calculate_reactor_path_length();
 
-  void
-  calculate_detector_interaction_probability();
+  double
+  calculate_detector_interaction_probability(double &detector_path_length);
 
-  void
-  calculate_non_interaction_probability();
+  double
+  calculate_non_interaction_probability(double &reactor_path_length);
 
   void
   calculate_efficiency();
@@ -59,29 +92,26 @@ private:
           Tensor<1, dim> detector_particle_origin,
           Tensor<1, dim> particle_position_rotation);
 
-  double                           efficiency;
-  double                           alpha;
-  double                           theta;
-  double                           theta_cri;
-  double                           weighting_factor_alpha;
-  double                           weighting_factor_theta;
-  double                           non_interaction_probability;
-  double                           detector_interaction_probability;
-  double                           detector_path_length;
-  double                           reactor_path_length;
-  double                           h;
-  double                           rho;
-  double                           OA_distance;
-  double                           OB_distance;
+  double         efficiency;
+  double         alpha;
+  double         theta;
+  double         theta_cri;
+  double         weighting_factor_alpha;
+  double         weighting_factor_theta;
+  double         h;
+  double         rho;
+  double         OA_distance;
+  double         OB_distance;
+  Tensor<1, dim> detector_orientation_x;
+  Tensor<1, dim> detector_orientation_y;
+  Tensor<1, dim> detector_orientation_z;
+
+  Point<dim> particle_position;
+  Point<dim> detector_face_position;
+  Point<dim> detector_middle_position;
+
   double                           detector_radius;
   double                           detector_length;
-  Point<dim>                       particle_position;
-  Point<dim>                       detector_face_position;
-  Point<dim>                       detector_middle_position;
-  Tensor<1, dim>                   face_detector_particle_distance;
-  Tensor<1, dim>                   detector_orientation_x;
-  Tensor<1, dim>                   detector_orientation_y;
-  Tensor<1, dim>                   detector_orientation_z;
   Parameters::RPTParameters        fixed_parameters;
   Parameters::InitialRPTParameters initial_parameters;
 };

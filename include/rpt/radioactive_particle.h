@@ -32,7 +32,7 @@ template <int dim>
 class RadioParticle
 {
 public:
-  RadioParticle(Point<dim> &location, int &n)
+  RadioParticle(Point<dim> &location, int n)
     : position(location)
     , id(n)
   {}

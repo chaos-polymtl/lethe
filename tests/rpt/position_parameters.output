@@ -1,0 +1,5 @@
+
+DEAL::Particle position 0 : h = 0.500000, rho = 1.00000
+DEAL::Particle position 1 : h = -0.500000, rho = 1.00000
+DEAL::Particle position 2 : h = 0.500000, rho = 0.00000
+DEAL::Particle position 3 : h = 0.500000, rho = 0.250000

@@ -9,7 +9,8 @@ void
 ParticleDetectorInteractions<dim>::calculate_position_parameters()
 {
   // Vector from the detector face center to the particle position (Xdp)
-  face_detector_particle_distance = particle_position - detector_face_position;
+  Tensor<1, dim> face_detector_particle_distance =
+    particle_position - detector_face_position;
 
   // Detector orientation vector parallel to z' in particle-detector coordinate
   // (e'z)
@@ -46,7 +47,7 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
   double r = detector_radius;
   double l = detector_length;
 
-  // Calculate relevant distances prior other calculations
+  // Calculate relevant distances prior next and other calculations
   OB_distance = rho * std::cos(alpha) -
                 std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
   OA_distance = rho * std::cos(alpha) +
@@ -74,16 +75,21 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
           theta_cri = M_PI_2; // pi/2
           theta_min = std::atan(OB_distance / l);
         }
-      else // Case 2 : S2 (h < 0)
+      else
         {
-          theta_max = M_PI_2 + std::atan(std::abs(h) / OB_distance);
-          theta_cri = M_PI_2 + std::atan(std::abs(h) / OB_distance);
-          theta_min = std::atan(OB_distance / (l - std::abs(h)));
+          /*
+          AssertThrow(
+            h >= 0,
+            ExcMessage(
+              "For now, it is not possible to calculate count for particle
+          positions on the side of the detector."));
+              */
           std::cout
-            << "For now, it is now possible to calculate count for particle position on the side of the detector."
+            << "For now, it is not possible to calculate count for particle positions on the side of the detector."
             << std::endl;
-          // This warning should be change to assert
         }
+
+
       // Calculate theta angle and its weighting factor for the Monte Carlo
       // iteration
       theta                  = std::acos(std::cos(theta_min) -
@@ -121,9 +127,10 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
 }
 
 template <int dim>
-void
+double
 ParticleDetectorInteractions<dim>::calculate_detector_path_length()
 {
+  double detector_path_length;
   double l       = detector_length;
   double theta_1 = std::atan(OA_distance / (h + l));
 
@@ -138,7 +145,7 @@ ParticleDetectorInteractions<dim>::calculate_detector_path_length()
         detector_path_length = (OA_distance - OB_distance) / std::sin(theta);
       else if (theta > theta_cri && theta <= theta_1)
         detector_path_length = l / std::cos(theta);
-      else if (theta > theta_cri && theta > theta_1)
+      else // (theta > theta_cri && theta > theta_1)
         detector_path_length =
           OA_distance / std::sin(theta) - h / std::cos(theta);
     }
@@ -152,7 +159,11 @@ ParticleDetectorInteractions<dim>::calculate_detector_path_length()
       else if (theta > theta_1 && theta <= theta_2)
         detector_path_length =
           OA_distance / std::sin(theta) - h / std::cos(theta);
+      else // Do not enters in the detector
+        detector_path_length = 0;
     }
+
+  return detector_path_length;
 }
 
 template <int dim>
@@ -211,7 +222,7 @@ ParticleDetectorInteractions<dim>::solve_t(
           t += dtn;
           i++;
 
-          if (i == max_iteration - 1)
+          if (i == max_iteration)
             std::cout << "Solving t didn't work" << std::endl;
         }
 
@@ -222,7 +233,7 @@ ParticleDetectorInteractions<dim>::solve_t(
 }
 
 template <int dim>
-void
+double
 ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
 {
   Tensor<1, dim> h_vector, detector_particle_origin,
@@ -271,32 +282,43 @@ ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
         std::abs(intersection_detector_distance_vector[i].norm());
     }
 
+  double reactor_path_length;
+
   if (intersection_detector_distance[0] < intersection_detector_distance[1])
     reactor_path_length =
       std::abs((particle_position - intersection_point[0]).norm());
   else
     reactor_path_length =
       std::abs((particle_position - intersection_point[1]).norm());
+
+  return reactor_path_length;
 }
 
 template <int dim>
-void
-ParticleDetectorInteractions<dim>::calculate_detector_interaction_probability()
+double
+ParticleDetectorInteractions<dim>::calculate_detector_interaction_probability(
+  double &detector_path_length)
 {
   calculate_detector_path_length();
 
   double mu_d = initial_parameters.attenuation_coefficient_detector;
-  detector_interaction_probability = 1 - std::exp(-mu_d * detector_path_length);
+  double detector_interaction_probability =
+    1 - std::exp(-mu_d * detector_path_length);
+
+  return detector_interaction_probability;
 }
 
 template <int dim>
-void
-ParticleDetectorInteractions<dim>::calculate_non_interaction_probability()
+double
+ParticleDetectorInteractions<dim>::calculate_non_interaction_probability(
+  double &reactor_path_length)
 {
   calculate_reactor_path_length();
 
   double mu_a = initial_parameters.attenuation_coefficient_reactor;
-  non_interaction_probability = std::exp(-mu_a * reactor_path_length);
+  double non_interaction_probability = std::exp(-mu_a * reactor_path_length);
+
+  return non_interaction_probability;
 }
 
 template <int dim>
@@ -315,13 +337,19 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
       double n_alpha = (double)rand() / RAND_MAX;
       double n_theta = (double)rand() / RAND_MAX;
 
+      // Initialize variables
+      double detector_path_length, reactor_path_length,
+        detector_interaction_probability, non_interaction_probability;
+
       // Calculate all parameters and distances for efficiency
       calculate_position_parameters();
       calculate_solid_angle(n_alpha, n_theta);
-      calculate_detector_path_length();
-      calculate_detector_interaction_probability();
-      calculate_reactor_path_length();
-      calculate_non_interaction_probability();
+      detector_path_length = calculate_detector_path_length();
+      detector_interaction_probability =
+        calculate_detector_interaction_probability(detector_path_length);
+      reactor_path_length = calculate_reactor_path_length();
+      non_interaction_probability =
+        calculate_non_interaction_probability(reactor_path_length);
 
       efficiency += weighting_factor_alpha * weighting_factor_theta *
                     detector_interaction_probability *

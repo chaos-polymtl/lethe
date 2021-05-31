@@ -133,7 +133,6 @@ Parameters::DetectorParameters::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("detector parameters");
   {
-    number                  = prm.get_integer("number");
     radius                  = prm.get_double("radius");
     length                  = prm.get_double("length");
     detector_positions_file = prm.get("detector positions file");

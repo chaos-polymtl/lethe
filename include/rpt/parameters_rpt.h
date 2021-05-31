@@ -73,10 +73,9 @@ namespace Parameters
   // Detector parameters, all detector should have the same dimensions(r and l)
   struct DetectorParameters
   {
-    unsigned int number;
-    double       radius;
-    double       length;
-    std::string  detector_positions_file;
+    double      radius;
+    double      length;
+    std::string detector_positions_file;
 
     static void
     declare_parameters(ParameterHandler &prm);

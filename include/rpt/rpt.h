@@ -55,8 +55,6 @@ private:
 
   std::vector<RadioParticle<dim>> particle_positions;
   std::vector<Detector<dim>>      detectors;
-
-  ParticleDetectorInteractions<dim> count;
 };
 
 #endif
