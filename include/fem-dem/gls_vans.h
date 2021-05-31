@@ -153,6 +153,10 @@ private:
 
   // Solution of the void fraction at previous time steps
 
+  IndexSet locally_owned_dofs_voidfraction;
+
+  IndexSet locally_relevant_dofs_voidfraction;
+
   TrilinosWrappers::MPI::Vector void_fraction_m1;
   TrilinosWrappers::MPI::Vector void_fraction_m2;
   TrilinosWrappers::MPI::Vector void_fraction_m3;

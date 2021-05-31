@@ -26,9 +26,8 @@ GLSVANSSolver<dim>::setup_dofs()
 {
   GLSNavierStokesSolver<dim>::setup_dofs();
   void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
-  const IndexSet locally_owned_dofs_voidfraction =
+  locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
-  IndexSet locally_relevant_dofs_voidfraction;
 
   DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler,
 
@@ -270,34 +269,34 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                        GeometryInfo<dim>::vertices_per_cell,
                      ExcNotImplemented());
               const unsigned int dof_index = cell->vertex_dof_index(v, 0);
-              if (dof_touched[dof_index] == false)
-                dof_touched[dof_index] = true;
-              else
-                continue;
-              const double solution_value =
-                nodal_void_fraction_relevant(dof_index);
-              if (lambda(dof_index) + penalty_parameter *
-                                        diagonal_of_mass_matrix(dof_index) *
-                                        (solution_value - 1) >
-                  0)
+              if (locally_owned_dofs_voidfraction.is_element(dof_index))
                 {
-                  active_set.add_index(dof_index);
-                  void_fraction_constraints.add_line(dof_index);
-                  void_fraction_constraints.set_inhomogeneity(dof_index, 1);
-                  nodal_void_fraction_relevant(dof_index) = 1;
-                  lambda(dof_index)                       = 0;
-                }
-              else if (lambda(dof_index) +
-                         penalty_parameter *
-                           diagonal_of_mass_matrix(dof_index) *
-                           (solution_value - 0.38) <
-                       0)
-                {
-                  active_set.add_index(dof_index);
-                  void_fraction_constraints.add_line(dof_index);
-                  void_fraction_constraints.set_inhomogeneity(dof_index, 0.38);
-                  nodal_void_fraction_relevant(dof_index) = 0.38;
-                  lambda(dof_index)                       = 0;
+                  const double solution_value =
+                    nodal_void_fraction_relevant(dof_index);
+                  if (lambda(dof_index) + penalty_parameter *
+                                            mass_matrix(dof_index, dof_index) *
+                                            (solution_value - 1) >
+                      0)
+                    {
+                      active_set.add_index(dof_index);
+                      void_fraction_constraints.add_line(dof_index);
+                      void_fraction_constraints.set_inhomogeneity(dof_index, 1);
+                      nodal_void_fraction_relevant(dof_index) = 1;
+                      lambda(dof_index)                       = 0;
+                    }
+                  else if (lambda(dof_index) +
+                             penalty_parameter *
+                               mass_matrix(dof_index, dof_index) *
+                               (solution_value - 0.38) <
+                           0)
+                    {
+                      active_set.add_index(dof_index);
+                      void_fraction_constraints.add_line(dof_index);
+                      void_fraction_constraints.set_inhomogeneity(dof_index,
+                                                                  0.38);
+                      nodal_void_fraction_relevant(dof_index) = 0.38;
+                      lambda(dof_index)                       = 0;
+                    }
                 }
             }
         }
