@@ -9,9 +9,11 @@ template <int dim>
 MultiphysicsInterface<dim>::MultiphysicsInterface(
   const SimulationParameters<dim> &                            nsparam,
   std::shared_ptr<parallel::DistributedTriangulationBase<dim>> p_triangulation,
-  std::shared_ptr<SimulationControl> p_simulation_control)
+  std::shared_ptr<SimulationControl> p_simulation_control,
+  ConditionalOStream &               p_pcout)
   : multiphysics_parameters(nsparam.multiphysics)
   , verbosity(nsparam.non_linear_solver.verbosity)
+  , pcout(p_pcout)
 {
   if (multiphysics_parameters.fluid_dynamics)
     {

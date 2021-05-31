@@ -57,7 +57,8 @@ public:
     const SimulationParameters<dim> &nsparam,
     std::shared_ptr<parallel::DistributedTriangulationBase<dim>>
                                        p_triangulation,
-    std::shared_ptr<SimulationControl> p_simulation_control);
+    std::shared_ptr<SimulationControl> p_simulation_control,
+    ConditionalOStream &               p_pcout);
 
   std::vector<PhysicsID>
   get_active_physics()
@@ -75,21 +76,21 @@ public:
   {
     if (physics_id == PhysicsID::heat_transfer)
       {
-        std::cout << "--------------" << std::endl
-                  << "Heat Transfer" << std::endl
-                  << "--------------" << std::endl;
+        pcout << "--------------" << std::endl
+              << "Heat Transfer" << std::endl
+              << "--------------" << std::endl;
       }
     else if (physics_id == PhysicsID::tracer)
       {
-        std::cout << "-------" << std::endl
-                  << "Tracer" << std::endl
-                  << "-------" << std::endl;
+        pcout << "-------" << std::endl
+              << "Tracer" << std::endl
+              << "-------" << std::endl;
       }
     else if (physics_id == PhysicsID::free_surface)
       {
-        std::cout << "-------------" << std::endl
-                  << "Free Surface" << std::endl
-                  << "-------------" << std::endl;
+        pcout << "-------------" << std::endl
+              << "Free Surface" << std::endl
+              << "-------------" << std::endl;
       }
   }
 
@@ -577,6 +578,7 @@ public:
 private:
   const Parameters::Multiphysics multiphysics_parameters;
   const Parameters::Verbosity    verbosity;
+  ConditionalOStream             pcout;
 
   // Data structure to store all physics which were enabled
   std::vector<PhysicsID> active_physics;

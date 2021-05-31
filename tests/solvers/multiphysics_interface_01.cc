@@ -61,10 +61,14 @@ test()
     std::make_shared<SimulationControlTransient>(
       solver_parameters.simulation_control);
 
+  ConditionalOStream pcout(
+    {std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0});
+
   {
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
-                                            simulation_control);
+                                            simulation_control,
+                                            pcout);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: fluid, heat)" << std::endl;
@@ -78,7 +82,8 @@ test()
   {
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
-                                            simulation_control);
+                                            simulation_control,
+                                            pcout);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: fluid)" << std::endl;
@@ -92,7 +97,8 @@ test()
   {
     MultiphysicsInterface<dim> multiphysics(solver_parameters,
                                             tria,
-                                            simulation_control);
+                                            simulation_control,
+                                            pcout);
     std::vector<PhysicsID> active_physics = multiphysics.get_active_physics();
 
     deallog << "Active physics (expected: none)" << std::endl;
