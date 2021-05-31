@@ -124,10 +124,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
           simulation_parameters.simulation_control);
     }
 
-  multiphysics =
-    std::make_shared<MultiphysicsInterface<dim>>(simulation_parameters,
-                                                 triangulation,
-                                                 simulation_control);
+  multiphysics = std::make_shared<MultiphysicsInterface<dim>>(
+    simulation_parameters, triangulation, simulation_control, this->pcout);
 
   // Pre-allocate memory for the previous solutions using the information
   // of the BDF schemes
