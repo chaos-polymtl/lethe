@@ -969,6 +969,8 @@ GLSVANSSolver<dim>::assembleGLS()
                                    present_void_fraction_values[q];
 
 
+              double gamma = 0.05;
+
               // Matrix assembly
               if (assemble_matrix)
                 {
@@ -1031,7 +1033,7 @@ GLSVANSSolver<dim>::assembleGLS()
 
                           // Grad-div stabilization - Bruno test
                           local_matrix(i, j) +=
-
+                            gamma *
                             (div_phi_u[j] * present_void_fraction_values[q] +
                              phi_u[j] * present_void_fraction_gradients[q]) *
                             div_phi_u[i] * JxW;
@@ -1137,7 +1139,8 @@ GLSVANSSolver<dim>::assembleGLS()
                     JxW;
 
                   // Grad-div stabilization
-                  local_rhs(i) -= (present_void_fraction_values[q] *
+                  local_rhs(i) -= gamma *
+                                  (present_void_fraction_values[q] *
                                      present_velocity_divergence +
                                    present_velocity_values[q] *
                                      present_void_fraction_gradients[q]) *
