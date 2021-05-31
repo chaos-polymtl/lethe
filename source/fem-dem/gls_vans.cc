@@ -207,7 +207,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
     {
       assemble_L2_projection_void_fraction();
       solve_L2_system_void_fraction();
-      // update_solution_and_constraints();
+      update_solution_and_constraints();
     }
 }
 
@@ -300,10 +300,9 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                   lambda(dof_index)                       = 0;
                 }
             }
-
-          void_fraction_constraints.close();
         }
     }
+  void_fraction_constraints.close();
 }
 
 template <int dim>
