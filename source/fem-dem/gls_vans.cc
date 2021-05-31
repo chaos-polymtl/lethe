@@ -95,10 +95,6 @@ GLSVANSSolver<dim>::setup_dofs()
                      this->mpi_communicator);
 
   assemble_mass_matrix_diagonal(mass_matrix);
-
-  diagonal_of_mass_matrix.reinit(locally_owned_dofs_voidfraction);
-  for (unsigned int j = 0; j < nodal_void_fraction_relevant.size(); j++)
-    diagonal_of_mass_matrix(j) = mass_matrix.diag_element(j);
 }
 
 
@@ -248,11 +244,13 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 {
   const double penalty_parameter = 100;
 
-  TrilinosWrappers::MPI::Vector lambda(
-    complete_index_set(void_fraction_dof_handler.n_dofs()));
+  TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs_voidfraction);
 
-  complete_system_matrix_void_fraction.residual(
-    lambda, nodal_void_fraction_relevant, complete_system_rhs_void_fraction);
+  nodal_void_fraction_owned = nodal_void_fraction_relevant;
+
+  complete_system_matrix_void_fraction.residual(lambda,
+                                                nodal_void_fraction_owned,
+                                                system_rhs_void_fraction);
 
   void_fraction_constraints.clear();
   active_set.clear();
@@ -272,7 +270,7 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
               if (locally_owned_dofs_voidfraction.is_element(dof_index))
                 {
                   const double solution_value =
-                    nodal_void_fraction_relevant(dof_index);
+                    nodal_void_fraction_owned(dof_index);
                   if (lambda(dof_index) + penalty_parameter *
                                             mass_matrix(dof_index, dof_index) *
                                             (solution_value - 1) >
@@ -281,8 +279,8 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                       active_set.add_index(dof_index);
                       void_fraction_constraints.add_line(dof_index);
                       void_fraction_constraints.set_inhomogeneity(dof_index, 1);
-                      nodal_void_fraction_relevant(dof_index) = 1;
-                      lambda(dof_index)                       = 0;
+                      nodal_void_fraction_owned(dof_index) = 1;
+                      lambda(dof_index)                    = 0;
                     }
                   else if (lambda(dof_index) +
                              penalty_parameter *
@@ -294,13 +292,15 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                       void_fraction_constraints.add_line(dof_index);
                       void_fraction_constraints.set_inhomogeneity(dof_index,
                                                                   0.38);
-                      nodal_void_fraction_relevant(dof_index) = 0.38;
-                      lambda(dof_index)                       = 0;
+                      nodal_void_fraction_owned(dof_index) = 0.38;
+                      lambda(dof_index)                    = 0;
                     }
                 }
             }
         }
     }
+  active_set.compress();
+  nodal_void_fraction_relevant = nodal_void_fraction_owned;
   void_fraction_constraints.close();
 }
 
@@ -701,12 +701,13 @@ GLSVANSSolver<dim>::assembleGLS()
   double h;
 
   // Diameter of particle
-  double d_p = 0;
-  for (auto &particle : particle_handler)
-    {
-      auto &particle_properties = particle.get_properties();
-      d_p                       = particle_properties[DEM::PropertiesIndex::dp];
-    }
+  double d_p = 0.001;
+  //  for (auto &particle : particle_handler)
+  //    {
+  //      auto &particle_properties = particle.get_properties();
+  //      d_p                       =
+  //      particle_properties[DEM::PropertiesIndex::dp];
+  //    }
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
