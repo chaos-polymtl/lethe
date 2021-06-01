@@ -72,31 +72,31 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::cutted_cells_mapping()
 {
+  // check all the cells if they are cut or not. Put the information in a map
+  // with the key being the cell.
+  TimerOutput::Scope t(this->computing_timer, "cutted_cells_mapping");
+  std::map<types::global_dof_index, Point<dim>> support_points;
+  DoFTools::map_dofs_to_support_points(*this->mapping,
+                                       this->dof_handler,
+                                       support_points);
+  cutted_cells_map.clear();
+  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-    // check all the cells if they are cut or not. Put the information in a map with the key being the cell.
-    TimerOutput::Scope t(this->computing_timer, "cutted_cells_mapping");
-    std::map<types::global_dof_index, Point<dim>> support_points;
-    DoFTools::map_dofs_to_support_points(*this->mapping,
-                                         this->dof_handler,
-                                         support_points);
-    cutted_cells_map.clear();
-    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-    const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    // // Loop on all the cells and check if they are cut.
-    for (const auto &cell : cell_iterator)
+  // // Loop on all the cells and check if they are cut.
+  for (const auto &cell : cell_iterator)
     {
-        if (cell->is_locally_owned() || cell->is_ghost()) {
-            bool cell_is_cut;
-            unsigned int p;
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          bool         cell_is_cut;
+          unsigned int p;
 
-            std::tie(cell_is_cut, p, std::ignore) =
-                    cell_cut(cell, local_dof_indices, support_points);
+          std::tie(cell_is_cut, p, std::ignore) =
+            cell_cut(cell, local_dof_indices, support_points);
 
-            // add the info in the map.
-            cutted_cells_map[cell] = {cell_is_cut, p};
-
+          // add the info in the map.
+          cutted_cells_map[cell] = {cell_is_cut, p};
         }
     }
 }
@@ -1843,7 +1843,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // Check if the cell is cut or not by the IB
 
           cell->get_dof_indices(local_dof_indices);
-          bool cell_is_cut;
+          bool         cell_is_cut;
           unsigned int p;
           std::tie(cell_is_cut, p) = cutted_cells_map[cell];
 
@@ -2072,7 +2072,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // it's not cut this dof must not
                                       // be overwritten
                                       bool cell_is_cut;
-                                      std::tie(cell_is_cut, std::ignore) = cutted_cells_map[cell_3];
+                                      std::tie(cell_is_cut, std::ignore) =
+                                        cutted_cells_map[cell_3];
 
 
                                       if (cell_is_cut == false)
@@ -2716,11 +2717,11 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-
   if (this->simulation_parameters.particlesParameters.integrate_motion)
     {
       force_on_ib();
       integrate_particles();
+      cutted_cells_mapping();
     }
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
@@ -2841,7 +2842,6 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
@@ -2985,7 +2985,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
     }
-
   this->simulation_parameters.mesh_adaptation.refinement_fraction = temp_refine;
   this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
 
@@ -3001,11 +3000,12 @@ GLSSharpNavierStokesSolver<dim>::solve()
         integrate_particles();
 
       this->simulation_control->print_progression(this->pcout);
-      if (this->simulation_control->is_at_start()){
-        vertices_cell_mapping();
-        cutted_cells_mapping();
-        this->first_iteration();
-      }
+      if (this->simulation_control->is_at_start())
+        {
+          vertices_cell_mapping();
+          cutted_cells_mapping();
+          this->first_iteration();
+        }
       else
         {
           refine_ib();

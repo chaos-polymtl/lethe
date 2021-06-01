@@ -161,8 +161,9 @@ private:
 
   /**
    * @brief
-   *This function create a map with the key being the cell and what it contains a bool to define if a cell is cut and the particle that cut it if it's the case.
-   * This map contains is referred as cutted_cells_map.
+   *This function create a map with the key being the cell and what it contains
+   *a bool to define if a cell is cut and the particle that cut it if it's the
+   *case. This map contains is referred as cutted_cells_map.
    */
   void
   cutted_cells_mapping();
@@ -256,10 +257,10 @@ private:
 private:
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-                               vertices_to_cell;
-    std::map<typename DoFHandler<dim>::active_cell_iterator,
-            std::tuple<bool,unsigned int>>
-            cutted_cells_map;
+    vertices_to_cell;
+  std::map<typename DoFHandler<dim>::active_cell_iterator,
+           std::tuple<bool, unsigned int>>
+                               cutted_cells_map;
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
