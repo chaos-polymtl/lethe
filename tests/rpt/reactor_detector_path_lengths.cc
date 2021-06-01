@@ -56,46 +56,42 @@ test()
   Parameters::DetectorParameters detector_param;
   detector_param.radius = 0.5;
   detector_param.length = 1;
-  Point<3> FP0          = {0.5, 0, 1};
-  Point<3> MP0          = {1, 0, 1};
-  Point<3> FP1          = {0.5, 0, 0};
-  Point<3> MP1          = {1, 0, 0};
+  Point<3>    FP        = {0.5, 0, 1};
+  Point<3>    MP        = {1, 0, 1};
+  Detector<3> detector(detector_param, 0, FP, MP);
 
-  Detector<3> detector0(detector_param, 0, FP0, MP0);
-  Detector<3> detector1(detector_param, 0, FP1, MP1);
-
-  const unsigned int n_detector = 2;
-  Detector<3>        detector_positions[n_detector]{detector0, detector1};
-
+  // Other parameters
   RPTCalculatingParameters rpt_parameters;
+  rpt_parameters.rpt_param.reactor_radius = 0.5;
 
   // Two sets of n values to check when rho < r => theta < theta_cri & theta >
-  // theta_cri and both alpha_min & theta_min
+  // theta_cri
   double n_alpha[3] = {0.1, 0.75, 0.5};
   double n_theta[3] = {0.1, 0.75, 0};
 
   for (unsigned int i_particle = 0; i_particle < n_particle; i_particle++)
     {
-      for (unsigned int i_detector = 0; i_detector < n_detector; i_detector++)
+      for (unsigned int i_n = 0; i_n < 3; i_n++)
         {
-          for (unsigned int i_n = 0; i_n < 3; i_n++)
-            {
-              ParticleDetectorInteractions<3> particle_detector_interactions(
-                particle_positions[i_particle],
-                detector_positions[i_detector],
-                rpt_parameters);
-              double alpha =
-                particle_detector_interactions.get_alpha(n_alpha[i_n],
-                                                         n_theta[i_n]);
-              double theta =
-                particle_detector_interactions.get_theta(n_alpha[i_n],
-                                                         n_theta[i_n]);
-              deallog << "Particle position " << i_particle << " | Detector "
-                      << i_detector << " | n_alpha " << n_alpha[i_n]
-                      << " | n_theta " << n_theta[i_n] << std::endl;
-              deallog << " alpha = " << alpha << std::endl;
-              deallog << " theta = " << theta << std::endl;
-            }
+          ParticleDetectorInteractions<3> particle_detector_interactions(
+            particle_positions[i_particle], detector, rpt_parameters);
+
+          double detector_path_length =
+            particle_detector_interactions.get_detector_path_length(
+              n_alpha[i_n], n_theta[i_n]);
+          double reactor_path_length =
+            particle_detector_interactions.get_reactor_path_length(
+              n_alpha[i_n], n_theta[i_n]);
+
+          deallog << "Particle position " << i_particle
+                  << " : detector path length = " << detector_path_length
+                  << std::endl;
+          deallog << "                      reactor path length =  "
+                  << reactor_path_length << std::endl;
+          deallog << "                      n_alpha = " << n_alpha[i_n]
+                  << std::endl;
+          deallog << "                      n_theta = " << n_theta[i_n]
+                  << std::endl;
         }
     }
 }

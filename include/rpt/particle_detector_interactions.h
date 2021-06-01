@@ -30,40 +30,22 @@ public:
   calculate_count();
 
   double
-  get_h()
-  {
-    calculate_position_parameters();
-
-    return h;
-  }
+  get_h();
 
   double
-  get_rho()
-  {
-    calculate_position_parameters();
-
-    return rho;
-  }
+  get_rho();
 
   double
-  get_alpha(double n_alpha, double n_theta)
-  {
-    calculate_position_parameters();
-    calculate_solid_angle(n_alpha, n_theta);
-
-    return alpha;
-  }
+  get_alpha(double n_alpha, double n_theta);
 
   double
-  get_theta(double n_alpha, double n_theta)
-  {
-    calculate_position_parameters();
-    calculate_solid_angle(n_alpha, n_theta);
+  get_theta(double n_alpha, double n_theta);
 
-    return theta;
-  }
+  double
+  get_detector_path_length(double n_alpha, double n_theta);
 
-
+  double
+  get_reactor_path_length(double n_alpha, double n_theta);
 
 private:
   void

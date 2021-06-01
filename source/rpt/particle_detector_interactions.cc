@@ -24,9 +24,13 @@ ParticleDetectorInteractions<dim>::calculate_position_parameters()
   h = scalar_product(face_detector_particle_distance, detector_orientation_z);
 
   // x' coordinate of the particle-detector frame (e'x) (see equations 29 to 31)
-  Tensor<1, dim> Z       = h * detector_orientation_z;
-  Tensor<1, dim> X       = Z - face_detector_particle_distance;
-  detector_orientation_x = X / X.norm();
+  Tensor<1, dim> Z = h * detector_orientation_z;
+  Tensor<1, dim> X = Z - face_detector_particle_distance;
+
+  if (X.norm() == 0) // When particle is aligned to the detector
+    detector_orientation_x = {0, 0, 1};
+  else
+    detector_orientation_x = X / X.norm();
 
   // y' coordinate of the particle-detector frame (e'y)
   detector_orientation_y =
@@ -47,12 +51,6 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
   double r = detector_radius;
   double l = detector_length;
 
-  // Calculate relevant distances prior next and other calculations
-  OB_distance = rho * std::cos(alpha) -
-                std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
-  OA_distance = rho * std::cos(alpha) +
-                std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
-
   // Case 1 or 2: S1 or S2 (Tracer views the detector from both top and/or
   // lateral side of the detector)
   if (rho > detector_radius)
@@ -62,6 +60,14 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
       alpha_max              = std::asin(r / rho);
       alpha                  = alpha_max * (2 * n_alpha - 1);
       weighting_factor_alpha = alpha_max / M_PI;
+
+      // Calculate relevant distances prior next and other calculations
+      OB_distance =
+        rho * std::cos(alpha) -
+        std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
+      OA_distance =
+        rho * std::cos(alpha) +
+        std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
 
       if (h > 0) // Case 1 : S1 (h > 0)
         {
@@ -75,20 +81,14 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
           theta_cri = M_PI_2; // pi/2
           theta_min = std::atan(OB_distance / l);
         }
-      else
+      else // Cases where h < 0 happens are not implemented yet since they are
+           // not usual
         {
-          /*
           AssertThrow(
             h >= 0,
             ExcMessage(
-              "For now, it is not possible to calculate count for particle
-          positions on the side of the detector."));
-              */
-          std::cout
-            << "For now, it is not possible to calculate count for particle positions on the side of the detector."
-            << std::endl;
+              "For now, it is not possible to calculate count for particle positions on the side of the detector."));
         }
-
 
       // Calculate theta angle and its weighting factor for the Monte Carlo
       // iteration
@@ -123,6 +123,14 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
           weighting_factor_alpha = alpha_max / M_PI;
         }
       alpha = alpha_max * (2 * n_alpha - 1);
+
+      // Calculate relevant distances prior next and other calculations
+      OB_distance =
+        rho * std::cos(alpha) -
+        std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
+      OA_distance =
+        rho * std::cos(alpha) +
+        std::sqrt(std::pow(r, 2) - std::pow(rho * std::sin(alpha), 2));
     }
 }
 
@@ -152,7 +160,7 @@ ParticleDetectorInteractions<dim>::calculate_detector_path_length()
   // Case 3 : S3 (Tracer views the detector only from the top surface)
   else
     {
-      double theta_2 = std::atan(OA_distance / (h));
+      double theta_2 = std::atan(OA_distance / h);
 
       if (theta <= theta_1)
         detector_path_length = l / std::cos(theta);
@@ -173,6 +181,710 @@ ParticleDetectorInteractions<dim>::solve_t(
   Tensor<1, dim> detector_particle_origin,
   Tensor<1, dim> particle_position_rotation)
 {
+  /*
+  // Assign short variables
+  double e00, e01, e10, e11, e20, e21, Xp0, Xp1, Xp2, XDPO0, XDPO1, R;
+
+  e00 = e_inverse[0][0];
+  e01 = e_inverse[1][0];
+  e10 = e_inverse[0][1];
+  e11 = e_inverse[1][1];
+  e20 = e_inverse[0][2];
+  e21 = e_inverse[1][2];
+
+  Xp0   = particle_position_rotation[0];
+  Xp1   = particle_position_rotation[1];
+  Xp2   = particle_position_rotation[2];
+  XDPO0 = detector_particle_origin[0];
+  XDPO1 = detector_particle_origin[1];
+  R     = fixed_parameters.reactor_radius;
+
+  // Analytical solution to solve t
+  std::vector<double> t_solutions = {
+    -(std::sqrt(
+        R * R * e20 * e20 * cos(theta) * cos(theta) +
+        R * R * e21 * e21 * cos(theta) * cos(theta) -
+        XDPO0 * XDPO0 * e21 * e21 * cos(theta) * cos(theta) -
+        XDPO1 * XDPO1 * e20 * e20 * cos(theta) * cos(theta) +
+        R * R * e00 * e00 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) +
+        R * R * e01 * e01 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) -
+        XDPO0 * XDPO0 * e01 * e01 * cos(alpha) * cos(alpha) * sin(theta) *
+          sin(theta) -
+        XDPO1 * XDPO1 * e00 * e00 * cos(alpha) * cos(alpha) * sin(theta) *
+          sin(theta) +
+        R * R * e10 * e10 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+        R * R * e11 * e11 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) -
+        XDPO0 * XDPO0 * e11 * e11 * sin(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        XDPO1 * XDPO1 * e10 * e10 * sin(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        Xp0 * Xp0 * e00 * e00 * e21 * e21 * cos(theta) * cos(theta) -
+        Xp0 * Xp0 * e01 * e01 * e20 * e20 * cos(theta) * cos(theta) -
+        Xp1 * Xp1 * e10 * e10 * e21 * e21 * cos(theta) * cos(theta) -
+        Xp1 * Xp1 * e11 * e11 * e20 * e20 * cos(theta) * cos(theta) -
+        Xp1 * Xp1 * e00 * e00 * e11 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        Xp1 * Xp1 * e01 * e01 * e10 * e10 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e00 * e00 * e21 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e01 * e01 * e20 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * XDPO1 * e20 * e21 * cos(theta) * cos(theta) -
+        Xp0 * Xp0 * e00 * e00 * e11 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        Xp0 * Xp0 * e01 * e01 * e10 * e10 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e10 * e10 * e21 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e11 * e11 * e20 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp0 * e00 * e21 * e21 * cos(theta) * cos(theta) -
+        2 * XDPO1 * Xp0 * e01 * e20 * e20 * cos(theta) * cos(theta) -
+        2 * XDPO0 * Xp1 * e10 * e21 * e21 * cos(theta) * cos(theta) -
+        2 * XDPO1 * Xp1 * e11 * e20 * e20 * cos(theta) * cos(theta) +
+        2 * XDPO0 * XDPO1 * e00 * e01 * cos(alpha) * cos(alpha) * sin(theta) *
+          sin(theta) +
+        2 * XDPO0 * XDPO1 * e10 * e11 * sin(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * R * R * e00 * e20 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * R * R * e01 * e21 * cos(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO1 * XDPO1 * e00 * e20 * cos(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO0 * XDPO0 * e01 * e21 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * R * R * e10 * e20 * sin(alpha) * cos(theta) * sin(theta) -
+        2 * R * R * e11 * e21 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO1 * XDPO1 * e10 * e20 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO0 * XDPO0 * e11 * e21 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e01 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * XDPO1 * Xp0 * e00 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * XDPO0 * Xp1 * e11 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * XDPO1 * Xp1 * e10 * e20 * e21 * cos(theta) * cos(theta) -
+        2 * XDPO0 * Xp1 * e01 * e01 * e10 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp1 * e00 * e00 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp2 * e01 * e01 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp2 * e00 * e00 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp0 * e00 * e11 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp0 * e01 * e10 * e10 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp2 * e11 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp2 * e10 * e10 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * R * R * e00 * e10 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) +
+        2 * R * R * e01 * e11 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * XDPO1 * XDPO1 * e00 * e10 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * XDPO0 * XDPO0 * e01 * e11 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e00 * e10 * e21 * e21 * cos(theta) * cos(theta) -
+        2 * Xp0 * Xp1 * e01 * e11 * e20 * e20 * cos(theta) * cos(theta) +
+        2 * Xp0 * Xp0 * e00 * e01 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * Xp1 * Xp1 * e10 * e11 * e20 * e21 * cos(theta) * cos(theta) -
+        2 * Xp1 * Xp2 * e01 * e01 * e10 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp1 * Xp2 * e00 * e00 * e11 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp1 * e00 * e01 * e10 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e00 * e01 * e20 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e11 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e01 * e10 * e10 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e01 * e01 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp1 * e00 * e11 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp0 * e00 * e00 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp1 * e01 * e10 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e00 * e21 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp2 * e01 * e01 * e20 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp0 * e00 * e01 * e10 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e10 * e11 * e20 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp1 * e00 * e11 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp1 * Xp1 * e01 * e10 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e10 * e10 * e21 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e11 * e11 * e20 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp0 * e01 * e01 * e10 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp0 * e00 * e00 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * XDPO1 * e00 * e21 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * XDPO0 * XDPO1 * e01 * e20 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * XDPO0 * XDPO1 * e10 * e21 * sin(alpha) * cos(theta) * sin(theta) -
+        2 * XDPO0 * XDPO1 * e11 * e20 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e00 * e11 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp1 * e01 * e01 * e10 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp2 * Xp2 * e00 * e10 * e21 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp2 * Xp2 * e01 * e11 * e20 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp1 * e00 * e01 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp1 * e00 * e01 * e10 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e00 * e01 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e00 * e01 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e01 * e10 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp0 * e00 * e10 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e10 * e11 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e10 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * XDPO1 * e00 * e11 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) +
+        2 * XDPO0 * XDPO1 * e01 * e10 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp0 * e01 * e01 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e00 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp2 * e00 * e21 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp2 * e01 * e20 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp1 * e11 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp2 * e10 * e21 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp1 * e10 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp2 * e11 * e20 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e11 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * Xp0 * Xp1 * e01 * e10 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * Xp1 * Xp2 * e00 * e01 * e10 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp2 * e00 * e01 * e11 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp2 * e00 * e10 * e11 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp2 * e01 * e10 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp0 * e00 * e01 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e01 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp1 * e01 * e10 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp1 * e00 * e10 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e00 * e11 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e01 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        4 * XDPO0 * Xp2 * e01 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        4 * XDPO1 * Xp2 * e00 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e00 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e01 * e10 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp1 * e01 * e01 * e10 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e00 * e00 * e11 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e00 * e10 * e21 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e01 * e11 * e20 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp1 * e00 * e10 * e11 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp1 * e01 * e10 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e00 * e11 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e01 * e10 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e10 * e21 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp2 * e01 * e11 * e20 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp0 * e00 * e01 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp0 * e00 * e01 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp2 * e01 * e01 * e10 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp2 * e00 * e00 * e11 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp2 * e00 * e11 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp2 * e01 * e10 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e00 * e11 * e20 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e01 * e10 * e20 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e00 * e01 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp0 * e00 * e01 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp1 * e00 * e11 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO0 * Xp1 * e01 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp1 * e01 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp1 * e00 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO1 * Xp1 * e00 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp1 * e01 * e10 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO0 * Xp2 * e01 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp2 * e00 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO0 * Xp0 * e00 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp0 * e01 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp0 * e01 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO1 * Xp0 * e01 * e10 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO0 * Xp1 * e10 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp1 * e10 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO0 * Xp2 * e11 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp2 * e10 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e01 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e01 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * Xp0 * Xp2 * e00 * e01 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp1 * Xp2 * e00 * e11 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp1 * Xp2 * e01 * e10 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e10 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e01 * e10 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp2 * e00 * e11 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp2 * e01 * e10 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        4 * Xp1 * Xp2 * e10 * e11 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        4 * Xp0 * Xp1 * e00 * e01 * e10 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e01 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e01 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp1 * Xp2 * e00 * e10 * e11 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp1 * Xp2 * e01 * e10 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta)) -
+      Xp2 * e20 * e20 * cos(theta) - Xp2 * e21 * e21 * cos(theta) -
+      XDPO0 * e20 * cos(theta) - XDPO1 * e21 * cos(theta) +
+      Xp0 * e00 * e00 * cos(alpha) * sin(theta) +
+      Xp0 * e01 * e01 * cos(alpha) * sin(theta) +
+      Xp1 * e10 * e10 * sin(alpha) * sin(theta) +
+      Xp1 * e11 * e11 * sin(alpha) * sin(theta) - Xp0 * e00 * e20 * cos(theta) -
+      Xp0 * e01 * e21 * cos(theta) - Xp1 * e10 * e20 * cos(theta) -
+      Xp1 * e11 * e21 * cos(theta) + XDPO0 * e00 * cos(alpha) * sin(theta) +
+      XDPO1 * e01 * cos(alpha) * sin(theta) +
+      XDPO0 * e10 * sin(alpha) * sin(theta) +
+      XDPO1 * e11 * sin(alpha) * sin(theta) +
+      Xp1 * e00 * e10 * cos(alpha) * sin(theta) +
+      Xp1 * e01 * e11 * cos(alpha) * sin(theta) +
+      Xp2 * e00 * e20 * cos(alpha) * sin(theta) +
+      Xp2 * e01 * e21 * cos(alpha) * sin(theta) +
+      Xp0 * e00 * e10 * sin(alpha) * sin(theta) +
+      Xp0 * e01 * e11 * sin(alpha) * sin(theta) +
+      Xp2 * e10 * e20 * sin(alpha) * sin(theta) +
+      Xp2 * e11 * e21 * sin(alpha) * sin(theta)) /
+      (e20 * e20 * cos(theta) * cos(theta) +
+       e21 * e21 * cos(theta) * cos(theta) +
+       e00 * e00 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) +
+       e01 * e01 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) +
+       e10 * e10 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+       e11 * e11 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+       2 * e00 * e10 * cos(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+       2 * e01 * e11 * cos(alpha) * sin(alpha) * sin(theta) * sin(theta) -
+       2 * e00 * e20 * cos(alpha) * cos(theta) * sin(theta) -
+       2 * e01 * e21 * cos(alpha) * cos(theta) * sin(theta) -
+       2 * e10 * e20 * sin(alpha) * cos(theta) * sin(theta) -
+       2 * e11 * e21 * sin(alpha) * cos(theta) * sin(theta)),
+    -(Xp0 * e00 * e00 * cos(alpha) * sin(theta) - Xp2 * e20 * e20 * cos(theta) -
+      Xp2 * e21 * e21 * cos(theta) - XDPO0 * e20 * cos(theta) -
+      XDPO1 * e21 * cos(theta) -
+      std::sqrt(
+        R * R * e20 * e20 * cos(theta) * cos(theta) +
+        R * R * e21 * e21 * cos(theta) * cos(theta) -
+        XDPO0 * XDPO0 * e21 * e21 * cos(theta) * cos(theta) -
+        XDPO1 * XDPO1 * e20 * e20 * cos(theta) * cos(theta) +
+        R * R * e00 * e00 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) +
+        R * R * e01 * e01 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) -
+        XDPO0 * XDPO0 * e01 * e01 * cos(alpha) * cos(alpha) * sin(theta) *
+          sin(theta) -
+        XDPO1 * XDPO1 * e00 * e00 * cos(alpha) * cos(alpha) * sin(theta) *
+          sin(theta) +
+        R * R * e10 * e10 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+        R * R * e11 * e11 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) -
+        XDPO0 * XDPO0 * e11 * e11 * sin(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        XDPO1 * XDPO1 * e10 * e10 * sin(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        Xp0 * Xp0 * e00 * e00 * e21 * e21 * cos(theta) * cos(theta) -
+        Xp0 * Xp0 * e01 * e01 * e20 * e20 * cos(theta) * cos(theta) -
+        Xp1 * Xp1 * e10 * e10 * e21 * e21 * cos(theta) * cos(theta) -
+        Xp1 * Xp1 * e11 * e11 * e20 * e20 * cos(theta) * cos(theta) -
+        Xp1 * Xp1 * e00 * e00 * e11 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        Xp1 * Xp1 * e01 * e01 * e10 * e10 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e00 * e00 * e21 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e01 * e01 * e20 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * XDPO1 * e20 * e21 * cos(theta) * cos(theta) -
+        Xp0 * Xp0 * e00 * e00 * e11 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        Xp0 * Xp0 * e01 * e01 * e10 * e10 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e10 * e10 * e21 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        Xp2 * Xp2 * e11 * e11 * e20 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp0 * e00 * e21 * e21 * cos(theta) * cos(theta) -
+        2 * XDPO1 * Xp0 * e01 * e20 * e20 * cos(theta) * cos(theta) -
+        2 * XDPO0 * Xp1 * e10 * e21 * e21 * cos(theta) * cos(theta) -
+        2 * XDPO1 * Xp1 * e11 * e20 * e20 * cos(theta) * cos(theta) +
+        2 * XDPO0 * XDPO1 * e00 * e01 * cos(alpha) * cos(alpha) * sin(theta) *
+          sin(theta) +
+        2 * XDPO0 * XDPO1 * e10 * e11 * sin(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * R * R * e00 * e20 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * R * R * e01 * e21 * cos(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO1 * XDPO1 * e00 * e20 * cos(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO0 * XDPO0 * e01 * e21 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * R * R * e10 * e20 * sin(alpha) * cos(theta) * sin(theta) -
+        2 * R * R * e11 * e21 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO1 * XDPO1 * e10 * e20 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO0 * XDPO0 * e11 * e21 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e01 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * XDPO1 * Xp0 * e00 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * XDPO0 * Xp1 * e11 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * XDPO1 * Xp1 * e10 * e20 * e21 * cos(theta) * cos(theta) -
+        2 * XDPO0 * Xp1 * e01 * e01 * e10 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp1 * e00 * e00 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp2 * e01 * e01 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp2 * e00 * e00 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp0 * e00 * e11 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp0 * e01 * e10 * e10 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp2 * e11 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp2 * e10 * e10 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * R * R * e00 * e10 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) +
+        2 * R * R * e01 * e11 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * XDPO1 * XDPO1 * e00 * e10 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * XDPO0 * XDPO0 * e01 * e11 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e00 * e10 * e21 * e21 * cos(theta) * cos(theta) -
+        2 * Xp0 * Xp1 * e01 * e11 * e20 * e20 * cos(theta) * cos(theta) +
+        2 * Xp0 * Xp0 * e00 * e01 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * Xp1 * Xp1 * e10 * e11 * e20 * e21 * cos(theta) * cos(theta) -
+        2 * Xp1 * Xp2 * e01 * e01 * e10 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp1 * Xp2 * e00 * e00 * e11 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp1 * e00 * e01 * e10 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e00 * e01 * e20 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e11 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e01 * e10 * e10 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e01 * e01 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp1 * e00 * e11 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp0 * e00 * e00 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp1 * e01 * e10 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e00 * e21 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp2 * e01 * e01 * e20 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp0 * e00 * e01 * e10 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e10 * e11 * e20 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp1 * e00 * e11 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp1 * Xp1 * e01 * e10 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e10 * e10 * e21 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e11 * e11 * e20 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp0 * e01 * e01 * e10 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp0 * e00 * e00 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * XDPO1 * e00 * e21 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * XDPO0 * XDPO1 * e01 * e20 * cos(alpha) * cos(theta) * sin(theta) -
+        2 * XDPO0 * XDPO1 * e10 * e21 * sin(alpha) * cos(theta) * sin(theta) -
+        2 * XDPO0 * XDPO1 * e11 * e20 * sin(alpha) * cos(theta) * sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e00 * e11 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp1 * e01 * e01 * e10 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp2 * Xp2 * e00 * e10 * e21 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp2 * Xp2 * e01 * e11 * e20 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp1 * e00 * e01 * e11 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp1 * e00 * e01 * e10 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e00 * e01 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e00 * e01 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e01 * e10 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp0 * e00 * e10 * e11 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e10 * e11 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e10 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * XDPO1 * e00 * e11 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) +
+        2 * XDPO0 * XDPO1 * e01 * e10 * cos(alpha) * sin(alpha) * sin(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp0 * e01 * e01 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e00 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp2 * e00 * e21 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp2 * e01 * e20 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp1 * e11 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp2 * e10 * e21 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp1 * e10 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp2 * e11 * e20 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e11 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * Xp0 * Xp1 * e01 * e10 * e20 * e21 * cos(theta) * cos(theta) +
+        2 * Xp1 * Xp2 * e00 * e01 * e10 * e21 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp2 * e00 * e01 * e11 * e20 * cos(alpha) * cos(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp2 * e00 * e10 * e11 * e21 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp2 * e01 * e10 * e11 * e20 * sin(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp0 * e00 * e01 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e01 * e10 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO0 * Xp1 * e01 * e10 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * XDPO1 * Xp1 * e00 * e10 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e00 * e11 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp2 * e01 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        4 * XDPO0 * Xp2 * e01 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        4 * XDPO1 * Xp2 * e00 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e00 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO1 * Xp2 * e01 * e10 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp1 * e01 * e01 * e10 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e00 * e00 * e11 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e00 * e10 * e21 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp2 * e01 * e11 * e20 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp1 * e00 * e10 * e11 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp1 * Xp1 * e01 * e10 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e00 * e11 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp1 * e01 * e10 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e10 * e21 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp2 * e01 * e11 * e20 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp0 * e00 * e01 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * Xp0 * Xp0 * e00 * e01 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp2 * e01 * e01 * e10 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp0 * Xp2 * e00 * e00 * e11 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp2 * e00 * e11 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp1 * Xp2 * e01 * e10 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e00 * e11 * e20 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * Xp2 * Xp2 * e01 * e10 * e20 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) +
+        2 * XDPO0 * Xp0 * e00 * e01 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp0 * e00 * e01 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp1 * e00 * e11 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO0 * Xp1 * e01 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp1 * e01 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp1 * e00 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO1 * Xp1 * e00 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp1 * e01 * e10 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO0 * Xp2 * e01 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp2 * e00 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO0 * Xp0 * e00 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp0 * e01 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO0 * Xp0 * e01 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e10 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        2 * XDPO1 * Xp0 * e00 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        4 * XDPO1 * Xp0 * e01 * e10 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO0 * Xp1 * e10 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp1 * e10 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO0 * Xp2 * e11 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * XDPO1 * Xp2 * e10 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e01 * e10 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e01 * e11 * e20 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        4 * Xp0 * Xp2 * e00 * e01 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp1 * Xp2 * e00 * e11 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp1 * Xp2 * e01 * e10 * e20 * e21 * cos(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e00 * e10 * e11 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp1 * e01 * e10 * e11 * e20 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp2 * e00 * e11 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        2 * Xp0 * Xp2 * e01 * e10 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) +
+        4 * Xp1 * Xp2 * e10 * e11 * e20 * e21 * sin(alpha) * cos(theta) *
+          sin(theta) -
+        4 * Xp0 * Xp1 * e00 * e01 * e10 * e11 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e01 * e10 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp0 * Xp2 * e00 * e01 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp1 * Xp2 * e00 * e10 * e11 * e21 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta) -
+        2 * Xp1 * Xp2 * e01 * e10 * e11 * e20 * cos(alpha) * sin(alpha) *
+          sin(theta) * sin(theta)) +
+      Xp0 * e01 * e01 * cos(alpha) * sin(theta) +
+      Xp1 * e10 * e10 * sin(alpha) * sin(theta) +
+      Xp1 * e11 * e11 * sin(alpha) * sin(theta) - Xp0 * e00 * e20 * cos(theta) -
+      Xp0 * e01 * e21 * cos(theta) - Xp1 * e10 * e20 * cos(theta) -
+      Xp1 * e11 * e21 * cos(theta) + XDPO0 * e00 * cos(alpha) * sin(theta) +
+      XDPO1 * e01 * cos(alpha) * sin(theta) +
+      XDPO0 * e10 * sin(alpha) * sin(theta) +
+      XDPO1 * e11 * sin(alpha) * sin(theta) +
+      Xp1 * e00 * e10 * cos(alpha) * sin(theta) +
+      Xp1 * e01 * e11 * cos(alpha) * sin(theta) +
+      Xp2 * e00 * e20 * cos(alpha) * sin(theta) +
+      Xp2 * e01 * e21 * cos(alpha) * sin(theta) +
+      Xp0 * e00 * e10 * sin(alpha) * sin(theta) +
+      Xp0 * e01 * e11 * sin(alpha) * sin(theta) +
+      Xp2 * e10 * e20 * sin(alpha) * sin(theta) +
+      Xp2 * e11 * e21 * sin(alpha) * sin(theta)) /
+      (e20 * e20 * cos(theta) * cos(theta) +
+       e21 * e21 * cos(theta) * cos(theta) +
+       e00 * e00 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) +
+       e01 * e01 * cos(alpha) * cos(alpha) * sin(theta) * sin(theta) +
+       e10 * e10 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+       e11 * e11 * sin(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+       2 * e00 * e10 * cos(alpha) * sin(alpha) * sin(theta) * sin(theta) +
+       2 * e01 * e11 * cos(alpha) * sin(alpha) * sin(theta) * sin(theta) -
+       2 * e00 * e20 * cos(alpha) * cos(theta) * sin(theta) -
+       2 * e01 * e21 * cos(alpha) * cos(theta) * sin(theta) -
+       2 * e10 * e20 * sin(alpha) * cos(theta) * sin(theta) -
+       2 * e11 * e21 * sin(alpha) * cos(theta) * sin(theta))};
+       */
+
   double R = fixed_parameters.reactor_radius;
 
   // Function value when evaluate with t (circle equation)
@@ -331,6 +1043,9 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
   efficiency = 0;
   srand(time(NULL));
 
+  // Calculate position parameters for the particle position
+  calculate_position_parameters();
+
   for (unsigned int i = 0; i < iteration_number; i++)
     {
       // Generate random values for Monte Carlo
@@ -342,7 +1057,6 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
         detector_interaction_probability, non_interaction_probability;
 
       // Calculate all parameters and distances for efficiency
-      calculate_position_parameters();
       calculate_solid_angle(n_alpha, n_theta);
       detector_path_length = calculate_detector_path_length();
       detector_interaction_probability =
@@ -379,6 +1093,61 @@ ParticleDetectorInteractions<dim>::calculate_count()
 
   return count;
 }
+
+double
+get_h()
+{
+  calculate_position_parameters();
+
+  return h;
+}
+
+double
+get_rho()
+{
+  calculate_position_parameters();
+
+  return rho;
+}
+
+double
+get_alpha(double n_alpha, double n_theta)
+{
+  calculate_position_parameters();
+  calculate_solid_angle(n_alpha, n_theta);
+
+  return alpha;
+}
+
+double
+get_theta(double n_alpha, double n_theta)
+{
+  calculate_position_parameters();
+  calculate_solid_angle(n_alpha, n_theta);
+
+  return theta;
+}
+
+double
+get_detector_path_length(double n_alpha, double n_theta)
+{
+  calculate_position_parameters();
+  calculate_solid_angle(n_alpha, n_theta);
+  double detector_path_length = calculate_detector_path_length();
+
+  return detector_path_length;
+}
+
+double
+get_reactor_path_length(double n_alpha, double n_theta)
+{
+  calculate_position_parameters();
+  calculate_solid_angle(n_alpha, n_theta);
+  double reactor_path_length = calculate_reactor_path_length();
+
+  return reactor_path_length;
+}
+
 
 
 template class ParticleDetectorInteractions<3>;
