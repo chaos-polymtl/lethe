@@ -164,7 +164,7 @@ private:
    *This function create a map (cut_cells_map) that indicates if a cell is cut.
    */
   void
-  cutted_cells_mapping();
+  generate_cut_cells_map();
 
   /**
    * @brief
