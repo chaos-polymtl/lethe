@@ -866,6 +866,10 @@ GLSVANSSolver<dim>::assembleGLS()
                     this->simulation_parameters.fem_parameters.velocity_order) *
                 pow((1 / 0.4), 2);
 
+              // Grad-div weight factor
+              const double gamma = 0.1;
+
+
               // Gather the shape functions, their gradient and their
               // laplacian for the velocity and the pressure
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -968,7 +972,6 @@ GLSVANSSolver<dim>::assembleGLS()
                                    present_void_fraction_values[q];
 
 
-              double gamma = 0.05;
 
               // Matrix assembly
               if (assemble_matrix)
@@ -1031,17 +1034,24 @@ GLSVANSSolver<dim>::assembleGLS()
                             JxW;
 
                           // Grad-div stabilization - Bruno test
-                          local_matrix(i, j) +=
-                            gamma *
-                            (div_phi_u[j] * present_void_fraction_values[q] +
-                             phi_u[j] * present_void_fraction_gradients[q]) *
-                            div_phi_u[i] * JxW;
+                          if (grad_div)
+                            {
+                              local_matrix(i, j) +=
+                                gamma *
+                                (div_phi_u[j] *
+                                   present_void_fraction_values[q] +
+                                 phi_u[j] *
+                                   present_void_fraction_gradients[q]) *
+                                div_phi_u[i] * JxW;
+                            }
 
                           // Mass matrix
                           if (is_bdf(scheme))
-                            local_matrix(i, j) +=
-                              present_void_fraction_values[q] * phi_u[j] *
-                              phi_u[i] * bdf_coefs[0] * JxW;
+                            {
+                              local_matrix(i, j) +=
+                                present_void_fraction_values[q] * phi_u[j] *
+                                phi_u[i] * bdf_coefs[0] * JxW;
+                            }
 
                           // PSPG GLS term
                           if (PSPG)
@@ -1137,13 +1147,6 @@ GLSVANSSolver<dim>::assembleGLS()
                         phi_p[i]) *
                     JxW;
 
-                  // Grad-div stabilization
-                  local_rhs(i) -= gamma *
-                                  (present_void_fraction_values[q] *
-                                     present_velocity_divergence +
-                                   present_velocity_values[q] *
-                                     present_void_fraction_gradients[q]) *
-                                  div_phi_u[i] * JxW;
 
                   // Residual associated with BDF schemes
                   if (scheme == Parameters::SimulationControl::
@@ -1160,6 +1163,14 @@ GLSVANSSolver<dim>::assembleGLS()
                         (bdf_coefs[0] * present_void_fraction_values[q] +
                          bdf_coefs[1] * p1_void_fraction_values[q]) *
                         phi_p[i] * JxW;
+
+                      if (grad_div)
+                        {
+                          local_rhs(i) -=
+                            (bdf_coefs[0] * present_void_fraction_values[q] +
+                             bdf_coefs[1] * p1_void_fraction_values[q]) *
+                            div_phi_u[i] * JxW;
+                        }
                     }
 
                   if (scheme ==
@@ -1176,6 +1187,15 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[1] * p1_void_fraction_values[q] +
                          bdf_coefs[2] * p2_void_fraction_values[q]) *
                         phi_p[i] * JxW;
+
+                      if (grad_div)
+                        {
+                          local_rhs(i) -=
+                            (bdf_coefs[0] * present_void_fraction_values[q] +
+                             bdf_coefs[1] * p1_void_fraction_values[q] +
+                             bdf_coefs[2] * p2_void_fraction_values[q]) *
+                            div_phi_u[i] * JxW;
+                        }
                     }
 
 
@@ -1197,6 +1217,16 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[2] * p2_void_fraction_values[q] +
                          bdf_coefs[3] * p3_void_fraction_values[q]) *
                         phi_p[i] * JxW;
+
+                      if (grad_div)
+                        {
+                          local_rhs(i) -=
+                            (bdf_coefs[0] * present_void_fraction_values[q] +
+                             bdf_coefs[1] * p1_void_fraction_values[q] +
+                             bdf_coefs[2] * p2_void_fraction_values[q] +
+                             bdf_coefs[3] * p3_void_fraction_values[q]) *
+                            div_phi_u[i] * JxW;
+                        }
                     }
 
                   if (velocity_source ==
@@ -1252,6 +1282,17 @@ GLSVANSSolver<dim>::assembleGLS()
                       scalar_product(present_velocity_gradients[q],
                                      grad_phi_u[i]) *
                       JxW;
+
+                  // Grad-div stabilization
+                  if (grad_div)
+                    {
+                      local_rhs(i) -= gamma *
+                                      (present_void_fraction_values[q] *
+                                         present_velocity_divergence +
+                                       present_velocity_values[q] *
+                                         present_void_fraction_gradients[q]) *
+                                      div_phi_u[i] * JxW;
+                    }
                 }
             }
 
