@@ -742,20 +742,11 @@ DEMSolver<dim>::solve()
           // Updating moment of inertia container
           update_moment_of_inertia(particle_handler, MOI);
 
-#if (DEAL_II_VERSION_MINOR <= 2)
-          particle_handler.exchange_ghost_particles();
-
-#else
           particle_handler.exchange_ghost_particles(true);
-#endif
         }
       else
         {
-#if (DEAL_II_VERSION_MINOR <= 2)
-          particle_handler.exchange_ghost_particles();
-#else
           particle_handler.update_ghost_particles();
-#endif
         }
 
       // Broad particle-particle contact search
@@ -804,16 +795,6 @@ DEMSolver<dim>::solve()
 
           // Particles-wall fine search
           particle_wall_fine_search();
-        }
-      else
-        {
-#if (DEAL_II_VERSION_MINOR <= 2)
-          locate_ghost_particles_in_cells<dim>(particle_handler,
-                                               ghost_particle_container,
-                                               ghost_adjacent_particles);
-#else
-          // This is not needed anymore with the update ghost mechanism
-#endif
         }
 
       // Particle-particle contact force
