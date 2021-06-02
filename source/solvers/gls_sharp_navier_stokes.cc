@@ -70,16 +70,16 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::cutted_cells_mapping()
+GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 {
   // check all the cells if they are cut or not. Put the information in a map
   // with the key being the cell.
-  TimerOutput::Scope t(this->computing_timer, "cutted_cells_mapping");
+  TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
   std::map<types::global_dof_index, Point<dim>> support_points;
   DoFTools::map_dofs_to_support_points(*this->mapping,
                                        this->dof_handler,
                                        support_points);
-  cutted_cells_map.clear();
+  cut_cells_map.clear();
   const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
@@ -89,14 +89,14 @@ GLSSharpNavierStokesSolver<dim>::cutted_cells_mapping()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          bool         cell_is_cut;
-          unsigned int p;
+          bool cell_is_cut;
+          unsigned int p=0;
 
           std::tie(cell_is_cut, p, std::ignore) =
-            cell_cut(cell, local_dof_indices, support_points);
+          cell_cut(cell, local_dof_indices, support_points);
 
-          // add the info in the map.
-          cutted_cells_map[cell] = {cell_is_cut, p};
+          // Add information about if the cell is cut "cell_is_cut" and the particle id that cuts it "p" in the map.
+          cut_cells_map[cell] = {cell_is_cut, p};
         }
     }
 }
@@ -1245,7 +1245,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          std::tie(cell_is_cut, std::ignore) = cutted_cells_map[cell];
+          // std::ignore is used because we don't care about what particle cut the cell.
+          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
 
           if (cell_is_cut == false)
             {
@@ -1840,12 +1841,15 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           sum_line = sum_line / dt;
 
-          // Check if the cell is cut or not by the IB
 
           cell->get_dof_indices(local_dof_indices);
-          bool         cell_is_cut;
+
+          //Check if the cell is cut or not by the IB and what the particle the cut the cell.
+          //If the particle is cut
+          bool cell_is_cut;
+          //The id of the particle that cut the cell. Returns 0 if the cell is not cut.
           unsigned int p;
-          std::tie(cell_is_cut, p) = cutted_cells_map[cell];
+          std::tie(cell_is_cut, p) = cut_cells_map[cell];
 
           if (cell_is_cut)
             {
@@ -2073,7 +2077,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // be overwritten
                                       bool cell_is_cut;
                                       std::tie(cell_is_cut, std::ignore) =
-                                        cutted_cells_map[cell_3];
+                                        cut_cells_map[cell_3];
 
 
                                       if (cell_is_cut == false)
@@ -2240,7 +2244,8 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          std::tie(cell_is_cut, std::ignore) = cutted_cells_map[cell];
+          // std::ignore is used because we don't care about what particle cut the cell.
+          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
           if (cell_is_cut == false)
             {
               fe_values.reinit(cell);
@@ -2721,7 +2726,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     {
       force_on_ib();
       integrate_particles();
-      cutted_cells_mapping();
+      generate_cut_cells_map();
     }
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
@@ -3003,7 +3008,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
       if (this->simulation_control->is_at_start())
         {
           vertices_cell_mapping();
-          cutted_cells_mapping();
+          generate_cut_cells_map();
           this->first_iteration();
         }
       else
@@ -3012,7 +3017,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           vertices_cell_mapping();
-          cutted_cells_mapping();
+          generate_cut_cells_map();
           this->iterate();
         }
 
