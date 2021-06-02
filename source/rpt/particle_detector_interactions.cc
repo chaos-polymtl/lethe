@@ -28,7 +28,11 @@ ParticleDetectorInteractions<dim>::calculate_position_parameters()
   Tensor<1, dim> X = Z - face_detector_particle_distance;
 
   if (X.norm() == 0) // When particle is aligned to the detector
-    detector_orientation_x = {0, 0, 1};
+    {
+      detector_orientation_x[0] = 0;
+      detector_orientation_x[1] = 0;
+      detector_orientation_x[2] = 1;
+    }
   else
     detector_orientation_x = X / X.norm();
 
@@ -1094,24 +1098,27 @@ ParticleDetectorInteractions<dim>::calculate_count()
   return count;
 }
 
+template <int dim>
 double
-get_h()
+ParticleDetectorInteractions<dim>::get_h()
 {
   calculate_position_parameters();
 
   return h;
 }
 
+template <int dim>
 double
-get_rho()
+ParticleDetectorInteractions<dim>::get_rho()
 {
   calculate_position_parameters();
 
   return rho;
 }
 
+template <int dim>
 double
-get_alpha(double n_alpha, double n_theta)
+ParticleDetectorInteractions<dim>::get_alpha(double n_alpha, double n_theta)
 {
   calculate_position_parameters();
   calculate_solid_angle(n_alpha, n_theta);
@@ -1119,8 +1126,9 @@ get_alpha(double n_alpha, double n_theta)
   return alpha;
 }
 
+template <int dim>
 double
-get_theta(double n_alpha, double n_theta)
+ParticleDetectorInteractions<dim>::get_theta(double n_alpha, double n_theta)
 {
   calculate_position_parameters();
   calculate_solid_angle(n_alpha, n_theta);
@@ -1128,8 +1136,10 @@ get_theta(double n_alpha, double n_theta)
   return theta;
 }
 
+template <int dim>
 double
-get_detector_path_length(double n_alpha, double n_theta)
+ParticleDetectorInteractions<dim>::get_detector_path_length(double n_alpha,
+                                                            double n_theta)
 {
   calculate_position_parameters();
   calculate_solid_angle(n_alpha, n_theta);
@@ -1138,8 +1148,10 @@ get_detector_path_length(double n_alpha, double n_theta)
   return detector_path_length;
 }
 
+template <int dim>
 double
-get_reactor_path_length(double n_alpha, double n_theta)
+ParticleDetectorInteractions<dim>::get_reactor_path_length(double n_alpha,
+                                                           double n_theta)
 {
   calculate_position_parameters();
   calculate_solid_angle(n_alpha, n_theta);
