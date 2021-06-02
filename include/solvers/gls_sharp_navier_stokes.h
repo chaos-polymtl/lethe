@@ -161,9 +161,7 @@ private:
 
   /**
    * @brief
-   *This function create a map with the key being the cell and what it contains
-   *a bool to define if a cell is cut and the particle that cut it if it's the
-   *case. This map contains is referred as cutted_cells_map.
+   *This function create a map (cut_cells_map) that indicates if a cell is cut.
    */
   void
   cutted_cells_mapping();
