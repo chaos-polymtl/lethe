@@ -89,13 +89,14 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          bool cell_is_cut;
-          unsigned int p=0;
+          bool         cell_is_cut;
+          unsigned int p = 0;
 
           std::tie(cell_is_cut, p, std::ignore) =
-          cell_cut(cell, local_dof_indices, support_points);
+            cell_cut(cell, local_dof_indices, support_points);
 
-          // Add information about if the cell is cut "cell_is_cut" and the particle id that cuts it "p" in the map.
+          // Add information about if the cell is cut "cell_is_cut" and the
+          // particle id that cuts it "p" in the map.
           cut_cells_map[cell] = {cell_is_cut, p};
         }
     }
@@ -1245,7 +1246,8 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          // std::ignore is used because we don't care about what particle cut the cell.
+          // std::ignore is used because we don't care about what particle cut
+          // the cell.
           std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
 
           if (cell_is_cut == false)
@@ -1844,10 +1846,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           cell->get_dof_indices(local_dof_indices);
 
-          //Check if the cell is cut or not by the IB and what the particle the cut the cell.
-          //If the particle is cut
+          // Check if the cell is cut or not by the IB and what the particle the
+          // cut the cell. If the particle is cut
           bool cell_is_cut;
-          //The id of the particle that cut the cell. Returns 0 if the cell is not cut.
+          // The id of the particle that cut the cell. Returns 0 if the cell is
+          // not cut.
           unsigned int p;
           std::tie(cell_is_cut, p) = cut_cells_map[cell];
 
@@ -2244,7 +2247,8 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          // std::ignore is used because we don't care about what particle cut the cell.
+          // std::ignore is used because we don't care about what particle cut
+          // the cell.
           std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
           if (cell_is_cut == false)
             {

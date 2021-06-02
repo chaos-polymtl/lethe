@@ -161,7 +161,8 @@ private:
 
   /**
    * @brief
-   *This function create a map (cut_cells_map) that indicates if a cell is cut, and the particle id of the particle that cut it.
+   *This function create a map (cut_cells_map) that indicates if a cell is cut,
+   *and the particle id of the particle that cut it.
    */
   void
   generate_cut_cells_map();
@@ -262,7 +263,7 @@ private:
    */
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>
-                               cut_cells_map;
+    cut_cells_map;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
