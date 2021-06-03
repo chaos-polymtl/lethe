@@ -21,7 +21,8 @@
 #define lethe_rpt_calculating_parameters_h
 
 /**
- * Handles all the parameters declared in the parameter handler file for the RPT
+ * Handles all the parameters declared in the parameter handler file for the
+ * RPT.
  */
 
 #include <deal.II/base/parameter_handler.h>

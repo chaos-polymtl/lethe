@@ -51,7 +51,7 @@ ParticleDetectorInteractions<dim>::calculate_solid_angle(double n_alpha,
                                                          double n_theta)
 {
   double alpha_max;
-  double theta_max, theta_min;
+  double theta_max = 0, theta_min = 0;
   double r = detector_radius;
   double l = detector_length;
 

@@ -21,7 +21,7 @@
 #define lethe_radioactive_particle_h
 
 /**
- * Contains all properties of a particle at one position from a parameter file
+ * Contains all properties of a particle at one position.
  */
 
 #include <deal.II/base/point.h>
@@ -32,6 +32,14 @@ template <int dim>
 class RadioParticle
 {
 public:
+  /**
+   * @brief Constructor for the RadioParticle.
+   *
+   * @param location Position of the particle
+   *
+   * @param n ID number to the particle
+   *
+   */
   RadioParticle(Point<dim> &location, int n)
     : position(location)
     , id(n)

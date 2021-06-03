@@ -18,7 +18,8 @@
  */
 
 /*
- * ---
+ *  This file defines parameters needed for the RPT simulation in the Parameters
+ * namespace.
  */
 
 #ifndef lethe_rpt_parameters_h
@@ -36,12 +37,18 @@ using namespace dealii;
 
 namespace Parameters
 {
+  /**
+   * @brief RPTParameters - Defines the common parameters for the RPT
+   * simulation as fixed parameters, number of Monte Carlo iterations and
+   * filename of the particle positions.
+   */
+
   struct RPTParameters
   {
-    // File name with particle positions
+    // Particle positions filename
     std::string particle_positions_file;
 
-    // Number of Monte Carlo iteration for alpha and theta
+    // Number of Monte Carlo iterations for alpha and theta
     unsigned int iteration_number;
 
     // All parameters that are fixed by the user
@@ -55,9 +62,18 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
+  /**
+   * @brief InitialRPTParameters - Allows parameters tuning. If turned on,
+   * other parameters values are the initial guess for the optimization,
+   * otherwise those act as fixed parameters.
+   */
+
   struct InitialRPTParameters
   {
-    bool   tuning;
+    // Enable tuning parameters
+    bool tuning;
+
+    // Parameters to tune or fixed parameters if tuning is disable
     double dead_time;
     double activity;
     double gamma_rays_emitted;
@@ -70,7 +86,11 @@ namespace Parameters
     parse_parameters(ParameterHandler &prm);
   };
 
-  // Detector parameters, all detector should have the same dimensions(r and l)
+  /**
+   * @brief DetectorParameters - Defines information related to detectors. All
+   * detectors must have the same dimensions (r and l).
+   */
+
   struct DetectorParameters
   {
     double      radius;
@@ -82,8 +102,6 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
   };
-
-
 
 } // namespace Parameters
 

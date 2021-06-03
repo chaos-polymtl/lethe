@@ -34,6 +34,18 @@ template <int dim>
 class Detector
 {
 public:
+  /**
+   * @brief Constructor for the Detector.
+   *
+   * @param detector_parameters All parameters related to the detector
+   *
+   * @param n ID number to the particle
+   *
+   * @param face_point Position on the center of the face of the detector
+   *
+   * @param middle_point Position of the middle of the detector
+   *
+   */
   Detector(Parameters::DetectorParameters &detector_parameters,
            int                             n,
            Point<dim> &                    face_point,

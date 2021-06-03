@@ -1,6 +1,29 @@
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2020 - by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 3.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+
+*
+* Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2021-
+*/
 
 #ifndef lethe_particle_detector_interactions_h
 #define lethe_particle_detector_interactions_h
+
+/**
+ * This class allows to calculate the photon count from a particle received by
+ * a detector with the Monte Carlo method.
+ */
 
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
@@ -14,6 +37,17 @@ template <int dim>
 class ParticleDetectorInteractions
 {
 public:
+  /**
+   * @brief Constructor for the ParticleDetectorInteractions.
+   *
+   * @param particle Particle which contains information about its position
+   *
+   * @param detector Detector which contains information about its positions,
+   * radius and length
+   *
+   * @param rpt_parameters All other parameters needed for the count calculation
+   *
+   */
   ParticleDetectorInteractions(RadioParticle<dim> &      particle,
                                Detector<dim> &           detector,
                                RPTCalculatingParameters &rpt_parameters)
@@ -26,6 +60,9 @@ public:
     , initial_parameters(rpt_parameters.initial_param)
   {}
 
+  /**
+   * @brief Calculate photon count of a detector with the Monte Carlo method.
+   */
   double
   calculate_count();
 
@@ -48,27 +85,73 @@ public:
   get_reactor_path_length(double n_alpha, double n_theta);
 
 private:
+  /**
+   * @brief Calculate position parameters (h & rho) of the particle with the
+   * detector.
+   */
   void
   calculate_position_parameters();
 
+  /**
+   * @brief Calculate related angles (theta and alpha) to the solid angle.
+   *
+   * @param n_alpha The random value [0; 1] generated in the Monte Carlo for
+   * alpha
+   *
+   * @param n_theta The random value [0; 1] generated in the Monte Carlo for
+   * theta
+   */
   void
   calculate_solid_angle(double n_alpha, double n_theta);
 
+  /**
+   * @brief Calculate the length of the photon path through the detector.
+   */
   double
   calculate_detector_path_length();
 
+  /**
+   * @brief Calculate the length of the photon path through the reactor/tank.
+   */
   double
   calculate_reactor_path_length();
 
+  /**
+   * @brief Calculate the probability functions of the gamma-rays interaction
+   * with the detector.
+   *
+   * @param detector_path_length Length of the photon path through the detector
+   */
   double
   calculate_detector_interaction_probability(double &detector_path_length);
 
+  /**
+   * @brief Calculate the probability of non-interaction between the gamma-rays
+   * emitted whithin the solid angle and the material inside the reactor/tank.
+   *
+   * @param reactor_path_length Length of the photon path through the reactor
+   */
   double
   calculate_non_interaction_probability(double &reactor_path_length);
 
+  /**
+   * @brief Calculate the efficiency of the detector with the Monte Carlo method.
+   */
   void
   calculate_efficiency();
 
+  /**
+   * @brief Solve the t variable of the equation of a straigth line in parametric
+   * form. It used the Newton's method with a numerical derivative with initial
+   * values of -1 and 1.
+   *
+   * @param e_inverse Inverse of the detector direction matrix
+   *
+   * @param detector_particle_origin Origin of the detector-particle coordinate
+   *
+   * @param particle_position_rotation Transfer of the lab coordinate particle
+   * position to the detector-particle coordinate
+   */
   std::vector<double>
   solve_t(Tensor<2, dim> e_inverse,
           Tensor<1, dim> detector_particle_origin,
