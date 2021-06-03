@@ -27,6 +27,9 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <deal.II/lac/full_matrix.h>
+
+
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>

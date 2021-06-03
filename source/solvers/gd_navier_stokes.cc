@@ -29,6 +29,8 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/lac/full_matrix.h>
+
 #include <deal.II/numerics/vector_tools.h>
 
 

@@ -43,27 +43,15 @@
 
 #include <deal.II/dofs/dof_handler.h>
 
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_simplex_p.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping_fe.h>
-#include <deal.II/fe/mapping_q.h>
 
 #include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_refinement.h>
 
 #include <deal.II/lac/affine_constraints.h>
-#include <deal.II/lac/full_matrix.h>
 #include <deal.II/lac/sparse_matrix.h>
-#include <deal.II/lac/vector.h>
 
 #include <deal.II/numerics/data_out.h>
-
-
-
-// Std
-#include <fstream>
-#include <iostream>
 
 using namespace dealii;
 
