@@ -2,16 +2,21 @@
  * @brief This code checks the read and write of simulationcontrol.
  */
 
+// Lethe
+#include <core/parameters.h>
+
+#include <solvers/gls_navier_stokes.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/simulation_parameters.h>
+
+
 // Deal.II includes
 #include <deal.II/base/function.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/types.h>
 
-// Lethe
-#include <core/parameters.h>
+#include <deal.II/grid/grid_generator.h>
 
-#include <solvers/gls_navier_stokes.h>
-#include <solvers/simulation_parameters.h>
 
 // Tests
 #include <../tests/tests.h>

@@ -22,6 +22,7 @@
 
 #include <solvers/navier_stokes_base.h>
 
+#include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/trilinos_precondition.h>
 #include <deal.II/lac/trilinos_solver.h>
 #include <deal.II/lac/trilinos_sparse_matrix.h>
