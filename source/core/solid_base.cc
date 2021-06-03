@@ -39,6 +39,8 @@
 
 #include <memory.h>
 
+#include <fstream>
+
 
 
 template <int dim, int spacedim>
