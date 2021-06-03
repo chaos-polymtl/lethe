@@ -25,10 +25,10 @@
 #include <deal.II/particles/data_out.h>
 
 // Lethe
+#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/solid_base.h>
 
-#include <solvers/nitsche.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
