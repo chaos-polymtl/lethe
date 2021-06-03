@@ -32,6 +32,10 @@
 #include <deal.II/grid/tria_iterator.h>
 
 #include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/error_estimator.h>
+#include <deal.II/numerics/matrix_tools.h>
+#include <deal.II/numerics/solution_transfer.h>
+#include <deal.II/numerics/vector_tools.h>
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>

@@ -20,6 +20,24 @@
 #ifndef lethe_navier_stokes_base_h
 #define lethe_navier_stokes_base_h
 
+
+// Lethe Includes
+#include <core/bdf.h>
+#include <core/boundary_conditions.h>
+#include <core/manifolds.h>
+#include <core/newton_non_linear_solver.h>
+#include <core/parameters.h>
+#include <core/physics_solver.h>
+#include <core/pvd_handler.h>
+#include <core/simulation_control.h>
+
+#include <solvers/flow_control.h>
+#include <solvers/multiphysics_interface.h>
+#include <solvers/post_processors.h>
+#include <solvers/postprocessing_cfd.h>
+#include <solvers/postprocessing_velocities.h>
+#include <solvers/simulation_parameters.h>
+
 // Dealii Includes
 
 // Base
@@ -36,7 +54,6 @@
 #include <deal.II/lac/affine_constraints.h>
 #include <deal.II/lac/dynamic_sparsity_pattern.h>
 #include <deal.II/lac/full_matrix.h>
-#include <deal.II/lac/precondition_block.h>
 #include <deal.II/lac/solver_bicgstab.h>
 #include <deal.II/lac/solver_cg.h>
 #include <deal.II/lac/solver_gmres.h>
@@ -45,13 +62,6 @@
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/sparsity_tools.h>
 #include <deal.II/lac/vector.h>
-
-// Lac - Trilinos includes
-#include <deal.II/lac/trilinos_parallel_block_vector.h>
-#include <deal.II/lac/trilinos_precondition.h>
-#include <deal.II/lac/trilinos_solver.h>
-#include <deal.II/lac/trilinos_sparse_matrix.h>
-#include <deal.II/lac/trilinos_vector.h>
 
 // Grid
 #include <deal.II/grid/grid_generator.h>
@@ -80,10 +90,7 @@
 
 // Numerics
 #include <deal.II/numerics/data_out.h>
-#include <deal.II/numerics/error_estimator.h>
-#include <deal.II/numerics/matrix_tools.h>
-#include <deal.II/numerics/solution_transfer.h>
-#include <deal.II/numerics/vector_tools.h>
+
 
 // Distributed
 #include <deal.II/distributed/fully_distributed_tria.h>
@@ -91,23 +98,6 @@
 #include <deal.II/distributed/solution_transfer.h>
 
 
-// Lethe Includes
-#include <core/bdf.h>
-#include <core/boundary_conditions.h>
-#include <core/manifolds.h>
-#include <core/newton_non_linear_solver.h>
-#include <core/parameters.h>
-#include <core/physics_solver.h>
-#include <core/pvd_handler.h>
-#include <core/simulation_control.h>
-
-#include <solvers/flow_control.h>
-#include <solvers/multiphysics_interface.h>
-#include <solvers/postprocessing_cfd.h>
-#include <solvers/postprocessing_velocities.h>
-
-#include "post_processors.h"
-#include "simulation_parameters.h"
 
 // Std
 #include <fstream>
