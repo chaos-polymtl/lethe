@@ -153,6 +153,10 @@ private:
 
   // Solution of the void fraction at previous time steps
 
+  IndexSet locally_owned_dofs_voidfraction;
+
+  IndexSet locally_relevant_dofs_voidfraction;
+
   TrilinosWrappers::MPI::Vector void_fraction_m1;
   TrilinosWrappers::MPI::Vector void_fraction_m2;
   TrilinosWrappers::MPI::Vector void_fraction_m3;
@@ -180,6 +184,7 @@ private:
   const bool   PSPG        = true;
   const bool   SUPG        = true;
   const bool   DCDD        = true;
+  const bool   grad_div    = false;
   const double GLS_u_scale = 1;
 };
 

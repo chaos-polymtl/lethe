@@ -26,9 +26,8 @@ GLSVANSSolver<dim>::setup_dofs()
 {
   GLSNavierStokesSolver<dim>::setup_dofs();
   void_fraction_dof_handler.distribute_dofs(fe_void_fraction);
-  const IndexSet locally_owned_dofs_voidfraction =
+  locally_owned_dofs_voidfraction =
     void_fraction_dof_handler.locally_owned_dofs();
-  IndexSet locally_relevant_dofs_voidfraction;
 
   DoFTools::extract_locally_relevant_dofs(void_fraction_dof_handler,
 
@@ -96,10 +95,6 @@ GLSVANSSolver<dim>::setup_dofs()
                      this->mpi_communicator);
 
   assemble_mass_matrix_diagonal(mass_matrix);
-
-  diagonal_of_mass_matrix.reinit(locally_owned_dofs_voidfraction);
-  for (unsigned int j = 0; j < nodal_void_fraction_relevant.size(); j++)
-    diagonal_of_mass_matrix(j) = mass_matrix.diag_element(j);
 }
 
 
@@ -207,7 +202,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
     {
       assemble_L2_projection_void_fraction();
       solve_L2_system_void_fraction();
-      // update_solution_and_constraints();
+      update_solution_and_constraints();
     }
 }
 
@@ -249,11 +244,13 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
 {
   const double penalty_parameter = 100;
 
-  TrilinosWrappers::MPI::Vector lambda(
-    complete_index_set(void_fraction_dof_handler.n_dofs()));
+  TrilinosWrappers::MPI::Vector lambda(locally_owned_dofs_voidfraction);
 
-  complete_system_matrix_void_fraction.residual(
-    lambda, nodal_void_fraction_relevant, complete_system_rhs_void_fraction);
+  nodal_void_fraction_owned = nodal_void_fraction_relevant;
+
+  complete_system_matrix_void_fraction.residual(lambda,
+                                                nodal_void_fraction_owned,
+                                                system_rhs_void_fraction);
 
   void_fraction_constraints.clear();
   active_set.clear();
@@ -270,40 +267,41 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                        GeometryInfo<dim>::vertices_per_cell,
                      ExcNotImplemented());
               const unsigned int dof_index = cell->vertex_dof_index(v, 0);
-              if (dof_touched[dof_index] == false)
-                dof_touched[dof_index] = true;
-              else
-                continue;
-              const double solution_value =
-                nodal_void_fraction_relevant(dof_index);
-              if (lambda(dof_index) + penalty_parameter *
-                                        diagonal_of_mass_matrix(dof_index) *
-                                        (solution_value - 1) >
-                  0)
+              if (locally_owned_dofs_voidfraction.is_element(dof_index))
                 {
-                  active_set.add_index(dof_index);
-                  void_fraction_constraints.add_line(dof_index);
-                  void_fraction_constraints.set_inhomogeneity(dof_index, 1);
-                  nodal_void_fraction_relevant(dof_index) = 1;
-                  lambda(dof_index)                       = 0;
-                }
-              else if (lambda(dof_index) +
-                         penalty_parameter *
-                           diagonal_of_mass_matrix(dof_index) *
-                           (solution_value - 0.38) <
-                       0)
-                {
-                  active_set.add_index(dof_index);
-                  void_fraction_constraints.add_line(dof_index);
-                  void_fraction_constraints.set_inhomogeneity(dof_index, 0.38);
-                  nodal_void_fraction_relevant(dof_index) = 0.38;
-                  lambda(dof_index)                       = 0;
+                  const double solution_value =
+                    nodal_void_fraction_owned(dof_index);
+                  if (lambda(dof_index) + penalty_parameter *
+                                            mass_matrix(dof_index, dof_index) *
+                                            (solution_value - 1) >
+                      0)
+                    {
+                      active_set.add_index(dof_index);
+                      void_fraction_constraints.add_line(dof_index);
+                      void_fraction_constraints.set_inhomogeneity(dof_index, 1);
+                      nodal_void_fraction_owned(dof_index) = 1;
+                      lambda(dof_index)                    = 0;
+                    }
+                  else if (lambda(dof_index) +
+                             penalty_parameter *
+                               mass_matrix(dof_index, dof_index) *
+                               (solution_value - 0.38) <
+                           0)
+                    {
+                      active_set.add_index(dof_index);
+                      void_fraction_constraints.add_line(dof_index);
+                      void_fraction_constraints.set_inhomogeneity(dof_index,
+                                                                  0.38);
+                      nodal_void_fraction_owned(dof_index) = 0.38;
+                      lambda(dof_index)                    = 0;
+                    }
                 }
             }
-
-          void_fraction_constraints.close();
         }
     }
+  active_set.compress();
+  nodal_void_fraction_relevant = nodal_void_fraction_owned;
+  void_fraction_constraints.close();
 }
 
 template <int dim>
@@ -703,12 +701,13 @@ GLSVANSSolver<dim>::assembleGLS()
   double h;
 
   // Diameter of particle
-  double d_p = 0;
-  for (auto &particle : particle_handler)
-    {
-      auto &particle_properties = particle.get_properties();
-      d_p                       = particle_properties[DEM::PropertiesIndex::dp];
-    }
+  double d_p = 0.001;
+  //  for (auto &particle : particle_handler)
+  //    {
+  //      auto &particle_properties = particle.get_properties();
+  //      d_p                       =
+  //      particle_properties[DEM::PropertiesIndex::dp];
+  //    }
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -867,6 +866,10 @@ GLSVANSSolver<dim>::assembleGLS()
                     this->simulation_parameters.fem_parameters.velocity_order) *
                 pow((1 / 0.4), 2);
 
+              // Grad-div weight factor
+              const double gamma = 0.1;
+
+
               // Gather the shape functions, their gradient and their
               // laplacian for the velocity and the pressure
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
@@ -969,6 +972,7 @@ GLSVANSSolver<dim>::assembleGLS()
                                    present_void_fraction_values[q];
 
 
+
               // Matrix assembly
               if (assemble_matrix)
                 {
@@ -1029,11 +1033,25 @@ GLSVANSSolver<dim>::assembleGLS()
                                   present_void_fraction_gradients[q]))) *
                             JxW;
 
+                          // Grad-div stabilization - Bruno test
+                          if (grad_div)
+                            {
+                              local_matrix(i, j) +=
+                                gamma *
+                                (div_phi_u[j] *
+                                   present_void_fraction_values[q] +
+                                 phi_u[j] *
+                                   present_void_fraction_gradients[q]) *
+                                div_phi_u[i] * JxW;
+                            }
+
                           // Mass matrix
                           if (is_bdf(scheme))
-                            local_matrix(i, j) +=
-                              present_void_fraction_values[q] * phi_u[j] *
-                              phi_u[i] * bdf_coefs[0] * JxW;
+                            {
+                              local_matrix(i, j) +=
+                                present_void_fraction_values[q] * phi_u[j] *
+                                phi_u[i] * bdf_coefs[0] * JxW;
+                            }
 
                           // PSPG GLS term
                           if (PSPG)
@@ -1129,6 +1147,7 @@ GLSVANSSolver<dim>::assembleGLS()
                         phi_p[i]) *
                     JxW;
 
+
                   // Residual associated with BDF schemes
                   if (scheme == Parameters::SimulationControl::
                                   TimeSteppingMethod::bdf1 ||
@@ -1144,6 +1163,14 @@ GLSVANSSolver<dim>::assembleGLS()
                         (bdf_coefs[0] * present_void_fraction_values[q] +
                          bdf_coefs[1] * p1_void_fraction_values[q]) *
                         phi_p[i] * JxW;
+
+                      if (grad_div)
+                        {
+                          local_rhs(i) -=
+                            (bdf_coefs[0] * present_void_fraction_values[q] +
+                             bdf_coefs[1] * p1_void_fraction_values[q]) *
+                            div_phi_u[i] * JxW;
+                        }
                     }
 
                   if (scheme ==
@@ -1160,6 +1187,15 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[1] * p1_void_fraction_values[q] +
                          bdf_coefs[2] * p2_void_fraction_values[q]) *
                         phi_p[i] * JxW;
+
+                      if (grad_div)
+                        {
+                          local_rhs(i) -=
+                            (bdf_coefs[0] * present_void_fraction_values[q] +
+                             bdf_coefs[1] * p1_void_fraction_values[q] +
+                             bdf_coefs[2] * p2_void_fraction_values[q]) *
+                            div_phi_u[i] * JxW;
+                        }
                     }
 
 
@@ -1181,6 +1217,16 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[2] * p2_void_fraction_values[q] +
                          bdf_coefs[3] * p3_void_fraction_values[q]) *
                         phi_p[i] * JxW;
+
+                      if (grad_div)
+                        {
+                          local_rhs(i) -=
+                            (bdf_coefs[0] * present_void_fraction_values[q] +
+                             bdf_coefs[1] * p1_void_fraction_values[q] +
+                             bdf_coefs[2] * p2_void_fraction_values[q] +
+                             bdf_coefs[3] * p3_void_fraction_values[q]) *
+                            div_phi_u[i] * JxW;
+                        }
                     }
 
                   if (velocity_source ==
@@ -1236,6 +1282,17 @@ GLSVANSSolver<dim>::assembleGLS()
                       scalar_product(present_velocity_gradients[q],
                                      grad_phi_u[i]) *
                       JxW;
+
+                  // Grad-div stabilization
+                  if (grad_div)
+                    {
+                      local_rhs(i) -= gamma *
+                                      (present_void_fraction_values[q] *
+                                         present_velocity_divergence +
+                                       present_velocity_values[q] *
+                                         present_void_fraction_gradients[q]) *
+                                      div_phi_u[i] * JxW;
+                    }
                 }
             }
 
