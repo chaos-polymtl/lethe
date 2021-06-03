@@ -67,6 +67,17 @@ IncludeCategories:
 # config.h must always be first:
   - Regex:    "deal.II/base/config.h"
     Priority: -1
+
+# Lethe folders in a specific order
+  - Regex:    "core/.*\\.h"
+    Priority: 101
+  - Regex:    "solvers/.*\\.h"
+    Priority: 102
+  - Regex:    "dem/.*\\.h"
+    Priority: 103
+  - Regex:    "fem-dem/.*\\.h"
+    Priority: 104
+
 # deal.II folders in sorted order:
   - Regex:    "deal.II/algorithms/.*\\.h"
     Priority: 110

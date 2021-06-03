@@ -16,12 +16,15 @@
  *
  * Author: Carole-Anne Daunais, Valérie Bibeau, Polytechnique Montreal, 2020-
  */
+
+
+#include <core/solid_base.h>
+
 #include <deal.II/base/bounding_box.h>
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/fe/fe.h>
-#include <deal.II/fe/fe_nothing.h>
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/filtered_iterator.h>
@@ -35,9 +38,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
-#include <core/grids.h>
-#include <core/parameters.h>
-#include <core/solid_base.h>
 #include <memory.h>
 
 

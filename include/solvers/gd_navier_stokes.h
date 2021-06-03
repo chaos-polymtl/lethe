@@ -20,9 +20,10 @@
 #ifndef lethe_gd_navier_stokes_h
 #define lethe_gd_navier_stokes_h
 
+#include "core/bdf.h"
+
 #include <deal.II/lac/trilinos_block_sparse_matrix.h>
 
-#include "core/bdf.h"
 #include "navier_stokes_base.h"
 
 using namespace dealii;

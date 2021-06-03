@@ -22,6 +22,15 @@
  * is calculated after a particle-wall collision
  */
 
+#include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
+#include <dem/find_boundary_cells_information.h>
+#include <dem/pw_broad_search.h>
+#include <dem/pw_contact_force.h>
+#include <dem/pw_fine_search.h>
+#include <dem/pw_nonlinear_force.h>
+#include <dem/velocity_verlet_integrator.h>
+
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/point.h>
 
@@ -34,15 +43,6 @@
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-
-#include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
-#include <dem/find_boundary_cells_information.h>
-#include <dem/pw_broad_search.h>
-#include <dem/pw_contact_force.h>
-#include <dem/pw_fine_search.h>
-#include <dem/pw_nonlinear_force.h>
-#include <dem/velocity_verlet_integrator.h>
 
 #include <iostream>
 #include <vector>

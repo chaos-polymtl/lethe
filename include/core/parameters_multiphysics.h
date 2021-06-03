@@ -28,8 +28,6 @@
 
 #include <deal.II/base/parameter_handler.h>
 
-#include <core/multiphysics.h>
-
 using namespace dealii;
 
 namespace Parameters

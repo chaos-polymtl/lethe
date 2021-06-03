@@ -17,10 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 #include <dem/dem_properties.h>
 #include <dem/particle_point_line_contact_info_struct.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 #include <iostream>
 #include <vector>

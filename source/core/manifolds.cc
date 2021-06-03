@@ -1,14 +1,12 @@
+#include <core/manifolds.h>
+
 // Dealii Includes
-// Base
 #include <deal.II/base/point.h>
 
-// Grid
 #include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
-
-#include "core/manifolds.h"
 
 namespace Parameters
 {

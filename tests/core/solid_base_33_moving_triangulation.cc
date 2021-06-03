@@ -30,6 +30,7 @@
 #include <core/parameters.h>
 #include <core/solid_base.h>
 #include <core/solutions_output.h>
+
 #include <solvers/nitsche.h>
 
 // Tests (with common definitions)

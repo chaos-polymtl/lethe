@@ -17,13 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/distributed/tria.h>
-
-#include <deal.II/particles/particle_handler.h>
-
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/insertion.h>
+
+#include <deal.II/distributed/tria.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 #ifndef uniform_insertion_h
 #  define uniform_insertion_h

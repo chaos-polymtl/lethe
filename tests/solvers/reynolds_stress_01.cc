@@ -38,6 +38,7 @@
 // Lethe
 #include <core/parameters.h>
 #include <core/simulation_control.h>
+
 #include <solvers/postprocessing_velocities.h>
 
 // Tests

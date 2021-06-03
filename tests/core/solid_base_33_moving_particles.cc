@@ -27,6 +27,7 @@
 // Lethe
 #include <core/parameters.h>
 #include <core/solid_base.h>
+
 #include <solvers/nitsche.h>
 
 // Tests (with common definitions)

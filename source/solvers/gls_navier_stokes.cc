@@ -19,14 +19,13 @@
 
 #include "solvers/gls_navier_stokes.h"
 
-#include <core/utilities.h>
-
 #include "core/bdf.h"
 #include "core/grids.h"
 #include "core/manifolds.h"
 #include "core/multiphysics.h"
 #include "core/sdirk.h"
 #include "core/time_integration_utilities.h"
+#include <core/utilities.h>
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>

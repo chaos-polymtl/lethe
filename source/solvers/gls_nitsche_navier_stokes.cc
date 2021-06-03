@@ -20,21 +20,20 @@
 
 #include "solvers/gls_nitsche_navier_stokes.h"
 
+#include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+#include "core/sdirk.h"
+#include "core/time_integration_utilities.h"
+#include <core/solutions_output.h>
+#include <core/utilities.h>
+
 #include <deal.II/numerics/fe_field_function.h>
 
 #include <deal.II/particles/data_out.h>
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-
-#include <core/solutions_output.h>
-#include <core/utilities.h>
-
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/sdirk.h"
-#include "core/time_integration_utilities.h"
 
 // Constructor for class GLSNitscheNavierStokesSolver
 template <int dim, int spacedim>

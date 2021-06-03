@@ -16,12 +16,13 @@
  *
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
-#include <boost/math/special_functions.hpp>
-#include <boost/range/adaptor/map.hpp>
-
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/pw_contact_info_struct.h>
+
+#include <boost/math/special_functions.hpp>
+#include <boost/range/adaptor/map.hpp>
+
 #include <math.h>
 
 #include <iostream>
