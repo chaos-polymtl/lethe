@@ -41,6 +41,7 @@ public:
   Parameters::Lagrangian::ModelParameters         model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
   Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
+  Parameters::Lagrangian::ForcesNdTorques         forces_torques;
 
   void
   declare(ParameterHandler &prm)
@@ -55,6 +56,7 @@ public:
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
     floating_walls.declare_parameters(prm);
     boundary_motion.declare_parameters(prm);
+    Parameters::Lagrangian::ForcesNdTorques::declare_parameters(prm);
   }
 
   void
@@ -70,6 +72,7 @@ public:
     simulation_control.parse_parameters(prm);
     floating_walls.parse_parameters(prm);
     boundary_motion.parse_parameters(prm);
+    forces_torques.parse_parameters(prm);
   }
 };
 

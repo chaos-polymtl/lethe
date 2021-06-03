@@ -217,6 +217,37 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+      /**
+       * @brief ForcesNdTorques - Defines the parameters for the
+       * force and torques calculation on boundaries of the domain.
+       */
+      struct ForcesNdTorques
+      {
+
+          // Enable force post-processing
+          bool calculate_force;
+
+          // Enable torque post-processing
+          bool calculate_torque;
+
+          // Frequency of the output
+          unsigned int calculation_frequency;
+
+          // Frequency of the output
+          unsigned int output_frequency;
+
+          // Prefix for simulation output
+          std::string force_output_name;
+
+          // Prefix for the torque output
+          std::string torque_output_name;
+
+          static void
+          declare_parameters(ParameterHandler &prm);
+          void
+          parse_parameters(ParameterHandler &prm);
+      };
+
     template <int dim>
     class FloatingWalls
     {
