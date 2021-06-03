@@ -17,6 +17,9 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2020 -
  */
 
+#ifndef lethe_utilities_h
+#define lethe_utilities_h
+
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -25,11 +28,7 @@
 #include <deal.II/fe/mapping_manifold.h>
 #include <deal.II/fe/mapping_q1.h>
 
-#ifndef lethe_utilities_h
-#  define lethe_utilities_h
-
 using namespace dealii;
-
 
 template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
