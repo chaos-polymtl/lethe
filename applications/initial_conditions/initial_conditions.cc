@@ -2,6 +2,7 @@
 #include <core/parameters.h>
 
 #include <solvers/gls_navier_stokes.h>
+#include <solvers/postprocessing_cfd.h>
 
 template <int dim>
 class ExactInitialSolution : public Function<dim>
