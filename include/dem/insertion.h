@@ -17,6 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
+
 #include <deal.II/base/array_view.h>
 #include <deal.II/base/data_out_base.h>
 
@@ -33,8 +36,6 @@
 #include <deal.II/particles/particle_iterator.h>
 #include <deal.II/particles/property_pool.h>
 
-#include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
 #include <math.h>
 
 #include <fstream>

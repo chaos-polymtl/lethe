@@ -1,8 +1,8 @@
 // check the read and write of simulationcontrol
 
-#include <fstream>
-
 #include "dem/dem_solver_parameters.h"
+
+#include <fstream>
 
 int
 main()

@@ -20,13 +20,13 @@
 // TODO : Refactor so the class itself is not a pointer, but contains a pointer
 //        to a function. This would be a lot more coherent...
 
-#ifndef LETHE_ANALYTICALSOLUTIONS_H
-#define LETHE_ANALYTICALSOLUTIONS_H
+#ifndef lethe_analytical_solutions_h
+#define lethe_analytical_solutions_h
+
+#include <core/parameters.h>
 
 #include <deal.II/base/function.h>
 #include <deal.II/base/parsed_function.h>
-
-#include <core/parameters.h>
 
 using namespace dealii;
 /**

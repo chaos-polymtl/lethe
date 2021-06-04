@@ -30,15 +30,11 @@
 #  include <deal.II/lac/vector.h>
 
 // Dofs
-#  include <deal.II/dofs/dof_accessor.h>
 #  include <deal.II/dofs/dof_handler.h>
 
 // Fe
-#  include <deal.II/fe/fe_q.h>
-#  include <deal.II/fe/fe_system.h>
-#  include <deal.II/fe/fe_values.h>
+#  include <deal.II/fe/fe.h>
 #  include <deal.II/fe/mapping_fe.h>
-#  include <deal.II/fe/mapping_q.h>
 
 // Lethe includes
 #  include <core/boundary_conditions.h>

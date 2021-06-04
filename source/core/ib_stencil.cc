@@ -1,9 +1,4 @@
-//
-// Created by lucka on 2021-05-21.
-//
-
 #include <core/ib_stencil.h>
-
 
 
 template <int dim>

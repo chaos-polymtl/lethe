@@ -1,8 +1,7 @@
+#include <solvers/free_surface.h>
+#include <solvers/heat_transfer.h>
 #include <solvers/multiphysics_interface.h>
-
-#include "solvers/free_surface.h"
-#include "solvers/heat_transfer.h"
-#include "solvers/tracer.h"
+#include <solvers/tracer.h>
 
 
 template <int dim>

@@ -17,12 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle.h>
-#include <deal.II/particles/particle_iterator.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_force.h>
 #include <dem/pp_contact_info_struct.h>
+
+#include <deal.II/particles/particle.h>
+#include <deal.II/particles/particle_iterator.h>
+
 #include <math.h>
 
 #include <iostream>

@@ -17,14 +17,14 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/boundary_cells_info_struct.h>
+#include <dem/dem_solver_parameters.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
 #include <deal.II/particles/particle_iterator.h>
-
-#include <dem/boundary_cells_info_struct.h>
-#include <dem/dem_solver_parameters.h>
 
 #include <iostream>
 #include <vector>

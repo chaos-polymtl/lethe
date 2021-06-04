@@ -20,6 +20,10 @@
 #ifndef lethe_grids_h
 #define lethe_grids_h
 
+#include <core/boundary_conditions.h>
+#include <core/manifolds.h>
+#include <core/parameters.h>
+
 #include <deal.II/distributed/tria.h>
 #include <deal.II/distributed/tria_base.h>
 
@@ -27,10 +31,6 @@
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_out.h>
 #include <deal.II/grid/tria.h>
-
-#include <core/boundary_conditions.h>
-#include <core/manifolds.h>
-#include <core/parameters.h>
 
 
 

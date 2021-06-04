@@ -22,7 +22,10 @@
 
 #include <core/ib_particle.h>
 #include <core/ib_stencil.h>
+
 #include <solvers/gls_navier_stokes.h>
+
+#include <deal.II/dofs/dof_tools.h>
 
 using namespace dealii;
 

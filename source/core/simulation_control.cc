@@ -3,8 +3,6 @@
 #include <cfloat>
 #include <fstream>
 
-#include "core/parameters.h"
-
 
 SimulationControl::SimulationControl(Parameters::SimulationControl param)
   : method(param.method)

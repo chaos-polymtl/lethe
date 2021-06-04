@@ -21,9 +21,9 @@
 #ifndef lethe_gls_nitsche_navier_stokes_h
 #define lethe_gls_nitsche_navier_stokes_h
 
-#include <deal.II/lac/trilinos_vector.h>
-
 #include <core/solid_base.h>
+
+#include <deal.II/lac/trilinos_vector.h>
 
 #include "gls_navier_stokes.h"
 

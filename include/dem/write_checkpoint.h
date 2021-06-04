@@ -17,6 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/pvd_handler.h>
+
+#include <dem/dem_solver_parameters.h>
+
 #include <deal.II/base/timer.h>
 
 #include <deal.II/distributed/tria.h>
@@ -25,9 +29,6 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-
-#include <core/pvd_handler.h>
-#include <dem/dem_solver_parameters.h>
 
 #include <fstream>
 #include <iostream>

@@ -17,13 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
+
 #include <deal.II/base/data_out_base.h>
 
 #include <deal.II/particles/particle.h>
 #include <deal.II/particles/particle_handler.h>
-
-#include <dem/dem_properties.h>
-#include <dem/dem_solver_parameters.h>
 
 #include <tuple>
 #include <vector>

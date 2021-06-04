@@ -6,9 +6,6 @@
 // Base
 #include <deal.II/base/tensor.h>
 
-// Lac
-#include <deal.II/lac/vector.h>
-
 // Numerics
 #include <deal.II/numerics/data_postprocessor.h>
 

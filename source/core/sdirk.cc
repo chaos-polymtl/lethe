@@ -1,6 +1,6 @@
-#include <deal.II/lac/full_matrix.h>
-
 #include <core/sdirk.h>
+
+#include <deal.II/lac/full_matrix.h>
 
 // Matrix of coefficients for the SDIRK methods
 // The lines store the information required for each step
