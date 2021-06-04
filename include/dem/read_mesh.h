@@ -17,13 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/dem_solver_parameters.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_in.h>
 #include <deal.II/grid/grid_tools.h>
-
-#include <dem/dem_solver_parameters.h>
 
 #include <fstream>
 #include <iostream>

@@ -20,10 +20,10 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
-#include <deal.II/base/function.h>
+#include <core/parameters.h>
+
 #include <deal.II/base/parsed_function.h>
 
-#include <core/parameters.h>
 
 using namespace dealii;
 /**

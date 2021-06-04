@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/analytical_solutions.h"
+#include <solvers/analytical_solutions.h>
 
 namespace AnalyticalSolutions
 {

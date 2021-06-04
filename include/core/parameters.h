@@ -26,16 +26,18 @@
  * are required.
  */
 
-#include <deal.II/base/conditional_ostream.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/parameter_acceptor.h>
-#include <deal.II/base/parameter_handler.h>
-#include <deal.II/base/parsed_function.h>
+
+
+#ifndef lethe_parameters_h
+#define lethe_parameters_h
 
 #include <core/ib_particle.h>
 
-#ifndef lethe_parameters_h
-#  define lethe_parameters_h
+#include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
+
+
 
 using namespace dealii;
 

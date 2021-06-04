@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/source_terms.h"
+#include <solvers/source_terms.h>
 
 // Pre-compile the 2D and 3D Navier-Stokes solver to ensure that the library is
 // valid before we actually compile the solver This greatly helps with debugging

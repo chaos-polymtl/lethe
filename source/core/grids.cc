@@ -1,11 +1,13 @@
+
+// Lethe includes
+#include <core/boundary_conditions.h>
+#include <core/grids.h>
+#include <core/periodic_hills_grid.h>
+
 // Deal.II includes
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/tria.h>
 
-// Lethe includes
-#include "core/boundary_conditions.h"
-#include "core/grids.h"
-#include "core/periodic_hills_grid.h"
 
 // Std
 #include <fstream>

@@ -17,6 +17,9 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <dem/boundary_cells_info_struct.h>
+#include <dem/dem_solver_parameters.h>
+
 #include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/tria.h>
@@ -25,9 +28,6 @@
 #include <deal.II/fe/fe_values.h>
 
 #include <deal.II/grid/grid_tools.h>
-
-#include <dem/boundary_cells_info_struct.h>
-#include <dem/dem_solver_parameters.h>
 
 #include <iostream>
 #include <unordered_set>
