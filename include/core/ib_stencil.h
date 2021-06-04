@@ -1,7 +1,23 @@
-//
-// Created by lucka on 2021-05-21.
-//
+/* ---------------------------------------------------------------------
+ *
+ * Copyright (C) 2019 -  by the Lethe authors
+ *
+ * This file is part of the Lethe library
+ *
+ * The Lethe library is free software; you can use it, redistribute
+ * it, and/or modify it under the terms of the GNU Lesser General
+ * Public License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * The full text of the license can be found in the file LICENSE at
+ * the top level of the Lethe distribution.
+ *
+ * ---------------------------------------------------------------------
+ *
+ * Author: Lucka Barbeau, Bruno Blais, Polytechnique Montreal, 2019 -
+ */
 
+#ifndef lethe_ib_stencils_h
+#define lethe_ib_stencils_h
 
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
@@ -17,10 +33,6 @@
 #include <deal.II/lac/trilinos_vector.h>
 
 #include <core/ib_particle.h>
-
-
-#ifndef lethe_ib_stencils_h
-#  define lethe_ib_stencils_h
 
 
 

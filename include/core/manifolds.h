@@ -21,17 +21,12 @@
 #define lethe_manifolds_h
 
 #include <deal.II/base/data_out_base.h>
-#include <deal.II/base/function.h>
-#include <deal.II/base/parsed_function.h>
+#include <deal.II/base/parameter_handler.h>
 
 #include <deal.II/distributed/tria.h>
 #include <deal.II/distributed/tria_base.h>
 
 #include <deal.II/dofs/dof_handler.h>
-
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/tria.h>
 
 #include <deal.II/numerics/data_postprocessor.h>
 
@@ -106,12 +101,7 @@ public:
     const DataPostprocessorInputs::Vector<dim> &input_data,
     std::vector<Vector<double>> &computed_quantities) const override
   {
-#if (DEAL_II_VERSION_MINOR <= 2)
-    const typename DoFHandler<dim>::cell_iterator current_cell =
-      input_data.template get_cell<DoFHandler<dim>>();
-#else
     auto current_cell = input_data.template get_cell<dim>();
-#endif
 
     for (unsigned int p = 0; p < input_data.evaluation_points.size(); ++p)
       {

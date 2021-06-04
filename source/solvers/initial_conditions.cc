@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "solvers/initial_conditions.h"
+#include <solvers/initial_conditions.h>
 
 namespace Parameters
 {

@@ -16,14 +16,14 @@
  *
  * Author: Bruno Blais, Shahab Golshan, Polytechnique Montreal, 2019-
  */
+#include <core/solutions_output.h>
+
+#include <dem/dem.h>
+
 #include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
-
-#include <core/solutions_output.h>
-#include <dem/dem.h>
-#include <dem/pw_contact_force.h>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -49,7 +49,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
-
 {
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
@@ -439,11 +438,7 @@ DEMSolver<dim>::particle_wall_contact_force()
 {
   // Particle-wall contact force
   pw_contact_force_object->calculate_pw_contact_force(
-    pw_pairs_in_contact,
-    simulation_control->get_time_step(),
-    momentum,
-    force,
-    parameters);
+    pw_pairs_in_contact, simulation_control->get_time_step(), momentum, force);
 
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
@@ -452,8 +447,7 @@ DEMSolver<dim>::particle_wall_contact_force()
         pfw_pairs_in_contact,
         simulation_control->get_time_step(),
         momentum,
-        force,
-        parameters);
+        force);
     }
 
   particle_point_line_contact_force_object

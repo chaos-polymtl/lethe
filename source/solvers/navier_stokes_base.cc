@@ -17,24 +17,36 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include <deal.II/grid/tria_iterator.h>
-
-#include <deal.II/numerics/data_out_faces.h>
-
-#include <deal.II/opencascade/manifold_lib.h>
-#include <deal.II/opencascade/utilities.h>
-
+#include <core/bdf.h>
 #include <core/grids.h>
 #include <core/sdirk.h>
 #include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_cfd.h>
 #include <solvers/postprocessing_velocities.h>
 
-#include "core/time_integration_utilities.h"
+#include <deal.II/distributed/fully_distributed_tria.h>
+#include <deal.II/distributed/grid_refinement.h>
+
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
+
+#include <deal.II/grid/tria_iterator.h>
+
+#include <deal.II/numerics/data_out_faces.h>
+#include <deal.II/numerics/error_estimator.h>
+#include <deal.II/numerics/matrix_tools.h>
+#include <deal.II/numerics/solution_transfer.h>
+#include <deal.II/numerics/vector_tools.h>
+
+#include <deal.II/opencascade/manifold_lib.h>
+#include <deal.II/opencascade/utilities.h>
+
 
 /*
  * Constructor for the Navier-Stokes base class

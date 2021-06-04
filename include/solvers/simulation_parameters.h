@@ -22,14 +22,14 @@
 
 #include <core/boundary_conditions.h>
 #include <core/manifolds.h>
+#include <core/nitsche.h>
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/parameters_multiphysics.h>
 
-#include "analytical_solutions.h"
-#include "initial_conditions.h"
-#include "nitsche.h"
-#include "source_terms.h"
+#include <solvers/analytical_solutions.h>
+#include <solvers/initial_conditions.h>
+#include <solvers/source_terms.h>
 
 template <int dim>
 class SimulationParameters

@@ -21,9 +21,9 @@
 #ifndef lethe_sdirk_h
 #define lethe_sdirk_h
 
-#include <deal.II/lac/full_matrix.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/lac/full_matrix.h>
 
 #include <vector>
 

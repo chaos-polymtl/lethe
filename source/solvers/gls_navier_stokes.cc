@@ -17,16 +17,29 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019-
  */
 
-#include "solvers/gls_navier_stokes.h"
-
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/manifolds.h>
+#include <core/multiphysics.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/multiphysics.h"
-#include "core/sdirk.h"
-#include "core/time_integration_utilities.h"
+#include <solvers/gls_navier_stokes.h>
+
+#include <deal.II/dofs/dof_renumbering.h>
+#include <deal.II/dofs/dof_tools.h>
+
+#include <deal.II/lac/full_matrix.h>
+#include <deal.II/lac/solver_bicgstab.h>
+#include <deal.II/lac/solver_cg.h>
+#include <deal.II/lac/solver_gmres.h>
+#include <deal.II/lac/sparse_direct.h>
+#include <deal.II/lac/sparse_ilu.h>
+
+#include <deal.II/numerics/vector_tools.h>
+
+
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>

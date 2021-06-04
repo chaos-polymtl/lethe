@@ -21,35 +21,27 @@
 #ifndef lethe_solid_base_h
 #define lethe_solid_base_h
 
+
+// Lethe Includes
+#include <core/nitsche.h>
+#include <core/parameters.h>
+
 // Dealii Includes
 
-// Dofs
+#include <deal.II/base/function.h>
+
+#include <deal.II/distributed/tria_base.h>
+
 #include <deal.II/dofs/dof_accessor.h>
 #include <deal.II/dofs/dof_handler.h>
 
-// Fe
 #include <deal.II/fe/fe_q.h>
-#include <deal.II/fe/fe_system.h>
 
-// Distributed
-#include <deal.II/distributed/tria.h>
-#include <deal.II/distributed/tria_base.h>
+#include <deal.II/grid/grid_generator.h>
 
-// Particles
-#include <deal.II/particles/data_out.h>
-#include <deal.II/particles/particle_accessor.h>
 #include <deal.II/particles/particle_handler.h>
 
-// Function
-#include <deal.II/base/function.h>
 
-// Lethe Includes
-#include <core/parameters.h>
-#include <solvers/simulation_parameters.h>
-
-// Std
-#include <fstream>
-#include <iostream>
 
 using namespace dealii;
 

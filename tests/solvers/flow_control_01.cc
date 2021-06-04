@@ -24,6 +24,7 @@
 
 // Lethe
 #include <core/parameters.h>
+
 #include <solvers/flow_control.h>
 
 // Tests

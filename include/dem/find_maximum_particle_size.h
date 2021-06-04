@@ -17,10 +17,10 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
 #include <dem/dem_solver_parameters.h>
 #include <dem/input_parameter_inspection.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 using namespace dealii;
 

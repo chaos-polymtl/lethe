@@ -17,13 +17,13 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <deal.II/particles/particle_handler.h>
-
-#include <boost/range/adaptor/map.hpp>
-
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 #include <dem/pp_contact_info_struct.h>
+
+#include <deal.II/particles/particle_handler.h>
+
+#include <boost/range/adaptor/map.hpp>
 
 using namespace dealii;
 

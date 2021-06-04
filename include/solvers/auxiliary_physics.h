@@ -20,13 +20,14 @@
 #ifndef lethe_auxiliary_physics_h
 #define lethe_auxiliary_physics_h
 
-#include <deal.II/distributed/tria_base.h>
-
-#include <deal.II/numerics/data_out.h>
-
 #include <core/parameters.h>
 #include <core/physics_solver.h>
+
 #include <solvers/simulation_parameters.h>
+
+#include <deal.II/dofs/dof_handler.h>
+
+#include <deal.II/numerics/data_out.h>
 
 
 /**
