@@ -18,15 +18,15 @@
  Montreal, 2020-
  */
 
-#include "solvers/gls_nitsche_navier_stokes.h"
-
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/sdirk.h"
-#include "core/time_integration_utilities.h"
+#include <core/bdf.h>
+#include <core/grids.h>
+#include <core/manifolds.h>
+#include <core/sdirk.h>
 #include <core/solutions_output.h>
+#include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+
+#include <solvers/gls_nitsche_navier_stokes.h>
 
 #include <deal.II/numerics/fe_field_function.h>
 

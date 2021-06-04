@@ -17,7 +17,7 @@
  * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
 
-#include "solvers/simulation_parameters.h"
+#include <solvers/simulation_parameters.h>
 
 template class SimulationParameters<2>;
 template class SimulationParameters<3>;
