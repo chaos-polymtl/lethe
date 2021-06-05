@@ -213,8 +213,16 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
       // Generate FEField function to evaluate values and gradients
       // at the particle location
       auto &evaluation_point = this->evaluation_point;
+
+#if (DEAL_II_VERSION_MAJOR < 10)
+      Functions::
+        FEFieldFunction<3, DoFHandler<3, 3>, TrilinosWrappers::MPI::Vector>
+          fe_field(this->dof_handler, evaluation_point);
+#else
       Functions::FEFieldFunction<3, TrilinosWrappers::MPI::Vector> fe_field(
         this->dof_handler, evaluation_point);
+#endif
+
 
       fe_field.set_active_cell(dh_cell);
 
@@ -732,7 +740,11 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
   const unsigned int i_solid)
 {
-  DataOut<dim, spacedim>     data_out;
+#if (DEAL_II_VERSION_MAJOR < 10)
+  DataOut<dim, DoFHandler<dim, spacedim>> data_out;
+#else
+  DataOut<dim, spacedim> data_out;
+#endif
   DoFHandler<dim, spacedim> &solid_dh = solid[i_solid]->get_solid_dof_handler();
   data_out.attach_dof_handler(solid_dh);
 
