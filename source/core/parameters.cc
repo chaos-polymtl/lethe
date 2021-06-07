@@ -1333,7 +1333,6 @@ namespace Parameters
     }
     prm.leave_subsection();
   }
-
   template class IBParticles<2>;
   template class IBParticles<3>;
 } // namespace Parameters

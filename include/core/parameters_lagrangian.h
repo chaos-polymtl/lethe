@@ -18,280 +18,309 @@
 using namespace dealii;
 namespace Parameters
 {
-  namespace Lagrangian
-  {
-    template <int dim>
-    class PhysicalProperties
+    namespace Lagrangian
     {
-    public:
-      // Gravitational acceleration
-      Tensor<1, dim> g;
+        template <int dim>
+        class PhysicalProperties
+        {
+        public:
+            // Gravitational acceleration
+            Tensor<1, dim> g;
 
-      // Choosing integration method
-      enum class size_distribution_type
-      {
-        uniform,
-        normal
-      } size_distribution_type;
+            // Choosing integration method
+            enum class size_distribution_type
+            {
+                uniform,
+                normal
+            } size_distribution_type;
 
-      // Number of particle types
-      unsigned int particle_type_number;
+            // Number of particle types
+            unsigned int particle_type_number;
 
-      // Average diameter of each particle type
-      std::unordered_map<unsigned int, double> particle_average_diameter;
+            // Average diameter of each particle type
+            std::unordered_map<unsigned int, double> particle_average_diameter;
 
-      // Size standard deviation of each particle type
-      std::unordered_map<unsigned int, double> particle_size_std;
+            // Size standard deviation of each particle type
+            std::unordered_map<unsigned int, double> particle_size_std;
 
-      // Number of each particle type
-      std::unordered_map<unsigned int, int> number;
+            // Number of each particle type
+            std::unordered_map<unsigned int, int> number;
 
-      // Density of each particle type
-      std::unordered_map<unsigned int, double> density;
+            // Density of each particle type
+            std::unordered_map<unsigned int, double> density;
 
-      // Young's modulus of each particle type
-      std::unordered_map<unsigned int, double> youngs_modulus_particle;
+            // Young's modulus of each particle type
+            std::unordered_map<unsigned int, double> youngs_modulus_particle;
 
-      // Poisson's ratio of each particle type
-      std::unordered_map<unsigned int, double> poisson_ratio_particle;
+            // Poisson's ratio of each particle type
+            std::unordered_map<unsigned int, double> poisson_ratio_particle;
 
-      // Coefficients of restituion of each particle type
-      std::unordered_map<unsigned int, double> restitution_coefficient_particle;
+            // Coefficients of restituion of each particle type
+            std::unordered_map<unsigned int, double> restitution_coefficient_particle;
 
-      // Friction coefficient of each particle type
-      std::unordered_map<unsigned int, double> friction_coefficient_particle;
+            // Friction coefficient of each particle type
+            std::unordered_map<unsigned int, double> friction_coefficient_particle;
 
-      // Rolling friction coefficient of each particle type
-      std::unordered_map<unsigned int, double>
-        rolling_friction_coefficient_particle;
+            // Rolling friction coefficient of each particle type
+            std::unordered_map<unsigned int, double>
+                    rolling_friction_coefficient_particle;
 
-      // Young's modulus of wall
-      double youngs_modulus_wall;
+            // Young's modulus of wall
+            double youngs_modulus_wall;
 
-      // Poisson's ratio of wall
-      double poisson_ratio_wall;
+            // Poisson's ratio of wall
+            double poisson_ratio_wall;
 
-      // Coefficient of restituion of wall
-      double restitution_coefficient_wall;
+            // Coefficient of restituion of wall
+            double restitution_coefficient_wall;
 
-      // Friction coefficient of wall
-      double friction_coefficient_wall;
+            // Friction coefficient of wall
+            double friction_coefficient_wall;
 
-      // Rolling friction coefficient wall
-      double rolling_friction_wall;
+            // Rolling friction coefficient wall
+            double rolling_friction_wall;
 
-      void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-      void
-      declareDefaultEntry(ParameterHandler &prm);
-      void
-      parse_particle_properties(const unsigned int &particle_type,
-                                ParameterHandler &  prm);
+            void
+            declare_parameters(ParameterHandler &prm);
+            void
+            parse_parameters(ParameterHandler &prm);
+            void
+            declareDefaultEntry(ParameterHandler &prm);
+            void
+            parse_particle_properties(const unsigned int &particle_type,
+                                      ParameterHandler &  prm);
 
-    private:
-      unsigned int particle_type_maximum_number = 5;
+        private:
+            unsigned int particle_type_maximum_number = 5;
 
-      void
-      initialize_containers(
-        std::unordered_map<unsigned int, double> &particle_average_diameter,
-        std::unordered_map<unsigned int, double> &particle_size_std,
-        std::unordered_map<unsigned int, int> &   number,
-        std::unordered_map<unsigned int, double> &density,
-        std::unordered_map<unsigned int, double> &youngs_modulus_particle,
-        std::unordered_map<unsigned int, double> &poisson_ratio_particle,
-        std::unordered_map<unsigned int, double>
-          &restitution_coefficient_particle,
-        std::unordered_map<unsigned int, double> &friction_coefficient_particle,
-        std::unordered_map<unsigned int, double>
-          &rolling_friction_coefficient_particle);
-    };
+            void
+            initialize_containers(
+                    std::unordered_map<unsigned int, double> &particle_average_diameter,
+                    std::unordered_map<unsigned int, double> &particle_size_std,
+                    std::unordered_map<unsigned int, int> &   number,
+                    std::unordered_map<unsigned int, double> &density,
+                    std::unordered_map<unsigned int, double> &youngs_modulus_particle,
+                    std::unordered_map<unsigned int, double> &poisson_ratio_particle,
+                    std::unordered_map<unsigned int, double>
+                    &restitution_coefficient_particle,
+                    std::unordered_map<unsigned int, double> &friction_coefficient_particle,
+                    std::unordered_map<unsigned int, double>
+                    &rolling_friction_coefficient_particle);
+        };
 
-    struct InsertionInfo
-    {
-      // Choosing insertion method
-      enum class InsertionMethod
-      {
-        uniform,
-        non_uniform
-      } insertion_method;
+        struct InsertionInfo
+        {
+            // Choosing insertion method
+            enum class InsertionMethod
+            {
+                uniform,
+                non_uniform
+            } insertion_method;
 
-      // Inserted number of particles at each time step
-      int inserted_this_step;
+            // Inserted number of particles at each time step
+            int inserted_this_step;
 
-      // Insertion frequency
-      int insertion_frequency;
+            // Insertion frequency
+            int insertion_frequency;
 
-      // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
-      double x_min, y_min, z_min, x_max, y_max, z_max;
+            // Insertion box info (xmin,xmax,ymin,ymax,zmin,zmax)
+            double x_min, y_min, z_min, x_max, y_max, z_max;
 
-      // Insertion distance threshold
-      double distance_threshold;
+            // Insertion distance threshold
+            double distance_threshold;
 
-      // Insertion random number range
-      double random_number_range;
+            // Insertion random number range
+            double random_number_range;
 
-      // Insertion random number seed
-      int random_number_seed;
+            // Insertion random number seed
+            int random_number_seed;
 
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+            static void
+            declare_parameters(ParameterHandler &prm);
+            void
+            parse_parameters(ParameterHandler &prm);
+        };
 
-    struct ModelParameters
-    {
-      // Load balance method
-      enum class LoadBalanceMethod
-      {
-        none,
-        once,
-        frequent,
-        dynamic
-      } load_balance_method;
+        struct ModelParameters
+        {
+            // Load balance method
+            enum class LoadBalanceMethod
+            {
+                none,
+                once,
+                frequent,
+                dynamic
+            } load_balance_method;
 
-      // Load balance step (for single step load-balancing)
-      unsigned int load_balance_step;
+            // Load balance step (for single step load-balancing)
+            unsigned int load_balance_step;
 
-      // Load balance frequency
-      unsigned int load_balance_frequency;
+            // Load balance frequency
+            unsigned int load_balance_frequency;
 
-      // Load balance threshold (for dynamic load-balancing)
-      double load_balance_threshold;
+            // Load balance threshold (for dynamic load-balancing)
+            double load_balance_threshold;
 
-      // Load balance check frequency (for dynamic load-balancing)
-      unsigned int dynamic_load_balance_check_frequency;
+            // Load balance check frequency (for dynamic load-balancing)
+            unsigned int dynamic_load_balance_check_frequency;
 
-      // Particle-particle, particle-wall broad and fine search frequency
-      unsigned int contact_detection_frequency;
+            // Particle-particle, particle-wall broad and fine search frequency
+            unsigned int contact_detection_frequency;
 
-      // Security factor for dynamic contact search
-      double dynamic_contact_search_factor;
+            // Security factor for dynamic contact search
+            double dynamic_contact_search_factor;
 
-      // Contact detection method
-      enum class ContactDetectionMethod
-      {
-        constant,
-        dynamic
-      } contact_detection_method;
+            // Contact detection method
+            enum class ContactDetectionMethod
+            {
+                constant,
+                dynamic
+            } contact_detection_method;
 
-      // Contact search neighborhood threshold (neighborhood diameter to
-      // particle diameter)
-      double neighborhood_threshold;
+            // Contact search neighborhood threshold (neighborhood diameter to
+            // particle diameter)
+            double neighborhood_threshold;
 
-      // Choosing particle-particle contact force model
-      enum class PPContactForceModel
-      {
-        pp_linear,
-        pp_nonlinear
-      } pp_contact_force_method;
+            // Choosing particle-particle contact force model
+            enum class PPContactForceModel
+            {
+                pp_linear,
+                pp_nonlinear
+            } pp_contact_force_method;
 
-      // Choosing particle-wall contact force model
-      enum class PWContactForceModel
-      {
-        pw_linear,
-        pw_nonlinear
-      } pw_contact_force_method;
+            // Choosing particle-wall contact force model
+            enum class PWContactForceModel
+            {
+                pw_linear,
+                pw_nonlinear
+            } pw_contact_force_method;
 
-      // Rolling resistance torque method
-      enum class RollingResistanceMethod
-      {
-        no_resistance,
-        constant_resistance,
-        viscous_resistance
-      } rolling_resistance_method;
+            // Rolling resistance torque method
+            enum class RollingResistanceMethod
+            {
+                no_resistance,
+                constant_resistance,
+                viscous_resistance
+            } rolling_resistance_method;
 
-      // Choosing integration method
-      enum class IntegrationMethod
-      {
-        velocity_verlet,
-        explicit_euler,
-        gear3
-      } integration_method;
+            // Choosing integration method
+            enum class IntegrationMethod
+            {
+                velocity_verlet,
+                explicit_euler,
+                gear3
+            } integration_method;
 
-      static void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-    };
+            static void
+            declare_parameters(ParameterHandler &prm);
+            void
+            parse_parameters(ParameterHandler &prm);
+        };
 
-    template <int dim>
-    class FloatingWalls
-    {
-    public:
-      // Number of floating walls
-      unsigned int floating_walls_number;
+        /**
+         * @brief ForcesNdTorques - Defines the parameters for the
+         * force and torques calculation on boundaries of the domain.
+         */
+        template<int dim>
+        class ForcesNdTorques
+        {
+        public :
+            // Enable force post-processing
+            bool calculate_force_torque;
 
-      // A point on each floating wall
-      std::vector<Point<dim>> points_on_walls;
+            // Frequency of the calculation
+            unsigned int calculation_frequency;
 
-      // Normal vectors of the floating walls
-      std::vector<Tensor<1, dim>> floating_walls_normal_vectors;
+            // Frequency of the output
+            unsigned int output_frequency;
 
-      // Beginning time
-      std::vector<double> time_start;
+            // Prefix for simulation output
+            std::string force_torque_output_name;
 
-      // Ending time
-      std::vector<double> time_end;
+            // Center of mass point
+            std::vector<Point<dim>> point_center_mass;
 
-      void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-      void
-      declareDefaultEntry(ParameterHandler &prm);
-      void
-      parse_floating_wall(ParameterHandler &prm);
-    };
+            void
+            declare_parameters(ParameterHandler &prm);
+            void
+            parse_parameters(ParameterHandler &prm);
+        };
 
-    template <int dim>
-    class BoundaryMotion
-    {
-    public:
-      // Number of moving boundaries
-      unsigned int moving_boundary_number;
+        template <int dim>
+        class FloatingWalls
+        {
+        public:
+            // Number of floating walls
+            unsigned int floating_walls_number;
 
-      // Choosing motion type
-      enum class motion_type
-      {
-        translational,
-        rotational
-      } motion_type;
+            // A point on each floating wall
+            std::vector<Point<dim>> points_on_walls;
 
-      // Translational velocities of moving boundaries
-      std::unordered_map<unsigned int, Tensor<1, dim>>
-        boundary_translational_velocity;
+            // Normal vectors of the floating walls
+            std::vector<Tensor<1, dim>> floating_walls_normal_vectors;
 
-      // Rotational speeds of rotating boundaries
-      std::unordered_map<unsigned int, double> boundary_rotational_speed;
+            // Beginning time
+            std::vector<double> time_start;
 
-      // Rotational vectors of rotating boundaries
-      std::unordered_map<unsigned int, Tensor<1, dim>>
-        boundary_rotational_vector;
+            // Ending time
+            std::vector<double> time_end;
 
-      void
-      declare_parameters(ParameterHandler &prm);
-      void
-      parse_parameters(ParameterHandler &prm);
-      void
-      declareDefaultEntry(ParameterHandler &prm);
-      void
-      parse_boundary_motion(ParameterHandler &prm);
+            void
+            declare_parameters(ParameterHandler &prm);
+            void
+            parse_parameters(ParameterHandler &prm);
+            void
+            declareDefaultEntry(ParameterHandler &prm);
+            void
+            parse_floating_wall(ParameterHandler &prm);
+        };
 
-    private:
-      unsigned int moving_boundary_maximum_number = 6;
-      void
-      initialize_containers(
-        std::unordered_map<unsigned int, Tensor<1, dim>>
-          &boundary_translational_velocity,
-        std::unordered_map<unsigned int, double> &boundary_rotational_speed,
-        std::unordered_map<unsigned int, Tensor<1, dim>>
-          &boundary_rotational_vector);
-    };
+        template <int dim>
+        class BoundaryMotion
+        {
+        public:
+            // Number of moving boundaries
+            unsigned int moving_boundary_number;
 
-  } // namespace Lagrangian
+            // Choosing motion type
+            enum class motion_type
+            {
+                translational,
+                rotational
+            } motion_type;
+
+            // Translational velocities of moving boundaries
+            std::unordered_map<unsigned int, Tensor<1, dim>>
+                    boundary_translational_velocity;
+
+            // Rotational speeds of rotating boundaries
+            std::unordered_map<unsigned int, double> boundary_rotational_speed;
+
+            // Rotational vectors of rotating boundaries
+            std::unordered_map<unsigned int, Tensor<1, dim>>
+                    boundary_rotational_vector;
+
+            void
+            declare_parameters(ParameterHandler &prm);
+            void
+            parse_parameters(ParameterHandler &prm);
+            void
+            declareDefaultEntry(ParameterHandler &prm);
+            void
+            parse_boundary_motion(ParameterHandler &prm);
+
+        private:
+            unsigned int moving_boundary_maximum_number = 6;
+            void
+            initialize_containers(
+                    std::unordered_map<unsigned int, Tensor<1, dim>>
+                    &boundary_translational_velocity,
+                    std::unordered_map<unsigned int, double> &boundary_rotational_speed,
+                    std::unordered_map<unsigned int, Tensor<1, dim>>
+                    &boundary_rotational_vector);
+        };
+
+    } // namespace Lagrangian
 } // namespace Parameters
 
 #endif /* PARAMETERS_H_ */

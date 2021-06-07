@@ -31,46 +31,49 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                                mesh;
-  Parameters::Testing                             test;
-  Parameters::Restart                             restart;
-  Parameters::Timer                               timer;
-  Parameters::SimulationControl                   simulation_control;
-  Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
-  Parameters::Lagrangian::InsertionInfo           insertion_info;
-  Parameters::Lagrangian::ModelParameters         model_parameters;
-  Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
-  Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
+    Parameters::Mesh                                mesh;
+    Parameters::Testing                             test;
+    Parameters::Restart                             restart;
+    Parameters::Timer                               timer;
+    Parameters::SimulationControl                   simulation_control;
+    Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
+    Parameters::Lagrangian::InsertionInfo           insertion_info;
+    Parameters::Lagrangian::ModelParameters         model_parameters;
+    Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
+    Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
+    Parameters::Lagrangian::ForcesNdTorques<dim>    forces_torques;
 
-  void
-  declare(ParameterHandler &prm)
-  {
-    Parameters::SimulationControl::declare_parameters(prm);
-    Parameters::Mesh::declare_parameters(prm);
-    Parameters::Restart::declare_parameters(prm);
-    Parameters::Timer::declare_parameters(prm);
-    Parameters::Testing::declare_parameters(prm);
-    physical_properties.declare_parameters(prm);
-    Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
-    Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
-    floating_walls.declare_parameters(prm);
-    boundary_motion.declare_parameters(prm);
-  }
+    void
+    declare(ParameterHandler &prm)
+    {
+        Parameters::SimulationControl::declare_parameters(prm);
+        Parameters::Mesh::declare_parameters(prm);
+        Parameters::Restart::declare_parameters(prm);
+        Parameters::Timer::declare_parameters(prm);
+        Parameters::Testing::declare_parameters(prm);
+        physical_properties.declare_parameters(prm);
+        Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
+        Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
+        floating_walls.declare_parameters(prm);
+        boundary_motion.declare_parameters(prm);
+        forces_torques.declare_parameters(prm);
+    }
 
-  void
-  parse(ParameterHandler &prm)
-  {
-    mesh.parse_parameters(prm);
-    test.parse_parameters(prm);
-    restart.parse_parameters(prm);
-    timer.parse_parameters(prm);
-    physical_properties.parse_parameters(prm);
-    insertion_info.parse_parameters(prm);
-    model_parameters.parse_parameters(prm);
-    simulation_control.parse_parameters(prm);
-    floating_walls.parse_parameters(prm);
-    boundary_motion.parse_parameters(prm);
-  }
+    void
+    parse(ParameterHandler &prm)
+    {
+        mesh.parse_parameters(prm);
+        test.parse_parameters(prm);
+        restart.parse_parameters(prm);
+        timer.parse_parameters(prm);
+        physical_properties.parse_parameters(prm);
+        insertion_info.parse_parameters(prm);
+        model_parameters.parse_parameters(prm);
+        simulation_control.parse_parameters(prm);
+        floating_walls.parse_parameters(prm);
+        boundary_motion.parse_parameters(prm);
+        forces_torques.parse_parameters(prm);
+    }
 };
 
 #endif /* parameters_DEM_h */
