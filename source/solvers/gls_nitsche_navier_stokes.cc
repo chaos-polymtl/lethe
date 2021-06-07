@@ -94,8 +94,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_nitsche_restriction()
           local_rhs    = 0;
 
 
+#if (DEAL_II_VERSION_MAJOR < 10)
           const auto &cell =
             particle->get_surrounding_cell(*this->triangulation);
+#else
+          const auto &cell = particle->get_surrounding_cell();
+#endif
           double h_cell = 0;
           if (dim == 2)
             h_cell = std::sqrt(4. * cell->measure() / M_PI) /
@@ -202,7 +206,11 @@ GLSNitscheNavierStokesSolver<2, 3>::calculate_forces_on_solid(
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
+#if (DEAL_II_VERSION_MAJOR < 10)
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
+#else
+      const auto &cell = particle->get_surrounding_cell();
+#endif
       const auto &dh_cell =
         typename DoFHandler<3>::cell_iterator(*cell, &this->dof_handler);
       dh_cell->get_dof_indices(fluid_dof_indices);
@@ -284,8 +292,12 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_forces_on_solid(
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
-      const auto &cell   = particle->get_surrounding_cell(*this->triangulation);
-      double      h_cell = 0;
+#if (DEAL_II_VERSION_MAJOR < 10)
+      const auto &cell = particle->get_surrounding_cell(*this->triangulation);
+#else
+      const auto &cell = particle->get_surrounding_cell();
+#endif
+      double h_cell = 0;
       if (dim == 2)
         h_cell =
           std::sqrt(4. * cell->measure() / M_PI) / this->velocity_fem_degree;
@@ -365,8 +377,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::calculate_torque_on_solid(
   auto particle = solid_ph->begin();
   while (particle != solid_ph->end())
     {
+#if (DEAL_II_VERSION_MAJOR < 10)
       const auto &cell = particle->get_surrounding_cell(*this->triangulation);
-
+#else
+      const auto &cell = particle->get_surrounding_cell();
+#endif
       double h_cell = 0;
       if (dim == 2)
         h_cell =
