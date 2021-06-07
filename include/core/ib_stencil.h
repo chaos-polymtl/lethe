@@ -19,6 +19,8 @@
 #ifndef lethe_ib_stencils_h
 #define lethe_ib_stencils_h
 
+#include <core/ib_particle.h>
+
 #include <deal.II/base/table_handler.h>
 #include <deal.II/base/tensor.h>
 
@@ -31,8 +33,6 @@
 
 #include <deal.II/lac/trilinos_parallel_block_vector.h>
 #include <deal.II/lac/trilinos_vector.h>
-
-#include <core/ib_particle.h>
 
 
 

@@ -58,7 +58,10 @@ test()
   int refinement_number = 2;
   tr.refine_global(refinement_number);
 
-  Particles::ParticleHandler<dim> particle_handler;
+  MappingQ1<dim> mapping;
+
+
+  Particles::ParticleHandler<dim> particle_handler(tr, mapping);
 
   // inserting three particles at x = -0.4 , x = 0.4 and x = 0.8
   // which means only particle 3 is located in a boundary cell
