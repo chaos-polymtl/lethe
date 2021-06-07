@@ -889,10 +889,10 @@ ParticleDetectorInteractions<dim>::solve_t(
        2 * e11 * e21 * sin(alpha) * cos(theta) * sin(theta))};
        */
 
-  double R = fixed_parameters.reactor_radius;
-
   // Function value when evaluate with t (circle equation)
   auto F = [=](double t) {
+    double R = fixed_parameters.reactor_radius;
+
     Tensor<1, dim> line_equations(
       {particle_position_rotation[0] + t * std::sin(theta) * std::cos(alpha),
        particle_position_rotation[1] + t * std::sin(theta) * std::sin(alpha),
@@ -968,13 +968,12 @@ ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
   particle_position_rotation =
     detector_orientation_matrix * particle_position_translation;
 
-  // Find t value of the parametric equation, evaluate and determinate the
-  // intersection point closer to the detector
+  // Find t value of the parametric equation for
   std::vector<double> t = solve_t(invert(detector_orientation_matrix),
                                   detector_particle_origin,
                                   particle_position_rotation);
 
-
+  // Evaluate and determinate the intersection point closer to the detector
   std::vector<Point<dim>>     intersection_point(t.size());
   std::vector<Tensor<1, dim>> intersection_detector_distance_vector(t.size());
   std::vector<double>         intersection_detector_distance(t.size());
@@ -998,13 +997,9 @@ ParticleDetectorInteractions<dim>::calculate_reactor_path_length()
         std::abs(intersection_detector_distance_vector[i].norm());
     }
 
-  double reactor_path_length;
-
-  if (intersection_detector_distance[0] < intersection_detector_distance[1])
-    reactor_path_length =
-      std::abs((particle_position - intersection_point[0]).norm());
-  else
-    reactor_path_length =
+  double reactor_path_length =
+    (intersection_detector_distance[0] < intersection_detector_distance[1]) ?
+      std::abs((particle_position - intersection_point[0]).norm()) :
       std::abs((particle_position - intersection_point[1]).norm());
 
   return reactor_path_length;

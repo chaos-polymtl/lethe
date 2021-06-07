@@ -5,7 +5,8 @@
 #---------------------------------------------------
 subsection rpt parameters
     set particle positions file          = positions1.particle
-    set iteration number                 = 1000
+    set export counts                    = true
+    set iteration number                 = 1000000
     set reactor radius       			 = 0.1
     set peak-to-total ratio  			 = 0.4
     set sampling time        			 = 1

@@ -48,6 +48,9 @@ namespace Parameters
     // Particle positions filename
     std::string particle_positions_file;
 
+    // Enable to export counts result in a .csv file
+    bool export_counts;
+
     // Number of Monte Carlo iterations for alpha and theta
     unsigned int iteration_number;
 

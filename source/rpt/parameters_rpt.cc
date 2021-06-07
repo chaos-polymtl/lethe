@@ -10,6 +10,12 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
                       Patterns::FileName(),
                       "Particle positions file name");
 
+    prm.declare_entry(
+      "export counts",
+      "false",
+      Patterns::Bool(),
+      "Enable to export counts result in a .csv file <true|false>");
+
     prm.declare_entry("iteration number",
                       "1",
                       Patterns::Integer(),
@@ -39,6 +45,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("rpt parameters");
   {
     particle_positions_file = prm.get("particle positions file");
+    export_counts           = prm.get_bool("export counts");
     iteration_number        = prm.get_integer("iteration number");
     reactor_radius          = prm.get_double("reactor radius");
     peak_to_total_ratio     = prm.get_double("peak-to-total ratio");

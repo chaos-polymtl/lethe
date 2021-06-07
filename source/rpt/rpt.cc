@@ -37,23 +37,44 @@ RPT<dim>::calculate()
   assign_particle_positions();
   assign_detector_positions();
 
+  std::ofstream myfile;
+  if (rpt_parameters.rpt_param.export_counts)
+    {
+      std::string filename = rpt_parameters.rpt_param.particle_positions_file;
+      myfile.open(filename.substr(0, filename.find(".")) + ".csv");
+      myfile
+        << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
+        << std::endl;
+    }
+
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();
        i_particle++)
     {
       for (unsigned int i_detector = 0; i_detector < detectors.size();
            i_detector++)
         {
+          // Create the particle-detector interaction object
           ParticleDetectorInteractions<dim> particle_detector_interactions(
             particle_positions[i_particle],
             detectors[i_detector],
             rpt_parameters);
-          particle_detector_interactions.calculate_count();
+
+          // Calculate count and print it in terminal
+          double count = particle_detector_interactions.calculate_count();
           std::cout << "Count for particle position " << i_particle
-                    << " and detector " << i_detector << " : "
-                    << particle_detector_interactions.calculate_count()
+                    << " and detector " << i_detector << " : " << count
                     << std::endl;
+
+          // Export results in .csv id enable
+          if (myfile.is_open())
+            myfile << particle_positions[i_particle].get_position() << " "
+                   << detectors[i_detector].get_id() << " " << count
+                   << std::endl;
         }
     }
+
+  if (myfile.is_open())
+    myfile.close();
 }
 
 template <int dim>
@@ -69,7 +90,7 @@ RPT<dim>::assign_particle_positions()
             std::istream_iterator<double>(),
             std::back_inserter(values));
 
-  int number_of_positions = (values.size() + 1) / dim;
+  int number_of_positions = values.size() / dim;
 
   // Extract positions, create point objects and radioactive particles
   for (int i = 0; i < number_of_positions; i++)
@@ -98,7 +119,7 @@ RPT<dim>::assign_detector_positions()
             std::back_inserter(values));
 
   // Get the number of detector (2 positions for 1 detector, face and middle)
-  int number_of_detector = (values.size() + 1) / (2 * dim);
+  int number_of_detector = values.size() / (2 * dim);
 
   // Extract positions, create point objects and detectors
   for (int i = 0; i < number_of_detector; i++)
@@ -118,6 +139,5 @@ RPT<dim>::assign_detector_positions()
       detectors.push_back(detector);
     }
 }
-
 
 template class RPT<3>;
