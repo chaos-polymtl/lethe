@@ -53,23 +53,23 @@ attach_grid_to_triangulation(
       Triangulation<dim, spacedim> basetria(
         Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
 
-
       GridIn<dim, spacedim> grid_in;
       grid_in.attach_triangulation(basetria);
       std::ifstream input_file(mesh_parameters.file_name);
 
       grid_in.read_msh(input_file);
-      GridTools::partition_triangulation_zorder(
-        Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
-        basetria);
-      GridTools::partition_multigrid_levels(basetria);
 
-      // create parallel::fullydistributed::Triangulation from description
+      // By default uses the METIS partitioner.
+      // A user parameter option could be made to chose a partitionner.
+      GridTools::partition_triangulation(Utilities::MPI::n_mpi_processes(
+                                           triangulation->get_communicator()),
+                                         basetria);
+
+
       auto construction_data = TriangulationDescription::Utilities::
         create_description_from_triangulation(
-          basetria,
-          triangulation->get_communicator(),
-          TriangulationDescription::Settings::construct_multigrid_hierarchy);
+          basetria, triangulation->get_communicator());
+
       triangulation->create_triangulation(construction_data);
     }
   // Dealii grids
