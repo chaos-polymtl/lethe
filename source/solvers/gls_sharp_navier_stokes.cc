@@ -96,7 +96,7 @@ GLSSharpNavierStokesSolver<dim>::cutted_cells_mapping()
       if (cell->is_locally_owned() || cell->is_ghost())
         {
           bool         cell_is_cut;
-          unsigned int p = 0;
+          unsigned int p ;
 
           std::tie(cell_is_cut, p, std::ignore) =
             cell_cut(cell, local_dof_indices, support_points);
@@ -1858,8 +1858,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           bool cell_is_cut;
           // The id of the particle that cut the cell. Returns 0 if the cell is
           // not cut.
-          unsigned int p;
-          std::tie(cell_is_cut, p) = cutted_cells_map[cell];
+          unsigned int ib_particle_id;
+          std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
 
           if (cell_is_cut)
             {
@@ -1898,7 +1898,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                       auto [point, interpolation_points] =
                         stencil.points(order,
-                                       particles[p],
+                                       particles[ib_particle_id],
                                        support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
@@ -1932,9 +1932,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Tolerence to define a intersection of
                           // the DOF and IB
                           if (abs((support_points[local_dof_indices[i]] -
-                                   particles[p].position)
+                                   particles[ib_particle_id].position)
                                     .norm() -
-                                  particles[p].radius) <= 1e-12 * dr)
+                                  particles[ib_particle_id].radius) <= 1e-12 * dr)
                             {
                               dof_on_ib = true;
                             }
@@ -2018,7 +2018,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // on the component index of the DOF and
                       // the dimension.
                       double v_ib = stencil.ib_velocity(
-                        particles[p],
+                        particles[ib_particle_id],
                         support_points[local_dof_indices[i]],
                         component_i);
 
