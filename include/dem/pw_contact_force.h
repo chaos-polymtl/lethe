@@ -74,8 +74,11 @@ public:
                     std::map<types::particle_index, pw_contact_info_struct<dim>>>
             &           pw_pairs_in_contact,
             const double &dt,
-            std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-            std::unordered_map<types::particle_index, Tensor<1, dim>> &force);
+            DEMSolverParameters<dim>                  parameters);
+
+    Tensor<1, dim>
+    calculation_total_torque(Tensor<1, dim> total_force,Point<dim> center_mass,Point<dim> point_on_boundary);
+
 protected:
     /**
      * Carries out updating the contact pair information for both non-linear and

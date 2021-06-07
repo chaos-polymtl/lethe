@@ -634,12 +634,10 @@ namespace Parameters
                 force_torque_output_name      = prm.get("Output name of force and torque's file (string)");
                 calculation_frequency         = prm.get_integer("Which frequency of computation? (int)");
                 output_frequency              = prm.get_integer("Which frequency for the output file creation? (int)");
-                Point<dim> wall_point;
-                wall_point[0] = prm.get_double("x");
-                wall_point[1] = prm.get_double("y");
+                point_center_mass[0] = prm.get_double("x");
+                point_center_mass[1] = prm.get_double("y");
                 if (dim == 3)
-                    wall_point[2] = prm.get_double("z");
-                this->point_center_mass.push_back(wall_point);
+                    point_center_mass[2] = prm.get_double("z");
             prm.leave_subsection();
         }
 

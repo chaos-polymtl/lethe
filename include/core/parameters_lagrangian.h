@@ -238,7 +238,7 @@ namespace Parameters
             std::string force_torque_output_name;
 
             // Center of mass point
-            std::vector<Point<dim>> point_center_mass;
+            Point<dim> point_center_mass;
 
             void
             declare_parameters(ParameterHandler &prm);

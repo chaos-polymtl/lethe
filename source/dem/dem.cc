@@ -23,6 +23,7 @@
 
 #include <core/solutions_output.h>
 #include <dem/dem.h>
+#include <dem/pw_contact_force.h>
 
 template <int dim>
 DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
@@ -441,11 +442,11 @@ DEMSolver<dim>::particle_wall_contact_force()
 
   // Forces and Torques applied in each boundary
   if (parameters.forces_torques.calculate_force_torque && (!(simulation_control->get_step_number() % parameters.forces_torques.calculation_frequency) || simulation_control->get_step_number()==1)    )
-  {pw_contact_force_object->calculate_pw_force_torque(
+  {
+      pw_contact_force_object->calculate_pw_force_torque(
           pw_pairs_in_contact,
           simulation_control->get_time_step(),
-          momentum,
-          force);
+          parameters);
   }
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
