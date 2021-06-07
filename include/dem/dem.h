@@ -293,9 +293,6 @@ private:
   bool                                 checkpoint_step;
   Tensor<1, dim>                       g;
   double                               triangulation_cell_diameter;
-  bool                                 m_Forces;
-  bool                                 m_Torques;
-  int                                  m_FrequencyCalculationForcesAndOrTorques;
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;
 
