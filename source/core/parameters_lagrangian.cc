@@ -598,6 +598,49 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+      template <int dim>
+      void
+      ForcesNdTorques<dim>::declare_parameters(ParameterHandler &prm)
+      {
+          prm.enter_subsection("Forces and Torques");
+          prm.declare_entry("calculation",
+                            "false",
+                            Patterns::Bool(),
+                            "Enable calculation of forces");
+          prm.declare_entry("Output name of force and torque's file (string)",
+                            "force",
+                            Patterns::FileName(),
+                            "File output force prefix");
+          prm.declare_entry("Which frequency of computation? (int)",
+                            "1",
+                            Patterns::Integer(),
+                            "Calculation frequency of forces and torques, must be lower or equal than output frequency");
+          prm.declare_entry("Which frequency for the output file creation? (int)",
+                            "1",
+                            Patterns::Integer(),
+                            "Output frequency, must be greater or equal to calculation frequency");
+          prm.declare_entry("x", "0.", Patterns::Double(), "X coordinate of center of mass");
+          prm.declare_entry("y", "0.", Patterns::Double(), "Y coordinate of center of mass");
+          prm.declare_entry("z", "0.", Patterns::Double(), "Z coordinate of center of mass");
+          prm.leave_subsection();
+      }
+
+      template <int dim>
+      void
+      ForcesNdTorques<dim>::parse_parameters(ParameterHandler &prm)
+      {
+          prm.enter_subsection("Forces and Torques");
+          calculate_force_torque        = prm.get_bool("calculation");
+          force_torque_output_name      = prm.get("Output name of force and torque's file (string)");
+          calculation_frequency         = prm.get_integer("Which frequency of computation? (int)");
+          output_frequency              = prm.get_integer("Which frequency for the output file creation? (int)");
+          point_center_mass[0] = prm.get_double("x");
+          point_center_mass[1] = prm.get_double("y");
+          if (dim == 3)
+              point_center_mass[2] = prm.get_double("z");
+          prm.leave_subsection();
+      }
+
     template <int dim>
     void
     FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
@@ -1039,6 +1082,8 @@ namespace Parameters
 
     template class PhysicalProperties<2>;
     template class PhysicalProperties<3>;
+    template class ForcesNdTorques<2>;
+    template class ForcesNdTorques<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
     template class BoundaryMotion<2>;
