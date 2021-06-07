@@ -203,13 +203,6 @@ private:
   particle_wall_contact_force();
 
   /**
-   * @brief Calculates particles-wall contact forces and/or Torques with each boundary of the domain
-   *
-   */
-  void
-  particle_wall_forces_torques_computation(double current_time,bool need_force_or_not,bool need_torque_or_not,int frequency_of_calculation);
-
-  /**
    * @brief finish_simulation
    * Finishes the simulation by calling all
    * the post-processing elements that are required
@@ -288,6 +281,7 @@ private:
   bool                                 checkpoint_step;
   Tensor<1, dim>                       g;
   double                               triangulation_cell_diameter;
+
   // Simulation control for time stepping and I/Os
   std::shared_ptr<SimulationControl> simulation_control;
 

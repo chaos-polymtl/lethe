@@ -49,6 +49,9 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   , insertion_frequency(parameters.insertion_info.insertion_frequency)
   , standard_deviation_multiplier(2.5)
   , background_dh(triangulation)
+  , m_Forces(parameters.forces_torques.calculate_force)
+  , m_Torques(parameters.forces_torques.calculate_torque)
+  , m_FrequencyCalculationForcesAndOrTorques(parameters.forces_torques.calculation_frequency)
 {
   // Change the behavior of the timer for situations when you don't want outputs
   if (parameters.timer.type == Parameters::Timer::Type::none)
@@ -474,6 +477,16 @@ DEMSolver<dim>::particle_wall_contact_force()
 
 template <int dim>
 void
+DEMSolver<dim>::particle_wall_forces_torques_computation(double current_time,bool need_force_or_not,bool need_torque_or_not,int frequency_of_calculation)
+{
+    std::cout << "\nSo nice, i go right here from the prm file, awsome! "<<current_time<<" "<< std::boolalpha <<need_force_or_not<<" "<< std::boolalpha <<need_torque_or_not<<" "<<frequency_of_calculation;
+}
+
+
+
+
+template <int dim>
+void
 DEMSolver<dim>::finish_simulation()
 {
   // Timer output
@@ -816,6 +829,9 @@ DEMSolver<dim>::solve()
 
       // Particles-walls contact force:
       particle_wall_contact_force();
+
+      // Calculation of forces and/or torques in each boundary of the domain
+      particle_wall_forces_torques_computation(simulation_control->get_current_time(),m_Forces,m_Torques,m_FrequencyCalculationForcesAndOrTorques);
 
       // Integration correction step (after force calculation)
       // In the first step, we have to obtain location of particles at half-step
