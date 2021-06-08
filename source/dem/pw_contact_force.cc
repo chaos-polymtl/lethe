@@ -19,6 +19,7 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/pw_contact_force.h>
+#include <fstream>
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step
@@ -111,6 +112,24 @@ Tensor<1, dim>
     }
 }
 
+template <int dim>
+void
+PWContactForce<dim>::write_forces_torques(std::map<unsigned int, Tensor<1, dim>> total_force,
+                     std::map<unsigned int, Tensor<1, dim>> total_torque,
+                     std::basic_string<char> name_file,
+                     double current_time)
+{
+  std::ofstream myFile;
+  myFile.open(name_file,std::ios::app);
+  myFile    << "Time "<<current_time<<" seconds\n";
+  for (const auto& it : total_force)
+    {
+      myFile    <<"Boundary " << it.first << " :\n"
+                << "F = " << -it.second << "\nM = "<<-total_torque[it.first]
+                <<"\n\n";
+    }
+  myFile.close();
+}
 
 
 template <int dim>
@@ -121,7 +140,8 @@ PWContactForce<dim>::calculate_pw_force_torque(
     std::map<types::particle_index, pw_contact_info_struct<dim>>>
     &                      pw_pairs_in_contact,
   const double &           dt,
-  DEMSolverParameters<dim> parameters)
+  DEMSolverParameters<dim> parameters,
+  double current_time)
 {
   std::map<unsigned int, Tensor<1, dim>> total_force;
   std::map<unsigned int, Tensor<1, dim>> total_torque;
@@ -340,28 +360,16 @@ PWContactForce<dim>::calculate_pw_force_torque(
                   total_force[contact_information.boundary_id],
                   parameters.forces_torques.point_center_mass,
                   point_on_boundary);
-              std::cout << "\n" << contact_information.boundary_id;
             }
         }
     }
-  std::cout << "\n"
-            << -total_force[2][0] << " " << -total_force[2][1] << " "
-            << -total_force[2][2];
-  std::cout << "\n"
-            << -total_force[3][0] << " " << -total_force[3][1] << " "
-            << -total_force[3][2];
-  std::cout << "\n"
-            << -total_force[4][0] << " " << -total_force[4][1] << " "
-            << -total_force[4][2];
-  std::cout << "\n"
-            << -total_torque[2][0] << " " << -total_torque[2][1] << " "
-            << -total_torque[2][2];
-  std::cout << "\n"
-            << -total_torque[3][0] << " " << -total_torque[3][1] << " "
-            << -total_torque[3][2];
-  std::cout << "\n"
-            << -total_torque[4][0] << " " << -total_torque[4][1] << " "
-            << -total_torque[4][2];
+  if (!(total_force.size()<1 && total_torque.size()<1))
+    {
+      write_forces_torques(total_force,
+                           total_torque,
+                           parameters.forces_torques.force_torque_output_name,
+                           current_time);
+    }
 }
 
 

@@ -74,11 +74,17 @@ public:
       std::map<types::particle_index, pw_contact_info_struct<dim>>>
       &                      pw_pairs_in_contact,
     const double &           dt,
-    DEMSolverParameters<dim> parameters);
+    DEMSolverParameters<dim> parameters,
+    double current_time);
 
   Tensor<1, dim> calculation_total_torque(Tensor<1, dim> total_force,
                                           Point<dim>     center_mass,
                                           Point<dim>     point_on_boundary);
+
+   void write_forces_torques(std::map<unsigned int, Tensor<1, dim>> total_force,
+                             std::map<unsigned int, Tensor<1, dim>> total_torque,
+                             std::basic_string<char> name_file,
+                             double current_time);
 
 protected:
   /**

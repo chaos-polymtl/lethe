@@ -448,7 +448,7 @@ DEMSolver<dim>::particle_wall_contact_force()
        simulation_control->get_step_number() == 1))
     {
       pw_contact_force_object->calculate_pw_force_torque(
-        pw_pairs_in_contact, simulation_control->get_time_step(), parameters);
+        pw_pairs_in_contact, simulation_control->get_time_step(), parameters,simulation_control->get_current_time());
     }
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
