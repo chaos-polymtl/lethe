@@ -27,11 +27,11 @@
 
 #include <deal.II/base/config.h>
 
+#include <core/parameters.h>
+
 #include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
 #include <deal.II/base/parsed_function.h>
-
-#include <core/parameters.h>
 
 using namespace dealii;
 

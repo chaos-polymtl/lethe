@@ -18,9 +18,19 @@
 * Polytechnique Montreal, 2020-
 */
 
+/**
+ * This class allows to calculate the photon count from a particle received by
+ * a detector with the Monte Carlo method.
+ */
 
 #ifndef lethe_rpt_h
 #define lethe_rpt_h
+
+/**
+ * This class handles positions of particles and detector and allows to
+ * calculate count for every pair. It also shows results in terminal or exports
+ * them in .csv file if enable.
+ */
 
 // deal.II includes
 #include <deal.II/base/point.h>
@@ -39,14 +49,32 @@ template <int dim>
 class RPT
 {
 public:
+  /**
+   * @brief Constructor for the RPT
+   *
+   * @param RPTparameters All parameters and positions needed for the count
+   * calculation
+   *
+   */
   RPT(RPTCalculatingParameters &RPTparameters);
 
+  /**
+   * @brief Calculate photon count for all particle positions and detector
+   */
   void
   calculate();
 
+  /**
+   * @brief Read text file for particle positions and assign them to particle
+   * objects
+   */
   void
   assign_particle_positions();
 
+  /**
+   * @brief Read text file for detector positions and assign them to detector
+   * objects
+   */
   void
   assign_detector_positions();
 

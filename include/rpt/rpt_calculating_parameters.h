@@ -25,9 +25,10 @@
  * RPT.
  */
 
+#include <core/parameters.h>
+
 #include <deal.II/base/parameter_handler.h>
 
-#include <core/parameters.h>
 #include <rpt/parameters_rpt.h>
 
 class RPTCalculatingParameters

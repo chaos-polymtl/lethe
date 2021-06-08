@@ -20,6 +20,7 @@
 #include <deal.II/base/point.h>
 
 #include <rpt/rpt.h>
+#include <time.h>
 
 #include <fstream>
 #include <iostream>
@@ -34,9 +35,11 @@ template <int dim>
 void
 RPT<dim>::calculate()
 {
+  // Reading and assigning positions to particles and detectors
   assign_particle_positions();
   assign_detector_positions();
 
+  // Open a .csv file if exporting results in enable
   std::ofstream myfile;
   if (rpt_parameters.rpt_param.export_counts)
     {
@@ -47,6 +50,10 @@ RPT<dim>::calculate()
         << std::endl;
     }
 
+  // Seed the random number generator
+  srand(time(NULL));
+
+  // Calculate count for every particle-detector pair
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();
        i_particle++)
     {
@@ -65,7 +72,7 @@ RPT<dim>::calculate()
                     << " and detector " << i_detector << " : " << count
                     << std::endl;
 
-          // Export results in .csv id enable
+          // Export results in .csv if enable
           if (myfile.is_open())
             myfile << particle_positions[i_particle].get_position() << " "
                    << detectors[i_detector].get_id() << " " << count
