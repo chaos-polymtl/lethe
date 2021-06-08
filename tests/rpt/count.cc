@@ -18,7 +18,8 @@
  */
 
 /**
- * @brief
+ * @brief Assure that the count is always the same with a fixed seed
+ * number for random number generator and iteration number.
  */
 
 #include <deal.II/base/point.h>

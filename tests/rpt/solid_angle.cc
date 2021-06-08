@@ -18,7 +18,8 @@
  */
 
 /**
- * @brief
+ * @brief Assure angles are proceed correctly in any different
+ * cases related to the particle position regarding the detector position.
  */
 
 #include <deal.II/base/point.h>

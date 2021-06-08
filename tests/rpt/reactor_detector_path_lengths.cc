@@ -18,7 +18,7 @@
  */
 
 /**
- * @brief
+ * @brief Assure path lengths calculation are proceed correctly.
  */
 
 #include <deal.II/base/point.h>
