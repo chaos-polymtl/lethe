@@ -54,6 +54,9 @@ namespace Parameters
     // Number of Monte Carlo iterations for alpha and theta
     unsigned int iteration_number;
 
+    // Seed of the random number generator
+    int seed;
+
     // All parameters that are fixed by the user
     double reactor_radius;
     double peak_to_total_ratio;

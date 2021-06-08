@@ -20,7 +20,6 @@
 #include <deal.II/base/point.h>
 
 #include <rpt/rpt.h>
-#include <time.h>
 
 #include <fstream>
 #include <iostream>
@@ -51,7 +50,7 @@ RPT<dim>::calculate()
     }
 
   // Seed the random number generator
-  srand(time(NULL));
+  srand(rpt_parameters.rpt_param.seed);
 
   // Calculate count for every particle-detector pair
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();

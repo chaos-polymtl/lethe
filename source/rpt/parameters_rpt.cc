@@ -1,4 +1,5 @@
 #include <rpt/parameters_rpt.h>
+#include <time.h>
 
 void
 Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
@@ -20,6 +21,11 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
                       "1",
                       Patterns::Integer(),
                       "Number of Monte Carlo iteration");
+
+    prm.declare_entry("random number seed",
+                      "auto",
+                      Patterns::Anything(),
+                      "Seed of the random number generator <auto|number>");
 
     prm.declare_entry("reactor radius",
                       "1",
@@ -50,6 +56,10 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
     reactor_radius          = prm.get_double("reactor radius");
     peak_to_total_ratio     = prm.get_double("peak-to-total ratio");
     sampling_time           = prm.get_double("sampling time");
+
+    seed = (prm.get("random number seed") == "auto") ?
+             time(NULL) :
+             prm.get_integer("random number seed");
   }
   prm.leave_subsection();
 }
