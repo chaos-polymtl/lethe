@@ -95,8 +95,11 @@ GLSSharpNavierStokesSolver<dim>::cutted_cells_mapping()
     {
       if (cell->is_locally_owned() || cell->is_ghost())
         {
-          bool         cell_is_cut;
-          unsigned int p ;
+          bool cell_is_cut;
+          // is the particle index that cut the cell if it's cut.  If the cell
+          // is not cut the default value is stored (0). If the cell is not cut
+          // this value will never be used.
+          unsigned int p;
 
           std::tie(cell_is_cut, p, std::ignore) =
             cell_cut(cell, local_dof_indices, support_points);
@@ -1934,7 +1937,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           if (abs((support_points[local_dof_indices[i]] -
                                    particles[ib_particle_id].position)
                                     .norm() -
-                                  particles[ib_particle_id].radius) <= 1e-12 * dr)
+                                  particles[ib_particle_id].radius) <=
+                              1e-12 * dr)
                             {
                               dof_on_ib = true;
                             }
