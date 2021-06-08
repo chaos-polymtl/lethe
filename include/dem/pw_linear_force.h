@@ -104,8 +104,8 @@ private:
                 const Tensor<1, dim> & /*normal_contact_vector*/)
   {
     Tensor<1, dim> rolling_resistance;
-      for (int d = 0; d < dim; ++d)
-          rolling_resistance[d] = 0;
+    for (int d = 0; d < dim; ++d)
+      rolling_resistance[d] = 0;
 
     return rolling_resistance;
   }
@@ -223,7 +223,7 @@ private:
   std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
   calculate_linear_contact_force_and_torque(
     pw_contact_info_struct<dim> &  contact_info,
-    const ArrayView<const double> &particle_properties) ;
+    const ArrayView<const double> &particle_properties);
 };
 
 #endif
