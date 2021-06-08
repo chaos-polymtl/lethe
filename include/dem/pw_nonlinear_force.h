@@ -222,7 +222,7 @@ private:
   std::tuple<Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>, Tensor<1, dim>>
   calculate_nonlinear_contact_force_and_torque(
     pw_contact_info_struct<dim> &  contact_info,
-    const ArrayView<const double> &particle_properties) ;
+    const ArrayView<const double> &particle_properties);
 };
 
 #endif
