@@ -49,8 +49,10 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
 {
   // Find all the cells around each vertices
   TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
+
   vertices_to_cell.clear();
   const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+
 
   // // Loop on all the cells and find their vertices to fill the map of sets of
   // cells around each vertex
@@ -68,6 +70,43 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
               // Insert the cell into the set of cell around that vertex.
               vertices_to_cell[v_index].insert(cell);
             }
+        }
+    }
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
+{
+  // check all the cells if they are cut or not. Put the information in a map
+  // with the key being the cell.
+  TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
+  std::map<types::global_dof_index, Point<dim>> support_points;
+  DoFTools::map_dofs_to_support_points(*this->mapping,
+                                       this->dof_handler,
+                                       support_points);
+  cut_cells_map.clear();
+  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+
+  // // Loop on all the cells and check if they are cut.
+  for (const auto &cell : cell_iterator)
+    {
+      if (cell->is_locally_owned() || cell->is_ghost())
+        {
+          bool cell_is_cut;
+          // is the particle index that cut the cell if it's cut.  If the cell
+          // is not cut the default value is stored (0). If the cell is not cut
+          // this value will never be used.
+          unsigned int p;
+
+          std::tie(cell_is_cut, p, std::ignore) =
+            cell_cut(cell, local_dof_indices, support_points);
+
+          // Add information about if the cell is cut "cell_is_cut" and the
+          // particle id that cuts it "p" in the map.
+          cut_cells_map[cell] = {cell_is_cut, p};
         }
     }
 }
@@ -1216,8 +1255,9 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
           cell->get_dof_indices(local_dof_indices);
 
           bool cell_is_cut;
-          std::tie(cell_is_cut, std::ignore, local_dof_indices) =
-            cell_cut(cell, local_dof_indices, support_points);
+          // std::ignore is used because we don't care about what particle cut
+          // the cell.
+          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
 
           if (cell_is_cut == false)
             {
@@ -1812,9 +1852,16 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
           sum_line = sum_line / dt;
 
-          // Check if the cell is cut or not by the IB
-          auto [cell_is_cut, p, local_dof_indices] =
-            cell_cut(cell, local_dof_indices_2, support_points);
+
+          cell->get_dof_indices(local_dof_indices);
+
+          // Check if the cell is cut or not by the IB and what the particle the
+          // cut the cell. If the particle is cut
+          bool cell_is_cut;
+          // The id of the particle that cut the cell. Returns 0 if the cell is
+          // not cut.
+          unsigned int ib_particle_id;
+          std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
 
           if (cell_is_cut)
             {
@@ -1853,7 +1900,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
 
                       auto [point, interpolation_points] =
                         stencil.points(order,
-                                       particles[p],
+                                       particles[ib_particle_id],
                                        support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
@@ -1887,9 +1934,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Tolerence to define a intersection of
                           // the DOF and IB
                           if (abs((support_points[local_dof_indices[i]] -
-                                   particles[p].position)
+                                   particles[ib_particle_id].position)
                                     .norm() -
-                                  particles[p].radius) <= 1e-12 * dr)
+                                  particles[ib_particle_id].radius) <=
+                              1e-12 * dr)
                             {
                               dof_on_ib = true;
                             }
@@ -1973,7 +2021,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // on the component index of the DOF and
                       // the dimension.
                       double v_ib = stencil.ib_velocity(
-                        particles[p],
+                        particles[ib_particle_id],
                         support_points[local_dof_indices[i]],
                         component_i);
 
@@ -2041,12 +2089,9 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                       // it's not cut this dof must not
                                       // be overwritten
                                       bool cell_is_cut;
-                                      std::tie(cell_is_cut,
-                                               std::ignore,
-                                               std::ignore) =
-                                        cell_cut(cell_3,
-                                                 local_dof_indices_3,
-                                                 support_points);
+                                      std::tie(cell_is_cut, std::ignore) =
+                                        cut_cells_map[cell_3];
+
 
                                       if (cell_is_cut == false)
                                         {
@@ -2211,12 +2256,10 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
         {
           cell->get_dof_indices(local_dof_indices);
 
-
           bool cell_is_cut;
-          std::tie(cell_is_cut, std::ignore, local_dof_indices) =
-            cell_cut(cell, local_dof_indices_iter, support_points);
-
-
+          // std::ignore is used because we don't care about what particle cut
+          // the cell.
+          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
           if (cell_is_cut == false)
             {
               fe_values.reinit(cell);
@@ -2697,6 +2740,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
     {
       force_on_ib();
       integrate_particles();
+      generate_cut_cells_map();
     }
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
@@ -2960,7 +3004,6 @@ GLSSharpNavierStokesSolver<dim>::solve()
       NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
         refine_mesh();
     }
-  vertices_cell_mapping();
   this->simulation_parameters.mesh_adaptation.refinement_fraction = temp_refine;
   this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
 
@@ -2977,13 +3020,18 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
       this->simulation_control->print_progression(this->pcout);
       if (this->simulation_control->is_at_start())
-        this->first_iteration();
+        {
+          vertices_cell_mapping();
+          generate_cut_cells_map();
+          this->first_iteration();
+        }
       else
         {
           refine_ib();
           NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>::
             refine_mesh();
           vertices_cell_mapping();
+          generate_cut_cells_map();
           this->iterate();
         }
 
