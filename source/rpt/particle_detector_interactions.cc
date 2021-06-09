@@ -26,7 +26,7 @@ ParticleDetectorInteractions<dim>::calculate_position_parameters()
   Tensor<1, dim> Z = h * detector_orientation_z;
   Tensor<1, dim> X = Z - face_detector_particle_distance;
 
-  if (X.norm() == 0) // When particle is aligned to the detector
+  if (X.norm() < 1e-6) // When particle is aligned to the detector
     {
       detector_orientation_x[0] = 0;
       detector_orientation_x[1] = 0;
@@ -331,15 +331,13 @@ template <int dim>
 void
 ParticleDetectorInteractions<dim>::calculate_efficiency()
 {
-  unsigned int iteration_number = fixed_parameters.iteration_number;
-
   // Initialize efficiency
   efficiency = 0;
 
   // Calculate position parameters for the particle position
   calculate_position_parameters();
 
-  for (unsigned int i = 0; i < iteration_number; i++)
+  for (unsigned int i = 0; i < fixed_parameters.n_monte_carlo_iteration; i++)
     {
       // Generate random values for Monte Carlo
       double n_alpha = (double)rand() / RAND_MAX;
@@ -363,7 +361,7 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
                     non_interaction_probability;
     }
 
-  efficiency /= iteration_number;
+  efficiency /= fixed_parameters.n_monte_carlo_iteration;
 }
 
 template <int dim>

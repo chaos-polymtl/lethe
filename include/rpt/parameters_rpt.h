@@ -52,15 +52,15 @@ namespace Parameters
     bool export_counts;
 
     // Number of Monte Carlo iterations for alpha and theta
-    unsigned int iteration_number;
+    unsigned int n_monte_carlo_iteration;
 
     // Seed of the random number generator
     int seed;
 
     // All parameters that are fixed by the user
-    double reactor_radius;
+    double reactor_radius; // [m]
     double peak_to_total_ratio;
-    double sampling_time;
+    double sampling_time; // [s]
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -80,11 +80,14 @@ namespace Parameters
     bool tuning;
 
     // Parameters to tune or fixed parameters if tuning is disable
-    double dead_time;
-    double activity;
-    double gamma_rays_emitted;
-    double attenuation_coefficient_reactor;
-    double attenuation_coefficient_detector;
+    double dead_time; // Dead time of the detector per accepted pulse
+    double activity;  // Activity of the tracer
+    double
+      gamma_rays_emitted; // Number of gamma-rays emitted by each disintegration
+    double attenuation_coefficient_reactor;  // Total linear attenuation
+                                             // coefficient of the medium
+    double attenuation_coefficient_detector; // Total linear attenuation
+                                             // coefficient of the detector
 
     static void
     declare_parameters(ParameterHandler &prm);

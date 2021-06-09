@@ -127,7 +127,8 @@ private:
 
   /**
    * @brief Calculate the probability of non-interaction between the gamma-rays
-   * emitted whithin the solid angle and the material inside the reactor/tank.
+   * emitted whithin the solid angle and the material inside the reactor/tank
+   * its body.
    *
    * @param reactor_path_length Length of the photon path through the reactor
    */

@@ -39,7 +39,7 @@ public:
    *
    * @param detector_parameters All parameters related to the detector
    *
-   * @param n ID number to the particle
+   * @param n ID number of the detector
    *
    * @param face_point Position on the center of the face of the detector
    *

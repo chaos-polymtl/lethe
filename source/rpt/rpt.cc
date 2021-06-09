@@ -90,7 +90,7 @@ RPT<dim>::assign_particle_positions()
   // Read text file with particle positions and store it in vector
   std::string   line;
   std::ifstream particle_file(rpt_parameters.rpt_param.particle_positions_file);
-  std::getline(particle_file, line);
+
   std::vector<double> values;
   std::copy(std::istream_iterator<double>(particle_file),
             std::istream_iterator<double>(),
@@ -118,7 +118,6 @@ RPT<dim>::assign_detector_positions()
   std::ifstream detector_file(
     rpt_parameters.detector_param.detector_positions_file);
 
-  std::getline(detector_file, line);
   std::vector<double> values;
   std::copy(std::istream_iterator<double>(detector_file),
             std::istream_iterator<double>(),
