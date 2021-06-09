@@ -196,8 +196,6 @@ RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
                                 2);
     }
 
-  cost_function = std::sqrt(cost_function);
-
   return cost_function;
 }
 
