@@ -105,6 +105,7 @@ PWNonLinearForce<dim>::PWNonLinearForce(
       calculate_rolling_resistance_torque =
         &PWNonLinearForce<dim>::viscous_resistance;
     }
+  this->calculation_force_torque=dem_parameters.forces_torques.calculate_force_torque;
 }
 
 template <int dim>
@@ -116,8 +117,10 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
     &           pw_pairs_in_contact,
   const double &dt,
   std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force)
+  std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
+  Point<dim> center_mass)
 {
+  PWContactForce<dim>::ForceOnWall.clear();
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :
@@ -182,7 +185,10 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
               // Apply the calculated forces and torques on the particle pair
               this->apply_force_and_torque(forces_and_torques,
                                            particle_momentum,
-                                           particle_force);
+                                           particle_force,
+                                           point_on_boundary,
+                                           center_mass,
+                                           contact_information.boundary_id);
             }
           else
             {
@@ -194,6 +200,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             }
         }
     }
+  PWContactForce<dim>::get_force_torque();
 }
 
 // Calculates nonlinear contact force and torques
