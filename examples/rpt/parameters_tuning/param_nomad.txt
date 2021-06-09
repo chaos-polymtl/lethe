@@ -1,6 +1,6 @@
 DIMENSION      3              # number of variables
 
-BB_EXE         rpt_3d.exe         # 'bb.exe' is a program that
+BB_EXE         rpt_3d         # 'bb.exe' is a program that
 BB_OUTPUT_TYPE OBJ     # takes in argument the name of
                               # a text file containing 5
                               # values, and that displays 3

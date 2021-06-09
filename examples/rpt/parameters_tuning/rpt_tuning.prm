@@ -6,7 +6,7 @@
 subsection rpt parameters
     set particle positions file          = positions1.particle
     set export counts                    = false
-    set iteration number                 = 100000
+    set monte carlo iteration            = 100000
     set random number seed               = 1
     set reactor radius       			 = 0.1
     set peak-to-total ratio  			 = 0.4

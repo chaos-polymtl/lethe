@@ -113,7 +113,6 @@ void
 RPT<dim>::assign_particle_positions()
 {
   // Read text file with particle positions and store it in vector
-  std::string   line;
   std::ifstream particle_file(rpt_parameters.rpt_param.particle_positions_file);
 
   std::vector<double> values;
@@ -139,7 +138,6 @@ void
 RPT<dim>::assign_detector_positions()
 {
   // Read text file with detector positions and store it in vector
-  std::string   line;
   std::ifstream detector_file(
     rpt_parameters.detector_param.detector_positions_file);
 
@@ -174,10 +172,8 @@ std::vector<double>
 RPT<dim>::extract_experimental_counts()
 {
   // Read text file with experimental counts
-  std::string   line;
   std::ifstream experimental_file(
     rpt_parameters.initial_param.experimental_file);
-  std::getline(experimental_file, line);
 
   std::vector<double> measured_counts;
   std::copy(std::istream_iterator<double>(experimental_file),
