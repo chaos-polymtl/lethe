@@ -218,11 +218,11 @@ namespace Parameters
     };
 
     /**
-     * @brief ForcesNdTorques - Defines the parameters for the
+     * @brief ForceTorqueOnWall - Defines the parameters for the
      * force and torques calculation on boundaries of the domain.
      */
     template <int dim>
-    class ForcesNdTorques
+    class ForceTorqueOnWall
     {
     public:
       // Enable force post-processing

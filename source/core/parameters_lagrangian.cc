@@ -600,7 +600,7 @@ namespace Parameters
 
     template <int dim>
     void
-    ForcesNdTorques<dim>::declare_parameters(ParameterHandler &prm)
+    ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("Forces and Torques");
       prm.declare_entry("calculation",
@@ -638,7 +638,7 @@ namespace Parameters
 
     template <int dim>
     void
-    ForcesNdTorques<dim>::parse_parameters(ParameterHandler &prm)
+    ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("Forces and Torques");
       calculate_force_torque = prm.get_bool("calculation");
@@ -1096,8 +1096,8 @@ namespace Parameters
 
     template class PhysicalProperties<2>;
     template class PhysicalProperties<3>;
-    template class ForcesNdTorques<2>;
-    template class ForcesNdTorques<3>;
+    template class ForceTorqueOnWall<2>;
+    template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
     template class BoundaryMotion<2>;

@@ -41,7 +41,7 @@ public:
   Parameters::Lagrangian::ModelParameters         model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
   Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
-  Parameters::Lagrangian::ForcesNdTorques<dim>    forces_torques;
+  Parameters::Lagrangian::ForceTorqueOnWall<dim>    forces_torques;
 
   void
   declare(ParameterHandler &prm)
