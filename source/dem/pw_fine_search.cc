@@ -32,8 +32,7 @@ void PWFineSearch<dim>::particle_wall_fine_search(
 
           // Normal vector of the boundary and a point on the boudary are
           // defined as local parameters
-          Tensor<1, dim> normal_vector =
-            std::get<1>(particle_pair_candidate_content);
+          auto normal_vector = std::get<1>(particle_pair_candidate_content);
           Point<dim> point_on_boundary =
             std::get<2>(particle_pair_candidate_content);
 
@@ -47,9 +46,7 @@ void PWFineSearch<dim>::particle_wall_fine_search(
               tangential_overlap[2] = 0.0;
             }
 
-          // Creating a sample from the pw_contact_info_struct and adding
-          // contact info to the sample
-          pw_contact_info_struct<dim> contact_info;
+          // Adding contact info to the sample to pw_contact_info_struct
           contact_info.particle          = particle;
           contact_info.normal_vector     = normal_vector;
           contact_info.point_on_boundary = point_on_boundary;
@@ -138,7 +135,6 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
 
               // Creating a sample from the pw_contact_info_struct and adding
               // contact info to the sample
-              pw_contact_info_struct<dim> contact_info;
               contact_info.particle          = particle;
               contact_info.normal_vector     = normal_vector;
               contact_info.point_on_boundary = point_on_floating_wall;

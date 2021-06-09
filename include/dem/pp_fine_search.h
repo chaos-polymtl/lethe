@@ -99,6 +99,9 @@ public:
     std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
       &          particle_container,
     const double neighborhood_threshold);
+
+private:
+  pp_contact_info_struct<dim> contact_info;
 };
 
 #endif /* particle_particle_fine_search_h */

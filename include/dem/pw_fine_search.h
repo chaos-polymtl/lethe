@@ -103,6 +103,9 @@ public:
       types::particle_index,
       std::map<types::particle_index, pw_contact_info_struct<dim>>>
       &pfw_pairs_in_contact);
+
+private:
+  pw_contact_info_struct<dim> contact_info;
 };
 
 #endif /* particle_wall_fine_search_h */
