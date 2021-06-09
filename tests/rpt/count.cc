@@ -66,7 +66,7 @@ test()
   rpt_parameters.rpt_param.reactor_radius                       = 0.5;
   rpt_parameters.rpt_param.peak_to_total_ratio                  = 1;
   rpt_parameters.rpt_param.sampling_time                        = 1;
-  rpt_parameters.rpt_param.iteration_number                     = 10000;
+  rpt_parameters.rpt_param.n_monte_carlo_iteration              = 10000;
   rpt_parameters.rpt_param.seed                                 = 1;
   rpt_parameters.initial_param.dead_time                        = 1;
   rpt_parameters.initial_param.activity                         = 1;
