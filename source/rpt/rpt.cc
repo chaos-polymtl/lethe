@@ -38,6 +38,20 @@ RPT<dim>::calculate()
   assign_particle_positions();
   assign_detector_positions();
 
+  std::vector<double> calculated_counts;
+  std::vector<double> measured_counts;
+  if (rpt_parameters.initial_param.tuning == true)
+    {
+      measured_counts = extract_experimental_counts();
+      AssertThrow(
+        measured_counts.size() == particle_positions.size(),
+        ExcMessage(
+          "Prior tuning parameters, the number of particle positions provided"
+          " has to be the same number of counts of experimental data. "
+          "Note : The experimental counts also have to be at the same positions which can not be verified."))
+    }
+
+
   // Open a .csv file if exporting results in enable
   std::ofstream myfile;
   if (rpt_parameters.rpt_param.export_counts)
@@ -67,20 +81,31 @@ RPT<dim>::calculate()
 
           // Calculate count and print it in terminal
           double count = particle_detector_interactions.calculate_count();
-          std::cout << "Count for particle position " << i_particle
-                    << " and detector " << i_detector << " : " << count
-                    << std::endl;
+          // std::cout << "Count for particle position " << i_particle
+          //          << " and detector " << i_detector << " : " << count
+          //          << std::endl;
 
           // Export results in .csv if enable
           if (myfile.is_open())
             myfile << particle_positions[i_particle].get_position() << " "
                    << detectors[i_detector].get_id() << " " << count
                    << std::endl;
+
+          // Store counts if tuning is enable
+          if (rpt_parameters.initial_param.tuning == true)
+            calculated_counts.push_back(count);
         }
     }
 
   if (myfile.is_open())
     myfile.close();
+
+  if (rpt_parameters.initial_param.tuning == true)
+    {
+      double cost_function =
+        calculate_cost_function(measured_counts, calculated_counts);
+      std::cout << cost_function << std::endl;
+    }
 }
 
 template <int dim>
@@ -143,6 +168,41 @@ RPT<dim>::assign_detector_positions()
 
       detectors.push_back(detector);
     }
+}
+template <int dim>
+std::vector<double>
+RPT<dim>::extract_experimental_counts()
+{
+  // Read text file with experimental counts
+  std::string   line;
+  std::ifstream experimental_file(
+    rpt_parameters.initial_param.experimental_file);
+  std::getline(experimental_file, line);
+
+  std::vector<double> measured_counts;
+  std::copy(std::istream_iterator<double>(experimental_file),
+            std::istream_iterator<double>(),
+            std::back_inserter(measured_counts));
+
+  return measured_counts;
+}
+template <int dim>
+double
+RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
+                                  std::vector<double> &calculated_counts)
+{
+  double cost_function = 0;
+
+  for (unsigned int i = 0; i < measured_counts.size(); i++)
+    {
+      cost_function += std::pow((calculated_counts[i] - measured_counts[i]) /
+                                  (calculated_counts[i] + measured_counts[i]),
+                                2);
+    }
+
+  cost_function = std::sqrt(cost_function);
+
+  return cost_function;
 }
 
 template class RPT<3>;

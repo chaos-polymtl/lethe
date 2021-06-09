@@ -75,6 +75,11 @@ Parameters::InitialRPTParameters::declare_parameters(ParameterHandler &prm)
                       Patterns::Bool(),
                       "Enable parameter tuning <true|false>");
 
+    prm.declare_entry("experimental data file",
+                      "none",
+                      Patterns::FileName(),
+                      "Experimental counts data file name");
+
     prm.declare_entry("dead time",
                       "1",
                       Patterns::Double(),
@@ -109,6 +114,7 @@ Parameters::InitialRPTParameters::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("parameter tuning");
   {
     tuning             = prm.get_bool("tuning");
+    experimental_file  = prm.get("experimental data file");
     dead_time          = prm.get_double("dead time");
     activity           = prm.get_double("activity");
     gamma_rays_emitted = prm.get_double("gamma-rays emitted");

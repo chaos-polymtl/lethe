@@ -78,9 +78,22 @@ public:
   void
   assign_detector_positions();
 
-private:
+  /**
+   * @brief Read text file for experimental count data and store it in a vector
+   */
+  std::vector<double>
+  extract_experimental_counts();
+
+  /**
+   * @brief Calculate cost function for calculated and measured counts
+   */
+  double
+  calculate_cost_function(std::vector<double> &measured_counts,
+                          std::vector<double> &calculated_counts);
+
   RPTCalculatingParameters rpt_parameters;
 
+private:
   std::vector<RadioParticle<dim>> particle_positions;
   std::vector<Detector<dim>>      detectors;
 };

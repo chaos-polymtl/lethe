@@ -82,6 +82,9 @@ namespace Parameters
     // Enable tuning parameters
     bool tuning;
 
+    // Filename of experimental data
+    std::string experimental_file;
+
     // Parameters to tune or fixed parameters if tuning is disable
     double dead_time; // Dead time of the detector per accepted pulse
     double activity;  // Activity of the tracer

@@ -1,0 +1,38 @@
+DIMENSION      3              # number of variables
+
+BB_EXE         rpt_3d.exe         # 'bb.exe' is a program that
+BB_OUTPUT_TYPE OBJ     # takes in argument the name of
+                              # a text file containing 5
+                              # values, and that displays 3
+                              # values that correspond to the
+                              # objective function value (OBJ),
+                              # and two constraints values g1
+                              # and g2 with g1 <= 0 and
+                              # g2 <= 0; 'PB' and 'EB'
+                              # correspond to constraints that
+                              # are treated by the Progressive
+                              # and Extreme Barrier approaches
+                              # (all constraint-handling
+                              #  options are described in the
+                              #  detailed parameters list)
+
+X0             ( 6.03e-06 842000 10.07 )  # starting point
+
+
+LOWER_BOUND    * 0          # all variables are >= -6
+
+
+MAX_BB_EVAL    100            # the algorithm terminates when
+                              # 100 black-box evaluations have
+                              # been made
+
+# TMP_DIR        /tmp         # indicates a directory where
+                              # temporary files are put
+                              # (increases performance by ~100%
+                              # if you're working on a network
+                              # account and if TMP_DIR is on a
+                              # local disk)
+
+
+DISPLAY_STATS BBE ( SOL ) OBJ # Display the number of evaluation (BBE),
+							  # the current solution ( SOL ) and the objective
