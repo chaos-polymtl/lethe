@@ -1,0 +1,38 @@
+# Listing of Parameters
+# ---------------------
+# --------------------------------------------------
+# RPT Monte Carlo technique
+#---------------------------------------------------
+subsection rpt parameters
+    set particle positions file          = positions1.particle
+    set export counts                    = false
+    set iteration number                 = 100000
+    set random number seed               = 1
+    set reactor radius       			 = 0.1
+    set peak-to-total ratio  			 = 0.4
+    set sampling time        			 = 1
+end
+	
+# --------------------------------------------------
+# Initial value of parameters for tuning
+#---------------------------------------------------
+subsection parameter tuning
+	set tuning                           = true
+	set experimental data file           = count.experimental
+    set dead time       				 = 6.03e-06
+    set activity  						 = 842000
+    set gamma-rays emitted        		 = 2
+    set attenuation coefficient reactor  = 10.07
+    set attenuation coefficient detector = 21.477
+end
+
+#---------------------------------------------------
+# Detector parameters
+#---------------------------------------------------
+subsection detector parameters
+	set detector positions file          = positions1.detector
+    set radius       			    	 = 0.0381 
+    set length					         = 0.0762
+end
+
+
