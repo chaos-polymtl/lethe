@@ -100,7 +100,7 @@ PPFineSearch<dim>::particle_particle_fine_search(
                   tangential_overlap[d] = 0;
                 }
 
-              // Initilizing the contact info and adding
+              // Adding the elements to contact info
               pp_contact_info_struct<dim> contact_info;
               contact_info.tangential_overlap = tangential_overlap;
               contact_info.particle_one       = particle_one;
@@ -185,7 +185,7 @@ PPFineSearch<dim>::particle_particle_fine_search(
                   tangential_overlap[d] = 0;
                 }
 
-              // Initilizing the contact info and adding
+              // Adding elements to contact info
               pp_contact_info_struct<dim> contact_info;
               contact_info.tangential_overlap = tangential_overlap;
               contact_info.particle_one       = particle_one;

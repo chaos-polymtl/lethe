@@ -54,10 +54,12 @@ test()
                             true);
   int refinement_number = 2;
   triangulation.refine_global(refinement_number);
-  Particles::ParticleHandler<dim> particle_handler;
+
 
   MappingQ1<dim>     mapping;
   PPBroadSearch<dim> broad_search_object;
+
+  Particles::ParticleHandler<dim> particle_handler(triangulation, mapping);
 
   // Finding cell neighbors list, it is required for finding the broad search
   // pairs

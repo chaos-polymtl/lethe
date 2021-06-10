@@ -1,0 +1,37 @@
+
+DEAL::Particle position 0 | n_alpha 0.100000 | n_theta 0.100000
+DEAL:: alpha = -0.418879
+DEAL:: theta = 0.516495
+DEAL::Particle position 0 | n_alpha 0.750000 | n_theta 0.750000
+DEAL:: alpha = 0.261799
+DEAL:: theta = 1.06034
+DEAL::Particle position 0 | n_alpha 0.500000 | n_theta 0.00000
+DEAL:: alpha = 0.00000
+DEAL:: theta = 0.321751
+DEAL::Particle position 1 | n_alpha 0.100000 | n_theta 0.100000
+DEAL:: alpha = -0.418879
+DEAL:: theta = 0.701350
+DEAL::Particle position 1 | n_alpha 0.750000 | n_theta 0.750000
+DEAL:: alpha = 0.261799
+DEAL:: theta = 1.34883
+DEAL::Particle position 1 | n_alpha 0.500000 | n_theta 0.00000
+DEAL:: alpha = 0.00000
+DEAL:: theta = 0.463648
+DEAL::Particle position 2 | n_alpha 0.100000 | n_theta 0.100000
+DEAL:: alpha = -2.51327
+DEAL:: theta = 0.242625
+DEAL::Particle position 2 | n_alpha 0.750000 | n_theta 0.750000
+DEAL:: alpha = 1.57080
+DEAL:: theta = 0.675603
+DEAL::Particle position 2 | n_alpha 0.500000 | n_theta 0.00000
+DEAL:: alpha = 0.00000
+DEAL:: theta = 0.00000
+DEAL::Particle position 3 | n_alpha 0.100000 | n_theta 0.100000
+DEAL:: alpha = -2.51327
+DEAL:: theta = 0.371944
+DEAL::Particle position 3 | n_alpha 0.750000 | n_theta 0.750000
+DEAL:: alpha = 0.755613
+DEAL:: theta = 1.06195
+DEAL::Particle position 3 | n_alpha 0.500000 | n_theta 0.00000
+DEAL:: alpha = 0.00000
+DEAL:: theta = 0.00000
