@@ -68,10 +68,10 @@ public:
     std::unordered_map<
       types::particle_index,
       std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
-      &           ghost_adjacent_particles,
-    const double &dt,
-    std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-    std::unordered_map<types::particle_index, Tensor<1, dim>> &force) = 0;
+      &                          ghost_adjacent_particles,
+    const double &               dt,
+    std::vector<Tensor<1, dim>> &momentum,
+    std::vector<Tensor<1, dim>> &force) = 0;
 
 protected:
   /**

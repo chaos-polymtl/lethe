@@ -6,10 +6,10 @@ using namespace DEM;
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_half_step_location(
-  Particles::ParticleHandler<dim> &                          particle_handler,
-  Tensor<1, dim> &                                           g,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-  double                                                     dt)
+  Particles::ParticleHandler<dim> &particle_handler,
+  Tensor<1, dim> &                 g,
+  std::vector<Tensor<1, dim>> &    force,
+  double                           dt)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -45,12 +45,12 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate(
-  Particles::ParticleHandler<dim> &                          particle_handler,
-  Tensor<1, dim> &                                           g,
-  double                                                     dt,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-  std::unordered_map<types::particle_index, double> &        MOI)
+  Particles::ParticleHandler<dim> &particle_handler,
+  Tensor<1, dim> &                 g,
+  double                           dt,
+  std::vector<Tensor<1, dim>> &    momentum,
+  std::vector<Tensor<1, dim>> &    force,
+  std::vector<double> &            MOI)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();

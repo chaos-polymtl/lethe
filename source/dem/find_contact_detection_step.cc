@@ -4,31 +4,26 @@ using namespace dealii;
 
 template <int dim>
 bool
-find_contact_detection_step(
-  Particles::ParticleHandler<dim> &particle_handler,
-  const double &                   dt,
-  const double &                   smallest_contact_search_criterion,
-  MPI_Comm &                       mpi_communicator,
-  bool &                           sorting_in_subdomains_step,
-  std::unordered_map<types::particle_index, double> &displacement)
+find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
+                            const double &                   dt,
+                            const double &smallest_contact_search_criterion,
+                            MPI_Comm &    mpi_communicator,
+                            bool &        sorting_in_subdomains_step,
+                            std::vector<double> &displacement)
 {
+  if (sorting_in_subdomains_step)
+    for (auto &d : displacement)
+      d = 0.;
+
   double       max_displacement       = 0;
   unsigned int contact_detection_step = 0;
-
-  // Looping through all the particles:
-  if (sorting_in_subdomains_step)
-    {
-      // If last step was a sorting into subdomains step, the displcement
-      // is reinitialized and then the new displacement is calculated
-
-      // Clearing displacement
-      displacement.clear();
-    }
 
   // Updating displacement
   for (auto &particle : particle_handler)
     {
-      auto &particle_properties   = particle.get_properties();
+      auto &particle_properties = particle.get_properties();
+      if (displacement.size() <= particle.get_id())
+        displacement.resize(particle.get_id() + 1);
       auto &particle_displacement = displacement[particle.get_id()];
 
       // Finding displacement of each particle during last step
@@ -60,18 +55,18 @@ find_contact_detection_step(
   return contact_detection_step;
 }
 
-template bool find_contact_detection_step(
-  Particles::ParticleHandler<2> &particle_handler,
-  const double &                 dt,
-  const double &                 smallest_contact_search_criterion,
-  MPI_Comm &                     mpi_communicator,
-  bool &                         sorting_in_subdomains_step,
-  std::unordered_map<types::particle_index, double> &displacement);
+template bool
+  find_contact_detection_step(Particles::ParticleHandler<2> &particle_handler,
+                              const double &                 dt,
+                              const double &smallest_contact_search_criterion,
+                              MPI_Comm &    mpi_communicator,
+                              bool &        sorting_in_subdomains_step,
+                              std::vector<double> &displacement);
 
-template bool find_contact_detection_step(
-  Particles::ParticleHandler<3> &particle_handler,
-  const double &                 dt,
-  const double &                 smallest_contact_search_criterion,
-  MPI_Comm &                     mpi_communicator,
-  bool &                         sorting_in_subdomains_step,
-  std::unordered_map<types::particle_index, double> &displacement);
+template bool
+  find_contact_detection_step(Particles::ParticleHandler<3> &particle_handler,
+                              const double &                 dt,
+                              const double &smallest_contact_search_criterion,
+                              MPI_Comm &    mpi_communicator,
+                              bool &        sorting_in_subdomains_step,
+                              std::vector<double> &displacement);

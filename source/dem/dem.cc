@@ -362,18 +362,26 @@ template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
   dealii::Particles::ParticleHandler<dim> &          particle_handler,
-  std::unordered_map<types::particle_index, double> &MOI)
+  std::vector<double> &MOI)
 {
-  // Clearing the container first
-  MOI.clear();
+  unsigned int max_particle_id = 0;
+  for (const auto &particle : particle_handler)
+    max_particle_id = std::max(max_particle_id, particle.get_id());
+
+  // We resize force and momentum every time we sort the particles
+  // into subdomains
+  momentum.resize(max_particle_id + 1);
+  force.resize(max_particle_id + 1);
+  displacement.resize(max_particle_id + 1);
+  MOI.resize(max_particle_id + 1);
 
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-      MOI.insert({particle.get_id(),
+      MOI[particle.get_id()] =
                   0.1 * particle_properties[DEM::PropertiesIndex::mass] *
                     particle_properties[DEM::PropertiesIndex::dp] *
-                    particle_properties[DEM::PropertiesIndex::dp]});
+                    particle_properties[DEM::PropertiesIndex::dp];
     }
 }
 
@@ -748,12 +756,6 @@ DEMSolver<dim>::solve()
           checkpoint_step = false;
 
           particle_handler.sort_particles_into_subdomains_and_cells();
-
-          // We clear force and momentum every time we sort the particles
-          // into subdomains to avoid increasing the size of these unordered
-          // maps on each processor
-          force.clear();
-          momentum.clear();
 
           // Updating moment of inertia container
           update_moment_of_inertia(particle_handler, MOI);

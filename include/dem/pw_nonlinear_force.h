@@ -80,10 +80,10 @@ public:
     std::unordered_map<
       types::particle_index,
       std::map<types::particle_index, pw_contact_info_struct<dim>>>
-      &           pw_pairs_in_contact,
-    const double &dt,
-    std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-    std::unordered_map<types::particle_index, Tensor<1, dim>> &force) override;
+      &                          pw_pairs_in_contact,
+    const double &               dt,
+    std::vector<Tensor<1, dim>> &momentum,
+    std::vector<Tensor<1, dim>> &force) override;
 
 private:
   /**
