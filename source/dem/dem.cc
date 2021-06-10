@@ -66,7 +66,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
   //
   // Attach the correct functions to the signals inside
   // parallel::distributed::Triangulation, which will be called every time the
-  // repartition() function is called.
+  // repartition() or refinement functions are called.
   // These connections only need to be created once, so we might as well
   // have set them up in the constructor of this class, but for the purpose
   // of this example we want to group the particle related instructions.
@@ -81,6 +81,15 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     &particle_handler));
 
   triangulation.signals.post_distributed_repartition.connect(
+    std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
+              &particle_handler,
+              false));
+
+  triangulation.signals.pre_distributed_refinement.connect(std::bind(
+    &Particles::ParticleHandler<dim>::register_store_callback_function,
+    &particle_handler));
+
+  triangulation.signals.post_distributed_refinement.connect(
     std::bind(&Particles::ParticleHandler<dim>::register_load_callback_function,
               &particle_handler,
               false));
