@@ -1159,9 +1159,10 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::postprocess_fd(bool firstIter)
 {
-  auto &present_solution = this->present_solution;
+  this->local_evaluation_point = this->present_solution;
+
   if (this->simulation_control->is_output_iteration())
-    this->write_output_results(present_solution);
+    this->write_output_results(this->local_evaluation_point);
 
   // Calculate the error with respect to the analytical solution
   if (!firstIter &&

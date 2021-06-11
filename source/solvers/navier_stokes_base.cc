@@ -1036,7 +1036,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
         }
     }
   if (this->simulation_control->is_output_iteration())
-    this->write_output_results(present_solution);
+    {
+      local_evaluation_point = present_solution;
+      this->write_output_results(local_evaluation_point);
+    }
 }
 
 template <int dim, typename VectorType, typename DofsType>

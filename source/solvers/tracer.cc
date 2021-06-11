@@ -390,7 +390,8 @@ template <int dim>
 void
 Tracer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
-  data_out.add_data_vector(dof_handler, present_solution, "tracer");
+  local_evaluation_point = present_solution;
+  data_out.add_data_vector(dof_handler, local_evaluation_point, "tracer");
 }
 
 template <int dim>

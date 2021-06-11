@@ -606,7 +606,9 @@ template <int dim>
 void
 HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
-  data_out.add_data_vector(dof_handler, present_solution, "temperature");
+  local_evaluation_point = present_solution;
+
+  data_out.add_data_vector(dof_handler, local_evaluation_point, "temperature");
 }
 
 template <int dim>
