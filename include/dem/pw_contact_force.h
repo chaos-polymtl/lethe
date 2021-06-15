@@ -148,14 +148,12 @@ protected:
   double triangulation_radius;
   double effective_radius;
   double effective_mass;
-  std::unordered_map<types::particle_index, Tensor<1, dim>>
-    boundary_translational_velocity_map;
-  std::unordered_map<types::particle_index, double>
-    boundary_rotational_speed_map;
-  std::unordered_map<types::particle_index, Tensor<1, dim>>
-                                          boundary_rotational_vector;
-  std::map<types::particle_index, double> effective_youngs_modulus;
-  std::map<types::particle_index, double> effective_shear_modulus;
+  std::unordered_map<unsigned int, Tensor<1, dim>>
+                                           boundary_translational_velocity_map;
+  std::unordered_map<unsigned int, double> boundary_rotational_speed_map;
+  std::unordered_map<unsigned int, Tensor<1, dim>> boundary_rotational_vector;
+  std::map<types::particle_index, double>          effective_youngs_modulus;
+  std::map<types::particle_index, double>          effective_shear_modulus;
   std::map<types::particle_index, double> effective_coefficient_of_restitution;
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
