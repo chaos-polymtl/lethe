@@ -1,0 +1,61 @@
+name: 'Welcome New Contributor'
+
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+env:
+  COMPILE_JOBS: 2
+
+jobs:
+  welcome:
+    runs-on: ubuntu-latest
+    
+    steps:
+        - uses: actions/first-interaction@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: 'Hello, thanks for opening your first issue. Welcome you to Lethe community!'
+          pr-message: 'Hello, thanks for opening your first Pull Request and taking the time to improve Lethe.'
+          
+          
+  build:
+    name: Build (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        build_type: ["Release", "Debug"]
+        dealii_version: ["master", "v9.3.0"]
+    
+    # Run steps in container of dealii's master branch
+    container:
+      image: dealii/dealii:${{ matrix.dealii_version }}-focal
+
+    steps:
+      - name: Setup
+        run: |
+          # Github action require containers to run as root. We can't do this without breaking the mpi tests.
+          # To allow the checkout action to operate, we preemptively give access to the workspace directory manually. 
+          sudo chown -R $USER:$USER $GITHUB_WORKSPACE
+          # Since dealii image doesn't include Node.js, we'll install it
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends nodejs
+          echo "Github actions is sane!"
+          echo "Running ${{ matrix.build_type }} build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
+      # Checks-out Lethe with branch of triggering commit
+      - uses: actions/checkout@v2
+
+      - name: Compile Lethe (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          mkdir build
+          cd build
+          cmake ../ -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          make -j${{ env.COMPILE_JOBS }}
+      - name: Run Lethe tests (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
+        run: |
+          cd build
+          ctest
