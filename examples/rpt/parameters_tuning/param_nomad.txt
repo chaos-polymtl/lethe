@@ -1,6 +1,6 @@
 DIMENSION      3              # number of variables
 
-BB_EXE         rpt_3d         # 'bb.exe' is a program that
+BB_EXE         lethe_nomad.py         # 'bb.exe' is a program that
 BB_OUTPUT_TYPE OBJ     # takes in argument the name of
                               # a text file containing 5
                               # values, and that displays 3
@@ -16,7 +16,7 @@ BB_OUTPUT_TYPE OBJ     # takes in argument the name of
                               #  options are described in the
                               #  detailed parameters list)
 
-X0             ( 1.5e-05 1.5e6 9 )  # starting point
+X0             ( 1.5e-05 1.5e6 10 )  # starting point
 
 
 LOWER_BOUND    * 0          # all variables are >= -6
