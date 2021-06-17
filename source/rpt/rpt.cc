@@ -79,21 +79,21 @@ RPT<dim>::calculate()
             detectors[i_detector],
             rpt_parameters);
 
-          // Calculate count and print it in terminal
+          // Calculate count and print it in terminal or store is if tuning
+          // is enable
           double count = particle_detector_interactions.calculate_count();
-          // std::cout << "Count for particle position " << i_particle
-          //          << " and detector " << i_detector << " : " << count
-          //          << std::endl;
+          if (rpt_parameters.initial_param.tuning == true)
+            calculated_counts.push_back(count);
+          else
+            std::cout << "Count for particle position " << i_particle
+                      << " and detector " << i_detector << " : " << count
+                      << std::endl;
 
           // Export results in .csv if enable
           if (myfile.is_open())
             myfile << particle_positions[i_particle].get_position() << " "
                    << detectors[i_detector].get_id() << " " << count
                    << std::endl;
-
-          // Store counts if tuning is enable
-          if (rpt_parameters.initial_param.tuning == true)
-            calculated_counts.push_back(count);
         }
     }
 
