@@ -240,6 +240,24 @@ namespace Parameters
       // Center of mass point
       Point<dim> point_center_mass;
 
+      //Static coefficient of friction
+      double friction_coefficient_mu_s;
+
+      //Dynamic coefficient of friction
+      double friction_coefficient_mu_k;
+
+      //Rolling friction coefficient
+      double friction_coefficient_mu_r;
+
+      //Solid's mass
+      double mass_solid;
+
+      //Slope
+      double angle_theta;
+
+      //Solid's inertia
+      double moment_inertia_x,moment_inertia_y,moment_inertia_z;
+
       void
       declare_parameters(ParameterHandler &prm);
       void
@@ -280,15 +298,16 @@ namespace Parameters
     class BoundaryMotion
     {
     public:
+
+      // Choosing motion method
+      enum class MotionMethod
+      {
+        free,
+        fix
+      } motion_method;
+
       // Number of moving boundaries
       unsigned int moving_boundary_number;
-
-      // Choosing motion type
-      enum class motion_type
-      {
-        translational,
-        rotational
-      } motion_type;
 
       // Translational velocities of moving boundaries
       std::unordered_map<unsigned int, Tensor<1, dim>>

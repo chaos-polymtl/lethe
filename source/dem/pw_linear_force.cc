@@ -95,7 +95,16 @@ PWLinearForce<dim>::PWLinearForce(
       calculate_rolling_resistance_torque =
         &PWLinearForce<dim>::viscous_resistance;
     }
-  this->calculation_force_torque=dem_parameters.forces_torques.calculate_force_torque;
+  if (dem_parameters.boundary_motion.motion_method==Parameters::Lagrangian::BoundaryMotion<dim>::MotionMethod::free)
+  {;
+    this->calculation_force_torque =
+      true;
+  }
+  else
+  {
+    this->calculation_force_torque =
+      dem_parameters.forces_torques.calculate_force_torque;
+  }
 }
 
 template <int dim>
@@ -108,8 +117,10 @@ PWLinearForce<dim>::calculate_pw_contact_force(
   const double &dt,
   std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
   std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-  Point<dim> center_mass)
+  const DEMSolverParameters<dim> &dem_parameters)
 {
+  PWContactForce<dim>::update_boundary_velocity(dem_parameters);
+  PWContactForce<dim>::ForceOnWall.clear();
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :
@@ -175,7 +186,7 @@ PWLinearForce<dim>::calculate_pw_contact_force(
                                            particle_momentum,
                                            particle_force,
                                            point_on_boundary,
-                                           center_mass,
+                                           dem_parameters.forces_torques.point_center_mass,
                                            contact_information.boundary_id);
             }
           else
@@ -187,7 +198,7 @@ PWLinearForce<dim>::calculate_pw_contact_force(
             }
         }
     }
-  PWContactForce<dim>::get_force_torque();
+  //PWContactForce<dim>::get_force_torque();
 }
 
 // Calculates linear contact force and torques

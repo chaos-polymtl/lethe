@@ -41,7 +41,7 @@ public:
   Parameters::Lagrangian::ModelParameters         model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
   Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
-  Parameters::Lagrangian::ForceTorqueOnWall<dim>    forces_torques;
+  Parameters::Lagrangian::ForceTorqueOnWall<dim>  forces_torques;
 
   void
   declare(ParameterHandler &prm)
@@ -73,6 +73,11 @@ public:
     floating_walls.parse_parameters(prm);
     boundary_motion.parse_parameters(prm);
     forces_torques.parse_parameters(prm);
+    if (boundary_motion.motion_method==Parameters::Lagrangian::BoundaryMotion<dim>::MotionMethod::free)
+    {
+      physical_properties.g[1]=physical_properties.g[1]*cos(forces_torques.angle_theta*M_PI/180)-physical_properties.g[2]*sin(forces_torques.angle_theta*M_PI/180);
+      physical_properties.g[2]=physical_properties.g[2]*cos(forces_torques.angle_theta*M_PI/180)+physical_properties.g[1]*sin(forces_torques.angle_theta*M_PI/180);
+    }
   }
 };
 

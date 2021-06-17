@@ -66,7 +66,7 @@ public:
     const double &dt,
     std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
     std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-    Point<dim> center_mass) = 0;
+    const DEMSolverParameters<dim> &dem_parameters) = 0;
 
 protected:
   /**
@@ -83,6 +83,11 @@ protected:
     pw_contact_info_struct<dim> &  contact_pair_information,
     const ArrayView<const double> &particle_properties,
     const double &                 dt);
+
+  void
+  update_boundary_velocity(const DEMSolverParameters<dim> &dem_parameters);
+
+  Tensor<1,dim> base_change(const Tensor<1,dim> tensor,const double theta);
 
   /**
    * Carries out applying the calculated force and torque on the local-local
@@ -103,9 +108,9 @@ protected:
                                           Tensor<1, dim>> &forces_and_torques,
                          Tensor<1, dim> &                  particle_momentum,
                          Tensor<1, dim> &                  particle_force,
-                         Point<dim>                       point_on_boundary,
-                         Point<dim>                       center_mass,
-                         unsigned int  boundary_id)
+                         Point<dim>                        point_on_boundary,
+                         Point<dim>                        center_mass,
+                         unsigned int                      boundary_id)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -118,7 +123,7 @@ protected:
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;
 
-    if (calculation_force_torque== true )
+    if (calculation_force_torque == true)
       {
         ForceOnWall[boundary_id] = ForceOnWall[boundary_id] - total_force;
         TorqueOnWall[boundary_id] =
@@ -140,7 +145,8 @@ protected:
       }
   }
 
-    void get_force_torque();
+  void
+  get_force_torque();
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -172,10 +178,10 @@ protected:
   std::map<types::particle_index, double> effective_coefficient_of_restitution;
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
-    effective_coefficient_of_rolling_friction;
-  std::map<int,Tensor<1,dim>> ForceOnWall;
-  std::map<int,Tensor<1,dim>> TorqueOnWall;
-  bool calculation_force_torque;
+                                effective_coefficient_of_rolling_friction;
+  std::map<int, Tensor<1, dim>> ForceOnWall;
+  std::map<int, Tensor<1, dim>> TorqueOnWall;
+  bool                          calculation_force_torque;
 };
 
 #endif /* particle_wall_contact_force_h */

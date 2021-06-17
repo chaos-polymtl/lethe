@@ -621,18 +621,41 @@ namespace Parameters
         "1",
         Patterns::Integer(),
         "Output frequency, must be greater or equal to calculation frequency");
-      prm.declare_entry("x",
-                        "0.",
+      prm.declare_entry("Coordinate x of center of mass",
+                        "0",
                         Patterns::Double(),
                         "X coordinate of center of mass");
-      prm.declare_entry("y",
-                        "0.",
+      prm.declare_entry("Coordinate y of center of mass",
+                        "0",
                         Patterns::Double(),
                         "Y coordinate of center of mass");
-      prm.declare_entry("z",
-                        "0.",
+      prm.declare_entry("Coordinate z of center of mass",
+                        "0",
                         Patterns::Double(),
                         "Z coordinate of center of mass");
+      prm.declare_entry("Static friction coefficient",
+                        "0",
+                        Patterns::Double(),
+                        "Static friction's coefficient mu_s");
+      prm.declare_entry("Dynamic friction coefficient",
+                        "0",
+                        Patterns::Double(),
+                        "Dynamic friction's coefficient mu_k");
+      prm.declare_entry("Rolling resistance friction coefficient",
+                        "0",
+                        Patterns::Double(),
+                        "Rolling resistance friction coefficient mu_r");
+      prm.declare_entry("Solid's mass",
+                        "0",
+                        Patterns::Double(),
+                        "Solid's mass");
+      prm.declare_entry("Slope's angle",
+                        "0",
+                        Patterns::Double(),
+                        "Slope's angle theta");
+      prm.declare_entry("Inertia x", "0", Patterns::Double(), "Moment of inertia over the x axis");
+      prm.declare_entry("Inertia y", "0", Patterns::Double(), "Moment of inertia over the y axis");
+      prm.declare_entry("Inertia z", "0", Patterns::Double(), "Moment of inertia over the z axis");
       prm.leave_subsection();
     }
 
@@ -648,10 +671,18 @@ namespace Parameters
         prm.get_integer("Which frequency of computation? (int)");
       output_frequency =
         prm.get_integer("Which frequency for the output file creation? (int)");
-      point_center_mass[0] = prm.get_double("x");
-      point_center_mass[1] = prm.get_double("y");
+      point_center_mass[0] = prm.get_double("Coordinate x of center of mass");
+      point_center_mass[1] = prm.get_double("Coordinate y of center of mass");
       if (dim == 3)
-        point_center_mass[2] = prm.get_double("z");
+        point_center_mass[2] = prm.get_double("Coordinate z of center of mass");
+      friction_coefficient_mu_s=prm.get_double("Static friction coefficient");
+      friction_coefficient_mu_k=prm.get_double("Dynamic friction coefficient");
+      friction_coefficient_mu_r=prm.get_double("Rolling resistance friction coefficient");
+      mass_solid=prm.get_double("Solid's mass");
+      angle_theta=prm.get_double("Slope's angle");
+      moment_inertia_x=prm.get_double("Inertia x");
+      moment_inertia_y=prm.get_double("Inertia y");
+      moment_inertia_z=prm.get_double("Inertia z");
       prm.leave_subsection();
     }
 
@@ -918,9 +949,9 @@ namespace Parameters
     BoundaryMotion<dim>::parse_boundary_motion(ParameterHandler &prm)
     {
       const unsigned int boundary_id = prm.get_integer("boundary id");
-      const std::string  motion_type = prm.get("type");
+      const std::string  type = prm.get("type");
 
-      if (motion_type == "translational")
+      if (type == "translational")
         {
           Tensor<1, dim> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
@@ -931,7 +962,7 @@ namespace Parameters
           this->boundary_translational_velocity.at(boundary_id) =
             translational_velocity;
         }
-      else if (motion_type == "rotational")
+      else if (type == "rotational")
         {
           double         rotational_speed = prm.get_double("rotational speed");
           Tensor<1, dim> rotational_vector;
@@ -957,6 +988,12 @@ namespace Parameters
     {
       prm.enter_subsection("boundary motion");
       {
+        prm.declare_entry("Type of boundary motion",
+                          "none",
+                          Patterns::Selection("none|free|fix"),
+                          "Type of boundary rotation"
+                          "Choices are <none|free|fix>.");
+
         prm.declare_entry("number of boundary motion",
                           "0",
                           Patterns::Integer(),
@@ -1012,61 +1049,70 @@ namespace Parameters
     BoundaryMotion<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("boundary motion");
-      initialize_containers(boundary_translational_velocity,
-                            boundary_rotational_speed,
-                            boundary_rotational_vector);
-      {
-        moving_boundary_number = prm.get_integer("number of boundary motion");
+        const std::string method = prm.get("Type of boundary motion");
+        if (method=="free")
+        {motion_method=MotionMethod::free;}
+        else if (method=="fix")
+          {
+            motion_method=MotionMethod::fix;
 
-        if (moving_boundary_number >= 1)
-          {
-            prm.enter_subsection("moving boundary 0");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
+            initialize_containers(boundary_translational_velocity,
+                                  boundary_rotational_speed,
+                                  boundary_rotational_vector);
+
+            moving_boundary_number =
+              prm.get_integer("number of boundary motion");
+
+            if (moving_boundary_number >= 1)
+              {
+                prm.enter_subsection("moving boundary 0");
+                {
+                  parse_boundary_motion(prm);
+                }
+                prm.leave_subsection();
+              }
+            if (moving_boundary_number >= 2)
+              {
+                prm.enter_subsection("moving boundary 1");
+                {
+                  parse_boundary_motion(prm);
+                }
+                prm.leave_subsection();
+              }
+            if (moving_boundary_number >= 3)
+              {
+                prm.enter_subsection("moving boundary 2");
+                {
+                  parse_boundary_motion(prm);
+                }
+                prm.leave_subsection();
+              }
+            if (moving_boundary_number >= 4)
+              {
+                prm.enter_subsection("moving boundary 3");
+                {
+                  parse_boundary_motion(prm);
+                }
+                prm.leave_subsection();
+              }
+            if (moving_boundary_number >= 5)
+              {
+                prm.enter_subsection("moving boundary 4");
+                {
+                  parse_boundary_motion(prm);
+                }
+                prm.leave_subsection();
+              }
+            if (moving_boundary_number >= 6)
+              {
+                prm.enter_subsection("moving boundary 5");
+                {
+                  parse_boundary_motion(prm);
+                }
+                prm.leave_subsection();
+              }
           }
-        if (moving_boundary_number >= 2)
-          {
-            prm.enter_subsection("moving boundary 1");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 3)
-          {
-            prm.enter_subsection("moving boundary 2");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 4)
-          {
-            prm.enter_subsection("moving boundary 3");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 5)
-          {
-            prm.enter_subsection("moving boundary 4");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 6)
-          {
-            prm.enter_subsection("moving boundary 5");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-      }
+        else {}
       prm.leave_subsection();
     }
 
