@@ -21,9 +21,9 @@ subsection parameter tuning
 	set experimental data file           = count.experimental
     set gamma-rays emitted        		 = 2
     set attenuation coefficient detector = 21.477
-    set dead time       				 = 1e-5
-    set activity  						 = 2e6
-    set attenuation coefficient reactor  = 10
+    set dead time       				 = 1.2e-5
+    set activity  						 = 2.041e6
+    set attenuation coefficient reactor  = 10.08
 end
 
 #---------------------------------------------------

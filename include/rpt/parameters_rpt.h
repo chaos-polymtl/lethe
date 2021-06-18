@@ -57,9 +57,6 @@ namespace Parameters
     // Seed of the random number generator
     int seed;
 
-    // Seed of the random number generator
-    int seed;
-
     // All parameters that are fixed by the user
     double reactor_radius; // [m]
     double peak_to_total_ratio;
@@ -86,10 +83,10 @@ namespace Parameters
     std::string experimental_file;
 
     // Parameters to tune or fixed parameters if tuning is disable
-    double dead_time; // Dead time of the detector per accepted pulse
-    double activity;  // Activity of the tracer
-    double
-           gamma_rays_emitted; // Number of gamma-rays emitted by each disintegration
+    double dead_time;          // Dead time of the detector per accepted pulse
+    double activity;           // Activity of the tracer
+    double gamma_rays_emitted; // Number of gamma-rays emitted by each
+                               // disintegration
     double attenuation_coefficient_reactor;  // Total linear attenuation
                                              // coefficient of the medium
     double attenuation_coefficient_detector; // Total linear attenuation
