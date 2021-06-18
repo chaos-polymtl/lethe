@@ -6,6 +6,7 @@
 subsection rpt parameters
     set particle positions file          = positions.particle
     set export counts                    = false
+    set counts file                      = initial_param
     set monte carlo iteration            = 10000
     set random number seed               = auto
     set reactor radius       			 = 0.1
