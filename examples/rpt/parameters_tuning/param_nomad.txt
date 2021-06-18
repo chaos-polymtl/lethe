@@ -1,38 +1,17 @@
-DIMENSION      3              # number of variables
+DIMENSION      3                                      # number of variables
 
-BB_EXE         lethe_nomad.py         # 'bb.exe' is a program that
-BB_OUTPUT_TYPE OBJ     # takes in argument the name of
-                              # a text file containing 5
-                              # values, and that displays 3
-                              # values that correspond to the
-                              # objective function value (OBJ),
-                              # and two constraints values g1
-                              # and g2 with g1 <= 0 and
-                              # g2 <= 0; 'PB' and 'EB'
-                              # correspond to constraints that
-                              # are treated by the Progressive
-                              # and Extreme Barrier approaches
-                              # (all constraint-handling
-                              #  options are described in the
-                              #  detailed parameters list)
+BB_EXE         "$python3 rpt_lethe_nomad.py"         # Blackbox (script)
 
-X0             ( 1.5e-05 1.5e6 10 )  # starting point
+BB_OUTPUT_TYPE OBJ
 
+X0             ( 1.1e-05 2.2e6 11 )                   # starting point (dead time, activity,
+                                                      # attenuation coefficient reactor)
 
-LOWER_BOUND    * 0          # all variables are >= -6
+LOWER_BOUND    * 0                                    # all variables are > 0
 
+MAX_BB_EVAL    50                                     # the algorithm terminates when
+                                                      # X black-box evaluations have
+                                                      # been made
 
-MAX_BB_EVAL    150            # the algorithm terminates when
-                              # 100 black-box evaluations have
-                              # been made
-
-# TMP_DIR        /tmp         # indicates a directory where
-                              # temporary files are put
-                              # (increases performance by ~100%
-                              # if you're working on a network
-                              # account and if TMP_DIR is on a
-                              # local disk)
-
-
-DISPLAY_STATS BBE ( SOL ) OBJ # Display the number of evaluation (BBE),
-							  # the current solution ( SOL ) and the objective
+DISPLAY_STATS BBE ( SOL ) OBJ                         # Display the number of evaluation (BBE),
+							                          # the current solution ( SOL ) and the objective
