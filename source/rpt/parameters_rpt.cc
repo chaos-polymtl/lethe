@@ -9,13 +9,18 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("particle positions file",
                       "none",
                       Patterns::FileName(),
-                      "Particle positions file name");
+                      "Particle positions filename");
 
     prm.declare_entry(
       "export counts",
       "false",
       Patterns::Bool(),
       "Enable to export counts result in a .csv file <true|false>");
+
+    prm.declare_entry("counts file",
+                      "counts",
+                      Patterns::FileName(),
+                      "Exported count's results filename");
 
     prm.declare_entry("monte carlo iteration",
                       "1",
@@ -52,6 +57,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
   {
     particle_positions_file = prm.get("particle positions file");
     export_counts           = prm.get_bool("export counts");
+    export_counts_file      = prm.get("counts file");
     n_monte_carlo_iteration = prm.get_integer("monte carlo iteration");
     reactor_radius          = prm.get_double("reactor radius");
     peak_to_total_ratio     = prm.get_double("peak-to-total ratio");

@@ -1,22 +1,3 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2020 - by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
-
-*
-* Author: Bruno Blais, Ghazaleh Mirakhori Polytechnique Montreal, 2020-
-*/
-
 #include <deal.II/base/point.h>
 
 #include <rpt/rpt.h>
@@ -56,8 +37,8 @@ RPT<dim>::calculate()
   std::ofstream myfile;
   if (rpt_parameters.rpt_param.export_counts)
     {
-      std::string filename = rpt_parameters.rpt_param.particle_positions_file;
-      myfile.open(filename.substr(0, filename.find(".")) + ".csv");
+      std::string filename = rpt_parameters.rpt_param.export_counts_file;
+      myfile.open(filename + ".csv");
       myfile
         << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
         << std::endl;

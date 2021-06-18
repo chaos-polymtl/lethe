@@ -51,6 +51,9 @@ namespace Parameters
     // Enable to export counts result in a .csv file
     bool export_counts;
 
+    // Exporting counts csv filename
+    std::string export_counts_file;
+
     // Number of Monte Carlo iterations for alpha and theta
     unsigned int n_monte_carlo_iteration;
 
