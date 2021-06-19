@@ -4,11 +4,10 @@ using namespace dealii;
 
 template <int dim>
 PWLinearForce<dim>::PWLinearForce(
-  const std::unordered_map<types::particle_index, Tensor<1, dim>>
-    boundary_translational_velocity,
-  const std::unordered_map<types::particle_index, double>
-    boundary_rotational_speed,
-  const std::unordered_map<types::particle_index, Tensor<1, dim>>
+  const std::unordered_map<unsigned int, Tensor<1, dim>>
+                                                 boundary_translational_velocity,
+  const std::unordered_map<unsigned int, double> boundary_rotational_speed,
+  const std::unordered_map<unsigned int, Tensor<1, dim>>
                                   boundary_rotational_vector,
   const double                    triangulation_radius,
   const DEMSolverParameters<dim> &dem_parameters)
