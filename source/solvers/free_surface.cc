@@ -348,8 +348,12 @@ template <int dim>
 void
 FreeSurface<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
+#if (DEAL_II_VERSION_MAJOR < 10)
+  data_out.add_data_vector(dof_handler, present_solution, "phase");
+#else
   local_evaluation_point = present_solution;
   data_out.add_data_vector(dof_handler, local_evaluation_point, "phase");
+#endif
 }
 
 template <int dim>

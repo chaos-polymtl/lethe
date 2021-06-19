@@ -1037,8 +1037,12 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
     }
   if (this->simulation_control->is_output_iteration())
     {
+#if (DEAL_II_VERSION_MAJOR < 10)
+      this->write_output_results(present_solution);
+#else
       local_evaluation_point = present_solution;
       this->write_output_results(local_evaluation_point);
+#endif
     }
 }
 
