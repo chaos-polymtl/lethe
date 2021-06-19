@@ -178,8 +178,7 @@ ParticleDetectorInteractions<dim>::calculate_detector_path_length()
 }
 
 template <int dim>
-std::vector<double>
-ParticleDetectorInteractions<dim>::solve_t(
+std::vector<double> ParticleDetectorInteractions<dim>::solve_t(
   Tensor<2, dim> e_inverse,
   Tensor<1, dim> detector_particle_origin,
   Tensor<1, dim> particle_position_rotation)
