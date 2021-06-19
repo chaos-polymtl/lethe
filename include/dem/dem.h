@@ -364,7 +364,7 @@ private:
   Visualization<dim>                   visualization_object;
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
-  const unsigned int                   standard_deviation_multiplier;
+  const double                         standard_deviation_multiplier;
 
   std::unordered_map<types::particle_index, Tensor<1, dim>> momentum;
   std::unordered_map<types::particle_index, Tensor<1, dim>> force;
