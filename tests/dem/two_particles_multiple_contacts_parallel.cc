@@ -1,27 +1,3 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2019 - 2019 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Polytechnique Montreal, 2019-
- */
-
-/**
- * @brief In this test, two particles collide on two processors
- */
-
-// Deal.II
 #include <deal.II/base/parameter_handler.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -296,42 +272,51 @@ test()
   PPNonLinearForce<dim>         nonlinear_force_object(dem_parameters);
   VelocityVerletIntegrator<dim> integrator_object;
 
-  // Inserting two particles in contact
-  Point<2>                 position1 = {0, 0.007};
-  int                      id1       = 0;
-  Point<2>                 position2 = {0, 0.001};
-  int                      id2       = 1;
-  Particles::Particle<dim> particle1(position1, position1, id1);
-  typename Triangulation<dim>::active_cell_iterator cell1 =
-    GridTools::find_active_cell_around_point(triangulation,
-                                             particle1.get_location());
-  Particles::ParticleIterator<dim> pit1 =
-    particle_handler.insert_particle(particle1, cell1);
-  pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-  pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::v_y]     = -0.4;
-  pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  MPI_Comm communicator     = triangulation.get_communicator();
+  auto     this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
 
-  Particles::Particle<dim> particle2(position2, position2, id2);
-  typename Triangulation<dim>::active_cell_iterator cell2 =
-    GridTools::find_active_cell_around_point(triangulation,
-                                             particle2.get_location());
-  Particles::ParticleIterator<dim> pit2 =
-    particle_handler.insert_particle(particle2, cell2);
-  pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
-  pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
-  pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+  // Inserting two particles in contact
+  Point<2> position1 = {0, 0.007};
+  int      id1       = 0;
+  Point<2> position2 = {0, 0.001};
+  int      id2       = 1;
+
+  // Both particles are inserted the domain owned by process1
+  if (this_mpi_process == 1)
+    {
+      Particles::Particle<dim> particle1(position1, position1, id1);
+      typename Triangulation<dim>::active_cell_iterator cell1 =
+        GridTools::find_active_cell_around_point(triangulation,
+                                                 particle1.get_location());
+      Particles::ParticleIterator<dim> pit1 =
+        particle_handler.insert_particle(particle1, cell1);
+      pit1->get_properties()[DEM::PropertiesIndex::type]    = 0;
+      pit1->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+      pit1->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+      pit1->get_properties()[DEM::PropertiesIndex::v_y]     = -0.4;
+      pit1->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+      pit1->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+      pit1->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+      pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+      pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+
+      Particles::Particle<dim> particle2(position2, position2, id2);
+      typename Triangulation<dim>::active_cell_iterator cell2 =
+        GridTools::find_active_cell_around_point(triangulation,
+                                                 particle2.get_location());
+      Particles::ParticleIterator<dim> pit2 =
+        particle_handler.insert_particle(particle2, cell2);
+      pit2->get_properties()[DEM::PropertiesIndex::type]    = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::dp]      = particle_diameter;
+      pit2->get_properties()[DEM::PropertiesIndex::v_x]     = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::v_y]     = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::v_z]     = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::omega_x] = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::omega_y] = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
+      pit2->get_properties()[DEM::PropertiesIndex::mass]    = 1;
+    }
+
 
   // Defining variables
   std::unordered_map<unsigned int, std::vector<unsigned int>>
