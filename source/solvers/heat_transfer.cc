@@ -606,12 +606,7 @@ template <int dim>
 void
 HeatTransfer<dim>::attach_solution_to_output(DataOut<dim> &data_out)
 {
-#if (DEAL_II_VERSION_MAJOR < 10)
   data_out.add_data_vector(dof_handler, present_solution, "temperature");
-#else
-  local_evaluation_point = present_solution;
-  data_out.add_data_vector(dof_handler, local_evaluation_point, "temperature");
-#endif
 }
 
 template <int dim>
