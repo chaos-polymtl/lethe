@@ -363,6 +363,7 @@ ChorinNavierStokes<dim>::assemble_init_velocity_eq()
                   cell_matrix(i, j) +=
                     ((phi_u[i] * phi_u[j]) +
                      (timestep *
+                      // Order here is incorrect
                       scalar_product(phi_u[i],
                                      present_velocity_values[q_index] *
                                        grad_phi_u[j])) +
@@ -737,48 +738,70 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
     }
 
   //  // Add boundary conditions
-  //  std::map<types::global_dof_index, double> boundary_values;
-  //  if (couette_case)
-  //    {
-  //      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-  //                                               0,
-  //                                               Functions::ZeroFunction<dim>(
-  //                                                 dim),
-  //                                               boundary_values);
-  //      VectorTools::interpolate_boundary_values(
-  //        dof_handler_velocity,
-  //        1,
-  //        Functions::ConstantFunction<dim>(1., dim),
-  //        boundary_values);
-  //    }
+  std::map<types::global_dof_index, double> boundary_values;
+  if (couette_case)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+      VectorTools::interpolate_boundary_values(
+        dof_handler_velocity,
+        1,
+        Functions::ConstantFunction<dim>(1., dim),
+        boundary_values);
+    }
 
-  //  else if (poiseulle_case)
-  //    {
-  //      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-  //                                               2,
-  //                                               Functions::ZeroFunction<dim>(
-  //                                                 dim),
-  //                                               boundary_values);
-  //      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-  //                                               3,
-  //                                               Functions::ZeroFunction<dim>(
-  //                                                 dim),
-  //                                               boundary_values);
-  //    }
+  else if (poiseuille_case)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               3,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+    }
+  else if (cavity_case)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               1,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               3,
+                                               CouetteTopVelocity<dim>(),
+                                               boundary_values);
+    }
 
-  //  else
-  //    {
-  //      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-  //                                               0,
-  //                                               Functions::ZeroFunction<dim>(
-  //                                                 dim),
-  //                                               boundary_values);
-  //    }
+  else
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               boundary_values);
+    }
 
-  //  MatrixTools::apply_boundary_values(boundary_values,
-  //                                     new_velocity_eq_system_matrix,
-  //                                     next_velocity,
-  //                                     new_velocity_eq_system_rhs);
+  MatrixTools::apply_boundary_values(boundary_values,
+                                     new_velocity_eq_system_matrix,
+                                     next_velocity,
+                                     new_velocity_eq_system_rhs);
 }
 
 template <int dim>
@@ -986,9 +1009,9 @@ main()
     {
       ChorinNavierStokes<2> problem_2d(1, 1); // degreeVelocity, degreePressure
 
-      problem_2d.runCouette();
+      // problem_2d.runCouette();
       //      problem_2d.runPoiseulle();
-      //            problem_2d.runCavity();
+      problem_2d.runCavity();
       // problem_2d.runMMS();
     }
   catch (std::exception &exc)
