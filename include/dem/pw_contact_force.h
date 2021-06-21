@@ -87,7 +87,8 @@ protected:
   void
   update_boundary_velocity(const DEMSolverParameters<dim> &dem_parameters);
 
-  Tensor<1,dim> base_change(const Tensor<1,dim> tensor,const double theta);
+  Tensor<1, dim>
+  base_change(const Tensor<1, dim> tensor, const double theta);
 
   /**
    * Carries out applying the calculated force and torque on the local-local
@@ -128,7 +129,7 @@ protected:
         ForceOnWall[boundary_id] = ForceOnWall[boundary_id] - total_force;
         TorqueOnWall[boundary_id] =
           TorqueOnWall[boundary_id] -
-          cross_product_3d(total_force, point_on_boundary - center_mass);
+          cross_product_3d(point_on_boundary - center_mass, total_force);
       }
 
     // Updating the force of particles in the particle handler

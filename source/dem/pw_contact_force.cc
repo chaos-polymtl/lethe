@@ -17,10 +17,7 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
-#include <dem/dem_solver_parameters.h>
 #include <dem/pw_contact_force.h>
-
-#include <fstream>
 
 // Updates the contact information (contact_info) based on the new information
 // of particles pair in the current time step
@@ -116,106 +113,112 @@ PWContactForce<dim>::get_force_torque()
 
 template <int dim>
 void
-  PWContactForce<dim>::update_boundary_velocity(const DEMSolverParameters<dim> &dem_parameters)
+PWContactForce<dim>::update_boundary_velocity(
+  const DEMSolverParameters<dim> &dem_parameters)
 {
-  if (dem_parameters.boundary_motion.motion_method==Parameters::Lagrangian::BoundaryMotion<dim>::MotionMethod::free)
-  {
-    //Definition of all the patameters needeed
-    double dt           = dem_parameters.simulation_control.dt;
-    //std::cout << "\ndt " << dt << "\n";
-    double m            = dem_parameters.forces_torques.mass_solid;
-    //std::cout << "\nm " << m << "\n";
-    std::string rad     = dem_parameters.mesh.grid_arguments;
-    rad.erase(remove(rad.begin(), rad.end(), ' '), rad.end());
-    rad                 = rad.substr(rad.find(":")+1,rad.find(":",rad.find(":")+1)-rad.find(":")-1);
-    double radius       = std::stod(rad);
-    //std::cout << "\nradius " << radius << "\n";
-    double mu_s         = dem_parameters.forces_torques.friction_coefficient_mu_s;
-    double mu_k         = dem_parameters.forces_torques.friction_coefficient_mu_k;
-    double mu_r         = dem_parameters.forces_torques.friction_coefficient_mu_r;
-    double theta        = dem_parameters.forces_torques.angle_theta;
-    Tensor<1,dim> g(dem_parameters.physical_properties.g),P(m*g);
-   // std::cout << "\ng " << g << "\n";
-    Tensor<1,dim> I;
-    double Ix     = dem_parameters.forces_torques.moment_inertia_x;
-    double Iy     = dem_parameters.forces_torques.moment_inertia_y;
-    I[0]=Ix;I[1]=Iy;
-    if (dim>2)
-      {
-        double Iz = dem_parameters.forces_torques.moment_inertia_z;
-        I[2]      = Iz;
-      }
-    //std::cout << "\nI " << I << "\n";
-    Tensor<1,dim> Sum_F,Sum_M,F_friction,M_friction,N;
-
-    for (const auto &it : ForceOnWall)
+  if (dem_parameters.boundary_motion.motion_method ==
+      Parameters::Lagrangian::BoundaryMotion<dim>::MotionMethod::free)
     {
-      Sum_F=Sum_F+it.second;
-      Sum_M=Sum_M+TorqueOnWall[it.first];
-    }
-    //base_change is used to change original coordinate vectors into a simplified model
-    Sum_F=base_change(Sum_F,theta);
-    //std::cout << "\nSum_F " << Sum_F << "\n";
-    //std::cout << "\nSum_M " << Sum_M << "\n";
-    // Second's law of Newton says that the normal reaction is equal to all forces in the other direction
-    N[2] =-(Sum_F[2]+P[2]);
-    //std::cout << "\nN " << N << "\n";
-    bool is_moving = (abs(Sum_F[1]+P[1])>abs(mu_s*N[2])) ? true : false ;
-    //std::cout << "\nis_moving " << is_moving << "\n";
-    std::string rotation_direction;
-    if (is_moving)
-    {
-      rotation_direction = (Sum_F[1]+P[1]>abs(mu_s*N[2])) ? "left" : "right";
-    }
-
-
-    if (is_moving && rotation_direction=="right")
-    {
-      F_friction[1]=-mu_k*N[2];
-    }
-    else if (is_moving && rotation_direction=="left")
-    {
-      F_friction[1]=mu_k*N[2];
-    }
-    else if (!is_moving)
-    {;
-      F_friction[1]=-(P[1]+Sum_F[1]);
-    }
-    //std::cout << "\nF_friction " << F_friction << "\n";
-    Tensor<1,dim> vector_contact; vector_contact[2]=-radius;
-    M_friction= cross_product_3d(vector_contact,F_friction);
-    //std::cout << "\nM_friction " << M_friction << "\n";
-    Tensor<1,dim> add_F,add_M,transition;
-    add_F=(dt/m)*(Sum_F+F_friction+P+N);
-    //std::cout << "\nadd_F " << add_F << "\n";
-    Tensor<1,dim> vector_rolling_contact;
-    vector_rolling_contact[1]=mu_r*radius; vector_rolling_contact[2]=-radius;
-    Tensor<1,dim> M_rolling(cross_product_3d(vector_rolling_contact,N));
-    for (int i=0;i<dim;i++)
-      {
-        add_M[i] = (dt/I[i]) * (Sum_M[i] + M_friction[i]+M_rolling[i]);
-      }
-    //std::cout << "\nadd_M " << add_M << "\n";
+      // Definition of all the parameters needed
+      double      dt  = dem_parameters.simulation_control.dt;
+      double      m   = dem_parameters.forces_torques.mass_solid;
+      std::string rad = dem_parameters.mesh.grid_arguments;
+      rad.erase(remove(rad.begin(), rad.end(), ' '), rad.end());
+      rad           = rad.substr(rad.find(":") + 1,
+                       rad.find(":", rad.find(":") + 1) - rad.find(":") - 1);
+      double radius = std::stod(rad);
+      double mu_s   = dem_parameters.forces_torques.friction_coefficient_mu_s;
+      double mu_k   = dem_parameters.forces_torques.friction_coefficient_mu_k;
+      double mu_r   = dem_parameters.forces_torques.friction_coefficient_mu_r;
+      double theta  = dem_parameters.forces_torques.angle_theta;
+      Tensor<1, dim> g(dem_parameters.physical_properties.g), P(m * g);
+      Tensor<1, dim> I;
+      I[0] = dem_parameters.forces_torques.moment_inertia_x;
+      I[1] = dem_parameters.forces_torques.moment_inertia_y;
+      if (dim > 2)
+        {
+          I[2] = dem_parameters.forces_torques.moment_inertia_z;
+        }
+      Tensor<1, dim> Sum_F, Sum_M, F_friction, M_friction, N;
+      for (const auto &it : ForceOnWall)
+        {
+          Sum_F = Sum_F + it.second;
+          Sum_M = Sum_M + TorqueOnWall[it.first];
+        }
+      // base_change is used to change original coordinate vectors into a
+      // simplified model
+      Sum_F = base_change(Sum_F, theta);
+      // std::cout << "\nSum_F " << Sum_F << "\n";
+      // std::cout << "\nSum_M " << Sum_M << "\n";
+      // Second's law of Newton says that the normal reaction is equal to all
+      // forces in the other direction
+      N[2] = -(Sum_F[2] + P[2]);
+      // std::cout << "\nN " << N << "\n";
+      bool is_moving = (abs(Sum_F[1] + P[1]) > abs(mu_s * N[2]));
+      // std::cout << "\nis_moving " << is_moving << "\n";
+      std::string rotation_direction;
+      if (is_moving)
+        {
+          rotation_direction =
+            (Sum_F[1] + P[1] > abs(mu_s * N[2])) ? "left" : "right";
+        }
+      if (is_moving && rotation_direction == "right")
+        {
+          F_friction[1] = -mu_k * N[2];
+        }
+      else if (is_moving && rotation_direction == "left")
+        {
+          F_friction[1] = mu_k * N[2];
+        }
+      else if (!is_moving)
+        {
+          F_friction[1] = -(P[1] + Sum_F[1]);
+        }
+      // std::cout << "\nF_friction " << F_friction << "\n";
+      Tensor<1, dim> vector_contact;
+      vector_contact[2] = -radius;
+      M_friction        = cross_product_3d(vector_contact, F_friction);
+      // std::cout << "\nM_friction " << M_friction << "\n";
+      Tensor<1, dim> add_F, add_M, transition;
+      add_F = (dt / m) * (Sum_F + F_friction + P + N);
+      // std::cout << "\nadd_F " << add_F << "\n";
+      Tensor<1, dim> vector_rolling_contact;
+      vector_rolling_contact[1] = mu_r * radius;
+      vector_rolling_contact[2] = -radius;
+      Tensor<1, dim> M_rolling(cross_product_3d(vector_rolling_contact, N));
+      for (int i = 0; i < dim; i++)
+        {
+          add_M[i] = (dt / I[i]) * (Sum_M[i] + M_friction[i] + M_rolling[i]);
+        }
+      // std::cout << "\nadd_M " << add_M << "\n";
       for (const auto &it : boundary_translational_velocity_map)
-      {
-        boundary_translational_velocity_map[it.first]=it.second+add_F;
-        //std::cout << "\nboundary_translational_velocity_map[it.first] " << boundary_translational_velocity_map[it.first] << "\n";
-        transition=boundary_rotational_speed_map[it.first]*boundary_rotational_vector[it.first]+add_M;
-        boundary_rotational_speed_map[it.first]=transition.norm();
-        //std::cout << "\nboundary_rotational_speed_map[it.first] " << boundary_rotational_speed_map[it.first] << "\n";
-        boundary_rotational_vector[it.first]=transition/transition.norm();
-        //std::cout << "\nboundary_rotational_vector[it.first] " << boundary_rotational_vector[it.first] << "\n";
-      }
-
-  }
+        {
+          boundary_translational_velocity_map[it.first] = it.second + add_F;
+          // std::cout << "\nboundary_translational_velocity_map[it.first] " <<
+          // boundary_translational_velocity_map[it.first] << "\n";
+          transition = boundary_rotational_speed_map[it.first] *
+                         boundary_rotational_vector[it.first] +
+                       add_M;
+          boundary_rotational_speed_map[it.first] = transition.norm();
+          // std::cout << "\nboundary_rotational_speed_map[it.first] " <<
+          // boundary_rotational_speed_map[it.first] << "\n";
+          boundary_rotational_vector[it.first] = transition / transition.norm();
+          // std::cout << "\nboundary_rotational_vector[it.first] " <<
+          // boundary_rotational_vector[it.first] << "\n";
+        }
+    }
 }
 
 template <int dim>
-Tensor<1,dim> PWContactForce<dim>::base_change(const Tensor<1,dim> tensor,const double theta)
+Tensor<1, dim>
+PWContactForce<dim>::base_change(const Tensor<1, dim> tensor,
+                                 const double         theta)
 {
-  Tensor <1,dim> out(tensor);
-  out[1]=tensor[1]*cos(theta*M_PI/180)-tensor[2]*sin(theta*M_PI/180);
-  out[2]=tensor[2]*cos(theta*M_PI/180)+tensor[1]*sin(theta*M_PI/180);
+  Tensor<1, dim> out(tensor);
+  out[1] =
+    tensor[1] * cos(theta * M_PI / 180) - tensor[2] * sin(theta * M_PI / 180);
+  out[2] =
+    tensor[2] * cos(theta * M_PI / 180) + tensor[1] * sin(theta * M_PI / 180);
   return out;
 }
 
