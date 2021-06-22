@@ -73,11 +73,6 @@ public:
     floating_walls.parse_parameters(prm);
     boundary_motion.parse_parameters(prm);
     forces_torques.parse_parameters(prm);
-    if (boundary_motion.motion_method==Parameters::Lagrangian::BoundaryMotion<dim>::MotionMethod::free)
-    {
-      physical_properties.g[1]=physical_properties.g[1]*cos(forces_torques.angle_theta*M_PI/180)-physical_properties.g[2]*sin(forces_torques.angle_theta*M_PI/180);
-      physical_properties.g[2]=physical_properties.g[2]*cos(forces_torques.angle_theta*M_PI/180)+physical_properties.g[1]*sin(forces_torques.angle_theta*M_PI/180);
-    }
   }
 };
 

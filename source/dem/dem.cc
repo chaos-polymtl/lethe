@@ -673,6 +673,44 @@ DEMSolver<dim>::write_output_results()
 
 template <int dim>
 void
+DEMSolver<dim>::write_forces_torques_output_results()
+{
+  std::map<unsigned int, Tensor<1, dim>> force_on_walls;
+  std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
+  force_on_walls=pw_contact_force_object->get_force();
+  torque_on_walls=pw_contact_force_object->get_torque();
+  if ( (parameters.forces_torques.force_torque_display_method ==
+      Parameters::Lagrangian::ForceTorqueOnWall<
+        dim>::ForcesAndTorquesDisplay::terminal) ||
+      (parameters.forces_torques.force_torque_display_method ==
+      Parameters::Lagrangian::ForceTorqueOnWall<
+        dim>::ForcesAndTorquesDisplay::both) )
+    {
+      for (const auto &it : force_on_walls)
+      {
+        pcout     << "Boundary " << it.first << " :\n"
+                  << "F = " << it.second << "\nM = " << torque_on_walls[it.first]
+                  << "\n\n";
+      }
+    }
+  if ( (parameters.forces_torques.force_torque_display_method ==
+      Parameters::Lagrangian::ForceTorqueOnWall<
+        dim>::ForcesAndTorquesDisplay::file) ||
+    (parameters.forces_torques.force_torque_display_method ==
+    Parameters::Lagrangian::ForceTorqueOnWall<
+      dim>::ForcesAndTorquesDisplay::both) )
+    {
+      std::string name_output_file = parameters.forces_torques.force_torque_output_name;
+
+    }
+}
+
+
+
+
+
+template <int dim>
+void
 DEMSolver<dim>::solve()
 {
   // Print simulation starting information
@@ -844,6 +882,11 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
+      if (parameters.forces_torques.force_torque_display_method!=Parameters::Lagrangian::ForceTorqueOnWall<dim>::ForcesAndTorquesDisplay::none
+          && (simulation_control->get_step_number() % parameters.forces_torques.output_frequency==0))
+      {
+        write_forces_torques_output_results();
+      }
 
       if (parameters.restart.checkpoint &&
           simulation_control->get_step_number() %
