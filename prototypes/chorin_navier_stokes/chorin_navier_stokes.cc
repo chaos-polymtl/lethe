@@ -73,8 +73,10 @@ using namespace dealii;
 
 enum SimulationCases
 {
-  MMS     = 0,
-  Couette = 1,
+  MMS        = 0,
+  Couette    = 1,
+  Poiseuille = 2,
+  Cavity     = 3
 };
 
 template <int dim>
@@ -90,8 +92,8 @@ public:
 
 template <int dim>
 void
-CouetteTopVelocity<dim>::vector_value(const Point<dim> &point,
-                                      Vector<double> &  values) const
+CouetteTopVelocity<dim>::vector_value(const Point<dim> & /*point*/,
+                                      Vector<double> &values) const
 {
   values[0] = 1;
   values[1] = 0;
@@ -105,17 +107,12 @@ template <int dim>
 class ChorinNavierStokes
 {
 public:
-  ChorinNavierStokes(const unsigned int degreeVelocity,
-                     const unsigned int degreePressure);
+  ChorinNavierStokes(const unsigned int    degreeVelocity,
+                     const unsigned int    degreePressure,
+                     const SimulationCases sim_case);
   ~ChorinNavierStokes();
   void
-  runMMS();
-  void
-  runCouette();
-  void
-  runPoiseulle();
-  void
-  runCavity();
+  run();
 
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
@@ -123,8 +120,6 @@ public:
 private:
   void
   make_cube_grid(int refinementLevel);
-  void
-  refine_grid();
   void
   refine_mesh();
   void
@@ -134,7 +129,7 @@ private:
   void
   initialize_system();
   void
-  assemble_init_velocity_eq();
+  assemble_predictor();
   void
   solve_init_velocity_eq();
   void
@@ -150,40 +145,42 @@ private:
   void
   output_results(const unsigned int cycle) const;
 
+  SimulationCases    simulation_case;
   double             viscosity;
   Triangulation<dim> triangulation;
-  double             timestep;
+  double             k_l;
   double             simulation_time;
 
-  bool couette_case;
-  bool poiseuille_case;
-  bool cavity_case;
-  bool MMS_case;
-
   // FE system for velocity
-  FESystem<dim>   fe_velocity;
-  DoFHandler<dim> dof_handler_velocity;
-  SparsityPattern sparsity_pattern_velocity;
+  FESystem<dim>             fe_velocity;
+  DoFHandler<dim>           dof_handler_velocity;
+  SparsityPattern           sparsity_pattern_velocity;
+  AffineConstraints<double> velocity_constraints;
+
 
   // FE system for pressure
-  FESystem<dim>   fe_pressure;
-  DoFHandler<dim> dof_handler_pressure;
-  SparsityPattern sparsity_pattern_pressure;
+  FESystem<dim>             fe_pressure;
+  DoFHandler<dim>           dof_handler_pressure;
+  SparsityPattern           sparsity_pattern_pressure;
+  AffineConstraints<double> pressure_constraints;
+
 
   // Components required for equation 1
-  SparseMatrix<double> init_velocity_eq_system_matrix;
-  Vector<double>       tentative_velocity;
-  Vector<double>       init_velocity_eq_system_rhs;
+  SparseMatrix<double> predictor_eq_system_matrix;
+  Vector<double>       predicted_velocity;
+  Vector<double>       predictor_eq_system_rhs;
 
   // Components required for equation 2
   SparseMatrix<double> pressure_eq_system_matrix;
-  Vector<double>       pressure_solution;
-  Vector<double>       pressure_eq_system_rhs;
+  Vector<double>       pressure;
+  Vector<double>       delta_pressure;
+
+  Vector<double> pressure_eq_system_rhs;
 
   // Components required for equation 3
-  SparseMatrix<double> new_velocity_eq_system_matrix;
-  Vector<double>       next_velocity;
-  Vector<double>       new_velocity_eq_system_rhs;
+  SparseMatrix<double> corrector_eq_system_matrix;
+  Vector<double>       corrected_velocity;
+  Vector<double>       corrector_eq_system_rhs;
 
   Vector<double> velocity_solution;
 };
@@ -192,13 +189,13 @@ private:
 // Constructor
 template <int dim>
 ChorinNavierStokes<dim>::ChorinNavierStokes(const unsigned int degreeVelocity,
-                                            const unsigned int degreePressure)
-  : viscosity(10.0)
-
+                                            const unsigned int degreePressure,
+                                            const SimulationCases sim_case)
+  : simulation_case(sim_case)
+  , viscosity(1.0)
   // Initialise FE system for velocity
   , fe_velocity(FE_Q<dim>(degreeVelocity), dim)
   , dof_handler_velocity(triangulation)
-
   // Initialise FE system for pressure
   , fe_pressure(FE_Q<dim>(degreePressure), 1)
   , dof_handler_pressure(triangulation)
@@ -217,42 +214,8 @@ ChorinNavierStokes<dim>::make_cube_grid(int refinementLevel)
   // Colorize BCs from the get go.
   GridGenerator::hyper_cube(triangulation, -1, 1, true);
 
-  //  // Define boundary ids according to test case
-  //  if (couette_case)
-  //    {
-  //      for (auto &face : triangulation.active_face_iterators())
-  //        {
-  //          // if face is on top of cube, set id to 1
-  //          if (std::fabs(face->center()(1) - (1.0)) < 1e-12)
-  //            face->set_boundary_id(1);
-  //        }
-  //    }
-  //  else if (poiseulle_case)
-  //    {
-  //      for (auto &face : triangulation.active_face_iterators())
-  //        {
-  //          // bottom face id = 0 (automatically)
-  //          // right face id = 1
-  //          if (std::fabs(face->center()(0) - (1.0)) < 1e-12)
-  //            face->set_boundary_id(1);
-  //          // top face id = 2
-  //          if (std::fabs(face->center()(1) - (1.0)) < 1e-12)
-  //            face->set_boundary_id(2);
-  //          // left face id = 3
-  //          if (std::fabs(face->center()(0) - (-1.0)) < 1e-12)
-  //            face->set_boundary_id(3);
-  //        }
-  //    }
-
   // Global refinement
   triangulation.refine_global(refinementLevel);
-}
-
-template <int dim>
-void
-ChorinNavierStokes<dim>::refine_grid()
-{
-  triangulation.refine_global(1);
 }
 
 template <int dim>
@@ -276,39 +239,125 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::initialize_system()
 {
-  // Build sparsity patterns
-  DynamicSparsityPattern dsp_velocity(dof_handler_velocity.n_dofs(),
-                                      dof_handler_velocity.n_dofs());
-  DoFTools::make_sparsity_pattern(dof_handler_velocity, dsp_velocity);
+  // Setup boundary conditions
+  if (simulation_case == SimulationCases::Couette)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               3,
+                                               CouetteTopVelocity<dim>(),
+                                               velocity_constraints);
+    }
+
+  else if (simulation_case == SimulationCases::Poiseuille)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               3,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+
+      VectorTools::interpolate_boundary_values(dof_handler_pressure,
+                                               1,
+                                               Functions::ZeroFunction<dim>(),
+                                               pressure_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_pressure,
+                                               0,
+                                               Functions::ConstantFunction<dim>(
+                                                 1.),
+                                               pressure_constraints);
+    }
+
+  else if (simulation_case == SimulationCases::Cavity)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               1,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               3,
+                                               CouetteTopVelocity<dim>(),
+                                               velocity_constraints);
+    }
+
+  else
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+    }
+
+
+  velocity_constraints.close();
+  pressure_constraints.close();
+
+
+
+  // Build sparsity patterns for velocity and pressure
+  DynamicSparsityPattern dsp_velocity(dof_handler_velocity.n_dofs());
+  DoFTools::make_sparsity_pattern(dof_handler_velocity,
+                                  dsp_velocity,
+                                  velocity_constraints,
+                                  false);
   sparsity_pattern_velocity.copy_from(dsp_velocity);
 
-  DynamicSparsityPattern dsp_pressure(dof_handler_pressure.n_dofs(),
-                                      dof_handler_pressure.n_dofs());
-  DoFTools::make_sparsity_pattern(dof_handler_pressure, dsp_pressure);
+  DynamicSparsityPattern dsp_pressure(dof_handler_pressure.n_dofs());
+  DoFTools::make_sparsity_pattern(dof_handler_pressure,
+                                  dsp_pressure,
+                                  pressure_constraints,
+                                  false);
   sparsity_pattern_pressure.copy_from(dsp_pressure);
 
   // Initialise matrices/vectors for each equation
-  init_velocity_eq_system_matrix.reinit(sparsity_pattern_velocity);
-  tentative_velocity.reinit(dof_handler_velocity.n_dofs());
-  init_velocity_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
+  predictor_eq_system_matrix.reinit(sparsity_pattern_velocity);
+  predicted_velocity.reinit(dof_handler_velocity.n_dofs());
+  predictor_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
 
   pressure_eq_system_matrix.reinit(sparsity_pattern_pressure);
-  pressure_solution.reinit(dof_handler_pressure.n_dofs());
+  pressure.reinit(dof_handler_pressure.n_dofs());
+  delta_pressure.reinit(dof_handler_pressure.n_dofs());
   pressure_eq_system_rhs.reinit(dof_handler_pressure.n_dofs());
 
-  new_velocity_eq_system_matrix.reinit(sparsity_pattern_velocity);
-  next_velocity.reinit(dof_handler_velocity.n_dofs());
-  new_velocity_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
+  corrector_eq_system_matrix.reinit(sparsity_pattern_velocity);
+  corrected_velocity.reinit(dof_handler_velocity.n_dofs());
+  corrector_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
 
   velocity_solution.reinit(dof_handler_velocity.n_dofs());
 }
 
 template <int dim>
 void
-ChorinNavierStokes<dim>::assemble_init_velocity_eq()
+ChorinNavierStokes<dim>::assemble_predictor()
 {
   QGauss<dim>   quadrature_velocity(fe_velocity.degree + 1);
   FEValues<dim> fe_values_velocity(fe_velocity,
+                                   quadrature_velocity,
+                                   update_values | update_quadrature_points |
+                                     update_gradients | update_JxW_values);
+
+  FEValues<dim> fe_values_pressure(fe_pressure,
                                    quadrature_velocity,
                                    update_values | update_quadrature_points |
                                      update_gradients | update_JxW_values);
@@ -327,32 +376,42 @@ ChorinNavierStokes<dim>::assemble_init_velocity_eq()
     velocity_dofs_per_cell);
 
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
+  std::vector<Tensor<1, dim>> present_pressure_gradients(n_q_points);
+
 
   std::vector<Tensor<1, dim>> phi_u(velocity_dofs_per_cell);
   std::vector<Tensor<2, dim>> grad_phi_u(velocity_dofs_per_cell);
 
-  std::vector<Tensor<1, dim>> force(velocity_dofs_per_cell);
+  // Set up iterators over both DoF_handlers
+  typename DoFHandler<dim>::active_cell_iterator cell_u =
+    dof_handler_velocity.begin_active();
+
+  typename DoFHandler<dim>::active_cell_iterator cell_p =
+    dof_handler_pressure.begin_active();
+  const auto endc = dof_handler_pressure.end();
 
   // Iterate over each cell
-  for (const auto &cell : dof_handler_velocity.active_cell_iterators())
+  for (; cell_u != endc; ++cell_u, ++cell_p)
     {
       // Reset each cell contributions
-      fe_values_velocity.reinit(cell);
+      fe_values_velocity.reinit(cell_u);
+      fe_values_pressure.reinit(cell_u);
       cell_matrix = 0;
       cell_rhs    = 0;
 
-      // Get function values
+      // Get values, shapes, gradients, etc.
       fe_values_velocity[velocities].get_function_values(
         velocity_solution, present_velocity_values);
+      fe_values_pressure.get_function_gradients(pressure,
+                                                present_pressure_gradients);
 
       // Iterate through quadrature points
-      for (unsigned int q_index = 0; q_index < n_q_points; ++q_index)
+      for (unsigned int q = 0; q < n_q_points; ++q)
         {
           for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
             {
-              phi_u[i] = fe_values_velocity[velocities].value(i, q_index);
-              grad_phi_u[i] =
-                fe_values_velocity[velocities].gradient(i, q_index);
+              phi_u[i]      = fe_values_velocity[velocities].value(i, q);
+              grad_phi_u[i] = fe_values_velocity[velocities].gradient(i, q);
             }
 
           for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
@@ -361,118 +420,42 @@ ChorinNavierStokes<dim>::assemble_init_velocity_eq()
                 {
                   // Build matrix A1 by cell components
                   cell_matrix(i, j) +=
-                    ((phi_u[i] * phi_u[j]) +
-                     (timestep *
-                      // Order here is incorrect
-                      scalar_product(phi_u[i],
-                                     present_velocity_values[q_index] *
-                                       grad_phi_u[j])) +
-                     (viscosity * timestep *
-                      scalar_product(grad_phi_u[i], grad_phi_u[j]))) *
-                    fe_values_velocity.JxW(q_index);
+                    ((phi_u[i] * phi_u[j]) / k_l +
+                     +viscosity *
+                       scalar_product(grad_phi_u[i], grad_phi_u[j])) *
+                    fe_values_velocity.JxW(q);
                 }
 
               // Build vector F1 by cell components
               cell_rhs(i) +=
-                (phi_u[i] * present_velocity_values[q_index] *
-                 fe_values_velocity.JxW(q_index)) // phi_i * u* * dx
-                + (timestep * phi_u[i] * force[i] *
-                   fe_values_velocity.JxW(q_index)); // k_l * phi_i * f_l * dx
+                (1. / k_l * phi_u[i] * present_velocity_values[q] -
+                 phi_u[i] * present_pressure_gradients[q]) *
+                fe_values_velocity.JxW(q); // k_l * phi_i * f_l * dx
             }
         }
 
       // Transfer cell components to global matrix/vector
-      cell->get_dof_indices(local_dof_indices);
+      cell_u->get_dof_indices(local_dof_indices);
 
-      for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
-        for (unsigned int j = 0; j < velocity_dofs_per_cell; ++j)
-          {
-            init_velocity_eq_system_matrix.add(local_dof_indices[i],
-                                               local_dof_indices[j],
-                                               cell_matrix(i, j));
-          }
-
-      for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
-        init_velocity_eq_system_rhs(local_dof_indices[i]) += cell_rhs(i);
+      velocity_constraints.distribute_local_to_global(
+        cell_matrix,
+        cell_rhs,
+        local_dof_indices,
+        predictor_eq_system_matrix,
+        predictor_eq_system_rhs);
     }
-
-  // Add boundary conditions
-  std::map<types::global_dof_index, double> boundary_values;
-  if (couette_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               2,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               3,
-                                               CouetteTopVelocity<dim>(),
-                                               boundary_values);
-    }
-
-  else if (poiseuille_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               2,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               3,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-    }
-
-  else if (cavity_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               0,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               1,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               2,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               3,
-                                               CouetteTopVelocity<dim>(),
-                                               boundary_values);
-    }
-
-  else
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               0,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-    }
-  MatrixTools::apply_boundary_values(boundary_values,
-                                     init_velocity_eq_system_matrix,
-                                     tentative_velocity,
-                                     init_velocity_eq_system_rhs);
 }
 
 template <int dim>
 void
 ChorinNavierStokes<dim>::solve_init_velocity_eq()
 {
-  // Solve AU=F directly
   SparseDirectUMFPACK init_velocity_eq_direct;
-  init_velocity_eq_direct.initialize(init_velocity_eq_system_matrix);
-  init_velocity_eq_direct.vmult(tentative_velocity,
-                                init_velocity_eq_system_rhs);
+  init_velocity_eq_direct.initialize(predictor_eq_system_matrix);
+  init_velocity_eq_direct.vmult(predicted_velocity, predictor_eq_system_rhs);
+  velocity_constraints.distribute(predicted_velocity);
 
-  std::cout << "    Initial Velocity Equation (1) directly solved."
+  std::cout << "    Predictor Equation (1) solved using direct solver."
             << std::endl;
 }
 
@@ -527,115 +510,73 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
 
       // Get function values
       fe_values_velocity[velocities].get_function_divergences(
-        tentative_velocity, div_tentative_velocity);
+        predicted_velocity, div_tentative_velocity);
 
       // Iterate over quadrature points
-      for (unsigned int q_pressure = 0; q_pressure < n_q_pressure; ++q_pressure)
+      for (unsigned int q = 0; q < n_q_pressure; ++q)
         {
           for (const unsigned int i : fe_values_pressure.dof_indices())
             for (const unsigned int j : fe_values_pressure.dof_indices())
               cell_matrix(i, j) +=
                 (fe_values_pressure.shape_grad(i,
-                                               q_pressure) * // grad phi_i(x_q)
+                                               q) * // grad phi_i(x_q)
                  fe_values_pressure.shape_grad(j,
-                                               q_pressure) * // grad phi_j(x_q)
-                 fe_values_pressure.JxW(q_pressure));        // dx
+                                               q) * // grad phi_j(x_q)
+                 fe_values_pressure.JxW(q));        // dx
 
           for (const unsigned int i : fe_values_pressure.dof_indices())
-            cell_rhs(i) -=
-              (fe_values_pressure.shape_value(i, q_pressure) * // phi_i(x_q)
-               div_tentative_velocity[q_pressure] *            // div u*
-               fe_values_pressure.JxW(q_pressure)) /
-              timestep; // dx / k_l
+            cell_rhs(i) -= (fe_values_pressure.shape_value(i, q) * // phi_i(x_q)
+                            div_tentative_velocity[q] *            // div u*
+                            fe_values_pressure.JxW(q)) /
+                           k_l; // dx / k_l
         }
 
       // Transfer cell components to global matrix/vector
       cell_p->get_dof_indices(local_dof_indices);
-      for (const unsigned int i : fe_values_pressure.dof_indices())
-        for (const unsigned int j : fe_values_pressure.dof_indices())
-          pressure_eq_system_matrix.add(local_dof_indices[i],
-                                        local_dof_indices[j],
-                                        cell_matrix(i, j));
 
-      for (const unsigned int i : fe_values_pressure.dof_indices())
-        pressure_eq_system_rhs(local_dof_indices[i]) += cell_rhs(i);
+      pressure_constraints.distribute_local_to_global(cell_matrix,
+                                                      cell_rhs,
+                                                      local_dof_indices,
+                                                      pressure_eq_system_matrix,
+                                                      pressure_eq_system_rhs);
 
-      // Add boundary conditions (couette)
-      if (couette_case || cavity_case)
-        {
-          // Target bottom left corner at (-1,-1)
-          Point<dim> target_point;
-          target_point(0) = -1.0;
-          target_point(1) = -1.0;
 
-          std::map<unsigned int, double> boundary_condition;
 
-          for (unsigned int vertex = 0;
-               vertex < GeometryInfo<dim>::vertices_per_cell;
-               ++vertex)
-            {
-              if (target_point.distance(cell_p->vertex(vertex)) <
-                  1e-3 * cell_p->diameter())
-                boundary_condition[cell_p->vertex_dof_index(vertex, 0)] = 0;
-            }
-        }
+      //// Add boundary conditions (couette)
+      // if (couette_case || cavity_case)
+      //  {
+      //    // Target bottom left corner at (-1,-1)
+      //    Point<dim> target_point;
+      //    target_point(0) = -1.0;
+      //    target_point(1) = -1.0;
+      //
+      //    std::map<unsigned int, double> boundary_condition;
+      //
+      //    for (unsigned int vertex = 0;
+      //         vertex < GeometryInfo<dim>::vertices_per_cell;
+      //         ++vertex)
+      //      {
+      //        if (target_point.distance(cell_p->vertex(vertex)) <
+      //            1e-3 * cell_p->diameter())
+      //          boundary_condition[cell_p->vertex_dof_index(vertex, 0)] = 0;
+      //      }
+      //  }
     }
-
-  // Add boundary conditions (poiseulle)
-  std::map<types::global_dof_index, double> boundary_values;
-  if (poiseuille_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_pressure,
-                                               1,
-                                               Functions::ZeroFunction<dim>(),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_pressure,
-                                               0,
-                                               Functions::ConstantFunction<dim>(
-                                                 1.),
-                                               boundary_values);
-      MatrixTools::apply_boundary_values(boundary_values,
-                                         pressure_eq_system_matrix,
-                                         pressure_solution,
-                                         pressure_eq_system_rhs);
-    }
-
-  //  if (couette_case)
-  //    {
-  //      VectorTools::interpolate_boundary_values(dof_handler_pressure,
-  //                                               0,
-  //                                               Functions::ConstantFunction<dim>(
-  //                                                 0.),
-  //                                               boundary_values);
-  //      MatrixTools::apply_boundary_values(boundary_values,
-  //                                         pressure_eq_system_matrix,
-  //                                         pressure_solution,
-  //                                         pressure_eq_system_rhs);
-  //    }
-
-  //  else
-  //    {
-  //      VectorTools::interpolate_boundary_values(dof_handler_pressure,
-  //                                               0,
-  //                                               Functions::ZeroFunction<dim>(),
-  //                                               boundary_values);
-  //      MatrixTools::apply_boundary_values(boundary_values,
-  //                                         pressure_eq_system_matrix,
-  //                                         pressure_solution,
-  //                                         pressure_eq_system_rhs);
-  //    }
 }
 
 template <int dim>
 void
 ChorinNavierStokes<dim>::solve_pressure_eq()
 {
-  // Solve AU=F directly
   SparseDirectUMFPACK pressure_eq_direct;
   pressure_eq_direct.initialize(pressure_eq_system_matrix);
-  pressure_eq_direct.vmult(pressure_solution, pressure_eq_system_rhs);
+  pressure_eq_direct.vmult(delta_pressure, pressure_eq_system_rhs);
+  pressure += delta_pressure;
+  pressure_constraints.distribute(pressure);
 
-  std::cout << "    Pressure Equation (2) directly solved." << std::endl;
+
+  std::cout << "    Pressure  Equation (2) solved using direct solver."
+            << std::endl;
 }
 
 template <int dim>
@@ -692,8 +633,8 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
 
       // Get function values
       fe_values_velocity[velocities].get_function_values(
-        tentative_velocity, tentative_velocity_values);
-      fe_values_pressure.get_function_gradients(pressure_solution,
+        predicted_velocity, tentative_velocity_values);
+      fe_values_pressure.get_function_gradients(delta_pressure,
                                                 pressure_gradients);
 
       for (unsigned int q_velocity = 0; q_velocity < n_q_points_velocity;
@@ -717,7 +658,7 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
               cell_rhs(i) +=
                 (phi_u[i] * tentative_velocity_values[q_velocity] *
                  fe_values_velocity.JxW(q_velocity)) -
-                (timestep * phi_u[i] * pressure_gradients[q_velocity] *
+                (k_l * phi_u[i] * pressure_gradients[q_velocity] *
                  fe_values_velocity.JxW(q_velocity)); // phi_i(x_q) * dx
             }
         }
@@ -725,83 +666,13 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
       // Transfer cell components to global matrix/vector
       cell_u->get_dof_indices(local_dof_indices);
 
-      for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
-        for (unsigned int j = 0; j < velocity_dofs_per_cell; ++j)
-          {
-            new_velocity_eq_system_matrix.add(local_dof_indices[i],
-                                              local_dof_indices[j],
-                                              cell_matrix(i, j));
-          }
-
-      for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
-        new_velocity_eq_system_rhs(local_dof_indices[i]) += cell_rhs(i);
+      velocity_constraints.distribute_local_to_global(
+        cell_matrix,
+        cell_rhs,
+        local_dof_indices,
+        corrector_eq_system_matrix,
+        corrector_eq_system_rhs);
     }
-
-  //  // Add boundary conditions
-  std::map<types::global_dof_index, double> boundary_values;
-  if (couette_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               0,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(
-        dof_handler_velocity,
-        1,
-        Functions::ConstantFunction<dim>(1., dim),
-        boundary_values);
-    }
-
-  else if (poiseuille_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               2,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               3,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-    }
-  else if (cavity_case)
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               0,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               1,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               2,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               3,
-                                               CouetteTopVelocity<dim>(),
-                                               boundary_values);
-    }
-
-  else
-    {
-      VectorTools::interpolate_boundary_values(dof_handler_velocity,
-                                               0,
-                                               Functions::ZeroFunction<dim>(
-                                                 dim),
-                                               boundary_values);
-    }
-
-  MatrixTools::apply_boundary_values(boundary_values,
-                                     new_velocity_eq_system_matrix,
-                                     next_velocity,
-                                     new_velocity_eq_system_rhs);
 }
 
 template <int dim>
@@ -810,10 +681,13 @@ ChorinNavierStokes<dim>::solve_new_velocity_eq()
 {
   // Solve AU=F directly
   SparseDirectUMFPACK new_velocity_eq_direct;
-  new_velocity_eq_direct.initialize(new_velocity_eq_system_matrix);
-  new_velocity_eq_direct.vmult(next_velocity, new_velocity_eq_system_rhs);
+  new_velocity_eq_direct.initialize(corrector_eq_system_matrix);
+  new_velocity_eq_direct.vmult(corrected_velocity, corrector_eq_system_rhs);
+  velocity_constraints.distribute(corrected_velocity);
 
-  std::cout << "    New Velocity Equation (3) directly solved." << std::endl;
+
+  std::cout << "    Velocity Correction Equation (3) directly solved."
+            << std::endl;
 }
 
 template <int dim>
@@ -833,16 +707,36 @@ ChorinNavierStokes<dim>::output_results(const unsigned int cycle) const
   // Output
   DataOut<dim> data_out;
 
-  data_out.add_data_vector(dof_handler_pressure, pressure_solution, "pressure");
+  data_out.add_data_vector(dof_handler_pressure, pressure, "pressure");
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
       dim, DataComponentInterpretation::component_is_part_of_vector);
-  std::vector<std::string> velocity_solution_names(dim, "velocity");
-  data_out.add_data_vector(dof_handler_velocity,
-                           velocity_solution,
-                           velocity_solution_names,
-                           data_component_interpretation);
+  {
+    std::vector<std::string> velocity_solution_names(dim, "velocity");
+    data_out.add_data_vector(dof_handler_velocity,
+                             velocity_solution,
+                             velocity_solution_names,
+                             data_component_interpretation);
+  }
+
+  {
+    std::vector<std::string> velocity_solution_names(dim, "predicted_velocity");
+    data_out.add_data_vector(dof_handler_velocity,
+                             predicted_velocity,
+                             velocity_solution_names,
+                             data_component_interpretation);
+  }
+
+  {
+    std::vector<std::string> velocity_solution_names(dim, "corrected_velocity");
+    data_out.add_data_vector(dof_handler_velocity,
+                             corrected_velocity,
+                             velocity_solution_names,
+                             data_component_interpretation);
+  }
+
+
 
   data_out.build_patches();
   std::ofstream output("output-" + Utilities::int_to_string(cycle, 4) + ".vtu");
@@ -858,48 +752,26 @@ ChorinNavierStokes<dim>::calculateL2Error()
 
 template <int dim>
 void
-ChorinNavierStokes<dim>::runMMS()
-{
-  couette_case    = false;
-  poiseuille_case = false;
-  MMS_case        = true;
-  cavity_case     = false;
-}
-
-template <int dim>
-void
-ChorinNavierStokes<dim>::runCouette()
+ChorinNavierStokes<dim>::run()
 {
   // Set time parameters for simulation
-  timestep              = 0.1;
-  const double end_time = 10;
+  k_l                   = 0.1;
+  const double end_time = 100;
 
   simulation_time              = 0;
-  const unsigned int end_cycle = end_time / timestep;
+  const unsigned int end_cycle = end_time / k_l;
 
-  couette_case    = true;
-  poiseuille_case = false;
-  MMS_case        = false;
-  cavity_case     = false;
+  std::cout << "Setting up grid" << std::endl;
+  make_cube_grid(4);
+  setup_dofs();
+  initialize_system();
 
-  std::cout << " Test case: Couette" << std::endl;
-
-  // Increase time
   for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
     {
+      // At each time step
       std::cout << " Time: " << simulation_time << " seconds" << std::endl;
 
-      // For first iteration in time
-      if (cycle == 0.0)
-        {
-          make_cube_grid(4);
-          refine_grid();
-          setup_dofs();
-          initialize_system();
-        }
-
-      // At each time step
-      assemble_init_velocity_eq();
+      assemble_predictor();
       solve_init_velocity_eq();
       assemble_pressure_eq();
       solve_pressure_eq();
@@ -907,98 +779,8 @@ ChorinNavierStokes<dim>::runCouette()
       solve_new_velocity_eq();
       output_results(cycle);
 
-      velocity_solution = next_velocity;
-      simulation_time   = simulation_time + timestep;
-    }
-}
-
-template <int dim>
-void
-ChorinNavierStokes<dim>::runPoiseulle()
-{
-  // Set time parameters for simulation
-  timestep              = 0.1;
-  const double end_time = 10;
-
-  simulation_time              = 0;
-  const unsigned int end_cycle = end_time / timestep;
-
-  couette_case    = false;
-  poiseuille_case = true;
-  MMS_case        = false;
-  cavity_case     = false;
-
-  std::cout << " Test case: Poiseulle" << std::endl;
-
-  // Increase time
-  for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
-    {
-      std::cout << " Time: " << simulation_time << " seconds" << std::endl;
-      // For first iteration in time
-      if (cycle == 0)
-        {
-          make_cube_grid(4);
-          refine_grid();
-          setup_dofs();
-          initialize_system();
-        }
-
-      // At each time step
-      assemble_init_velocity_eq();
-      solve_init_velocity_eq();
-      assemble_pressure_eq();
-      solve_pressure_eq();
-      assemble_new_velocity_eq();
-      solve_new_velocity_eq();
-      output_results(cycle);
-
-      velocity_solution = next_velocity;
-      simulation_time   = simulation_time + timestep;
-    }
-}
-
-template <int dim>
-void
-ChorinNavierStokes<dim>::runCavity()
-{
-  // Set time parameters for simulation
-  timestep              = 0.1;
-  const double end_time = 10;
-
-  simulation_time              = 0;
-  const unsigned int end_cycle = end_time / timestep;
-
-  couette_case    = false;
-  poiseuille_case = false;
-  MMS_case        = false;
-  cavity_case     = true;
-  std::cout << " Test case: Cavity" << std::endl;
-
-  // Increase time
-  for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
-    {
-      std::cout << " Time: " << simulation_time << " seconds" << std::endl;
-
-      // For first iteration in time
-      if (cycle == 0.0)
-        {
-          make_cube_grid(4);
-          refine_grid();
-          setup_dofs();
-          initialize_system();
-        }
-
-      // At each time step
-      assemble_init_velocity_eq();
-      solve_init_velocity_eq();
-      assemble_pressure_eq();
-      solve_pressure_eq();
-      assemble_new_velocity_eq();
-      solve_new_velocity_eq();
-      output_results(cycle);
-
-      velocity_solution = next_velocity;
-      simulation_time   = simulation_time + timestep;
+      velocity_solution = corrected_velocity;
+      simulation_time   = simulation_time + k_l;
     }
 }
 
@@ -1007,11 +789,12 @@ main()
 {
   try
     {
-      ChorinNavierStokes<2> problem_2d(1, 1); // degreeVelocity, degreePressure
+      ChorinNavierStokes<2> problem_2d(
+        1, 1, SimulationCases::Poiseuille); // degreeVelocity, degreePressure
 
       // problem_2d.runCouette();
-      //      problem_2d.runPoiseulle();
-      problem_2d.runCavity();
+      problem_2d.run();
+      // problem_2d.runCavity();
       // problem_2d.runMMS();
     }
   catch (std::exception &exc)
