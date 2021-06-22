@@ -1,8 +1,17 @@
 name: CI
 
 on:
-  # Runs on every push. If a push contains multiple commits, it will be ran on the latest one.
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
+    branches:    
+      # Push events on master branch
+      - master
+  # Runs the workflow when a PR is opened or syncronized (new commit). Covers PRs from forks.
+  # See: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target
+  pull_request_target:
+    branches:    
+      # Pull request events targetting master branch
+      - master
 
 env:
   COMPILE_JOBS: 2
@@ -36,9 +45,17 @@ jobs:
           echo "Github actions is sane!"
           echo "Running ${{ matrix.build_type }} build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
 
+      # Only on PR
+      - uses: actions/first-interaction@v1
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          issue-message: 'Hello, thanks for opening your first issue. Welcome you to Lethe community!'
+          pr-message: 'Hello, thanks for opening your first Pull Request and taking the time to improve Lethe.'
 
       # Checks-out Lethe with branch of triggering commit
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Compile Lethe (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
         run: |
