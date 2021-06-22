@@ -1,30 +1,19 @@
-/* ---------------------------------------------------------------------
+/*
+ * parametersdem.h
  *
- * Copyright (C) 2019 - 2020 by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
-
- *
- * Author: Shahab Golshan, Bruno Blais, Polytechnique Montreal, 2019-
+ *  Created on: Dec 16, 2019
+ *      Author: shahab
  */
-
-#ifndef lethe_parameters_lagrangian_h
-#define lethe_parameters_lagrangian_h
-
-//#include <deal.II/base/conditional_ostream.h>
-//#include <deal.II/base/function.h>
+#include <deal.II/base/conditional_ostream.h>
+#include <deal.II/base/function.h>
+#include <deal.II/base/parameter_acceptor.h>
 #include <deal.II/base/parameter_handler.h>
+#include <deal.II/base/parsed_function.h>
 
 #include <string>
+
+#ifndef PARAMETERS_LAGRANGIAN_H_
+#  define PARAMETERS_LAGRANGIAN_H_
 
 using namespace dealii;
 namespace Parameters
@@ -228,7 +217,42 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
-    template <int dim>
+      /**
+     * @brief ForceTorqueOnWall - Defines the parameters for the
+           * force and torques calculation on boundaries of the domain.
+           */
+      template<int dim>
+    class ForceTorqueOnWall
+      {
+      public :
+          // Enable force post-processing
+          bool calculate_force_torque;
+
+      // Choosing how the outputs is gonna be displayed
+      enum class ForcesAndTorquesDisplay
+      {
+        none,
+        terminal,
+        file,
+        both
+      } force_torque_display_method;
+
+          // Frequency of the output
+          unsigned int output_frequency;
+
+          // Prefix for simulation output
+          std::string force_torque_output_name;
+
+          // Center of mass point
+          Point<dim> point_center_mass;
+
+          void
+          declare_parameters(ParameterHandler &prm);
+          void
+          parse_parameters(ParameterHandler &prm);
+      };
+
+      template <int dim>
     class FloatingWalls
     {
     public:

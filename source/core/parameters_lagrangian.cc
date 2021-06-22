@@ -600,6 +600,74 @@ namespace Parameters
 
     template <int dim>
     void
+    ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("Forces and Torques");
+      prm.declare_entry("calculation",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable calculation of forces");
+      prm.declare_entry("Output mode",
+                        "none",
+                        Patterns::Selection("none|terminal|file|both"),
+                        "Choosing how the outputs is gonna be displayed"
+                        "Choices are <none|terminal|file|both>.");
+      prm.declare_entry("Output name of force and torque's file (string)",
+                        "force",
+                        Patterns::FileName(),
+                        "File output force prefix");
+      prm.declare_entry(
+        "Which output's creation frequency? (int)",
+        "1",
+        Patterns::Integer(),
+        "Output frequency");
+      prm.declare_entry("Coordinate x of center of mass",
+                        "0",
+                        Patterns::Double(),
+                        "X coordinate of center of mass");
+      prm.declare_entry("Coordinate y of center of mass",
+                        "0",
+                        Patterns::Double(),
+                        "Y coordinate of center of mass");
+      prm.declare_entry("Coordinate z of center of mass",
+                        "0",
+                        Patterns::Double(),
+                        "Z coordinate of center of mass");
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("Forces and Torques");
+      calculate_force_torque = prm.get_bool("calculation");
+      const std::string display = prm.get("Output mode");
+      if (display == "none")
+        force_torque_display_method = ForcesAndTorquesDisplay::none;
+      else if (display == "terminal")
+        force_torque_display_method = ForcesAndTorquesDisplay::terminal;
+      else if (display == "file")
+        force_torque_display_method = ForcesAndTorquesDisplay::file;
+      else if (display == "both")
+        force_torque_display_method = ForcesAndTorquesDisplay::both;
+      else
+      {
+        throw(std::runtime_error("Invalid display method "));
+      }
+      force_torque_output_name =
+        prm.get("Output name of force and torque's file (string)");
+      output_frequency =
+        prm.get_integer("Which output's creation frequency? (int)");
+      point_center_mass[0] = prm.get_double("Coordinate x of center of mass");
+      point_center_mass[1] = prm.get_double("Coordinate y of center of mass");
+      if (dim == 3)
+        point_center_mass[2] = prm.get_double("Coordinate z of center of mass");
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
     FloatingWalls<dim>::declareDefaultEntry(ParameterHandler &prm)
     {
       prm.enter_subsection("point on wall");
@@ -1039,6 +1107,8 @@ namespace Parameters
 
     template class PhysicalProperties<2>;
     template class PhysicalProperties<3>;
+    template class ForceTorqueOnWall<2>;
+    template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
     template class BoundaryMotion<2>;
