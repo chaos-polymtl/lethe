@@ -83,8 +83,7 @@ public:
       &           pw_pairs_in_contact,
     const double &dt,
     std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-    std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-    const DEMSolverParameters<dim> &dem_parameters) override;
+    std::unordered_map<types::particle_index, Tensor<1, dim>> &force) override;
 
 private:
   /**

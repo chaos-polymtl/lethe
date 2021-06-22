@@ -597,54 +597,6 @@ namespace Parameters
       }
       prm.leave_subsection();
     }
-      void
-      ForcesNdTorques::declare_parameters(ParameterHandler &prm)
-      {
-          prm.enter_subsection("Forces and Torques");
-          {
-              prm.declare_entry("Calculate forces? (false/true)",
-                                "false",
-                                Patterns::Bool(),
-                                "Enable calculation of forces");
-              prm.declare_entry("Calculate torques? (false/true)",
-                                "false",
-                                Patterns::Bool(),
-                                "Enable calculation of torques");
-              prm.declare_entry("Output name of force's file (string)",
-                                "force",
-                                Patterns::FileName(),
-                                "File output force prefix");
-              prm.declare_entry("Output name of torque's file (string)",
-                                "Output name of torque's file",
-                                Patterns::FileName(),
-                                "File output force prefix");
-              prm.declare_entry("Which frequency of computation? (int)",
-                                "1",
-                                Patterns::Integer(),
-                                "Calculation frequency of forces and torques, must be lower or equal than output frequency");
-              prm.declare_entry("Which frequency for the output file creation? (int)",
-                                "1",
-                                Patterns::Integer(),
-                                "Output frequency, must be greater or equal to calculation frequency");
-          }
-          prm.leave_subsection();
-      }
-
-      void
-      ForcesNdTorques::parse_parameters(ParameterHandler &prm)
-      {
-          prm.enter_subsection("Forces and Torques");
-          {
-              calculate_force       = prm.get_bool("Calculate forces? (false/true)");
-              calculate_torque      = prm.get_bool("Calculate torques? (false/true)");
-              force_output_name     = prm.get("Output name of force's file (string)");
-              torque_output_name    = prm.get("Output name of torque's file (string)");
-              calculation_frequency = prm.get_integer("Which frequency of computation? (int)");
-              output_frequency      = prm.get_integer("Which frequency for the output file creation? (int)");
-          }
-          prm.leave_subsection();
-      }
-
 
       template <int dim>
     void
