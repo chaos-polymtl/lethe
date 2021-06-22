@@ -163,6 +163,8 @@ private:
   DoFHandler<dim>           dof_handler_pressure;
   SparsityPattern           sparsity_pattern_pressure;
   AffineConstraints<double> pressure_constraints;
+  AffineConstraints<double> delta_pressure_constraints;
+
 
 
   // Components required for equation 1
@@ -183,6 +185,8 @@ private:
   Vector<double>       corrector_eq_system_rhs;
 
   Vector<double> velocity_solution;
+
+  bool pressure_initialized;
 };
 
 
@@ -275,6 +279,16 @@ ChorinNavierStokes<dim>::initialize_system()
                                                Functions::ConstantFunction<dim>(
                                                  1.),
                                                pressure_constraints);
+
+      VectorTools::interpolate_boundary_values(dof_handler_pressure,
+                                               1,
+                                               Functions::ZeroFunction<dim>(),
+                                               delta_pressure_constraints);
+
+      VectorTools::interpolate_boundary_values(dof_handler_pressure,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
+                                               delta_pressure_constraints);
     }
 
   else if (simulation_case == SimulationCases::Cavity)
@@ -312,6 +326,7 @@ ChorinNavierStokes<dim>::initialize_system()
 
   velocity_constraints.close();
   pressure_constraints.close();
+  delta_pressure_constraints.close();
 
 
 
@@ -351,6 +366,9 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::assemble_predictor()
 {
+  predictor_eq_system_matrix = 0;
+  predictor_eq_system_rhs    = 0;
+
   QGauss<dim>   quadrature_velocity(fe_velocity.degree + 1);
   FEValues<dim> fe_values_velocity(fe_velocity,
                                    quadrature_velocity,
@@ -385,17 +403,17 @@ ChorinNavierStokes<dim>::assemble_predictor()
   // Set up iterators over both DoF_handlers
   typename DoFHandler<dim>::active_cell_iterator cell_u =
     dof_handler_velocity.begin_active();
+  const auto endc = dof_handler_velocity.end();
 
   typename DoFHandler<dim>::active_cell_iterator cell_p =
     dof_handler_pressure.begin_active();
-  const auto endc = dof_handler_pressure.end();
 
   // Iterate over each cell
   for (; cell_u != endc; ++cell_u, ++cell_p)
     {
       // Reset each cell contributions
       fe_values_velocity.reinit(cell_u);
-      fe_values_pressure.reinit(cell_u);
+      fe_values_pressure.reinit(cell_p);
       cell_matrix = 0;
       cell_rhs    = 0;
 
@@ -463,6 +481,9 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::assemble_pressure_eq()
 {
+  pressure_eq_system_matrix = 0;
+  pressure_eq_system_rhs    = 0;
+
   // Pressure FE system
   QGauss<dim>   quadrature_pressure(fe_pressure.degree + 1);
   FEValues<dim> fe_values_pressure(fe_pressure,
@@ -525,8 +546,9 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
                  fe_values_pressure.JxW(q));        // dx
 
           for (const unsigned int i : fe_values_pressure.dof_indices())
-            cell_rhs(i) -= (fe_values_pressure.shape_value(i, q) * // phi_i(x_q)
-                            div_tentative_velocity[q] *            // div u*
+            cell_rhs(i) -= (fe_values_pressure.shape_value(i, q) *
+                            // phi_i(x_q)
+                            div_tentative_velocity[q] * // div u*
                             fe_values_pressure.JxW(q)) /
                            k_l; // dx / k_l
         }
@@ -534,11 +556,24 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
       // Transfer cell components to global matrix/vector
       cell_p->get_dof_indices(local_dof_indices);
 
-      pressure_constraints.distribute_local_to_global(cell_matrix,
-                                                      cell_rhs,
-                                                      local_dof_indices,
-                                                      pressure_eq_system_matrix,
-                                                      pressure_eq_system_rhs);
+      if (pressure_initialized)
+        {
+          delta_pressure_constraints.distribute_local_to_global(
+            cell_matrix,
+            cell_rhs,
+            local_dof_indices,
+            pressure_eq_system_matrix,
+            pressure_eq_system_rhs);
+        }
+      else
+        {
+          pressure_constraints.distribute_local_to_global(
+            cell_matrix,
+            cell_rhs,
+            local_dof_indices,
+            pressure_eq_system_matrix,
+            pressure_eq_system_rhs);
+        }
 
 
 
@@ -570,9 +605,18 @@ ChorinNavierStokes<dim>::solve_pressure_eq()
 {
   SparseDirectUMFPACK pressure_eq_direct;
   pressure_eq_direct.initialize(pressure_eq_system_matrix);
-  pressure_eq_direct.vmult(delta_pressure, pressure_eq_system_rhs);
-  pressure += delta_pressure;
-  pressure_constraints.distribute(pressure);
+  if (pressure_initialized)
+    {
+      pressure_eq_direct.vmult(delta_pressure, pressure_eq_system_rhs);
+      delta_pressure_constraints.distribute(delta_pressure);
+      pressure += delta_pressure;
+    }
+  else
+    {
+      pressure_eq_direct.vmult(pressure, pressure_eq_system_rhs);
+      pressure_constraints.distribute(pressure);
+      pressure_initialized = true;
+    }
 
 
   std::cout << "    Pressure  Equation (2) solved using direct solver."
@@ -583,6 +627,9 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::assemble_new_velocity_eq()
 {
+  corrector_eq_system_matrix = 0;
+  corrector_eq_system_rhs    = 0;
+
   // Velocity FE system
   QGauss<dim>   quadrature_velocity(fe_velocity.degree + 1);
   FEValues<dim> fe_values_velocity(fe_velocity,
@@ -708,6 +755,10 @@ ChorinNavierStokes<dim>::output_results(const unsigned int cycle) const
   DataOut<dim> data_out;
 
   data_out.add_data_vector(dof_handler_pressure, pressure, "pressure");
+  data_out.add_data_vector(dof_handler_pressure,
+                           delta_pressure,
+                           "delta_pressure");
+
 
   std::vector<DataComponentInterpretation::DataComponentInterpretation>
     data_component_interpretation(
@@ -755,8 +806,9 @@ void
 ChorinNavierStokes<dim>::run()
 {
   // Set time parameters for simulation
-  k_l                   = 0.1;
+  k_l                   = 1;
   const double end_time = 100;
+  pressure_initialized  = false;
 
   simulation_time              = 0;
   const unsigned int end_cycle = end_time / k_l;
@@ -790,12 +842,9 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(
-        1, 1, SimulationCases::Poiseuille); // degreeVelocity, degreePressure
+        1, 1, SimulationCases::Cavity); // degreeVelocity, degreePressure
 
-      // problem_2d.runCouette();
       problem_2d.run();
-      // problem_2d.runCavity();
-      // problem_2d.runMMS();
     }
   catch (std::exception &exc)
     {
