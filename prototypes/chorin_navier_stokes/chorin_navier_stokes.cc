@@ -842,7 +842,7 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(
-        1, 1, SimulationCases::Cavity); // degreeVelocity, degreePressure
+        1, 1, SimulationCases::Poiseuille); // degreeVelocity, degreePressure
 
       problem_2d.run();
     }
