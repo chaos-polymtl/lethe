@@ -1,11 +1,17 @@
 name: CI
 
 on:
-  # Runs on every push. If a push contains multiple commits, it will be ran on the latest one.
+  # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
+    branches:    
+      # Push events on master branch
+      - master
   # Runs the workflow when a PR is opened or syncronized (new commit). Covers PRs from forks.
   # See: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target
   pull_request_target:
+    branches:    
+      # Pull request events targetting master branch
+      - master
 
 env:
   COMPILE_JOBS: 2
@@ -14,10 +20,6 @@ jobs:
   build:
     name: Build (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
     runs-on: ubuntu-latest
-    
-    # Cancels out jobs with the same concurrency label to avoid duplicates caused by the push and pull_request trigger
-    # See: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#concurrency
-    concurrency: build-${{ github.ref }}
 
     strategy:
       fail-fast: false
@@ -42,7 +44,6 @@ jobs:
 
           echo "Github actions is sane!"
           echo "Running ${{ matrix.build_type }} build with deal.ii version ${{ matrix.dealii_version }} on branch ${GITHUB_REF#refs/heads/}"
-
 
       # Checks-out Lethe with branch of triggering commit
       - name: Checkout code
