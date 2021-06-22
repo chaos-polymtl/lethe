@@ -67,6 +67,7 @@ test()
   param->solid_mesh.grid_type          = "hyper_cube";
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 3;
+  param->solid_mesh.simplex            = false;
 
   double time_step = 0.01;
   param->solid_velocity.declare_parameters(prm, 3);
@@ -79,7 +80,9 @@ test()
   const unsigned int degree_velocity = 1;
 
   // SolidBase class
-  SolidBase<3, 3> solid(param, fluid_tria, degree_velocity);
+  std::shared_ptr<Mapping<3>> fluid_mapping =
+    std::make_shared<MappingQGeneric<3>>(1);
+  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping, degree_velocity);
   solid.initial_setup();
   solid.setup_particles();
   DoFHandler<3, 3> &solid_dh = solid.get_solid_dof_handler();
