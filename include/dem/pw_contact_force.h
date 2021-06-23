@@ -68,6 +68,18 @@ public:
     std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
     std::unordered_map<types::particle_index, Tensor<1, dim>> &force) = 0;
 
+  std::map<unsigned int, Tensor<1, dim>>
+    get_force()
+  {
+    return force_on_walls;
+  }
+
+  std::map<unsigned int, Tensor<1, dim>>
+    get_torque()
+  {
+    return torque_on_walls;
+  }
+
 protected:
   /**
    * Carries out updating the contact pair information for both non-linear and
@@ -102,7 +114,9 @@ protected:
                                           Tensor<1, dim>,
                                           Tensor<1, dim>> &forces_and_torques,
                          Tensor<1, dim> &                  particle_momentum,
-                         Tensor<1, dim> &                  particle_force)
+                         Tensor<1, dim> &                  particle_force,
+                         Point<dim>     &                  point_on_boundary,
+                         unsigned int   &                  boundary_id)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -114,6 +128,23 @@ protected:
 
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;
+
+    if (calculate_force_torque_on_boundary == true)
+      {
+        force_on_walls[boundary_id] = force_on_walls[boundary_id] - total_force;
+        if (dim==2)
+          {
+            Tensor<1,dim> r = point_on_boundary - center_mass_container;
+            torque_on_walls[boundary_id][2] =
+              torque_on_walls[boundary_id][2] - (r[0]*total_force[1]-r[1]*total_force[2]);
+          }
+        else if (dim==3)
+        {
+          torque_on_walls[boundary_id] =
+            torque_on_walls[boundary_id] - cross_product_3d(point_on_boundary - center_mass_container,
+                             total_force);
+        }
+      }
 
     // Updating the force of particles in the particle handler
     for (int d = 0; d < dim; ++d)
@@ -128,6 +159,12 @@ protected:
                                rolling_resistance_torque[d];
       }
   }
+
+  void
+  get_force_torque();
+
+  std::map<unsigned int, Tensor<1, dim>>
+  initialize(std::map<unsigned int, Tensor<1, dim>> map);
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -158,6 +195,10 @@ protected:
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
     effective_coefficient_of_rolling_friction;
+  std::map<unsigned int, Tensor<1, dim>> force_on_walls;
+  std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
+  bool                          calculate_force_torque_on_boundary;
+  Point<dim>                    center_mass_container;
 };
 
 #endif /* particle_wall_contact_force_h */
