@@ -430,6 +430,8 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
             }
           error_table.set_precision("error_velocity",
                                     simulation_control->get_log_precision());
+          error_table.set_precision("error_pressure",
+                                    simulation_control->get_log_precision());
           error_table.write_text(std::cout);
         }
     }

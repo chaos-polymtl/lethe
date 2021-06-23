@@ -687,6 +687,8 @@ HeatTransfer<dim>::finish_simulation()
             ConvergenceTable::reduction_rate_log2);
         }
       error_table.set_scientific("error_temperature", true);
+      error_table.set_precision("error_temperature",
+                                simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
 }

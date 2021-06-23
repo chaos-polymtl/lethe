@@ -422,6 +422,8 @@ FreeSurface<dim>::finish_simulation()
         error_table.omit_column_from_convergence_rate_evaluation("time");
 
       error_table.set_scientific("error_phase", true);
+      error_table.set_precision("error_phase",
+                                simulation_control->get_log_precision());
       error_table.write_text(std::cout);
     }
 }
