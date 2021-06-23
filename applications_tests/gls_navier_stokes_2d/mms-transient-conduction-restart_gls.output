@@ -42,6 +42,11 @@ Transient iteration : 10       Time : 1        Time step : 0.1      CFL : 0
 L2 error velocity : 0
 L2 error temperature : 5.05833e-09
  time  error_velocity 
+0.6000 0.000000e+00   
+0.7000 0.000000e+00   
+0.8000 0.000000e+00   
+0.9000 0.000000e+00   
+1.0000 0.000000e+00   
 cells error_temperature 
 256   2.438505e-07      
 256   3.052461e-08      
