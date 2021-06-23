@@ -94,6 +94,10 @@ PWLinearForce<dim>::PWLinearForce(
       calculate_rolling_resistance_torque =
         &PWLinearForce<dim>::viscous_resistance;
     }
+
+    this->calculate_force_torque_on_boundary =
+      dem_parameters.forces_torques.calculate_force_torque;
+  this->center_mass_container=dem_parameters.forces_torques.point_center_mass;
 }
 
 template <int dim>
@@ -107,6 +111,8 @@ PWLinearForce<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
+  PWContactForce<dim>::force_on_walls=PWContactForce<dim>::initialize(PWContactForce<dim>::force_on_walls);
+  PWContactForce<dim>::torque_on_walls=PWContactForce<dim>::initialize(PWContactForce<dim>::torque_on_walls);
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :
@@ -170,7 +176,9 @@ PWLinearForce<dim>::calculate_pw_contact_force(
               // Apply the calculated forces and torques on the particle pair
               this->apply_force_and_torque(forces_and_torques,
                                            particle_momentum,
-                                           particle_force);
+                                           particle_force,
+                                           point_on_boundary,
+                                           contact_information.boundary_id);
             }
           else
             {

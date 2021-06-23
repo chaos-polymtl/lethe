@@ -244,6 +244,9 @@ private:
   void
   write_output_results();
 
+  void
+  write_forces_torques_output_results();
+
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
