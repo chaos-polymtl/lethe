@@ -17,7 +17,7 @@ jobs:
       matrix:
         build_type: ["Release", "Debug"]
         dealii_version: ["master", "v9.3.0"]
-    
+
     # Run steps in container of dealii's master branch
     container:
       image: dealii/dealii:${{ matrix.dealii_version }}-focal
@@ -26,7 +26,7 @@ jobs:
       - name: Setup
         run: |
           # Github action require containers to run as root. We can't do this without breaking the mpi tests.
-          # To allow the checkout action to operate, we preemptively give access to the workspace directory manually. 
+          # To allow the checkout action to operate, we preemptively give access to the workspace directory manually.
           sudo chown -R $USER:$USER $GITHUB_WORKSPACE
 
           # Since dealii image doesn't include Node.js, we'll install it
@@ -52,10 +52,10 @@ jobs:
           cd build
           ctest -V
 
-  #formatting:
-    #runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    #    steps:
+      #formatting:
+      #runs-on: ubuntu-latest
+      # Steps represent a sequence of tasks that will be executed as part of the job
+      #    steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       # - uses: actions/checkout@v2
       #        with: clangFormatVersion: 5
