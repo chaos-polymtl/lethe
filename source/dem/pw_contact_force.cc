@@ -99,17 +99,6 @@ PWContactForce<dim>::update_contact_information(
 }
 
 template <int dim>
-void
-PWContactForce<dim>::get_force_torque()
-{
-  for (const auto &it : force_on_walls)
-    {
-      std::cout << "Boundary " << it.first << " :\n"
-                << "F = " << it.second << "\nM = " << torque_on_walls[it.first]
-                << "\n\n";
-    }
-}
-template <int dim>
 std::map<unsigned int, Tensor<1, dim>>
 PWContactForce<dim>::initialize(std::map<unsigned int, Tensor<1, dim>> map)
 {
