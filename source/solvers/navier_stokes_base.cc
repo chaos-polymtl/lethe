@@ -1035,8 +1035,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error velocity : " << error_velocity
-                          << std::endl;
+              this->pcout << "L2 error velocity : "
+                          << std::setprecision(
+                               simulation_control->get_log_precision())
+                          << error_velocity << std::endl;
             }
         }
     }
