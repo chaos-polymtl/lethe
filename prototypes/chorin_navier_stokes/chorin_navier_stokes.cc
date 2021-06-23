@@ -271,10 +271,6 @@ ChorinNavierStokes<dim>::initialize_system()
                                                velocity_constraints);
 
       VectorTools::interpolate_boundary_values(dof_handler_pressure,
-                                               1,
-                                               Functions::ZeroFunction<dim>(),
-                                               pressure_constraints);
-      VectorTools::interpolate_boundary_values(dof_handler_pressure,
                                                0,
                                                Functions::ConstantFunction<dim>(
                                                  1.),
@@ -283,10 +279,14 @@ ChorinNavierStokes<dim>::initialize_system()
       VectorTools::interpolate_boundary_values(dof_handler_pressure,
                                                1,
                                                Functions::ZeroFunction<dim>(),
+                                               pressure_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_pressure,
+                                               0,
+                                               Functions::ZeroFunction<dim>(),
                                                delta_pressure_constraints);
 
       VectorTools::interpolate_boundary_values(dof_handler_pressure,
-                                               0,
+                                               1,
                                                Functions::ZeroFunction<dim>(),
                                                delta_pressure_constraints);
     }
@@ -327,6 +327,11 @@ ChorinNavierStokes<dim>::initialize_system()
   velocity_constraints.close();
   pressure_constraints.close();
   delta_pressure_constraints.close();
+
+  std::cout << "Number of pressure constraints       : "
+            << pressure_constraints.n_constraints() << std::endl;
+  std::cout << "Number of delta pressure constraints : "
+            << pressure_constraints.n_constraints() << std::endl;
 
 
 
@@ -806,15 +811,15 @@ void
 ChorinNavierStokes<dim>::run()
 {
   // Set time parameters for simulation
-  k_l                   = 1;
-  const double end_time = 100;
+  k_l                   = 0.1;
+  const double end_time = 10;
   pressure_initialized  = false;
 
   simulation_time              = 0;
   const unsigned int end_cycle = end_time / k_l;
 
   std::cout << "Setting up grid" << std::endl;
-  make_cube_grid(4);
+  make_cube_grid(6);
   setup_dofs();
   initialize_system();
 
@@ -842,7 +847,7 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(
-        1, 1, SimulationCases::Poiseuille); // degreeVelocity, degreePressure
+        2, 1, SimulationCases::Couette); // degreeVelocity, degreePressure
 
       problem_2d.run();
     }
