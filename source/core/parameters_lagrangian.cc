@@ -616,11 +616,10 @@ namespace Parameters
                         "force",
                         Patterns::FileName(),
                         "File output force prefix");
-      prm.declare_entry(
-        "Which output's creation frequency? (int)",
-        "1",
-        Patterns::Integer(),
-        "Output frequency");
+      prm.declare_entry("Which output's creation frequency? (int)",
+                        "1",
+                        Patterns::Integer(),
+                        "Output frequency");
       prm.declare_entry("Coordinate x of center of mass",
                         "0",
                         Patterns::Double(),
@@ -641,7 +640,7 @@ namespace Parameters
     ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("Forces and Torques");
-      calculate_force_torque = prm.get_bool("calculation");
+      calculate_force_torque    = prm.get_bool("calculation");
       const std::string display = prm.get("Output mode");
       if (display == "none")
         force_torque_display_method = ForcesAndTorquesDisplay::none;
@@ -652,9 +651,9 @@ namespace Parameters
       else if (display == "both")
         force_torque_display_method = ForcesAndTorquesDisplay::both;
       else
-      {
-        throw(std::runtime_error("Invalid display method "));
-      }
+        {
+          throw(std::runtime_error("Invalid display method "));
+        }
       force_torque_output_name =
         prm.get("Output name of force and torque's file (string)");
       output_frequency =

@@ -114,9 +114,9 @@ std::map<unsigned int, Tensor<1, dim>>
 PWContactForce<dim>::initialize(std::map<unsigned int, Tensor<1, dim>> map)
 {
   for (const auto &it : map)
-  {
-    map[it.first]=0;
-  }
+    {
+      map[it.first] = 0;
+    }
   return map;
 }
 
