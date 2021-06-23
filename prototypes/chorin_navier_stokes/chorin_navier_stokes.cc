@@ -129,6 +129,8 @@ private:
   void
   initialize_system();
   void
+  set_pressure_reference();
+  void
   assemble_predictor();
   void
   solve_init_velocity_eq();
@@ -365,6 +367,63 @@ ChorinNavierStokes<dim>::initialize_system()
   corrector_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
 
   velocity_solution.reinit(dof_handler_velocity.n_dofs());
+}
+
+template <int dim>
+void
+ChorinNavierStokes<dim>::set_pressure_reference()
+{
+  // First find candidates for DoF indices to constrain for each velocity
+  // component.
+  types::global_dof_index pressure_id[1];
+  {
+    for (unsigned int d = 0; d < dim; ++d)
+      pressure_id[d] = numbers::invalid_dof_index;
+
+    unsigned int n_left_to_find = dim;
+
+    std::vector<types::global_dof_index> local_dof_indices(
+      finite_element.dofs_per_cell);
+    typename DoFHandler<dim>::active_cell_iterator cell;
+    for (const auto &cell : dof_handler.active_cell_iterators())
+      if (cell->is_locally_owned())
+        {
+          cell->get_dof_indices(local_dof_indices);
+
+          for (unsigned int i = 0; i < finite_element.dofs_per_cell; ++i)
+            {
+              const unsigned int component =
+                finite_element.system_to_component_index(i).first;
+
+              if (component < introspection.component_indices.velocities[0] ||
+                  component >
+                    introspection.component_indices.velocities[dim - 1])
+                continue; // only look at velocity
+
+              const unsigned int velocity_component =
+                component - introspection.component_indices.velocities[0];
+
+              if (vel_idx[velocity_component] != numbers::invalid_dof_index)
+                continue; // already found one
+
+              const types::global_dof_index idx = local_dof_indices[i];
+
+              if (constraints.can_store_line(idx) &&
+                  !constraints.is_constrained(idx))
+                {
+                  vel_idx[velocity_component] = idx;
+                  --n_left_to_find;
+                }
+
+              // are we done searching?
+              if (n_left_to_find == 0)
+                break; // exit inner loop
+            }
+
+          if (n_left_to_find == 0)
+            break; // exit outer loop
+        }
+  }
 }
 
 template <int dim>
