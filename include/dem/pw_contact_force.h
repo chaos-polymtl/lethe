@@ -160,9 +160,6 @@ protected:
       }
   }
 
-  void
-  get_force_torque();
-
   std::map<unsigned int, Tensor<1, dim>>
   initialize(std::map<unsigned int, Tensor<1, dim>> map);
 
