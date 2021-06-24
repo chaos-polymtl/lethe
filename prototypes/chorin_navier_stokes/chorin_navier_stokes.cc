@@ -207,6 +207,8 @@ private:
   void
   set_pressure_reference();
   void
+  solve_cfd(const double tolerance);
+  void
   assemble_predictor();
   void
   solve_init_velocity_eq();
@@ -1011,33 +1013,14 @@ ChorinNavierStokes<dim>::calculateL2Error()
   std::cout << "L2Error is : " << std::sqrt(l2errorU) << std::endl;
 }
 
+
+
 template <int dim>
 void
-ChorinNavierStokes<dim>::run()
+ChorinNavierStokes<dim>::solve_cfd(const double tolerance)
 {
-  if (simulation_case == SimulationCases::MMS)
-    {
-      forcing_function = new MMSSineForcingFunction<dim>;
-      exact_solution   = new ExactSolutionMMS<dim>;
-    }
-  else
-    forcing_function = new NoForce<dim>;
-
-
-  // Set time parameters for simulation
-  k_l                  = 0.01;
-  double tolerance     = 1e-3;
-  double residual      = 1;
-  pressure_initialized = false;
-
-  simulation_time = 0;
-
-  std::cout << "Setting up grid" << std::endl;
-  make_cube_grid(6);
-  setup_dofs();
-  initialize_system();
-  unsigned int cycle = 0;
-
+  double       residual = 1;
+  unsigned int cycle    = 0;
   while (residual > tolerance)
     {
       // At each time step
@@ -1062,10 +1045,36 @@ ChorinNavierStokes<dim>::run()
 
       velocity_solution = corrected_velocity;
       simulation_time   = simulation_time + k_l;
-      if (exact_solution)
-        calculateL2Error();
       cycle++;
     }
+}
+
+template <int dim>
+void
+ChorinNavierStokes<dim>::run()
+{
+  if (simulation_case == SimulationCases::MMS)
+    {
+      forcing_function = new MMSSineForcingFunction<dim>;
+      exact_solution   = new ExactSolutionMMS<dim>;
+    }
+  else
+    forcing_function = new NoForce<dim>;
+
+
+  viscosity = 1;
+  // Set time parameters for simulation
+  k_l                  = 0.01;
+  double tolerance     = 1e-3;
+  pressure_initialized = false;
+
+  simulation_time = 0;
+
+  make_cube_grid(5);
+  setup_dofs();
+  initialize_system();
+  solve_cfd(tolerance);
+  calculateL2Error();
 }
 
 int
