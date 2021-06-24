@@ -96,6 +96,10 @@ protected:
   // the terminal
   unsigned int log_frequency;
 
+  // Log precision
+  // Controls the number of significant digits displayed on the standard outputs
+  unsigned int log_precision;
+
   // Number of mesh subdivision to be used when outputting the results
   unsigned int subdivision;
 
@@ -315,6 +319,12 @@ public:
   get_group_files()
   {
     return group_files;
+  }
+
+  unsigned int
+  get_log_precision()
+  {
+    return log_precision;
   }
 
   double
