@@ -187,6 +187,8 @@ private:
   Vector<double>       corrector_eq_system_rhs;
 
   Vector<double> velocity_solution;
+  Vector<double> velocity_change;
+
 
   bool pressure_initialized;
 };
@@ -257,6 +259,8 @@ ChorinNavierStokes<dim>::initialize_system()
                                                3,
                                                CouetteTopVelocity<dim>(),
                                                velocity_constraints);
+
+      set_pressure_reference();
     }
 
   else if (simulation_case == SimulationCases::Poiseuille)
@@ -314,6 +318,8 @@ ChorinNavierStokes<dim>::initialize_system()
                                                3,
                                                CouetteTopVelocity<dim>(),
                                                velocity_constraints);
+
+      set_pressure_reference();
     }
 
   else
@@ -367,6 +373,7 @@ ChorinNavierStokes<dim>::initialize_system()
   corrector_eq_system_rhs.reinit(dof_handler_velocity.n_dofs());
 
   velocity_solution.reinit(dof_handler_velocity.n_dofs());
+  velocity_change.reinit(dof_handler_velocity.n_dofs());
 }
 
 template <int dim>
@@ -377,41 +384,26 @@ ChorinNavierStokes<dim>::set_pressure_reference()
   // component.
   types::global_dof_index pressure_id[1];
   {
-    for (unsigned int d = 0; d < dim; ++d)
-      pressure_id[d] = numbers::invalid_dof_index;
+    pressure_id[0] = numbers::invalid_dof_index;
 
-    unsigned int n_left_to_find = dim;
+    unsigned int n_left_to_find = 1;
 
     std::vector<types::global_dof_index> local_dof_indices(
-      finite_element.dofs_per_cell);
+      fe_pressure.dofs_per_cell);
     typename DoFHandler<dim>::active_cell_iterator cell;
-    for (const auto &cell : dof_handler.active_cell_iterators())
+    for (const auto &cell : dof_handler_pressure.active_cell_iterators())
       if (cell->is_locally_owned())
         {
           cell->get_dof_indices(local_dof_indices);
 
-          for (unsigned int i = 0; i < finite_element.dofs_per_cell; ++i)
+          for (unsigned int i = 0; i < fe_pressure.dofs_per_cell; ++i)
             {
-              const unsigned int component =
-                finite_element.system_to_component_index(i).first;
-
-              if (component < introspection.component_indices.velocities[0] ||
-                  component >
-                    introspection.component_indices.velocities[dim - 1])
-                continue; // only look at velocity
-
-              const unsigned int velocity_component =
-                component - introspection.component_indices.velocities[0];
-
-              if (vel_idx[velocity_component] != numbers::invalid_dof_index)
-                continue; // already found one
-
               const types::global_dof_index idx = local_dof_indices[i];
 
-              if (constraints.can_store_line(idx) &&
-                  !constraints.is_constrained(idx))
+              if (pressure_constraints.can_store_line(idx) &&
+                  !pressure_constraints.is_constrained(idx))
                 {
-                  vel_idx[velocity_component] = idx;
+                  pressure_id[0] = idx;
                   --n_left_to_find;
                 }
 
@@ -424,6 +416,11 @@ ChorinNavierStokes<dim>::set_pressure_reference()
             break; // exit outer loop
         }
   }
+
+  std::cout << "Adding constraint to the following dof " << pressure_id[0]
+            << std::endl;
+  pressure_constraints.add_line(pressure_id[0]);
+  delta_pressure_constraints.add_line(pressure_id[0]);
 }
 
 template <int dim>
@@ -870,19 +867,20 @@ void
 ChorinNavierStokes<dim>::run()
 {
   // Set time parameters for simulation
-  k_l                   = 0.1;
-  const double end_time = 10;
-  pressure_initialized  = false;
+  k_l                  = 0.1;
+  double tolerance     = 1e-6;
+  double residual      = 1;
+  pressure_initialized = false;
 
-  simulation_time              = 0;
-  const unsigned int end_cycle = end_time / k_l;
+  simulation_time = 0;
 
   std::cout << "Setting up grid" << std::endl;
-  make_cube_grid(6);
+  make_cube_grid(5);
   setup_dofs();
   initialize_system();
+  unsigned int cycle = 0;
 
-  for (unsigned int cycle = 0; cycle < end_cycle; cycle++)
+  while (residual > tolerance)
     {
       // At each time step
       std::cout << " Time: " << simulation_time << " seconds" << std::endl;
@@ -895,8 +893,14 @@ ChorinNavierStokes<dim>::run()
       solve_new_velocity_eq();
       output_results(cycle);
 
+      velocity_change = corrected_velocity;
+      velocity_change -= velocity_solution;
+      residual = velocity_change.l2_norm();
+      std::cout << "    Residual : " << residual << std::endl;
+
       velocity_solution = corrected_velocity;
       simulation_time   = simulation_time + k_l;
+      cycle++;
     }
 }
 
@@ -906,7 +910,7 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(
-        2, 1, SimulationCases::Couette); // degreeVelocity, degreePressure
+        2, 1, SimulationCases::Cavity); // degreeVelocity, degreePressure
 
       problem_2d.run();
     }
