@@ -104,6 +104,59 @@ CouetteTopVelocity<dim>::vector_value(const Point<dim> & /*point*/,
 }
 
 template <int dim>
+class MMSSineForcingFunction : public Function<dim>
+{
+public:
+  MMSSineForcingFunction()
+    : Function<dim>(2){};
+  virtual void
+  vector_value(const Point<dim> &p, Vector<double> &values) const;
+};
+template <int dim>
+void
+MMSSineForcingFunction<dim>::vector_value(const Point<dim> &p,
+                                          Vector<double> &  values) const
+{
+  assert(dim == 2);
+  const double a = M_PI;
+
+  double x = p[0];
+  double y = p[1];
+  values(0) =
+    (2 * a * a * (-sin(a * x) * sin(a * x) + cos(a * x) * (cos(a * x))) *
+       sin(a * y) * cos(a * y) -
+     4 * a * a * sin(a * x) * sin(a * x) * sin(a * y) * cos(a * y) - 2.0 * x) *
+      (-1.) +
+    a * std::pow(sin(a * x), 3.) * std::pow(sin(a * y), 2.) * std::cos(a * x);
+  values(1) =
+    (2 * a * a * (sin(a * y) * (sin(a * y)) - cos(a * y) * cos(a * y)) *
+       sin(a * x) * cos(a * x) +
+     4 * a * a * sin(a * x) * sin(a * y) * sin(a * y) * cos(a * x) - 2.0 * y) *
+      (-1) +
+    a * std::pow(sin(a * x), 2.) * std::pow(sin(a * y), 3.) * std::cos(a * y);
+}
+
+template <int dim>
+class NoForce : public Function<dim>
+{
+public:
+  NoForce()
+    : Function<dim>(2){};
+  virtual void
+  vector_value(const Point<dim> &p, Vector<double> &values) const;
+};
+template <int dim>
+void
+NoForce<dim>::vector_value(const Point<dim> & /*p*/,
+                           Vector<double> &values) const
+{
+  assert(dim == 2);
+  values(0) = 0.;
+  values(1) = 0.;
+}
+
+
+template <int dim>
 class ChorinNavierStokes
 {
 public:
@@ -139,9 +192,9 @@ private:
   void
   solve_pressure_eq();
   void
-  assemble_new_velocity_eq();
+  assemble_corrector();
   void
-  solve_new_velocity_eq();
+  solve_corrector();
   void
   calculateL2Error();
   void
@@ -322,6 +375,32 @@ ChorinNavierStokes<dim>::initialize_system()
       set_pressure_reference();
     }
 
+  else if (simulation_case == SimulationCases::MMS)
+    {
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               0,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               1,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               2,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      VectorTools::interpolate_boundary_values(dof_handler_velocity,
+                                               3,
+                                               Functions::ZeroFunction<dim>(
+                                                 dim),
+                                               velocity_constraints);
+      set_pressure_reference();
+    }
+
+
   else
     {
       VectorTools::interpolate_boundary_values(dof_handler_velocity,
@@ -461,6 +540,10 @@ ChorinNavierStokes<dim>::assemble_predictor()
   std::vector<Tensor<1, dim>> phi_u(velocity_dofs_per_cell);
   std::vector<Tensor<2, dim>> grad_phi_u(velocity_dofs_per_cell);
 
+  std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim));
+  Tensor<1, dim>              force;
+
+
   // Set up iterators over both DoF_handlers
   typename DoFHandler<dim>::active_cell_iterator cell_u =
     dof_handler_velocity.begin_active();
@@ -484,6 +567,10 @@ ChorinNavierStokes<dim>::assemble_predictor()
       fe_values_pressure.get_function_gradients(pressure,
                                                 present_pressure_gradients);
 
+      // Force
+      forcing_function->vector_value_list(
+        fe_values_velocity.get_quadrature_points(), rhs_force);
+
       // Iterate through quadrature points
       for (unsigned int q = 0; q < n_q_points; ++q)
         {
@@ -491,6 +578,11 @@ ChorinNavierStokes<dim>::assemble_predictor()
             {
               phi_u[i]      = fe_values_velocity[velocities].value(i, q);
               grad_phi_u[i] = fe_values_velocity[velocities].gradient(i, q);
+            }
+          // Establish the force vector
+          for (int i = 0; i < dim; ++i)
+            {
+              force[i] = rhs_force[q](i);
             }
 
           for (unsigned int i = 0; i < velocity_dofs_per_cell; ++i)
@@ -508,7 +600,7 @@ ChorinNavierStokes<dim>::assemble_predictor()
               // Build vector F1 by cell components
               cell_rhs(i) +=
                 (1. / k_l * phi_u[i] * present_velocity_values[q] -
-                 phi_u[i] * present_pressure_gradients[q]) *
+                 phi_u[i] * present_pressure_gradients[q] + phi_u[i] * force) *
                 fe_values_velocity.JxW(q); // k_l * phi_i * f_l * dx
             }
         }
@@ -635,28 +727,6 @@ ChorinNavierStokes<dim>::assemble_pressure_eq()
             pressure_eq_system_matrix,
             pressure_eq_system_rhs);
         }
-
-
-
-      //// Add boundary conditions (couette)
-      // if (couette_case || cavity_case)
-      //  {
-      //    // Target bottom left corner at (-1,-1)
-      //    Point<dim> target_point;
-      //    target_point(0) = -1.0;
-      //    target_point(1) = -1.0;
-      //
-      //    std::map<unsigned int, double> boundary_condition;
-      //
-      //    for (unsigned int vertex = 0;
-      //         vertex < GeometryInfo<dim>::vertices_per_cell;
-      //         ++vertex)
-      //      {
-      //        if (target_point.distance(cell_p->vertex(vertex)) <
-      //            1e-3 * cell_p->diameter())
-      //          boundary_condition[cell_p->vertex_dof_index(vertex, 0)] = 0;
-      //      }
-      //  }
     }
 }
 
@@ -666,18 +736,19 @@ ChorinNavierStokes<dim>::solve_pressure_eq()
 {
   SparseDirectUMFPACK pressure_eq_direct;
   pressure_eq_direct.initialize(pressure_eq_system_matrix);
+  pressure_eq_direct.vmult(delta_pressure, pressure_eq_system_rhs);
+
   if (pressure_initialized)
     {
-      pressure_eq_direct.vmult(delta_pressure, pressure_eq_system_rhs);
       delta_pressure_constraints.distribute(delta_pressure);
-      pressure += delta_pressure;
     }
   else
     {
-      pressure_eq_direct.vmult(pressure, pressure_eq_system_rhs);
-      pressure_constraints.distribute(pressure);
+      pressure_constraints.distribute(delta_pressure);
       pressure_initialized = true;
     }
+  // delta_pressure *= 0.3;
+  pressure += delta_pressure;
 
 
   std::cout << "    Pressure  Equation (2) solved using direct solver."
@@ -686,7 +757,7 @@ ChorinNavierStokes<dim>::solve_pressure_eq()
 
 template <int dim>
 void
-ChorinNavierStokes<dim>::assemble_new_velocity_eq()
+ChorinNavierStokes<dim>::assemble_corrector()
 {
   corrector_eq_system_matrix = 0;
   corrector_eq_system_rhs    = 0;
@@ -785,7 +856,7 @@ ChorinNavierStokes<dim>::assemble_new_velocity_eq()
 
 template <int dim>
 void
-ChorinNavierStokes<dim>::solve_new_velocity_eq()
+ChorinNavierStokes<dim>::solve_corrector()
 {
   // Solve AU=F directly
   SparseDirectUMFPACK new_velocity_eq_direct;
@@ -866,8 +937,14 @@ template <int dim>
 void
 ChorinNavierStokes<dim>::run()
 {
+  if (simulation_case == SimulationCases::MMS)
+    forcing_function = new MMSSineForcingFunction<dim>;
+  else
+    forcing_function = new NoForce<dim>;
+
+
   // Set time parameters for simulation
-  k_l                  = 0.1;
+  k_l                  = 0.01;
   double tolerance     = 1e-6;
   double residual      = 1;
   pressure_initialized = false;
@@ -889,14 +966,18 @@ ChorinNavierStokes<dim>::run()
       solve_init_velocity_eq();
       assemble_pressure_eq();
       solve_pressure_eq();
-      assemble_new_velocity_eq();
-      solve_new_velocity_eq();
+      assemble_corrector();
+      solve_corrector();
       output_results(cycle);
 
       velocity_change = corrected_velocity;
       velocity_change -= velocity_solution;
-      residual = velocity_change.l2_norm();
-      std::cout << "    Residual : " << residual << std::endl;
+      double residual_velocity = velocity_change.l2_norm();
+      double residual_pressure = delta_pressure.l2_norm();
+
+      std::cout << "    Residual velocity : " << residual_velocity << std::endl;
+      std::cout << "    Residual pressure : " << residual_pressure << std::endl;
+      residual = std::max(residual_pressure, residual_velocity);
 
       velocity_solution = corrected_velocity;
       simulation_time   = simulation_time + k_l;
@@ -910,7 +991,7 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(
-        2, 1, SimulationCases::Cavity); // degreeVelocity, degreePressure
+        1, 1, SimulationCases::Poiseuille); // degreeVelocity, degreePressure
 
       problem_2d.run();
     }
