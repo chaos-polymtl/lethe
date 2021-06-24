@@ -426,8 +426,13 @@ NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
               sub_columns.push_back("cells");
               sub_columns.push_back("error_velocity");
               sub_columns.push_back("error_pressure");
+              error_table.set_precision(
+                "error_pressure", simulation_control->get_log_precision());
               error_table.set_column_order(sub_columns);
             }
+          error_table.set_precision("error_velocity",
+                                    simulation_control->get_log_precision());
+
           error_table.write_text(std::cout);
         }
     }
@@ -1030,8 +1035,10 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocess_fd(bool firstIter)
           if (this->simulation_parameters.analytical_solution->verbosity ==
               Parameters::Verbosity::verbose)
             {
-              this->pcout << "L2 error velocity : " << error_velocity
-                          << std::endl;
+              this->pcout << "L2 error velocity : "
+                          << std::setprecision(
+                               simulation_control->get_log_precision())
+                          << error_velocity << std::endl;
             }
         }
     }

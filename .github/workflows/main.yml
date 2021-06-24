@@ -3,15 +3,7 @@ name: CI
 on:
   # Runs on every push on master branch. If a push contains multiple commits, it will be ran on the latest one.
   push:
-    branches:    
-      # Push events on master branch
-      - master
-  # Runs the workflow when a PR is opened or syncronized (new commit). Covers PRs from forks.
-  # See: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#pull_request_target
   pull_request_target:
-    branches:    
-      # Pull request events targetting master branch
-      - master
 
 env:
   COMPILE_JOBS: 2
