@@ -155,6 +155,29 @@ NoForce<dim>::vector_value(const Point<dim> & /*p*/,
   values(1) = 0.;
 }
 
+template <int dim>
+class ExactSolutionMMS : public Function<dim>
+{
+public:
+  ExactSolutionMMS()
+    : Function<dim>(2)
+  {}
+  virtual void
+  vector_value(const Point<dim> &p, Vector<double> &values) const;
+};
+template <int dim>
+void
+ExactSolutionMMS<dim>::vector_value(const Point<dim> &p,
+                                    Vector<double> &  values) const
+{
+  const double a = M_PI;
+  double       x = p[0];
+  double       y = p[1];
+  values(0)      = sin(a * x) * sin(a * x) * cos(a * y) * sin(a * y);
+  values(1)      = -cos(a * x) * sin(a * x) * sin(a * y) * sin(a * y);
+  // values(2)      = -2 + x * x + y * y;
+}
+
 
 template <int dim>
 class ChorinNavierStokes
@@ -592,8 +615,8 @@ ChorinNavierStokes<dim>::assemble_predictor()
                   // Build matrix A1 by cell components
                   cell_matrix(i, j) +=
                     ((phi_u[i] * phi_u[j]) / k_l +
-                     +viscosity *
-                       scalar_product(grad_phi_u[i], grad_phi_u[j])) *
+                     +viscosity * scalar_product(grad_phi_u[i], grad_phi_u[j]) +
+                     grad_phi_u[j] * present_velocity_values[q] * phi_u[i]) *
                     fe_values_velocity.JxW(q);
                 }
 
@@ -931,28 +954,86 @@ ChorinNavierStokes<dim>::output_results(const unsigned int cycle) const
 template <int dim>
 void
 ChorinNavierStokes<dim>::calculateL2Error()
-{}
+{
+  QGauss<dim>   quadrature_velocity(fe_velocity.degree + 1);
+  FEValues<dim> fe_values(fe_velocity,
+                          quadrature_velocity,
+                          update_values | update_gradients |
+                            update_quadrature_points | update_JxW_values);
+
+  double l2errorU = 0;
+
+  const FEValuesExtractors::Vector velocities(0);
+  const unsigned int velocity_dofs_per_cell = fe_velocity.n_dofs_per_cell();
+  const unsigned int n_q_points             = quadrature_velocity.size();
+  std::vector<types::global_dof_index> local_dof_indices(
+    velocity_dofs_per_cell);
+
+  std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
+  std::vector<Vector<double>> q_exactSol(n_q_points, Vector<double>(dim));
+
+
+
+  // loop over elements
+  typename DoFHandler<dim>::active_cell_iterator cell = dof_handler_velocity
+                                                          .begin_active(),
+                                                 endc =
+                                                   dof_handler_velocity.end();
+  for (; cell != endc; ++cell)
+    {
+      fe_values.reinit(cell);
+      fe_values[velocities].get_function_values(velocity_solution,
+                                                present_velocity_values);
+
+      // Retrieve the effective "connectivity matrix" for this element
+      cell->get_dof_indices(local_dof_indices);
+
+      // Get the exact solution at all gauss points
+      exact_solution->vector_value_list(fe_values.get_quadrature_points(),
+                                        q_exactSol);
+
+      for (unsigned int q = 0; q < n_q_points; q++)
+        {
+          // Find the values of x and u_h (the finite element solution) at the
+          // quadrature points
+          double ux_sim   = present_velocity_values[q][0];
+          double ux_exact = q_exactSol[q][0];
+
+          double uy_sim   = present_velocity_values[q][1];
+          double uy_exact = q_exactSol[q][1];
+
+          l2errorU +=
+            (ux_sim - ux_exact) * (ux_sim - ux_exact) * fe_values.JxW(q);
+          l2errorU +=
+            (uy_sim - uy_exact) * (uy_sim - uy_exact) * fe_values.JxW(q);
+        }
+    }
+  std::cout << "L2Error is : " << std::sqrt(l2errorU) << std::endl;
+}
 
 template <int dim>
 void
 ChorinNavierStokes<dim>::run()
 {
   if (simulation_case == SimulationCases::MMS)
-    forcing_function = new MMSSineForcingFunction<dim>;
+    {
+      forcing_function = new MMSSineForcingFunction<dim>;
+      exact_solution   = new ExactSolutionMMS<dim>;
+    }
   else
     forcing_function = new NoForce<dim>;
 
 
   // Set time parameters for simulation
   k_l                  = 0.01;
-  double tolerance     = 1e-6;
+  double tolerance     = 1e-3;
   double residual      = 1;
   pressure_initialized = false;
 
   simulation_time = 0;
 
   std::cout << "Setting up grid" << std::endl;
-  make_cube_grid(5);
+  make_cube_grid(6);
   setup_dofs();
   initialize_system();
   unsigned int cycle = 0;
@@ -981,6 +1062,8 @@ ChorinNavierStokes<dim>::run()
 
       velocity_solution = corrected_velocity;
       simulation_time   = simulation_time + k_l;
+      if (exact_solution)
+        calculateL2Error();
       cycle++;
     }
 }
@@ -991,7 +1074,7 @@ main()
   try
     {
       ChorinNavierStokes<2> problem_2d(
-        1, 1, SimulationCases::Poiseuille); // degreeVelocity, degreePressure
+        2, 1, SimulationCases::MMS); // degreeVelocity, degreePressure
 
       problem_2d.run();
     }
