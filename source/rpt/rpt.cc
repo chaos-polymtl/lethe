@@ -172,9 +172,10 @@ RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
 
   for (unsigned int i = 0; i < measured_counts.size(); i++)
     {
-      cost_function += std::pow((calculated_counts[i] - measured_counts[i]) /
-                                  (calculated_counts[i] + measured_counts[i]),
-                                2);
+      cost_function +=
+        std::pow((calculated_counts[i] - measured_counts[i]) /
+                   ((calculated_counts[i] + measured_counts[i]) / 2),
+                 2);
     }
 
   return cost_function;
