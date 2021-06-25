@@ -4,12 +4,12 @@ BB_EXE         "$python3 rpt_lethe_nomad.py"         # Blackbox (script)
 
 BB_OUTPUT_TYPE OBJ
 
-X0             ( 1.1e-05 2.2e6 11 )                   # starting point (dead time, activity,
+X0             ( 1e-4 1e6 15)                   # starting point (dead time, activity,
                                                       # attenuation coefficient reactor)
 
 LOWER_BOUND    * 0                                    # all variables are > 0
 
-MAX_BB_EVAL    50                                     # the algorithm terminates when
+MAX_BB_EVAL    250                                    # the algorithm terminates when
                                                       # X black-box evaluations have
                                                       # been made
 
