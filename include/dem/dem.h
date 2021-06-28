@@ -244,6 +244,10 @@ private:
   void
   write_output_results();
 
+  /**
+   * @brief write_forces_torques_output_results
+   * Write results of force and torque calculation in a file and depending of verbosity, in the terminal.
+   */
   void
   write_forces_torques_output_results();
 

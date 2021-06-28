@@ -102,7 +102,7 @@ template <int dim>
 std::map<unsigned int, Tensor<1, dim>>
 PWContactForce<dim>::initialize(std::map<unsigned int, Tensor<1, dim>> map)
 {
-  for (const auto &it : map)
+  for (const auto &it : boundary_translational_velocity_map)
   {
     map[it.first]=0;
   }

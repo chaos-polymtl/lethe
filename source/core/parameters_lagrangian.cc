@@ -591,11 +591,12 @@ namespace Parameters
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of forces");
-      prm.declare_entry("Output mode",
-                        "none",
-                        Patterns::Selection("none|terminal|file|both"),
-                        "Choosing how the outputs is gonna be displayed"
-                        "Choices are <none|terminal|file|both>.");
+      prm.declare_entry(
+        "verbosity",
+        "verbose",
+        Patterns::Selection("quiet|verbose"),
+        "State whether output from solver runs should be printed. "
+        "Choices are <quiet|verbose>.");
       prm.declare_entry("Output name of force and torque's file (string)",
                         "force",
                         Patterns::FileName(),
@@ -626,18 +627,14 @@ namespace Parameters
     {
       prm.enter_subsection("Forces and Torques");
       calculate_force_torque = prm.get_bool("calculation");
-      const std::string display = prm.get("Output mode");
-      if (display == "none")
-        force_torque_display_method = ForcesAndTorquesDisplay::none;
-      else if (display == "terminal")
-        force_torque_display_method = ForcesAndTorquesDisplay::terminal;
-      else if (display == "file")
-        force_torque_display_method = ForcesAndTorquesDisplay::file;
-      else if (display == "both")
-        force_torque_display_method = ForcesAndTorquesDisplay::both;
+      const std::string verbose = prm.get("verbosity");
+      if (verbose == "quiet")
+        force_torque_verbosity = Verbosity::quiet;
+      else if (verbose == "verbose")
+        force_torque_verbosity = Verbosity::verbose;
       else
       {
-        throw(std::runtime_error("Invalid display method "));
+        throw(std::runtime_error("Invalid verbosity choice "));
       }
       force_torque_output_name =
         prm.get("Output name of force and torque's file (string)");

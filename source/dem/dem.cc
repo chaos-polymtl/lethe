@@ -42,6 +42,8 @@
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
 
+#include <deal.II/base/table_handler.h>
+
 #include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -705,39 +707,56 @@ template <int dim>
 void
 DEMSolver<dim>::write_forces_torques_output_results()
 {
-  std::map<unsigned int, Tensor<1, dim>> force_on_walls;
-  std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
-  force_on_walls=pw_contact_force_object->get_force();
-  torque_on_walls=pw_contact_force_object->get_torque();
-  if ( (parameters.forces_torques.force_torque_display_method ==
-      Parameters::Lagrangian::ForceTorqueOnWall<
-        dim>::ForcesAndTorquesDisplay::terminal) ||
-      (parameters.forces_torques.force_torque_display_method ==
-      Parameters::Lagrangian::ForceTorqueOnWall<
-        dim>::ForcesAndTorquesDisplay::both) )
+  if (parameters.forces_torques.calculate_force_torque
+      && (this_mpi_process==0) )
     {
-      for (const auto &it : force_on_walls)
-      {
-        pcout     << "Boundary " << it.first << " :\n"
-                  << "F = " << it.second << "\nM = " << torque_on_walls[it.first]
-                  << "\n\n";
-      }
-    }
-  if ( (parameters.forces_torques.force_torque_display_method ==
-      Parameters::Lagrangian::ForceTorqueOnWall<
-        dim>::ForcesAndTorquesDisplay::file) ||
-    (parameters.forces_torques.force_torque_display_method ==
-    Parameters::Lagrangian::ForceTorqueOnWall<
-      dim>::ForcesAndTorquesDisplay::both) )
-    {
-      std::string name_output_file = parameters.forces_torques.force_torque_output_name;
+      std::map<unsigned int, Tensor<1, dim>> force_on_walls =
+        pw_contact_force_object->get_force();
+      std::map<unsigned int, Tensor<1, dim>> torque_on_walls =
+        pw_contact_force_object->get_torque();
 
+      if ( (parameters.forces_torques.force_torque_verbosity ==
+          Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose)
+          && (simulation_control->get_step_number() % parameters.forces_torques.output_frequency==0) )
+        {
+          for (const auto &it : force_on_walls)
+            {
+              pcout << "Boundary " << it.first << " :\n"
+                    << "Force = " << it.second
+                    << "\nMoment = " << torque_on_walls[it.first] << "\n\n";
+            }
+        }
+        std::string name_output_file =
+          parameters.forces_torques.force_torque_output_name;
+        TableHandler table;
+
+        for (const auto &it : force_on_walls)
+          {
+            table.add_value("Boundary", it.first);
+            table.add_value("Force x", it.second[0]);
+            table.add_value("Force y", it.second[1]);
+            table.add_value("Force z", it.second[2]);
+            table.add_value("Moment x", torque_on_walls[it.first][0]);
+            table.add_value("Moment y", torque_on_walls[it.first][1]);
+            table.add_value("Moment z", torque_on_walls[it.first][2]);
+            table.add_value("Current time",
+                            simulation_control->get_current_time());
+          }
+
+        table.set_precision("Force x", 9);
+        table.set_precision("Force y", 9);
+        table.set_precision("Force x", 9);
+        table.set_precision("Moment x", 9);
+        table.set_precision("Moment y", 9);
+        table.set_precision("Moment z", 9);
+        table.set_precision("Current time", 9);
+
+        // output
+        std::ofstream out_file(name_output_file, std::ofstream::app);
+        table.write_text(out_file);
+        out_file.close();
     }
 }
-
-
-
-
 
 template <int dim>
 void
@@ -944,11 +963,7 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
-      if (parameters.forces_torques.force_torque_display_method!=Parameters::Lagrangian::ForceTorqueOnWall<dim>::ForcesAndTorquesDisplay::none
-          && (simulation_control->get_step_number() % parameters.forces_torques.output_frequency==0))
-      {
         write_forces_torques_output_results();
-      }
 
       if (parameters.restart.checkpoint &&
           simulation_control->get_step_number() %
