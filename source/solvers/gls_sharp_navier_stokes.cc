@@ -2021,7 +2021,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           double entries=local_entrie[j].second;
 
                           interpolation+=this->evaluation_point(col)*entries;
-                          this->system_matrix.set(local_dof_indices[i],col,-entries*sum_line);
+                          this->system_matrix.set(local_dof_indices[i],col,entries*sum_line);
 
                       }
 
