@@ -239,14 +239,12 @@ namespace Parameters
           // Enable force post-processing
           bool calculate_force_torque;
 
-      // Choosing how the outputs is gonna be displayed
-      enum class ForcesAndTorquesDisplay
-      {
-        none,
-        terminal,
-        file,
-        both
-      } force_torque_display_method;
+          // Choosing how the outputs is gonna be displayed
+          enum class Verbosity
+        {
+          quiet,
+          verbose
+        } force_torque_verbosity;
 
           // Frequency of the output
           unsigned int output_frequency;
