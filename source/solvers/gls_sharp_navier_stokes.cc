@@ -90,6 +90,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
+
   // // Loop on all the cells and check if they are cut.
   for (const auto &cell : cell_iterator)
     {
@@ -101,12 +102,13 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // this value will never be used.
           unsigned int p;
 
-          std::tie(cell_is_cut, p, std::ignore) =
+          std::tie(cell_is_cut, p, local_dof_indices) =
             cell_cut(cell, local_dof_indices, support_points);
 
           // Add information about if the cell is cut "cell_is_cut" and the
           // particle id that cuts it "p" in the map.
           cut_cells_map[cell] = {cell_is_cut, p};
+
         }
     }
 }
@@ -150,7 +152,7 @@ GLSSharpNavierStokesSolver<dim>::point_inside_cell(
         this->mapping->transform_real_to_unit_cell(cell, point);
       const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
       // if the cell contains the point, the distance is equal to 0
-      if (dist == 0)
+      if (dist <=1e-12)
         {
           // The cell is found so we return it and exit the function.
 
@@ -185,57 +187,6 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(
 }
 
 
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  unsigned int                                          dof_index)
-{
-  // Clear a line in the matrix based on an initial cell that contains the DOF.
-  // This function ensure that if the dof is a ghost all the entry of the matrix
-  // will be erased.
-
-
-  // if the dof is locally owned we can use the default function of deal ii for
-  // matrix (most of the time this is ok)
-  if (this->locally_owned_dofs.is_element(dof_index))
-    {
-      this->system_matrix.clear_row(dof_index);
-    }
-  else
-    {
-      // This DOf is special, it's at a frontier between two processors. Only
-      // one of the processors owns it. If we have reached this point, we are
-      // not on that processor. In this case  the clear_row function doesn't
-      // clear the entire row it only clear DOFs that are owned by the row. This
-      // is an issue. To fix that we force all DOFs contain in ghost cells to be
-      // put to 0.
-      std::vector<typename DoFHandler<dim>::active_cell_iterator>
-        active_neighbors_set = find_cells_around_cell(cell);
-
-      const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-      std::vector<types::global_dof_index> local_dof_indices_iter(
-        dofs_per_cell);
-      // Loop over the neighbours cells and erase the entry of the matrix that
-      // could be linked to neighbours ghost cells.
-      for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
-        {
-          const auto &cell_3 = active_neighbors_set[i];
-          cell_3->get_dof_indices(local_dof_indices_iter);
-          if (std::find(local_dof_indices_iter.begin(),
-                        local_dof_indices_iter.end(),
-                        dof_index) != local_dof_indices_iter.end())
-            {
-              for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k)
-                {
-                  this->system_matrix.set(dof_index,
-                                          local_dof_indices_iter[k],
-                                          0);
-                }
-            }
-        }
-    }
-}
 
 
 template <int dim>
@@ -1801,6 +1752,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
     dt = 1;
 
 
+
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
@@ -1829,12 +1781,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           for (unsigned int i=0;i<local_dof_indices.size();++i) {
               const unsigned int component_i =
                       this->fe->system_to_component_index(i).first;
-              if (this->zero_constraints.is_constrained(local_dof_indices[i])==false && component_i==dim){
+              if (this->zero_constraints.is_constrained(local_dof_indices[i])==false &&  this->locally_owned_dofs.is_element(local_dof_indices[i]) && component_i==dim){
                   inside_index =local_dof_indices[i];
                   break;
               }
           }
-          clear_line_in_matrix(cell, inside_index);
+
+          this->system_matrix.clear_row( inside_index);
           // this->system_matrix.clear_row(inside_index)
           // is not reliable on edge case
 
@@ -1848,7 +1801,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
         }
     }
 
-
+  ib_done.clear();
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
@@ -1885,17 +1838,19 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                     this->fe->system_to_component_index(i).first;
                   unsigned int global_index_overwrite =
                             local_dof_indices[i];
-                  if (component_i < dim && this->locally_owned_dofs.is_element(global_index_overwrite)) {
+
+
+                  if (component_i < dim && this->locally_owned_dofs.is_element(global_index_overwrite) && ib_done[global_index_overwrite]==false) {
                       // We are working on the velocity of the cell cut
                       // loops on the dof that are for vx or vy separately
                       // loops on all the dof of the cell that represent
                       // a specific component
+                      ib_done[global_index_overwrite]=true;
 
-                      // define which dof is going to be redefined
-
+                      // Define which dof is going to be redefined
 
                       // Clear the current line of this dof
-                      clear_line_in_matrix(cell, global_index_overwrite);
+                      this->system_matrix.clear_row( global_index_overwrite);
 
                       // Define the points for the IB stencil, based on the
                       // order and the particle position as well as the DOF
@@ -1936,9 +1891,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passe from part of
                           // the boundary to the fluid.
+
                           this->system_matrix.set(global_index_overwrite,
                                                   global_index_overwrite,
-                                                  -sum_line);
+                                                  sum_line);
                           skip_stencil = true;
 
                           // Tolerence to define a intersection of
@@ -1948,6 +1904,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                           .norm() -
                                   particles[ib_particle_id].radius) <=
                               1e-12 * dr) {
+
                               dof_on_ib = true;
                           }
                       }
@@ -2019,43 +1976,64 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       }
 
                       // Define the RHS of the equation.
-                      if (this->zero_constraints.is_constrained(local_dof_indices[i]) == false) {
-                          double rhs_add = 0;
-                          // Different boundary conditions depending
-                          // on the component index of the DOF and
-                          // the dimension.
-                          double v_ib = stencil.ib_velocity(
-                                  particles[ib_particle_id],
-                                  support_points[local_dof_indices[i]],
-                                  component_i);
 
-                          for (unsigned int k = 0; k < ib_coef.size(); ++k) {
-                              rhs_add +=
-                                      -local_interp_sol[k] * ib_coef[k] * sum_line;
-                          }
-                          this->system_rhs(global_index_overwrite) =
-                                  v_ib * sum_line + rhs_add;
+                      double rhs_add = 0;
+                      // Different boundary conditions depending
+                      // on the component index of the DOF and
+                      // the dimension.
+                      double v_ib = stencil.ib_velocity(
+                              particles[ib_particle_id],
+                              support_points[local_dof_indices[i]],
+                              component_i);
 
-                          if (dof_on_ib)
-                              // Dof is on the immersed boundary
-                              this->system_rhs(global_index_overwrite) =
-                                      v_ib * sum_line -
-                                      this->evaluation_point(global_index_overwrite) *
-                                      sum_line;
-
-                          if (skip_stencil && dof_on_ib == false)
-                              // Impose the value of the dummy dof. This help
-                              // with pressure variation when the IB is
-                              // moving.
-                              this->system_rhs(global_index_overwrite) =
-                                      sum_line * v_ib -
-                                      this->evaluation_point(global_index_overwrite) *
-                                      sum_line;
+                      for (unsigned int k = 0; k < ib_coef.size(); ++k) {
+                          rhs_add +=
+                                  -local_interp_sol[k] * ib_coef[k] * sum_line;
                       }
+                      this->system_rhs(global_index_overwrite) =
+                              v_ib * sum_line + rhs_add;
+
+                      if (dof_on_ib)
+                          // Dof is on the immersed boundary
+                          this->system_rhs(global_index_overwrite) =
+                                  v_ib * sum_line -
+                                  this->evaluation_point(global_index_overwrite) *
+                                  sum_line;
+
+                      if (skip_stencil && dof_on_ib == false)
+                          // Impose the value of the dummy dof. This help
+                          // with pressure variation when the IB is
+                          // moving.
+                          this->system_rhs(global_index_overwrite) =
+                                  sum_line * v_ib -
+                                  this->evaluation_point(global_index_overwrite) *
+                                  sum_line;
+                  }
+
+                  if(this->zero_constraints.is_constrained(local_dof_indices[i]) && this->locally_owned_dofs.is_element(global_index_overwrite)){
+                      this->system_matrix.clear_row( global_index_overwrite);
+
+                      auto local_entries=this->zero_constraints.get_constraint_entries(local_dof_indices[i]);
+                      auto local_entrie=*local_entries;
+                      double interpolation=0;
+                      for (unsigned int j=0 ; j<local_entrie.size();++j){
+                          unsigned int col=local_entrie[j].first;
+                          double entries=local_entrie[j].second;
+
+                          interpolation+=this->evaluation_point(col)*entries;
+                          this->system_matrix.set(local_dof_indices[i],col,-entries*sum_line);
+
+                      }
+
+                      this->system_matrix.set(local_dof_indices[i],local_dof_indices[i],sum_line);
+                      this->system_rhs(local_dof_indices[i]) =-this->evaluation_point(
+                              local_dof_indices[i])*sum_line+interpolation*sum_line+this->zero_constraints.get_inhomogeneity(local_dof_indices[i])*sum_line;
+
                   }
 
 
-                  if (component_i == dim)
+
+                  if (component_i == dim && this->locally_owned_dofs.is_element(global_index_overwrite))
                     {
                       // Applied equation on dof that have no equation
                       // defined for them. those DOF become Dummy dof. This
