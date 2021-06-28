@@ -125,8 +125,15 @@ namespace Parameters
       enum class InsertionMethod
       {
         uniform,
-        non_uniform
+        non_uniform,
+        unique
       } insertion_method;
+
+      // Determine of only one particle is inserted
+      bool is_insertion_unique;
+
+      // Coordinate of the only one inserted particle
+      Point<3> unique_point_coordinate;
 
       // Inserted number of particles at each time step
       int inserted_this_step;

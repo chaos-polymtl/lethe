@@ -110,6 +110,20 @@ Insertion<dim>::particle_size_sampling(std::vector<double> &particle_sizes,
 }
 
 template <int dim>
+Point<dim>
+  Insertion<dim>::special_case_insertion(Point<dim> Point)
+{
+  if (is_unique_particle_insertion)
+    {
+      for (int i = 0; i < dim; i++)
+        {
+          Point[i] = unique_point_location[i];
+        }
+    }
+  return Point ;
+}
+
+template <int dim>
 void
 Insertion<dim>::calculate_insertion_domain_maximum_particle_number(
   const DEMSolverParameters<dim> &dem_parameters,

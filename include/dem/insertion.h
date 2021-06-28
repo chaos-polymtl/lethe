@@ -120,6 +120,13 @@ protected:
     const DEMSolverParameters<dim> &dem_parameters,
     const ConditionalOStream &      pcout);
 
+  /**
+   * @brief Use to specify a particle insertion at specific emplacement
+   *
+   */
+  Point<dim>
+  special_case_insertion(Point<dim> Point);
+
   // Number of particles that is going to be inserted at each insetion step.This
   // value can change in the last insertion step to reach the desired number of
   // particles
@@ -140,6 +147,11 @@ protected:
   // particles at each insertion step
   std::vector<std::vector<double>> particle_properties;
 
+  // If true, it means that there is just one particle inserted and that a specific location is declared
+  bool is_unique_particle_insertion;
+
+  // Specific location
+  Point<3> unique_point_location;
 private:
   /**
    * Carries out sampling from specified distributions for particle size.

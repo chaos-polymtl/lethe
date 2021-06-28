@@ -318,6 +318,22 @@ namespace Parameters
                           Patterns::Selection("uniform|non_uniform"),
                           "Choosing insertion method. "
                           "Choices are <uniform|non_uniform>.");
+        prm.declare_entry("Unique insertion (true/false)",
+                          "false",
+                          Patterns::Selection("true|false"),
+                          "Determine if only one particle is inserted and that a desired position need to be specified ");
+        prm.declare_entry("Coordinate x",
+                          "0",
+                          Patterns::Double(),
+                          "Coordinate x of the unique particle");
+        prm.declare_entry("Coordinate y",
+                          "0",
+                          Patterns::Double(),
+                          "Coordinate y of the unique particle");
+        prm.declare_entry("Coordinate z",
+                          "0",
+                          Patterns::Double(),
+                          "Coordinate z of the unique particle");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -380,6 +396,18 @@ namespace Parameters
           {
             throw(std::runtime_error("Invalid insertion method "));
           }
+        const std::string unique_insertion=prm.get("Unique insertion (true/false)");
+         if (unique_insertion=="true")
+          is_insertion_unique=true;
+        else if (unique_insertion=="false")
+           is_insertion_unique=false;
+        else
+        {
+          throw(std::runtime_error("Invalid unique insertion specification "));
+        }
+        unique_point_coordinate[0]=prm.get_double("Coordinate x");
+        unique_point_coordinate[1]=prm.get_double("Coordinate y");
+        unique_point_coordinate[2]=prm.get_double("Coordinate z");
         inserted_this_step =
           prm.get_integer("inserted number of particles at each time step");
         insertion_frequency = prm.get_integer("insertion frequency");

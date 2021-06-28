@@ -31,6 +31,8 @@ UniformInsertion<dim>::insert(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim> &                 dem_parameters)
 {
+  this->is_unique_particle_insertion=dem_parameters.insertion_info.is_insertion_unique;
+  this->unique_point_location=dem_parameters.insertion_info.unique_point_coordinate;
   if (remained_particles_of_each_type == 0 &&
       current_inserting_particle_type !=
         dem_parameters.physical_properties.particle_type_number - 1)
@@ -101,6 +103,7 @@ UniformInsertion<dim>::insert(
           find_insertion_location_uniform(insertion_location,
                                           id,
                                           dem_parameters.insertion_info);
+          insertion_location=this->special_case_insertion(insertion_location);
           insertion_points_on_proc.push_back(insertion_location);
         }
 
