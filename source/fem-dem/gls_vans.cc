@@ -1,8 +1,8 @@
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
 
 
 // Constructor for class GLS_VANS
@@ -89,8 +89,6 @@ GLSVANSSolver<dim>::setup_dofs()
 
   complete_system_rhs_void_fraction.reinit(locally_owned_dofs_voidfraction,
                                            this->mpi_communicator);
-
-  // lambda.reinit(locally_owned_dofs_voidfraction, this->mpi_communicator);
 
   active_set.set_size(void_fraction_dof_handler.n_dofs());
 
@@ -627,23 +625,26 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<Tensor<1, dim>>          present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>>          present_velocity_gradients(n_q_points);
-  std::vector<double>                  present_pressure_values(n_q_points);
-  std::vector<Tensor<1, dim>>          present_pressure_gradients(n_q_points);
-  std::vector<Tensor<1, dim>>          present_velocity_laplacians(n_q_points);
-  std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
+  std::vector<Tensor<2, dim>> present_velocity_gradients_transpose(n_q_points);
+  std::vector<Tensor<2, dim>> stress_tensor_velocity(n_q_points);
+  std::vector<double>         present_pressure_values(n_q_points);
+  std::vector<Tensor<1, dim>> present_pressure_gradients(n_q_points);
+  std::vector<Tensor<1, dim>> present_velocity_laplacians(n_q_points);
+  std::vector<Tensor<2, dim>> present_velocity_hess(n_q_points);
 
   // Data storage vector for the void fraction values/gradients
   std::vector<double>         present_void_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_void_fraction_gradients(n_q_points);
 
-  // Data storage vector for drag
-  std::vector<double> momentum_coefficient(n_q_points);
-
   Tensor<1, dim> force;
 
-  // Interphase Momentum transfer coefficent
-  double beta = 0;
-  double c_d  = 0;
+  // Drag variables
+  double                               beta;
+  std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+  Tensor<1, dim>                       particle_velocity;
+  Tensor<1, dim>                       fluid_velocity_at_particle_location;
+  Tensor<1, dim>                       drag_force;
+  double                               c_d = 0;
 
   // Velocity dependent source term
   //----------------------------------
@@ -662,6 +663,8 @@ GLSVANSSolver<dim>::assembleGLS()
   std::vector<Tensor<3, dim>> hess_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>> laplacian_phi_u(dofs_per_cell);
   std::vector<Tensor<2, dim>> grad_phi_u(dofs_per_cell);
+  std::vector<Tensor<2, dim>> stress_tensor_phi_u(dofs_per_cell);
+  std::vector<Tensor<2, dim>> grad_phi_u_transpose(dofs_per_cell);
   std::vector<double>         phi_p(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_p(dofs_per_cell);
 
@@ -705,15 +708,6 @@ GLSVANSSolver<dim>::assembleGLS()
   // Element size
   double h;
 
-  // Diameter of particle
-  double d_p = 0.001;
-  //  for (auto &particle : particle_handler)
-  //    {
-  //      auto &particle_properties = particle.get_properties();
-  //      d_p                       =
-  //      particle_properties[DEM::PropertiesIndex::dp];
-  //    }
-
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
@@ -735,6 +729,8 @@ GLSVANSSolver<dim>::assembleGLS()
 
           local_matrix = 0;
           local_rhs    = 0;
+          drag_force   = 0;
+          beta         = 0;
 
           // Gather velocity (values, gradient and laplacian)
           auto &evaluation_point = this->evaluation_point;
@@ -763,6 +759,34 @@ GLSVANSSolver<dim>::assembleGLS()
           // Calculate forcing term if there is a forcing function
           if (l_forcing_function)
             l_forcing_function->vector_value_list(quadrature_points, rhs_force);
+
+          // Calculate Transpose of the present_velocity_gradients tensor
+          for (unsigned int q = 0; q < n_q_points; ++q)
+            {
+              present_velocity_gradients_transpose[q] =
+                transpose(present_velocity_gradients[q]);
+            }
+
+          // Calculate the stress tensor from present_velocity_gradients
+          if (full_stress_tensor)
+            {
+              for (unsigned int q = 0; q < n_q_points; ++q)
+                {
+                  stress_tensor_velocity[q] =
+                    present_velocity_gradients[q] +
+                    present_velocity_gradients_transpose[q];
+
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      stress_tensor_velocity[q][d][d] +=
+                        -(2.0 / 3) *
+                        trace(present_velocity_gradients[q]); // Divergence of u
+                    }
+                }
+            }
+          else
+            stress_tensor_velocity = present_velocity_gradients;
+
 
           // Gather the previous time steps depending on the number of stages
           // of the time integration scheme
@@ -797,52 +821,97 @@ GLSVANSSolver<dim>::assembleGLS()
                   void_fraction_m3, p3_void_fraction_values);
             }
 
+          //*******************************************************************
+          // Calculation of particles' drag force
+          if (this->simulation_parameters.void_fraction->mode ==
+              Parameters::VoidFractionMode::dem)
+            {
+              // Calculate cell void fraction
+              double particles_volume_in_cell = 0;
+
+              // Loop over particles in cell
+              const auto pic = particle_handler.particles_in_cell(cell);
+              for (auto &particle : pic)
+                {
+                  auto particle_properties = particle.get_properties();
+                  particles_volume_in_cell +=
+                    M_PI *
+                    pow(particle_properties[DEM::PropertiesIndex::dp], dim) /
+                    (2 * dim);
+                }
+              double cell_volume = cell->measure();
+
+              double cell_void_fraction =
+                (cell_volume - particles_volume_in_cell) / cell_volume;
+
+              // Get the local dof indices for velocity field interpolation
+              // at particle's position
+              const auto &dh_cell =
+                typename DoFHandler<dim>::cell_iterator(*cell,
+                                                        &this->dof_handler);
+              dh_cell->get_dof_indices(fluid_dof_indices);
+
+              // Loop over particles in cell
+              for (auto &particle : pic)
+                {
+                  auto particle_properties = particle.get_properties();
+
+                  // Stock the values of particle velocity in a
+                  // tensor
+                  particle_velocity[0] =
+                    particle_properties[DEM::PropertiesIndex::v_x];
+                  particle_velocity[1] =
+                    particle_properties[DEM::PropertiesIndex::v_y];
+                  if (dim == 3)
+                    particle_velocity[2] =
+                      particle_properties[DEM::PropertiesIndex::v_z];
+
+                  // Interpolate velocity at particle position
+                  // Reference location of the particle
+                  auto reference_location = particle.get_reference_location();
+
+                  fluid_velocity_at_particle_location = 0;
+
+                  for (unsigned int j = 0; j < dofs_per_cell; ++j)
+                    {
+                      const auto comp_j =
+                        this->fe->system_to_component_index(j).first;
+                      if (comp_j < dim)
+                        {
+                          auto &evaluation_point = this->previous_solutions[0];
+                          fluid_velocity_at_particle_location[comp_j] +=
+                            evaluation_point[fluid_dof_indices[j]] *
+                            this->fe->shape_value(j, reference_location);
+                        }
+                    }
+
+                  // Particle's Reynolds number
+                  double re =
+                    1e-1 + fluid_velocity_at_particle_location.norm() *
+                             particle_properties[DEM::PropertiesIndex::dp] /
+                             viscosity;
+
+                  // Drag Coefficient Calculation
+
+                  // Di Felice Drag Model CD Calculation
+                  c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+                        pow(cell_void_fraction,
+                            -(3.7 - 0.6 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+
+                  beta +=
+                    (0.5 * c_d * M_PI *
+                     pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
+                     4) *
+                    fluid_velocity_at_particle_location.norm();
+                }
+
+              beta = beta / cell_volume;
+            }
+          //**************************************************************************
+
           // Loop over the quadrature points
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
-              double cell_void_fraction = present_void_fraction_values[q];
-
-              //**************************************************************************************************
-              // Drag Force Calculation
-              //**************************************************************************************************
-              if (this->simulation_parameters.void_fraction->mode ==
-                  Parameters::VoidFractionMode::dem)
-                {
-                  // Particle's Reynolds number
-                  double re = 1e-1 + cell_void_fraction *
-                                       present_velocity_values[q].norm() * d_p /
-                                       viscosity;
-
-                  // Drag Coefficient Calculation
-                  if (re < 1000)
-                    {
-                      c_d = (24 / re) * (1 + 0.15 * pow(re, 0.687));
-                    }
-                  else if (re >= 1000)
-                    {
-                      c_d = 0.44;
-                    }
-
-                  if (cell_void_fraction < 0.8)
-                    {
-                      beta = (150 * pow((1 - cell_void_fraction), 2) *
-                                viscosity / (cell_void_fraction * pow(d_p, 2)) +
-                              1.75 * (1 - cell_void_fraction) *
-                                present_velocity_values[q].norm() / d_p);
-                    }
-                  else if (cell_void_fraction >= 0.8)
-
-                    {
-                      beta =
-                        ((3.0 / 4) * c_d * present_velocity_values[q].norm() *
-                         cell_void_fraction * (1 - cell_void_fraction) *
-                         pow(cell_void_fraction, -2.65)) /
-                        d_p;
-                    }
-                }
-
-              //**************************************************************************************************
-
               // Calculation of the magnitude of the velocity for the
               // stabilization parameter
               const double u_mag = std::max(present_velocity_values[q].norm(),
@@ -869,7 +938,7 @@ GLSVANSSolver<dim>::assembleGLS()
                 (h / (2 * 1)) *
                 pow(present_velocity_gradients[q].norm() * h / (1),
                     this->simulation_parameters.fem_parameters.velocity_order) *
-                pow((1 / 0.4), 2);
+                pow((1 / 0.1), 2);
 
               // Grad-div weight factor
               const double gamma = 0.1;
@@ -890,6 +959,30 @@ GLSVANSSolver<dim>::assembleGLS()
                   for (int d = 0; d < dim; ++d)
                     laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
                 }
+
+              // Calculate Transpose of the grad_phi_u tensor
+              for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                {
+                  grad_phi_u_transpose[i] = transpose(grad_phi_u[i]);
+                }
+
+              // Calculate the stress tensor from grad_phi_u
+              if (full_stress_tensor)
+                {
+                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
+                    {
+                      stress_tensor_phi_u[i] =
+                        grad_phi_u[i] + grad_phi_u_transpose[i];
+
+                      for (int d = 0; d < dim; ++d)
+                        {
+                          stress_tensor_phi_u[i][d][d] +=
+                            -(2.0 / 3) * div_phi_u[i];
+                        }
+                    }
+                }
+              else
+                stress_tensor_phi_u = grad_phi_u;
 
               // Establish the force vector
               for (int i = 0; i < dim; ++i)
@@ -912,10 +1005,12 @@ GLSVANSSolver<dim>::assembleGLS()
                   present_void_fraction_values[q]
                 // Mass source term
                 + mass_source * present_velocity_values[q] +
+                // Drag Force
                 beta * present_velocity_values[q] +
                 present_pressure_gradients[q] -
                 viscosity * present_velocity_laplacians[q] -
                 force * present_void_fraction_values[q];
+
 
               if (velocity_source ==
                   Parameters::VelocitySource::VelocitySourceType::srf)
@@ -991,8 +1086,10 @@ GLSVANSSolver<dim>::assembleGLS()
                          grad_phi_u[j] * present_velocity_values[q] *
                            present_void_fraction_values[q]
                          // Mass source term
-                         + mass_source * phi_u[j] + beta * phi_u[j] +
-                         grad_phi_p[j] - viscosity * laplacian_phi_u[j]);
+                         + mass_source * phi_u[j]
+                         // Drag Force
+                         + beta * phi_u[j] + grad_phi_p[j] -
+                         viscosity * laplacian_phi_u[j]);
 
                       if (is_bdf(scheme))
                         strong_jac += present_void_fraction_values[q] *
@@ -1016,8 +1113,8 @@ GLSVANSSolver<dim>::assembleGLS()
                           local_matrix(i, j) +=
                             (
                               // Momentum terms
-                              viscosity *
-                                scalar_product(grad_phi_u[j], grad_phi_u[i]) +
+                              viscosity * scalar_product(stress_tensor_phi_u[j],
+                                                         grad_phi_u[i]) +
                               // Advection terms
                               ((phi_u[j] * present_void_fraction_values[q] *
                                 present_velocity_gradients[q] * phi_u[i]) +
@@ -1130,7 +1227,7 @@ GLSVANSSolver<dim>::assembleGLS()
                   local_rhs(i) +=
                     (
                       // Momentum
-                      -viscosity * scalar_product(present_velocity_gradients[q],
+                      -viscosity * scalar_product(stress_tensor_velocity[q],
                                                   grad_phi_u[i]) -
                       // Advection terms
                       (present_velocity_gradients[q] *
@@ -1140,9 +1237,9 @@ GLSVANSSolver<dim>::assembleGLS()
                       - mass_source * present_velocity_values[q] * phi_u[i]
                       // Pressure and force
                       + present_pressure_values[q] * div_phi_u[i] +
-                      force * present_void_fraction_values[q] * phi_u[i] -
-                      // Drag force
-                      beta * present_velocity_values[q] * phi_u[i] -
+                      force * present_void_fraction_values[q] * phi_u[i]
+                      // Drag Force
+                      - beta * present_velocity_values[q] * phi_u[i] -
                       // Continuity
                       (present_velocity_divergence *
                          present_void_fraction_values[q] +

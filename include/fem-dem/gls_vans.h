@@ -20,19 +20,6 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
-#include <core/grids.h>
-#include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
-
-#include "solvers/gls_navier_stokes.h"
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -42,6 +29,18 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+#include <core/grids.h>
+#include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
+
+#include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+#include "core/time_integration_utilities.h"
+#include "solvers/gls_navier_stokes.h"
 
 
 
@@ -148,16 +147,13 @@ private:
   FE_Q<dim>       fe_void_fraction;
 
 
-  // Vector<double>                       cell_void_fraction;
   MappingQGeneric<dim>                 particle_mapping;
   Particles::ParticleHandler<dim, dim> particle_handler;
 
-  // Solution of the void fraction at previous time steps
-
   IndexSet locally_owned_dofs_voidfraction;
-
   IndexSet locally_relevant_dofs_voidfraction;
 
+  // Solution of the void fraction at previous time steps
   TrilinosWrappers::MPI::Vector void_fraction_m1;
   TrilinosWrappers::MPI::Vector void_fraction_m2;
   TrilinosWrappers::MPI::Vector void_fraction_m3;
@@ -171,8 +167,7 @@ private:
   TrilinosWrappers::MPI::Vector  complete_system_rhs_void_fraction;
   TrilinosWrappers::SparseMatrix mass_matrix;
   TrilinosWrappers::MPI::Vector  diagonal_of_mass_matrix;
-  // TrilinosWrappers::MPI::Vector  lambda;
-  IndexSet active_set;
+  IndexSet                       active_set;
 
   // Vectors for drag calculation
 
@@ -182,11 +177,12 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   AffineConstraints<double>                          void_fraction_constraints;
 
-  const bool   PSPG        = true;
-  const bool   SUPG        = true;
-  const bool   DCDD        = true;
-  const bool   grad_div    = false;
-  const double GLS_u_scale = 1;
+  const bool   PSPG               = true;
+  const bool   SUPG               = true;
+  const bool   DCDD               = true;
+  const bool   grad_div           = true;
+  const bool   full_stress_tensor = false;
+  const double GLS_u_scale        = 1;
 };
 
 #endif
