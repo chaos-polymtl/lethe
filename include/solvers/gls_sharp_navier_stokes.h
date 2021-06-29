@@ -253,11 +253,16 @@ private:
            std::tuple<bool, unsigned int>>
     cut_cells_map;
 
+  /*
+  * This map is used to keep in memory which DOFs already have an IB equation imposed on them in order to avoid writing multiple time the same equation.
+  */
+  std::map<unsigned int,bool> ib_done;
+
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
-  std::map<unsigned int,bool> ib_done;
+
 
 
   std::vector<TableHandler> table_f;

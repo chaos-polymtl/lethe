@@ -1840,6 +1840,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                             local_dof_indices[i];
 
 
+                  // Check if the DOfs is owned and if it's not a hanging node.
                   if (component_i < dim && this->locally_owned_dofs.is_element(global_index_overwrite) && ib_done[global_index_overwrite]==false) {
                       // We are working on the velocity of the cell cut
                       // loops on the dof that are for vx or vy separately
@@ -2010,12 +2011,17 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   sum_line;
                   }
 
-                  if(this->zero_constraints.is_constrained(local_dof_indices[i]) && this->locally_owned_dofs.is_element(global_index_overwrite)){
-                      this->system_matrix.clear_row( global_index_overwrite);
 
+
+                  // If the DOFs is hanging put back the equations of the hanging nodes
+                  if(this->zero_constraints.is_constrained(local_dof_indices[i]) && this->locally_owned_dofs.is_element(global_index_overwrite)){
+                      // Clear the line if there is something on it
+                      this->system_matrix.clear_row( global_index_overwrite);
+                      // Get the constraint equations
                       auto local_entries=this->zero_constraints.get_constraint_entries(local_dof_indices[i]);
                       auto local_entrie=*local_entries;
                       double interpolation=0;
+                      // Write the equation
                       for (unsigned int j=0 ; j<local_entrie.size();++j){
                           unsigned int col=local_entrie[j].first;
                           double entries=local_entrie[j].second;
@@ -2024,8 +2030,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           this->system_matrix.set(local_dof_indices[i],col,entries*sum_line);
 
                       }
-
                       this->system_matrix.set(local_dof_indices[i],local_dof_indices[i],sum_line);
+                      // Write the RHS
                       this->system_rhs(local_dof_indices[i]) =-this->evaluation_point(
                               local_dof_indices[i])*sum_line+interpolation*sum_line+this->zero_constraints.get_inhomogeneity(local_dof_indices[i])*sum_line;
 
