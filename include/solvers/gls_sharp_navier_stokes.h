@@ -254,9 +254,10 @@ private:
     cut_cells_map;
 
   /*
-  * This map is used to keep in memory which DOFs already have an IB equation imposed on them in order to avoid writing multiple time the same equation.
-  */
-  std::map<unsigned int,bool> ib_done;
+   * This map is used to keep in memory which DOFs already have an IB equation
+   * imposed on them in order to avoid writing multiple time the same equation.
+   */
+  std::map<unsigned int, bool> ib_done;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;

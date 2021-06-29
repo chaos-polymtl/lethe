@@ -108,7 +108,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // Add information about if the cell is cut "cell_is_cut" and the
           // particle id that cuts it "p" in the map.
           cut_cells_map[cell] = {cell_is_cut, p};
-
         }
     }
 }
@@ -152,7 +151,7 @@ GLSSharpNavierStokesSolver<dim>::point_inside_cell(
         this->mapping->transform_real_to_unit_cell(cell, point);
       const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
       // if the cell contains the point, the distance is equal to 0
-      if (dist <=1e-12)
+      if (dist <= 1e-12)
         {
           // The cell is found so we return it and exit the function.
 
@@ -185,7 +184,6 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(
     cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
   return cells_sharing_vertices;
 }
-
 
 
 
@@ -1776,18 +1774,25 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           sum_line = sum_line / dt;
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
-          //Check on which DOF of the cell to impose the pressure. If the dof is on a hanging node, the pressure cannot be imposed there. So we just go to the next pressure DOF of the cell.
+          // Check on which DOF of the cell to impose the pressure. If the dof
+          // is on a hanging node, the pressure cannot be imposed there. So we
+          // just go to the next pressure DOF of the cell.
 
-          for (unsigned int i=0;i<local_dof_indices.size();++i) {
+          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+            {
               const unsigned int component_i =
-                      this->fe->system_to_component_index(i).first;
-              if (this->zero_constraints.is_constrained(local_dof_indices[i])==false &&  this->locally_owned_dofs.is_element(local_dof_indices[i]) && component_i==dim){
-                  inside_index =local_dof_indices[i];
+                this->fe->system_to_component_index(i).first;
+              if (this->zero_constraints.is_constrained(local_dof_indices[i]) ==
+                    false &&
+                  this->locally_owned_dofs.is_element(local_dof_indices[i]) &&
+                  component_i == dim)
+                {
+                  inside_index = local_dof_indices[i];
                   break;
-              }
-          }
+                }
+            }
 
-          this->system_matrix.clear_row( inside_index);
+          this->system_matrix.clear_row(inside_index);
           // this->system_matrix.clear_row(inside_index)
           // is not reliable on edge case
 
@@ -1836,22 +1841,25 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                 {
                   const unsigned int component_i =
                     this->fe->system_to_component_index(i).first;
-                  unsigned int global_index_overwrite =
-                            local_dof_indices[i];
+                  unsigned int global_index_overwrite = local_dof_indices[i];
 
 
                   // Check if the DOfs is owned and if it's not a hanging node.
-                  if (component_i < dim && this->locally_owned_dofs.is_element(global_index_overwrite) && ib_done[global_index_overwrite]==false) {
+                  if (component_i < dim &&
+                      this->locally_owned_dofs.is_element(
+                        global_index_overwrite) &&
+                      ib_done[global_index_overwrite] == false)
+                    {
                       // We are working on the velocity of the cell cut
                       // loops on the dof that are for vx or vy separately
                       // loops on all the dof of the cell that represent
                       // a specific component
-                      ib_done[global_index_overwrite]=true;
+                      ib_done[global_index_overwrite] = true;
 
                       // Define which dof is going to be redefined
 
                       // Clear the current line of this dof
-                      this->system_matrix.clear_row( global_index_overwrite);
+                      this->system_matrix.clear_row(global_index_overwrite);
 
                       // Define the points for the IB stencil, based on the
                       // order and the particle position as well as the DOF
@@ -1865,15 +1873,15 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // and the locations of the points use in the stencil
                       // calculation.
 
-                      auto[point, interpolation_points] =
-                      stencil.points(order,
-                                     particles[ib_particle_id],
-                                     support_points[local_dof_indices[i]]);
+                      auto [point, interpolation_points] =
+                        stencil.points(order,
+                                       particles[ib_particle_id],
+                                       support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
                       auto cell_2 = find_cell_around_point_with_neighbors(
-                              cell,
-                              interpolation_points[stencil.nb_points(order) - 1]);
+                        cell,
+                        interpolation_points[stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
 
                       bool skip_stencil = false;
@@ -1886,9 +1894,10 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // definition of the stencil ("cell_2") is on a face
                       // between the cell that is cut ("cell") and the "cell_2".
                       bool point_in_cell = point_inside_cell(
-                              cell,
-                              interpolation_points[stencil.nb_points(order) - 1]);
-                      if (cell_2 == cell || point_in_cell ) {
+                        cell,
+                        interpolation_points[stencil.nb_points(order) - 1]);
+                      if (cell_2 == cell || point_in_cell)
+                        {
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passe from part of
                           // the boundary to the fluid.
@@ -1902,13 +1911,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // the DOF and IB
                           if (abs((support_points[local_dof_indices[i]] -
                                    particles[ib_particle_id].position)
-                                          .norm() -
+                                    .norm() -
                                   particles[ib_particle_id].radius) <=
-                              1e-12 * dr) {
-
+                              1e-12 * dr)
+                            {
                               dof_on_ib = true;
-                          }
-                      }
+                            }
+                        }
                       // Define the variable used for the
                       // extrapolation of the actual solution at the
                       // boundaries in order to define the correction
@@ -1916,26 +1925,30 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Define the unit cell points for the points
                       // used in the stencil.
                       std::vector<Point<dim>> unite_cell_interpolation_points(
-                              ib_coef.size());
+                        ib_coef.size());
                       unite_cell_interpolation_points[0] =
-                              this->mapping->transform_real_to_unit_cell(cell_2,
-                                                                         point);
-                      for (unsigned int j = 1; j < ib_coef.size(); ++j) {
+                        this->mapping->transform_real_to_unit_cell(cell_2,
+                                                                   point);
+                      for (unsigned int j = 1; j < ib_coef.size(); ++j)
+                        {
                           unite_cell_interpolation_points[j] =
-                                  this->mapping->transform_real_to_unit_cell(
-                                          cell_2, interpolation_points[j - 1]);
-                      }
+                            this->mapping->transform_real_to_unit_cell(
+                              cell_2, interpolation_points[j - 1]);
+                        }
 
                       std::vector<double> local_interp_sol(ib_coef.size());
 
                       // Define the new matrix entry for this dof
-                      if (skip_stencil == false) {
+                      if (skip_stencil == false)
+                        {
                           for (unsigned int j = 0;
                                j < local_dof_indices_2.size();
-                               ++j) {
+                               ++j)
+                            {
                               const unsigned int component_j =
-                                      this->fe->system_to_component_index(j).first;
-                              if (component_j == component_i) {
+                                this->fe->system_to_component_index(j).first;
+                              if (component_j == component_i)
+                                {
                                   //  Define the solution at each point used for
                                   //  the stencil and applied the stencil for
                                   //  the specific DOF. For stencils of order 4
@@ -1954,27 +1967,28 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                   // is needed to define the residual.
                                   double local_matrix_entry = 0;
                                   for (unsigned int k = 0; k < ib_coef.size();
-                                       ++k) {
+                                       ++k)
+                                    {
                                       local_matrix_entry +=
-                                              this->fe->shape_value(
-                                                      j,
-                                                      unite_cell_interpolation_points[k]) *
-                                              ib_coef[k];
+                                        this->fe->shape_value(
+                                          j,
+                                          unite_cell_interpolation_points[k]) *
+                                        ib_coef[k];
                                       local_interp_sol[k] +=
-                                              this->fe->shape_value(
-                                                      j,
-                                                      unite_cell_interpolation_points[k]) *
-                                              this->evaluation_point(
-                                                      local_dof_indices_2[j]);
-                                  }
+                                        this->fe->shape_value(
+                                          j,
+                                          unite_cell_interpolation_points[k]) *
+                                        this->evaluation_point(
+                                          local_dof_indices_2[j]);
+                                    }
                                   // update the matrix.
                                   this->system_matrix.set(
-                                          global_index_overwrite,
-                                          local_dof_indices_2[j],
-                                          local_matrix_entry * sum_line);
-                              }
-                          }
-                      }
+                                    global_index_overwrite,
+                                    local_dof_indices_2[j],
+                                    local_matrix_entry * sum_line);
+                                }
+                            }
+                        }
 
                       // Define the RHS of the equation.
 
@@ -1983,63 +1997,79 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // on the component index of the DOF and
                       // the dimension.
                       double v_ib = stencil.ib_velocity(
-                              particles[ib_particle_id],
-                              support_points[local_dof_indices[i]],
-                              component_i);
+                        particles[ib_particle_id],
+                        support_points[local_dof_indices[i]],
+                        component_i);
 
-                      for (unsigned int k = 0; k < ib_coef.size(); ++k) {
+                      for (unsigned int k = 0; k < ib_coef.size(); ++k)
+                        {
                           rhs_add +=
-                                  -local_interp_sol[k] * ib_coef[k] * sum_line;
-                      }
+                            -local_interp_sol[k] * ib_coef[k] * sum_line;
+                        }
                       this->system_rhs(global_index_overwrite) =
-                              v_ib * sum_line + rhs_add;
+                        v_ib * sum_line + rhs_add;
 
                       if (dof_on_ib)
-                          // Dof is on the immersed boundary
-                          this->system_rhs(global_index_overwrite) =
-                                  v_ib * sum_line -
-                                  this->evaluation_point(global_index_overwrite) *
-                                  sum_line;
+                        // Dof is on the immersed boundary
+                        this->system_rhs(global_index_overwrite) =
+                          v_ib * sum_line -
+                          this->evaluation_point(global_index_overwrite) *
+                            sum_line;
 
                       if (skip_stencil && dof_on_ib == false)
-                          // Impose the value of the dummy dof. This help
-                          // with pressure variation when the IB is
-                          // moving.
-                          this->system_rhs(global_index_overwrite) =
-                                  sum_line * v_ib -
-                                  this->evaluation_point(global_index_overwrite) *
-                                  sum_line;
-                  }
+                        // Impose the value of the dummy dof. This help
+                        // with pressure variation when the IB is
+                        // moving.
+                        this->system_rhs(global_index_overwrite) =
+                          sum_line * v_ib -
+                          this->evaluation_point(global_index_overwrite) *
+                            sum_line;
+                    }
 
-
-
-                  // If the DOFs is hanging put back the equations of the hanging nodes
-                  if(this->zero_constraints.is_constrained(local_dof_indices[i]) && this->locally_owned_dofs.is_element(global_index_overwrite)){
+                  // If the DOFs is hanging put back the equations of the
+                  // hanging nodes
+                  if (this->zero_constraints.is_constrained(
+                        local_dof_indices[i]) &&
+                      this->locally_owned_dofs.is_element(
+                        global_index_overwrite))
+                    {
                       // Clear the line if there is something on it
-                      this->system_matrix.clear_row( global_index_overwrite);
+                      this->system_matrix.clear_row(global_index_overwrite);
                       // Get the constraint equations
-                      auto local_entries=this->zero_constraints.get_constraint_entries(local_dof_indices[i]);
-                      auto local_entrie=*local_entries;
-                      double interpolation=0;
+                      auto local_entries =
+                        *this->zero_constraints.get_constraint_entries(
+                          local_dof_indices[i]);
+
+                      double interpolation = 0;
                       // Write the equation
-                      for (unsigned int j=0 ; j<local_entrie.size();++j){
-                          unsigned int col=local_entrie[j].first;
-                          double entries=local_entrie[j].second;
+                      for (unsigned int j = 0; j < local_entries.size(); ++j)
+                        {
+                          unsigned int col     = local_entries[j].first;
+                          double       entries = local_entries[j].second;
 
-                          interpolation+=this->evaluation_point(col)*entries;
-                          this->system_matrix.set(local_dof_indices[i],col,entries*sum_line);
-
-                      }
-                      this->system_matrix.set(local_dof_indices[i],local_dof_indices[i],sum_line);
+                          interpolation +=
+                            this->evaluation_point(col) * entries;
+                          this->system_matrix.set(local_dof_indices[i],
+                                                  col,
+                                                  entries * sum_line);
+                        }
+                      this->system_matrix.set(local_dof_indices[i],
+                                              local_dof_indices[i],
+                                              sum_line);
                       // Write the RHS
-                      this->system_rhs(local_dof_indices[i]) =-this->evaluation_point(
-                              local_dof_indices[i])*sum_line+interpolation*sum_line+this->zero_constraints.get_inhomogeneity(local_dof_indices[i])*sum_line;
+                      this->system_rhs(local_dof_indices[i]) =
+                        -this->evaluation_point(local_dof_indices[i]) *
+                          sum_line +
+                        interpolation * sum_line +
+                        this->zero_constraints.get_inhomogeneity(
+                          local_dof_indices[i]) *
+                          sum_line;
+                    }
 
-                  }
 
 
-
-                  if (component_i == dim && this->locally_owned_dofs.is_element(global_index_overwrite))
+                  if (component_i == dim && this->locally_owned_dofs.is_element(
+                                              global_index_overwrite))
                     {
                       // Applied equation on dof that have no equation
                       // defined for them. those DOF become Dummy dof. This
