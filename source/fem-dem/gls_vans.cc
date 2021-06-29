@@ -938,7 +938,7 @@ GLSVANSSolver<dim>::assembleGLS()
                 (h / (2 * 1)) *
                 pow(present_velocity_gradients[q].norm() * h / (1),
                     this->simulation_parameters.fem_parameters.velocity_order) *
-                pow((1 / 0.1), 2);
+                pow((1 / 0.4), 2);
 
               // Grad-div weight factor
               const double gamma = 0.1;
