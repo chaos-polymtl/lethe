@@ -196,6 +196,7 @@ protected:
   std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
   bool                          calculate_force_torque_on_boundary;
   Point<dim>                    center_mass_container;
+  std::vector<types::boundary_id>                        boundary_index;
 };
 
 #endif /* particle_wall_contact_force_h */

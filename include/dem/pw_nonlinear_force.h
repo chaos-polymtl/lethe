@@ -62,7 +62,8 @@ public:
     const std::unordered_map<unsigned int, Tensor<1, dim>>
                                     boundary_rotational_vector,
     const double                    triangulation_radius,
-    const DEMSolverParameters<dim> &dem_parameters);
+    const DEMSolverParameters<dim> &dem_parameters,
+    const std::vector<types::boundary_id>      boundary_index);
 
   /**
    * Carries out the calculation of the particle-wall contact force using
