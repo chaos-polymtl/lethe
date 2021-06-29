@@ -10,7 +10,8 @@ PWLinearForce<dim>::PWLinearForce(
   const std::unordered_map<unsigned int, Tensor<1, dim>>
                                   boundary_rotational_vector,
   const double                    triangulation_radius,
-  const DEMSolverParameters<dim> &dem_parameters)
+  const DEMSolverParameters<dim> &dem_parameters,
+  const std::vector<types::boundary_id>      boundary_index)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
   this->boundary_rotational_speed_map       = boundary_rotational_speed;
@@ -98,6 +99,7 @@ PWLinearForce<dim>::PWLinearForce(
     this->calculate_force_torque_on_boundary =
       dem_parameters.forces_torques.calculate_force_torque;
   this->center_mass_container=dem_parameters.forces_torques.point_center_mass;
+  this->boundary_index=boundary_index;
 }
 
 template <int dim>

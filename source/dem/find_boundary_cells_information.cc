@@ -107,7 +107,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                       // boundary_cells_info_struct
                       boundary_cells_info_struct<dim> boundary_information;
                       boundary_information.cell        = cell;
-                      boundary_information.boundary_id = face_id;
+                      boundary_information.boundary_id = cell->face(face_id)->boundary_id();
                       boundary_information.boundary_face_id =
                         cell->face_index(face_id);
                       boundary_information.normal_vector = normal_vector;

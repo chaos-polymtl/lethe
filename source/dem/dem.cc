@@ -614,6 +614,7 @@ template <int dim>
 std::shared_ptr<PWContactForce<dim>>
 DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 {
+  std::vector<types::boundary_id> boundary_index = triangulation.get_boundary_ids();
   if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
@@ -622,7 +623,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
         triangulation_cell_diameter,
-        parameters);
+        parameters,
+        boundary_index);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -633,7 +635,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
         triangulation_cell_diameter,
-        parameters);
+        parameters,
+        boundary_index);
     }
   else
     {
@@ -708,7 +711,8 @@ void
 DEMSolver<dim>::write_forces_torques_output_results()
 {
   if (parameters.forces_torques.calculate_force_torque
-      && (this_mpi_process==0) )
+      && (this_mpi_process==0)
+      && (simulation_control->get_step_number() % parameters.forces_torques.output_frequency==0) )
     {
       std::map<unsigned int, Tensor<1, dim>> force_on_walls =
         pw_contact_force_object->get_force();
@@ -716,8 +720,7 @@ DEMSolver<dim>::write_forces_torques_output_results()
         pw_contact_force_object->get_torque();
 
       if ( (parameters.forces_torques.force_torque_verbosity ==
-          Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose)
-          && (simulation_control->get_step_number() % parameters.forces_torques.output_frequency==0) )
+          Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose) )
         {
           for (const auto &it : force_on_walls)
             {
