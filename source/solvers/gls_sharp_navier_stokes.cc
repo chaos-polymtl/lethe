@@ -1750,7 +1750,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
     dt = 1;
 
 
-
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
