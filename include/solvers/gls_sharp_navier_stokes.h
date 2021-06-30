@@ -264,8 +264,6 @@ private:
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
 
-
-
   std::vector<TableHandler> table_f;
   std::vector<TableHandler> table_t;
 };
