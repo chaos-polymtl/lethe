@@ -32,7 +32,11 @@ UniformInsertion<dim>::insert(
   const DEMSolverParameters<dim> &                 dem_parameters)
 {
   this->is_unique_particle_insertion=dem_parameters.insertion_info.is_insertion_unique;
-  this->unique_point_location=dem_parameters.insertion_info.unique_point_coordinate;
+  if (this->is_unique_particle_insertion)
+    {
+      this->unique_point_location =
+        dem_parameters.insertion_info.unique_point_coordinate;
+    }
   if (remained_particles_of_each_type == 0 &&
       current_inserting_particle_type !=
         dem_parameters.physical_properties.particle_type_number - 1)
