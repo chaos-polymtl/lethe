@@ -1775,8 +1775,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
           // Check on which DOF of the cell to impose the pressure. If the dof
-          // is on a hanging node, the pressure cannot be imposed there. So we
-          // just go to the next pressure DOF of the cell.
+          // is on a hanging node, it is already constrained and
+          // the pressure cannot be imposed there. So we just go to the next pressure DOF of the cell.
 
           for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
             {
