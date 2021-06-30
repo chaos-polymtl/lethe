@@ -224,21 +224,6 @@ private:
   find_cells_around_cell(
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
-  /**
-   * @brief
-   *Clear all the line of dof even if the dof is not owned but it is ghost
-   *
-   * @param cell , The initial cell from which we access the DOF,
-   *
-   * @param dof_index , The dof index for which we want to clear the line in the matrix.
-   *
-   */
-  void
-  clear_line_in_matrix(
-    const typename DoFHandler<dim>::active_cell_iterator &cell,
-    unsigned int                                          dof_index);
-
-
   /*
    Modified version of assemble_matrix_and_rhs to include the presence of
    extra steps. For more detail see the same function in the
@@ -268,11 +253,16 @@ private:
            std::tuple<bool, unsigned int>>
     cut_cells_map;
 
+  /*
+   * This map is used to keep in memory which DOFs already have an IB equation
+   * imposed on them in order to avoid writing multiple time the same equation.
+   */
+  std::map<unsigned int, bool> ib_done;
+
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
   const double                 GLS_u_scale = 1;
   std::vector<IBParticle<dim>> particles;
-
 
   std::vector<TableHandler> table_f;
   std::vector<TableHandler> table_t;

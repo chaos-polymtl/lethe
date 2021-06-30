@@ -101,7 +101,7 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // this value will never be used.
           unsigned int p;
 
-          std::tie(cell_is_cut, p, std::ignore) =
+          std::tie(cell_is_cut, p, local_dof_indices) =
             cell_cut(cell, local_dof_indices, support_points);
 
           // Add information about if the cell is cut "cell_is_cut" and the
@@ -150,7 +150,7 @@ GLSSharpNavierStokesSolver<dim>::point_inside_cell(
         this->mapping->transform_real_to_unit_cell(cell, point);
       const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
       // if the cell contains the point, the distance is equal to 0
-      if (dist == 0)
+      if (dist <= 1e-12)
         {
           // The cell is found so we return it and exit the function.
 
@@ -184,58 +184,6 @@ GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(
   return cells_sharing_vertices;
 }
 
-
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::clear_line_in_matrix(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  unsigned int                                          dof_index)
-{
-  // Clear a line in the matrix based on an initial cell that contains the DOF.
-  // This function ensure that if the dof is a ghost all the entry of the matrix
-  // will be erased.
-
-
-  // if the dof is locally owned we can use the default function of deal ii for
-  // matrix (most of the time this is ok)
-  if (this->locally_owned_dofs.is_element(dof_index))
-    {
-      this->system_matrix.clear_row(dof_index);
-    }
-  else
-    {
-      // This DOf is special, it's at a frontier between two processors. Only
-      // one of the processors owns it. If we have reached this point, we are
-      // not on that processor. In this case  the clear_row function doesn't
-      // clear the entire row it only clear DOFs that are owned by the row. This
-      // is an issue. To fix that we force all DOFs contain in ghost cells to be
-      // put to 0.
-      std::vector<typename DoFHandler<dim>::active_cell_iterator>
-        active_neighbors_set = find_cells_around_cell(cell);
-
-      const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-      std::vector<types::global_dof_index> local_dof_indices_iter(
-        dofs_per_cell);
-      // Loop over the neighbours cells and erase the entry of the matrix that
-      // could be linked to neighbours ghost cells.
-      for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
-        {
-          const auto &cell_3 = active_neighbors_set[i];
-          cell_3->get_dof_indices(local_dof_indices_iter);
-          if (std::find(local_dof_indices_iter.begin(),
-                        local_dof_indices_iter.end(),
-                        dof_index) != local_dof_indices_iter.end())
-            {
-              for (unsigned int k = 0; k < local_dof_indices_iter.size(); ++k)
-                {
-                  this->system_matrix.set(dof_index,
-                                          local_dof_indices_iter[k],
-                                          0);
-                }
-            }
-        }
-    }
-}
 
 
 template <int dim>
@@ -1824,7 +1772,25 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
           sum_line = sum_line / dt;
           // Clear the line in the matrix
           unsigned int inside_index = local_dof_indices[dim];
-          clear_line_in_matrix(cell, inside_index);
+          // Check on which DOF of the cell to impose the pressure. If the dof
+          // is on a hanging node, it is already constrained and
+          // the pressure cannot be imposed there. So we just go to the next pressure DOF of the cell.
+
+          for (unsigned int i = 0; i < local_dof_indices.size(); ++i)
+            {
+              const unsigned int component_i =
+                this->fe->system_to_component_index(i).first;
+              if (this->zero_constraints.is_constrained(local_dof_indices[i]) ==
+                    false &&
+                  this->locally_owned_dofs.is_element(local_dof_indices[i]) &&
+                  component_i == dim)
+                {
+                  inside_index = local_dof_indices[i];
+                  break;
+                }
+            }
+
+          this->system_matrix.clear_row(inside_index);
           // this->system_matrix.clear_row(inside_index)
           // is not reliable on edge case
 
@@ -1838,11 +1804,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
         }
     }
 
-
+  ib_done.clear();
   // Loop on all the cell to define if the sharp edge cut them
   for (const auto &cell : cell_iterator)
     {
-      if (cell->is_locally_owned())
+      if (cell->is_locally_owned() || cell->is_ghost())
         {
           double sum_line = 0;
           fe_values.reinit(cell);
@@ -1873,19 +1839,25 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                 {
                   const unsigned int component_i =
                     this->fe->system_to_component_index(i).first;
-                  if (component_i < dim)
+                  unsigned int global_index_overwrite = local_dof_indices[i];
+
+
+                  // Check if the DOfs is owned and if it's not a hanging node.
+                  if (component_i < dim &&
+                      this->locally_owned_dofs.is_element(
+                        global_index_overwrite) &&
+                      ib_done[global_index_overwrite] == false)
                     {
                       // We are working on the velocity of the cell cut
                       // loops on the dof that are for vx or vy separately
                       // loops on all the dof of the cell that represent
                       // a specific component
+                      ib_done[global_index_overwrite] = true;
 
-                      // define which dof is going to be redefined
-                      unsigned int global_index_overwrite =
-                        local_dof_indices[i];
+                      // Define which dof is going to be redefined
 
                       // Clear the current line of this dof
-                      clear_line_in_matrix(cell, global_index_overwrite);
+                      this->system_matrix.clear_row(global_index_overwrite);
 
                       // Define the points for the IB stencil, based on the
                       // order and the particle position as well as the DOF
@@ -1927,6 +1899,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // Give the DOF an approximated value. This help
                           // with pressure shock when the DOF passe from part of
                           // the boundary to the fluid.
+
                           this->system_matrix.set(global_index_overwrite,
                                                   global_index_overwrite,
                                                   sum_line);
@@ -2051,8 +2024,50 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                             sum_line;
                     }
 
+                  // If the DOFs is hanging put back the equations of the
+                  // hanging nodes
+                  if (this->zero_constraints.is_constrained(
+                        local_dof_indices[i]) &&
+                      this->locally_owned_dofs.is_element(
+                        global_index_overwrite))
+                    {
+                      // Clear the line if there is something on it
+                      this->system_matrix.clear_row(global_index_overwrite);
+                      // Get the constraint equations
+                      auto local_entries =
+                        *this->zero_constraints.get_constraint_entries(
+                          local_dof_indices[i]);
 
-                  if (component_i == dim)
+                      double interpolation = 0;
+                      // Write the equation
+                      for (unsigned int j = 0; j < local_entries.size(); ++j)
+                        {
+                          unsigned int col     = local_entries[j].first;
+                          double       entries = local_entries[j].second;
+
+                          interpolation +=
+                            this->evaluation_point(col) * entries;
+                          this->system_matrix.set(local_dof_indices[i],
+                                                  col,
+                                                  entries * sum_line);
+                        }
+                      this->system_matrix.set(local_dof_indices[i],
+                                              local_dof_indices[i],
+                                              sum_line);
+                      // Write the RHS
+                      this->system_rhs(local_dof_indices[i]) =
+                        -this->evaluation_point(local_dof_indices[i]) *
+                          sum_line +
+                        interpolation * sum_line +
+                        this->zero_constraints.get_inhomogeneity(
+                          local_dof_indices[i]) *
+                          sum_line;
+                    }
+
+
+
+                  if (component_i == dim && this->locally_owned_dofs.is_element(
+                                              global_index_overwrite))
                     {
                       // Applied equation on dof that have no equation
                       // defined for them. those DOF become Dummy dof. This
