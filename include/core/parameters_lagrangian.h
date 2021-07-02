@@ -231,38 +231,38 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
-      /**
+    /**
      * @brief ForceTorqueOnWall - Defines the parameters for the
-           * force and torques calculation on boundaries of the domain.
-           */
-      template<int dim>
+     * force and torques calculation on boundaries of the domain.
+     */
+    template <int dim>
     class ForceTorqueOnWall
+    {
+    public:
+      // Enable force post-processing
+      bool calculate_force_torque;
+
+      // Choosing how the outputs is gonna be displayed
+      enum class Verbosity
       {
-      public :
-          // Enable force post-processing
-          bool calculate_force_torque;
+        quiet,
+        verbose
+      } force_torque_verbosity;
 
-          // Choosing how the outputs is gonna be displayed
-          enum class Verbosity
-        {
-          quiet,
-          verbose
-        } force_torque_verbosity;
+      // Frequency of the output
+      unsigned int output_frequency;
 
-          // Frequency of the output
-          unsigned int output_frequency;
+      // Prefix for simulation output
+      std::string force_torque_output_name;
 
-          // Prefix for simulation output
-          std::string force_torque_output_name;
+      // Center of mass point
+      Point<dim> point_center_mass;
 
-          // Center of mass point
-          Point<dim> point_center_mass;
-
-          void
-          declare_parameters(ParameterHandler &prm);
-          void
-          parse_parameters(ParameterHandler &prm);
-      };
+      void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
 
     template <int dim>
     class FloatingWalls

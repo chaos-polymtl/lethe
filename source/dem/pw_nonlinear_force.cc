@@ -8,10 +8,10 @@ PWNonLinearForce<dim>::PWNonLinearForce(
                                                  boundary_translational_velocity,
   const std::unordered_map<unsigned int, double> boundary_rotational_speed,
   const std::unordered_map<unsigned int, Tensor<1, dim>>
-                                  boundary_rotational_vector,
-  const double                    triangulation_radius,
-  const DEMSolverParameters<dim> &dem_parameters,
-  const std::vector<types::boundary_id>      boundary_index)
+                                        boundary_rotational_vector,
+  const double                          triangulation_radius,
+  const DEMSolverParameters<dim> &      dem_parameters,
+  const std::vector<types::boundary_id> boundary_index)
 {
   this->boundary_translational_velocity_map = boundary_translational_velocity;
   this->boundary_rotational_speed_map       = boundary_rotational_speed;
@@ -105,10 +105,12 @@ PWNonLinearForce<dim>::PWNonLinearForce(
       calculate_rolling_resistance_torque =
         &PWNonLinearForce<dim>::viscous_resistance;
     }
-    this->calculate_force_torque_on_boundary =
-     dem_parameters.forces_torques.calculate_force_torque;
-  this->center_mass_container=dem_parameters.forces_torques.point_center_mass;
-  this->boundary_index=boundary_index;
+  this->calculate_force_torque_on_boundary =
+    dem_parameters.forces_torques.calculate_force_torque;
+  this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
+  this->boundary_index        = boundary_index;
+  this->force_on_walls        = this->initialize();
+  this->torque_on_walls       = this->initialize();
 }
 
 template <int dim>
@@ -122,8 +124,8 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::vector<Tensor<1, dim>> &momentum,
   std::vector<Tensor<1, dim>> &force)
 {
-  PWContactForce<dim>::force_on_walls =PWContactForce<dim>::initialize(PWContactForce<dim>::force_on_walls);
-  PWContactForce<dim>::torque_on_walls=PWContactForce<dim>::initialize(PWContactForce<dim>::torque_on_walls);
+  PWContactForce<dim>::force_on_walls  = PWContactForce<dim>::initialize();
+  PWContactForce<dim>::torque_on_walls = PWContactForce<dim>::initialize();
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
   for (auto &&pairs_in_contact_content :
@@ -206,6 +208,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             }
         }
     }
+  this->mpi_correction();
 }
 
 // Calculates nonlinear contact force and torques
