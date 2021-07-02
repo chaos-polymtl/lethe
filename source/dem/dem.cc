@@ -451,6 +451,11 @@ DEMSolver<dim>::particle_wall_contact_force()
   pw_contact_force_object->calculate_pw_contact_force(
     pw_pairs_in_contact, simulation_control->get_time_step(), momentum, force);
 
+  forces_boundary_information[simulation_control->get_step_number()] =
+    pw_contact_force_object->get_force();
+  torques_boundary_information[simulation_control->get_step_number()] =
+    pw_contact_force_object->get_torque();
+
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
@@ -498,6 +503,56 @@ DEMSolver<dim>::finish_simulation()
           if (this_mpi_process == processor_number)
             {
               visualization_object.print_xyz(particle_handler, pcout);
+            }
+        }
+    }
+
+  // Outputting force and torques over boundary
+  if (parameters.forces_torques.calculate_force_torque)
+    {
+      unsigned int number_boundary = triangulation.get_boundary_ids().size();
+      string name_file = parameters.forces_torques.force_torque_output_name;
+      for (unsigned int i = 0; i < number_boundary; i++)
+        {
+          string name_file_boundary_description =
+            std::to_string(triangulation.get_boundary_ids()[i]);
+          std::string name_output_file =
+            name_file + "_boundary_" + name_file_boundary_description;
+          if (this_mpi_process == i || (i + 1) > n_mpi_processes)
+            {
+              TableHandler table;
+
+              for (unsigned int j = 0; j < forces_boundary_information.size();
+                   j += parameters.forces_torques.output_frequency)
+                {
+                  table.add_value("Force x",
+                                  forces_boundary_information[j][i][0]);
+                  table.add_value("Force y",
+                                  forces_boundary_information[j][i][1]);
+                  table.add_value("Force z",
+                                  forces_boundary_information[j][i][2]);
+                  table.add_value("Moment x",
+                                  torques_boundary_information[j][i][0]);
+                  table.add_value("Moment y",
+                                  torques_boundary_information[j][i][1]);
+                  table.add_value("Moment z",
+                                  torques_boundary_information[j][i][2]);
+                  table.add_value("Current time",
+                                  j * simulation_control->get_time_step());
+                }
+
+              table.set_precision("Force x", 9);
+              table.set_precision("Force y", 9);
+              table.set_precision("Force z", 9);
+              table.set_precision("Moment x", 9);
+              table.set_precision("Moment y", 9);
+              table.set_precision("Moment z", 9);
+              table.set_precision("Current time", 9);
+
+              // output
+              std::ofstream out_file(name_output_file);
+              table.write_text(out_file);
+              out_file.close();
             }
         }
     }
@@ -584,7 +639,8 @@ template <int dim>
 std::shared_ptr<PWContactForce<dim>>
 DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 {
-  std::vector<types::boundary_id> boundary_index = triangulation.get_boundary_ids();
+  std::vector<types::boundary_id> boundary_index =
+    triangulation.get_boundary_ids();
   if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
@@ -680,54 +736,25 @@ template <int dim>
 void
 DEMSolver<dim>::write_forces_torques_output_results()
 {
-  if (parameters.forces_torques.calculate_force_torque
-      && (this_mpi_process==0)
-      && (simulation_control->get_step_number() % parameters.forces_torques.output_frequency==0) )
+  if (parameters.forces_torques.calculate_force_torque &&
+      (this_mpi_process == 0) &&
+      (simulation_control->get_step_number() %
+         parameters.forces_torques.output_frequency ==
+       0) &&
+      (parameters.forces_torques.force_torque_verbosity ==
+       Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose))
     {
       std::map<unsigned int, Tensor<1, dim>> force_on_walls =
-        pw_contact_force_object->get_force();
+        forces_boundary_information[simulation_control->get_step_number()];
       std::map<unsigned int, Tensor<1, dim>> torque_on_walls =
-        pw_contact_force_object->get_torque();
+        torques_boundary_information[simulation_control->get_step_number()];
 
-      if ( (parameters.forces_torques.force_torque_verbosity ==
-          Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose) )
+      for (const auto &it : force_on_walls)
         {
-          for (const auto &it : force_on_walls)
-            {
-              pcout << "Boundary " << it.first << " :\n"
-                    << "Force = " << it.second
-                    << "\nMoment = " << torque_on_walls[it.first] << "\n\n";
-            }
+          pcout << "Boundary " << it.first << " :\n"
+                << "Force = " << it.second
+                << "\nMoment = " << torque_on_walls[it.first] << "\n\n";
         }
-        std::string name_output_file =
-          parameters.forces_torques.force_torque_output_name;
-        TableHandler table;
-
-        for (const auto &it : force_on_walls)
-          {
-            table.add_value("Boundary", it.first);
-            table.add_value("Force x", it.second[0]);
-            table.add_value("Force y", it.second[1]);
-            table.add_value("Force z", it.second[2]);
-            table.add_value("Moment x", torque_on_walls[it.first][0]);
-            table.add_value("Moment y", torque_on_walls[it.first][1]);
-            table.add_value("Moment z", torque_on_walls[it.first][2]);
-            table.add_value("Current time",
-                            simulation_control->get_current_time());
-          }
-
-        table.set_precision("Force x", 9);
-        table.set_precision("Force y", 9);
-        table.set_precision("Force x", 9);
-        table.set_precision("Moment x", 9);
-        table.set_precision("Moment y", 9);
-        table.set_precision("Moment z", 9);
-        table.set_precision("Current time", 9);
-
-        // output
-        std::ofstream out_file(name_output_file, std::ofstream::app);
-        table.write_text(out_file);
-        out_file.close();
     }
 }
 
@@ -904,7 +931,7 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
-        write_forces_torques_output_results();
+      write_forces_torques_output_results();
 
       if (parameters.restart.checkpoint &&
           simulation_control->get_step_number() %

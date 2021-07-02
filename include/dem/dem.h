@@ -265,7 +265,8 @@ private:
 
   /**
    * @brief write_forces_torques_output_results
-   * Write results of force and torque calculation in a file and depending of verbosity, in the terminal.
+   * Write results of force and torque calculation in a file and depending of
+   * verbosity, in the terminal.
    */
   void
   write_forces_torques_output_results();
@@ -376,6 +377,11 @@ private:
   std::unordered_map<types::particle_index, Tensor<1, dim>> force;
   std::unordered_map<types::particle_index, double>         displacement;
   std::unordered_map<types::particle_index, double>         MOI;
+
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+    forces_boundary_information;
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+    torques_boundary_information;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;

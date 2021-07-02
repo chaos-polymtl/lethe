@@ -617,11 +617,10 @@ namespace Parameters
                         "force",
                         Patterns::FileName(),
                         "File output force prefix");
-      prm.declare_entry(
-        "Which output's creation frequency? (int)",
-        "1",
-        Patterns::Integer(),
-        "Output frequency");
+      prm.declare_entry("Which output's creation frequency? (int)",
+                        "1",
+                        Patterns::Integer(),
+                        "Output frequency");
       prm.declare_entry("Coordinate x of center of mass",
                         "0",
                         Patterns::Double(),
@@ -642,16 +641,16 @@ namespace Parameters
     ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("Forces and Torques");
-      calculate_force_torque = prm.get_bool("calculation");
+      calculate_force_torque    = prm.get_bool("calculation");
       const std::string verbose = prm.get("verbosity");
       if (verbose == "quiet")
         force_torque_verbosity = Verbosity::quiet;
       else if (verbose == "verbose")
         force_torque_verbosity = Verbosity::verbose;
       else
-      {
-        throw(std::runtime_error("Invalid verbosity choice "));
-      }
+        {
+          throw(std::runtime_error("Invalid verbosity choice "));
+        }
       force_torque_output_name =
         prm.get("Output name of force and torque's file (string)");
       output_frequency =

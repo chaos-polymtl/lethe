@@ -69,13 +69,13 @@ public:
     std::unordered_map<types::particle_index, Tensor<1, dim>> &force) = 0;
 
   std::map<unsigned int, Tensor<1, dim>>
-    get_force()
+  get_force()
   {
     return force_on_walls;
   }
 
   std::map<unsigned int, Tensor<1, dim>>
-    get_torque()
+  get_torque()
   {
     return torque_on_walls;
   }
@@ -115,8 +115,8 @@ protected:
                                           Tensor<1, dim>> &forces_and_torques,
                          Tensor<1, dim> &                  particle_momentum,
                          Tensor<1, dim> &                  particle_force,
-                         Point<dim>     &                  point_on_boundary,
-                         unsigned int   &                  boundary_id)
+                         Point<dim> &                      point_on_boundary,
+                         unsigned int &                    boundary_id)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -129,22 +129,9 @@ protected:
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;
 
-    if (calculate_force_torque_on_boundary == true)
-      {
-        force_on_walls[boundary_id] = force_on_walls[boundary_id] - total_force;
-        if (dim==2)
-          {
-            Tensor<1,dim> r = point_on_boundary - center_mass_container;
-            torque_on_walls[boundary_id][2] =
-              torque_on_walls[boundary_id][2] - (r[0]*total_force[1]-r[1]*total_force[2]);
-          }
-        else if (dim==3)
-        {
-          torque_on_walls[boundary_id] =
-            torque_on_walls[boundary_id] - cross_product_3d(point_on_boundary - center_mass_container,
-                             total_force);
-        }
-      }
+    calculate_force_torque_on_boundary_function(boundary_id,
+                                                total_force,
+                                                point_on_boundary);
 
     // Updating the force of particles in the particle handler
     for (int d = 0; d < dim; ++d)
@@ -160,8 +147,25 @@ protected:
       }
   }
 
+  /** This function is used to calculate the total force and total torque on
+   * each boundary
+   */
+  void
+  calculate_force_torque_on_boundary_function(const unsigned int boundary_id,
+                                              Tensor<1, dim>     add_force,
+                                              const Point<dim>   point_contact);
+
+  /** This function is used to initialize a map of vectors to zero
+   * with the member class boundary index which has the keys as information
+   */
   std::map<unsigned int, Tensor<1, dim>>
-  initialize(std::map<unsigned int, Tensor<1, dim>> map);
+  initialize();
+
+  /** This function sum every forces and torques member class from each
+   * MPI process to have the good result
+   */
+  void
+  mpi_correction();
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -191,12 +195,12 @@ protected:
   std::map<types::particle_index, double> effective_coefficient_of_restitution;
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
-    effective_coefficient_of_rolling_friction;
+                                         effective_coefficient_of_rolling_friction;
   std::map<unsigned int, Tensor<1, dim>> force_on_walls;
   std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
-  bool                          calculate_force_torque_on_boundary;
-  Point<dim>                    center_mass_container;
-  std::vector<types::boundary_id>                        boundary_index;
+  bool                                   calculate_force_torque_on_boundary;
+  Point<dim>                             center_mass_container;
+  std::vector<types::boundary_id>        boundary_index;
 };
 
 #endif /* particle_wall_contact_force_h */
