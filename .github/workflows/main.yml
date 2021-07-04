@@ -59,7 +59,7 @@ jobs:
       - name: Run Lethe tests (${{ matrix.build_type }}-deal.ii:${{ matrix.dealii_version }})
         run: |
           cd build
-          ctest -V
+          ctest -V -j${{ env.COMPILE_JOBS }}
 
   #formatting:
     #runs-on: ubuntu-latest
