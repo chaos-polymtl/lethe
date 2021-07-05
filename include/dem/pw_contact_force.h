@@ -115,8 +115,8 @@ protected:
                                           Tensor<1, dim>> &forces_and_torques,
                          Tensor<1, dim> &                  particle_momentum,
                          Tensor<1, dim> &                  particle_force,
-                         Point<dim> &                      point_on_boundary=0,
-                         int                               boundary_id=0)
+                         Point<dim> &point_on_boundary = 0,
+                         int         boundary_id       = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling

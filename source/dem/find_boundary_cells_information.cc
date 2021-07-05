@@ -106,7 +106,7 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                       // Storing these information into the
                       // boundary_cells_info_struct
                       boundary_cells_info_struct<dim> boundary_information;
-                      boundary_information.cell        = cell;
+                      boundary_information.cell = cell;
                       boundary_information.boundary_id =
                         cell->face(face_id)->boundary_id();
                       boundary_information.boundary_face_id =
