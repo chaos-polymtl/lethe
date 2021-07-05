@@ -63,7 +63,7 @@ public:
                                           boundary_rotational_vector,
     const double                          triangulation_radius,
     const DEMSolverParameters<dim> &      dem_parameters,
-    const std::vector<types::boundary_id> boundary_index);
+    const std::vector<types::boundary_id> boundary_index={0});
 
   /**
    * Carries out the calculation of the particle-wall contact force using
