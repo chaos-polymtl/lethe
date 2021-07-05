@@ -2342,13 +2342,16 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                     // stabilization parameter used is different if the simulation
                     // is steady or unsteady. In the unsteady case it includes the
                     // value of the time-step
-                    const double tau =
-                            is_steady(scheme) ?
-                            1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                                           9 * std::pow(4 * viscosity / (h * h), 2)) :
-                            1. /
-                            std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                                      9 * std::pow(4 * viscosity / (h * h), 2));
+                    double tau=1. /
+                    std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
+                              9 * std::pow(4 * viscosity / (h * h), 2));
+                    if(scheme == Parameters::SimulationControl::TimeSteppingMethod::steady) {
+
+                        tau=1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
+                                       9 * std::pow(4 * viscosity / (h * h), 2));
+                    }
+
+
 
                     // Gather the shape functions, their gradient and their
                     // laplacian for the velocity and the pressure

@@ -12,7 +12,9 @@
 inline bool
 is_steady(const Parameters::SimulationControl::TimeSteppingMethod method)
 {
-  return (method == Parameters::SimulationControl::TimeSteppingMethod::steady );
+  return (method == Parameters::SimulationControl::TimeSteppingMethod::steady ||
+          method ==
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf);
 }
 /**
  * @brief Determines if the time integration method is within the sdirk family
