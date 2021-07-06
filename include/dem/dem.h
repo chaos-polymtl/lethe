@@ -246,8 +246,8 @@ private:
 
   /**
    * @brief write_forces_torques_output_results
-   * Write results of force and torque calculation in a file and depending of
-   * verbosity, in the terminal.
+   * Writes the results of force and torque calculations in a file, and depending on the
+   * verbosity, in the terminal
    */
   void
   write_forces_torques_output_results();
