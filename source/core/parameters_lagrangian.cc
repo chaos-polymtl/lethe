@@ -29,7 +29,7 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Number of particles of this type");
-      prm.declare_entry("density",
+      prm.declare_entry("density particle",
                         "1000",
                         Patterns::Double(),
                         "Particle density");
@@ -79,8 +79,8 @@ namespace Parameters
         {
           throw(std::runtime_error("Invalid size distribution type "));
         }
-      number.at(particle_type)  = prm.get_integer("number");
-      density.at(particle_type) = prm.get_double("density");
+      number.at(particle_type)           = prm.get_integer("number");
+      density_particle.at(particle_type) = prm.get_double("density particle");
       youngs_modulus_particle.at(particle_type) =
         prm.get_double("young modulus particle");
       poisson_ratio_particle.at(particle_type) =
@@ -212,7 +212,7 @@ namespace Parameters
       initialize_containers(particle_average_diameter,
                             particle_size_std,
                             number,
-                            density,
+                            density_particle,
                             youngs_modulus_particle,
                             poisson_ratio_particle,
                             restitution_coefficient_particle,
@@ -284,7 +284,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::unordered_map<unsigned int, int> &   number,
-      std::unordered_map<unsigned int, double> &density,
+      std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
       std::unordered_map<unsigned int, double> &poisson_ratio_particle,
       std::unordered_map<unsigned int, double>
@@ -299,7 +299,7 @@ namespace Parameters
           particle_average_diameter.insert({counter, 0.});
           particle_size_std.insert({counter, 0.});
           number.insert({counter, 0.});
-          density.insert({counter, 0.});
+          density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});
           poisson_ratio_particle.insert({counter, 0.});
           restitution_coefficient_particle.insert({counter, 0.});
