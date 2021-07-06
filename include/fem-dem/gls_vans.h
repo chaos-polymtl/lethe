@@ -181,8 +181,8 @@ private:
   const bool   PSPG               = true;
   const bool   SUPG               = true;
   const bool   DCDD               = true;
-  const bool   grad_div           = false;
-  const bool   full_stress_tensor = false;
+  const bool   grad_div           = true;
+  const bool   full_stress_tensor = true;
   const double GLS_u_scale        = 1;
 };
 
