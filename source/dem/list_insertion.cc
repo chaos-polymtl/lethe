@@ -82,6 +82,22 @@ ListInsertion<dim>::insert(
       const unsigned int n_particles_to_insert_this_proc =
         this_mpi_process == 0 ? n_total_particles_to_insert : 0;
 
+
+      std::vector<Point<dim>> insertion_points_on_proc_this_step;
+
+      // Because the list insertion is made to insert only a few particles
+      // only processor 0 manages the insertion of these particles
+      if (this_mpi_process == 0)
+        {
+          insertion_points_on_proc_this_step.reserve(
+            n_particles_to_insert_this_proc);
+          for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
+            {
+              insertion_points_on_proc_this_step.emplace_back(
+                insertion_points[p]);
+            }
+        }
+
       // Obtain global bounding boxes
       const auto my_bounding_box =
         GridTools::compute_mesh_predicate_bounding_box(
@@ -89,20 +105,6 @@ ListInsertion<dim>::insert(
       const auto global_bounding_boxes =
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
-      std::vector<Point<dim>> insertion_points_on_proc_this_step;
-      insertion_points_on_proc_this_step.reserve(
-        n_particles_to_insert_this_proc);
-
-      // Because the list insertion is made to insert only a few particles
-      // only processor 0 manages the insertion of these particles
-      if (this_mpi_process == 0)
-        {
-          for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
-            {
-              insertion_points_on_proc_this_step.emplace_back(
-                insertion_points[p]);
-            }
-        }
 
       // Assigning inserted particles properties using
       // assign_particle_properties function
