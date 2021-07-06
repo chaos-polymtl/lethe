@@ -20,19 +20,6 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
-#include <core/grids.h>
-#include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
-
-#include "solvers/gls_navier_stokes.h"
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -42,6 +29,18 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+#include <core/grids.h>
+#include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
+
+#include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+#include "core/time_integration_utilities.h"
+#include "solvers/gls_navier_stokes.h"
 
 
 
@@ -181,8 +180,8 @@ private:
   const bool   PSPG               = true;
   const bool   SUPG               = true;
   const bool   DCDD               = true;
-  const bool   grad_div           = true;
-  const bool   full_stress_tensor = true;
+  const bool   grad_div           = false;
+  const bool   full_stress_tensor = false;
   const double GLS_u_scale        = 1;
 };
 
