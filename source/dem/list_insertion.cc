@@ -79,13 +79,13 @@ ListInsertion<dim>::insert(
         this_mpi_process == 0 ? n_total_particles_to_insert : 0;
 
       std::vector<Point<dim>> insertion_points_on_proc_this_step;
+      insertion_points_on_proc_this_step.reserve(
+        n_particles_to_insert_this_proc);
 
       // Because the list insertion is made to insert only a few particles
       // only processor 0 manages the insertion of these particles
       if (this_mpi_process == 0)
         {
-          insertion_points_on_proc_this_step.reserve(
-            n_particles_to_insert_this_proc);
           for (unsigned int p = 0; p < n_particles_to_insert_this_proc; ++p)
             {
               insertion_points_on_proc_this_step.emplace_back(
