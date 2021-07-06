@@ -523,9 +523,7 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
   else if (parameters.insertion_info.insertion_method ==
            Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
     {
-      insertion_object =
-        std::make_shared<ListInsertion<dim>>(parameters,
-                                             maximum_particle_diameter);
+      insertion_object = std::make_shared<ListInsertion<dim>>(parameters);
     }
   else
     {

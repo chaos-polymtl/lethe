@@ -13,15 +13,12 @@ DeclException2(ListSizeCoherence,
 // create the insertion_points member
 template <int dim>
 ListInsertion<dim>::ListInsertion(
-  const DEMSolverParameters<dim> &dem_parameters,
-  const double &                  maximum_particle_diameter)
+  const DEMSolverParameters<dim> &dem_parameters)
   : remaining_particles_of_each_type(
       dem_parameters.physical_properties.number.at(0))
 {
   // Inializing current inserting particle type
   current_inserting_particle_type = 0;
-
-  this->maximum_diameter = maximum_particle_diameter;
 
   const auto &list_x = dem_parameters.insertion_info.list_x;
   const auto &list_y = dem_parameters.insertion_info.list_y;

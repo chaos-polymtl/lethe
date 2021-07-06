@@ -38,8 +38,7 @@ template <int dim>
 class ListInsertion : public Insertion<dim>
 {
 public:
-  ListInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters,
-                     const double &                  maximum_particle_diameter);
+  ListInsertion<dim>(const DEMSolverParameters<dim> &dem_parameters);
 
   /**
    * @brief The ListInsertion class inserts particles using a list specific position.
