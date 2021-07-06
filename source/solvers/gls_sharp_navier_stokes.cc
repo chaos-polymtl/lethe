@@ -2152,27 +2152,25 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   MPI_Barrier(this->mpi_communicator);
   if (assemble_matrix)
     this->system_matrix = 0;
-  system_rhs = 0;
-  // erase_inertia();
+  this->system_rhs = 0;
+
   double viscosity = this->simulation_parameters.physical_properties.viscosity;
   Function<dim> *l_forcing_function = this->forcing_function;
 
-  QGauss<dim>        quadrature_formula(this->number_quadrature_points);
-  FEValues<dim>      fe_values(*this->mapping,
+  FEValues<dim>                    fe_values(*this->mapping,
                           *this->fe,
-                          quadrature_formula,
+                          *this->cell_quadrature,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int n_q_points    = quadrature_formula.size();
+  const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int               n_q_points = this->cell_quadrature->size();
   const FEValuesExtractors::Vector velocities(0);
   const FEValuesExtractors::Scalar pressure(dim);
   FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
   Vector<double>                   local_rhs(dofs_per_cell);
   std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices_iter(dofs_per_cell);
   std::vector<Tensor<1, dim>>          present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>>          present_velocity_gradients(n_q_points);
   std::vector<double>                  present_pressure_values(n_q_points);
@@ -2210,18 +2208,9 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
-  // support point
 
-  std::map<types::global_dof_index, Point<dim>> support_points;
-  DoFTools::map_dofs_to_support_points(*this->mapping,
-                                       this->dof_handler,
-                                       support_points);
-
-  Point<dim> center_immersed;
-  Point<dim> pressure_bridge;
-
-
-  // Time steps and inverse time steps which is used for numerous calculations
+  // Time steps and inverse time steps which is used for numerous
+  // calculations
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
@@ -2231,10 +2220,10 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   // 1 - n
   // 2 - n-1
   // 3 - n-2
-
   Vector<double> bdf_coefs;
 
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
+  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+      scheme == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
@@ -2242,7 +2231,6 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
 
   if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     bdf_coefs = bdf_coefficients(3, time_steps_vector);
-
 
   // Matrix of coefficients for the SDIRK methods
   // The lines store the information required for each step
@@ -2256,18 +2244,11 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   if (is_sdirk3(scheme))
     sdirk_coefs = sdirk_coefficients(3, dt);
 
-
-
   // Element size
   double h;
+  auto & evaluation_point = this->evaluation_point;
 
-
-
-  typename DoFHandler<dim>::active_cell_iterator cell = this->dof_handler
-                                                          .begin_active(),
-                                                 endc = this->dof_handler.end();
-  auto &evaluation_point                              = this->evaluation_point;
-  for (; cell != endc; ++cell)
+  for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
       if (cell->is_locally_owned())
         {
@@ -2371,6 +2352,8 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
                       1. / std::sqrt(std::pow(sdt, 2) +
                                      std::pow(2. * u_mag / h, 2) +
                                      9 * std::pow(4 * viscosity / (h * h), 2));
+
+
 
                   // Gather the shape functions, their gradient and their
                   // laplacian for the velocity and the pressure
@@ -2813,6 +2796,15 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
         assembleGLS<true,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::none>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          true,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::none>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
 
   else if (this->simulation_parameters.velocitySource.type ==
@@ -2869,9 +2861,22 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
         assembleGLS<true,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          true,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::srf>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
 
   sharp_edge();
+  if (this->simulation_control->is_first_assembly())
+    {
+      this->simulation_control->provide_residual(this->system_rhs.l2_norm());
+    }
 }
 template <int dim>
 void
@@ -2932,6 +2937,15 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
         assembleGLS<false,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::none>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          false,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::none>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
   if (this->simulation_parameters.velocitySource.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
@@ -2987,6 +3001,15 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
         assembleGLS<false,
                     Parameters::SimulationControl::TimeSteppingMethod::steady,
                     Parameters::VelocitySource::VelocitySourceType::srf>();
+      else if (time_stepping_method ==
+               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+        assembleGLS<
+          false,
+          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
+          Parameters::VelocitySource::VelocitySourceType::srf>();
+      else
+        throw std::runtime_error(
+          "The time stepping method provided is not supported by this solver");
     }
   sharp_edge();
 }
