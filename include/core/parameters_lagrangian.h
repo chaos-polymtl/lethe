@@ -249,13 +249,13 @@ namespace Parameters
         verbose
       } force_torque_verbosity;
 
-      // Frequency of the output
+      // Output frequency
       unsigned int output_frequency;
 
       // Prefix for simulation output
       std::string force_torque_output_name;
 
-      // Center of mass point
+      // Center of mass
       Point<dim> point_center_mass;
 
       void
