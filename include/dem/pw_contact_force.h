@@ -161,8 +161,8 @@ protected:
   std::map<unsigned int, Tensor<1, dim>>
   initialize();
 
-  /** This function sum every forces and torques member class from each
-   * MPI process to have the good result
+  /** This function sums all the forces and torques from all the
+   * MPI processes
    */
   void
   mpi_correction();
