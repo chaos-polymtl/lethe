@@ -378,6 +378,8 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
             {
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
+                  // fe_values_void_fraction.get_function_values(
+                  //  nodal_void_fraction_relevant, phi_vf);
                   phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
                   grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
                 }
@@ -982,14 +984,12 @@ GLSVANSSolver<dim>::assembleGLS()
 
               // Calcukation of the shock capturing viscosity term
               const double vdcdd =
-                (h / (2 * this->simulation_parameters.void_fraction
-                            ->reference_velocity)) *
+                (h /
+                 (2 * this->simulation_parameters.cfd_dem.reference_velocity)) *
                 pow(present_velocity_gradients[q].norm() * h /
-                      (this->simulation_parameters.void_fraction
-                         ->reference_velocity),
+                      (this->simulation_parameters.cfd_dem.reference_velocity),
                     this->simulation_parameters.fem_parameters.velocity_order) *
-                pow((this->simulation_parameters.void_fraction
-                       ->reference_velocity /
+                pow((this->simulation_parameters.cfd_dem.reference_velocity /
                      this->simulation_parameters.void_fraction->l2_lower_bound),
                     2);
 
