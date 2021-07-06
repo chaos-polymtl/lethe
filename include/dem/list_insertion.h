@@ -31,7 +31,7 @@
 /**
  * Insertion of particles using a list of positions
  *
- * @author Bruno Blais, Polytechnique Montreal 2019-
+ * @author Bruno Blais, Polytechnique Montreal 2021-
  */
 
 template <int dim>
@@ -42,7 +42,14 @@ public:
                      const double &                  maximum_particle_diameter);
 
   /**
-   * Carries out the insertion of particles using the
+   * @brief The ListInsertion class inserts particles using a list specific position.
+   * This allows the insertion of any number of particles at a well-controled
+   * location which is especially useful from a testing perspective. The code
+   * ensures that the number of positions provided in the x,y (and possibly z)
+   * direction is coherent. If more particles than the number of position in the
+   * list are requested, the class will continue inserting particles at the
+   * insertion frequency using the list of position. There is no mechanism in
+   * place that prevents the overlap of these new particles with previous ones.
    *
    * @param particle_handler The particle handler of particles which are being
    * inserted
@@ -55,12 +62,12 @@ public:
          const parallel::distributed::Triangulation<dim> &triangulation,
          const DEMSolverParameters<dim> &dem_parameters) override;
 
-  // Number of remained particles of each type that should be inserted in the
+  // Number of remaining particles of each type that should be inserted in the
   // upcoming insertion steps
   unsigned int remaining_particles_of_each_type;
-
   unsigned int current_inserting_particle_type;
 
+  // Vector of the location used to insert the particles
   std::vector<Point<dim>> insertion_points;
 };
 

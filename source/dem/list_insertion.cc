@@ -56,6 +56,7 @@ ListInsertion<dim>::insert(
   const parallel::distributed::Triangulation<dim> &triangulation,
   const DEMSolverParameters<dim> &                 dem_parameters)
 {
+  // TODO refactor into a function call
   if (remaining_particles_of_each_type == 0 &&
       current_inserting_particle_type !=
         dem_parameters.physical_properties.particle_type_number - 1)
@@ -65,23 +66,17 @@ ListInsertion<dim>::insert(
           ++current_inserting_particle_type);
     }
 
-  // Check to see if there remains particles to be inserted
-  if (remaining_particles_of_each_type != 0)
+  if (remaining_particles_of_each_type > 0)
     {
-      MPI_Comm           communicator = triangulation.get_communicator();
-      ConditionalOStream pcout        = {
-        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0};
-
-      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
-
       unsigned int n_total_particles_to_insert = insertion_points.size();
       n_total_particles_to_insert =
         std::min(remaining_particles_of_each_type, n_total_particles_to_insert);
 
       // All processors except 0 will not insert particles
+      MPI_Comm communicator = triangulation.get_communicator();
+      auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       const unsigned int n_particles_to_insert_this_proc =
         this_mpi_process == 0 ? n_total_particles_to_insert : 0;
-
 
       std::vector<Point<dim>> insertion_points_on_proc_this_step;
 
@@ -106,8 +101,7 @@ ListInsertion<dim>::insert(
         Utilities::MPI::all_gather(communicator, my_bounding_box);
 
 
-      // Assigning inserted particles properties using
-      // assign_particle_properties function
+      // Assign inserted particles properties
       this->assign_particle_properties(dem_parameters,
                                        n_particles_to_insert_this_proc,
                                        current_inserting_particle_type,
@@ -119,9 +113,12 @@ ListInsertion<dim>::insert(
         global_bounding_boxes,
         this->particle_properties);
 
-      // Updating remaining particles
+      // Update number of particles remaining to be inserted
       remaining_particles_of_each_type -= n_total_particles_to_insert;
 
+
+      ConditionalOStream pcout = {
+        std::cout, Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 0};
       this->print_insertion_info(n_total_particles_to_insert,
                                  remaining_particles_of_each_type,
                                  current_inserting_particle_type,
