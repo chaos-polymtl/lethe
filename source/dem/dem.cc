@@ -20,6 +20,27 @@
 
 #include <dem/dem.h>
 #include <dem/list_insertion.h>
+#include <dem/explicit_euler_integrator.h>
+#include <dem/find_contact_detection_step.h>
+#include <dem/find_maximum_particle_size.h>
+#include <dem/gear3_integrator.h>
+#include <dem/input_parameter_inspection.h>
+#include <dem/localize_contacts.h>
+#include <dem/locate_ghost_particles.h>
+#include <dem/locate_local_particles.h>
+#include <dem/non_uniform_insertion.h>
+#include <dem/pp_contact_info_struct.h>
+#include <dem/pp_linear_force.h>
+#include <dem/pp_nonlinear_force.h>
+#include <dem/print_initial_information.h>
+#include <dem/pw_contact_info_struct.h>
+#include <dem/pw_linear_force.h>
+#include <dem/pw_nonlinear_force.h>
+#include <dem/read_checkpoint.h>
+#include <dem/read_mesh.h>
+#include <dem/uniform_insertion.h>
+#include <dem/velocity_verlet_integrator.h>
+#include <dem/write_checkpoint.h>
 
 #include <deal.II/fe/mapping_q_generic.h>
 
