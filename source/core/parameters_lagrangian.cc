@@ -1008,6 +1008,112 @@ namespace Parameters
         }
     }
 
+    template <int dim>
+    void
+    GridMotion<dim>::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("grid motion");
+      {
+        prm.declare_entry(
+          "motion type",
+          "none",
+          Patterns::Selection(
+            "none|translational|rotational|translational_rotational"),
+          "Choosing grid motion type. "
+          "Choices are <none|translational|rotational|translational_rotational>.");
+
+        prm.declare_entry("grid_translational_velocity_x",
+                          "0",
+                          Patterns::Double(),
+                          "grid translational velocity");
+        prm.declare_entry("grid_translational_velocity_y",
+                          "0",
+                          Patterns::Double(),
+                          "grid translational velocity");
+        prm.declare_entry("grid_translational_velocity_z",
+                          "0",
+                          Patterns::Double(),
+                          "grid translational velocity");
+
+        prm.declare_entry("grid_rotational_speed",
+                          "0",
+                          Patterns::Double(),
+                          "grid rotational speed");
+
+        prm.declare_entry("grid_rotational_vector_x",
+                          "0",
+                          Patterns::Double(),
+                          "grid rotational vector");
+        prm.declare_entry("grid_rotational_vector_y",
+                          "0",
+                          Patterns::Double(),
+                          "grid rotational vector");
+        prm.declare_entry("grid_rotational_vector_z",
+                          "0",
+                          Patterns::Double(),
+                          "grid rotational vector");
+      }
+      prm.leave_subsection();
+    }
+
+    template <int dim>
+    void
+    GridMotion<dim>::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("grid motion");
+      {
+        const std::string motion = prm.get("motion type");
+        if (motion == "rotational")
+          {
+            motion_type           = MotionType::rotational;
+            grid_rotational_speed = prm.get_double("grid_rotational_speed");
+            grid_rotational_vector[0] =
+              prm.get_double("grid_rotational_vector_x");
+            grid_rotational_vector[1] =
+              prm.get_double("grid_rotational_vector_y");
+            if (dim == 3)
+              grid_rotational_vector[2] =
+                prm.get_double("grid_rotational_vector_z");
+          }
+        else if (motion == "translational")
+          {
+            motion_type = MotionType::translational;
+            grid_translational_velocity[0] =
+              prm.get_double("grid_translational_velocity_x");
+            grid_translational_velocity[1] =
+              prm.get_double("grid_translational_velocity_y");
+            if (dim == 3)
+              grid_translational_velocity[2] =
+                prm.get_double("grid_translational_velocity_z");
+          }
+        else if (motion == "translational_rotational")
+          {
+            motion_type           = MotionType::translational_rotational;
+            grid_rotational_speed = prm.get_double("grid_rotational_speed");
+            grid_rotational_vector[0] =
+              prm.get_double("grid_rotational_vector_x");
+            grid_rotational_vector[1] =
+              prm.get_double("grid_rotational_vector_y");
+            grid_translational_velocity[0] =
+              prm.get_double("grid_translational_velocity_x");
+            grid_translational_velocity[1] =
+              prm.get_double("grid_translational_velocity_y");
+            if (dim == 3)
+              {
+                grid_rotational_vector[2] =
+                  prm.get_double("grid_rotational_vector_z");
+                grid_translational_velocity[2] =
+                  prm.get_double("grid_translational_velocity_z");
+              }
+          }
+        else
+          {
+            throw(std::runtime_error("Invalid grid motion "));
+          }
+      }
+      prm.leave_subsection();
+    }
+
     template class PhysicalProperties<2>;
     template class PhysicalProperties<3>;
     template class ForceTorqueOnWall<2>;
@@ -1016,6 +1122,8 @@ namespace Parameters
     template class FloatingWalls<3>;
     template class BoundaryMotion<2>;
     template class BoundaryMotion<3>;
+    template class GridMotion<2>;
+    template class GridMotion<3>;
 
   } // namespace Lagrangian
 

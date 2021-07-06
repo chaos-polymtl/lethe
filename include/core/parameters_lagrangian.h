@@ -302,7 +302,7 @@ namespace Parameters
       unsigned int moving_boundary_number;
 
       // Choosing motion type
-      enum class motion_type
+      enum class MotionType
       {
         translational,
         rotational
@@ -315,7 +315,7 @@ namespace Parameters
       // Rotational speeds of rotating boundaries
       std::unordered_map<unsigned int, double> boundary_rotational_speed;
 
-      // Rotational vectors of rotating boundaries
+      // Rotational axes of rotating boundaries
       std::unordered_map<unsigned int, Tensor<1, dim>>
         boundary_rotational_vector;
 
@@ -337,6 +337,33 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
         std::unordered_map<unsigned int, Tensor<1, dim>>
           &boundary_rotational_vector);
+    };
+
+    template <int dim>
+    class GridMotion
+    {
+    public:
+      // Choosing grid motion type
+      enum class MotionType
+      {
+        translational,
+        rotational,
+        translational_rotational
+      } motion_type;
+
+      // Translational velocity of the moving grid
+      Tensor<1, dim> grid_translational_velocity;
+
+      // Rotational speed of rotating grid
+      double grid_rotational_speed;
+
+      // Rotational axis of rotating grid
+      Tensor<1, dim> grid_rotational_vector;
+
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
     };
 
   } // namespace Lagrangian
