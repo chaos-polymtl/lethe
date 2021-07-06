@@ -315,9 +315,9 @@ namespace Parameters
       {
         prm.declare_entry("insertion method",
                           "non_uniform",
-                          Patterns::Selection("uniform|non_uniform"),
+                          Patterns::Selection("uniform|non_uniform|list"),
                           "Choosing insertion method. "
-                          "Choices are <uniform|non_uniform>.");
+                          "Choices are <uniform|non_uniform|list>.");
         prm.declare_entry("inserted number of particles at each time step",
                           "1",
                           Patterns::Integer(),
@@ -362,6 +362,19 @@ namespace Parameters
                           "1",
                           Patterns::Integer(),
                           "Random number seed");
+
+        prm.declare_entry("list x",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of particles x positions");
+        prm.declare_entry("list y",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of particles y positions");
+        prm.declare_entry("list z",
+                          "0",
+                          Patterns::List(Patterns::Double()),
+                          "List of particles z positions");
       }
       prm.leave_subsection();
     }
@@ -376,6 +389,8 @@ namespace Parameters
           insertion_method = InsertionMethod::uniform;
         else if (insertion == "non_uniform")
           insertion_method = InsertionMethod::non_uniform;
+        else if (insertion == "list")
+          insertion_method = InsertionMethod::list;
         else
           {
             throw(std::runtime_error("Invalid insertion method "));
@@ -392,6 +407,24 @@ namespace Parameters
         distance_threshold  = prm.get_double("insertion distance threshold");
         random_number_range = prm.get_double("insertion random number range");
         random_number_seed  = prm.get_double("insertion random number seed");
+
+        // Read x, y and z list as a single string
+        std::string x_str = prm.get("list x");
+        std::string y_str = prm.get("list y");
+        std::string z_str = prm.get("list z");
+
+        // Convert x,y and z string to vector of strings
+        std::vector<std::string> x_str_list(
+          Utilities::split_string_list(x_str));
+        std::vector<std::string> y_str_list(
+          Utilities::split_string_list(y_str));
+        std::vector<std::string> z_str_list(
+          Utilities::split_string_list(z_str));
+
+        // Convert x,y and z string vector to double vector
+        list_x = Utilities::string_to_double(x_str_list);
+        list_y = Utilities::string_to_double(y_str_list);
+        list_z = Utilities::string_to_double(z_str_list);
       }
       prm.leave_subsection();
     }
