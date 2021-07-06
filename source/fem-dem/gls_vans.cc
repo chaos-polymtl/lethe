@@ -1,8 +1,8 @@
+#include <fem-dem/gls_vans.h>
+
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <fem-dem/gls_vans.h>
 
 
 // Constructor for class GLS_VANS
@@ -894,9 +894,21 @@ GLSVANSSolver<dim>::assembleGLS()
                   // Drag Coefficient Calculation
 
                   // Di Felice Drag Model CD Calculation
-                  c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
-                        pow(cell_void_fraction,
-                            -(3.7 - 0.6 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+                  c_d =
+                    pow((0.63 + 4.8 / sqrt(re)), 2) *
+                    pow(cell_void_fraction,
+                        -(3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+
+                  // Rong Drag Model CD Calculation
+                  //                  c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+                  //                        pow(cell_void_fraction,
+                  //                            -(2.65 * (cell_void_fraction +
+                  //                            1) -
+                  //                              (5.3 - (3.5 *
+                  //                              cell_void_fraction)) *
+                  //                                pow(cell_void_fraction, 2) *
+                  //                                exp(-pow(1.5 - log10(re), 2)
+                  //                                / 2)));
 
                   beta +=
                     (0.5 * c_d * M_PI *
@@ -904,7 +916,6 @@ GLSVANSSolver<dim>::assembleGLS()
                      4) *
                     fluid_velocity_at_particle_location.norm();
                 }
-
               beta = beta / cell_volume;
             }
           //**************************************************************************
