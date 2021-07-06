@@ -106,10 +106,6 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh &&
       param->solid_mesh.simplex)
     {
-      // TODO - Serial triangulation should only be created on one processor...
-      // Get communicator from triangulation
-      // auto communicator     = triangulation->get_communicator();
-      // auto this_mpi_process = Utilities::MPI::this_mpi_process(communicator);
       Triangulation<dim, spacedim> basetria(
         Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
 
