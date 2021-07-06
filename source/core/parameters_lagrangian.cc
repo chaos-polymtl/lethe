@@ -120,65 +120,16 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of particle types");
 
-        prm.enter_subsection("particle type 0");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 1");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 2");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 3");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 4");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 5");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 6");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 7");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 8");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 9");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
+        for (unsigned int counter = 0; counter < particle_type_maximum_number;
+             ++counter)
+          {
+            prm.enter_subsection("particle type " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
 
         prm.declare_entry("young modulus wall",
                           "1000000.",
@@ -689,65 +640,16 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of floating walls");
 
-        prm.enter_subsection("wall 0");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 1");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 2");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 3");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 4");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 5");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 6");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 7");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 8");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 9");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
+        for (unsigned int counter = 0; counter < floating_wall_maximum_number;
+             ++counter)
+          {
+            prm.enter_subsection("wall " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
       }
       prm.leave_subsection();
     }
@@ -938,47 +840,16 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of boundary motion");
 
-        prm.enter_subsection("moving boundary 0");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 1");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 2");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 3");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 4");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 5");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 6");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
+        for (unsigned int counter = 0; counter < moving_boundary_maximum_number;
+             ++counter)
+          {
+            prm.enter_subsection("moving boundary " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
       }
       prm.leave_subsection();
     }
