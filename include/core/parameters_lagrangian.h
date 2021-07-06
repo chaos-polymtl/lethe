@@ -125,7 +125,8 @@ namespace Parameters
       enum class InsertionMethod
       {
         uniform,
-        non_uniform
+        non_uniform,
+        list
       } insertion_method;
 
       // Inserted number of particles at each time step
@@ -145,6 +146,8 @@ namespace Parameters
 
       // Insertion random number seed
       int random_number_seed;
+
+      std::vector<double> list_x, list_y, list_z;
 
       static void
       declare_parameters(ParameterHandler &prm);

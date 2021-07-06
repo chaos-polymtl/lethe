@@ -19,6 +19,7 @@
 #include <core/solutions_output.h>
 
 #include <dem/dem.h>
+#include <dem/list_insertion.h>
 
 #include <deal.II/fe/mapping_q_generic.h>
 
@@ -518,6 +519,13 @@ DEMSolver<dim>::set_insertion_type(const DEMSolverParameters<dim> &parameters)
       insertion_object =
         std::make_shared<NonUniformInsertion<dim>>(parameters,
                                                    maximum_particle_diameter);
+    }
+  else if (parameters.insertion_info.insertion_method ==
+           Parameters::Lagrangian::InsertionInfo::InsertionMethod::list)
+    {
+      insertion_object =
+        std::make_shared<ListInsertion<dim>>(parameters,
+                                             maximum_particle_diameter);
     }
   else
     {
