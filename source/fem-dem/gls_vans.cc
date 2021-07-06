@@ -1,8 +1,8 @@
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
 
 
 // Constructor for class GLS_VANS
@@ -329,6 +329,7 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
   Vector<double>     local_rhs_void_fraction(dofs_per_cell);
   std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
   std::vector<double>                  phi_vf(dofs_per_cell);
+  std::vector<Tensor<1, dim>>          grad_phi_vf(dofs_per_cell);
 
   system_rhs_void_fraction    = 0;
   system_matrix_void_fraction = 0;
@@ -367,7 +368,8 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
                 {
                   // fe_values_void_fraction.get_function_values(
                   //  nodal_void_fraction_relevant, phi_vf);
-                  phi_vf[k] = fe_values_void_fraction.shape_value(k, q);
+                  phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
+                  grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
                 }
               for (unsigned int i = 0; i < dofs_per_cell; ++i)
                 {
@@ -376,7 +378,9 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
                     {
                       local_matrix_void_fraction(i, j) +=
                         (phi_vf[j] * phi_vf[i]) *
-                        fe_values_void_fraction.JxW(q);
+                          fe_values_void_fraction.JxW(q) +
+                        (0.00001 * grad_phi_vf[j] * grad_phi_vf[i] *
+                         fe_values_void_fraction.JxW(q));
                     }
                   local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
                                                 fe_values_void_fraction.JxW(q);
@@ -946,10 +950,10 @@ GLSVANSSolver<dim>::assembleGLS()
 
               // Calcukation of the shock capturing viscosity term
               const double vdcdd =
-                (h / (2 * 1)) *
-                pow(present_velocity_gradients[q].norm() * h / (1),
+                (h / (2 * 0.5)) *
+                pow(present_velocity_gradients[q].norm() * h / (0.5),
                     this->simulation_parameters.fem_parameters.velocity_order) *
-                pow((1 / 0.4), 2);
+                pow((0.5 / 0.4), 2);
 
               // Grad-div weight factor
               const double gamma = 0.1;
