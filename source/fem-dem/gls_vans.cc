@@ -661,8 +661,6 @@ GLSVANSSolver<dim>::assembleGLS()
   Tensor<1, dim>                       average_particle_velocity;
   Tensor<1, dim>                       fluid_velocity_at_particle_location;
   Tensor<1, dim>                       relative_velocity;
-  Tensor<1, dim>                       drag_force;
-  Tensor<1, dim>                       drag_force_derivative;
   double                               c_d = 0;
   int                                  particles_in_cell;
 
@@ -750,8 +748,6 @@ GLSVANSSolver<dim>::assembleGLS()
 
           local_matrix              = 0;
           local_rhs                 = 0;
-          drag_force                = 0;
-          drag_force_derivative     = 0;
           beta                      = 0;
           average_particle_velocity = 0;
           particles_in_cell         = 0;
@@ -948,8 +944,6 @@ GLSVANSSolver<dim>::assembleGLS()
                      pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
                      4) *
                     relative_velocity.norm();
-
-                  drag_force += beta * relative_velocity;
                 }
 
               if (particles_in_cell != 0)
@@ -1751,7 +1745,7 @@ GLSVANSSolver<dim>::global_mass_conservation()
         }
     }
   mass_flow = Utilities::MPI::sum(mass_flow, this->mpi_communicator);
-  this->pcout << "mass source is: " << mass_flow << std::endl;
+  // this->pcout << "mass source is: " << mass_flow << std::endl;
 }
 
 template <int dim>
