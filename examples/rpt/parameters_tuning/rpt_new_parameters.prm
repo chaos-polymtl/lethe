@@ -6,7 +6,6 @@
 subsection rpt parameters
     set particle positions file          = positions.particle
     set export counts                    = false
-    set counts file                      = initial_param
     set monte carlo iteration            = 100
     set random number seed               = auto
     set reactor radius       			 = 0.1
@@ -25,9 +24,9 @@ subsection parameter tuning
     set experimental data file           = count.experimental
     set gamma-rays emitted        		 = 2
     set attenuation coefficient detector = 21.477
-    set dead time       				 = 1.2e-5
-    set activity  						 = 2.041e6
-    set attenuation coefficient reactor  = 10.08
+    set dead time       				 = 0.000001769
+    set activity  						 = 8576070
+    set attenuation coefficient reactor  = 6.47993
 end
 
 #---------------------------------------------------

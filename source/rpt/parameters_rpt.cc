@@ -76,6 +76,21 @@ Parameters::InitialRPTParameters::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("parameter tuning");
   {
+    prm.declare_entry("Larachi cost function",
+                      "false",
+                      Patterns::Bool(),
+                      "Enable Larachi cost function <true|false>");
+
+    prm.declare_entry("L1 cost function",
+                      "false",
+                      Patterns::Bool(),
+                      "Enable L1 cost function <true|false>");
+
+    prm.declare_entry("L2 cost function",
+                      "false",
+                      Patterns::Bool(),
+                      "Enable L2 cost function <true|false>");
+
     prm.declare_entry("tuning",
                       "false",
                       Patterns::Bool(),
@@ -120,6 +135,9 @@ Parameters::InitialRPTParameters::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("parameter tuning");
   {
     tuning             = prm.get_bool("tuning");
+    Larachi_cost_function = prm.get_bool("Larachi cost function");
+    L1_cost_function = prm.get_bool("L1 cost function");
+    L2_cost_function = prm.get_bool("L2 cost function");
     experimental_file  = prm.get("experimental data file");
     dead_time          = prm.get_double("dead time");
     activity           = prm.get_double("activity");
