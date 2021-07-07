@@ -597,11 +597,11 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether output from solver runs should be printed. "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("Output name of force and torque's file (string)",
+      prm.declare_entry("Name file",
                         "force",
                         Patterns::FileName(),
                         "File output force prefix");
-      prm.declare_entry("Which output's creation frequency? (int)",
+      prm.declare_entry("Output frequency",
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
@@ -636,9 +636,9 @@ namespace Parameters
           throw(std::runtime_error("Invalid verbosity choice "));
         }
       force_torque_output_name =
-        prm.get("Output name of force and torque's file (string)");
+        prm.get("Name file");
       output_frequency =
-        prm.get_integer("Which output's creation frequency? (int)");
+        prm.get_integer("Output frequency");
       point_center_mass[0] = prm.get_double("Coordinate x of center of mass");
       point_center_mass[1] = prm.get_double("Coordinate y of center of mass");
       if (dim == 3)

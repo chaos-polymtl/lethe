@@ -99,7 +99,7 @@ PWContactForce<dim>::update_contact_information(
 }
 template <int dim>
 void
-PWContactForce<dim>::calculate_force_torque_on_boundary_function(
+PWContactForce<dim>::calculate_force_and_torque_on_boundary(
   const unsigned int boundary_id,
   Tensor<1, dim>     add_force,
   const Point<dim>   point_contact)

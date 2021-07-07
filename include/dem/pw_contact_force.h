@@ -129,9 +129,9 @@ protected:
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;
 
-    calculate_force_torque_on_boundary_function(boundary_id,
-                                                total_force,
-                                                point_on_boundary);
+    calculate_force_and_torque_on_boundary(boundary_id,
+                                           total_force,
+                                           point_on_boundary);
 
     // Updating the force of particles in the particle handler
     for (int d = 0; d < dim; ++d)
@@ -151,7 +151,7 @@ protected:
    * each boundary
    */
   void
-  calculate_force_torque_on_boundary_function(const unsigned int boundary_id,
+  calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
                                               Tensor<1, dim>     add_force,
                                               const Point<dim>   point_contact);
 
