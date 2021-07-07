@@ -90,7 +90,7 @@ private:
   solve_L2_system_void_fraction();
 
   void
-  volume_conservation();
+  global_mass_conservation();
 
   virtual void
   iterate() override;
@@ -176,6 +176,8 @@ private:
 
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   AffineConstraints<double>                          void_fraction_constraints;
+
+  Parameters::SimulationControl::TimeSteppingMethod scheme;
 
   const bool   PSPG        = true;
   const bool   SUPG        = true;
