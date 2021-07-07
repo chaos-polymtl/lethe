@@ -274,29 +274,41 @@ GLSVANSSolver<dim>::update_solution_and_constraints()
                 {
                   const double solution_value =
                     nodal_void_fraction_owned(dof_index);
-                  if (lambda(dof_index) + penalty_parameter *
-                                            mass_matrix(dof_index, dof_index) *
-                                            (solution_value - 1) >
+                  if (lambda(dof_index) +
+                        penalty_parameter * mass_matrix(dof_index, dof_index) *
+                          (solution_value - this->simulation_parameters
+                                              .void_fraction->l2_upper_bound) >
                       0)
                     {
                       active_set.add_index(dof_index);
                       void_fraction_constraints.add_line(dof_index);
-                      void_fraction_constraints.set_inhomogeneity(dof_index, 1);
-                      nodal_void_fraction_owned(dof_index) = 1;
-                      lambda(dof_index)                    = 0;
+                      void_fraction_constraints.set_inhomogeneity(
+                        dof_index,
+                        this->simulation_parameters.void_fraction
+                          ->l2_upper_bound);
+                      nodal_void_fraction_owned(dof_index) =
+                        this->simulation_parameters.void_fraction
+                          ->l2_upper_bound;
+                      lambda(dof_index) = 0;
                     }
                   else if (lambda(dof_index) +
                              penalty_parameter *
                                mass_matrix(dof_index, dof_index) *
-                               (solution_value - 0.38) <
+                               (solution_value -
+                                this->simulation_parameters.void_fraction
+                                  ->l2_lower_bound) <
                            0)
                     {
                       active_set.add_index(dof_index);
                       void_fraction_constraints.add_line(dof_index);
-                      void_fraction_constraints.set_inhomogeneity(dof_index,
-                                                                  0.38);
-                      nodal_void_fraction_owned(dof_index) = 0.38;
-                      lambda(dof_index)                    = 0;
+                      void_fraction_constraints.set_inhomogeneity(
+                        dof_index,
+                        this->simulation_parameters.void_fraction
+                          ->l2_lower_bound);
+                      nodal_void_fraction_owned(dof_index) =
+                        this->simulation_parameters.void_fraction
+                          ->l2_lower_bound;
+                      lambda(dof_index) = 0;
                     }
                 }
             }
@@ -366,8 +378,6 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
             {
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
-                  // fe_values_void_fraction.get_function_values(
-                  //  nodal_void_fraction_relevant, phi_vf);
                   phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
                   grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
                 }
@@ -379,7 +389,9 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
                       local_matrix_void_fraction(i, j) +=
                         (phi_vf[j] * phi_vf[i]) *
                           fe_values_void_fraction.JxW(q) +
-                        (0.00001 * grad_phi_vf[j] * grad_phi_vf[i] *
+                        (this->simulation_parameters.void_fraction
+                           ->l2_smoothing_factor *
+                         grad_phi_vf[j] * grad_phi_vf[i] *
                          fe_values_void_fraction.JxW(q));
                     }
                   local_rhs_void_fraction(i) += phi_vf[i] * cell_void_fraction *
@@ -646,9 +658,12 @@ GLSVANSSolver<dim>::assembleGLS()
   double                               beta;
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
   Tensor<1, dim>                       particle_velocity;
+  Tensor<1, dim>                       average_particle_velocity;
   Tensor<1, dim>                       fluid_velocity_at_particle_location;
+  Tensor<1, dim>                       relative_velocity;
   Tensor<1, dim>                       drag_force;
   double                               c_d = 0;
+  int                                  particles_in_cell;
 
   // Velocity dependent source term
   //----------------------------------
@@ -731,10 +746,12 @@ GLSVANSSolver<dim>::assembleGLS()
             h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
                 this->velocity_fem_degree;
 
-          local_matrix = 0;
-          local_rhs    = 0;
-          drag_force   = 0;
-          beta         = 0;
+          local_matrix              = 0;
+          local_rhs                 = 0;
+          drag_force                = 0;
+          beta                      = 0;
+          average_particle_velocity = 0;
+          particles_in_cell         = 0;
 
           // Gather velocity (values, gradient and laplacian)
           auto &evaluation_point = this->evaluation_point;
@@ -772,7 +789,8 @@ GLSVANSSolver<dim>::assembleGLS()
             }
 
           // Calculate the stress tensor from present_velocity_gradients
-          if (full_stress_tensor)
+          if (this->simulation_parameters.void_fraction->full_stress_tensor ==
+              true)
             {
               for (unsigned int q = 0; q < n_q_points; ++q)
                 {
@@ -889,36 +907,49 @@ GLSVANSSolver<dim>::assembleGLS()
                         }
                     }
 
+                  average_particle_velocity += particle_velocity;
+                  particles_in_cell += 1;
+                  relative_velocity =
+                    fluid_velocity_at_particle_location - particle_velocity;
+
                   // Particle's Reynolds number
                   double re =
-                    1e-1 + fluid_velocity_at_particle_location.norm() *
+                    1e-1 + relative_velocity.norm() *
                              particle_properties[DEM::PropertiesIndex::dp] /
                              viscosity;
 
                   // Drag Coefficient Calculation
-
-                  // Di Felice Drag Model CD Calculation
-                  c_d =
-                    pow((0.63 + 4.8 / sqrt(re)), 2) *
-                    pow(cell_void_fraction,
-                        -(3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
-
+                  if (this->simulation_parameters.void_fraction->drag_model
+                        .compare("difelice") == 0)
+                    // Di Felice Drag Model CD Calculation
+                    {
+                      c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+                            pow(cell_void_fraction,
+                                -(3.7 -
+                                  0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+                    }
                   // Rong Drag Model CD Calculation
-                  //                  c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
-                  //                        pow(cell_void_fraction,
-                  //                            -(2.65 * (cell_void_fraction +
-                  //                            1) -
-                  //                              (5.3 - (3.5 *
-                  //                              cell_void_fraction)) *
-                  //                                pow(cell_void_fraction, 2) *
-                  //                                exp(-pow(1.5 - log10(re), 2)
-                  //                                / 2)));
+                  else if (this->simulation_parameters.void_fraction->drag_model
+                             .compare("rong") == 0)
+                    {
+                      c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+                            pow(cell_void_fraction,
+                                -(2.65 * (cell_void_fraction + 1) -
+                                  (5.3 - (3.5 * cell_void_fraction)) *
+                                    pow(cell_void_fraction, 2) *
+                                    exp(-pow(1.5 - log10(re), 2) / 2)));
+                    }
 
                   beta +=
                     (0.5 * c_d * M_PI *
                      pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
                      4) *
-                    fluid_velocity_at_particle_location.norm();
+                    relative_velocity.norm();
+                }
+              if (particles_in_cell != 0)
+                {
+                  average_particle_velocity =
+                    average_particle_velocity / particles_in_cell;
                 }
               beta = beta / cell_volume;
             }
@@ -950,10 +981,16 @@ GLSVANSSolver<dim>::assembleGLS()
 
               // Calcukation of the shock capturing viscosity term
               const double vdcdd =
-                (h / (2 * 0.5)) *
-                pow(present_velocity_gradients[q].norm() * h / (0.5),
+                (h / (2 * this->simulation_parameters.void_fraction
+                            ->reference_velocity)) *
+                pow(present_velocity_gradients[q].norm() * h /
+                      (this->simulation_parameters.void_fraction
+                         ->reference_velocity),
                     this->simulation_parameters.fem_parameters.velocity_order) *
-                pow((0.5 / 0.4), 2);
+                pow((this->simulation_parameters.void_fraction
+                       ->reference_velocity /
+                     this->simulation_parameters.void_fraction->l2_lower_bound),
+                    2);
 
               // Grad-div weight factor
               const double gamma = 0.1;
@@ -982,7 +1019,8 @@ GLSVANSSolver<dim>::assembleGLS()
                 }
 
               // Calculate the stress tensor from grad_phi_u
-              if (full_stress_tensor)
+              if (this->simulation_parameters.void_fraction
+                    ->full_stress_tensor == true)
                 {
                   for (unsigned int i = 0; i < dofs_per_cell; ++i)
                     {
@@ -1021,7 +1059,8 @@ GLSVANSSolver<dim>::assembleGLS()
                 // Mass source term
                 + mass_source * present_velocity_values[q] +
                 // Drag Force
-                beta * present_velocity_values[q] +
+                beta *
+                  (present_velocity_values[q] - average_particle_velocity) +
                 present_pressure_gradients[q] -
                 viscosity * present_velocity_laplacians[q] -
                 force * present_void_fraction_values[q];
@@ -1053,7 +1092,8 @@ GLSVANSSolver<dim>::assembleGLS()
                     }
                 }
 
-              if (DCDD)
+              if (this->simulation_parameters.void_fraction->shock_capturing ==
+                  true)
                 strong_residual += -vdcdd * present_velocity_laplacians[q];
 
               /* Adjust the strong residual in cases where the scheme is
@@ -1120,7 +1160,8 @@ GLSVANSSolver<dim>::assembleGLS()
                             strong_jac +=
                               2 * cross_product_3d(omega_vector, phi_u[j]);
                         }
-                      if (DCDD)
+                      if (this->simulation_parameters.void_fraction
+                            ->shock_capturing == true)
                         strong_jac += -vdcdd * laplacian_phi_u[j];
 
                       for (unsigned int i = 0; i < dofs_per_cell; ++i)
@@ -1151,7 +1192,8 @@ GLSVANSSolver<dim>::assembleGLS()
                             JxW;
 
                           // Grad-div stabilization - Bruno test
-                          if (grad_div)
+                          if (this->simulation_parameters.void_fraction
+                                ->grad_div == true)
                             {
                               local_matrix(i, j) +=
                                 gamma *
@@ -1224,7 +1266,8 @@ GLSVANSSolver<dim>::assembleGLS()
                               //   fe_values.JxW(q);
                             }
 
-                          if (DCDD)
+                          if (this->simulation_parameters.void_fraction
+                                ->shock_capturing == true)
                             {
                               local_matrix(i, j) +=
                                 vdcdd *
@@ -1254,7 +1297,10 @@ GLSVANSSolver<dim>::assembleGLS()
                       + present_pressure_values[q] * div_phi_u[i] +
                       force * present_void_fraction_values[q] * phi_u[i]
                       // Drag Force
-                      - beta * present_velocity_values[q] * phi_u[i] -
+                      - beta *
+                          (present_velocity_values[q] -
+                           average_particle_velocity) *
+                          phi_u[i] -
                       // Continuity
                       (present_velocity_divergence *
                          present_void_fraction_values[q] +
@@ -1281,7 +1327,8 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[1] * p1_void_fraction_values[q]) *
                         phi_p[i] * JxW;
 
-                      if (grad_div)
+                      if (this->simulation_parameters.void_fraction->grad_div ==
+                          true)
                         {
                           local_rhs(i) -=
                             (bdf_coefs[0] * present_void_fraction_values[q] +
@@ -1305,7 +1352,8 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[2] * p2_void_fraction_values[q]) *
                         phi_p[i] * JxW;
 
-                      if (grad_div)
+                      if (this->simulation_parameters.void_fraction->grad_div ==
+                          true)
                         {
                           local_rhs(i) -=
                             (bdf_coefs[0] * present_void_fraction_values[q] +
@@ -1335,7 +1383,8 @@ GLSVANSSolver<dim>::assembleGLS()
                          bdf_coefs[3] * p3_void_fraction_values[q]) *
                         phi_p[i] * JxW;
 
-                      if (grad_div)
+                      if (this->simulation_parameters.void_fraction->grad_div ==
+                          true)
                         {
                           local_rhs(i) -=
                             (bdf_coefs[0] * present_void_fraction_values[q] +
@@ -1393,7 +1442,8 @@ GLSVANSSolver<dim>::assembleGLS()
                         JxW;
                     }
 
-                  if (DCDD)
+                  if (this->simulation_parameters.void_fraction
+                        ->shock_capturing == true)
                     local_rhs(i) +=
                       -vdcdd *
                       scalar_product(present_velocity_gradients[q],
@@ -1401,7 +1451,8 @@ GLSVANSSolver<dim>::assembleGLS()
                       JxW;
 
                   // Grad-div stabilization
-                  if (grad_div)
+                  if (this->simulation_parameters.void_fraction->grad_div ==
+                      true)
                     {
                       local_rhs(i) -= gamma *
                                       (present_void_fraction_values[q] *

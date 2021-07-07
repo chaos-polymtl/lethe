@@ -23,6 +23,39 @@ namespace Parameters
                       "dem",
                       Patterns::FileName(),
                       "File output dem prefix");
+    prm.declare_entry("shock capturing",
+                      "true",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply shock_capturing");
+    prm.declare_entry("grad div",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply grad_div stabilization");
+    prm.declare_entry(
+      "full stress tensor",
+      "false",
+      Patterns::Bool(),
+      "Choose whether or not to apply the complete stress tensor");
+    prm.declare_entry("l2 lower bound",
+                      "0.36",
+                      Patterns::Double(),
+                      "The lower bound for void fraction L2 projection");
+    prm.declare_entry("l2 upper bound",
+                      "1",
+                      Patterns::Double(),
+                      "The upper bound for void fraction L2 projection");
+    prm.declare_entry("l2 smoothing factor",
+                      "0.0001",
+                      Patterns::Double(),
+                      "The smoothing factor for void fraction L2 projection");
+    prm.declare_entry("drag model",
+                      "difelice",
+                      Patterns::FileName(),
+                      "The drag model used to determine the drag coefficient");
+    prm.declare_entry("reference velocity",
+                      "1",
+                      Patterns::Double(),
+                      "The refernce velocity for the shock capturing scheme");
     prm.leave_subsection();
   }
 
@@ -42,9 +75,16 @@ namespace Parameters
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
 
-    read_dem      = prm.get_bool("read dem");
-    dem_file_name = prm.get("dem file name");
-
+    read_dem            = prm.get_bool("read dem");
+    dem_file_name       = prm.get("dem file name");
+    shock_capturing     = prm.get_bool("shock capturing");
+    grad_div            = prm.get_bool("grad div");
+    full_stress_tensor  = prm.get_bool("full stress tensor");
+    l2_lower_bound      = prm.get_double("l2 lower bound");
+    l2_upper_bound      = prm.get_double("l2 upper bound");
+    l2_smoothing_factor = prm.get_double("l2 smoothing factor");
+    drag_model          = prm.get("drag model");
+    reference_velocity  = prm.get_double("reference velocity");
     prm.leave_subsection();
   }
 
