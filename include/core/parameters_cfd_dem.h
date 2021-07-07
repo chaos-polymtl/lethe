@@ -20,9 +20,9 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parsed_function.h>
+
+#include <core/parameters.h>
 
 
 using namespace dealii;
@@ -64,7 +64,15 @@ namespace Parameters
     VoidFractionMode               mode;
     Functions::ParsedFunction<dim> void_fraction;
     bool                           read_dem;
+    bool                           shock_capturing;
+    bool                           grad_div;
+    bool                           full_stress_tensor;
+    double                         l2_lower_bound;
+    double                         l2_upper_bound;
+    double                         l2_smoothing_factor;
+    double                         reference_velocity;
     std::string                    dem_file_name;
+    std::string                    drag_model;
   };
 
 
