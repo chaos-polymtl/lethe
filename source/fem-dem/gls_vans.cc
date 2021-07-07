@@ -378,8 +378,6 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
             {
               for (unsigned int k = 0; k < dofs_per_cell; ++k)
                 {
-                  // fe_values_void_fraction.get_function_values(
-                  //  nodal_void_fraction_relevant, phi_vf);
                   phi_vf[k]      = fe_values_void_fraction.shape_value(k, q);
                   grad_phi_vf[k] = fe_values_void_fraction.shape_grad(k, q);
                 }
@@ -665,7 +663,6 @@ GLSVANSSolver<dim>::assembleGLS()
   Tensor<1, dim>                       relative_velocity;
   double                               c_d = 0;
   int                                  particles_in_cell;
-
 
   // Velocity dependent source term
   //----------------------------------
