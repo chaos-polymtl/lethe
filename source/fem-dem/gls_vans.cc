@@ -664,6 +664,7 @@ GLSVANSSolver<dim>::assembleGLS()
   double                               c_d = 0;
   int                                  particles_in_cell;
 
+
   // Velocity dependent source term
   //----------------------------------
   // Angular velocity of the rotating frame. This is always a 3D vector even
@@ -943,6 +944,8 @@ GLSVANSSolver<dim>::assembleGLS()
                      pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
                      4) *
                     relative_velocity.norm();
+
+                  drag_force += beta * relative_velocity;
                 }
 
               if (particles_in_cell != 0)
