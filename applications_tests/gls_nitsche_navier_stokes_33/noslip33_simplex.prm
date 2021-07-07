@@ -8,7 +8,7 @@
 subsection simulation control
   set method                  = steady
   set output name             = noslip33_simplex
-  set log precision           = 1
+  set log precision           = 0
 end
 
 #---------------------------------------------------
