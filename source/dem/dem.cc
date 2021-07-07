@@ -180,6 +180,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
+
+  grid_motion_object =
+    std::make_shared<GridMotion<dim>>(parameters,
+                                      simulation_control->get_time_step());
 }
 
 template <int dim>
@@ -793,6 +797,11 @@ DEMSolver<dim>::solve()
   while (simulation_control->integrate())
     {
       simulation_control->print_progression(pcout);
+
+      // Grid motion
+      if (parameters.grid_motion.motion_type !=
+          Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
+        grid_motion_object->move_grid(triangulation);
 
       // Keep track if particles were inserted this step
       particles_insertion_step = insert_particles();

@@ -1022,36 +1022,28 @@ namespace Parameters
           "Choosing grid motion type. "
           "Choices are <none|translational|rotational|translational_rotational>.");
 
-        prm.declare_entry("grid_translational_velocity_x",
+        prm.declare_entry("grid translational velocity x",
                           "0",
                           Patterns::Double(),
                           "grid translational velocity");
-        prm.declare_entry("grid_translational_velocity_y",
+        prm.declare_entry("grid translational velocity y",
                           "0",
                           Patterns::Double(),
                           "grid translational velocity");
-        prm.declare_entry("grid_translational_velocity_z",
+        prm.declare_entry("grid translational_velocity z",
                           "0",
                           Patterns::Double(),
                           "grid translational velocity");
 
-        prm.declare_entry("grid_rotational_speed",
+        prm.declare_entry("grid rotational speed",
                           "0",
                           Patterns::Double(),
                           "grid rotational speed");
 
-        prm.declare_entry("grid_rotational_vector_x",
+        prm.declare_entry("grid rotational axis",
                           "0",
-                          Patterns::Double(),
-                          "grid rotational vector");
-        prm.declare_entry("grid_rotational_vector_y",
-                          "0",
-                          Patterns::Double(),
-                          "grid rotational vector");
-        prm.declare_entry("grid_rotational_vector_z",
-                          "0",
-                          Patterns::Double(),
-                          "grid rotational vector");
+                          Patterns::Integer(),
+                          "grid rotational axis");
       }
       prm.leave_subsection();
     }
@@ -1066,45 +1058,33 @@ namespace Parameters
         if (motion == "rotational")
           {
             motion_type           = MotionType::rotational;
-            grid_rotational_speed = prm.get_double("grid_rotational_speed");
-            grid_rotational_vector[0] =
-              prm.get_double("grid_rotational_vector_x");
-            grid_rotational_vector[1] =
-              prm.get_double("grid_rotational_vector_y");
-            if (dim == 3)
-              grid_rotational_vector[2] =
-                prm.get_double("grid_rotational_vector_z");
+            grid_rotational_speed = prm.get_double("grid rotational speed");
+            grid_rotational_axis  = prm.get_integer("grid rotational axis");
           }
         else if (motion == "translational")
           {
             motion_type = MotionType::translational;
             grid_translational_velocity[0] =
-              prm.get_double("grid_translational_velocity_x");
+              prm.get_double("grid translational velocity x");
             grid_translational_velocity[1] =
-              prm.get_double("grid_translational_velocity_y");
+              prm.get_double("grid translational velocity y");
             if (dim == 3)
               grid_translational_velocity[2] =
-                prm.get_double("grid_translational_velocity_z");
+                prm.get_double("grid translational velocity z");
           }
         else if (motion == "translational_rotational")
           {
             motion_type           = MotionType::translational_rotational;
             grid_rotational_speed = prm.get_double("grid_rotational_speed");
-            grid_rotational_vector[0] =
-              prm.get_double("grid_rotational_vector_x");
-            grid_rotational_vector[1] =
-              prm.get_double("grid_rotational_vector_y");
+            grid_rotational_axis  = prm.get_integer("grid rotational axis");
             grid_translational_velocity[0] =
-              prm.get_double("grid_translational_velocity_x");
+              prm.get_double("grid translational velocity x");
             grid_translational_velocity[1] =
-              prm.get_double("grid_translational_velocity_y");
+              prm.get_double("grid translational velocity y");
+
             if (dim == 3)
-              {
-                grid_rotational_vector[2] =
-                  prm.get_double("grid_rotational_vector_z");
-                grid_translational_velocity[2] =
-                  prm.get_double("grid_translational_velocity_z");
-              }
+              grid_translational_velocity[2] =
+                prm.get_double("grid translational velocity z");
           }
         else
           {

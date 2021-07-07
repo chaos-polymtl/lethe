@@ -24,6 +24,7 @@
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
 #include <dem/insertion.h>
+#include <dem/grid_motion.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
@@ -335,6 +336,7 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
+  std::shared_ptr<GridMotion<dim>>     grid_motion_object;
   PPBroadSearch<dim>                   pp_broad_search_object;
   PPFineSearch<dim>                    pp_fine_search_object;
   PWBroadSearch<dim>                   pw_broad_search_object;

@@ -312,7 +312,7 @@ namespace Parameters
       std::unordered_map<unsigned int, Tensor<1, dim>>
         boundary_translational_velocity;
 
-      // Rotational speeds of rotating boundaries
+      // Rotational speeds of rotating boundaries in rad/s
       std::unordered_map<unsigned int, double> boundary_rotational_speed;
 
       // Rotational axes of rotating boundaries
@@ -348,17 +348,19 @@ namespace Parameters
       {
         translational,
         rotational,
-        translational_rotational
+        translational_rotational,
+        none
       } motion_type;
 
       // Translational velocity of the moving grid
       Tensor<1, dim> grid_translational_velocity;
 
-      // Rotational speed of rotating grid
+      // Rotational speed of rotating grid in rad/s
       double grid_rotational_speed;
 
-      // Rotational axis of rotating grid
-      Tensor<1, dim> grid_rotational_vector;
+      // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
+      // 1=y axis, 2=z axis.
+      unsigned int grid_rotational_axis;
 
       static void
       declare_parameters(ParameterHandler &prm);
