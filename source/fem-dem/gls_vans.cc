@@ -944,8 +944,6 @@ GLSVANSSolver<dim>::assembleGLS()
                      pow(particle_properties[DEM::PropertiesIndex::dp], 2) /
                      4) *
                     relative_velocity.norm();
-
-                  drag_force += beta * relative_velocity;
                 }
 
               if (particles_in_cell != 0)
