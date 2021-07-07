@@ -88,7 +88,13 @@ public:
    * @brief Calculate cost function for calculated and measured counts
    */
   double
-  calculate_cost_function(std::vector<double> &measured_counts,
+  calculate_cost_function_Larachi(std::vector<double> &measured_counts,
+                          std::vector<double> &calculated_counts);
+  double
+  calculate_cost_function_L1(std::vector<double> &measured_counts,
+                          std::vector<double> &calculated_counts);
+  double
+  calculate_cost_function_L2(std::vector<double> &measured_counts,
                           std::vector<double> &calculated_counts);
 
 
