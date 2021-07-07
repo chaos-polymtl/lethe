@@ -2,10 +2,10 @@
 
 #include <rpt/rpt.h>
 
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <iterator>
-#include<cmath>
 
 template <int dim>
 RPT<dim>::RPT(RPTCalculatingParameters &RPTparameters)
@@ -67,7 +67,7 @@ RPT<dim>::calculate()
           if (rpt_parameters.initial_param.tuning == true)
             calculated_counts.push_back(count);
           else
-            std::cout << count<< std::endl;
+            std::cout << count << std::endl;
 
           // Export results in .csv if enable
           if (myfile.is_open())
@@ -82,28 +82,26 @@ RPT<dim>::calculate()
 
   if (rpt_parameters.initial_param.tuning == true)
     {
-      if(rpt_parameters.initial_param.Larachi_cost_function==true)
-      {
-
+      if (rpt_parameters.initial_param.Larachi_cost_function == true)
+        {
           double cost_function =
-                calculate_cost_function_Larachi(measured_counts, calculated_counts);
-                std::cout << cost_function << std::endl;
-      }
+            calculate_cost_function_Larachi(measured_counts, calculated_counts);
+          std::cout << cost_function << std::endl;
+        }
 
-      else if(rpt_parameters.initial_param.L1_cost_function==true)
-      {
+      else if (rpt_parameters.initial_param.L1_cost_function == true)
+        {
           double cost_function =
-                calculate_cost_function_L1(measured_counts, calculated_counts);
-                std::cout << cost_function << std::endl;
-      }
+            calculate_cost_function_L1(measured_counts, calculated_counts);
+          std::cout << cost_function << std::endl;
+        }
       else
-      {
+        {
           double cost_function =
-                calculate_cost_function_L2(measured_counts, calculated_counts);
-                std::cout << cost_function << std::endl;
-      }
-
-}
+            calculate_cost_function_L2(measured_counts, calculated_counts);
+          std::cout << cost_function << std::endl;
+        }
+    }
 }
 
 template <int dim>
@@ -182,8 +180,9 @@ RPT<dim>::extract_experimental_counts()
 }
 template <int dim>
 double
-RPT<dim>::calculate_cost_function_Larachi(std::vector<double> &measured_counts,
-                                  std::vector<double> &calculated_counts)
+RPT<dim>::calculate_cost_function_Larachi(
+  std::vector<double> &measured_counts,
+  std::vector<double> &calculated_counts)
 {
   double cost_function = 0;
 
@@ -193,7 +192,6 @@ RPT<dim>::calculate_cost_function_Larachi(std::vector<double> &measured_counts,
         std::pow((calculated_counts[i] - measured_counts[i]) /
                    ((calculated_counts[i] + measured_counts[i]) / 2),
                  2);
-
     }
 
   return cost_function;
@@ -201,33 +199,31 @@ RPT<dim>::calculate_cost_function_Larachi(std::vector<double> &measured_counts,
 template <int dim>
 double
 RPT<dim>::calculate_cost_function_L1(std::vector<double> &measured_counts,
-                                  std::vector<double> &calculated_counts)
+                                     std::vector<double> &calculated_counts)
 {
   double cost_function = 0;
 
   for (unsigned int i = 0; i < measured_counts.size(); i++)
     {
-      cost_function += abs( calculated_counts[i] - measured_counts[i]);
-
+      cost_function += abs(calculated_counts[i] - measured_counts[i]);
     }
 
-  cost_function=cost_function/measured_counts.size();
+  cost_function = cost_function / measured_counts.size();
   return cost_function;
 }
 template <int dim>
 double
 RPT<dim>::calculate_cost_function_L2(std::vector<double> &measured_counts,
-                                  std::vector<double> &calculated_counts)
+                                     std::vector<double> &calculated_counts)
 {
   double cost_function = 0;
 
   for (unsigned int i = 0; i < measured_counts.size(); i++)
     {
-      cost_function += std::pow ((calculated_counts[i] - measured_counts[i]),2);
-
+      cost_function += std::pow((calculated_counts[i] - measured_counts[i]), 2);
     }
 
-  cost_function=cost_function/measured_counts.size();
+  cost_function = cost_function / measured_counts.size();
   return cost_function;
 }
 

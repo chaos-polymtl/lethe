@@ -81,11 +81,11 @@ namespace Parameters
   {
     // Enable tuning parameters
     bool tuning;
-    //Enable Larachi cost function
+    // Enable Larachi cost function
     bool Larachi_cost_function;
-    //Enable L1 cost function
+    // Enable L1 cost function
     bool L1_cost_function;
-    //Enable L2 cost finction
+    // Enable L2 cost finction
     bool L2_cost_function;
 
     // Filename of experimental data

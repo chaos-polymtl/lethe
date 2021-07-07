@@ -89,13 +89,13 @@ public:
    */
   double
   calculate_cost_function_Larachi(std::vector<double> &measured_counts,
-                          std::vector<double> &calculated_counts);
+                                  std::vector<double> &calculated_counts);
   double
   calculate_cost_function_L1(std::vector<double> &measured_counts,
-                          std::vector<double> &calculated_counts);
+                             std::vector<double> &calculated_counts);
   double
   calculate_cost_function_L2(std::vector<double> &measured_counts,
-                          std::vector<double> &calculated_counts);
+                             std::vector<double> &calculated_counts);
 
   RPTCalculatingParameters rpt_parameters;
 

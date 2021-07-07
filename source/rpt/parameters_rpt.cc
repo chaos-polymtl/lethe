@@ -134,14 +134,14 @@ Parameters::InitialRPTParameters::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("parameter tuning");
   {
-    tuning             = prm.get_bool("tuning");
+    tuning                = prm.get_bool("tuning");
     Larachi_cost_function = prm.get_bool("Larachi cost function");
-    L1_cost_function = prm.get_bool("L1 cost function");
-    L2_cost_function = prm.get_bool("L2 cost function");
-    experimental_file  = prm.get("experimental data file");
-    dead_time          = prm.get_double("dead time");
-    activity           = prm.get_double("activity");
-    gamma_rays_emitted = prm.get_double("gamma-rays emitted");
+    L1_cost_function      = prm.get_bool("L1 cost function");
+    L2_cost_function      = prm.get_bool("L2 cost function");
+    experimental_file     = prm.get("experimental data file");
+    dead_time             = prm.get_double("dead time");
+    activity              = prm.get_double("activity");
+    gamma_rays_emitted    = prm.get_double("gamma-rays emitted");
     attenuation_coefficient_reactor =
       prm.get_double("attenuation coefficient reactor");
     attenuation_coefficient_detector =
