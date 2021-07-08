@@ -53,8 +53,15 @@ IF(PROTOTYPES)
     ADD_SUBDIRECTORY(prototypes)
  ENDIF()
 
-
-
-
-
-
+find_program(TXR_EXECUTABLE
+  NAMES txr
+  DOC "Path to the TXR executable.")
+if(TXR_EXECUTABLE STREQUAL "TXR_EXECUTABLE-NOTFOUND")
+  message(STATUS "Could not find TXR: omitting target \"update-golden\"")
+else()
+  message(STATUS "Found TXR: ${TXR_EXECUTABLE}")
+  add_custom_target(update-golden
+    COMMAND ${TXR_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/contrib/utilities/update-golden.tl
+            ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR})
+endif()
