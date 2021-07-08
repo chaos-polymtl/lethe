@@ -88,6 +88,17 @@ private:
   void
   force_on_ib();
 
+  void
+  force_on_ib_v2();
+
+  Tensor<2,dim>
+  compute_stress_tensor_around_point(Point<dim>             point,
+                                         const typename DoFHandler<dim>::active_cell_iterator &cell);
+
+
+    void
+  force_evaluation_points();
+
   /**
    * @brief
    * Modify the system matrix to impose IB condition using the sharp_edge
@@ -188,6 +199,12 @@ private:
            std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
 
+  bool
+  cell_cut_by_p(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             std::vector<types::global_dof_index> &         local_dof_indices,
+             std::map<types::global_dof_index, Point<dim>> &support_points,
+             unsigned int p);
+
   /**
    * @brief
    * Return the cell around a point based on a initial guess of a closed cell
@@ -202,7 +219,16 @@ private:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     Point<dim>                                            point);
 
-  /**
+
+
+
+  typename DoFHandler<dim>::active_cell_iterator
+  find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
+                                                Point<dim>             point,
+                                                const typename DoFHandler<dim>::active_cell_iterator &cell);
+
+
+    /**
   * @brief
   Return a bool that describes  if a cell contains a specific point
   *
@@ -258,6 +284,13 @@ private:
    * imposed on them in order to avoid writing multiple time the same equation.
    */
   std::map<unsigned int, bool> ib_done;
+
+  /*
+  * This map is used to keep in memory which cell containt each point of evaluation for each particle.
+  * The first key is the particle id, this link to a map of all evaluation points of that specific particle and for each of that point we have it's position and the last cell that contains it
+  */
+  std::map<unsigned int,std::map<unsigned int,std::tuple<Point<dim>,typename DoFHandler<dim>::active_cell_iterator>>> force_evaluation_point;
+
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;

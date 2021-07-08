@@ -187,7 +187,7 @@ find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
   return best_cell_iter;
 }
 
-template <int dim>
+/*template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
 find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
                                  Point<dim>             point,
@@ -329,7 +329,7 @@ find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
 
 
     return best_cell_iter;
-}
+}*/
 
 
 template TableHandler
