@@ -137,7 +137,7 @@ PWContactForce<dim>::initialize()
 
 template <int dim>
 void
-PWContactForce<dim>::mpi_correction()
+PWContactForce<dim>::mpi_correction_over_calculation_of_force_torque()
 {
   for (const auto &it : boundary_index)
     {

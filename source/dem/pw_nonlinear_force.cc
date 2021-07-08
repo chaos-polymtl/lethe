@@ -105,12 +105,16 @@ PWNonLinearForce<dim>::PWNonLinearForce(
       calculate_rolling_resistance_torque =
         &PWNonLinearForce<dim>::viscous_resistance;
     }
-  this->calculate_force_torque_on_boundary =
-    dem_parameters.forces_torques.calculate_force_torque;
-  this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
-  this->boundary_index        = boundary_index;
-  this->force_on_walls        = this->initialize();
-  this->torque_on_walls       = this->initialize();
+  if (dem_parameters.forces_torques.calculate_force_torque)
+  {
+    this->calculate_force_torque_on_boundary =
+      dem_parameters.forces_torques.calculate_force_torque;
+    this->center_mass_container =
+      dem_parameters.forces_torques.point_center_mass;
+    this->boundary_index  = boundary_index;
+    this->force_on_walls  = this->initialize();
+    this->torque_on_walls = this->initialize();
+  }
 }
 
 template <int dim>
@@ -208,7 +212,7 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
             }
         }
     }
-  this->mpi_correction();
+  this->mpi_correction_over_calculation_of_force_torque();
 }
 
 // Calculates nonlinear contact force and torques
