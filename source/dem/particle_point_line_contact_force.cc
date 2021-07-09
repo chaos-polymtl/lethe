@@ -130,7 +130,11 @@ ParticlePointLineForce<dim>::calculate_particle_point_contact_force(
             spring_normal_force - dashpot_normal_force;
 
           // Getting force
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          Tensor<1, dim> &particle_force = force[particle->get_local_index()];
+#else
           Tensor<1, dim> &particle_force = force[particle->get_id()];
+#endif
 
           // Updating the body force of particles in the particle handler
           for (int d = 0; d < dim; ++d)
@@ -270,7 +274,11 @@ ParticlePointLineForce<dim>::calculate_particle_line_contact_force(
             spring_normal_force - dashpot_normal_force;
 
           // Getting force
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          Tensor<1, dim> &particle_force = force[particle->get_local_index()];
+#else
           Tensor<1, dim> &particle_force = force[particle->get_id()];
+#endif
 
           // Updating the body force of particles in the particle handler
           for (int d = 0; d < dim; ++d)

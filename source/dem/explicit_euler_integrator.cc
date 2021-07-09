@@ -29,7 +29,11 @@ ExplicitEulerIntegrator<dim>::integrate(
     {
       // Get the total array view to the particle properties and location once
       // to improve efficiency
-      unsigned int    particle_id         = particle->get_id();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      types::particle_index particle_id = particle->get_local_index();
+#else
+      types::particle_index particle_id = particle->get_id();
+#endif
       auto            particle_properties = particle->get_properties();
       Tensor<1, dim> &particle_momentum   = momentum[particle_id];
       Tensor<1, dim> &particle_force      = force[particle_id];

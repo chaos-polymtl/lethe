@@ -361,27 +361,22 @@ DEMSolver<dim>::insert_particles()
 template <int dim>
 void
 DEMSolver<dim>::update_moment_of_inertia(
-  dealii::Particles::ParticleHandler<dim> &          particle_handler,
-  std::vector<double> &MOI)
+  dealii::Particles::ParticleHandler<dim> &particle_handler,
+  std::vector<double> &                    MOI)
 {
-  unsigned int max_particle_id = 0;
-  for (const auto &particle : particle_handler)
-    max_particle_id = std::max(max_particle_id, particle.get_id());
-
-  // We resize force and momentum every time we sort the particles
-  // into subdomains
-  momentum.resize(max_particle_id + 1);
-  force.resize(max_particle_id + 1);
-  displacement.resize(max_particle_id + 1);
-  MOI.resize(max_particle_id + 1);
+  MOI.resize(momentum.size());
 
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      MOI[particle.get_local_index()] =
+#else
       MOI[particle.get_id()] =
-                  0.1 * particle_properties[DEM::PropertiesIndex::mass] *
-                    particle_properties[DEM::PropertiesIndex::dp] *
-                    particle_properties[DEM::PropertiesIndex::dp];
+#endif
+        0.1 * particle_properties[DEM::PropertiesIndex::mass] *
+        particle_properties[DEM::PropertiesIndex::dp] *
+        particle_properties[DEM::PropertiesIndex::dp];
     }
 }
 
@@ -742,6 +737,18 @@ DEMSolver<dim>::solve()
       // Keep track if particles were inserted this step
       particles_insertion_step = insert_particles();
 
+      if (particles_insertion_step)
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+        displacement.resize(particle_handler.get_max_local_particle_index());
+#else
+        {
+          unsigned int max_particle_id = 0;
+          for (const auto &particle : particle_handler)
+            max_particle_id = std::max(max_particle_id, particle.get_id());
+          displacement.resize(max_particle_id + 1);
+        }
+#endif
+
       // Load balancing
       load_balance_step = (this->*check_load_balance_step)();
 
@@ -756,6 +763,19 @@ DEMSolver<dim>::solve()
           checkpoint_step = false;
 
           particle_handler.sort_particles_into_subdomains_and_cells();
+
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          displacement.resize(particle_handler.get_max_local_particle_index());
+#else
+          {
+            unsigned int max_particle_id = 0;
+            for (const auto &particle : particle_handler)
+              max_particle_id = std::max(max_particle_id, particle.get_id());
+            displacement.resize(max_particle_id + 1);
+          }
+#endif
+          force.resize(displacement.size());
+          momentum.resize(displacement.size());
 
           // Updating moment of inertia container
           update_moment_of_inertia(particle_handler, MOI);

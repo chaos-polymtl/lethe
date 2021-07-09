@@ -174,7 +174,11 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
                     contact_information, particle_properties);
 
               // Getting particle's momentum and force
-              unsigned int    particle_id       = particle->get_id();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+              types::particle_index particle_id = particle->get_local_index();
+#else
+              types::particle_index particle_id = particle->get_id();
+#endif
               Tensor<1, dim> &particle_momentum = momentum[particle_id];
               Tensor<1, dim> &particle_force    = force[particle_id];
 

@@ -22,9 +22,11 @@ find_contact_detection_step(Particles::ParticleHandler<dim> &particle_handler,
   for (auto &particle : particle_handler)
     {
       auto &particle_properties = particle.get_properties();
-      if (displacement.size() <= particle.get_id())
-        displacement.resize(particle.get_id() + 1);
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      auto &particle_displacement = displacement[particle.get_local_index()];
+#else
       auto &particle_displacement = displacement[particle.get_id()];
+#endif
 
       // Finding displacement of each particle during last step
       particle_displacement +=
