@@ -41,7 +41,7 @@ struct boundary_cells_info_struct
   unsigned int boundary_id;
 
   // ID of boundary face in the boundary cell
-  unsigned int boundary_face_id;
+  unsigned int global_face_id;
 
   // Normal vector of the boundary face
   Tensor<1, dim> normal_vector;

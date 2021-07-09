@@ -2,6 +2,9 @@
 
 #include <deal.II/grid/grid_tools.h>
 
+#include <boost/math/special_functions.hpp>
+#include <boost/range/adaptor/map.hpp>
+
 using namespace dealii;
 
 template <int dim>
@@ -34,10 +37,6 @@ GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
       rotation_axis = dem_parameters.grid_motion.grid_rotational_axis;
       shift_vector =
         dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
-    }
-  else
-    {
-      throw std::runtime_error("Specified grid motion is not valid");
     }
 }
 
@@ -77,6 +76,34 @@ void GridMotion<3>::move_grid_translational_rotational(
 {
   GridTools::shift(shift_vector, triangulation);
   GridTools::rotate(rotation_angle, rotation_axis, triangulation);
+}
+
+template <int dim>
+void
+GridMotion<dim>::update_boundary_points_and_normal_vectors_in_contact_list(
+  std::unordered_map<
+    types::particle_index,
+    std::map<types::particle_index, pw_contact_info_struct<dim>>>
+    &pw_pairs_in_contact,
+  const std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+    &updated_boundary_points_and_normal_vectors)
+{
+  for (auto &&pairs_in_contact_content :
+       pw_pairs_in_contact | boost::adaptors::map_values)
+    {
+      for (auto &&contact_information :
+           pairs_in_contact_content | boost::adaptors::map_values)
+        {
+          contact_information.normal_vector =
+            updated_boundary_points_and_normal_vectors
+              .at(contact_information.global_face_id)
+              .first;
+          contact_information.point_on_boundary =
+            updated_boundary_points_and_normal_vectors
+              .at(contact_information.global_face_id)
+              .second;
+        }
+    }
 }
 
 template class GridMotion<2>;

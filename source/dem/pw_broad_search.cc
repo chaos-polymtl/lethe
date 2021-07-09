@@ -18,6 +18,7 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
+                                  unsigned int,
                                   unsigned int>>> &pw_contact_candidates)
 {
   // Clearing pw_contact_candidates (output of this function)
@@ -59,10 +60,11 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
                 std::make_tuple(particles_in_cell_iterator,
                                 boundary_cells_content.normal_vector,
                                 boundary_cells_content.point_on_face,
-                                boundary_cells_content.boundary_id);
+                                boundary_cells_content.boundary_id,
+                                boundary_cells_content.global_face_id);
 
               pw_contact_candidates[particles_in_cell_iterator->get_id()]
-                .insert({boundary_cells_content.boundary_face_id, map_content});
+                .insert({boundary_cells_content.global_face_id, map_content});
             }
         }
     }

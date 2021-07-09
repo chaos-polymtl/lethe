@@ -14,6 +14,7 @@ void PWFineSearch<dim>::particle_wall_fine_search(
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
+                                  unsigned int,
                                   unsigned int>>> &pw_contact_pair_candidates,
   std::unordered_map<
     types::particle_index,
@@ -57,7 +58,8 @@ void PWFineSearch<dim>::particle_wall_fine_search(
             std::get<3>(particle_pair_candidate_content);
           contact_info.tangential_overlap           = tangential_overlap;
           contact_info.tangential_relative_velocity = .0;
-          contact_info.face_id                      = 0;
+          contact_info.global_face_id =
+            std::get<4>(particle_pair_candidate_content);
 
           pw_pairs_in_contact[particle_id].insert({face_id, contact_info});
         }
@@ -149,9 +151,10 @@ PWFineSearch<dim>::particle_floating_wall_fine_search(
               // The boundary ID of floating walls is set to 100, it should be
               // modified after adding motion of floating walls
               contact_info.boundary_id                  = 100;
+              contact_info.global_face_id               = 0;
               contact_info.tangential_overlap           = tangential_overlap;
               contact_info.tangential_relative_velocity = .0;
-              contact_info.face_id                      = 0;
+
 
               pfw_pairs_in_contact[particle_id].insert(
                 {floating_wall_id, contact_info});

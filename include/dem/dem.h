@@ -310,6 +310,7 @@ private:
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
+                                  unsigned int,
                                   unsigned int>>>
     pw_contact_candidates;
   std::unordered_map<types::particle_index,
@@ -326,7 +327,9 @@ private:
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-                                           ghost_particle_container;
+    ghost_particle_container;
+  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+                                           updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();

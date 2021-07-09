@@ -66,7 +66,7 @@ test()
       auto boundary_information = boundary_cells_information_iterator->second;
       deallog << "Cell " << boundary_information.cell
               << " is on system boundaries (boundary"
-              << boundary_information.boundary_face_id << ")" << std::endl;
+              << boundary_information.global_face_id << ")" << std::endl;
     }
 }
 
