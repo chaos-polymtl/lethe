@@ -262,8 +262,8 @@ DEMSolver<dim>::load_balance()
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
-  boundary_cell_object.update_boundary_info_after_grid_motion(
-    updated_boundary_points_and_normal_vectors);
+    boundary_cell_object.update_boundary_info_after_grid_motion(
+      updated_boundary_points_and_normal_vectors);
 
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(triangulation.n_active_cells(),
