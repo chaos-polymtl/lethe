@@ -80,7 +80,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
     {
       if (dim == 2)
         {
-          if (parameters.grid_motion.grid_rotational_axis != 0 ||
+          if (parameters.grid_motion.grid_rotational_axis != 0 &&
               parameters.grid_motion.grid_rotational_axis != 1)
             throw std::runtime_error(
               "Specified grid rotational axis is not valid, use 0 for rotation around x"
@@ -88,8 +88,8 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
         }
       else if (dim == 3)
         {
-          if (parameters.grid_motion.grid_rotational_axis != 0 ||
-              parameters.grid_motion.grid_rotational_axis != 1 ||
+          if (parameters.grid_motion.grid_rotational_axis != 0 &&
+              parameters.grid_motion.grid_rotational_axis != 1 &&
               parameters.grid_motion.grid_rotational_axis != 2)
             throw std::runtime_error(
               "Specified grid rotational axis is not valid, use 0 for rotation around x"
