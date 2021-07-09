@@ -75,8 +75,11 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
       << std::endl;
 
   // Grid motion check
-  if (parameters.grid_motion.motion_type !=
-      Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
+  if (parameters.grid_motion.motion_type ==
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::rotational &&
+      parameters.grid_motion.motion_type !=
+        Parameters::Lagrangian::GridMotion<
+          dim>::MotionType::translational_rotational)
     {
       if (dim == 2)
         {
