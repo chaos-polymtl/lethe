@@ -463,6 +463,7 @@ template <int dim>
 Tensor<2,dim>
 GLSSharpNavierStokesSolver<dim>::compute_stress_tensor_around_point(Point<dim>             point,
 const typename DoFHandler<dim>::active_cell_iterator &cell){
+
     TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation");
     Tensor<2, dim> velocity_gradient;
     Tensor<2, dim> pressure_tensor;
@@ -490,16 +491,19 @@ const typename DoFHandler<dim>::active_cell_iterator &cell){
     }
 
     std::vector<Point<dim>> unite_cell_interpolation_points(dim+1);
-    for (unsigned int i = 0; i < dim+1; ++i)
     {
-        unite_cell_interpolation_points[i] =
-                this->mapping->transform_real_to_unit_cell(
-                        cell, interpolation_points[i]);
+        TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation mapping");
+        for (unsigned int i = 0; i < dim + 1; ++i) {
+            unite_cell_interpolation_points[i] =
+                    this->mapping->transform_real_to_unit_cell(
+                            cell, interpolation_points[i]);
+        }
     }
     cell->get_dof_indices(local_dof_indices);
     double pressure=0;
 
     for (unsigned int i=0 ; i<dim+1; ++i) {
+        TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation interpolation");
         for (unsigned int j = 0; j< local_dof_indices.size(); ++j) {
             const unsigned int component_j =
                     this->fe->system_to_component_index(j).first;
@@ -516,22 +520,24 @@ const typename DoFHandler<dim>::active_cell_iterator &cell){
             }
         }
     }
-
-    velocity_gradient=0;
-    for(unsigned int i=0 ; i<dim; ++i){
-        for(unsigned int j=0 ; j<dim; ++j){
-            velocity_gradient[i][j]=(local_interp_sol[i+1][j]-local_interp_sol[0][j])/(dr*0.001);
+    {
+        TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation gradient evaluation");
+        velocity_gradient = 0;
+        for (unsigned int i = 0; i < dim; ++i) {
+            for (unsigned int j = 0; j < dim; ++j) {
+                velocity_gradient[i][j] = (local_interp_sol[i + 1][j] - local_interp_sol[0][j]) / (dr * 0.001);
+            }
         }
-    }
 
-    pressure_tensor=0;
-    for(unsigned int i=0 ; i<dim; ++i){
-        pressure_tensor[i][i]=pressure;
+        pressure_tensor = 0;
+        for (unsigned int i = 0; i < dim; ++i) {
+            pressure_tensor[i][i] = pressure;
+        }
+        stress_tensor = mu *
+                        (velocity_gradient +
+                         transpose(velocity_gradient)) -
+                        pressure_tensor;
     }
-    stress_tensor=mu *
-                  (velocity_gradient +
-                   transpose(velocity_gradient)) -
-            pressure_tensor;
 
     return stress_tensor;
 }
@@ -567,10 +573,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(dim);
     // Initalize fe value objects in order to do calculation with it later
     QGauss<dim>        q_formula(this->number_quadrature_points);
+
+
     FEValues<dim>      fe_values(*this->fe,
                                  q_formula,
                                  update_quadrature_points | update_JxW_values);
-
 
     FEFaceValues<dim> fe_face_values(*this->mapping,
                                      *this->fe,
@@ -604,14 +611,27 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     const unsigned int vertices_per_face =
             GeometryInfo<dim>::vertices_per_face;
     const unsigned int               n_q_points_face = this->face_quadrature->size();
+    const unsigned int               n_q_points =this->number_quadrature_points;
 
-    std::vector<double>              pressure_values(n_q_points_face);
+    std::vector<double>              pressure_values(ib_coef.size());
     Tensor<1, dim>                   normal_vector;
-    std::vector<Tensor<2, dim>>      velocity_gradients(n_q_points_face);
+    std::vector<Tensor<2, dim>>      velocity_gradients(ib_coef.size());
     Tensor<2, dim>                   fluid_stress;
     Tensor<2, dim>                   fluid_stress_v2;
+    Tensor<2, dim>                   fluid_stress_v2_unit;
     Tensor<2, dim>                   fluid_pressure;
+    Tensor<2, dim>                   fluide_stress_at_ib;
+    Tensor<1, dim>                   local_grad;
+    Tensor<1, dim>                   local_grad_unit;
 
+
+    ArrayView<Tensor<2,dim>>         A_fluid_stress_v2(fluid_stress_v2);
+    ArrayView<Tensor<2,dim>>         A_fluid_stress_v2_unit(fluid_stress_v2_unit);
+
+    std::vector<Point<dim>> vertices_of_face_projection(vertices_per_face);
+    std::vector<CellData<dim-1>> local_face_cell_data(1);
+
+    typename Mapping<dim>::InternalDataBase mapping_data;
     // Define multiple local_dof_indices one for the cell iterator one for the
     // cell with the second point for the sharp edge stencil and one for
     // manipulation on the neighbour’s cell.
@@ -622,7 +642,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     std::vector<types::global_dof_index> local_dof_indices_4(dofs_per_cell);
 
     std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
-    std::set<unsigned int>               clear_line;
+
+    std::vector<Point<dim>> unite_cell_interpolation_points(
+            ib_coef.size());
+    std::vector<Point<dim>> total_interpolation_points(
+            ib_coef.size());
+    std::vector<double> local_interp_sol(ib_coef.size());
+
+    std::vector<Tensor<2,dim>> local_face_tensor(dofs_per_face);
 
     std::cout<<"debut de calcul"<<std::endl;
 
@@ -666,14 +693,14 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                     // if face is not cut and face is outward;
                     if (nb_dof_inside == 0) {
+                        TimerOutput::Scope t(this->computing_timer, "new force_eval: in force evaluation");
                         fe_face_values.reinit(cell, face);
                         fe_values.reinit(cell);
 
                         //generate a surface cell from the projection of the face on the IB surface
 
                         //Define the triangulation of the cell
-                        std::vector<Point<dim>> vertices_of_face_projection(vertices_per_face);
-                        std::vector<CellData<dim-1>> local_face_cell_data(1);
+
                         for (unsigned int i = 0; i < vertices_per_face; ++i) {
                             Tensor<1, dim, double> vertex_projection =particles[p].position+
                                     particles[p].radius*(local_face->vertex(i) - particles[p].position) /
@@ -696,108 +723,118 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                         DoFTools::map_dofs_to_support_points(local_face_map,
                                                              local_face_dof_handler,
                                                              local_face_support_points);
+                        std::cout<<"cell_map_don"<<std::endl;
 
                         //defined solution on face
-                        Vector<double> local_face_solution(dofs_per_face);
+
                         std::vector<Tensor<2,dim>> local_face_tensor(dofs_per_face);
+                        {
+                            TimerOutput::Scope t(this->computing_timer, "new force_eval :Extrapolate solution at boundary");
+                            for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
+                                const unsigned int component_i =
+                                        this->fe->system_to_component_index(i).first;
+                                if (component_i == 0) {
+                                    //define dof contribution to the area
 
-                        for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
-                            const unsigned int component_i =
-                                    this->fe->system_to_component_index(i).first;
-                            if (component_i == 0) {
-                                //define dof contribution to the area
-                                Tensor<1, dim, double> normal_ib =
-                                        (support_points[local_face_dof_indices[i]] - particles[p].position) /
-                                        (support_points[local_face_dof_indices[i]] - particles[p].position).norm();
+                                    auto[point, interpolation_points] =
+                                    stencil.points(order,
+                                                   particles[p],
+                                                   support_points[local_face_dof_indices[i]]);
 
+                                    auto cell_2 = find_cell_around_point_with_neighbors(
+                                            cell,
+                                            interpolation_points[stencil.nb_points(order) - 1]);
 
-                                auto[point, interpolation_points] =
-                                stencil.points(order,
-                                               particles[p],
-                                               support_points[local_face_dof_indices[i]]);
-
-                                auto cell_2 = find_cell_around_point_with_neighbors(
-                                        cell,
-                                        interpolation_points[stencil.nb_points(order) - 1]);
-
-                                cell_2->get_dof_indices(local_dof_indices_2);
-
-                                std::vector<Point<dim>> unite_cell_interpolation_points(
-                                        ib_coef.size());
-
-                                std::vector<Point<dim>> total_interpolation_points(
-                                        ib_coef.size());
-
-                                total_interpolation_points[0] = point;
-                                for (unsigned int j = 1; j < ib_coef.size(); ++j) {
-                                    total_interpolation_points[j] = interpolation_points[j - 1];
-                                }
-                                std::vector<double> local_interp_sol(ib_coef.size());
-
-                                Tensor<2, dim> fluide_stress_at_ib;
-                                fluide_stress_at_ib=0;
+                                    cell_2->get_dof_indices(local_dof_indices_2);
 
 
-                                for (unsigned int k = 0; k < ib_coef.size();
+                                    unite_cell_interpolation_points[0] =
+                                            this->mapping->transform_real_to_unit_cell(cell_2,
+                                                                                       point);
+                                    total_interpolation_points[0] = point;
+                                    for (unsigned int j = 1; j < ib_coef.size(); ++j) {
+                                        total_interpolation_points[j] = interpolation_points[j - 1];
+                                        unite_cell_interpolation_points[j] =
+                                                this->mapping->transform_real_to_unit_cell(
+                                                        cell_2, interpolation_points[j - 1]);
+                                    }
+
+
+                                    fluide_stress_at_ib = 0;
+
+                                    Quadrature<dim> q_local(unite_cell_interpolation_points, ib_coef);
+                                    FEValues<dim> fe_values_cell2(*this->fe,
+                                                                  q_local,
+                                                                  update_quadrature_points | update_gradients |
+                                                                  update_values);
+                                    fe_values_cell2.reinit(cell_2);
+                                    fe_values_cell2[velocities].get_function_gradients(
+                                            this->present_solution, velocity_gradients);
+                                    fe_values_cell2[pressure].get_function_values(
+                                            this->present_solution, pressure_values);
+                                    for (unsigned int k = 0; k < ib_coef.size();
                                          ++k) {
+                                        for (int d = 0; d < dim; ++d) {
+                                            fluid_pressure[d][d] = pressure_values[k];
+                                        }
+                                        fluid_stress =
+                                                mu *
+                                                (velocity_gradients[k] +
+                                                 transpose(velocity_gradients[k])) -
+                                                fluid_pressure;
+                                        fluide_stress_at_ib += fluid_stress * ib_coef[k];
 
-                                    fluide_stress_at_ib += compute_stress_tensor_around_point(total_interpolation_points[k],cell_2)*ib_coef[k];
+                                    }
+
+                                    local_face_tensor[i] = fluide_stress_at_ib;
                                 }
-
-                                local_face_tensor[i] =fluide_stress_at_ib ;
                             }
                         }
+                        {
+                            TimerOutput::Scope t(this->computing_timer, "new force_eval :interpolate solution at to eval force");
+                            for (const auto &projection_cell_face : local_face_dof_handler.active_cell_iterators()) {
 
-                        for (const auto &projection_cell_face : local_face_dof_handler.active_cell_iterators()) {
+                                fe_face_projection_values.reinit(projection_cell_face);
 
-                            fe_face_projection_values.reinit(projection_cell_face);
-
-                            std::vector<Point<dim>> q_points =
-                                    fe_face_projection_values.get_quadrature_points();
-                            fe_face_projection_values[velocities].get_function_gradients(
-                                    local_face_solution, velocity_gradients);
-                            fe_face_projection_values[pressure].get_function_values(
-                                    local_face_solution, pressure_values);
+                                std::vector<Point<dim>> q_points =
+                                        fe_face_projection_values.get_quadrature_points();
 
 
-                            for (unsigned int q = 0; q < n_q_points_face; q++)
-                            {
-                                total_area+=fe_face_projection_values.JxW(q);
-                                normal_vector =(q_points[q] - particles[p].position) /
-                                        (q_points[q] - particles[p].position).norm();
-                                fluid_stress=0;
-                                for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
-                                    const unsigned int component_i =
-                                            this->fe->system_to_component_index(i).first;
-                                    if (component_i == 0) {
-                                        fluid_stress+=fe_face_projection_values.shape_value(i,q)*local_face_tensor[i];
+                                for (unsigned int q = 0; q < n_q_points_face; q++) {
+                                    total_area += fe_face_projection_values.JxW(q);
+                                    normal_vector = (q_points[q] - particles[p].position) /
+                                                    (q_points[q] - particles[p].position).norm();
+                                    fluid_stress = 0;
+                                    for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
+                                        const unsigned int component_i =
+                                                this->fe->system_to_component_index(i).first;
+                                        if (component_i == 0) {
+                                            fluid_stress +=
+                                                    fe_face_projection_values.shape_value(i, q) * local_face_tensor[i];
+                                        }
+                                    }
+
+                                    auto force = fluid_stress * normal_vector *
+                                                 fe_face_projection_values.JxW(q);
+                                    particles[p].forces += force;
+
+                                    auto distance = q_points[q] - particles[p].position;
+                                    if (dim == 2) {
+                                        particles[p].torques[0] += 0.;
+                                        particles[p].torques[1] += 0.;
+                                        particles[p].torques[2] += distance[0] * force[1] -
+                                                                   distance[1] * force[0];
+                                    } else if (dim == 3) {
+                                        particles[p].torques[0] += distance[1] * force[2] -
+                                                                   distance[2] * force[1];
+                                        particles[p].torques[1] += distance[2] * force[0] -
+                                                                   distance[0] * force[2];
+                                        particles[p].torques[2] += distance[0] * force[1] -
+                                                                   distance[1] * force[0];
                                     }
                                 }
-
-                                auto force = fluid_stress * normal_vector *
-                                        fe_face_projection_values.JxW(q);
-                                particles[p].forces+=force;
-
-                                auto distance = q_points[q] - particles[p].position;
-                                if (dim == 2)
-                                {
-                                    particles[p].torques[0] += 0.;
-                                    particles[p].torques[1] += 0.;
-                                    particles[p].torques[2] += distance[0] * force[1] -
-                                                 distance[1] * force[0];
-                                }
-                                else if (dim == 3)
-                                {
-                                    particles[p].torques[0] += distance[1] * force[2] -
-                                                 distance[2] * force[1];
-                                    particles[p].torques[1] += distance[2] * force[0] -
-                                                 distance[0] * force[2];
-                                    particles[p].torques[2] += distance[0] * force[1] -
-                                                 distance[1] * force[0];
-                                }
                             }
                         }
-
                     }
                 }
             }
