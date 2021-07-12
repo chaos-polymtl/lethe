@@ -29,27 +29,27 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Number of particles of this type");
-      prm.declare_entry("density particle",
+      prm.declare_entry("density particles",
                         "1000",
                         Patterns::Double(),
                         "Particle density");
-      prm.declare_entry("young modulus particle",
+      prm.declare_entry("young modulus particles",
                         "1000000",
                         Patterns::Double(),
                         "Particle Young's modulus");
-      prm.declare_entry("poisson ratio particle",
+      prm.declare_entry("poisson ratio particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle Poisson ratio");
-      prm.declare_entry("restitution coefficient particle",
+      prm.declare_entry("restitution coefficient particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle restitution coefficient");
-      prm.declare_entry("friction coefficient particle",
+      prm.declare_entry("friction coefficient particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle friction coefficient");
-      prm.declare_entry("rolling friction particle",
+      prm.declare_entry("rolling friction particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle rolling friction");
@@ -80,17 +80,17 @@ namespace Parameters
           throw(std::runtime_error("Invalid size distribution type "));
         }
       number.at(particle_type)           = prm.get_integer("number");
-      density_particle.at(particle_type) = prm.get_double("density particle");
+      density_particle.at(particle_type) = prm.get_double("density particles");
       youngs_modulus_particle.at(particle_type) =
-        prm.get_double("young modulus particle");
+        prm.get_double("young modulus particles");
       poisson_ratio_particle.at(particle_type) =
-        prm.get_double("poisson ratio particle");
+        prm.get_double("poisson ratio particles");
       restitution_coefficient_particle.at(particle_type) =
-        prm.get_double("restitution coefficient particle");
+        prm.get_double("restitution coefficient particles");
       friction_coefficient_particle.at(particle_type) =
-        prm.get_double("friction coefficient particle");
+        prm.get_double("friction coefficient particles");
       rolling_friction_coefficient_particle.at(particle_type) =
-        prm.get_double("rolling friction particle");
+        prm.get_double("rolling friction particles");
     }
 
     template <int dim>
@@ -640,7 +640,7 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of floating walls");
 
-        for (unsigned int counter = 0; counter < floating_wall_maximum_number;
+        for (unsigned int counter = 0; counter < max_number_floating_walls;
              ++counter)
           {
             prm.enter_subsection("wall " +

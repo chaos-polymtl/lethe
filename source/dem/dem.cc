@@ -19,12 +19,12 @@
 #include <core/solutions_output.h>
 
 #include <dem/dem.h>
-#include <dem/list_insertion.h>
 #include <dem/explicit_euler_integrator.h>
 #include <dem/find_contact_detection_step.h>
 #include <dem/find_maximum_particle_size.h>
 #include <dem/gear3_integrator.h>
 #include <dem/input_parameter_inspection.h>
+#include <dem/list_insertion.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
 #include <dem/locate_local_particles.h>
