@@ -226,8 +226,8 @@ test()
   dem_parameters.physical_properties.friction_coefficient_particle[0]    = 0.5;
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
-  dem_parameters.physical_properties.density[0] = 2500;
-  double neighborhood_threshold                 = 1.3 * particle_diameter;
+  dem_parameters.physical_properties.density_particle[0] = 2500;
+  double neighborhood_threshold = 1.3 * particle_diameter;
   dem_parameters.model_parameters.rolling_resistance_method = Parameters::
     Lagrangian::ModelParameters::RollingResistanceMethod::constant_resistance;
 

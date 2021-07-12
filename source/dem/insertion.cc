@@ -73,7 +73,7 @@ Insertion<dim>::assign_particle_properties(
         diameter = particle_sizes[particle_counter] :
         -particle_sizes[particle_counter];
       double density =
-        physical_properties.density[current_inserting_particle_type];
+        physical_properties.density_particle[current_inserting_particle_type];
       double vel_x   = 0.;
       double vel_y   = 0.;
       double vel_z   = 0.;
