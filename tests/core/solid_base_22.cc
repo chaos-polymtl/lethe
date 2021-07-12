@@ -20,6 +20,8 @@
 // Deal.II includes
 #include <deal.II/distributed/tria.h>
 
+#include <deal.II/fe/mapping.h>
+
 #include <deal.II/grid/grid_generator.h>
 
 #include <deal.II/particles/data_out.h>
@@ -57,6 +59,7 @@ test()
   param->solid_mesh.grid_type          = "hyper_cube";
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 4;
+  param->solid_mesh.simplex            = false;
 
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);
@@ -64,7 +67,9 @@ test()
   const unsigned int degree_velocity = 1;
 
   // SolidBase class
-  SolidBase<2> solid(param, fluid_tria, degree_velocity);
+  std::shared_ptr<Mapping<2>> fluid_mapping =
+    std::make_shared<MappingQGeneric<2>>(1);
+  SolidBase<2> solid(param, fluid_tria, fluid_mapping, degree_velocity);
   solid.initial_setup();
   solid.setup_particles();
 

@@ -57,6 +57,7 @@ test()
   param->solid_mesh.grid_type          = "hyper_ball";
   param->solid_mesh.grid_arguments     = "0 , 0 , 0 : 0.75 : false";
   param->solid_mesh.initial_refinement = 1;
+  param->solid_mesh.simplex            = false;
 
   // Mesh of the fluid
   GridGenerator::hyper_cube(*fluid_tria, -1, 1);
@@ -64,7 +65,9 @@ test()
   const unsigned int degree_velocity = 1;
 
   // SolidBase class
-  SolidBase<3, 3> solid(param, fluid_tria, degree_velocity);
+  std::shared_ptr<Mapping<3>> fluid_mapping =
+    std::make_shared<MappingQGeneric<3>>(1);
+  SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping, degree_velocity);
   solid.initial_setup();
   solid.setup_particles();
 
