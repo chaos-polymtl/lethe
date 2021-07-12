@@ -310,12 +310,8 @@ namespace Parameters
         rotational
       } BC_type;
 
-
-
       // Outlet boundary IDs
       std::vector<unsigned int> outlet_boundaries;
-
-
 
       // Translational velocities of moving boundaries
       std::unordered_map<unsigned int, Tensor<1, dim>>

@@ -147,7 +147,8 @@ test()
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
-  boundary_cells_object.build(tr);
+  std::vector<unsigned int>     outlet_boundaries;
+  boundary_cells_object.build(tr, outlet_boundaries);
 
   // Calling broad search
   PWBroadSearch<dim> broad_search_object;

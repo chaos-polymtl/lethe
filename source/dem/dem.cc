@@ -258,7 +258,9 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  boundary_cell_object.build(triangulation, parameters.floating_walls);
+  boundary_cell_object.build(triangulation,
+                             parameters.floating_walls,
+                             parameters.boundary_conditions.outlet_boundaries);
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
@@ -790,7 +792,9 @@ DEMSolver<dim>::solve()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
-  boundary_cell_object.build(triangulation, parameters.floating_walls);
+  boundary_cell_object.build(triangulation,
+                             parameters.floating_walls,
+                             parameters.boundary_conditions.outlet_boundaries);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object        = set_insertion_type(parameters);
