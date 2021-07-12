@@ -22,14 +22,14 @@
 #include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
-#include <deal.II/fe/fe_q.h>
+
 #include <solvers/gls_sharp_navier_stokes.h>
 
 #include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/lac/full_matrix.h>
-
-
+#include <deal.II/fe/fe_q.h>
+#include <deal.II/numerics/fe_field_function.h>
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -645,13 +645,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
     std::vector<Point<dim>> unite_cell_interpolation_points(
             ib_coef.size());
-    std::vector<Point<dim>> total_interpolation_points(
-            ib_coef.size());
     std::vector<double> local_interp_sol(ib_coef.size());
 
     std::vector<Tensor<2,dim>> local_face_tensor(dofs_per_face);
 
     std::cout<<"debut de calcul"<<std::endl;
+    std::map<unsigned int, std::pair<bool, Tensor<2,dim>>> force_eval_done;
 
     // Define cell iterator
     const auto &cell_iterator = this->dof_handler.active_cell_iterators();
@@ -665,12 +664,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
     double total_area=0;
     double total_edge_area=0;
-
+    unsigned int nb_evaluation=0;
     for (const auto &cell : cell_iterator)
     {
 
         if (cell->is_locally_owned())
         {
+
         //particle id that cut the cell.
             unsigned int p;
             bool cell_is_cut;
@@ -693,9 +693,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                     // if face is not cut and face is outward;
                     if (nb_dof_inside == 0) {
-                        TimerOutput::Scope t(this->computing_timer, "new force_eval: in force evaluation");
-                        fe_face_values.reinit(cell, face);
-                        fe_values.reinit(cell);
 
                         //generate a surface cell from the projection of the face on the IB surface
 
@@ -711,39 +708,44 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                             local_face_cell_data[0].vertices[i]=i;
                         }
-                        local_face_cell_data[0].material_id = 0;
 
+                        local_face_cell_data[0].material_id = 0;
                         Triangulation<dim-1,dim> local_face_projection_triangulation;
-                        local_face_projection_triangulation.create_triangulation(vertices_of_face_projection,local_face_cell_data,SubCellData());
                         // map the triangulation
 
                         DoFHandler<dim-1,dim> local_face_dof_handler;
 
+                        local_face_projection_triangulation.create_triangulation(vertices_of_face_projection,local_face_cell_data,SubCellData());
                         local_face_dof_handler.initialize(local_face_projection_triangulation,local_face_fe);
                         DoFTools::map_dofs_to_support_points(local_face_map,
-                                                             local_face_dof_handler,
-                                                             local_face_support_points);
-                        std::cout<<"cell_map_don"<<std::endl;
-
+                                                                 local_face_dof_handler,
+                                                                 local_face_support_points);
                         //defined solution on face
 
                         std::vector<Tensor<2,dim>> local_face_tensor(dofs_per_face);
-                        {
-                            TimerOutput::Scope t(this->computing_timer, "new force_eval :Extrapolate solution at boundary");
-                            for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
-                                const unsigned int component_i =
-                                        this->fe->system_to_component_index(i).first;
+                        for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
+
+                            //TimerOutput::Scope t(this->computing_timer, "new force_eval extrapolate");
+                            const unsigned int component_i =
+                                    this->fe->system_to_component_index(i).first;
+                            if(force_eval_done[local_face_dof_indices[i]].first==false) {
                                 if (component_i == 0) {
                                     //define dof contribution to the area
-
+                                    nb_evaluation+=1;
                                     auto[point, interpolation_points] =
                                     stencil.points(order,
                                                    particles[p],
                                                    support_points[local_face_dof_indices[i]]);
 
-                                    auto cell_2 = find_cell_around_point_with_neighbors(
-                                            cell,
-                                            interpolation_points[stencil.nb_points(order) - 1]);
+
+                                    auto cell_2 = ib_done[local_face_dof_indices[i]].second;
+
+                                    if (ib_done[local_face_dof_indices[i]].first == false) {
+                                        cell_2 = find_cell_around_point_with_neighbors(
+                                                cell,
+                                                interpolation_points[stencil.nb_points(order) - 1]);
+                                    }
+                                    // std::cout<<"dof done "<<ib_done[local_face_dof_indices[i]].first <<std::endl;
 
                                     cell_2->get_dof_indices(local_dof_indices_2);
 
@@ -751,9 +753,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     unite_cell_interpolation_points[0] =
                                             this->mapping->transform_real_to_unit_cell(cell_2,
                                                                                        point);
-                                    total_interpolation_points[0] = point;
                                     for (unsigned int j = 1; j < ib_coef.size(); ++j) {
-                                        total_interpolation_points[j] = interpolation_points[j - 1];
                                         unite_cell_interpolation_points[j] =
                                                 this->mapping->transform_real_to_unit_cell(
                                                         cell_2, interpolation_points[j - 1]);
@@ -767,6 +767,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                                   q_local,
                                                                   update_quadrature_points | update_gradients |
                                                                   update_values);
+                                    FEField
                                     fe_values_cell2.reinit(cell_2);
                                     fe_values_cell2[velocities].get_function_gradients(
                                             this->present_solution, velocity_gradients);
@@ -787,51 +788,52 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     }
 
                                     local_face_tensor[i] = fluide_stress_at_ib;
+                                    force_eval_done[local_face_dof_indices[i]] = std::make_pair(true, fluide_stress_at_ib);
                                 }
                             }
+                            else{
+                                local_face_tensor[i]=force_eval_done[local_face_dof_indices[i]].second;
+                            }
                         }
-                        {
-                            TimerOutput::Scope t(this->computing_timer, "new force_eval :interpolate solution at to eval force");
-                            for (const auto &projection_cell_face : local_face_dof_handler.active_cell_iterators()) {
-
-                                fe_face_projection_values.reinit(projection_cell_face);
-
-                                std::vector<Point<dim>> q_points =
-                                        fe_face_projection_values.get_quadrature_points();
 
 
-                                for (unsigned int q = 0; q < n_q_points_face; q++) {
-                                    total_area += fe_face_projection_values.JxW(q);
-                                    normal_vector = (q_points[q] - particles[p].position) /
-                                                    (q_points[q] - particles[p].position).norm();
-                                    fluid_stress = 0;
-                                    for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
-                                        const unsigned int component_i =
-                                                this->fe->system_to_component_index(i).first;
-                                        if (component_i == 0) {
-                                            fluid_stress +=
-                                                    fe_face_projection_values.shape_value(i, q) * local_face_tensor[i];
-                                        }
+                        for (const auto &projection_cell_face : local_face_dof_handler.active_cell_iterators()) {
+                            //TimerOutput::Scope t(this->computing_timer, "new force_eval interpolate");
+                            fe_face_projection_values.reinit(projection_cell_face);
+
+                            std::vector<Point<dim>> q_points =
+                                    fe_face_projection_values.get_quadrature_points();
+                            for (unsigned int q = 0; q < n_q_points_face; q++) {
+                                total_area += fe_face_projection_values.JxW(q);
+                                normal_vector = (q_points[q] - particles[p].position) /
+                                                (q_points[q] - particles[p].position).norm();
+                                fluid_stress = 0;
+                                for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
+                                    const unsigned int component_i =
+                                            this->fe->system_to_component_index(i).first;
+                                    if (component_i == 0) {
+                                        fluid_stress +=
+                                                fe_face_projection_values.shape_value(i, q) * local_face_tensor[i];
                                     }
+                                }
 
-                                    auto force = fluid_stress * normal_vector *
-                                                 fe_face_projection_values.JxW(q);
-                                    particles[p].forces += force;
+                                auto force = fluid_stress * normal_vector *
+                                             fe_face_projection_values.JxW(q);
+                                particles[p].forces += force;
 
-                                    auto distance = q_points[q] - particles[p].position;
-                                    if (dim == 2) {
-                                        particles[p].torques[0] += 0.;
-                                        particles[p].torques[1] += 0.;
-                                        particles[p].torques[2] += distance[0] * force[1] -
-                                                                   distance[1] * force[0];
-                                    } else if (dim == 3) {
-                                        particles[p].torques[0] += distance[1] * force[2] -
-                                                                   distance[2] * force[1];
-                                        particles[p].torques[1] += distance[2] * force[0] -
-                                                                   distance[0] * force[2];
-                                        particles[p].torques[2] += distance[0] * force[1] -
-                                                                   distance[1] * force[0];
-                                    }
+                                auto distance = q_points[q] - particles[p].position;
+                                if (dim == 2) {
+                                    particles[p].torques[0] += 0.;
+                                    particles[p].torques[1] += 0.;
+                                    particles[p].torques[2] += distance[0] * force[1] -
+                                                               distance[1] * force[0];
+                                } else if (dim == 3) {
+                                    particles[p].torques[0] += distance[1] * force[2] -
+                                                               distance[2] * force[1];
+                                    particles[p].torques[1] += distance[2] * force[0] -
+                                                               distance[0] * force[2];
+                                    particles[p].torques[2] += distance[0] * force[1] -
+                                                               distance[1] * force[0];
                                 }
                             }
                         }
@@ -839,7 +841,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                 }
             }
         }
+
     }
+
     std::cout<<"total area"<<  total_area <<std::endl;
     std::cout<<"total edge area"<<  total_edge_area <<std::endl;
 
@@ -847,8 +851,9 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         particles[i].forces=Utilities::MPI::sum(particles[i].forces, this->mpi_communicator)*rho;
         particles[i].torques=Utilities::MPI::sum(particles[i].torques, this->mpi_communicator)*rho;
     }
+    nb_evaluation=Utilities::MPI::sum(nb_evaluation, this->mpi_communicator);
 
-
+    std::cout<<"nb_evaluation : "<<  nb_evaluation <<std::endl;
 }
 
 
@@ -1025,14 +1030,15 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib_v2()
               // Check if the cell is locally owned before doing the evaluation.
               if (cell_2->is_locally_owned())
                 {
-                  const auto &cell_3 =
-                            find_cell_around_point_with_tree_with_guess(this->dof_handler,
-                                                                        third_point,cell_2);
+                    const auto &cell_3 =
+                            find_cell_around_point_with_tree(this->dof_handler,
+                                                             third_point);
+                    //const auto &cell_3 = find_cell_around_point_with_neighbors(cell_2,third_point);
                     // const auto &cell_3 =
                     // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
-                  const auto &cell_4 =
-                            find_cell_around_point_with_tree_with_guess(this->dof_handler,
-                                                                        fourth_point,cell_3);
+                    const auto &cell_4 =
+                            find_cell_around_point_with_tree(this->dof_handler,
+                                                             fourth_point);
                   // const auto &cell_4 =
                   // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                   cell_2->get_dof_indices(local_dof_indices);
@@ -1381,16 +1387,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib_v2()
                   // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                   if (cell_2->is_locally_owned())
                     {
-                      /*const auto &cell_3 =
-                        find_cell_around_point_with_tree_with_guess(this->dof_handler,
-                                                         third_point,cell_2);*/
-                        const auto &cell_3 = find_cell_around_point_with_neighbors(cell_2,third_point);
+                      const auto &cell_3 =
+                        find_cell_around_point_with_tree(this->dof_handler,
+                                                         third_point);
+                        //const auto &cell_3 = find_cell_around_point_with_neighbors(cell_2,third_point);
                       // const auto &cell_3 =
                       // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
-                      /*const auto &cell_4 =
-                        find_cell_around_point_with_tree_with_guess(this->dof_handler,
-                                                         fourth_point,cell_3);*/
-                        const auto &cell_4 = find_cell_around_point_with_neighbors(cell_3,fourth_point);
+                      const auto &cell_4 =
+                        find_cell_around_point_with_tree(this->dof_handler,
+                                                         fourth_point);
+                        //const auto &cell_4 = find_cell_around_point_with_neighbors(cell_3,fourth_point);
                       // const auto &cell_4 =
                       // this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       cell_2->get_dof_indices(local_dof_indices);
@@ -2444,13 +2450,13 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                   if (component_i < dim &&
                       this->locally_owned_dofs.is_element(
                         global_index_overwrite) &&
-                      ib_done[global_index_overwrite] == false)
+                      ib_done[global_index_overwrite].first == false)
                     {
                       // We are working on the velocity of the cell cut
                       // loops on the dof that are for vx or vy separately
                       // loops on all the dof of the cell that represent
                       // a specific component
-                      ib_done[global_index_overwrite] = true;
+
 
                       // Define which dof is going to be redefined
 
@@ -2479,6 +2485,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         cell,
                         interpolation_points[stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
+
+                      ib_done[global_index_overwrite] = std::make_pair(true,cell_2);
 
                       bool skip_stencil = false;
 
