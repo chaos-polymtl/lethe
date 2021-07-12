@@ -103,85 +103,88 @@ template <int dim, int spacedim>
 void
 SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 {
-  if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh &&
-      param->solid_mesh.simplex)
+  if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
-      Triangulation<dim, spacedim> basetria(
-        Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
+      if (param->solid_mesh.simplex)
+        {
+          Triangulation<dim, spacedim> basetria(
+            Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
 
-      GridIn<dim, spacedim> grid_in;
-      grid_in.attach_triangulation(basetria);
-      std::ifstream input_file(param->solid_mesh.file_name);
+          GridIn<dim, spacedim> grid_in;
+          grid_in.attach_triangulation(basetria);
+          std::ifstream input_file(param->solid_mesh.file_name);
 
-      grid_in.read_msh(input_file);
+          grid_in.read_msh(input_file);
 
-      // By default uses the METIS partitioner.
-      // A user parameter option could be made to chose a partitionner.
-      GridTools::partition_triangulation(Utilities::MPI::n_mpi_processes(
-                                           solid_tria->get_communicator()),
-                                         basetria);
+          // By default uses the METIS partitioner.
+          // A user parameter option could be made to chose a partitionner.
+          GridTools::partition_triangulation(Utilities::MPI::n_mpi_processes(
+                                               solid_tria->get_communicator()),
+                                             basetria);
 
 
-      auto construction_data = TriangulationDescription::Utilities::
-        create_description_from_triangulation(basetria,
-                                              solid_tria->get_communicator());
+          auto construction_data = TriangulationDescription::Utilities::
+            create_description_from_triangulation(
+              basetria, solid_tria->get_communicator());
 
-      solid_tria->create_triangulation(construction_data);
+          solid_tria->create_triangulation(construction_data);
+        }
+      else
+        { // Grid creation
+          GridIn<dim, spacedim> grid_in;
+          // Attach triangulation to the grid
+          grid_in.attach_triangulation(*solid_tria);
+          // Read input gmsh file
+          std::ifstream input_file(param->solid_mesh.file_name);
+          grid_in.read_msh(input_file);
+        }
     }
-  else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii &&
-           param->solid_mesh.simplex)
+  else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
-      Triangulation<dim, spacedim> temporary_quad_triangulation;
-      GridGenerator::generate_from_name_and_arguments(
-        temporary_quad_triangulation,
-        param->solid_mesh.grid_type,
-        param->solid_mesh.grid_arguments);
+      if (param->solid_mesh.simplex)
+        { // TODO Using dealii generated meshes with simplices in Nitsche solver
+          // generates and error. "boundary_id !=
+          // numbers::internal_face_boundary_id"
+          Triangulation<dim, spacedim> temporary_quad_triangulation;
+          GridGenerator::generate_from_name_and_arguments(
+            temporary_quad_triangulation,
+            param->solid_mesh.grid_type,
+            param->solid_mesh.grid_arguments);
 
-      // initial refinement
-      const int initial_refinement = param->solid_mesh.initial_refinement;
-      temporary_quad_triangulation.refine_global(initial_refinement);
-      // flatten the triangulation
-      Triangulation<dim, spacedim> flat_temp_quad_triangulation;
-      GridGenerator::flatten_triangulation(temporary_quad_triangulation,
-                                           flat_temp_quad_triangulation);
+          // initial refinement
+          const int initial_refinement = param->solid_mesh.initial_refinement;
+          temporary_quad_triangulation.refine_global(initial_refinement);
+          // flatten the triangulation
+          Triangulation<dim, spacedim> flat_temp_quad_triangulation;
+          GridGenerator::flatten_triangulation(temporary_quad_triangulation,
+                                               flat_temp_quad_triangulation);
 
-      Triangulation<dim, spacedim> temporary_tri_triangulation(
-        Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
-      GridGenerator::convert_hypercube_to_simplex_mesh(
-        flat_temp_quad_triangulation, temporary_tri_triangulation);
+          Triangulation<dim, spacedim> temporary_tri_triangulation(
+            Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
+          GridGenerator::convert_hypercube_to_simplex_mesh(
+            flat_temp_quad_triangulation, temporary_tri_triangulation);
 
-      GridTools::partition_triangulation_zorder(
-        Utilities::MPI::n_mpi_processes(solid_tria->get_communicator()),
-        temporary_tri_triangulation);
-      GridTools::partition_multigrid_levels(temporary_tri_triangulation);
+          GridTools::partition_triangulation_zorder(
+            Utilities::MPI::n_mpi_processes(solid_tria->get_communicator()),
+            temporary_tri_triangulation);
+          GridTools::partition_multigrid_levels(temporary_tri_triangulation);
 
-      // extract relevant information from distributed triangulation
-      auto construction_data = TriangulationDescription::Utilities::
-        create_description_from_triangulation(
-          temporary_tri_triangulation,
-          solid_tria->get_communicator(),
-          TriangulationDescription::Settings::construct_multigrid_hierarchy);
-      solid_tria->create_triangulation(construction_data);
-    }
-  else if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh &&
-           !param->solid_mesh.simplex)
-    {
-      // Grid creation
-      GridIn<dim, spacedim> grid_in;
-      // Attach triangulation to the grid
-      grid_in.attach_triangulation(*solid_tria);
-      // Read input gmsh file
-      std::ifstream input_file(param->solid_mesh.file_name);
-      grid_in.read_msh(input_file);
-    }
-  else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii &&
-           !param->solid_mesh.simplex)
-    {
-      // deal.ii creates grid and attaches the solid triangulation
-      GridGenerator::generate_from_name_and_arguments(
-        *solid_tria,
-        param->solid_mesh.grid_type,
-        param->solid_mesh.grid_arguments);
+          // extract relevant information from distributed triangulation
+          auto construction_data = TriangulationDescription::Utilities::
+            create_description_from_triangulation(
+              temporary_tri_triangulation,
+              solid_tria->get_communicator(),
+              TriangulationDescription::Settings::
+                construct_multigrid_hierarchy);
+          solid_tria->create_triangulation(construction_data);
+        }
+      else
+        { // deal.ii creates grid and attaches the solid triangulation
+          GridGenerator::generate_from_name_and_arguments(
+            *solid_tria,
+            param->solid_mesh.grid_type,
+            param->solid_mesh.grid_arguments);
+        }
     }
   else
     throw std::runtime_error(
@@ -190,15 +193,16 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
   // afterwards
-  if (!restart && !param->solid_mesh.simplex)
+  if (!restart)
     {
-      solid_tria->refine_global(param->solid_mesh.initial_refinement);
-      // Initialize dof handler for solid
-      solid_dh.distribute_dofs(*fe);
-    }
-  else if (!restart)
-    {
-      // Initialize dof handler for solid
+      if (param->solid_mesh.simplex)
+        {
+          // Simplex triangulation refinement isn't possible yet
+        }
+      else
+        {
+          solid_tria->refine_global(param->solid_mesh.initial_refinement);
+        }
       solid_dh.distribute_dofs(*fe);
     }
 }
