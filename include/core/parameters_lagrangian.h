@@ -58,7 +58,7 @@ namespace Parameters
       std::unordered_map<unsigned int, int> number;
 
       // Density of each particle type
-      std::unordered_map<unsigned int, double> density;
+      std::unordered_map<unsigned int, double> density_particle;
 
       // Young's modulus of each particle type
       std::unordered_map<unsigned int, double> youngs_modulus_particle;
@@ -109,7 +109,7 @@ namespace Parameters
         std::unordered_map<unsigned int, double> &particle_average_diameter,
         std::unordered_map<unsigned int, double> &particle_size_std,
         std::unordered_map<unsigned int, int> &   number,
-        std::unordered_map<unsigned int, double> &density,
+        std::unordered_map<unsigned int, double> &density_particle,
         std::unordered_map<unsigned int, double> &youngs_modulus_particle,
         std::unordered_map<unsigned int, double> &poisson_ratio_particle,
         std::unordered_map<unsigned int, double>
@@ -258,6 +258,9 @@ namespace Parameters
       declareDefaultEntry(ParameterHandler &prm);
       void
       parse_floating_wall(ParameterHandler &prm);
+
+    private:
+      unsigned int max_number_floating_walls = 9;
     };
 
     template <int dim>

@@ -29,27 +29,27 @@ namespace Parameters
                         "0",
                         Patterns::Integer(),
                         "Number of particles of this type");
-      prm.declare_entry("density",
+      prm.declare_entry("density particles",
                         "1000",
                         Patterns::Double(),
                         "Particle density");
-      prm.declare_entry("young modulus particle",
+      prm.declare_entry("young modulus particles",
                         "1000000",
                         Patterns::Double(),
                         "Particle Young's modulus");
-      prm.declare_entry("poisson ratio particle",
+      prm.declare_entry("poisson ratio particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle Poisson ratio");
-      prm.declare_entry("restitution coefficient particle",
+      prm.declare_entry("restitution coefficient particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle restitution coefficient");
-      prm.declare_entry("friction coefficient particle",
+      prm.declare_entry("friction coefficient particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle friction coefficient");
-      prm.declare_entry("rolling friction particle",
+      prm.declare_entry("rolling friction particles",
                         "0.1",
                         Patterns::Double(),
                         "Particle rolling friction");
@@ -79,18 +79,18 @@ namespace Parameters
         {
           throw(std::runtime_error("Invalid size distribution type "));
         }
-      number.at(particle_type)  = prm.get_integer("number");
-      density.at(particle_type) = prm.get_double("density");
+      number.at(particle_type)           = prm.get_integer("number");
+      density_particle.at(particle_type) = prm.get_double("density particles");
       youngs_modulus_particle.at(particle_type) =
-        prm.get_double("young modulus particle");
+        prm.get_double("young modulus particles");
       poisson_ratio_particle.at(particle_type) =
-        prm.get_double("poisson ratio particle");
+        prm.get_double("poisson ratio particles");
       restitution_coefficient_particle.at(particle_type) =
-        prm.get_double("restitution coefficient particle");
+        prm.get_double("restitution coefficient particles");
       friction_coefficient_particle.at(particle_type) =
-        prm.get_double("friction coefficient particle");
+        prm.get_double("friction coefficient particles");
       rolling_friction_coefficient_particle.at(particle_type) =
-        prm.get_double("rolling friction particle");
+        prm.get_double("rolling friction particles");
     }
 
     template <int dim>
@@ -120,65 +120,16 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of particle types");
 
-        prm.enter_subsection("particle type 0");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 1");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 2");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 3");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 4");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 5");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 6");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 7");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 8");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("particle type 9");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
+        for (unsigned int counter = 0; counter < particle_type_maximum_number;
+             ++counter)
+          {
+            prm.enter_subsection("particle type " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
 
         prm.declare_entry("young modulus wall",
                           "1000000.",
@@ -212,7 +163,7 @@ namespace Parameters
       initialize_containers(particle_average_diameter,
                             particle_size_std,
                             number,
-                            density,
+                            density_particle,
                             youngs_modulus_particle,
                             poisson_ratio_particle,
                             restitution_coefficient_particle,
@@ -284,7 +235,7 @@ namespace Parameters
       std::unordered_map<unsigned int, double> &particle_average_diameter,
       std::unordered_map<unsigned int, double> &particle_size_std,
       std::unordered_map<unsigned int, int> &   number,
-      std::unordered_map<unsigned int, double> &density,
+      std::unordered_map<unsigned int, double> &density_particle,
       std::unordered_map<unsigned int, double> &youngs_modulus_particle,
       std::unordered_map<unsigned int, double> &poisson_ratio_particle,
       std::unordered_map<unsigned int, double>
@@ -299,7 +250,7 @@ namespace Parameters
           particle_average_diameter.insert({counter, 0.});
           particle_size_std.insert({counter, 0.});
           number.insert({counter, 0.});
-          density.insert({counter, 0.});
+          density_particle.insert({counter, 0.});
           youngs_modulus_particle.insert({counter, 0.});
           poisson_ratio_particle.insert({counter, 0.});
           restitution_coefficient_particle.insert({counter, 0.});
@@ -689,65 +640,16 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of floating walls");
 
-        prm.enter_subsection("wall 0");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 1");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 2");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 3");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 4");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 5");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 6");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 7");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 8");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("wall 9");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
+        for (unsigned int counter = 0; counter < max_number_floating_walls;
+             ++counter)
+          {
+            prm.enter_subsection("wall " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
       }
       prm.leave_subsection();
     }
@@ -938,47 +840,16 @@ namespace Parameters
                           Patterns::Integer(),
                           "Number of boundary motion");
 
-        prm.enter_subsection("moving boundary 0");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 1");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 2");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 3");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 4");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 5");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
-
-        prm.enter_subsection("moving boundary 6");
-        {
-          declareDefaultEntry(prm);
-        }
-        prm.leave_subsection();
+        for (unsigned int counter = 0; counter < moving_boundary_maximum_number;
+             ++counter)
+          {
+            prm.enter_subsection("moving boundary " +
+                                 Utilities::int_to_string(counter, 1));
+            {
+              declareDefaultEntry(prm);
+            }
+            prm.leave_subsection();
+          }
       }
       prm.leave_subsection();
     }

@@ -33,12 +33,12 @@ subsection physical properties
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
 		set number				= 150
-    		set density            	 		= 2000
-    		set young modulus particle         	= 100000000
-    		set poisson ratio particle          	= 0.3
-    		set restitution coefficient particle	= 0.9
-    		set friction coefficient particle       = 0.05
-    		set rolling friction particle         	= 0.1
+    		set density particles  	 		= 2000
+    		set young modulus particles         	= 100000000
+    		set poisson ratio particles          	= 0.3
+    		set restitution coefficient particles	= 0.9
+    		set friction coefficient particles      = 0.05
+    		set rolling friction particles         	= 0.1
 	end
     set young modulus wall            			= 100000000
     set poisson ratio wall            			= 0.3

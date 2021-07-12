@@ -85,7 +85,7 @@ test()
   dem_parameters.physical_properties.rolling_friction_coefficient_particle[0] =
     0.1;
   dem_parameters.physical_properties.rolling_friction_wall  = 0.1;
-  dem_parameters.physical_properties.density[0]             = 7850;
+  dem_parameters.physical_properties.density_particle[0]    = 7850;
   dem_parameters.model_parameters.rolling_resistance_method = Parameters::
     Lagrangian::ModelParameters::RollingResistanceMethod::constant_resistance;
 

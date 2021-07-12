@@ -69,7 +69,7 @@ test()
   dem_parameters.physical_properties.particle_type_number         = 1;
   dem_parameters.physical_properties.particle_average_diameter[0] = 0.005;
   dem_parameters.physical_properties.particle_size_std[0]         = 0;
-  dem_parameters.physical_properties.density[0]                   = 2500;
+  dem_parameters.physical_properties.density_particle[0]          = 2500;
   dem_parameters.physical_properties.number[0]                    = 10;
 
   // Defining particle handler

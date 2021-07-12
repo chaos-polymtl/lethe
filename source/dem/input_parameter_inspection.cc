@@ -17,7 +17,7 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
   for (unsigned int i = 0; i < physical_properties.particle_type_number; ++i)
     rayleigh_time_step =
       std::max(M_PI_2 * physical_properties.particle_average_diameter[i] *
-                 sqrt(2 * physical_properties.density[i] *
+                 sqrt(2 * physical_properties.density_particle[i] *
                       (2 + physical_properties.poisson_ratio_particle[i]) *
                       (1 - physical_properties.poisson_ratio_particle[i]) /
                       physical_properties.youngs_modulus_particle[i]) /
