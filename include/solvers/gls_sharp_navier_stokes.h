@@ -283,7 +283,7 @@ private:
    * This map is used to keep in memory which DOFs already have an IB equation
    * imposed on them in order to avoid writing multiple time the same equation.
    */
-  std::map<unsigned int, bool> ib_done;
+  std::map<unsigned int, std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>> ib_done;
 
   /*
   * This map is used to keep in memory which cell containt each point of evaluation for each particle.
