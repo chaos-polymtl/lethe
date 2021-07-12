@@ -91,12 +91,12 @@ subsection mesh
 end
 
 #---------------------------------------------------
-# Boundary Motion
+#  DEM Boundary Conditions
 #---------------------------------------------------
-subsection boundary motion
-  set number of boundary motion         		= 1
-    subsection moving boundary 0
-	set boundary id					= 0
+subsection DEM boundary conditions
+  set number of boundary conditions         		= 1
+    subsection boundary condition 0
+	set boundary id					= 4
         set type              				= rotational
 	set rotational speed				= 2.5
 	set rotational vector x				= 1

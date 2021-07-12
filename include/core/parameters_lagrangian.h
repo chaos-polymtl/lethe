@@ -295,18 +295,27 @@ namespace Parameters
     };
 
     template <int dim>
-    class BoundaryMotion
+    class BCDEM
     {
     public:
-      // Number of moving boundaries
-      unsigned int moving_boundary_number;
+      // Number of DEM boundary conditions
+      unsigned int DEM_BC_number;
 
-      // Choosing motion type
-      enum class MotionType
+      // Choosing BC type
+      enum class BoundaryType
       {
+        fixed_wall,
+        outlet,
         translational,
         rotational
-      } motion_type;
+      } BC_type;
+
+
+
+      // Outlet boundary IDs
+      std::vector<unsigned int> outlet_boundaries;
+
+
 
       // Translational velocities of moving boundaries
       std::unordered_map<unsigned int, Tensor<1, dim>>
@@ -326,17 +335,18 @@ namespace Parameters
       void
       declareDefaultEntry(ParameterHandler &prm);
       void
-      parse_boundary_motion(ParameterHandler &prm);
+      parse_boundary_conditions(ParameterHandler &prm);
 
     private:
-      unsigned int moving_boundary_maximum_number = 6;
+      const unsigned int DEM_BC_number_max = 10;
       void
       initialize_containers(
         std::unordered_map<unsigned int, Tensor<1, dim>>
           &boundary_translational_velocity,
         std::unordered_map<unsigned int, double> &boundary_rotational_speed,
         std::unordered_map<unsigned int, Tensor<1, dim>>
-          &boundary_rotational_vector);
+          &                        boundary_rotational_vector,
+        std::vector<unsigned int> &outlet_boundaries);
     };
 
     template <int dim>

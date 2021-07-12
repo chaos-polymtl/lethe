@@ -40,7 +40,7 @@ public:
   Parameters::Lagrangian::InsertionInfo           insertion_info;
   Parameters::Lagrangian::ModelParameters         model_parameters;
   Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
-  Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
+  Parameters::Lagrangian::BCDEM<dim>              boundary_conditions;
   Parameters::Lagrangian::ForceTorqueOnWall<dim>  forces_torques;
   Parameters::Lagrangian::GridMotion<dim>         grid_motion;
 
@@ -56,7 +56,7 @@ public:
     Parameters::Lagrangian::InsertionInfo::declare_parameters(prm);
     Parameters::Lagrangian::ModelParameters::declare_parameters(prm);
     floating_walls.declare_parameters(prm);
-    boundary_motion.declare_parameters(prm);
+    boundary_conditions.declare_parameters(prm);
     forces_torques.declare_parameters(prm);
     grid_motion.declare_parameters(prm);
   }
@@ -73,7 +73,7 @@ public:
     model_parameters.parse_parameters(prm);
     simulation_control.parse_parameters(prm);
     floating_walls.parse_parameters(prm);
-    boundary_motion.parse_parameters(prm);
+    boundary_conditions.parse_parameters(prm);
     forces_torques.parse_parameters(prm);
     grid_motion.parse_parameters(prm);
   }

@@ -815,17 +815,15 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotion<dim>::declareDefaultEntry(ParameterHandler &prm)
+    BCDEM<dim>::declareDefaultEntry(ParameterHandler &prm)
     {
-      prm.declare_entry("boundary id",
-                        "0",
-                        Patterns::Integer(),
-                        "Moving boundary ID");
-      prm.declare_entry("type",
-                        "none",
-                        Patterns::Selection("none|translational|rotational"),
-                        "Type of boundary rotation"
-                        "Choices are <none|translational|rotational>.");
+      prm.declare_entry("boundary id", "0", Patterns::Integer(), "Boundary ID");
+      prm.declare_entry(
+        "type",
+        "fixed_wall",
+        Patterns::Selection("fixed_wall|outlet|translational|rotational"),
+        "Type of boundary condition"
+        "Choices are <fixed_wall|outlet|translational|rotational>.");
 
       prm.declare_entry("speed x",
                         "0.",
@@ -860,13 +858,19 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotion<dim>::parse_boundary_motion(ParameterHandler &prm)
+    BCDEM<dim>::parse_boundary_conditions(ParameterHandler &prm)
     {
-      const unsigned int boundary_id = prm.get_integer("boundary id");
-      const std::string  motion_type = prm.get("type");
+      const unsigned int boundary_id   = prm.get_integer("boundary id");
+      const std::string  boundary_type = prm.get("type");
 
-      if (motion_type == "translational")
+      if (boundary_type == "outlet")
         {
+          BC_type = BoundaryType::outlet;
+          this->outlet_boundaries.push_back(boundary_id);
+        }
+      else if (boundary_type == "translational")
+        {
+          BC_type = BoundaryType::translational;
           Tensor<1, dim> translational_velocity;
           translational_velocity[0] = prm.get_double("speed x");
           translational_velocity[1] = prm.get_double("speed y");
@@ -876,8 +880,9 @@ namespace Parameters
           this->boundary_translational_velocity.at(boundary_id) =
             translational_velocity;
         }
-      else if (motion_type == "rotational")
+      else if (boundary_type == "rotational")
         {
+          BC_type                         = BoundaryType::rotational;
           double         rotational_speed = prm.get_double("rotational speed");
           Tensor<1, dim> rotational_vector;
           if (dim == 3)
@@ -890,27 +895,30 @@ namespace Parameters
           this->boundary_rotational_speed.at(boundary_id)  = rotational_speed;
           this->boundary_rotational_vector.at(boundary_id) = rotational_vector;
         }
+      else if (boundary_type == "fixed_wall")
+        {
+          BC_type = BoundaryType::fixed_wall;
+        }
       else
         {
-          throw(std::runtime_error("Invalid boundary motion type "));
+          throw(std::runtime_error("Invalid boundary condition type "));
         }
     }
 
     template <int dim>
     void
-    BoundaryMotion<dim>::declare_parameters(ParameterHandler &prm)
+    BCDEM<dim>::declare_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("boundary motion");
+      prm.enter_subsection("DEM boundary conditions");
       {
-        prm.declare_entry("number of boundary motion",
+        prm.declare_entry("number of boundary conditions",
                           "0",
                           Patterns::Integer(),
-                          "Number of boundary motion");
+                          "Number of boundary conditions");
 
-        for (unsigned int counter = 0; counter < moving_boundary_maximum_number;
-             ++counter)
-          {
-            prm.enter_subsection("moving boundary " +
+        for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
+          { // Example: "boundary condition 0"
+            prm.enter_subsection("boundary condition " +
                                  Utilities::int_to_string(counter, 1));
             {
               declareDefaultEntry(prm);
@@ -923,75 +931,38 @@ namespace Parameters
 
     template <int dim>
     void
-    BoundaryMotion<dim>::parse_parameters(ParameterHandler &prm)
+    BCDEM<dim>::parse_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("boundary motion");
+      prm.enter_subsection("DEM boundary conditions");
+
+      DEM_BC_number = prm.get_integer("number of boundary conditions");
+
       initialize_containers(boundary_translational_velocity,
                             boundary_rotational_speed,
-                            boundary_rotational_vector);
-      {
-        moving_boundary_number = prm.get_integer("number of boundary motion");
+                            boundary_rotational_vector,
+                            outlet_boundaries);
 
-        if (moving_boundary_number >= 1)
+      for (unsigned int counter = 0; counter < DEM_BC_number; ++counter)
+        {
+          prm.enter_subsection("boundary condition " +
+                               Utilities::int_to_string(counter, 1));
           {
-            prm.enter_subsection("moving boundary 0");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
+            parse_boundary_conditions(prm);
           }
-        if (moving_boundary_number >= 2)
-          {
-            prm.enter_subsection("moving boundary 1");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 3)
-          {
-            prm.enter_subsection("moving boundary 2");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 4)
-          {
-            prm.enter_subsection("moving boundary 3");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 5)
-          {
-            prm.enter_subsection("moving boundary 4");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-        if (moving_boundary_number >= 6)
-          {
-            prm.enter_subsection("moving boundary 5");
-            {
-              parse_boundary_motion(prm);
-            }
-            prm.leave_subsection();
-          }
-      }
+          prm.leave_subsection();
+        }
       prm.leave_subsection();
     }
 
     template <int dim>
     void
-    BoundaryMotion<dim>::initialize_containers(
+    BCDEM<dim>::initialize_containers(
       std::unordered_map<unsigned int, Tensor<1, dim>>
         &                                       boundary_translational_velocity,
       std::unordered_map<unsigned int, double> &boundary_rotational_speed,
       std::unordered_map<unsigned int, Tensor<1, dim>>
-        &boundary_rotational_vector)
+        &                        boundary_rotational_vector,
+      std::vector<unsigned int> &outlet_boundaries)
     {
       Tensor<1, dim> zero_tensor;
       for (unsigned int d = 0; d < dim; ++d)
@@ -999,13 +970,14 @@ namespace Parameters
           zero_tensor[d] = 0;
         }
 
-      for (unsigned int counter = 0; counter < moving_boundary_maximum_number;
-           ++counter)
+      for (unsigned int counter = 0; counter < DEM_BC_number_max; ++counter)
         {
           boundary_translational_velocity.insert({counter, zero_tensor});
           boundary_rotational_speed.insert({counter, 0});
           boundary_rotational_vector.insert({counter, zero_tensor});
         }
+
+      outlet_boundaries.reserve(DEM_BC_number);
     }
 
     template <int dim>
@@ -1090,8 +1062,8 @@ namespace Parameters
     template class ForceTorqueOnWall<3>;
     template class FloatingWalls<2>;
     template class FloatingWalls<3>;
-    template class BoundaryMotion<2>;
-    template class BoundaryMotion<3>;
+    template class BCDEM<2>;
+    template class BCDEM<3>;
     template class GridMotion<2>;
     template class GridMotion<3>;
 

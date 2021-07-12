@@ -649,9 +649,9 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
       pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
-        parameters.boundary_motion.boundary_translational_velocity,
-        parameters.boundary_motion.boundary_rotational_speed,
-        parameters.boundary_motion.boundary_rotational_vector,
+        parameters.boundary_conditions.boundary_translational_velocity,
+        parameters.boundary_conditions.boundary_rotational_speed,
+        parameters.boundary_conditions.boundary_rotational_vector,
         triangulation_cell_diameter,
         parameters,
         boundary_index);
@@ -661,9 +661,9 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
              pw_nonlinear)
     {
       pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>(
-        parameters.boundary_motion.boundary_translational_velocity,
-        parameters.boundary_motion.boundary_rotational_speed,
-        parameters.boundary_motion.boundary_rotational_vector,
+        parameters.boundary_conditions.boundary_translational_velocity,
+        parameters.boundary_conditions.boundary_rotational_speed,
+        parameters.boundary_conditions.boundary_rotational_vector,
         triangulation_cell_diameter,
         parameters,
         boundary_index);
