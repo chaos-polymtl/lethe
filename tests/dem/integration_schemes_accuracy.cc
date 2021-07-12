@@ -104,8 +104,7 @@ test()
   pit0->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
   // Calling integrators
-  ExplicitEulerIntegrator<dim>  explicit_euler_object;
-  VelocityVerletIntegrator<dim> velocity_verlet_object;
+  ExplicitEulerIntegrator<dim> explicit_euler_object;
 
   std::vector<Tensor<1, dim>> momentum;
   std::vector<Tensor<1, dim>> force;
@@ -191,6 +190,9 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::v_y]  = 0;
   pit2->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
   pit2->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
+
+  // Create Velocity Verlet integrator
+  VelocityVerletIntegrator<dim> velocity_verlet_object;
 
   // Output Velocity Verlet
   for (auto particle_iterator = particle_handler.begin();
