@@ -24,6 +24,8 @@
 #include <deal.II/base/point.h>
 #include <deal.II/base/quadrature_lib.h>
 
+#include <deal.II/distributed/fully_distributed_tria.h>
+
 #include <deal.II/fe/fe.h>
 #include <deal.II/fe/fe_values.h>
 #include <deal.II/fe/mapping.h>
@@ -47,7 +49,8 @@ template <int dim, int spacedim>
 SolidBase<dim, spacedim>::SolidBase(
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &             param,
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria,
-  const unsigned int degree_velocity)
+  std::shared_ptr<Mapping<spacedim>> fluid_mapping,
+  const unsigned int                 degree_velocity)
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
@@ -59,11 +62,32 @@ SolidBase<dim, spacedim>::SolidBase(
             Triangulation<dim, spacedim>::smoothing_on_refinement |
             Triangulation<dim, spacedim>::smoothing_on_coarsening))))
   , fluid_tria(fluid_tria)
+  , fluid_mapping(fluid_mapping)
   , solid_dh(*solid_tria)
   , param(param)
   , velocity(&param->solid_velocity)
   , degree_velocity(degree_velocity)
-{}
+{
+  if (param->solid_mesh.simplex)
+    {
+      // for simplex meshes
+      fe            = std::make_shared<FE_SimplexP<dim, spacedim>>(1);
+      solid_mapping = std::make_shared<MappingFE<dim, spacedim>>(*fe);
+      quadrature    = std::make_shared<QGaussSimplex<dim>>(degree_velocity + 1);
+      solid_tria    = std::make_shared<
+        parallel::fullydistributed::Triangulation<dim, spacedim>>(
+        this->mpi_communicator);
+      solid_dh.clear();
+      solid_dh.reinit(*this->solid_tria);
+    }
+  else
+    {
+      // Usual case, for quad/hex meshes
+      fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
+      solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
+      quadrature    = std::make_shared<QGauss<dim>>(degree_velocity + 1);
+    }
+}
 
 template <int dim, int spacedim>
 void
@@ -81,21 +105,86 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 {
   if (param->solid_mesh.type == Parameters::Mesh::Type::gmsh)
     {
-      // Grid creation
-      GridIn<dim, spacedim> grid_in;
-      // Attach triangulation to the grid
-      grid_in.attach_triangulation(*solid_tria);
-      // Read input gmsh file
-      std::ifstream input_file(param->solid_mesh.file_name);
-      grid_in.read_msh(input_file);
+      if (param->solid_mesh.simplex)
+        {
+          Triangulation<dim, spacedim> basetria(
+            Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
+
+          GridIn<dim, spacedim> grid_in;
+          grid_in.attach_triangulation(basetria);
+          std::ifstream input_file(param->solid_mesh.file_name);
+
+          grid_in.read_msh(input_file);
+
+          // By default uses the METIS partitioner.
+          // A user parameter option could be made to chose a partitionner.
+          GridTools::partition_triangulation(Utilities::MPI::n_mpi_processes(
+                                               solid_tria->get_communicator()),
+                                             basetria);
+
+
+          auto construction_data = TriangulationDescription::Utilities::
+            create_description_from_triangulation(
+              basetria, solid_tria->get_communicator());
+
+          solid_tria->create_triangulation(construction_data);
+        }
+      else
+        { // Grid creation
+          GridIn<dim, spacedim> grid_in;
+          // Attach triangulation to the grid
+          grid_in.attach_triangulation(*solid_tria);
+          // Read input gmsh file
+          std::ifstream input_file(param->solid_mesh.file_name);
+          grid_in.read_msh(input_file);
+        }
     }
   else if (param->solid_mesh.type == Parameters::Mesh::Type::dealii)
     {
-      // deal.ii creates grid and attaches the solid triangulation
-      GridGenerator::generate_from_name_and_arguments(
-        *solid_tria,
-        param->solid_mesh.grid_type,
-        param->solid_mesh.grid_arguments);
+      if (param->solid_mesh.simplex)
+        { // TODO Using dealii generated meshes with simplices in Nitsche solver
+          // generates and error. "boundary_id !=
+          // numbers::internal_face_boundary_id"
+          Triangulation<dim, spacedim> temporary_quad_triangulation;
+          GridGenerator::generate_from_name_and_arguments(
+            temporary_quad_triangulation,
+            param->solid_mesh.grid_type,
+            param->solid_mesh.grid_arguments);
+
+          // initial refinement
+          const int initial_refinement = param->solid_mesh.initial_refinement;
+          temporary_quad_triangulation.refine_global(initial_refinement);
+          // flatten the triangulation
+          Triangulation<dim, spacedim> flat_temp_quad_triangulation;
+          GridGenerator::flatten_triangulation(temporary_quad_triangulation,
+                                               flat_temp_quad_triangulation);
+
+          Triangulation<dim, spacedim> temporary_tri_triangulation(
+            Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
+          GridGenerator::convert_hypercube_to_simplex_mesh(
+            flat_temp_quad_triangulation, temporary_tri_triangulation);
+
+          GridTools::partition_triangulation_zorder(
+            Utilities::MPI::n_mpi_processes(solid_tria->get_communicator()),
+            temporary_tri_triangulation);
+          GridTools::partition_multigrid_levels(temporary_tri_triangulation);
+
+          // extract relevant information from distributed triangulation
+          auto construction_data = TriangulationDescription::Utilities::
+            create_description_from_triangulation(
+              temporary_tri_triangulation,
+              solid_tria->get_communicator(),
+              TriangulationDescription::Settings::
+                construct_multigrid_hierarchy);
+          solid_tria->create_triangulation(construction_data);
+        }
+      else
+        { // deal.ii creates grid and attaches the solid triangulation
+          GridGenerator::generate_from_name_and_arguments(
+            *solid_tria,
+            param->solid_mesh.grid_type,
+            param->solid_mesh.grid_arguments);
+        }
     }
   else
     throw std::runtime_error(
@@ -106,10 +195,15 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
   // afterwards
   if (!restart)
     {
-      solid_tria->refine_global(param->solid_mesh.initial_refinement);
-      // Initialize dof handler for solid
-      FE_Q<dim, spacedim> fe(1);
-      solid_dh.distribute_dofs(fe);
+      if (param->solid_mesh.simplex)
+        {
+          // Simplex triangulation refinement isn't possible yet
+        }
+      else
+        {
+          solid_tria->refine_global(param->solid_mesh.initial_refinement);
+        }
+      solid_dh.distribute_dofs(*fe);
     }
 }
 
@@ -147,8 +241,7 @@ SolidBase<dim, spacedim>::load_triangulation(const std::string filename_tria)
     }
 
   // Initialize dof handler for solid
-  FE_Q<dim, spacedim> fe(1);
-  solid_dh.distribute_dofs(fe);
+  solid_dh.distribute_dofs(*fe);
 }
 
 template <int dim, int spacedim>
@@ -160,9 +253,8 @@ SolidBase<dim, spacedim>::setup_particles_handler()
   solid_particle_handler =
     std::make_shared<Particles::ParticleHandler<spacedim>>();
 
-  solid_particle_handler->initialize(*fluid_tria,
-                                     StaticMappingQ1<spacedim>::mapping,
-                                     n_properties);
+  // Put the proper triangulation and mapping for more general cases
+  solid_particle_handler->initialize(*fluid_tria, *fluid_mapping, n_properties);
 
   // Connect Nitsche particles to the fluid triangulation
   fluid_tria->signals.pre_distributed_refinement.connect(
@@ -178,21 +270,18 @@ SolidBase<dim, spacedim>::setup_particles()
   setup_particles_handler();
 
   // Initialize FEValues
-  FE_Q<dim, spacedim> fe(1);
-
-  QGauss<dim>                  quadrature(degree_velocity + 1);
   std::vector<Point<spacedim>> quadrature_points_vec;
-  quadrature_points_vec.reserve(quadrature.size() *
+  quadrature_points_vec.reserve(quadrature->size() *
                                 solid_tria->n_locally_owned_active_cells());
   std::vector<std::vector<double>> properties;
-  properties.reserve(quadrature.size() *
+  properties.reserve(quadrature->size() *
                      solid_tria->n_locally_owned_active_cells());
 
   UpdateFlags update_flags = update_JxW_values | update_quadrature_points;
   if (dim == 2 && spacedim == 3)
     update_flags = update_flags | update_normal_vectors;
 
-  FEValues<dim, spacedim> fe_v(fe, quadrature, update_flags);
+  FEValues<dim, spacedim> fe_v(*solid_mapping, *fe, *quadrature, update_flags);
 
   // Fill quadrature points vector and properties, used to fill
   // solid_particle_handler

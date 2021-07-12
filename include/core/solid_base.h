@@ -29,6 +29,7 @@
 // Dealii Includes
 
 #include <deal.II/base/function.h>
+#include <deal.II/base/quadrature_lib.h>
 
 #include <deal.II/distributed/tria_base.h>
 
@@ -36,6 +37,9 @@
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/fe/fe_q.h>
+#include <deal.II/fe/fe_simplex_p.h>
+#include <deal.II/fe/fe_system.h>
+#include <deal.II/fe/mapping_fe.h>
 
 #include <deal.II/grid/grid_generator.h>
 
@@ -51,7 +55,7 @@ using namespace dealii;
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
  * @tparam spacedim An integer that denotes the dimension of the space occupied
- * by the embeddede solid
+ * by the embedded solid
  *
  * @author Carole-Anne Daunais, Valerie Bibeau, 2020
  */
@@ -63,8 +67,9 @@ public:
   // Member functions
   SolidBase(std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param,
             std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>>
-                               fluid_tria,
-            const unsigned int degree_velocity);
+                                               fluid_tria,
+            std::shared_ptr<Mapping<spacedim>> fluid_mapping,
+            const unsigned int                 degree_velocity);
 
   /**
    * @brief Manages solid triangulation and particles setup
@@ -158,6 +163,12 @@ private:
   std::shared_ptr<parallel::DistributedTriangulationBase<spacedim>> fluid_tria;
   DoFHandler<dim, spacedim>                                         solid_dh;
   std::shared_ptr<Particles::ParticleHandler<spacedim>> solid_particle_handler;
+
+  std::shared_ptr<FiniteElement<dim, spacedim>> fe;
+
+  std::shared_ptr<Mapping<dim, spacedim>> solid_mapping;
+  std::shared_ptr<Mapping<spacedim>>      fluid_mapping;
+  std::shared_ptr<Quadrature<dim>>        quadrature;
 
   std::shared_ptr<Parameters::NitscheSolid<spacedim>> &param;
 
