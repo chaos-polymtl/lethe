@@ -767,7 +767,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                                   q_local,
                                                                   update_quadrature_points | update_gradients |
                                                                   update_values);
-                                    FEField
+                                    
                                     fe_values_cell2.reinit(cell_2);
                                     fe_values_cell2[velocities].get_function_gradients(
                                             this->present_solution, velocity_gradients);
