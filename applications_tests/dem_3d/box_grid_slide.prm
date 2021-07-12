@@ -54,8 +54,8 @@ subsection physical properties
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.005
-    		set number				= 200
-    		set density particles 	 		= 1000
+    		set number				= 100
+    		set density particles            	= 1000
     		set young modulus particles         	= 1000000
     		set poisson ratio particles          	= 0.3
     		set restitution coefficient particles	= 0.3
