@@ -103,7 +103,6 @@ test()
   std::vector<double>         MOI;
   momentum.push_back(Tensor<1, dim>({0, 0, 0}));
   force.push_back(Tensor<1, dim>({0, 0, 0}));
-  force.resize(particle_handler.n_locally_owned_particles());
   MOI.push_back(1);
 
   ExplicitEulerIntegrator<dim> integrator_object;
