@@ -699,6 +699,19 @@ DEMSolver<dim>::solve()
                       triangulation,
                       particle_handler);
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      displacement.resize(particle_handler.get_max_local_particle_index());
+#else
+      {
+        unsigned int max_particle_id = 0;
+        for (const auto &particle : particle_handler)
+          max_particle_id = std::max(max_particle_id, particle.get_id());
+        displacement.resize(max_particle_id + 1);
+      }
+#endif
+      force.resize(displacement.size());
+      momentum.resize(displacement.size());
+
       update_moment_of_inertia(particle_handler, MOI);
 
       checkpoint_step = true;

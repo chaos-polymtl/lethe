@@ -109,9 +109,21 @@ test()
   std::vector<Tensor<1, dim>> momentum;
   std::vector<Tensor<1, dim>> force;
   std::vector<double>         MOI;
-  momentum.push_back(Tensor<1, dim>({0, 0, 0}));
-  force.push_back(Tensor<1, dim>({0, 0, 0}));
-  MOI.push_back(1);
+
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+  MOI[0] = 1.;
 
   // Explicit Euler
   for (auto particle_iterator = particle_handler.begin();
@@ -123,7 +135,11 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          force[particle_iterator->get_local_index()] = force_tensor;
+#else
           force[particle_iterator->get_id()] = force_tensor;
+#endif
           explicit_euler_object.integrate(
             particle_handler, g, dt1, momentum, force, MOI);
 
@@ -150,6 +166,20 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
   pit1->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
        ++particle_iterator)
@@ -161,7 +191,11 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          force[particle_iterator->get_local_index()] = force_tensor;
+#else
           force[particle_iterator->get_id()] = force_tensor;
+#endif
           explicit_euler_object.integrate(
             particle_handler, g, dt2, momentum, force, MOI);
           t += dt2;
@@ -191,6 +225,20 @@ test()
   pit2->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
   pit2->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+
   // Create Velocity Verlet integrator
   VelocityVerletIntegrator<dim> velocity_verlet_object;
 
@@ -201,7 +249,12 @@ test()
     {
       t = 0;
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      force[particle_iterator->get_local_index()][dim - 1] = -x0;
+#else
       force[particle_iterator->get_id()][dim - 1] = -x0;
+#endif
+
       velocity_verlet_object.integrate_half_step_location(particle_handler,
                                                           g,
                                                           force,
@@ -213,7 +266,11 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          force[particle_iterator->get_local_index()] = force_tensor;
+#else
           force[particle_iterator->get_id()] = force_tensor;
+#endif
           velocity_verlet_object.integrate(
             particle_handler, g, dt1, momentum, force, MOI);
 
@@ -238,6 +295,20 @@ test()
   pit3->get_properties()[DEM::PropertiesIndex::v_z]  = 0;
   pit3->get_properties()[DEM::PropertiesIndex::mass] = particle_mass;
 
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+
   // Output Velocity Verlet
   for (auto particle_iterator = particle_handler.begin();
        particle_iterator != particle_handler.end();
@@ -245,7 +316,11 @@ test()
     {
       t = 0;
 
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      force[particle_iterator->get_local_index()][dim - 1] = -x0;
+#else
       force[particle_iterator->get_id()][dim - 1] = -x0;
+#endif
       velocity_verlet_object.integrate_half_step_location(particle_handler,
                                                           g,
                                                           force,
@@ -257,7 +332,11 @@ test()
           Tensor<1, dim> force_tensor;
           force_tensor[dim - 1] =
             -spring_constant * particle_iterator->get_location()[dim - 1];
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+          force[particle_iterator->get_local_index()] = force_tensor;
+#else
           force[particle_iterator->get_id()] = force_tensor;
+#endif
 
           velocity_verlet_object.integrate(
             particle_handler, g, dt2, momentum, force, MOI);
