@@ -53,6 +53,36 @@ IF(PROTOTYPES)
     ADD_SUBDIRECTORY(prototypes)
  ENDIF()
 
+set(missing_dealii_features)
+
+foreach(feat
+    DEAL_II_WITH_METIS
+    # MPI is required for p4est and Trilinos, but leave it here as
+    # additional documentation.
+    DEAL_II_WITH_MPI
+    DEAL_II_WITH_P4EST
+    DEAL_II_WITH_TRILINOS)
+  message(STATUS "Checking required ${feat}: " ${${feat}})
+  if(NOT DEFINED ${feat} OR NOT ${${feat}})
+    list(APPEND missing_dealii_features ${feat})
+  endif()
+endforeach()
+
+foreach(feat
+    DEAL_II_WITH_OPENCASCADE)
+  message(STATUS "Checking optional ${feat}: " ${${feat}})
+endforeach()
+
+list(LENGTH missing_dealii_features num_missing_dealii_features)
+if(num_missing_dealii_features GREATER 0)
+  message(FATAL_ERROR
+    "Lethe requires the following features that deal.II was compiled without: "
+    "${missing_dealii_features}")
+endif()
+
+unset(num_missing_dealii_features)
+unset(missing_dealii_features)
+
 find_program(TXR_EXECUTABLE
   NAMES txr
   DOC "Path to the TXR executable.")
