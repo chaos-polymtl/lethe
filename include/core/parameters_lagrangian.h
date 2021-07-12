@@ -260,7 +260,7 @@ namespace Parameters
       parse_floating_wall(ParameterHandler &prm);
 
     private:
-      unsigned int floating_wall_maximum_number = 9;
+      unsigned int max_number_floating_walls = 9;
     };
 
     template <int dim>
