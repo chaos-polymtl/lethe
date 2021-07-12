@@ -457,14 +457,14 @@ GLSNavierStokesSolver<dim>::assembleGLS()
           for (unsigned int q = 0; q < n_q_points; ++q)
             {
               // Gather into local variables the relevant fields
-              const Tensor<1, dim> velocity = present_velocity_values[q];
+              std::vector<Tensor<1, dim>> velocity = { present_velocity_values[q],
+                                                         p1_velocity_values[q],
+                                                         p2_velocity_values[q],
+                                                         p3_velocity_values[q] };
               const Tensor<2, dim> velocity_gradient =
                 present_velocity_gradients[q];
               const double present_velocity_divergence =
                 trace(velocity_gradient);
-              const Tensor<1, dim> p1_velocity = p1_velocity_values[q];
-              const Tensor<1, dim> p2_velocity = p2_velocity_values[q];
-              const Tensor<1, dim> p3_velocity = p3_velocity_values[q];
               const double current_pressure    = present_pressure_values[q];
 
 
@@ -472,7 +472,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
               // Calculation of the magnitude of the velocity for the
               // stabilization parameter
               const double u_mag =
-                std::max(velocity.norm(), 1e-12 * GLS_u_scale);
+                std::max(velocity[0].norm(), 1e-12 * GLS_u_scale);
 
               // Store JxW in local variable for faster access;
               const double JxW = fe_values.JxW(q);
@@ -517,7 +517,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
               // Calculate the strong residual for GLS stabilization
               auto strong_residual =
-                velocity_gradient * velocity + present_pressure_gradients[q] -
+                velocity_gradient * velocity[0] + present_pressure_gradients[q] - 
                 viscosity * present_velocity_laplacians[q] - force;
 
               if (velocity_source ==
@@ -526,7 +526,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                   if (dim == 2)
                     {
                       strong_residual +=
-                        2 * omega_z * (-1.) * cross_product_2d(velocity);
+                        2 * omega_z * (-1.) * cross_product_2d(velocity[0]); 
                       auto centrifugal =
                         omega_z * (-1.) *
                         cross_product_2d(
@@ -537,7 +537,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                   else // dim == 3
                     {
                       strong_residual +=
-                        2 * cross_product_3d(omega_vector, velocity);
+                        2 * cross_product_3d(omega_vector, velocity[0]);
                       strong_residual += cross_product_3d(
                         omega_vector,
                         cross_product_3d(omega_vector, quadrature_points[q]));
@@ -556,39 +556,39 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                     Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
                   scheme == Parameters::SimulationControl::TimeSteppingMethod::
                               steady_bdf)
-                strong_residual += bdf_coefs[0] * velocity +
-                                   bdf_coefs[1] * p1_velocity_values[q];
+                strong_residual += bdf_coefs[0] * velocity[0] +
+                                   bdf_coefs[1] * velocity[1];
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                strong_residual += bdf_coefs[0] * velocity +
-                                   bdf_coefs[1] * p1_velocity +
-                                   bdf_coefs[2] * p2_velocity;
+                strong_residual += bdf_coefs[0] * velocity[0] +
+                                   bdf_coefs[1] * velocity[1] +
+                                   bdf_coefs[2] * velocity[2];
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 strong_residual +=
-                  bdf_coefs[0] * velocity + bdf_coefs[1] * p1_velocity +
-                  bdf_coefs[2] * p2_velocity + bdf_coefs[3] * p3_velocity;
+                  bdf_coefs[0] * velocity[0] + bdf_coefs[1] * velocity[1] +
+                  bdf_coefs[2] * velocity[2] + bdf_coefs[3] * velocity[3];
 
 
               if (is_sdirk_step1(scheme))
-                strong_residual += sdirk_coefs[0][0] * velocity +
-                                   sdirk_coefs[0][1] * p1_velocity;
+                strong_residual += sdirk_coefs[0][0] * velocity[0] +
+                                   sdirk_coefs[0][1] * velocity[1];
 
               if (is_sdirk_step2(scheme))
                 {
-                  strong_residual += sdirk_coefs[1][0] * velocity +
-                                     sdirk_coefs[1][1] * p1_velocity +
-                                     sdirk_coefs[1][2] * p2_velocity;
+                  strong_residual += sdirk_coefs[1][0] * velocity[0] +
+                                     sdirk_coefs[1][1] * velocity[1] +
+                                     sdirk_coefs[1][2] * velocity[2];
                 }
 
               if (is_sdirk_step3(scheme))
                 {
-                  strong_residual += sdirk_coefs[2][0] * velocity +
-                                     sdirk_coefs[2][1] * p1_velocity +
-                                     sdirk_coefs[2][2] * p2_velocity +
-                                     sdirk_coefs[2][3] * p3_velocity;
+                  strong_residual += sdirk_coefs[2][0] * velocity[0] +
+                                     sdirk_coefs[2][1] * velocity[1] +
+                                     sdirk_coefs[2][2] * velocity[2] +
+                                     sdirk_coefs[2][3] * velocity[3];
                 }
 
               // Matrix assembly
@@ -606,7 +606,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
 
 
                       auto strong_jac =
-                        (velocity_gradient * phi_u_j + grad_phi_u_j * velocity +
+                        (velocity_gradient * phi_u_j + grad_phi_u_j * velocity[0] +
                          grad_phi_p_j - viscosity * laplacian_phi_u[j]);
 
                       if (is_bdf(scheme))
@@ -639,7 +639,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                               viscosity *
                                 scalar_product(grad_phi_u_j, grad_phi_u_i) +
                               velocity_gradient * phi_u_j * phi_u_i +
-                              grad_phi_u_j * velocity * phi_u_i -
+                              grad_phi_u_j * velocity[0] * phi_u_i -
                               div_phi_u[i] * phi_p_j +
                               // Continuity
                               phi_p_i * div_phi_u[j]) *
@@ -686,7 +686,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                             {
                               local_matrix(i, j) +=
                                 tau *
-                                (strong_jac * (grad_phi_u_i * velocity) +
+                                (strong_jac * (grad_phi_u_i * velocity[0]) +
                                  strong_residual * (grad_phi_u_i * phi_u_j)) *
                                 JxW;
 
@@ -697,11 +697,11 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                               //   -strong_residual
                               //   * (grad_phi_u_i
                               //   *
-                              //   velocity)
+                              //   velocity[0])
                               //   * tau * tau *
                               //   tau * 4 / h / h
                               //   *
-                              //   (velocity
+                              //   (velocity[0]
                               //   *phi_u_j) *
                               //   fe_values.JxW(q);
                             }
@@ -725,7 +725,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       // Momentum
                       -viscosity *
                         scalar_product(velocity_gradient, grad_phi_u_i) -
-                      velocity_gradient * velocity * phi_u_i +
+                      velocity_gradient * velocity[0] * phi_u_i +
                       current_pressure * div_phi_u_i + force * phi_u_i -
                       // Continuity
                       present_velocity_divergence * phi_p_i) *
@@ -737,47 +737,46 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       scheme == Parameters::SimulationControl::
                                   TimeSteppingMethod::steady_bdf)
                     local_rhs(i) -=
-                      bdf_coefs[0] * (velocity - p1_velocity) * phi_u_i * JxW;
+                      bdf_coefs[0] * (velocity[0] - velocity[1]) * phi_u_i * JxW;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    local_rhs(i) -= (bdf_coefs[0] * (velocity * phi_u_i) +
-                                     bdf_coefs[1] * (p1_velocity * phi_u_i) +
-                                     bdf_coefs[2] * (p2_velocity * phi_u_i)) *
+                    local_rhs(i) -= (bdf_coefs[0] * (velocity[0] * phi_u_i) +
+                                     bdf_coefs[1] * (velocity[1] * phi_u_i) +
+                                     bdf_coefs[2] * (velocity[2] * phi_u_i)) *
                                     JxW;
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                    local_rhs(i) -= (bdf_coefs[0] * (velocity * phi_u_i) +
-                                     bdf_coefs[1] * (p1_velocity * phi_u_i) +
-                                     bdf_coefs[2] * (p2_velocity * phi_u_i) +
-                                     bdf_coefs[3] * (p3_velocity * phi_u_i)) *
+                    local_rhs(i) -= (bdf_coefs[0] * (velocity[0] * phi_u_i) +
+                                     bdf_coefs[1] * (velocity[1] * phi_u_i) +
+                                     bdf_coefs[2] * (velocity[2] * phi_u_i) +
+                                     bdf_coefs[3] * (velocity[3] * phi_u_i)) *
                                     JxW;
 
                   // Residuals associated with SDIRK schemes
                   if (is_sdirk_step1(scheme))
                     local_rhs(i) -=
-                      (sdirk_coefs[0][0] * (velocity * phi_u_i) +
-                       sdirk_coefs[0][1] * (p1_velocity * phi_u_i)) *
+                      (sdirk_coefs[0][0] * (velocity[0] * phi_u_i) +
+                       sdirk_coefs[0][1] * (velocity[1] * phi_u_i)) *
                       JxW;
 
                   if (is_sdirk_step2(scheme))
                     {
                       local_rhs(i) -=
-                        (sdirk_coefs[1][0] * (velocity * phi_u_i) +
-                         sdirk_coefs[1][1] * (p1_velocity * phi_u_i) +
-                         sdirk_coefs[1][2] *
-                           (p2_velocity_values[q] * phi_u_i)) *
+                        (sdirk_coefs[1][0] * (velocity[0] * phi_u_i) +
+                         sdirk_coefs[1][1] * (velocity[1] * phi_u_i) +
+                         sdirk_coefs[1][2] * (velocity[2] * phi_u_i)) *
                         JxW;
                     }
 
                   if (is_sdirk_step3(scheme))
                     {
                       local_rhs(i) -=
-                        (sdirk_coefs[2][0] * (velocity * phi_u_i) +
-                         sdirk_coefs[2][1] * (p1_velocity * phi_u_i) +
-                         sdirk_coefs[2][2] * (p2_velocity * phi_u_i) +
-                         sdirk_coefs[2][3] * (p3_velocity * phi_u_i)) *
+                        (sdirk_coefs[2][0] * (velocity[0] * phi_u_i) +
+                         sdirk_coefs[2][1] * (velocity[1] * phi_u_i) +
+                         sdirk_coefs[2][2] * (velocity[2] * phi_u_i) +
+                         sdirk_coefs[2][3] * (velocity[3] * phi_u_i)) *
                         JxW;
                     }
 
@@ -787,7 +786,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       if (dim == 2)
                         {
                           local_rhs(i) += -2 * omega_z * (-1.) *
-                                          cross_product_2d(velocity) * phi_u_i *
+                                          cross_product_2d(velocity[0]) * phi_u_i *
                                           JxW;
                           auto centrifugal =
                             omega_z * (-1.) *
@@ -799,7 +798,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                       else if (dim == 3)
                         {
                           local_rhs(i) +=
-                            -2 * cross_product_3d(omega_vector, velocity) *
+                            -2 * cross_product_3d(omega_vector, velocity[0]) *
                             phi_u_i * JxW;
                           local_rhs(i) +=
                             -cross_product_3d(
@@ -817,7 +816,7 @@ GLSNavierStokesSolver<dim>::assembleGLS()
                   if (SUPG)
                     {
                       local_rhs(i) +=
-                        -tau * (strong_residual * (grad_phi_u_i * velocity)) *
+                        -tau * (strong_residual * (grad_phi_u_i * velocity[0])) *
                         JxW;
                     }
                 }
