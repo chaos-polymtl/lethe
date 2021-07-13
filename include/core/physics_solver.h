@@ -26,7 +26,6 @@
 #include "newton_non_linear_solver.h"
 #include "non_linear_solver.h"
 #include "parameters.h"
-#include "skip_newton_non_linear_solver.h"
 
 /**
  * This interface class is used to house all the common elements of physics
@@ -139,10 +138,6 @@ PhysicsSolver<VectorType>::PhysicsSolver(
         non_linear_solver =
           new NewtonNonLinearSolver<VectorType>(this,
                                                 non_linear_solver_parameters);
-        break;
-      case Parameters::NonLinearSolver::SolverType::skip_newton:
-        non_linear_solver = new SkipNewtonNonLinearSolver<VectorType>(
-          this, non_linear_solver_parameters);
         break;
       default:
         break;

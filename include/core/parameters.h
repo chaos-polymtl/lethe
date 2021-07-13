@@ -359,7 +359,7 @@ namespace Parameters
     enum class SolverType
     {
       newton,
-      skip_newton
+      kinsol_newton
     };
 
     Verbosity verbosity;
@@ -378,9 +378,6 @@ namespace Parameters
 
     // Residual precision
     unsigned int display_precision;
-
-    // Iterations to skip in the non-linear solver
-    unsigned int skip_iterations;
 
     static void
     declare_parameters(ParameterHandler &prm);
