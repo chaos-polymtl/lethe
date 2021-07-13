@@ -1056,6 +1056,68 @@ namespace Parameters
       prm.leave_subsection();
     }
 
+    void
+    LagrangianPostProcessing::declare_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("post-processing");
+      {
+        prm.declare_entry(
+          "Lagrangian post processing",
+          "false",
+          Patterns::Bool(),
+          "State whether Lagrangian post-processing should be performed.");
+
+        prm.declare_entry("calculate particles average velocity",
+                          "false",
+                          Patterns::Bool(),
+                          "Enable calculation of particles average velocity.");
+
+        prm.declare_entry("calculate granular temperature",
+                          "false",
+                          Patterns::Bool(),
+                          "Enable calculation of granular temperature.");
+
+        prm.declare_entry("initial time",
+                          "0.0",
+                          Patterns::Double(),
+                          "Initial time to start Lagrangian post-processing.");
+
+        prm.declare_entry("end time",
+                          "0.0",
+                          Patterns::Double(),
+                          "End time to finish Lagrangian post-processing.");
+
+        prm.declare_entry("particles velocity name",
+                          "particles_velocity",
+                          Patterns::FileName(),
+                          "File output particles velocity.");
+
+        prm.declare_entry("granular temperature name",
+                          "granular_temperature",
+                          Patterns::FileName(),
+                          "File output granular temperature.");
+      }
+      prm.leave_subsection();
+    }
+
+    void
+    LagrangianPostProcessing::parse_parameters(ParameterHandler &prm)
+    {
+      prm.enter_subsection("post-processing");
+      {
+        Lagrangian_post_processing = prm.get_bool("Lagrangian post processing");
+        calculate_particles_average_velocity =
+          prm.get_bool("calculate particles average velocity");
+        calculate_granular_temperature =
+          prm.get_bool("calculate granular temperature");
+        initial_time              = prm.get_double("initial time");
+        end_time                  = prm.get_double("end time");
+        particles_velocity_name   = prm.get("particles velocity name");
+        granular_temperature_name = prm.get("granular temperature name");
+      }
+      prm.leave_subsection();
+    }
+
     template class PhysicalProperties<2>;
     template class PhysicalProperties<3>;
     template class ForceTorqueOnWall<2>;

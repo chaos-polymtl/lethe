@@ -373,6 +373,40 @@ namespace Parameters
       parse_parameters(ParameterHandler &prm);
     };
 
+    /**
+     * @brief Lagrangian Postprocessing - Defines the parameters
+     * for the Lagrangian post-processing.
+     *
+     */
+    struct LagrangianPostProcessing
+    {
+      // A bool variable which sets-up the Lagrangian post-processing
+      bool Lagrangian_post_processing;
+
+      // Enable particles velocity post-processing
+      bool calculate_particles_average_velocity;
+
+      // Enable granular temperature post-processing
+      bool calculate_granular_temperature;
+
+      // Set initial time to start post-processing calculations
+      double initial_time;
+
+      // Set end time to finish post-processing calculations
+      double end_time;
+
+      // Prefix for particles velocity output
+      std::string particles_velocity_name;
+
+      // Prefix for granular temperature output
+      std::string granular_temperature_name;
+
+      static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
   } // namespace Lagrangian
 } // namespace Parameters
 
