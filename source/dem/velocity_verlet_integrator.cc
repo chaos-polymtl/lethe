@@ -6,10 +6,10 @@ using namespace DEM;
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate_half_step_location(
-  Particles::ParticleHandler<dim> &                          particle_handler,
-  Tensor<1, dim> &                                           g,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-  double                                                     dt)
+  Particles::ParticleHandler<dim> &particle_handler,
+  Tensor<1, dim> &                 g,
+  std::vector<Tensor<1, dim>> &    force,
+  double                           dt)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -17,9 +17,13 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-      auto            particle_properties = particle->get_properties();
-      auto            particle_position   = particle->get_location();
-      unsigned int    particle_id         = particle->get_id();
+      auto particle_properties = particle->get_properties();
+      auto particle_position   = particle->get_location();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      types::particle_index particle_id = particle->get_local_index();
+#else
+      types::particle_index particle_id = particle->get_id();
+#endif
       Tensor<1, dim>  particle_acceleration;
       Tensor<1, dim> &particle_force = force[particle_id];
 
@@ -45,25 +49,27 @@ VelocityVerletIntegrator<dim>::integrate_half_step_location(
 template <int dim>
 void
 VelocityVerletIntegrator<dim>::integrate(
-  Particles::ParticleHandler<dim> &                          particle_handler,
-  Tensor<1, dim> &                                           g,
-  double                                                     dt,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-  std::unordered_map<types::particle_index, double> &        MOI)
+  Particles::ParticleHandler<dim> &particle_handler,
+  Tensor<1, dim> &                 g,
+  double                           dt,
+  std::vector<Tensor<1, dim>> &    momentum,
+  std::vector<Tensor<1, dim>> &    force,
+  std::vector<double> &            MOI)
 {
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
+  for (auto &particle : particle_handler)
     {
       // Get the total array view to the particle properties once to improve
       // efficiency
-      unsigned int    particle_id         = particle->get_id();
-      auto            particle_properties = particle->get_properties();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+      types::particle_index particle_id = particle.get_local_index();
+#else
+      types::particle_index particle_id = particle.get_id();
+#endif
+      auto            particle_properties = particle.get_properties();
       Tensor<1, dim> &particle_momentum   = momentum[particle_id];
       Tensor<1, dim> &particle_force      = force[particle_id];
       Tensor<1, dim>  particle_acceleration;
-      auto            particle_position = particle->get_location();
+      auto            particle_position = particle.get_location();
       double mass_inverse = 1 / particle_properties[PropertiesIndex::mass];
       double MOI_inverse  = 1 / MOI[particle_id];
 
@@ -89,7 +95,7 @@ VelocityVerletIntegrator<dim>::integrate(
           // Reinitializing torque
           particle_momentum[d] = 0;
         }
-      particle->set_location(particle_position);
+      particle.set_location(particle_position);
     }
 }
 

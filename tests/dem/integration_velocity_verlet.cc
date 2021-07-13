@@ -96,10 +96,12 @@ test()
   pit->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
-  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
-  std::unordered_map<unsigned int, Tensor<1, dim>> force;
-  std::unordered_map<unsigned int, double>         MOI;
-  MOI.insert({0, 1});
+  std::vector<Tensor<1, dim>> momentum;
+  std::vector<Tensor<1, dim>> force;
+  std::vector<double>         MOI;
+  momentum.push_back(Tensor<1, dim>({0, 0, 0}));
+  force.push_back(Tensor<1, dim>({0, 0, 0}));
+  MOI.push_back(1);
 
   // Calling velocity verlet integrator
   VelocityVerletIntegrator<dim> integration_object;

@@ -131,10 +131,26 @@ test(double coefficient_of_restitution)
   pit1->get_properties()[DEM::PropertiesIndex::mass] =
     M_PI * particle_diameter * particle_diameter * particle_diameter / 6;
 
-  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
-  std::unordered_map<unsigned int, Tensor<1, dim>> force;
-  std::unordered_map<unsigned int, double>         MOI;
-  MOI.insert({0, 1});
+
+  std::vector<Tensor<1, dim>> momentum;
+  std::vector<Tensor<1, dim>> force;
+  std::vector<double>         MOI;
+
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+  for (unsigned i = 0; i < MOI.size(); ++i)
+    MOI[i] = 1;
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;

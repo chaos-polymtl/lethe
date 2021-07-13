@@ -77,10 +77,10 @@ public:
    */
   virtual void
   integrate_half_step_location(
-    Particles::ParticleHandler<dim> &                          particle_handler,
-    Tensor<1, dim> &                                           body_force,
-    std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-    double time_step) override;
+    Particles::ParticleHandler<dim> &particle_handler,
+    Tensor<1, dim> &                 body_force,
+    std::vector<Tensor<1, dim>> &    force,
+    double                           time_step) override;
 
   /**
    * Carries out the integration of the motion of all
@@ -98,9 +98,9 @@ public:
   integrate(Particles::ParticleHandler<dim> &particle_handler,
             Tensor<1, dim> &                 body_force,
             double                           time_step,
-            std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-            std::unordered_map<types::particle_index, Tensor<1, dim>> &force,
-            std::unordered_map<types::particle_index, double> &MOI) override;
+            std::vector<Tensor<1, dim>> &    momentum,
+            std::vector<Tensor<1, dim>> &    force,
+            std::vector<double> &            MOI) override;
 
 private:
   Point<dim>     predicted_location;

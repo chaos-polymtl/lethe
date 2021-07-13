@@ -128,11 +128,13 @@ test()
   pit1->get_properties()[DEM::PropertiesIndex::omega_z] = 0;
   pit1->get_properties()[DEM::PropertiesIndex::mass]    = 1;
 
-  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
-  std::unordered_map<unsigned int, Tensor<1, dim>> force;
-  std::unordered_map<unsigned int, double>         MOI;
-  double                                           step_force;
-  MOI.insert({0, 1});
+  std::vector<Tensor<1, dim>> momentum;
+  std::vector<Tensor<1, dim>> force;
+  std::vector<double>         MOI;
+  momentum.push_back(Tensor<1, dim>({0, 0, 0}));
+  force.push_back(Tensor<1, dim>({0, 0, 0}));
+  MOI.push_back(1);
+  double step_force;
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
@@ -171,11 +173,11 @@ test()
   for (double time = 0; time < 0.00115; time += dt)
     {
       auto particle = particle_handler.begin();
-      force[0]      = 0;
-      force[1]      = 0;
+      force[0][0]   = 0;
+      force[0][1]   = 0;
       if (dim == 3)
         {
-          force[2] = 0;
+          force[0][2] = 0;
         }
       distance = hyper_cube_length + particle->get_location()[0] -
                  particle->get_properties()[DEM::PropertiesIndex::dp] / 2.0;
@@ -220,10 +222,7 @@ test()
                                                      force);
 
           // Storing force before integration
-          for (unsigned int d = 0; d < dim; ++d)
-            {
-              step_force = force[particle->get_id()][0];
-            }
+          step_force = force[0][0];
 
 
           integrator_object.integrate(

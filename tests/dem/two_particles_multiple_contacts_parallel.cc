@@ -172,8 +172,8 @@ locate_local_particles_in_cells(
 template <int dim>
 void
 reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-                   std::unordered_map<unsigned int, Tensor<1, dim>> &force)
+                   std::vector<Tensor<1, dim>> &    momentum,
+                   std::vector<Tensor<1, dim>> &    force)
 {
   for (auto particle = particle_handler.begin();
        particle != particle_handler.end();
@@ -322,12 +322,27 @@ test()
   std::unordered_map<unsigned int, std::vector<unsigned int>>
     local_contact_pair_candidates;
   std::unordered_map<unsigned int, std::vector<unsigned int>>
-                                                   ghost_contact_pair_candidates;
-  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
-  std::unordered_map<unsigned int, Tensor<1, dim>> force;
-  std::unordered_map<unsigned int, double>         MOI;
-  MOI.insert({0, 1});
-  MOI.insert({1, 1});
+                              ghost_contact_pair_candidates;
+  std::vector<Tensor<1, dim>> momentum;
+  std::vector<Tensor<1, dim>> force;
+  std::vector<double>         MOI;
+
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+  for (unsigned i = 0; i < MOI.size(); ++i)
+    MOI[i] = 1;
+
   double step_force;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
@@ -369,11 +384,10 @@ test()
         momentum,
         force);
 
-      // Storing force before integration
-      for (unsigned int d = 0; d < dim; ++d)
-        {
-          step_force = force[0][1];
-        }
+      // Store force before integration for proc 1
+      // TODO - Improve this in the future, this is not clean.
+      if (Utilities::MPI::this_mpi_process(MPI_COMM_WORLD) == 1)
+        step_force = force[0][1];
 
       // Integration
       integrator_object.integrate(
