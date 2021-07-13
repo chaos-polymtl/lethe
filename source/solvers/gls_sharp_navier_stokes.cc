@@ -634,8 +634,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
       particles[i].torques =
         Utilities::MPI::sum(particles[i].torques, this->mpi_communicator) * rho;
     }
-  //total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
-  //std::cout << "total area " << total_area << std::endl;
+  // total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
+  // std::cout << "total area " << total_area << std::endl;
 }
 
 template <int dim>
