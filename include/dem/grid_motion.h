@@ -31,6 +31,8 @@ using namespace dealii;
  * Carries out motion of the triangulation, including rotational, translational
  * and rotational-translational motions.
  *
+ * @note Grid motion with a ParsedFunction should be added to the code as a future
+ * improvement
  * @param triangulation Triagulation
  * @param dem_parameters Input DEM parameters in the parameter handler file
  *
