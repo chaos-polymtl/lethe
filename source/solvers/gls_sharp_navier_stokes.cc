@@ -155,7 +155,6 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_tree_with_guess(con
 
     while (cell_upward_search==false)
     {
-        bool         cell_found = false;
         if(best_cell_iter->level()==0) {
             try {
                 const Point<dim, double> p_cell =
@@ -253,8 +252,6 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_tree_with_guess(con
 
         //      break;
     }
-
-
     return best_cell_iter;
 }
 
@@ -401,150 +398,6 @@ GLSSharpNavierStokesSolver<dim>::refine_ib()
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::force_evaluation_points()
-{
-    TimerOutput::Scope t(this->computing_timer, "force_evaluation");
-    // Calculate the torque and force on an immersed boundary
-    // The boundary is a circle in 2D or a sphere in 3D
-
-    std::vector<typename DoFHandler<dim>::active_cell_iterator>
-            active_neighbors_set;
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> active_neighbors;
-
-    const double min_cell_diameter =
-            GridTools::minimal_cell_diameter(*this->triangulation);
-
-    double dr  = (min_cell_diameter) / std::sqrt(2);
-    double rho = this->simulation_parameters.particlesParameters.density;
-    // Define stuff for later use
-    using numbers::PI;
-    Point<dim> center_immersed;
-
-    if (dim == 2)
-    {
-        // Define general stuff useful for the evaluation of force with stencil
-        QGauss<dim>   q_formula(this->fe->degree + 1);
-        FEValues<dim> fe_values(*this->fe, q_formula, update_quadrature_points);
-
-        double mu = this->simulation_parameters.physical_properties.viscosity;
-
-        std::map<types::global_dof_index, Point<dim>> support_points;
-        DoFTools::map_dofs_to_support_points(*this->mapping,
-                                             this->dof_handler,
-                                             support_points);
-
-        for (unsigned int p = 0; p < particles.size(); ++p) {
-
-        }
-
-    }
-
-
-    // Same structure as for the 2d case but used 3d variables  so there is 1 more
-    // vector on the surface for the evaluation
-    if (dim == 3)
-    {
-        QGauss<dim>   q_formula(this->fe->degree + 1);
-        FEValues<dim> fe_values(*this->fe, q_formula, update_quadrature_points);
-
-        double mu = this->simulation_parameters.physical_properties.viscosity;
-
-        std::map<types::global_dof_index, Point<dim>> support_points;
-        DoFTools::map_dofs_to_support_points(*this->mapping,
-                                             this->dof_handler,
-                                             support_points);
-
-
-
-    }
-}
-
-template <int dim>
-Tensor<2,dim>
-GLSSharpNavierStokesSolver<dim>::compute_stress_tensor_around_point(Point<dim>             point,
-const typename DoFHandler<dim>::active_cell_iterator &cell){
-
-    TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation");
-    Tensor<2, dim> velocity_gradient;
-    Tensor<2, dim> pressure_tensor;
-    Tensor<2, dim> stress_tensor;
-    const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-    std::vector<Tensor<1,dim>> local_interp_sol(dim+1);
-    double mu = this->simulation_parameters.physical_properties.viscosity;
-
-    double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(dim);
-
-    std::vector<Point<dim>> interpolation_points(dim+1);
-    interpolation_points[0]= point;
-    interpolation_points[1]= point;
-    interpolation_points[2]= point;
-    if(dim==3){
-        interpolation_points[3]= point;
-    }
-
-    interpolation_points[1][0]=interpolation_points[1][0]+dr*0.001;
-    interpolation_points[2][1]=interpolation_points[2][1]+dr*0.001;
-    if(dim==3) {
-        interpolation_points[3][2] = interpolation_points[3][2] + dr * 0.001;
-    }
-
-    std::vector<Point<dim>> unite_cell_interpolation_points(dim+1);
-    {
-        TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation mapping");
-        for (unsigned int i = 0; i < dim + 1; ++i) {
-            unite_cell_interpolation_points[i] =
-                    this->mapping->transform_real_to_unit_cell(
-                            cell, interpolation_points[i]);
-        }
-    }
-    cell->get_dof_indices(local_dof_indices);
-    double pressure=0;
-
-    for (unsigned int i=0 ; i<dim+1; ++i) {
-        TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation interpolation");
-        for (unsigned int j = 0; j< local_dof_indices.size(); ++j) {
-            const unsigned int component_j =
-                    this->fe->system_to_component_index(j).first;
-            if(component_j<dim){
-                local_interp_sol[i][component_j] +=
-                        this->fe->shape_value(
-                                j,
-                                unite_cell_interpolation_points[i])*this->present_solution(local_dof_indices[j]);
-            }
-            if(i==0 && component_j==dim){
-                pressure+=this->fe->shape_value(
-                        j,
-                        unite_cell_interpolation_points[i])*this->present_solution(local_dof_indices[j]);
-            }
-        }
-    }
-    {
-        TimerOutput::Scope t(this->computing_timer, "stress tensor evaluation gradient evaluation");
-        velocity_gradient = 0;
-        for (unsigned int i = 0; i < dim; ++i) {
-            for (unsigned int j = 0; j < dim; ++j) {
-                velocity_gradient[i][j] = (local_interp_sol[i + 1][j] - local_interp_sol[0][j]) / (dr * 0.001);
-            }
-        }
-
-        pressure_tensor = 0;
-        for (unsigned int i = 0; i < dim; ++i) {
-            pressure_tensor[i][i] = pressure;
-        }
-        stress_tensor = mu *
-                        (velocity_gradient +
-                         transpose(velocity_gradient)) -
-                        pressure_tensor;
-    }
-
-    return stress_tensor;
-}
-
-
-template <int dim>
-void
 GLSSharpNavierStokesSolver<dim>::force_on_ib()
 {
     // This function defines an Immersed Boundary based on the sharp edge method
@@ -570,7 +423,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     DoFTools::map_dofs_to_support_points(*this->mapping,
                                          this->dof_handler,
                                          support_points);
-    double dr = GridTools::minimal_cell_diameter(*this->triangulation) / sqrt(dim);
     // Initalize fe value objects in order to do calculation with it later
     QGauss<dim>        q_formula(this->number_quadrature_points);
 
@@ -597,6 +449,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                   update_values | update_quadrature_points |
                                                   update_gradients | update_JxW_values |
                                                   update_normal_vectors);
+    Functions::FEFieldFunction<dim,TrilinosWrappers::MPI::Vector> fe_field(
+            this->dof_handler, this->present_solution);
 
     const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
     const unsigned int dofs_per_face = this->fe->dofs_per_face;
@@ -611,22 +465,18 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
     const unsigned int vertices_per_face =
             GeometryInfo<dim>::vertices_per_face;
     const unsigned int               n_q_points_face = this->face_quadrature->size();
-    const unsigned int               n_q_points =this->number_quadrature_points;
+
 
     std::vector<double>              pressure_values(ib_coef.size());
     Tensor<1, dim>                   normal_vector;
     std::vector<Tensor<2, dim>>      velocity_gradients(ib_coef.size());
+    std::vector<std::vector<Tensor<1, dim>>>     velocity_gradients_component(dim+1);
+    for(unsigned int i =0 ;i<dim+1;++i)
+        velocity_gradients_component[i].resize(ib_coef.size());
     Tensor<2, dim>                   fluid_stress;
-    Tensor<2, dim>                   fluid_stress_v2;
-    Tensor<2, dim>                   fluid_stress_v2_unit;
     Tensor<2, dim>                   fluid_pressure;
     Tensor<2, dim>                   fluide_stress_at_ib;
-    Tensor<1, dim>                   local_grad;
-    Tensor<1, dim>                   local_grad_unit;
 
-
-    ArrayView<Tensor<2,dim>>         A_fluid_stress_v2(fluid_stress_v2);
-    ArrayView<Tensor<2,dim>>         A_fluid_stress_v2_unit(fluid_stress_v2_unit);
 
     std::vector<Point<dim>> vertices_of_face_projection(vertices_per_face);
     std::vector<CellData<dim-1>> local_face_cell_data(1);
@@ -638,16 +488,15 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
     std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
     std::vector<types::global_dof_index> local_dof_indices_2(dofs_per_cell);
-    std::vector<types::global_dof_index> local_dof_indices_3(dofs_per_cell);
-    std::vector<types::global_dof_index> local_dof_indices_4(dofs_per_cell);
+
 
     std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
 
     std::vector<Point<dim>> unite_cell_interpolation_points(
             ib_coef.size());
+    std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
     std::vector<double> local_interp_sol(ib_coef.size());
 
-    std::vector<Tensor<2,dim>> local_face_tensor(dofs_per_face);
 
     std::cout<<"debut de calcul"<<std::endl;
     std::map<unsigned int, std::pair<bool, Tensor<2,dim>>> force_eval_done;
@@ -661,15 +510,12 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         particles[i].torques=0;
     }
 
-
     double total_area=0;
     double total_edge_area=0;
     unsigned int nb_evaluation=0;
     for (const auto &cell : cell_iterator)
     {
-
-        if (cell->is_locally_owned())
-        {
+        if (cell->is_locally_owned()){
 
         //particle id that cut the cell.
             unsigned int p;
@@ -753,12 +599,13 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     unite_cell_interpolation_points[0] =
                                             this->mapping->transform_real_to_unit_cell(cell_2,
                                                                                        point);
+                                    cell_interpolation_points[0];
                                     for (unsigned int j = 1; j < ib_coef.size(); ++j) {
                                         unite_cell_interpolation_points[j] =
                                                 this->mapping->transform_real_to_unit_cell(
                                                         cell_2, interpolation_points[j - 1]);
+                                        cell_interpolation_points[j]=interpolation_points[j - 1];
                                     }
-
 
                                     fluide_stress_at_ib = 0;
 
@@ -767,7 +614,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                                   q_local,
                                                                   update_quadrature_points | update_gradients |
                                                                   update_values);
-                                    
+
                                     fe_values_cell2.reinit(cell_2);
                                     fe_values_cell2[velocities].get_function_gradients(
                                             this->present_solution, velocity_gradients);
@@ -783,10 +630,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                 (velocity_gradients[k] +
                                                  transpose(velocity_gradients[k])) -
                                                 fluid_pressure;
+
                                         fluide_stress_at_ib += fluid_stress * ib_coef[k];
 
                                     }
-
                                     local_face_tensor[i] = fluide_stress_at_ib;
                                     force_eval_done[local_face_dof_indices[i]] = std::make_pair(true, fluide_stress_at_ib);
                                 }
@@ -798,9 +645,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
 
                         for (const auto &projection_cell_face : local_face_dof_handler.active_cell_iterators()) {
-                            //TimerOutput::Scope t(this->computing_timer, "new force_eval interpolate");
                             fe_face_projection_values.reinit(projection_cell_face);
-
                             std::vector<Point<dim>> q_points =
                                     fe_face_projection_values.get_quadrature_points();
                             for (unsigned int q = 0; q < n_q_points_face; q++) {
@@ -975,7 +820,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib_v2()
                       // &cell_iter=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                       cell_iter->get_dof_indices(local_dof_indices);
                       // std::cout << "got dof _indices " << std::endl;
-                      unsigned int count_small = 0;
                       center_immersed          = particles[p].position;
 
                       // check if the cell is cut
@@ -1334,7 +1178,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib_v2()
                             // &cell_iter=this->vertices_to_cell[cell_vertex_map.first][cell_vertex_map.second];
                             cell_iter->get_dof_indices(local_dof_indices);
                             // std::cout << "got dof _indices " << std::endl;
-                            unsigned int count_small = 0;
+
                             center_immersed          = particles[p].position;
 
                             // check if the cell is cut
@@ -2234,7 +2078,6 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-        const typename DoFHandler<dim>::active_cell_iterator &cell,
         std::vector<types::global_dof_index> &                local_dof_indices,
         std::map<types::global_dof_index, Point<dim>> &       support_points,
         unsigned int p)
@@ -2280,7 +2123,7 @@ GLSSharpNavierStokesSolver<dim>::cell_cut(
 
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      if(cell_cut_by_p(cell,local_dof_indices,support_points,p)) {
+      if(cell_cut_by_p(local_dof_indices,support_points,p)) {
           return {true, p, local_dof_indices};
       }
     }
