@@ -41,7 +41,7 @@ struct pw_contact_info_struct
   double                           normal_relative_velocity;
   Tensor<1, dim>                   tangential_overlap;
   Tensor<1, dim>                   tangential_relative_velocity;
-  unsigned int                     boundary_id;
+  types::boundary_id               boundary_id;
   unsigned int                     global_face_id;
 };
 

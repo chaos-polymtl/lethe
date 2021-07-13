@@ -70,7 +70,7 @@ public:
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
-                                    unsigned int,
+                                    types::boundary_id,
                                     unsigned int>>> &pw_contact_pair_candidates,
     std::unordered_map<
       types::particle_index,

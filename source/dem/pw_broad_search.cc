@@ -18,7 +18,7 @@ PWBroadSearch<dim>::find_particle_wall_contact_pairs(
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
-                                  unsigned int,
+                                  types::boundary_id,
                                   unsigned int>>> &pw_contact_candidates)
 {
   // Clearing pw_contact_candidates (output of this function)
