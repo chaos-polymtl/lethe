@@ -62,8 +62,8 @@ SolidBase<dim, spacedim>::SolidBase(
             Triangulation<dim, spacedim>::smoothing_on_refinement |
             Triangulation<dim, spacedim>::smoothing_on_coarsening))))
   , fluid_tria(fluid_tria)
-  , fluid_mapping(fluid_mapping)
   , solid_dh(*solid_tria)
+  , fluid_mapping(fluid_mapping)
   , param(param)
   , velocity(&param->solid_velocity)
   , degree_velocity(degree_velocity)
