@@ -23,8 +23,8 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
-#include <dem/insertion.h>
 #include <dem/grid_motion.h>
+#include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>

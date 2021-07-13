@@ -107,15 +107,6 @@ private:
   move_grid_translational(
     parallel::distributed::Triangulation<dim> &triangulation);
 
-  /**
-   * Carries out translational-rotational motion of the triangulation
-   *
-   * @param triangulation Triangulation
-   */
-  void
-  move_grid_translational_rotational(
-    parallel::distributed::Triangulation<dim> &triangulation);
-
   // Since the DEM time-step and rotational speed are constant, we calculate the
   // rotation angle at each time-step once in the constructor and define it as a
   // member variable.

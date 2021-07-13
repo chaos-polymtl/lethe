@@ -27,17 +27,6 @@ GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
       shift_vector =
         dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
     }
-  else if (dem_parameters.grid_motion.motion_type ==
-           Parameters::Lagrangian::GridMotion<
-             dim>::MotionType::translational_rotational)
-    {
-      grid_motion = &GridMotion<dim>::move_grid_translational_rotational;
-      rotation_angle =
-        dem_parameters.grid_motion.grid_rotational_speed * dem_time_step;
-      rotation_axis = dem_parameters.grid_motion.grid_rotational_axis;
-      shift_vector =
-        dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
-    }
 }
 
 template <>
@@ -60,22 +49,6 @@ GridMotion<dim>::move_grid_translational(
   parallel::distributed::Triangulation<dim> &triangulation)
 {
   GridTools::shift(shift_vector, triangulation);
-}
-
-template <>
-void GridMotion<2>::move_grid_translational_rotational(
-  parallel::distributed::Triangulation<2> &triangulation)
-{
-  GridTools::shift(shift_vector, triangulation);
-  GridTools::rotate(rotation_angle, triangulation);
-}
-
-template <>
-void GridMotion<3>::move_grid_translational_rotational(
-  parallel::distributed::Triangulation<3> &triangulation)
-{
-  GridTools::shift(shift_vector, triangulation);
-  GridTools::rotate(rotation_angle, rotation_axis, triangulation);
 }
 
 template <int dim>

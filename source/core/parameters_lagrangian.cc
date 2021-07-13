@@ -1072,20 +1072,6 @@ namespace Parameters
               grid_translational_velocity[2] =
                 prm.get_double("grid translational velocity z");
           }
-        else if (motion == "translational_rotational")
-          {
-            motion_type           = MotionType::translational_rotational;
-            grid_rotational_speed = prm.get_double("grid rotational speed");
-            grid_rotational_axis  = prm.get_integer("grid rotational axis");
-            grid_translational_velocity[0] =
-              prm.get_double("grid translational velocity x");
-            grid_translational_velocity[1] =
-              prm.get_double("grid translational velocity y");
-
-            if (dim == 3)
-              grid_translational_velocity[2] =
-                prm.get_double("grid translational velocity z");
-          }
         else if (motion == "none")
           {
             motion_type = MotionType::none;

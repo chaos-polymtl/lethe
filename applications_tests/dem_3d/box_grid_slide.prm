@@ -30,12 +30,6 @@ end
 subsection model parameters
   set contact detection method 		   		 = dynamic
   set dynamic contact search size coefficient	 	 = 0.9
-<<<<<<< HEAD:applications_tests/dem_3d/box_grid_slide.prm
-=======
-  set load balance method				 = dynamic
-  set load balance threshold				 = 0.5
-  set dynamic load balance check frequency		 = 5000
->>>>>>> Change box_grid_slide_rotation test parameters:applications_tests/dem_3d/box_grid_slide_rotation.prm
   set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear

@@ -348,7 +348,6 @@ namespace Parameters
       {
         translational,
         rotational,
-        translational_rotational,
         none
       } motion_type;
 
