@@ -25,6 +25,11 @@
 #include <dem/find_cell_neighbors.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
+#include <dem/localize_contacts.h>
+#include <dem/locate_ghost_particles.h>
+#include <dem/locate_local_particles.h>
+#include <dem/non_uniform_insertion.h>
+#include <dem/output_force_torque_calculation.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_point_line_contact_info_struct.h>
@@ -243,14 +248,6 @@ private:
    */
   void
   write_output_results();
-
-  /**
-   * @brief write_forces_torques_output_results
-   * Writes the results of force and torque calculations in a file, and depending on the
-   * verbosity, in the terminal
-   */
-  void
-  write_forces_torques_output_results();
 
 
   MPI_Comm                                  mpi_communicator;

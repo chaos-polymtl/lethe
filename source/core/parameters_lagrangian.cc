@@ -586,7 +586,7 @@ namespace Parameters
     void
     ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("Forces and Torques");
+      prm.enter_subsection("boundary forces");
       prm.declare_entry("calculation",
                         "false",
                         Patterns::Bool(),
@@ -597,26 +597,29 @@ namespace Parameters
         Patterns::Selection("quiet|verbose"),
         "State whether output from solver runs should be printed. "
         "Choices are <quiet|verbose>.");
-      prm.declare_entry("Name file",
+      prm.declare_entry("filename",
                         "force",
                         Patterns::FileName(),
                         "File output force prefix");
-      prm.declare_entry("Output frequency",
+      prm.declare_entry("output frequency",
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
-      prm.declare_entry("Coordinate x of center of mass",
+      prm.enter_subsection("center of mass coordinate");
+      prm.declare_entry("x",
                         "0",
                         Patterns::Double(),
                         "X coordinate of center of mass");
-      prm.declare_entry("Coordinate y of center of mass",
+      prm.declare_entry("y",
                         "0",
                         Patterns::Double(),
                         "Y coordinate of center of mass");
-      prm.declare_entry("Coordinate z of center of mass",
+      prm.declare_entry("z",
                         "0",
                         Patterns::Double(),
                         "Z coordinate of center of mass");
+      prm.leave_subsection();
+
       prm.leave_subsection();
     }
 
@@ -624,7 +627,7 @@ namespace Parameters
     void
     ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
     {
-      prm.enter_subsection("Forces and Torques");
+      prm.enter_subsection("boundary forces");
       calculate_force_torque    = prm.get_bool("calculation");
       const std::string verbose = prm.get("verbosity");
       if (verbose == "quiet")
@@ -636,13 +639,15 @@ namespace Parameters
           throw(std::runtime_error("Invalid verbosity choice "));
         }
       force_torque_output_name =
-        prm.get("Name file");
+        prm.get("filename");
       output_frequency =
-        prm.get_integer("Output frequency");
-      point_center_mass[0] = prm.get_double("Coordinate x of center of mass");
-      point_center_mass[1] = prm.get_double("Coordinate y of center of mass");
+        prm.get_integer("output frequency");
+      prm.enter_subsection("center of mass coordinate");
+      point_center_mass[0] = prm.get_double("x");
+      point_center_mass[1] = prm.get_double("y");
       if (dim == 3)
-        point_center_mass[2] = prm.get_double("Coordinate z of center of mass");
+        point_center_mass[2] = prm.get_double("z");
+      prm.leave_subsection();
       prm.leave_subsection();
     }
 

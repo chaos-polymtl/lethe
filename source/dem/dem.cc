@@ -559,11 +559,11 @@ DEMSolver<dim>::finish_simulation()
                                   forces_boundary_information[j][i][1]);
                   table.add_value("Force z",
                                   forces_boundary_information[j][i][2]);
-                  table.add_value("Moment x",
+                  table.add_value("Torque x",
                                   torques_boundary_information[j][i][0]);
-                  table.add_value("Moment y",
+                  table.add_value("Torque y",
                                   torques_boundary_information[j][i][1]);
-                  table.add_value("Moment z",
+                  table.add_value("Torque z",
                                   torques_boundary_information[j][i][2]);
                   table.add_value("Current time",
                                   j * simulation_control->get_time_step());
@@ -572,9 +572,9 @@ DEMSolver<dim>::finish_simulation()
               table.set_precision("Force x", 9);
               table.set_precision("Force y", 9);
               table.set_precision("Force z", 9);
-              table.set_precision("Moment x", 9);
-              table.set_precision("Moment y", 9);
-              table.set_precision("Moment z", 9);
+              table.set_precision("Torque x", 9);
+              table.set_precision("Torque y", 9);
+              table.set_precision("Torque z", 9);
               table.set_precision("Current time", 9);
 
               // output
@@ -762,32 +762,6 @@ DEMSolver<dim>::write_output_results()
 
       write_boundaries_vtu<dim>(
         data_out_faces, folder, time, iter, this->mpi_communicator);
-    }
-}
-
-template <int dim>
-void
-DEMSolver<dim>::write_forces_torques_output_results()
-{
-  if (parameters.forces_torques.calculate_force_torque &&
-      (this_mpi_process == 0) &&
-      (simulation_control->get_step_number() %
-         parameters.forces_torques.output_frequency ==
-       0) &&
-      (parameters.forces_torques.force_torque_verbosity ==
-       Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose))
-    {
-      std::map<unsigned int, Tensor<1, dim>> force_on_walls =
-        forces_boundary_information[simulation_control->get_step_number()];
-      std::map<unsigned int, Tensor<1, dim>> torque_on_walls =
-        torques_boundary_information[simulation_control->get_step_number()];
-
-      for (const auto &it : force_on_walls)
-        {
-          pcout << "Boundary " << it.first << " :\n"
-                << "Force = " << it.second
-                << "\nMoment = " << torque_on_walls[it.first] << "\n\n";
-        }
     }
 }
 
@@ -996,7 +970,16 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
-      write_forces_torques_output_results();
+      if (parameters.forces_torques.calculate_force_torque &&
+          (this_mpi_process == 0) &&
+          (simulation_control->get_step_number() %
+           parameters.forces_torques.output_frequency ==
+           0) &&
+          (parameters.forces_torques.force_torque_verbosity ==
+           Parameters::Lagrangian::ForceTorqueOnWall<dim>::Verbosity::verbose))
+      write_forces_torques_output_results<dim>(forces_boundary_information[simulation_control->get_step_number()],
+                                          torques_boundary_information[simulation_control->get_step_number()],
+                                          pcout);
 
       if (parameters.restart.checkpoint &&
           simulation_control->get_step_number() %

@@ -193,7 +193,7 @@ PWLinearForce<dim>::calculate_pw_contact_force(
             }
         }
     }
-  this->mpi_correction_over_calculation_of_force_torque();
+  this->mpi_correction_over_calculation_of_forces_and_torques();
 }
 
 // Calculates linear contact force and torques

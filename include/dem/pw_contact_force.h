@@ -165,7 +165,7 @@ protected:
    * MPI processes
    */
   void
-  mpi_correction_over_calculation_of_force_torque();
+  mpi_correction_over_calculation_of_forces_and_torques();
 
   /** This function is used to find the projection of vector_a on
    * vector_b

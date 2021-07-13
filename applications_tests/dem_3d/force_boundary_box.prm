@@ -77,12 +77,14 @@ subsection mesh
     set initial refinement   				            = 4
 end
 
-subsection Forces and Torques
+subsection boundary forces
     set calculation               	                                            = true
     set verbosity                                                               = verbose
-    set Name file                                            	     		    = force_and_torque
-    set Output frequency                                                        = 2000
-    set Coordinate x of center of mass                                          = 0.05
-    set Coordinate y of center of mass                                          = 0.05
-    set Coordinate z of center of mass                                          = 0
+    set filename                                            	     		    = force_and_torque
+    set output frequency                                                        = 2000
+    subsection center of mass coordinate
+        set x                                                                       = 0.05
+        set y                                                                       = 0.05
+        set z                                                                       = 0
+    end
 end
