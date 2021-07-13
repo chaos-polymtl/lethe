@@ -112,10 +112,10 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
   std::unordered_map<
     types::particle_index,
     std::map<types::particle_index, pw_contact_info_struct<dim>>>
-    &           pw_pairs_in_contact,
-  const double &dt,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force)
+    &                          pw_pairs_in_contact,
+  const double &               dt,
+  std::vector<Tensor<1, dim>> &momentum,
+  std::vector<Tensor<1, dim>> &force)
 {
   // Looping over pw_pairs_in_contact, which means looping over all the active
   // particles with iterator pw_pairs_in_contact_iterator
@@ -174,7 +174,11 @@ PWNonLinearForce<dim>::calculate_pw_contact_force(
                     contact_information, particle_properties);
 
               // Getting particle's momentum and force
-              unsigned int    particle_id       = particle->get_id();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+              types::particle_index particle_id = particle->get_local_index();
+#else
+              types::particle_index particle_id = particle->get_id();
+#endif
               Tensor<1, dim> &particle_momentum = momentum[particle_id];
               Tensor<1, dim> &particle_force    = force[particle_id];
 

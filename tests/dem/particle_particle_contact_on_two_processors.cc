@@ -197,27 +197,24 @@ locate_local_particles_in_cells(
 template <int dim>
 void
 reinitialize_force(Particles::ParticleHandler<dim> &particle_handler,
-                   std::unordered_map<unsigned int, Tensor<1, dim>> &momentum,
-                   std::unordered_map<unsigned int, Tensor<1, dim>> &force)
+                   std::vector<Tensor<1, dim>> &    momentum,
+                   std::vector<Tensor<1, dim>> &    force)
 {
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
+  momentum.resize(particle_handler.n_locally_owned_particles());
+  force.resize(particle_handler.n_locally_owned_particles());
+
+  for (unsigned int i = 0; i < momentum.size(); ++i)
     {
-      // Getting id of particle as local variable
-      unsigned int particle_id = particle->get_id();
-
       // Reinitializing forces and momentums of particles in the system
-      force[particle_id][0] = 0;
-      force[particle_id][1] = 0;
+      force[i][0] = 0;
+      force[i][1] = 0;
 
-      momentum[particle_id][0] = 0;
-      momentum[particle_id][1] = 0;
-
+      momentum[i][0] = 0;
+      momentum[i][1] = 0;
       if (dim == 3)
         {
-          force[particle_id][2]    = 0;
-          momentum[particle_id][2] = 0;
+          force[i][2]    = 0;
+          momentum[i][2] = 0;
         }
     }
 }
@@ -351,12 +348,27 @@ test()
   std::unordered_map<unsigned int, std::vector<unsigned int>>
     local_contact_pair_candidates;
   std::unordered_map<unsigned int, std::vector<unsigned int>>
-                                                   ghost_contact_pair_candidates;
-  std::unordered_map<unsigned int, Tensor<1, dim>> momentum;
-  std::unordered_map<unsigned int, Tensor<1, dim>> force;
-  std::unordered_map<unsigned int, double>         MOI;
-  MOI.insert({0, 1});
-  MOI.insert({1, 1});
+    ghost_contact_pair_candidates;
+
+  std::vector<Tensor<1, dim>> momentum;
+  std::vector<Tensor<1, dim>> force;
+  std::vector<double>         MOI;
+
+  particle_handler.sort_particles_into_subdomains_and_cells();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+  force.resize(particle_handler.get_max_local_particle_index());
+#else
+  {
+    unsigned int max_particle_id = 0;
+    for (const auto &particle : particle_handler)
+      max_particle_id = std::max(max_particle_id, particle.get_id());
+    force.resize(max_particle_id + 1);
+  }
+#endif
+  momentum.resize(force.size());
+  MOI.resize(force.size());
+  for (unsigned i = 0; i < MOI.size(); ++i)
+    MOI[i] = 1;
 
   for (unsigned int iteration = 0; iteration < step_end; ++iteration)
     {

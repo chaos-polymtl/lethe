@@ -120,10 +120,10 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
   std::unordered_map<
     types::particle_index,
     std::unordered_map<types::particle_index, pp_contact_info_struct<dim>>>
-    &           ghost_adjacent_particles,
-  const double &dt,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &momentum,
-  std::unordered_map<types::particle_index, Tensor<1, dim>> &force)
+    &                          ghost_adjacent_particles,
+  const double &               dt,
+  std::vector<Tensor<1, dim>> &momentum,
+  std::vector<Tensor<1, dim>> &force)
 {
   // Updating contact force of particles for local-local and local-ghost contact
   // pairs are differnet. Consequently, contact forces of local-local and
@@ -185,8 +185,17 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     rolling_resistance_torque);
 
                   // Getting particles' momentum and force
-                  unsigned int    particle_one_id = particle_one->get_id();
-                  unsigned int    particle_two_id = particle_two->get_id();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                  types::particle_index particle_one_id =
+                    particle_one->get_local_index();
+                  types::particle_index particle_two_id =
+                    particle_two->get_local_index();
+#else
+                  types::particle_index particle_one_id =
+                    particle_one->get_id();
+                  types::particle_index particle_two_id =
+                    particle_two->get_id();
+#endif
                   Tensor<1, dim> &particle_one_momentum =
                     momentum[particle_one_id];
                   Tensor<1, dim> &particle_two_momentum =
@@ -280,7 +289,13 @@ PPNonLinearForce<dim>::calculate_pp_contact_force(
                     rolling_resistance_torque);
 
                   // Getting momentum and force of particle one
-                  unsigned int    particle_one_id = particle_one->get_id();
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+                  types::particle_index particle_one_id =
+                    particle_one->get_local_index();
+#else
+                  types::particle_index particle_one_id =
+                    particle_one->get_id();
+#endif
                   Tensor<1, dim> &particle_one_momentum =
                     momentum[particle_one_id];
                   Tensor<1, dim> &particle_one_force = force[particle_one_id];
