@@ -25,12 +25,12 @@
 
 #include <solvers/gls_sharp_navier_stokes.h>
 
+#include <deal.II/fe/fe_q.h>
+
 #include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/lac/full_matrix.h>
-#include <deal.II/fe/fe_q.h>
-#include <deal.II/numerics/fe_field_function.h>
-#include <deal.II/grid/manifold_lib.h>
 
 // Constructor for class GLSNavierStokesSolver
 template <int dim>
@@ -79,185 +79,38 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
 {
-    // check all the cells if they are cut or not. Put the information in a map
-    // with the key being the cell.
-    TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
-    std::map<types::global_dof_index, Point<dim>> support_points;
-    DoFTools::map_dofs_to_support_points(*this->mapping,
-                                         this->dof_handler,
-                                         support_points);
-    cut_cells_map.clear();
-    const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
-    const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  // check all the cells if they are cut or not. Put the information in a map
+  // with the key being the cell.
+  TimerOutput::Scope t(this->computing_timer, "cut_cells_mapping");
+  std::map<types::global_dof_index, Point<dim>> support_points;
+  DoFTools::map_dofs_to_support_points(*this->mapping,
+                                       this->dof_handler,
+                                       support_points);
+  cut_cells_map.clear();
+  const auto &       cell_iterator = this->dof_handler.active_cell_iterators();
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
 
-    // // Loop on all the cells and check if they are cut.
-    for (const auto &cell : cell_iterator)
+  // // Loop on all the cells and check if they are cut.
+  for (const auto &cell : cell_iterator)
     {
-        if (cell->is_locally_owned() || cell->is_ghost())
+      if (cell->is_locally_owned() || cell->is_ghost())
         {
-            bool cell_is_cut;
-            // is the particle index that cut the cell if it's cut.  If the cell
-            // is not cut the default value is stored (0). If the cell is not cut
-            // this value will never be used.
-            unsigned int p;
+          bool cell_is_cut;
+          // is the particle index that cut the cell if it's cut.  If the cell
+          // is not cut the default value is stored (0). If the cell is not cut
+          // this value will never be used.
+          unsigned int p;
 
-            std::tie(cell_is_cut, p, local_dof_indices) =
-                    cell_cut(cell, local_dof_indices, support_points);
+          std::tie(cell_is_cut, p, local_dof_indices) =
+            cell_cut(cell, local_dof_indices, support_points);
 
-            // Add information about if the cell is cut "cell_is_cut" and the
-            // particle id that cuts it "p" in the map.
-            cut_cells_map[cell] = {cell_is_cut, p};
+          // Add information about if the cell is cut "cell_is_cut" and the
+          // particle id that cuts it "p" in the map.
+          cut_cells_map[cell] = {cell_is_cut, p};
         }
     }
 }
-
-template <int dim>
-typename DoFHandler<dim>::active_cell_iterator
-GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
-                                            Point<dim>             point,
-                                            const typename DoFHandler<dim>::active_cell_iterator &cell_guess)
-{
-    // find cell around point using tree properties instead of looping on all cell
-
-    // define stuff for the search
-    MappingQ1<dim> map;
-    const auto &   cell_iterator = dof_handler.cell_iterators_on_level(0);
-    unsigned int   max_childs    = GeometryInfo<dim>::max_children_per_cell;
-    typename DoFHandler<dim>::cell_iterator best_cell_iter;
-
-    // first check if the guess is already the cell we search
-    bool cell_guess_is_good=false;
-    try
-    {
-        const Point<dim, double> p_cell =
-                map.transform_real_to_unit_cell(cell_guess, point);
-
-        const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-        if (dist == 0)
-        {
-            // cell on lvl 0 found
-            cell_guess_is_good   = true;
-            best_cell_iter = cell_guess;
-        }
-    }
-    catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-    {}
-    if(cell_guess_is_good){
-        return best_cell_iter;
-    }
-
-    // upward v find the parent cell that contains the point
-
-    best_cell_iter=cell_guess;
-    bool cell_upward_search=false;
-    bool cell_not_found_in_parents=false;
-
-    while (cell_upward_search==false)
-    {
-        if(best_cell_iter->level()==0) {
-            try {
-                const Point<dim, double> p_cell =
-                        map.transform_real_to_unit_cell(best_cell_iter->parent(),
-                                                        point);
-                const double dist =
-                        GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-                best_cell_iter = best_cell_iter->parent();
-                if (dist == 0) {
-                    cell_upward_search = true;
-                }
-
-            }
-            catch (
-                    const typename MappingQGeneric<dim>::ExcTransformationFailed &) {}
-        }
-        else{
-            cell_not_found_in_parents=true;
-            break;
-        }
-
-    }
-
-    bool cell_0_found = false;
-    if(cell_not_found_in_parents) {
-
-        // loop on the cell on lvl 0 of the mesh
-        for (const auto &cell : cell_iterator) {
-            try {
-                const Point<dim, double> p_cell =
-                        map.transform_real_to_unit_cell(cell, point);
-
-                const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-
-                if (dist == 0) {
-                    // cell on lvl 0 found
-                    cell_0_found = true;
-                    best_cell_iter = cell;
-                }
-            }
-            catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &) {}
-        }
-    }
-
-    // downward v
-
-    if (cell_0_found||cell_upward_search)
-    {
-        // the cell on lvl 0 contain the point so now loop on the childs of
-        // this cell when we found the child of the cell that containt it we
-        // stop and loop if the cell is active if the cell is not active loop
-        // on the child of the cell. Repeat
-        unsigned int lvl = 0;
-        while (best_cell_iter->is_active() == false)
-        {
-            bool         cell_found = false;
-            double       best_dist  = DBL_MAX;
-            unsigned int best_index = 0;
-            for (unsigned int i = 0; i < max_childs; ++i)
-            {
-                try
-                {
-                    const Point<dim, double> p_cell =
-                            map.transform_real_to_unit_cell(best_cell_iter->child(i),
-                                                            point);
-                    const double dist =
-                            GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-                    bool inside = true;
-
-
-                    if (dist <= best_dist and inside)
-                    {
-                        best_dist  = dist;
-                        best_index = i;
-                        cell_found = true;
-                        if (dist == 0)
-                            break;
-                    }
-                }
-                catch (
-                        const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-                {}
-            }
-
-            best_cell_iter = best_cell_iter->child(best_index);
-
-            if (cell_found == false)
-            {
-                std::cout << "cell not found" << point << std::endl;
-                break;
-            }
-
-            lvl += 1;
-        }
-
-        //      break;
-    }
-    return best_cell_iter;
-}
-
-
-
 
 template <int dim>
 typename DoFHandler<dim>::active_cell_iterator
@@ -401,264 +254,369 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::force_on_ib()
 {
-    // This function defines an Immersed Boundary based on the sharp edge method
-    // on a hyper_sphere of dim=2 or dim=3
+  // This function defines the force and torque applied on an Immersed Boundary
+  // based on the sharp edge method on a hyper_sphere of dim=2 or dim=3
 
-    TimerOutput::Scope t(this->computing_timer, "new force_eval");
+  TimerOutput::Scope t(this->computing_timer, "new force_eval");
 
-    const FEValuesExtractors::Scalar pressure(dim);
-    const FEValuesExtractors::Vector velocities(0);
+  const FEValuesExtractors::Scalar pressure(dim);
+  const FEValuesExtractors::Vector velocities(0);
 
-    std::vector<double> time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
-    // Define a map to all dofs and their support points
-    std::map<types::global_dof_index, Point<dim>> support_points;
-    DoFTools::map_dofs_to_support_points(*this->mapping,
-                                         this->dof_handler,
-                                         support_points);
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  // Define a map to all dofs and their support points
+  std::map<types::global_dof_index, Point<dim>> support_points;
+  DoFTools::map_dofs_to_support_points(*this->mapping,
+                                       this->dof_handler,
+                                       support_points);
 
-    // Initalize fe value objects in order to do calculation with it later
-    QGauss<dim>        q_formula(this->number_quadrature_points);
-    MappingQ<dim-1,dim> local_face_map(this->velocity_fem_degree, this->simulation_parameters.fem_parameters.qmapping_all);
+  // Initalize fe value objects in order to do calculation with it later
+  QGauss<dim>            q_formula(this->number_quadrature_points);
+  MappingQ<dim - 1, dim> local_face_map(
+    this->velocity_fem_degree,
+    this->simulation_parameters.fem_parameters.qmapping_all);
 
-    FESystem<dim-1,dim> local_face_fe(
-            FE_Q<dim-1,dim>(this->simulation_parameters.fem_parameters.velocity_order),
-            dim,
-            FE_Q<dim-1,dim>(this->simulation_parameters.fem_parameters.pressure_order),
-            1);
-    FEValues<dim-1,dim> fe_face_projection_values(local_face_map,
-                                                  local_face_fe,
-                                     *this->face_quadrature,
-                                                  update_values | update_quadrature_points |
-                                                  update_gradients | update_JxW_values |
-                                                  update_normal_vectors);
+  FESystem<dim - 1, dim> local_face_fe(
+    FE_Q<dim - 1, dim>(
+      this->simulation_parameters.fem_parameters.velocity_order),
+    dim,
+    FE_Q<dim - 1, dim>(
+      this->simulation_parameters.fem_parameters.pressure_order),
+    1);
+  FEValues<dim - 1, dim> fe_face_projection_values(local_face_map,
+                                                   local_face_fe,
+                                                   *this->face_quadrature,
+                                                   update_values |
+                                                     update_quadrature_points |
+                                                     update_gradients |
+                                                     update_JxW_values |
+                                                     update_normal_vectors);
 
-    DoFHandler<dim-1,dim> local_face_dof_handler;
-    const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-    const unsigned int dofs_per_face = this->fe->dofs_per_face;
+  DoFHandler<dim - 1, dim> local_face_dof_handler;
 
-    int order = this->simulation_parameters.particlesParameters.order;
-    double mu = this->simulation_parameters.physical_properties.viscosity;
-    double rho = this->simulation_parameters.particlesParameters.density;
+  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
+  const unsigned int dofs_per_face = this->fe->dofs_per_face;
 
-    IBStencil<dim>      stencil;
-    std::vector<double> ib_coef = stencil.coefficients(order);
+  int    order = this->simulation_parameters.particlesParameters.order;
+  double mu    = this->simulation_parameters.physical_properties.viscosity;
+  double rho   = this->simulation_parameters.particlesParameters.density;
 
-    const unsigned int vertices_per_face =
-            GeometryInfo<dim>::vertices_per_face;
-    const unsigned int               n_q_points_face = this->face_quadrature->size();
+  IBStencil<dim>      stencil;
+  std::vector<double> ib_coef = stencil.coefficients(order);
 
-    std::vector<double>              pressure_values(ib_coef.size());
-    Tensor<1, dim>                   normal_vector;
-    std::vector<Tensor<2, dim>>      velocity_gradients(ib_coef.size());
-    std::vector<std::vector<Tensor<1, dim>>>     velocity_gradients_component(dim+1);
-    for(unsigned int i =0 ;i<dim+1;++i)
-        velocity_gradients_component[i].resize(ib_coef.size());
-    Tensor<2, dim>                   fluid_stress;
-    Tensor<2, dim>                   fluid_pressure;
-    Tensor<2, dim>                   fluide_stress_at_ib;
+  const unsigned int vertices_per_face = GeometryInfo<dim>::vertices_per_face;
+  const unsigned int n_q_points_face   = this->face_quadrature->size();
 
-    std::vector<Point<dim>> vertices_of_face_projection(vertices_per_face);
-    std::vector<CellData<dim-1>> local_face_cell_data(1);
+  std::vector<double>                      pressure_values(ib_coef.size());
+  Tensor<1, dim>                           normal_vector;
+  std::vector<Tensor<2, dim>>              velocity_gradients(ib_coef.size());
+  std::vector<std::vector<Tensor<1, dim>>> velocity_gradients_component(dim +
+                                                                        1);
+  for (unsigned int i = 0; i < dim + 1; ++i)
+    velocity_gradients_component[i].resize(ib_coef.size());
+  Tensor<2, dim> fluid_stress;
+  Tensor<2, dim> fluid_pressure;
+  Tensor<2, dim> fluide_stress_at_ib;
 
-    typename Mapping<dim>::InternalDataBase mapping_data;
-    // Define multiple local_dof_indices one for the cell iterator one for the
-    // cell with the second point for the sharp edge stencil and one for
-    // manipulation on the neighbour’s cell.
+  std::vector<Point<dim>>        vertices_of_face_projection(vertices_per_face);
+  std::vector<CellData<dim - 1>> local_face_cell_data(1);
 
-    std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-    std::vector<types::global_dof_index> local_dof_indices_2(dofs_per_cell);
+  typename Mapping<dim>::InternalDataBase mapping_data;
+  // Define multiple local_dof_indices one for the cell iterator one for the
+  // cell with the second point for the sharp edge stencil and one for
+  // manipulation on the neighbour’s cell.
 
-    std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
+  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
+  std::vector<types::global_dof_index> local_dof_indices_2(dofs_per_cell);
 
-    std::vector<Point<dim>> unite_cell_interpolation_points(
-            ib_coef.size());
-    std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
-    std::vector<double> local_interp_sol(ib_coef.size());
+  std::vector<types::global_dof_index> local_face_dof_indices(dofs_per_face);
 
-    std::map<unsigned int, std::pair<bool, Tensor<2,dim>>> force_eval_done;
+  std::vector<Point<dim>> unite_cell_interpolation_points(ib_coef.size());
+  std::vector<Point<dim>> cell_interpolation_points(ib_coef.size());
+  std::vector<double>     local_interp_sol(ib_coef.size());
 
-    // Define cell iterator
-    const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+  std::map<unsigned int, std::pair<bool, Tensor<2, dim>>> force_eval_done;
 
-    // Clear particle force and torque
-    for( unsigned int i =0 ; i<particles.size();++i){
-        particles[i].forces=0;
-        particles[i].torques=0;
+  // Define cell iterator
+  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
+
+  // Clear particle force and torque
+  for (unsigned int i = 0; i < particles.size(); ++i)
+    {
+      particles[i].forces  = 0;
+      particles[i].torques = 0;
     }
 
-    double total_area=0;
-    unsigned int nb_evaluation=0;
-    // Loop over all the cell
-    for (const auto &cell : cell_iterator)
+  double       total_area    = 0;
+  unsigned int nb_evaluation = 0;
+  // Loop over all the cell
+  for (const auto &cell : cell_iterator)
     {
-        if (cell->is_locally_owned()){
-            //Particle id that cut the cell.
-            unsigned int p;
-            bool cell_is_cut;
-            std::tie(cell_is_cut, p)=cut_cells_map[cell] ;
-            // If the cell is cute
-            if (cell_is_cut) {
-                // Loop over all the face of the cell that is cut.
-                for (const auto face : cell->face_indices()) {
-                    auto local_face=cell->face(face);
-                    cell->face(face)->get_dof_indices(local_face_dof_indices);
+      if (cell->is_locally_owned())
+        {
+          // Particle id that cut the cell.
+          unsigned int p;
+          bool         cell_is_cut;
+          std::tie(cell_is_cut, p) = cut_cells_map[cell];
+          // If the cell is cute
+          if (cell_is_cut)
+            {
+              // Loop over all the face of the cell that is cut.
+              for (const auto face : cell->face_indices())
+                {
+                  auto local_face = cell->face(face);
+                  cell->face(face)->get_dof_indices(local_face_dof_indices);
 
-                    // Check if the face is cut
-                    unsigned int nb_dof_inside = 0;
-                    for (unsigned int j = 0; j < local_face_dof_indices.size(); ++j) {
-                        // Count the number of DOFs that are inside
-                        // of the particles. If all the DOfs are on one side
-                        // the cell is not cut by the boundary.
-                        if ((support_points[local_face_dof_indices[j]] - particles[p].position)
-                                    .norm() <= particles[p].radius)
-                            ++nb_dof_inside;
+                  // Check if the face is cut
+                  unsigned int nb_dof_inside = 0;
+                  for (unsigned int j = 0; j < local_face_dof_indices.size();
+                       ++j)
+                    {
+                      // Count the number of DOFs that are inside
+                      // of the particles. If all the DOfs are on one side
+                      // the cell is not cut by the boundary.
+                      if ((support_points[local_face_dof_indices[j]] -
+                           particles[p].position)
+                            .norm() <= particles[p].radius)
+                        ++nb_dof_inside;
                     }
 
-                    // If the face is not cut and the face is outside of the IB, the face of the cell is on the boundary of the computational domain.
-                    if (nb_dof_inside == 0) {
-                        //Projects the face on the surface of the IB. This creates a surface cell where we can evaluate the solution.
-                        //Define the triangulation of the surface cell.
-                        for (unsigned int i = 0; i < vertices_per_face; ++i) {
-                            // Define the vertices of the surface cell.
-                            Tensor<1, dim, double> vertex_projection =particles[p].position+
-                                    particles[p].radius*(local_face->vertex(i) - particles[p].position) /
-                                    (local_face->vertex(i) - particles[p].position).norm();
-                            // Create the list of vertices
-                            for(unsigned int j=0; j<dim;++j) {
-                                vertices_of_face_projection[i][j] = vertex_projection[j];
+                  // If the face is not cut and the face is outside of the IB,
+                  // the face of the cell is on the boundary of the
+                  // computational domain.
+                  if (nb_dof_inside == 0)
+                    {
+                      // Projects the face on the surface of the IB. This
+                      // creates a surface cell where we can evaluate the
+                      // solution. Define the triangulation of the surface cell.
+                      for (unsigned int i = 0; i < vertices_per_face; ++i)
+                        {
+                          // Define the vertices of the surface cell.
+                          Tensor<1, dim, double> vertex_projection =
+                            particles[p].position +
+                            particles[p].radius *
+                              (local_face->vertex(i) - particles[p].position) /
+                              (local_face->vertex(i) - particles[p].position)
+                                .norm();
+                          // Create the list of vertices
+                          for (unsigned int j = 0; j < dim; ++j)
+                            {
+                              vertices_of_face_projection[i][j] =
+                                vertex_projection[j];
                             }
-                            // Create the connectivity of the vertices of the cell
-                            local_face_cell_data[0].vertices[i]=i;
+                          // Create the connectivity of the vertices of the cell
+                          local_face_cell_data[0].vertices[i] = i;
                         }
 
-                        local_face_cell_data[0].material_id = 0;
-                        Triangulation<dim-1,dim> local_face_projection_triangulation;
-                        SphericalManifold<dim-1,dim> sphere_manifold(particles[p].position);
-                        // Create a dof handler that contains the triangulation of the projection of the face on the IB. This create the surface cell on the IB
-                        local_face_projection_triangulation.create_triangulation(vertices_of_face_projection,local_face_cell_data,SubCellData());
-                        local_face_projection_triangulation.set_all_manifold_ids(0);
-                        local_face_projection_triangulation.set_manifold(0, sphere_manifold);
-                        local_face_dof_handler.reinit(local_face_projection_triangulation);
-                        local_face_dof_handler.distribute_dofs(local_face_fe);
+                      local_face_cell_data[0].material_id = 0;
+                      Triangulation<dim - 1, dim>
+                                                      local_face_projection_triangulation;
+                      SphericalManifold<dim - 1, dim> sphere_manifold(
+                        particles[p].position);
+                      // Create a dof handler that contains the triangulation of
+                      // the projection of the face on the IB. This create the
+                      // surface cell on the IB
+                      local_face_projection_triangulation.create_triangulation(
+                        vertices_of_face_projection,
+                        local_face_cell_data,
+                        SubCellData());
+                      local_face_projection_triangulation.set_all_manifold_ids(
+                        0);
+                      local_face_projection_triangulation.set_manifold(
+                        0, sphere_manifold);
+                      local_face_dof_handler.reinit(
+                        local_face_projection_triangulation);
+                      local_face_dof_handler.distribute_dofs(local_face_fe);
 
-                        // Defined the solution on  IB surface cell by using the IB stencil to extrapolate the fluid stress tensor.
+                      // Defined the solution on  IB surface cell by using the
+                      // IB stencil to extrapolate the fluid stress tensor.
 
-                        std::vector<Tensor<2,dim>> local_face_tensor(dofs_per_face);
-                        for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
-                            const unsigned int component_i =
-                                    this->fe->system_to_component_index(i).first;
-                            //Check if that dof already have been used to extrapolate the fluid stress tensor on the IB surface.
-                            if(force_eval_done[local_face_dof_indices[i]].first==false) {
-                                // Only need one extrapolation by dof location;
-                                if (component_i == 0) {
-                                    // Count the number of evaluation
-                                    nb_evaluation+=1;
-                                    auto[point, interpolation_points] =
-                                    stencil.points(order,
-                                                   particles[p],
-                                                   support_points[local_face_dof_indices[i]]);
+                      std::vector<Tensor<2, dim>> local_face_tensor(
+                        dofs_per_face);
+                      for (unsigned int i = 0;
+                           i < local_face_dof_indices.size();
+                           ++i)
+                        {
+                          const unsigned int component_i =
+                            this->fe->system_to_component_index(i).first;
+                          // Check if that dof already have been used to
+                          // extrapolate the fluid stress tensor on the IB
+                          // surface.
+                          if (force_eval_done[local_face_dof_indices[i]]
+                                .first == false)
+                            {
+                              // Only need one extrapolation by dof location;
+                              if (component_i == 0)
+                                {
+                                  // Count the number of evaluation
+                                  nb_evaluation += 1;
+                                  auto [point, interpolation_points] =
+                                    stencil.points(
+                                      order,
+                                      particles[p],
+                                      support_points
+                                        [local_face_dof_indices[i]]);
 
-                                    auto cell_2 = ib_done[local_face_dof_indices[i]].second;
-                                    // Check if we already have the cell used to defined the IB constraint of that dof.
-                                    // We always have that information except if the dof is not owned.
-                                    if (ib_done[local_face_dof_indices[i]].first == false) {
-                                        // Get the cell use for the extrapolation
-                                        cell_2 = find_cell_around_point_with_neighbors(
-                                                cell,
-                                                interpolation_points[stencil.nb_points(order) - 1]);
+                                  auto cell_2 =
+                                    ib_done[local_face_dof_indices[i]].second;
+                                  // Check if we already have the cell used to
+                                  // defined the IB constraint of that dof. We
+                                  // always have that information except if the
+                                  // dof is not owned.
+                                  if (ib_done[local_face_dof_indices[i]]
+                                        .first == false)
+                                    {
+                                      // Get the cell use for the extrapolation
+                                      cell_2 =
+                                        find_cell_around_point_with_neighbors(
+                                          cell,
+                                          interpolation_points
+                                            [stencil.nb_points(order) - 1]);
                                     }
 
-                                    cell_2->get_dof_indices(local_dof_indices_2);
+                                  cell_2->get_dof_indices(local_dof_indices_2);
 
-                                    unite_cell_interpolation_points[0] =
-                                            this->mapping->transform_real_to_unit_cell(cell_2,
-                                                                                       point);
-                                    for (unsigned int j = 1; j < ib_coef.size(); ++j) {
-                                        unite_cell_interpolation_points[j] =
-                                                this->mapping->transform_real_to_unit_cell(
-                                                        cell_2, interpolation_points[j - 1]);
+                                  unite_cell_interpolation_points[0] =
+                                    this->mapping->transform_real_to_unit_cell(
+                                      cell_2, point);
+                                  for (unsigned int j = 1; j < ib_coef.size();
+                                       ++j)
+                                    {
+                                      unite_cell_interpolation_points[j] =
+                                        this->mapping
+                                          ->transform_real_to_unit_cell(
+                                            cell_2,
+                                            interpolation_points[j - 1]);
                                     }
 
 
-                                    fluide_stress_at_ib = 0;
+                                  fluide_stress_at_ib = 0;
 
-                                    // Create a quadrature that is based on the IB stencil
-                                    Quadrature<dim> q_local(unite_cell_interpolation_points, ib_coef);
-                                    FEValues<dim> fe_values_cell2(*this->fe,
-                                                                  q_local,
-                                                                  update_quadrature_points | update_gradients |
-                                                                  update_values);
+                                  // Create a quadrature that is based on the IB
+                                  // stencil
+                                  Quadrature<dim> q_local(
+                                    unite_cell_interpolation_points, ib_coef);
+                                  FEValues<dim> fe_values_cell2(
+                                    *this->fe,
+                                    q_local,
+                                    update_quadrature_points |
+                                      update_gradients | update_values);
 
-                                    // Evaluate the relevant information at the quadrature points to do the extrapolation.
-                                    fe_values_cell2.reinit(cell_2);
-                                    fe_values_cell2[velocities].get_function_gradients(
-                                            this->present_solution, velocity_gradients);
-                                    fe_values_cell2[pressure].get_function_values(
-                                            this->present_solution, pressure_values);
+                                  // Evaluate the relevant information at the
+                                  // quadrature points to do the extrapolation.
+                                  fe_values_cell2.reinit(cell_2);
+                                  fe_values_cell2[velocities]
+                                    .get_function_gradients(
+                                      this->present_solution,
+                                      velocity_gradients);
+                                  fe_values_cell2[pressure].get_function_values(
+                                    this->present_solution, pressure_values);
 
-                                    // Extrapolate the fluid stress tensor on the surface of the IB.
-                                    for (unsigned int k = 0; k < ib_coef.size();
-                                         ++k) {
-                                        for (int d = 0; d < dim; ++d) {
-                                            fluid_pressure[d][d] = pressure_values[k];
+                                  // Extrapolate the fluid stress tensor on the
+                                  // surface of the IB.
+                                  for (unsigned int k = 0; k < ib_coef.size();
+                                       ++k)
+                                    {
+                                      for (int d = 0; d < dim; ++d)
+                                        {
+                                          fluid_pressure[d][d] =
+                                            pressure_values[k];
                                         }
-                                        fluid_stress =
-                                                mu *
-                                                (velocity_gradients[k] +
-                                                 transpose(velocity_gradients[k])) -
-                                                fluid_pressure;
+                                      fluid_stress =
+                                        mu *
+                                          (velocity_gradients[k] +
+                                           transpose(velocity_gradients[k])) -
+                                        fluid_pressure;
 
-                                        fluide_stress_at_ib += fluid_stress * ib_coef[k];
+                                      fluide_stress_at_ib +=
+                                        fluid_stress * ib_coef[k];
                                     }
-                                    // Store the stress tensor that results from the extrapolation in the local evaluation vector of the IB surface cell and in a map that is used if the same extrapolation is needed in another face.
-                                    local_face_tensor[i] = fluide_stress_at_ib;
-                                    force_eval_done[local_face_dof_indices[i]] = std::make_pair(true, fluide_stress_at_ib);
+                                  // Store the stress tensor that results from
+                                  // the extrapolation in the local evaluation
+                                  // vector of the IB surface cell and in a map
+                                  // that is used if the same extrapolation is
+                                  // needed in another face.
+                                  local_face_tensor[i] = fluide_stress_at_ib;
+                                  force_eval_done[local_face_dof_indices[i]] =
+                                    std::make_pair(true, fluide_stress_at_ib);
                                 }
                             }
-                            else{
-                                // Use the results from a previously evaluated extrapolation.
-                                local_face_tensor[i]=force_eval_done[local_face_dof_indices[i]].second;
+                          else
+                            {
+                              // Use the results from a previously evaluated
+                              // extrapolation. This step comes with an error du
+                              // to the curvature of the surface in Q2 and
+                              // higher order elements.
+                              local_face_tensor[i] =
+                                force_eval_done[local_face_dof_indices[i]]
+                                  .second;
                             }
                         }
-
-
-                        for (const auto &projection_cell_face : local_face_dof_handler.active_cell_iterators()) {
-                            fe_face_projection_values.reinit(projection_cell_face);
-                            std::vector<Point<dim>> q_points =
-                                    fe_face_projection_values.get_quadrature_points();
-                            for (unsigned int q = 0; q < n_q_points_face; q++) {
-                                total_area += fe_face_projection_values.JxW(q);
-                                normal_vector = (q_points[q] - particles[p].position) /
-                                                (q_points[q] - particles[p].position).norm();
-                                fluid_stress = 0;
-                                for (unsigned int i = 0; i < local_face_dof_indices.size(); ++i) {
-                                    const unsigned int component_i =
-                                            this->fe->system_to_component_index(i).first;
-                                    if (component_i == 0) {
-                                        fluid_stress +=
-                                                fe_face_projection_values.shape_value(i, q) * local_face_tensor[i];
+                      // Use the extrapolation of fluide stress tensor at the
+                      // dof location of the IB surface cell to integrate the
+                      // stress tensor on the surface of the IB
+                      for (const auto &projection_cell_face :
+                           local_face_dof_handler.active_cell_iterators())
+                        {
+                          fe_face_projection_values.reinit(
+                            projection_cell_face);
+                          std::vector<Point<dim>> q_points =
+                            fe_face_projection_values.get_quadrature_points();
+                          for (unsigned int q = 0; q < n_q_points_face; q++)
+                            {
+                              // Evaluate the total surface
+                              total_area += fe_face_projection_values.JxW(q);
+                              // Redefined the normal at the quadrature point
+                              // since we dont control the orientation of the
+                              // cell.
+                              normal_vector =
+                                (q_points[q] - particles[p].position) /
+                                (q_points[q] - particles[p].position).norm();
+                              fluid_stress = 0;
+                              // Integrate
+                              for (unsigned int i = 0;
+                                   i < local_face_dof_indices.size();
+                                   ++i)
+                                {
+                                  const unsigned int component_i =
+                                    this->fe->system_to_component_index(i)
+                                      .first;
+                                  if (component_i == 0)
+                                    {
+                                      fluid_stress +=
+                                        fe_face_projection_values.shape_value(
+                                          i, q) *
+                                        local_face_tensor[i];
                                     }
                                 }
 
-                                auto force = fluid_stress * normal_vector *
-                                             fe_face_projection_values.JxW(q);
-                                particles[p].forces += force;
+                              auto force = fluid_stress * normal_vector *
+                                           fe_face_projection_values.JxW(q);
+                              // Add the local contribution of this surface
+                              // cell.
+                              particles[p].forces += force;
 
-                                auto distance = q_points[q] - particles[p].position;
-                                if (dim == 2) {
-                                    particles[p].torques[0] += 0.;
-                                    particles[p].torques[1] += 0.;
-                                    particles[p].torques[2] += distance[0] * force[1] -
-                                                               distance[1] * force[0];
+                              auto distance =
+                                q_points[q] - particles[p].position;
+                              if (dim == 2)
+                                {
+                                  particles[p].torques[0] += 0.;
+                                  particles[p].torques[1] += 0.;
+                                  particles[p].torques[2] +=
+                                    distance[0] * force[1] -
+                                    distance[1] * force[0];
                                 }
-                                else if (dim == 3) {
-                                    particles[p].torques[0] += distance[1] * force[2] -
-                                                               distance[2] * force[1];
-                                    particles[p].torques[1] += distance[2] * force[0] -
-                                                               distance[0] * force[2];
-                                    particles[p].torques[2] += distance[0] * force[1] -
-                                                               distance[1] * force[0];
+                              else if (dim == 3)
+                                {
+                                  particles[p].torques[0] +=
+                                    distance[1] * force[2] -
+                                    distance[2] * force[1];
+                                  particles[p].torques[1] +=
+                                    distance[2] * force[0] -
+                                    distance[0] * force[2];
+                                  particles[p].torques[2] +=
+                                    distance[0] * force[1] -
+                                    distance[1] * force[0];
                                 }
                             }
                         }
@@ -668,12 +626,16 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
         }
     }
 
-    for( unsigned int i =0 ; i<particles.size();++i){
-        particles[i].forces=Utilities::MPI::sum(particles[i].forces, this->mpi_communicator)*rho;
-        particles[i].torques=Utilities::MPI::sum(particles[i].torques, this->mpi_communicator)*rho;
+  // Sums the force evaluation on each of the processor.
+  for (unsigned int i = 0; i < particles.size(); ++i)
+    {
+      particles[i].forces =
+        Utilities::MPI::sum(particles[i].forces, this->mpi_communicator) * rho;
+      particles[i].torques =
+        Utilities::MPI::sum(particles[i].torques, this->mpi_communicator) * rho;
     }
-    total_area=Utilities::MPI::sum(total_area, this->mpi_communicator);
-    std::cout<<"total area "<<total_area <<std::endl;
+  total_area = Utilities::MPI::sum(total_area, this->mpi_communicator);
+  std::cout << "total area " << total_area << std::endl;
 }
 
 template <int dim>
@@ -1247,34 +1209,34 @@ GLSSharpNavierStokesSolver<dim>::finish_time_step_particles()
 template <int dim>
 bool
 GLSSharpNavierStokesSolver<dim>::cell_cut_by_p(
-        std::vector<types::global_dof_index> &                local_dof_indices,
-        std::map<types::global_dof_index, Point<dim>> &       support_points,
-        unsigned int p)
+  std::vector<types::global_dof_index> &         local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>> &support_points,
+  unsigned int                                   p)
 {
-    // Check if a cell is cut and if it's rerun the particle by which it's cut and
-    // the local DOFs index. The check is done by counting the number of DOFs that
-    // is on either side of the boundary define by a particle.
+  // Check if a cell is cut and if it's rerun the particle by which it's cut and
+  // the local DOFs index. The check is done by counting the number of DOFs that
+  // is on either side of the boundary define by a particle.
 
-    unsigned int nb_dof_inside = 0;
-    for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+  unsigned int nb_dof_inside = 0;
+  for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
     {
-            // Count the number of DOFs that are inside
-            // of the particles. If all the DOfs are on one side
-            // the cell is not cut by the boundary.
-            if ((support_points[local_dof_indices[j]] - particles[p].position)
-                        .norm() <= particles[p].radius)
-                ++nb_dof_inside;
+      // Count the number of DOFs that are inside
+      // of the particles. If all the DOfs are on one side
+      // the cell is not cut by the boundary.
+      if ((support_points[local_dof_indices[j]] - particles[p].position)
+            .norm() <= particles[p].radius)
+        ++nb_dof_inside;
     }
-    if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size())
+  if (nb_dof_inside != 0 && nb_dof_inside != local_dof_indices.size())
     {
-            // Some of the DOFs are inside the boundary, some are outside.
-            // This mean that the cell is cut so we return that information and
-            // the index of the particle that cut the cell as well as the
-            // container containing local DOF of the cell.
-            return true;
+      // Some of the DOFs are inside the boundary, some are outside.
+      // This mean that the cell is cut so we return that information and
+      // the index of the particle that cut the cell as well as the
+      // container containing local DOF of the cell.
+      return true;
     }
 
-    return false ;
+  return false;
 }
 
 template <int dim>
@@ -1292,9 +1254,10 @@ GLSSharpNavierStokesSolver<dim>::cell_cut(
 
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
-      if(cell_cut_by_p(local_dof_indices,support_points,p)) {
+      if (cell_cut_by_p(local_dof_indices, support_points, p))
+        {
           return {true, p, local_dof_indices};
-      }
+        }
     }
   return {false, 0, local_dof_indices};
 }
@@ -1498,7 +1461,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                         interpolation_points[stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
 
-                      ib_done[global_index_overwrite] = std::make_pair(true,cell_2);
+                      ib_done[global_index_overwrite] =
+                        std::make_pair(true, cell_2);
 
                       bool skip_stencil = false;
 

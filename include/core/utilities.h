@@ -39,7 +39,8 @@ find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
 typename DoFHandler<dim>::active_cell_iterator
 find_cell_around_point_with_tree_with_guess(const DoFHandler<dim> &dof_handler,
                                  Point<dim>             point,
-                                 const typename DoFHandler<dim>::active_cell_iterator &cell);*/
+                                 const typename
+DoFHandler<dim>::active_cell_iterator &cell);*/
 
 
 
