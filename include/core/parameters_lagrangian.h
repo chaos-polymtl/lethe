@@ -395,6 +395,9 @@ namespace Parameters
       // Set end time to finish post-processing calculations
       double end_time;
 
+      // Set post-processing sampling frequency
+      unsigned int sampling_frequency;
+
       // Prefix for particles velocity output
       std::string particles_velocity_name;
 
