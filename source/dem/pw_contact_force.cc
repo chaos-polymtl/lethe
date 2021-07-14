@@ -97,6 +97,57 @@ PWContactForce<dim>::update_contact_information(
   contact_info.tangential_overlap           = modified_tangential_overlap;
   contact_info.tangential_relative_velocity = tangential_relative_velocity;
 }
+template <int dim>
+void
+PWContactForce<dim>::calculate_force_and_torque_on_boundary(
+  const unsigned int boundary_id,
+  Tensor<1, dim>     add_force,
+  const Point<dim>   point_contact)
+{
+  if (calculate_force_torque_on_boundary == true)
+    {
+      force_on_walls[boundary_id] = force_on_walls[boundary_id] - add_force;
+      if (dim == 2)
+        {
+          Tensor<1, dim> r = point_contact - center_mass_container;
+          torque_on_walls[boundary_id][2] =
+            torque_on_walls[boundary_id][2] -
+            (r[0] * add_force[1] - r[1] * add_force[2]);
+        }
+      else if (dim == 3)
+        {
+          torque_on_walls[boundary_id] =
+            torque_on_walls[boundary_id] -
+            cross_product_3d(point_contact - center_mass_container, add_force);
+        }
+    }
+}
+
+template <int dim>
+std::map<unsigned int, Tensor<1, dim>>
+PWContactForce<dim>::initialize()
+{
+  std::map<unsigned int, Tensor<1, dim>> map;
+  for (const auto &it : boundary_index)
+    {
+      map[it] = 0;
+    }
+  return map;
+}
+
+template <int dim>
+void
+PWContactForce<dim>::mpi_correction_over_calculation_of_forces_and_torques()
+{
+  for (const auto &it : boundary_index)
+    {
+      force_on_walls[it] =
+        Utilities::MPI::sum(force_on_walls[it], MPI_COMM_WORLD);
+      torque_on_walls[it] =
+        Utilities::MPI::sum(torque_on_walls[it], MPI_COMM_WORLD);
+    }
+}
+
 
 template class PWContactForce<2>;
 template class PWContactForce<3>;
