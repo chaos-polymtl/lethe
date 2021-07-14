@@ -292,7 +292,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                      update_JxW_values |
                                                      update_normal_vectors);
 
-  DoFHandler<dim - 1, dim> local_face_dof_handler;
+
 
   const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
   const unsigned int dofs_per_face = this->fe->dofs_per_face;
@@ -317,6 +317,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   Tensor<2, dim> fluid_stress;
   Tensor<2, dim> fluid_pressure;
   Tensor<2, dim> fluide_stress_at_ib;
+  DoFHandler<dim - 1, dim> local_face_dof_handler;
+  Triangulation<dim - 1, dim> local_face_projection_triangulation;
 
   std::vector<Point<dim>>        vertices_of_face_projection(vertices_per_face);
   std::vector<CellData<dim - 1>> local_face_cell_data(1);
@@ -409,10 +411,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                         }
 
                       local_face_cell_data[0].material_id = 0;
-                      Triangulation<dim - 1, dim>
-                                                      local_face_projection_triangulation;
+
                       SphericalManifold<dim - 1, dim> sphere_manifold(
                         particles[p].position);
+                      local_face_projection_triangulation=Triangulation<dim-1,dim>();
                       // Create a dof handler that contains the triangulation of
                       // the projection of the face on the IB. This create the
                       // surface cell on the IB
@@ -424,6 +426,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                         0);
                       local_face_projection_triangulation.set_manifold(
                         0, sphere_manifold);
+
                       local_face_dof_handler.reinit(
                         local_face_projection_triangulation);
                       local_face_dof_handler.distribute_dofs(local_face_fe);
