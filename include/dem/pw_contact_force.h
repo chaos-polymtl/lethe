@@ -68,6 +68,18 @@ public:
     std::vector<Tensor<1, dim>> &momentum,
     std::vector<Tensor<1, dim>> &force) = 0;
 
+  std::map<unsigned int, Tensor<1, dim>>
+  get_force()
+  {
+    return force_on_walls;
+  }
+
+  std::map<unsigned int, Tensor<1, dim>>
+  get_torque()
+  {
+    return torque_on_walls;
+  }
+
 protected:
   /**
    * Carries out updating the contact pair information for both non-linear and
@@ -102,7 +114,9 @@ protected:
                                           Tensor<1, dim>,
                                           Tensor<1, dim>> &forces_and_torques,
                          Tensor<1, dim> &                  particle_momentum,
-                         Tensor<1, dim> &                  particle_force)
+                         Tensor<1, dim> &                  particle_force,
+                         Point<dim> &point_on_boundary = 0,
+                         int         boundary_id       = 0)
   {
     // Getting the values from the forces_and_torques tuple, which are: 1,
     // normal force, 2, tangential force, 3, tangential torque and 4, rolling
@@ -114,6 +128,10 @@ protected:
 
     // Calculation of total force
     Tensor<1, dim> total_force = normal_force + tangential_force;
+
+    calculate_force_and_torque_on_boundary(boundary_id,
+                                           total_force,
+                                           point_on_boundary);
 
     // Updating the force of particles in the particle handler
     for (int d = 0; d < dim; ++d)
@@ -128,6 +146,26 @@ protected:
                                rolling_resistance_torque[d];
       }
   }
+
+  /** This function is used to calculate the total force and total torque on
+   * each boundary
+   */
+  void
+  calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
+                                         Tensor<1, dim>     add_force,
+                                         const Point<dim>   point_contact);
+
+  /** This function is used to initialize a map of vectors to zero
+   * with the member class boundary index which has the keys as information
+   */
+  std::map<unsigned int, Tensor<1, dim>>
+  initialize();
+
+  /** This function sums all the forces and torques from all the
+   * MPI processes
+   */
+  void
+  mpi_correction_over_calculation_of_forces_and_torques();
 
   /** This function is used to find the projection of vector_a on
    * vector_b
@@ -157,7 +195,12 @@ protected:
   std::map<types::particle_index, double> effective_coefficient_of_restitution;
   std::map<types::particle_index, double> effective_coefficient_of_friction;
   std::map<types::particle_index, double>
-    effective_coefficient_of_rolling_friction;
+                                         effective_coefficient_of_rolling_friction;
+  std::map<unsigned int, Tensor<1, dim>> force_on_walls;
+  std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
+  bool                                   calculate_force_torque_on_boundary;
+  Point<dim>                             center_mass_container;
+  std::vector<types::boundary_id>        boundary_index;
 };
 
 #endif /* particle_wall_contact_force_h */

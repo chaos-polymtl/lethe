@@ -22,6 +22,8 @@
 
 //#include <deal.II/base/conditional_ostream.h>
 //#include <deal.II/base/function.h>
+#include <core/parameters.h>
+
 #include <deal.II/base/parameter_handler.h>
 
 #include <string>
@@ -226,6 +228,35 @@ namespace Parameters
       } integration_method;
 
       static void
+      declare_parameters(ParameterHandler &prm);
+      void
+      parse_parameters(ParameterHandler &prm);
+    };
+
+    /**
+     * @brief ForceTorqueOnWall - Defines the parameters for the
+     * force and torques calculation on boundaries of the domain.
+     */
+    template <int dim>
+    class ForceTorqueOnWall
+    {
+    public:
+      // Enable force post-processing
+      bool calculate_force_torque;
+
+      // Choosing how the outputs is gonna be displayed
+      Parameters::Verbosity force_torque_verbosity;
+
+      // Output frequency
+      unsigned int output_frequency;
+
+      // Prefix for simulation output
+      std::string force_torque_output_name;
+
+      // Center of mass
+      Point<dim> point_center_mass;
+
+      void
       declare_parameters(ParameterHandler &prm);
       void
       parse_parameters(ParameterHandler &prm);

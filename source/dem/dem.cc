@@ -42,6 +42,8 @@
 #include <dem/velocity_verlet_integrator.h>
 #include <dem/write_checkpoint.h>
 
+#include <deal.II/base/table_handler.h>
+
 #include <deal.II/fe/mapping_q_generic.h>
 
 #include <deal.II/grid/grid_generator.h>
@@ -474,6 +476,14 @@ DEMSolver<dim>::particle_wall_contact_force()
   pw_contact_force_object->calculate_pw_contact_force(
     pw_pairs_in_contact, simulation_control->get_time_step(), momentum, force);
 
+  if (parameters.forces_torques.calculate_force_torque)
+    {
+      forces_boundary_information[simulation_control->get_step_number()] =
+        pw_contact_force_object->get_force();
+      torques_boundary_information[simulation_control->get_step_number()] =
+        pw_contact_force_object->get_torque();
+    }
+
   // Particle-floating wall contact force
   if (parameters.floating_walls.floating_walls_number > 0)
     {
@@ -523,6 +533,18 @@ DEMSolver<dim>::finish_simulation()
               visualization_object.print_xyz(particle_handler, pcout);
             }
         }
+    }
+
+  // Outputting force and torques over boundary
+  if (parameters.forces_torques.calculate_force_torque)
+    {
+      write_forces_torques_output_results(
+        parameters.forces_torques.force_torque_output_name,
+        parameters.forces_torques.output_frequency,
+        triangulation.get_boundary_ids(),
+        simulation_control->get_time_step(),
+        forces_boundary_information,
+        torques_boundary_information);
     }
 }
 
@@ -612,6 +634,8 @@ template <int dim>
 std::shared_ptr<PWContactForce<dim>>
 DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
 {
+  std::vector<types::boundary_id> boundary_index =
+    triangulation.get_boundary_ids();
   if (parameters.model_parameters.pw_contact_force_method ==
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
@@ -620,7 +644,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
         triangulation_cell_diameter,
-        parameters);
+        parameters,
+        boundary_index);
     }
   else if (parameters.model_parameters.pw_contact_force_method ==
            Parameters::Lagrangian::ModelParameters::PWContactForceModel::
@@ -631,7 +656,8 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
         parameters.boundary_motion.boundary_rotational_speed,
         parameters.boundary_motion.boundary_rotational_vector,
         triangulation_cell_diameter,
-        parameters);
+        parameters,
+        boundary_index);
     }
   else
     {
@@ -906,6 +932,16 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
+      if (parameters.forces_torques.calculate_force_torque &&
+          (this_mpi_process == 0) &&
+          (simulation_control->get_step_number() %
+             parameters.forces_torques.output_frequency ==
+           0) &&
+          (parameters.forces_torques.force_torque_verbosity ==
+           Parameters::Verbosity::verbose))
+        write_forces_torques_output_locally<dim>(
+          forces_boundary_information[simulation_control->get_step_number()],
+          torques_boundary_information[simulation_control->get_step_number()]);
 
       if (parameters.restart.checkpoint &&
           simulation_control->get_step_number() %

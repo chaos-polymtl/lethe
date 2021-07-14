@@ -25,6 +25,11 @@
 #include <dem/find_cell_neighbors.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
+#include <dem/localize_contacts.h>
+#include <dem/locate_ghost_particles.h>
+#include <dem/locate_local_particles.h>
+#include <dem/non_uniform_insertion.h>
+#include <dem/output_force_torque_calculation.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_point_line_contact_info_struct.h>
@@ -350,6 +355,11 @@ private:
   std::vector<Tensor<1, dim>> force;
   std::vector<double>         displacement;
   std::vector<double>         MOI;
+
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+    forces_boundary_information;
+  std::map<unsigned int, std::map<unsigned int, Tensor<1, dim>>>
+    torques_boundary_information;
 
   // Information for parallel grid processing
   DoFHandler<dim> background_dh;
