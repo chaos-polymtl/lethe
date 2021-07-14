@@ -73,101 +73,53 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step)
 {
-  (void)time_stepping_method;
-  (void)is_initial_step;
+  double       current_res;
+  double       last_res;
+  bool         first_step      = is_initial_step;
+  unsigned int outer_iteration = 0;
+  last_res                     = 1e6;
+  current_res                  = 1e6;
 
-  // double       current_res;
-  // double       last_res;
-  // bool         first_step      = is_initial_step;
-  // unsigned int outer_iteration = 0;
-  // last_res                     = 1e6;
-  // current_res                  = 1e6;
+  PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  // PhysicsSolver<VectorType> *solver = this->physics_solver;
+  auto &evaluation_point = solver->get_evaluation_point();
+  auto &present_solution = solver->get_present_solution();
+  auto &residual         = solver->get_system_rhs();
 
-  // auto &evaluation_point = solver->get_evaluation_point();
-  // auto &present_solution = solver->get_present_solution();
 
-  // while ((current_res > this->params.tolerance) &&
-  //        outer_iteration < this->params.max_iterations)
-  //   {
-  //     evaluation_point = present_solution;
+  typename SUNDIALS::KINSOL<VectorType>::AdditionalData additional_data;
+  additional_data.function_tolerance = this->params.tolerance;
 
-  //     solver->assemble_matrix_and_rhs(time_stepping_method);
+  SUNDIALS::KINSOL<VectorType> nonlinear_solver(additional_data);
 
-  //     if (outer_iteration == 0)
-  //       {
-  //         auto &system_rhs = solver->get_system_rhs();
-  //         current_res      = system_rhs.l2_norm();
-  //         last_res         = current_res;
-  //       }
+  nonlinear_solver.reinit_vector = [&](VectorType &x) {
+    x.reinit(present_solution);
+  };
 
-  //     if (this->params.verbosity != Parameters::Verbosity::quiet)
-  //       {
-  //         solver->pcout << "Newton iteration: " << outer_iteration
-  //                       << "  - Residual:  " << current_res << std::endl;
-  //       }
+  nonlinear_solver.residual = [&](const VectorType &evaluation_point,
+                                  VectorType &      residual) {
+    solver->assemble_rhs(time_stepping_method);
 
-  //     solver->solve_linear_system(first_step);
-  //     double last_alpha_res = current_res;
+    return 0;
+  };
 
-  //     for (double alpha = 1.0; alpha > 1e-1; alpha *= 0.5)
-  //       {
-  //         auto &local_evaluation_point =
-  //         solver->get_local_evaluation_point(); auto &newton_update =
-  //         solver->get_newton_update(); local_evaluation_point       =
-  //         present_solution; local_evaluation_point.add(alpha, newton_update);
-  //         solver->apply_constraints();
-  //         evaluation_point = local_evaluation_point;
-  //         solver->assemble_rhs(time_stepping_method);
+  nonlinear_solver.setup_jacobian = [&](const VectorType &present_solution,
+                                        const VectorType & /*current_f*/) {
+    // TODO Replace the function by assemble matrix only
+    solver->assemble_matrix_and_rhs(time_stepping_method);
 
-  //         auto &system_rhs = solver->get_system_rhs();
-  //         current_res      = system_rhs.l2_norm();
+    return 0;
+  };
 
-  //         if (this->params.verbosity != Parameters::Verbosity::quiet)
-  //           {
-  //             solver->pcout << "\t\talpha = " << std::setw(6) << alpha
-  //                           << std::setw(0) << " res = "
-  //                           <<
-  //                           std::setprecision(this->params.display_precision)
-  //                           << current_res << std::endl;
-  //           }
+  nonlinear_solver.solve_with_jacobian = [&](const VectorType &residual,
+                                             VectorType &      present_solution,
+                                             const double      tolerance) {
+    solver->solve_linear_system(first_step);
 
-  //         // If it's not the first iteration of alpha check if the residual
-  //         is
-  //         // smaller then the last alpha iteration. If it's not smaller we
-  //         fall
-  //         // back to the last alpha iteration.
-  //         if (current_res > last_alpha_res and alpha < 0.99)
-  //           {
-  //             alpha                  = 2 * alpha;
-  //             local_evaluation_point = present_solution;
-  //             local_evaluation_point.add(alpha, newton_update);
-  //             solver->apply_constraints();
-  //             evaluation_point = local_evaluation_point;
+    return 0;
+  };
 
-  //             if (this->params.verbosity != Parameters::Verbosity::quiet)
-  //               {
-  //                 solver->pcout
-  //                   << "\t\talpha value was kept at alpha = " << alpha
-  //                   << " since alpha = " << alpha / 2
-  //                   << " increased the residual" << std::endl;
-  //               }
-  //             current_res = last_alpha_res;
-  //             break;
-  //           }
-  //         if (current_res < this->params.step_tolerance * last_res ||
-  //             last_res < this->params.tolerance)
-  //           {
-  //             break;
-  //           }
-  //         last_alpha_res = current_res;
-  //       }
-
-  //     present_solution = evaluation_point;
-  //     last_res         = current_res;
-  //     ++outer_iteration;
-  //   }
+  nonlinear_solver.solve(present_solution);
 }
 
 #endif
