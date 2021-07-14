@@ -163,10 +163,10 @@ GDNavierStokesSolver<dim>::assembleGD()
     alpha_bdf = bdf_coefficients(3, time_steps);
 
   // Values at previous time step for backward Euler scheme
-  std::vector<Tensor<1, dim>> p1_velocity_values(n_q_points);
-  std::vector<Tensor<1, dim>> p2_velocity_values(n_q_points);
-  std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
-  std::vector<Tensor<1, dim>> p4_velocity_values(n_q_points);
+  std::vector<std::vector<Tensor<1, dim>>> velocity_values = { std::vector<Tensor<1, dim>>(n_q_points),
+                                                                std::vector<Tensor<1, dim>>(n_q_points),
+                                                                std::vector<Tensor<1, dim>>(n_q_points),
+                                                                std::vector<Tensor<1, dim>>(n_q_points) };
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
@@ -190,17 +190,17 @@ GDNavierStokesSolver<dim>::assembleGD()
           if (scheme !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             fe_values[velocities].get_function_values(
-              this->previous_solutions[0], p1_velocity_values);
+              this->previous_solutions[0], velocity_values[0]);
 
           if (scheme ==
                 Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
               scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(
-              this->previous_solutions[1], p2_velocity_values);
+              this->previous_solutions[1], velocity_values[1]);
 
           if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(
-              this->previous_solutions[2], p3_velocity_values);
+              this->previous_solutions[2], velocity_values[2]);
 
           if (l_forcing_function)
             l_forcing_function->vector_value_list(
@@ -275,24 +275,24 @@ GDNavierStokesSolver<dim>::assembleGD()
                       Parameters::SimulationControl::TimeSteppingMethod::bdf1)
                     local_rhs(i) -=
                       alpha_bdf[0] *
-                      (present_velocity_values[q] - p1_velocity_values[q]) *
+                      (present_velocity_values[q] - velocity_values[0][q]) *
                       phi_u[i] * fe_values.JxW(q);
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i])) *
+                       alpha_bdf[1] * (velocity_values[0][q] * phi_u[i]) +
+                       alpha_bdf[2] * (velocity_values[1][q] * phi_u[i])) *
                       fe_values.JxW(q);
 
                   if (scheme ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     local_rhs(i) -=
                       (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[1] * (p1_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[2] * (p2_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[3] * (p3_velocity_values[q] * phi_u[i])) *
+                       alpha_bdf[1] * (velocity_values[0][q] * phi_u[i]) +
+                       alpha_bdf[2] * (velocity_values[1][q] * phi_u[i]) +
+                       alpha_bdf[3] * (velocity_values[2][q] * phi_u[i])) *
                       fe_values.JxW(q);
                 }
             }
