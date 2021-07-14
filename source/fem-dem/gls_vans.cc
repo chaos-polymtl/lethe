@@ -609,7 +609,7 @@ GLSVANSSolver<dim>::first_iteration()
 
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
       this->percolate_time_vectors_fd();
       percolate_void_fraction();
 
@@ -626,7 +626,7 @@ GLSVANSSolver<dim>::first_iteration()
 
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf2, false);
 
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
     }
@@ -649,7 +649,7 @@ GLSVANSSolver<dim>::first_iteration()
 
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
       this->percolate_time_vectors_fd();
       percolate_void_fraction();
 
@@ -663,7 +663,7 @@ GLSVANSSolver<dim>::first_iteration()
 
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf1, false);
       this->percolate_time_vectors_fd();
       percolate_void_fraction();
 
@@ -678,7 +678,7 @@ GLSVANSSolver<dim>::first_iteration()
 
 
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false, true);
+        Parameters::SimulationControl::TimeSteppingMethod::bdf3, false);
       this->simulation_control->set_suggested_time_step(timeParameters.dt);
     }
 }
@@ -694,7 +694,7 @@ GLSVANSSolver<dim>::iterate()
   this->forcing_function->set_time(
     this->simulation_control->get_current_time());
   PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
-    this->simulation_parameters.simulation_control.method, false, false);
+    this->simulation_parameters.simulation_control.method, false);
 }
 
 template <int dim>

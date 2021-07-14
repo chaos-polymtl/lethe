@@ -53,16 +53,11 @@ public:
    *
    * @param is_initial_step Boolean variable that controls which constraints are
    * going to be applied to the equations
-   *
-   * @param force_matrix_renewal Boolean variable that controls if the Newton non-linear
-   * solver will force the re-caculation of the jacobian matrix and the
-   * reconstruction of the preconditioner at every iteration.
    */
   void
   solve(const Parameters::SimulationControl::TimeSteppingMethod
                    time_stepping_method,
-        const bool is_initial_step,
-        const bool force_matrix_renewal = true) override;
+        const bool is_initial_step) override;
 };
 
 template <typename VectorType>
@@ -76,8 +71,7 @@ template <typename VectorType>
 void
 KinsolNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step,
-  const bool)
+  const bool                                              is_initial_step)
 {
   (void)time_stepping_method;
   (void)is_initial_step;

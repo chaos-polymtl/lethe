@@ -719,9 +719,7 @@ GDNavierStokesSolver<dim>::set_initial_condition_fd(
         this->simulation_parameters.initial_condition->viscosity;
       PhysicsSolver<TrilinosWrappers::MPI::BlockVector>::
         solve_non_linear_system(
-          Parameters::SimulationControl::TimeSteppingMethod::steady,
-          false,
-          true);
+          Parameters::SimulationControl::TimeSteppingMethod::steady, false);
       this->finish_time_step_fd();
       this->simulation_parameters.physical_properties.viscosity = viscosity;
     }

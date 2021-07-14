@@ -90,8 +90,7 @@ public:
   solve_non_linear_system(
     const Parameters::SimulationControl::TimeSteppingMethod
                time_stepping_method,
-    const bool first_iteration,
-    const bool force_matrix_renewal);
+    const bool first_iteration);
 
   virtual void
   apply_constraints()
@@ -154,15 +153,12 @@ template <typename VectorType>
 void
 PhysicsSolver<VectorType>::solve_non_linear_system(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              first_iteration,
-  const bool                                              force_matrix_renewal)
+  const bool                                              first_iteration)
 {
   // BB IMPORTANT
   // for (unsigned int iphys = 0; iphys < 1; iphys++)
   {
-    this->non_linear_solver->solve(time_stepping_method,
-                                   first_iteration,
-                                   force_matrix_renewal);
+    this->non_linear_solver->solve(time_stepping_method, first_iteration);
   }
 }
 #endif

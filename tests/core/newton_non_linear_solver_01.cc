@@ -32,7 +32,7 @@ test()
   deallog << "Solving non-linear system " << std::endl;
   // Solve the non-linear system of equation
   solver->solve_non_linear_system(
-    Parameters::SimulationControl::TimeSteppingMethod::steady, true, true);
+    Parameters::SimulationControl::TimeSteppingMethod::steady, true);
 
   auto &present_solution = solver->get_present_solution();
   deallog << "The final solution is : " << present_solution[0] << " "
