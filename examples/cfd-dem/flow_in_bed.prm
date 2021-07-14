@@ -93,10 +93,6 @@ subsection boundary conditions
             set Function expression = 0
         end
     end
-#   subsection bc 2
-#     set id		   = 2
-#     set type              = slip
-#    end
 end
 
 # --------------------------------------------------
@@ -104,20 +100,7 @@ end
 #---------------------------------------------------
 subsection source term
   set enable                 = false
-    subsection xyz
-            set Function expression = 0; 0; 0; 0
-    end
 end
-
-# --------------------------------------------------
-# Analytical Solution
-#---------------------------------------------------
-subsection analytical solution
-  set enable                 = false
-	subsection uvwp
-	set Function expression =  if(x >= -0.05 && x<0.05, 0.5 , 1.42857142857)  ; 0 ; 0; 0
-	end
-    end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
