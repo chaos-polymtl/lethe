@@ -314,10 +314,10 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                                                         1);
   for (unsigned int i = 0; i < dim + 1; ++i)
     velocity_gradients_component[i].resize(ib_coef.size());
-  Tensor<2, dim> fluid_stress;
-  Tensor<2, dim> fluid_pressure;
-  Tensor<2, dim> fluide_stress_at_ib;
-  DoFHandler<dim - 1, dim> local_face_dof_handler;
+  Tensor<2, dim>              fluid_stress;
+  Tensor<2, dim>              fluid_pressure;
+  Tensor<2, dim>              fluide_stress_at_ib;
+  DoFHandler<dim - 1, dim>    local_face_dof_handler;
   Triangulation<dim - 1, dim> local_face_projection_triangulation;
 
   std::vector<Point<dim>>        vertices_of_face_projection(vertices_per_face);
@@ -414,7 +414,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                       SphericalManifold<dim - 1, dim> sphere_manifold(
                         particles[p].position);
-                      local_face_projection_triangulation=Triangulation<dim-1,dim>();
+                      local_face_projection_triangulation =
+                        Triangulation<dim - 1, dim>();
                       // Create a dof handler that contains the triangulation of
                       // the projection of the face on the IB. This create the
                       // surface cell on the IB
