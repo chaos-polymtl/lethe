@@ -152,8 +152,8 @@ protected:
    */
   void
   calculate_force_and_torque_on_boundary(const unsigned int boundary_id,
-                                              Tensor<1, dim>     add_force,
-                                              const Point<dim>   point_contact);
+                                         Tensor<1, dim>     add_force,
+                                         const Point<dim>   point_contact);
 
   /** This function is used to initialize a map of vectors to zero
    * with the member class boundary index which has the keys as information

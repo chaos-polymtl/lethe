@@ -22,6 +22,8 @@
 
 //#include <deal.II/base/conditional_ostream.h>
 //#include <deal.II/base/function.h>
+#include <core/parameters.h>
+
 #include <deal.II/base/parameter_handler.h>
 
 #include <string>
@@ -243,11 +245,7 @@ namespace Parameters
       bool calculate_force_torque;
 
       // Choosing how the outputs is gonna be displayed
-      enum class Verbosity
-      {
-        quiet,
-        verbose
-      } force_torque_verbosity;
+      Parameters::Verbosity force_torque_verbosity;
 
       // Output frequency
       unsigned int output_frequency;

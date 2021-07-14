@@ -631,17 +631,15 @@ namespace Parameters
       calculate_force_torque    = prm.get_bool("calculation");
       const std::string verbose = prm.get("verbosity");
       if (verbose == "quiet")
-        force_torque_verbosity = Verbosity::quiet;
+        force_torque_verbosity = Parameters::Verbosity::quiet;
       else if (verbose == "verbose")
-        force_torque_verbosity = Verbosity::verbose;
+        force_torque_verbosity = Parameters::Verbosity::verbose;
       else
         {
           throw(std::runtime_error("Invalid verbosity choice "));
         }
-      force_torque_output_name =
-        prm.get("filename");
-      output_frequency =
-        prm.get_integer("output frequency");
+      force_torque_output_name = prm.get("filename");
+      output_frequency         = prm.get_integer("output frequency");
       prm.enter_subsection("center of mass coordinate");
       point_center_mass[0] = prm.get_double("x");
       point_center_mass[1] = prm.get_double("y");
