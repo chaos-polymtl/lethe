@@ -18,8 +18,9 @@
  */
 
 #include <deal.II/distributed/tria.h>
-
 #include <deal.II/particles/particle_handler.h>
+
+#include <dem/dem_properties.h>
 
 #include <iostream>
 #include <vector>

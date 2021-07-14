@@ -1,4 +1,3 @@
-#include <dem/dem_properties.h>
 #include <dem/lagrangian_post_processing.h>
 
 
@@ -37,8 +36,8 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
   std::vector<double> granular_temperature_average;
   granular_temperature_average.reserve(triangulation.n_cells());
 
-  double       granular_temperature_cell = 0;
-  unsigned int particles_cell_number     = 0;
+  double       granular_temperature_cell(0);
+  unsigned int particles_cell_number(0);
 
   // Iterating through the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -59,10 +58,8 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
                                                           particle_handler);
 
               // Initializing velocity fluctuations
-              Tensor<1, dim> cell_velocity_fluctuation_squared_sum;
-              cell_velocity_fluctuation_squared_sum = 0;
-              Tensor<1, dim> cell_velocity_fluctuation_squared_average;
-              cell_velocity_fluctuation_squared_average = 0;
+              Tensor<1, dim> cell_velocity_fluctuation_squared_sum = Tensor<1,dim>();
+              Tensor<1, dim> cell_velocity_fluctuation_squared_average = Tensor<1,dim>();
 
               for (typename Particles::ParticleHandler<
                      dim>::particle_iterator_range::iterator
@@ -73,22 +70,14 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
                   auto &particle_properties =
                     particles_in_cell_iterator->get_properties();
 
-                  cell_velocity_fluctuation_squared_sum[0] +=
-                    (particle_properties[DEM::PropertiesIndex::v_x] -
-                     velocity_in_cell_average[0]) *
-                    (particle_properties[DEM::PropertiesIndex::v_x] -
-                     velocity_in_cell_average[0]);
-                  cell_velocity_fluctuation_squared_sum[1] +=
-                    (particle_properties[DEM::PropertiesIndex::v_y] -
-                     velocity_in_cell_average[1]) *
-                    (particle_properties[DEM::PropertiesIndex::v_y] -
-                     velocity_in_cell_average[1]);
-                  if (dim == 3)
-                    cell_velocity_fluctuation_squared_sum[2] +=
-                      (particle_properties[DEM::PropertiesIndex::v_z] -
-                       velocity_in_cell_average[2]) *
-                      (particle_properties[DEM::PropertiesIndex::v_z] -
-                       velocity_in_cell_average[2]);
+                  for (int d = 0; d < dim; ++d)
+                    {
+                      cell_velocity_fluctuation_squared_sum[d] +=
+                    (particle_properties[DEM::PropertiesIndex::v_x+d] -
+                     velocity_in_cell_average[d]) *
+                    (particle_properties[DEM::PropertiesIndex::v_x+d] -
+                     velocity_in_cell_average[d]);
+                    }
 
                   particles_cell_number++;
                 }
@@ -116,11 +105,9 @@ LagrangianPostProcessing<dim>::calculate_cell_average_particles_velocity(
   const typename parallel::distributed::Triangulation<dim>::cell_iterator &cell,
   const Particles::ParticleHandler<dim> &particle_handler)
 {
-  Tensor<1, dim> velocity_cell_sum;
-  velocity_cell_sum = 0;
-  Tensor<1, dim> velocity_cell_average;
-  velocity_cell_average              = 0;
-  unsigned int particles_cell_number = 0;
+  Tensor<1, dim> velocity_cell_sum = Tensor<1,dim>();
+  Tensor<1, dim> velocity_cell_average = Tensor<1,dim>();
+  unsigned int particles_cell_number(0);
 
   // Looping through all the particles in the cell
   // Particles in the cell
@@ -140,13 +127,10 @@ LagrangianPostProcessing<dim>::calculate_cell_average_particles_velocity(
           auto &particle_properties =
             particles_in_cell_iterator->get_properties();
 
-          velocity_cell_sum[0] +=
-            particle_properties[DEM::PropertiesIndex::v_x];
-          velocity_cell_sum[1] +=
-            particle_properties[DEM::PropertiesIndex::v_y];
-          if (dim == 3)
-            velocity_cell_sum[2] +=
-              particle_properties[DEM::PropertiesIndex::v_z];
+          for (int d = 0; d < dim; ++d)
+            {
+              velocity_cell_sum[d] += particle_properties[DEM::PropertiesIndex::v_x+d];
+            }
 
           particles_cell_number++;
         }
