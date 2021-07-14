@@ -489,7 +489,6 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                             interpolation_points[j - 1]);
                                     }
 
-
                                   fluide_stress_at_ib = 0;
 
                                   // Create a quadrature that is based on the IB
@@ -780,7 +779,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
               fe_values[velocities].get_function_gradients(
                 evaluation_point, present_velocity_gradients);
 
-
               // Retrieve the effective "connectivity matrix" for this element
               cell->get_dof_indices(local_dof_indices);
 
@@ -793,7 +791,6 @@ GLSSharpNavierStokesSolver<dim>::calculate_L2_error_particles()
                     trace(present_velocity_gradients[q]);
                   total_velocity_divergence +=
                     present_velocity_divergence * fe_values.JxW(q);
-
 
                   // Find the values of x and u_h (the finite element solution)
                   // at the quadrature points
@@ -927,14 +924,10 @@ GLSSharpNavierStokesSolver<dim>::integrate_particles()
             }
           particles[p].velocity_iter = particles[p].velocity;
 
-
-
           particles[p].position =
             particles[p].last_position +
             (particles[p].velocity * 0.5 + particles[p].last_velocity * 0.5) *
               dt;
-
-
 
           // For the rotation velocity : same logic as the velocity.
           if (dim == 2)
