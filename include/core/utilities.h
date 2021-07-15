@@ -30,11 +30,6 @@
 
 using namespace dealii;
 
-template <int dim>
-typename DoFHandler<dim>::active_cell_iterator
-find_cell_around_point_with_tree(const DoFHandler<dim> &dof_handler,
-                                 Point<dim>             point);
-
 
 // Utility function to create tables from vectors of scalars/tensors as
 // dependent or independent variables.

@@ -22,6 +22,7 @@
 #include <core/sdirk.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+#include <core/lethegridtools.h>
 
 #include <solvers/gls_sharp_navier_stokes.h>
 #include <solvers/navier_stokes_vof_assemblers.h>
@@ -142,7 +143,7 @@ GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(
   // The cell is not found near the initial cell so we use the cell tree
   // algorithm instead (much slower).
   std::cout << "Cell not found around " << point << std::endl;
-  return find_cell_around_point_with_tree(this->dof_handler, point);
+  return LetheGridTools::find_cell_around_point_with_tree(this->dof_handler, point);
 }
 
 template <int dim>
@@ -1370,10 +1371,11 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   // impose pressure reference in each of the particle
   for (unsigned int p = 0; p < particles.size(); ++p)
     {
+      Point<dim> pressure_reference_location=particles[p].pressure_location +
+                                             particles[p].position;
       const auto &cell =
-        find_cell_around_point_with_tree(this->dof_handler,
-                                         particles[p].pressure_location +
-                                           particles[p].position);
+        LetheGridTools::find_cell_around_point_with_tree(this->dof_handler,
+                                                         pressure_reference_location);
 
       if (cell->is_locally_owned())
         {
