@@ -88,6 +88,7 @@ private:
   void
   force_on_ib();
 
+
   /**
    * @brief
    * Modify the system matrix to impose IB condition using the sharp_edge
@@ -188,6 +189,11 @@ private:
            std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
 
+  bool
+  cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
+                std::map<types::global_dof_index, Point<dim>> &support_points,
+                unsigned int                                   p);
+
   /**
    * @brief
    * Return the cell around a point based on a initial guess of a closed cell
@@ -202,14 +208,16 @@ private:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     Point<dim>                                            point);
 
+
+
   /**
-  * @brief
-  Return a bool that describes  if a cell contains a specific point
-  *
-  * @param cell , The initial cell for which we want to check if the point is inside.
-  *
-  * @param point, The point that we wish to check
-  */
+* @brief
+Return a bool that describes  if a cell contains a specific point
+*
+* @param cell , The initial cell for which we want to check if the point is inside.
+*
+* @param point, The point that we wish to check
+*/
   bool
   point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,
                     Point<dim> point);
@@ -252,12 +260,13 @@ private:
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>
     cut_cells_map;
-
   /*
    * This map is used to keep in memory which DOFs already have an IB equation
    * imposed on them in order to avoid writing multiple time the same equation.
    */
-  std::map<unsigned int, bool> ib_done;
+  std::map<unsigned int,
+           std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
+    ib_done;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
