@@ -91,7 +91,7 @@ private:
   solve_L2_system_void_fraction();
 
   void
-  volume_conservation();
+  global_mass_conservation();
 
   virtual void
   iterate() override;
@@ -178,12 +178,11 @@ private:
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   AffineConstraints<double>                          void_fraction_constraints;
 
-  const bool   PSPG               = true;
-  const bool   SUPG               = true;
-  const bool   DCDD               = true;
-  const bool   grad_div           = false;
-  const bool   full_stress_tensor = false;
-  const double GLS_u_scale        = 1;
+  Parameters::SimulationControl::TimeSteppingMethod scheme;
+
+  const bool   PSPG        = true;
+  const bool   SUPG        = true;
+  const double GLS_u_scale = 1;
 };
 
 #endif

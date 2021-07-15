@@ -163,10 +163,11 @@ GDNavierStokesSolver<dim>::assembleGD()
     alpha_bdf = bdf_coefficients(3, time_steps);
 
   // Values at previous time step for backward Euler scheme
-  std::vector<std::vector<Tensor<1, dim>>> velocity_values = { std::vector<Tensor<1, dim>>(n_q_points),
-                                                                std::vector<Tensor<1, dim>>(n_q_points),
-                                                                std::vector<Tensor<1, dim>>(n_q_points),
-                                                                std::vector<Tensor<1, dim>>(n_q_points) };
+  std::vector<std::vector<Tensor<1, dim>>> velocity_values = {
+    std::vector<Tensor<1, dim>>(n_q_points),
+    std::vector<Tensor<1, dim>>(n_q_points),
+    std::vector<Tensor<1, dim>>(n_q_points),
+    std::vector<Tensor<1, dim>>(n_q_points)};
 
   for (const auto &cell : this->dof_handler.active_cell_iterators())
     {
