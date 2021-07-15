@@ -1,0 +1,6 @@
+warming up a viscous fluid
+
+This example can be solved using the gls_navier_stokes_2d solver. It demonstrates handling of multiple physics, here fluid dynamic and heat transfer. Results are compared to the analytical solution.
+-------------
+A description of the test case can be found at the following link :
+https://github.com/lethe-cfd/lethe/wiki/Warming-up-a-viscous-fluid

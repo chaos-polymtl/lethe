@@ -1,7 +1,7 @@
 
-#include <core/parameters_multiphysics.h>
-
 #include <deal.II/base/parameter_handler.h>
+
+#include <core/parameters_multiphysics.h>
 
 
 
@@ -29,6 +29,12 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Free surface calculation <true|false>");
+
+    // subparameter for heat_transfer
+    prm.declare_entry("viscous dissipation",
+                      "false",
+                      Patterns::Bool(),
+                      "Viscous thermic dissipation calculation <true|false>");
   }
   prm.leave_subsection();
 }
@@ -42,6 +48,9 @@ Parameters::Multiphysics::parse_parameters(ParameterHandler &prm)
     heat_transfer  = prm.get_bool("heat transfer");
     tracer         = prm.get_bool("tracer");
     free_surface   = prm.get_bool("free surface");
+
+    // subparameter for heat_transfer
+    viscous_dissipation = prm.get_bool("viscous dissipation");
   }
   prm.leave_subsection();
 }

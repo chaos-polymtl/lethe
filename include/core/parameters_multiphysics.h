@@ -39,6 +39,9 @@ namespace Parameters
     bool tracer;
     bool free_surface;
 
+    // subparameter for heat_transfer
+    bool viscous_dissipation;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
