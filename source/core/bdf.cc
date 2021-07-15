@@ -73,3 +73,18 @@ bdf_coefficients(unsigned int p, const std::vector<double> dt)
     }
   return alpha;
 }
+
+Vector<double>
+bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
+                 const std::vector<double>                         dt)
+{
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+    return bdf_coefficients(1, dt);
+
+  else if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    return bdf_coefficients(2, dt);
+
+  else // if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    return bdf_coefficients(3, dt);
+}

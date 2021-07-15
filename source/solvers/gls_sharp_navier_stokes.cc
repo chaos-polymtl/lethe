@@ -1765,11 +1765,11 @@ GLSSharpNavierStokesSolver<dim>::assembleGLS()
   // in 2D.
   Tensor<1, dim> omega_vector;
 
-  double omega_z  = this->simulation_parameters.velocitySource.omega_z;
-  omega_vector[0] = this->simulation_parameters.velocitySource.omega_x;
-  omega_vector[1] = this->simulation_parameters.velocitySource.omega_y;
+  double omega_z  = this->simulation_parameters.velocity_sources.omega_z;
+  omega_vector[0] = this->simulation_parameters.velocity_sources.omega_x;
+  omega_vector[1] = this->simulation_parameters.velocity_sources.omega_y;
   if (dim == 3)
-    omega_vector[2] = this->simulation_parameters.velocitySource.omega_z;
+    omega_vector[2] = this->simulation_parameters.velocity_sources.omega_z;
 
   std::vector<double>         div_phi_u(dofs_per_cell);
   std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
@@ -2320,7 +2320,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
       integrate_particles();
       generate_cut_cells_map();
     }
-  if (this->simulation_parameters.velocitySource.type ==
+  if (this->simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
@@ -2385,7 +2385,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
           "The time stepping method provided is not supported by this solver");
     }
 
-  else if (this->simulation_parameters.velocitySource.type ==
+  else if (this->simulation_parameters.velocity_sources.type ==
            Parameters::VelocitySource::VelocitySourceType::srf)
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
@@ -2461,7 +2461,7 @@ void
 GLSSharpNavierStokesSolver<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  if (this->simulation_parameters.velocitySource.type ==
+  if (this->simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::none)
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
@@ -2525,7 +2525,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_rhs(
         throw std::runtime_error(
           "The time stepping method provided is not supported by this solver");
     }
-  if (this->simulation_parameters.velocitySource.type ==
+  if (this->simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_rhs");

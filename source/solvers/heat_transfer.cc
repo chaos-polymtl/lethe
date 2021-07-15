@@ -101,7 +101,7 @@ HeatTransfer<dim>::assemble_system(
     }
 
 
-  auto &source_term = simulation_parameters.sourceTerm->heat_transfer_source;
+  auto &source_term = simulation_parameters.source_term->heat_transfer_source;
   source_term.set_time(simulation_control->get_current_time());
 
   FEValues<dim> fe_values_ht(*fe,

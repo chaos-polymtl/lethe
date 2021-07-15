@@ -11,16 +11,14 @@
  * The full text of the license can be found in the file LICENSE at
  * the top level of the Lethe distribution.
  *
- * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019-
- */
+ * ---------------------------------------------------------------------*/
 
 #ifndef lethe_gls_navier_stokes_h
 #define lethe_gls_navier_stokes_h
 
+#include <solvers/copy_data.h>
 #include <solvers/navier_stokes_base.h>
+#include <solvers/navier_stokes_scratch_data.h>
 
 #include <deal.II/lac/sparse_matrix.h>
 #include <deal.II/lac/trilinos_precondition.h>
@@ -68,6 +66,60 @@ protected:
   set_solution_vector(double value);
 
 protected:
+  /*
+   *  Assemble the matrix associated with the solver
+   */
+  void
+  assemble_system_matrix();
+
+  /*
+   *  Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
+
+
+  /*
+   * Assemble the local matrix for a given cell
+   */
+  void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+
+  /*
+   * Assemble the local rhs for a given cell
+   */
+  void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+
+  /*
+   * Sets up the vector of assembler functions
+   */
+  void
+  setup_assemblers();
+
+
+  /*
+   * Copy local cell information to global matrix
+   */
+
+  void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+
+  /*
+   * Copy local cell rhs information to global rhs
+   */
+
+  void
+  copy_local_rhs_to_global_rhs(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme,
             Parameters::VelocitySource::VelocitySourceType    velocity_source>

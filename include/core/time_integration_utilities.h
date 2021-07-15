@@ -61,43 +61,6 @@ is_sdirk3(const Parameters::SimulationControl::TimeSteppingMethod method)
     method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33);
 }
 
-/**
- * @brief Determines if this is the first step of an sdirk method
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk_step1(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1);
-}
-
-/**
- * @brief Determines if this is the second step of an sdirk method
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk_step2(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
-    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2);
-}
-
-/**
- * @brief Determines if this is the third step of an sdirk method
- *
- * @param method A time integration method
- */
-inline bool
-is_sdirk_step3(const Parameters::SimulationControl::TimeSteppingMethod method)
-{
-  return (method ==
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3);
-}
 
 /**
  * @brief Determines if the time integration method is within the bdf-1 family
