@@ -82,9 +82,9 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
-  auto &evaluation_point = solver->get_evaluation_point();
-  auto &present_solution = solver->get_present_solution();
-  auto &residual         = solver->get_system_rhs();
+  VectorType &evaluation_point = solver->get_evaluation_point();
+  VectorType &present_solution = solver->get_present_solution();
+  VectorType &residual         = solver->get_system_rhs();
 
 
   typename SUNDIALS::KINSOL<VectorType>::AdditionalData additional_data;
@@ -94,6 +94,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
 
   nonlinear_solver.reinit_vector = [&](VectorType &x) {
     x.reinit(present_solution);
+    std::cout<<present_solution.size()<<std::endl;
   };
 
   nonlinear_solver.residual = [&](const VectorType &evaluation_point,
