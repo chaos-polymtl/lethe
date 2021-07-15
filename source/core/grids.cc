@@ -128,6 +128,11 @@ attach_grid_to_triangulation(
     throw std::runtime_error(
       "Unsupported mesh type - mesh will not be created");
 
+  // Translate the mesh
+  if (mesh_parameters.translate)
+    throw std::runtime_error(
+      "Main grid can't be moved: the solid mesh must be moved instead. Grid will not be moved.");
+
 
   // Setup periodic boundary conditions
   for (unsigned int i_bc = 0; i_bc < boundary_conditions.size; ++i_bc)
