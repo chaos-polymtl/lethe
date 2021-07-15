@@ -19,8 +19,8 @@
 
 #include <dem/dem_solver_parameters.h>
 
-#include <deal.II/base/table_handler.h>
 #include <deal.II/base/mpi.h>
+#include <deal.II/base/table_handler.h>
 
 #ifndef lethe_output_force_torque_calculation_h
 #  define lethe_output_force_torque_calculation_h

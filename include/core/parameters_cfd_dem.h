@@ -44,6 +44,12 @@ namespace Parameters
     dem
   };
 
+  enum class DragModel
+  {
+    difelice,
+    rong
+  };
+
 
   template <int dim>
   class VoidFraction
@@ -65,7 +71,25 @@ namespace Parameters
     Functions::ParsedFunction<dim> void_fraction;
     bool                           read_dem;
     std::string                    dem_file_name;
+    double                         l2_smoothing_factor;
+    double                         l2_lower_bound;
+    double                         l2_upper_bound;
   };
+
+  struct CFDDEM
+  {
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+
+    bool      shock_capturing;
+    bool      grad_div;
+    bool      full_stress_tensor;
+    double    reference_velocity;
+    DragModel drag_model;
+  };
+
 
 
 } // namespace Parameters
