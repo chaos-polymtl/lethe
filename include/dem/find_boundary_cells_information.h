@@ -104,6 +104,18 @@ public:
     return boundary_cells_for_floating_walls;
   }
 
+  /**
+   * Carries out updating the boundary information (point on boundary face and
+   * its normal vector) after moving the grid.
+   *
+   * @param updated_boundary_points_and_normal_vectors Normal vector and a point
+   * on the boundary faces which are updated after motion of the grid
+   */
+  void
+  update_boundary_info_after_grid_motion(
+    std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+      &updated_boundary_points_and_normal_vectors);
+
 private:
   /**
    * Loops over all the cells to find boundary cells, find the boundary faces of
@@ -184,6 +196,13 @@ private:
   // Structure that contains the boundary cells faces
   std::vector<typename Triangulation<dim>::active_cell_iterator>
     boundary_cells_with_faces;
+
+  // A map that contains updated points on boundaries and normal vectors of the
+  // boundary faces. This container is used when the grid is moving. We use this
+  // vector to update the boundary points and normal vectors in particle-wall
+  // contact list.
+  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+    updated_boundary_points_and_normal_vectors;
 };
 
 #endif /* find_boundary_cells_information_h */
