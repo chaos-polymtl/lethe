@@ -68,6 +68,7 @@ test()
   param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
   param->solid_mesh.initial_refinement = 3;
   param->solid_mesh.simplex            = false;
+  param->solid_mesh.translate          = false;
 
   double time_step = 0.01;
   param->solid_velocity.declare_parameters(prm, 3);
