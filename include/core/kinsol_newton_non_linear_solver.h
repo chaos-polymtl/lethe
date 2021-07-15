@@ -73,34 +73,30 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step)
 {
-  double       current_res;
-  double       last_res;
   bool         first_step      = is_initial_step;
-  unsigned int outer_iteration = 0;
-  last_res                     = 1e6;
-  current_res                  = 1e6;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
   VectorType &evaluation_point = solver->get_evaluation_point();
   VectorType &present_solution = solver->get_present_solution();
-  VectorType &residual         = solver->get_system_rhs();
 
+  evaluation_point = present_solution;
 
   typename SUNDIALS::KINSOL<VectorType>::AdditionalData additional_data;
   additional_data.function_tolerance = this->params.tolerance;
-
+  additional_data.function_tolerance = this->params.max_iterations;
   SUNDIALS::KINSOL<VectorType> nonlinear_solver(additional_data);
 
   nonlinear_solver.reinit_vector = [&](VectorType &x) {
     x.reinit(present_solution);
-    std::cout<<present_solution.size()<<std::endl;
   };
 
   nonlinear_solver.residual = [&](const VectorType &evaluation_point,
                                   VectorType &      residual) {
+    solver->apply_constraints();
     solver->assemble_rhs(time_stepping_method);
-
+    auto &present_residual = solver->get_system_rhs();
+    residual = present_residual;
     return 0;
   };
 
@@ -108,15 +104,15 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
                                         const VectorType & /*current_f*/) {
     // TODO Replace the function by assemble matrix only
     solver->assemble_matrix_and_rhs(time_stepping_method);
-
     return 0;
   };
 
-  nonlinear_solver.solve_with_jacobian = [&](const VectorType &residual,
+  nonlinear_solver.solve_with_jacobian = [&](const VectorType &/* residual */,
                                              VectorType &      present_solution,
-                                             const double      tolerance) {
+                                             const double      /* tolerance */) {
     solver->solve_linear_system(first_step);
-
+    auto &temp_solution = solver->get_present_solution();
+    present_solution = temp_solution;
     return 0;
   };
 
