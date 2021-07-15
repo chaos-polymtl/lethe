@@ -190,6 +190,7 @@ LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
         for(unsigned int i=0;i<GeometryInfo<dim>::vertices_per_cell;++i){
             if(cell->point_inside(cell_iter->vertex(i))){
                 cells_inside.push_back(cell_iter);
+                break;
             }
         }
     }
