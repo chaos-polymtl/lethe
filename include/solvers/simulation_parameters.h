@@ -26,7 +26,6 @@
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/parameters_multiphysics.h>
-
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/source_terms.h>
@@ -58,10 +57,9 @@ public:
   Parameters::VelocitySource                        velocitySource;
   Parameters::IBParticles<dim>                      particlesParameters;
   std::shared_ptr<Parameters::VoidFraction<dim>>    void_fraction;
+  Parameters::CFDDEM                                cfd_dem;
   Parameters::DynamicFlowControl                    flow_control;
   Parameters::Multiphysics                          multiphysics;
-
-
 
   void
   declare(ParameterHandler &prm)
@@ -102,6 +100,7 @@ public:
 
     void_fraction = std::make_shared<Parameters::VoidFraction<dim>>();
     void_fraction->declare_parameters(prm);
+    Parameters::CFDDEM::declare_parameters(prm);
 
     multiphysics.declare_parameters(prm);
   }
@@ -134,6 +133,7 @@ public:
     velocitySource.parse_parameters(prm);
     particlesParameters.parse_parameters(prm);
     void_fraction->parse_parameters(prm);
+    cfd_dem.parse_parameters(prm);
     multiphysics.parse_parameters(prm);
 
     // Check consistency of parameters parsed in different subsections
