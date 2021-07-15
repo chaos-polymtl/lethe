@@ -26,6 +26,7 @@
 #include <core/parameters.h>
 #include <core/parameters_cfd_dem.h>
 #include <core/parameters_multiphysics.h>
+
 #include <solvers/analytical_solutions.h>
 #include <solvers/initial_conditions.h>
 #include <solvers/source_terms.h>
