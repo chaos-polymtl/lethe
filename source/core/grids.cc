@@ -130,10 +130,8 @@ attach_grid_to_triangulation(
 
   // Translate the mesh
   if (mesh_parameters.translate)
-    GridTools::shift(Point<spacedim>(mesh_parameters.delta_x,
-                                     mesh_parameters.delta_y,
-                                     mesh_parameters.delta_z),
-                     *triangulation);
+    throw std::runtime_error(
+      "Main grid can't be moved: the solid mesh must be moved instead. Grid will not be moved.");
 
 
   // Setup periodic boundary conditions

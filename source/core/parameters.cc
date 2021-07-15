@@ -654,10 +654,12 @@ namespace Parameters
       prm.declare_entry("grid arguments", "-1 : 1 : false");
 
 
-      prm.declare_entry("translate",
-                        "false",
-                        Patterns::Bool(),
-                        "Indicates that the mesh should be translated.");
+      prm.declare_entry(
+        "translate",
+        "false",
+        Patterns::Bool(),
+        "Indicates that the mesh should be translated. To be "
+        "used to reposition solid grids relative to the fluid grid.");
 
       prm.declare_entry("delta_x",
                         "0 ",
