@@ -55,28 +55,7 @@ GLSSharpNavierStokesSolver<dim>::vertices_cell_mapping()
   // Find all the cells around each vertices
   TimerOutput::Scope t(this->computing_timer, "vertices_to_cell_map");
 
-  vertices_to_cell.clear();
-  const auto &cell_iterator = this->dof_handler.active_cell_iterators();
-
-
-  // // Loop on all the cells and find their vertices to fill the map of sets of
-  // cells around each vertex
-  for (const auto &cell : cell_iterator)
-    {
-      if (cell->is_locally_owned() || cell->is_ghost())
-        {
-          const unsigned int vertices_per_cell =
-            GeometryInfo<dim>::vertices_per_cell;
-          for (unsigned int i = 0; i < vertices_per_cell; i++)
-            {
-              // First obtain vertex index
-              unsigned int v_index = cell->vertex_index(i);
-
-              // Insert the cell into the set of cell around that vertex.
-              vertices_to_cell[v_index].insert(cell);
-            }
-        }
-    }
+  LetheGridTools::vertices_cell_mapping(this->dof_handler,vertices_to_cell);
 }
 
 template <int dim>
@@ -119,78 +98,6 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
     }
 }
 
-template <int dim>
-typename DoFHandler<dim>::active_cell_iterator
-GLSSharpNavierStokesSolver<dim>::find_cell_around_point_with_neighbors(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  Point<dim>                                            point)
-{
-  // Find the cell around a point based on an initial cell.
-
-  // Find the cells around the initial cell ( cells that share a vertex with the
-  // original cell).
-  std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    active_neighbors_set = find_cells_around_cell(cell);
-  // Loop over that group of cells
-  for (unsigned int i = 0; i < active_neighbors_set.size(); ++i)
-    {
-      bool inside_cell = point_inside_cell(active_neighbors_set[i], point);
-      if (inside_cell)
-        {
-          return active_neighbors_set[i];
-        }
-    }
-  // The cell is not found near the initial cell so we use the cell tree
-  // algorithm instead (much slower).
-  std::cout << "Cell not found around " << point << std::endl;
-  return LetheGridTools::find_cell_around_point_with_tree(this->dof_handler, point);
-}
-
-template <int dim>
-bool
-GLSSharpNavierStokesSolver<dim>::point_inside_cell(
-  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  Point<dim>                                            point)
-{
-  try
-    {
-      const Point<dim, double> p_cell =
-        this->mapping->transform_real_to_unit_cell(cell, point);
-      const double dist = GeometryInfo<dim>::distance_to_unit_cell(p_cell);
-      // if the cell contains the point, the distance is equal to 0
-      if (dist <= 1e-12)
-        {
-          // The cell is found so we return it and exit the function.
-
-          return true;
-        }
-    }
-  catch (const typename MappingQGeneric<dim>::ExcTransformationFailed &)
-    {}
-  return false;
-}
-
-template <int dim>
-std::vector<typename DoFHandler<dim>::active_cell_iterator>
-GLSSharpNavierStokesSolver<dim>::find_cells_around_cell(
-  const typename DoFHandler<dim>::active_cell_iterator &cell)
-{
-  // Find all the cells that share a vertex with a reference cell including the
-  // initial cell.
-  std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
-  // Loop over the vertices of the initial cell and find all the cells around
-  // each vertex and add them to the set of cells around the reference cell.
-  for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
-    {
-      unsigned int v_index = cell->vertex_index(i);
-      neighbors_cells.insert(this->vertices_to_cell[v_index].begin(),
-                             this->vertices_to_cell[v_index].end());
-    }
-  // Transform the set into a vector.
-  std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    cells_sharing_vertices(neighbors_cells.begin(), neighbors_cells.end());
-  return cells_sharing_vertices;
-}
 
 
 
@@ -479,7 +386,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                     {
                                       // Get the cell use for the extrapolation
                                       cell_2 =
-                                        find_cell_around_point_with_neighbors(
+                                              LetheGridTools::find_cell_around_point_with_neighbors(this->dof_handler,
+                                          vertices_to_cell,
                                           cell,
                                           interpolation_points
                                             [stencil.nb_points(order) - 1]);
@@ -1498,7 +1406,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                        support_points[local_dof_indices[i]]);
 
                       // Find the cell used for the stencil definition.
-                      auto cell_2 = find_cell_around_point_with_neighbors(
+                      auto cell_2 = LetheGridTools::find_cell_around_point_with_neighbors(this->dof_handler,
+                        vertices_to_cell,
                         cell,
                         interpolation_points[stencil.nb_points(order) - 1]);
                       cell_2->get_dof_indices(local_dof_indices_2);
@@ -1515,9 +1424,8 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                       // Check if the point used to define the cell used for the
                       // definition of the stencil ("cell_2") is on a face
                       // between the cell that is cut ("cell") and the "cell_2".
-                      bool point_in_cell = point_inside_cell(
-                        cell,
-                        interpolation_points[stencil.nb_points(order) - 1]);
+                      bool point_in_cell = cell->point_inside(interpolation_points[stencil.nb_points(order) - 1]);
+
                       if (cell_2 == cell || point_in_cell)
                         {
                           // Give the DOF an approximated value. This help
@@ -1710,7 +1618,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // If the matrix entry on the diagonal of this DOF is
                           // close to zero, check if all the cells close are
                           // cut. If it's the case, the DOF is a dummy DOF.
-                          active_neighbors_set = find_cells_around_cell(cell);
+                          active_neighbors_set = LetheGridTools::find_cells_around_cell(this->dof_handler,vertices_to_cell,cell);
                           for (unsigned int m = 0;
                                m < active_neighbors_set.size();
                                m++)
