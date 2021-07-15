@@ -73,7 +73,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step)
 {
-  bool         first_step      = is_initial_step;
+  bool first_step = is_initial_step;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
@@ -91,28 +91,32 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
     x.reinit(present_solution);
   };
 
-  nonlinear_solver.residual = [&](const VectorType &evaluation_point,
-                                  VectorType &      residual) {
+  nonlinear_solver.residual = [&](const VectorType & /* evaluation_point */,
+                                  VectorType &residual) {
+    std::cout << "Computing residual vector..." << std::endl;
     solver->apply_constraints();
     solver->assemble_rhs(time_stepping_method);
     auto &present_residual = solver->get_system_rhs();
-    residual = present_residual;
+    residual               = present_residual;
     return 0;
   };
 
-  nonlinear_solver.setup_jacobian = [&](const VectorType &present_solution,
-                                        const VectorType & /*current_f*/) {
-    // TODO Replace the function by assemble matrix only
-    solver->assemble_matrix_and_rhs(time_stepping_method);
-    return 0;
-  };
+  nonlinear_solver.setup_jacobian =
+    [&](const VectorType & /* present_solution */,
+        const VectorType & /*current_f*/) {
+      // TODO Replace the function by assemble matrix only
+      std::cout << "Computing jacobian matrix..." << std::endl;
+      solver->assemble_matrix_and_rhs(time_stepping_method);
+      return 0;
+    };
 
-  nonlinear_solver.solve_with_jacobian = [&](const VectorType &/* residual */,
-                                             VectorType &      present_solution,
-                                             const double      /* tolerance */) {
+  nonlinear_solver.solve_with_jacobian = [&](const VectorType & /* residual */,
+                                             VectorType &present_solution,
+                                             const double /* tolerance */) {
+    std::cout << "Solving linear system..." << std::endl;
     solver->solve_linear_system(first_step);
     auto &temp_solution = solver->get_present_solution();
-    present_solution = temp_solution;
+    present_solution    = temp_solution;
     return 0;
   };
 
