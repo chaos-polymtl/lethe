@@ -75,9 +75,15 @@ namespace LetheGridTools
                             const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
                             Point<dim> &point_2);
 
+    /**
+      * @brief
+      *Return a vector of cells around a cell including vertex neighbors
+      *
+      * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
+      */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,const DoFHandler<dim> &dof_handler_2,
+    find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
             const typename DoFHandler<dim>::active_cell_iterator &cell);
 
 

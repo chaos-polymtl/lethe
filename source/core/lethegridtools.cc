@@ -181,9 +181,20 @@ LetheGridTools::find_cells_around_cell(const DoFHandler<dim> &dof_handler,
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,const DoFHandler<dim> &dof_handler_2,
+LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
                     const typename DoFHandler<dim>::active_cell_iterator &cell){
+    GeometryInfo<dim>::vertices_per_cell;
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_inside;
+    for (const auto &cell_iter : dof_handler_1.active_cell_iterators())
+    {
+        for(unsigned int i=0;i<GeometryInfo<dim>::vertices_per_cell;++i){
+            if(cell->point_inside(cell_iter->vertex(i))){
+                cells_inside.push_back(cell_iter);
+            }
+        }
+    }
 
+    return cells_inside;
 }
 
 
@@ -230,9 +241,9 @@ LetheGridTools::find_cells_around_cell(const DoFHandler<3> &dof_handler,
                                        const typename DoFHandler<3>::active_cell_iterator &cell);
 
 template std::vector<typename DoFHandler<2>::active_cell_iterator>
-LetheGridTools::find_cells_in_cells(const DoFHandler<2> &dof_handler_1,const DoFHandler<2> &dof_handler_2,
+LetheGridTools::find_cells_in_cells(const DoFHandler<2> &dof_handler_1,
                                     const typename DoFHandler<2>::active_cell_iterator &cell);
 
 template std::vector<typename DoFHandler<3>::active_cell_iterator>
-LetheGridTools::find_cells_in_cells(const DoFHandler<3> &dof_handler_1,const DoFHandler<3> &dof_handler_2,
+LetheGridTools::find_cells_in_cells(const DoFHandler<3> &dof_handler_1,
                                     const typename DoFHandler<3>::active_cell_iterator &cell);

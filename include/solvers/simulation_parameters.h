@@ -40,6 +40,7 @@ public:
   Parameters::NonLinearSolver                       non_linear_solver;
   Parameters::MeshAdaptation                        mesh_adaptation;
   Parameters::Mesh                                  mesh;
+  Parameters::MeshBoxRefinement                     mesh_box_refinement;
   std::shared_ptr<Parameters::Nitsche<dim>>         nitsche;
   Parameters::PhysicalProperties                    physical_properties;
   Parameters::SimulationControl                     simulation_control;
@@ -84,6 +85,7 @@ public:
     Parameters::Timer::declare_parameters(prm);
     Parameters::Forces::declare_parameters(prm);
     Parameters::MeshAdaptation::declare_parameters(prm);
+    Parameters::MeshBoxRefinement::declare_parameters(prm);
     Parameters::NonLinearSolver::declare_parameters(prm);
     Parameters::LinearSolver::declare_parameters(prm);
     Parameters::PostProcessing::declare_parameters(prm);
@@ -114,6 +116,7 @@ public:
     non_linear_solver.parse_parameters(prm);
     mesh_adaptation.parse_parameters(prm);
     mesh.parse_parameters(prm);
+    mesh_box_refinement.parse_parameters(prm);
     nitsche->parse_parameters(prm);
     physical_properties.parse_parameters(prm);
     multiphysics.parse_parameters(prm);

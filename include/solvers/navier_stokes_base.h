@@ -321,6 +321,9 @@ protected:
   refine_mesh();
 
   void
+  box_refine_mesh();
+
+  void
   refine_mesh_kelly();
 
   void

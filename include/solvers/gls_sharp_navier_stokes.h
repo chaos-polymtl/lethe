@@ -377,6 +377,9 @@ Return a bool that describes  if a cell contains a specific point
 
 
 
+  void
+  box_refine();
+
   /**
    * Members
    */

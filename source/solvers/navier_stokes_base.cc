@@ -23,6 +23,7 @@
 #include <core/solutions_output.h>
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
+#include <core/lethegridtools.h>
 
 #include <solvers/flow_control.h>
 #include <solvers/navier_stokes_base.h>
@@ -37,6 +38,7 @@
 #include <deal.II/fe/fe_simplex_p.h>
 
 #include <deal.II/grid/tria_iterator.h>
+#include <deal.II/grid/grid_tools.h>
 
 #include <deal.II/numerics/data_out_faces.h>
 #include <deal.II/numerics/error_estimator.h>
@@ -46,6 +48,7 @@
 
 #include <deal.II/opencascade/manifold_lib.h>
 #include <deal.II/opencascade/utilities.h>
+
 
 
 /*
@@ -389,6 +392,8 @@ NavierStokesBase<dim, VectorType, DofsType>::postprocessing_torques(
 
 
 
+
+
 template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::finish_simulation_fd()
@@ -653,6 +658,183 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh()
         refine_mesh_uniform();
     }
 }
+
+template <int dim, typename VectorType, typename DofsType>
+void
+NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
+{
+    Triangulation<dim> box_to_refine;
+    if (this->simulation_parameters.mesh_box_refinement.type == Parameters::MeshBoxRefinement::Type::gmsh)
+    {
+        if (this->simulation_parameters.mesh_box_refinement.simplex)
+        {
+
+            Triangulation<dim> basetria(
+                    Triangulation<dim>::limit_level_difference_at_vertices);
+
+            GridIn<dim> grid_in;
+            grid_in.attach_triangulation(basetria);
+            std::ifstream input_file(this->simulation_parameters.mesh_box_refinement.file_name);
+
+            grid_in.read_msh(input_file);
+
+            // By default uses the METIS partitioner.
+            // A user parameter option could be made to chose a partitionner.
+            GridTools::partition_triangulation(0,
+                    basetria);
+
+
+            auto construction_data = TriangulationDescription::Utilities::
+            create_description_from_triangulation(
+                    basetria,0);
+
+            triangulation->create_triangulation(construction_data);
+        }
+        else
+        {
+            GridIn<dim> grid_in;
+            grid_in.attach_triangulation(box_to_refine);
+            std::ifstream input_file(this->simulation_parameters.mesh_box_refinement.file_name);
+            grid_in.read_msh(input_file);
+        }
+    }
+        // Dealii grids
+    else if (this->simulation_parameters.mesh_box_refinement.type == Parameters::MeshBoxRefinement::Type::dealii)
+    {
+        if (this->simulation_parameters.mesh_box_refinement.simplex)
+        {
+            Triangulation<dim> temporary_quad_triangulation;
+            GridGenerator::generate_from_name_and_arguments(
+                    temporary_quad_triangulation,
+                    this->simulation_parameters.mesh_box_refinement.grid_type,
+                    this->simulation_parameters.mesh_box_refinement.grid_arguments);
+
+            // initial refinement
+            const int initial_refinement = this->simulation_parameters.mesh_box_refinement.initial_refinement;
+            temporary_quad_triangulation.refine_global(initial_refinement);
+            // flatten the triangulation
+            Triangulation<dim> flat_temp_quad_triangulation;
+            GridGenerator::flatten_triangulation(temporary_quad_triangulation,
+                                                 flat_temp_quad_triangulation);
+
+            Triangulation<dim> temporary_tri_triangulation(
+                    Triangulation<dim>::limit_level_difference_at_vertices);
+            GridGenerator::convert_hypercube_to_simplex_mesh(
+                    flat_temp_quad_triangulation, temporary_tri_triangulation);
+
+            GridTools::partition_triangulation_zorder(
+                    0,
+                    temporary_tri_triangulation);
+            GridTools::partition_multigrid_levels(temporary_tri_triangulation);
+
+            // extract relevant information from distributed triangulation
+            auto construction_data = TriangulationDescription::Utilities::
+            create_description_from_triangulation(
+                    temporary_tri_triangulation,
+                    0,
+                    TriangulationDescription::Settings::
+                    construct_multigrid_hierarchy);
+            box_to_refine.create_triangulation(construction_data);
+        }
+        else
+        {
+            GridGenerator::generate_from_name_and_arguments(
+                    box_to_refine,
+                    this->simulation_parameters.mesh_box_refinement.grid_type,
+                    this->simulation_parameters.mesh_box_refinement.grid_arguments);
+        }
+    }
+
+    box_to_refine.refine_global(this->simulation_parameters.mesh_box_refinement.initial_refinement_box);
+    DoFHandler<dim>    box_to_refine_dof_handler(box_to_refine);
+    for( unsigned int i =0 ; i<this->simulation_parameters.mesh_box_refinement.initial_refinement;++i) {
+        if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+                    this->triangulation.get()) == nullptr)
+            return;
+
+        auto &tria = *dynamic_cast<parallel::distributed::Triangulation<dim> *>(
+                this->triangulation.get());
+
+        // Time monitoring
+        TimerOutput::Scope t(this->computing_timer, "box refine");
+
+        Vector<float> estimated_error_per_cell(tria.n_active_cells());
+        const FEValuesExtractors::Vector velocity(0);
+        const FEValuesExtractors::Scalar pressure(dim);
+        auto &present_solution = this->present_solution;
+
+        const auto &cell_iterator = box_to_refine_dof_handler.active_cell_iterators();
+
+
+        for (const auto &cell : cell_iterator) {
+            std::vector<typename DoFHandler<dim>::active_cell_iterator> cell_to_refine;
+            cell_to_refine = (LetheGridTools::find_cells_in_cells(this->dof_handler, cell));
+            for (unsigned int j = 0; j < cell_to_refine.size(); ++j) {
+                cell_to_refine[j]->set_refine_flag();
+            }
+        }
+
+
+        tria.prepare_coarsening_and_refinement();
+
+        // Solution transfer objects for all the solutions
+        parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer(
+                this->dof_handler);
+        std::vector<parallel::distributed::SolutionTransfer<dim, VectorType>>
+                previous_solutions_transfer;
+        // Important to reserve to prevent pointer dangling
+        previous_solutions_transfer.reserve(previous_solutions.size());
+        for (unsigned int i = 0; i < previous_solutions.size(); ++i) {
+            previous_solutions_transfer.push_back(
+                    parallel::distributed::SolutionTransfer<dim, VectorType>(
+                            this->dof_handler));
+            previous_solutions_transfer[i].prepare_for_coarsening_and_refinement(
+                    previous_solutions[i]);
+        }
+
+        parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
+                this->dof_handler);
+        parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
+                this->dof_handler);
+        parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
+                this->dof_handler);
+        solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
+
+        multiphysics->prepare_for_mesh_adaptation();
+        if (this->simulation_parameters.post_processing.calculate_average_velocities)
+            average_velocities->prepare_for_mesh_adaptation();
+
+
+        tria.execute_coarsening_and_refinement();
+        this->setup_dofs();
+
+        // Set up the vectors for the transfer
+        VectorType tmp(locally_owned_dofs, this->mpi_communicator);
+
+        // Interpolate the solution at time and previous time
+        solution_transfer.interpolate(tmp);
+
+        // Distribute constraints
+        auto &nonzero_constraints = this->nonzero_constraints;
+        nonzero_constraints.distribute(tmp);
+
+        // Fix on the new mesh
+        present_solution = tmp;
+
+        for (unsigned int i = 0; i < previous_solutions.size(); ++i) {
+            VectorType tmp_previous_solution(locally_owned_dofs,
+                                             this->mpi_communicator);
+            previous_solutions_transfer[i].interpolate(tmp_previous_solution);
+            nonzero_constraints.distribute(tmp_previous_solution);
+            previous_solutions[i] = tmp_previous_solution;
+        }
+
+        multiphysics->post_mesh_adaptation();
+        if (this->simulation_parameters.post_processing.calculate_average_velocities)
+            average_velocities->post_mesh_adaptation();
+    }
+}
+
 
 template <int dim, typename VectorType, typename DofsType>
 void
