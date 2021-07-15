@@ -652,6 +652,29 @@ namespace Parameters
 
       prm.declare_entry("grid type", "hyper_cube");
       prm.declare_entry("grid arguments", "-1 : 1 : false");
+
+
+      prm.declare_entry(
+        "translate",
+        "false",
+        Patterns::Bool(),
+        "Indicates that the mesh should be translated. To be "
+        "used to reposition solid grids relative to the fluid grid.");
+
+      prm.declare_entry("delta_x",
+                        "0 ",
+                        Patterns::Double(),
+                        "X component of the desired translation of the mesh");
+
+      prm.declare_entry("delta_y",
+                        "0 ",
+                        Patterns::Double(),
+                        "Y component of the desired translation of the mesh");
+
+      prm.declare_entry("delta_z",
+                        "0 ",
+                        Patterns::Double(),
+                        "Z component of the desired translation of the mesh");
     }
     prm.leave_subsection();
   }
@@ -684,6 +707,12 @@ namespace Parameters
       refine_until_target_size = prm.get_bool("enable target size");
       simplex                  = prm.get_bool("simplex");
       target_size              = prm.get_double("target size");
+
+
+      translate = prm.get_bool("translate");
+      delta_x   = prm.get_double("delta_x");
+      delta_y   = prm.get_double("delta_y");
+      delta_z   = prm.get_double("delta_z");
     }
     prm.leave_subsection();
   }
