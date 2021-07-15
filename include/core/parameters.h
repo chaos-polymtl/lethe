@@ -487,6 +487,12 @@ namespace Parameters
     // Target size when automatically refining initial mesh
     double target_size;
 
+    // Grid displacement at initiation
+    bool   translate;
+    double delta_x;
+    double delta_y;
+    double delta_z;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
