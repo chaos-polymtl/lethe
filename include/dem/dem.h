@@ -23,6 +23,7 @@
 #include <dem/dem_solver_parameters.h>
 #include <dem/find_boundary_cells_information.h>
 #include <dem/find_cell_neighbors.h>
+#include <dem/grid_motion.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
 #include <dem/localize_contacts.h>
@@ -309,6 +310,7 @@ private:
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
+                                  unsigned int,
                                   unsigned int>>>
     pw_contact_candidates;
   std::unordered_map<types::particle_index,
@@ -325,7 +327,9 @@ private:
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
     particle_container;
   std::unordered_map<types::particle_index, Particles::ParticleIterator<dim>>
-                                           ghost_particle_container;
+    ghost_particle_container;
+  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+                                           updated_boundary_points_and_normal_vectors;
   DEM::DEMProperties<dim>                  properties_class;
   std::vector<std::pair<std::string, int>> properties =
     properties_class.get_properties_name();
@@ -335,6 +339,7 @@ private:
   const unsigned int insertion_frequency;
 
   // Initilization of classes and building objects
+  std::shared_ptr<GridMotion<dim>>     grid_motion_object;
   PPBroadSearch<dim>                   pp_broad_search_object;
   PPFineSearch<dim>                    pp_fine_search_object;
   PWBroadSearch<dim>                   pw_broad_search_object;

@@ -77,6 +77,7 @@ localize_contacts(
                        std::tuple<Particles::ParticleIterator<dim>,
                                   Tensor<1, dim>,
                                   Point<dim>,
+                                  unsigned int,
                                   unsigned int>>> &pw_contact_candidates,
   std::unordered_map<
     types::particle_index,

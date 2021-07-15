@@ -42,6 +42,7 @@ public:
   Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
   Parameters::Lagrangian::BoundaryMotion<dim>     boundary_motion;
   Parameters::Lagrangian::ForceTorqueOnWall<dim>  forces_torques;
+  Parameters::Lagrangian::GridMotion<dim>         grid_motion;
 
   void
   declare(ParameterHandler &prm)
@@ -57,6 +58,7 @@ public:
     floating_walls.declare_parameters(prm);
     boundary_motion.declare_parameters(prm);
     forces_torques.declare_parameters(prm);
+    grid_motion.declare_parameters(prm);
   }
 
   void
@@ -73,6 +75,7 @@ public:
     floating_walls.parse_parameters(prm);
     boundary_motion.parse_parameters(prm);
     forces_torques.parse_parameters(prm);
+    grid_motion.parse_parameters(prm);
   }
 };
 

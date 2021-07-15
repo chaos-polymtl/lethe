@@ -106,10 +106,9 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                       // Storing these information into the
                       // boundary_cells_info_struct
                       boundary_cells_info_struct<dim> boundary_information;
-                      boundary_information.cell = cell;
-                      boundary_information.boundary_id =
-                        cell->face(face_id)->boundary_id();
-                      boundary_information.boundary_face_id =
+                      boundary_information.cell        = cell;
+                      boundary_information.boundary_id = cell->face(face_id)->boundary_id();
+                      boundary_information.global_face_id =
                         cell->face_index(face_id);
                       boundary_information.normal_vector = normal_vector;
                       boundary_information.point_on_face = quad_point;
@@ -132,6 +131,55 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                           search_vector.push_back(information_search_element);
                         }
                     }
+                }
+            }
+        }
+    }
+}
+
+
+// This function is used to update the normal vector and the location of the
+// stored point of the boundary faces. It is used when the grid is moving.
+// Updated points and normal vectors are then used to update the particle-wall
+// contact list.
+template <int dim>
+void
+BoundaryCellsInformation<dim>::update_boundary_info_after_grid_motion(
+  std::map<unsigned int, std::pair<Tensor<1, dim>, Point<dim>>>
+    &updated_boundary_points_and_normal_vectors)
+{
+  // Initialize a simple quadrature for on the system. This will be used to
+  // obtain a single sample point on the boundary faces
+  const FE_Q<dim>   fe(1);
+  QGauss<dim - 1>   face_quadrature_formula(1);
+  unsigned int      n_face_q_points = face_quadrature_formula.size();
+  FEFaceValues<dim> fe_face_values(fe,
+                                   face_quadrature_formula,
+                                   update_values | update_quadrature_points |
+                                     update_normal_vectors);
+
+  for (auto &cell : boundary_cells_with_faces)
+    {
+      // Iterating over the faces of each cell
+      for (int face_id = 0; face_id < int(GeometryInfo<dim>::faces_per_cell);
+           ++face_id)
+        {
+          // Check to see if the face is located at boundary
+          if (cell->face(face_id)->at_boundary())
+            {
+              fe_face_values.reinit(cell, face_id);
+
+              for (unsigned int f_q_point = 0; f_q_point < n_face_q_points;
+                   ++f_q_point)
+                {
+                  // Finding the normal vector of the boundary face
+                  Tensor<1, dim> normal_vector =
+                    -fe_face_values.normal_vector(f_q_point);
+
+                  // Finding a point on the boundary face
+                  Point<dim> quad_point = fe_face_values.quadrature_point(0);
+                  updated_boundary_points_and_normal_vectors[cell->face_index(
+                    face_id)] = std::make_pair(normal_vector, quad_point);
                 }
             }
         }

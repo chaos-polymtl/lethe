@@ -51,10 +51,10 @@ public:
 
   /**
    * Finds unordered map of tuples (tuple of particle located in
-   * boundary cells, normal vector of the boundary face and a
-   * point on the face) which shows the candidate particle-wall collision pairs.
-   * These collision candidates will be investigated in the fine search to check
-   * if they are in contact or not
+   * boundary cells, normal vector of the boundary face, a
+   * point on the face and the corresponding boundary cell) which shows the
+   * candidate particle-wall collision pairs. These collision candidates will be
+   * investigated in the fine search to check if they are in contact or not
    *
    * @param boundary_cells_information Information of the boundary cells and
    * faces. This is the output of the FindBoundaryCellsInformation class
@@ -62,8 +62,8 @@ public:
    * cells
    * @param pw_contact_candidates A two-layered unordered map of tuples. Each
    * tuple contains a particle located near boundaries, the normal vector of
-   * the corresponding face boundary, a point on the boundary and boundary id.
-   * The contact pair is used in the fine search
+   * the corresponding face boundary, a point on the boundary and the boundary
+   * cell. The contact pair is used in the fine search
    */
 
   void
@@ -77,6 +77,7 @@ public:
                          std::tuple<Particles::ParticleIterator<dim>,
                                     Tensor<1, dim>,
                                     Point<dim>,
+                                    types::boundary_id,
                                     unsigned int>>> &pw_contact_candidates);
 
   /**

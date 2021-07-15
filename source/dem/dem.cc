@@ -180,6 +180,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
+
+  grid_motion_object =
+    std::make_shared<GridMotion<dim>>(parameters,
+                                      simulation_control->get_time_step());
 }
 
 template <int dim>
@@ -255,6 +259,11 @@ DEMSolver<dim>::load_balance()
                                             cells_ghost_neighbor_list);
 
   boundary_cell_object.build(triangulation, parameters.floating_walls);
+
+  if (parameters.grid_motion.motion_type !=
+      Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
+    boundary_cell_object.update_boundary_info_after_grid_motion(
+      updated_boundary_points_and_normal_vectors);
 
   const auto average_minimum_maximum_cells =
     Utilities::MPI::min_max_avg(triangulation.n_active_cells(),
@@ -794,6 +803,15 @@ DEMSolver<dim>::solve()
     {
       simulation_control->print_progression(pcout);
 
+      // Grid motion
+      if (parameters.grid_motion.motion_type !=
+          Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
+        {
+          grid_motion_object->move_grid(triangulation);
+          boundary_cell_object.update_boundary_info_after_grid_motion(
+            updated_boundary_points_and_normal_vectors);
+        }
+
       // Keep track if particles were inserted this step
       particles_insertion_step = insert_particles();
 
@@ -873,6 +891,7 @@ DEMSolver<dim>::solve()
                                  pw_contact_candidates,
                                  pfw_contact_candidates);
 
+
           locate_local_particles_in_cells<dim>(particle_handler,
                                                particle_container,
                                                ghost_adjacent_particles,
@@ -902,6 +921,18 @@ DEMSolver<dim>::solve()
         simulation_control->get_time_step(),
         momentum,
         force);
+
+      // We have to update the positions of the points on boundary faces and
+      // their normal vectors here. The localize_contact class deletes the
+      // particle-wall contact candidate if it exists in the contact list. As a
+      // result, when we update the points on boundary faces and their normal
+      // vectors, localize_contact deletes it from the output of broad search
+      // and they are not updated in the contact force calculations.
+      if (parameters.grid_motion.motion_type !=
+          Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
+        grid_motion_object
+          ->update_boundary_points_and_normal_vectors_in_contact_list(
+            pw_pairs_in_contact, updated_boundary_points_and_normal_vectors);
 
       // Particles-walls contact force:
       particle_wall_contact_force();
