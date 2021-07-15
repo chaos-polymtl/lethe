@@ -129,7 +129,6 @@ attach_grid_to_triangulation(
       "Unsupported mesh type - mesh will not be created");
 
   // Translate the mesh
-
   if (mesh_parameters.translate)
     GridTools::shift(Point<spacedim>(mesh_parameters.delta_x,
                                      mesh_parameters.delta_y,
