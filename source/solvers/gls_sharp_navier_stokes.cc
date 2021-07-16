@@ -270,7 +270,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
   // Loop over all the cell
   for (const auto &cell : cell_iterator)
     {
-      if (cell->is_locally_owned())
+      if (cell->is_locally_owned() || cell->is_ghost())
         {
           // Particle id that cut the cell.
           unsigned int p;
@@ -363,7 +363,8 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           // extrapolate the fluid stress tensor on the IB
                           // surface.
                           if (force_eval_done[local_face_dof_indices[i]]
-                                .first == false)
+                                .first == false && this->locally_owned_dofs.is_element(
+                                  local_face_dof_indices[i]))
                             {
                               // Only need one extrapolation by dof location;
                               if (component_i == 0)
