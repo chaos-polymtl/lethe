@@ -9,7 +9,7 @@ subsection simulation control
   set output name              = result_
   set output frequency	  	= 1
   set startup time scaling         = 0.6
-  set time end                     = 0.1
+  set time end                     = 0.01
   set time step                    = 0.002
   set subdivision             = 1 
   set log precision     = 10 
