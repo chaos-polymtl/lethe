@@ -14,6 +14,8 @@
 #include <deal.II/fe/mapping_manifold.h>
 #include <deal.II/fe/mapping_q1.h>
 
+#include <unordered_set>
+
 using namespace dealii;
 namespace LetheGridTools
 {
@@ -88,10 +90,45 @@ namespace LetheGridTools
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
 
+    template <int dim>
+    struct hash_cell
+    {
+      std::size_t
+      operator()(const typename DoFHandler<dim>::active_cell_iterator &cell)
+        const noexcept
+      {
+        size_t value = 0;
+        for (int i = GeometryInfo<dim>::vertices_per_cell; i > 0; --i)
+          {
+            value = value ^ std::hash<int>()(cell->vertex_index(i));
+          }
+        return value;
+      }
+    };
 
-
+    template <int dim>
+    struct equal_cell
+    {
+      std::size_t
+      operator()(const typename DoFHandler<dim>::active_cell_iterator &cell1,
+                 const typename DoFHandler<dim>::active_cell_iterator &cell2)
+        const noexcept
+      {
+        bool is_equal = true;
+        for (int i = GeometryInfo<dim>::vertices_per_cell; i > 0; --i)
+          {
+            if (cell1->vertex_index(i) != cell2->vertex_index(i))
+              {
+                is_equal = false;
+                break;
+              }
+          }
+        return is_equal;
+      }
+    };
 
 }
+
 
 #endif //LETHE_LETHEGRIDTOOLS_H
 

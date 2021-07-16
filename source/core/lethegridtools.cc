@@ -163,7 +163,10 @@ LetheGridTools::find_cells_around_cell(std::map<unsigned int,std::set<typename D
 {
     // Find all the cells that share a vertex with a reference cell including the
     // initial cell.
-    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+    // std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
+
+    std::unordered_set<typename DoFHandler<dim>::active_cell_iterator, LetheGridTools::hash_cell<dim>, LetheGridTools::equal_cell<dim>> neighbors_cells;
+
     // Loop over the vertices of the initial cell and find all the cells around
     // each vertex and add them to the set of cells around the reference cell.
     for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; i++)
@@ -208,13 +211,12 @@ find_cells_around_edge(const DoFHandler<dim> &dof_handler,
     Tensor<1,dim> unit_direction=(point_2-point_1)/(point_2-point_1).norm();
     double total_dist=(point_2-point_1).norm();
 
-    bool all_cell_found=false;
     std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
     cells_pierced_set.push_back(starting_cell);
     Point<dim> next_point=point_1;
     auto& next_cell=starting_cell;
     double dist_done=0;
-    while(dist_done<dist_done){
+    while(dist_done<total_dist){
         next_point= next_point+unit_direction*next_cell->measure()/2;
         dist_done+=next_cell->measure()/2;
         next_cell=LetheGridTools::find_cell_around_point_with_neighbors(vertices_cell_map,next_point);
