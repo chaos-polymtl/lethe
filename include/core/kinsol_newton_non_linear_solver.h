@@ -82,7 +82,8 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
 
   typename SUNDIALS::KINSOL<VectorType>::AdditionalData additional_data;
   additional_data.function_tolerance = this->params.tolerance;
-  additional_data.function_tolerance = this->params.max_iterations;
+  additional_data.maximum_non_linear_iterations = this->params.max_iterations;
+  additional_data.step_tolerance = this->params.tolerance;
   SUNDIALS::KINSOL<VectorType> nonlinear_solver(additional_data);
 
   nonlinear_solver.reinit_vector = [&](VectorType &x) {
