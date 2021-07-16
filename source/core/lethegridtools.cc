@@ -163,8 +163,6 @@ LetheGridTools::find_cells_around_cell(std::map<unsigned int,std::set<typename D
 {
     // Find all the cells that share a vertex with a reference cell including the
     // initial cell.
-    // std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
-
     std::unordered_set<typename DoFHandler<dim>::active_cell_iterator, LetheGridTools::hash_cell<dim>, LetheGridTools::equal_cell<dim>> neighbors_cells;
 
     // Loop over the vertices of the initial cell and find all the cells around
@@ -232,33 +230,67 @@ find_cells_around_edge(const DoFHandler<dim> &dof_handler,
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-find_cells_around_flat_cell(const DoFHandler<dim> &dof_handler,
-                       std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
-                       const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
-                       Point<dim> &point_2){
+find_cells_around_flat_cell(
+  const DoFHandler<dim> &                                   dof_handler,
+  const typename DoFHandler<dim - 1>::active_cell_iterator &cell,
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    &vertices_cell_map)
+{
+  auto &starting_cell =
+    find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
 
-    auto& starting_cell=find_cell_around_point_with_tree(dof_handler,point_1);
-    Tensor<1,dim> unit_direction=(point_2-point_1)/(point_2-point_1).norm();
-    double total_dist=(point_2-point_1).norm();
+  std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+                     LetheGridTools::hash_cell<dim>,
+                     LetheGridTools::equal_cell<dim>>
+    previous_candidate_cells;
 
-    bool all_cell_found=false;
-    std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
-    cells_pierced_set.push_back(starting_cell);
-    Point<dim> next_point=point_1;
-    auto& next_cell=starting_cell;
-    double dist_done=0;
-    while(dist_done<dist_done){
-        next_point= next_point+unit_direction*next_cell->measure()/2;
-        dist_done+=next_cell->measure()/2;
-        next_cell=LetheGridTools::find_cell_around_point_with_neighbors(vertices_cell_map,next_point);
-        cells_pierced_set.insert(next_cell);
+  std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+                     LetheGridTools::hash_cell<dim>,
+                     LetheGridTools::equal_cell<dim>>
+    current_candidate_cells;
+
+  std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+                     LetheGridTools::hash_cell<dim>,
+                     LetheGridTools::equal_cell<dim>>
+    intersected_cells;
+
+  previous_candidate_cells.insert(starting_cell);
+  current_candidate_cells.insert(starting_cell);
+  intersected_cells.insert(starting_cell);
+
+  int n_previous_intersected = 0;
+
+  while (intersected_cells.size() > n_previous_intersected)
+    {
+      // Find all cells around previous candidate cells
+      for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
+           previous_candidate_cells)
+        {
+          current_candidate_cells.insert(
+            LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
+                                                        cell_iter));
+        }
+
+      // Reset the list of previous candidates
+      previous_candidate_cells.clear();
+
+      // Check if current candidate cells are intersected, and if they are, add
+      // them to the intersected cell set. If the added cell was not already
+      // present in the intersected cell set, add it to the previous candidate
+      // cells as well.
+      for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
+        current_candidate_cells) {
+          //TODO If intersection is detected
+          if(true){
+              // If the cell was not present in the intersected cells set
+              if (intersected_cells.insert(cell_iter).second) {
+                  previous_candidate_cells.insert(cell_iter)
+                }
+            }
+        }
     }
-
-    std::vector<typename DoFHandler<dim>::active_cell_iterator>
-            cells_pierced(cells_pierced_set.begin(), cells_pierced_set.end());
-    return cells_pierced;
 }
-
 
 
 
