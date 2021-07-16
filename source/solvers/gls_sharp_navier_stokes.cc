@@ -1621,7 +1621,7 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                           // If the matrix entry on the diagonal of this DOF is
                           // close to zero, check if all the cells close are
                           // cut. If it's the case, the DOF is a dummy DOF.
-                          active_neighbors_set = LetheGridTools::find_cells_around_cell(this->dof_handler,vertices_to_cell,cell);
+                          active_neighbors_set = LetheGridTools::find_cells_around_cell<dim>(vertices_to_cell,cell);
                           for (unsigned int m = 0;
                                m < active_neighbors_set.size();
                                m++)

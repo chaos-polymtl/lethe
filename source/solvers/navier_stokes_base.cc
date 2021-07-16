@@ -663,6 +663,7 @@ template <int dim, typename VectorType, typename DofsType>
 void
 NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 {
+    // Read the mesh for that define the box use in this function
     Triangulation<dim> box_to_refine;
     if (this->simulation_parameters.mesh_box_refinement.type == Parameters::MeshBoxRefinement::Type::gmsh)
     {
@@ -745,8 +746,12 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
         }
     }
 
+    //define a local dof handler of this mesh.
+
     box_to_refine.refine_global(this->simulation_parameters.mesh_box_refinement.initial_refinement_box);
     DoFHandler<dim>    box_to_refine_dof_handler(box_to_refine);
+
+    //refine the number of time needed
     for( unsigned int i =0 ; i<this->simulation_parameters.mesh_box_refinement.initial_refinement;++i) {
         if (dynamic_cast<parallel::distributed::Triangulation<dim> *>(
                     this->triangulation.get()) == nullptr)
@@ -765,7 +770,7 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
 
         const auto &cell_iterator = box_to_refine_dof_handler.active_cell_iterators();
 
-
+        //Find all the cells of the principal mesh that are partially contained inside the box_mesh and set them up for refinement.
         for (const auto &cell : cell_iterator) {
             std::vector<typename DoFHandler<dim>::active_cell_iterator> cell_to_refine;
             cell_to_refine = (LetheGridTools::find_cells_in_cells(this->dof_handler, cell));
@@ -773,7 +778,6 @@ NavierStokesBase<dim, VectorType, DofsType>::box_refine_mesh()
                 cell_to_refine[j]->set_refine_flag();
             }
         }
-
 
         tria.prepare_coarsening_and_refinement();
 

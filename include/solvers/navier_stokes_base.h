@@ -320,6 +320,10 @@ protected:
   void
   refine_mesh();
 
+  /**
+   * @brief Allow the initial refinement of all cells of the principal mesh that are partially
+   * contained in one of the cells of the box refinement mesh given in the parameter.
+   */
   void
   box_refine_mesh();
 

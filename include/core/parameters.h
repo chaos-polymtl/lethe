@@ -580,9 +580,10 @@ namespace Parameters
         // Arguments of the GridTools
         std::string grid_arguments;
 
-        // Initial refinement level of primitive mesh
+        // Initial refinement level of primitive mesh contained in the box
         unsigned int initial_refinement;
 
+        // Initial refinement level mesh box
         unsigned int initial_refinement_box;
 
         // Enabling fixing initial refinement from a target size

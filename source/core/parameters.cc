@@ -769,11 +769,11 @@ namespace Parameters
             prm.declare_entry("initial refinement",
                               "0",
                               Patterns::Integer(),
-                              "Initial refinement of the mesh");
+                              "Initial refinement of the principal mesh");
             prm.declare_entry("box initial refinement",
                               "0",
                               Patterns::Integer(),
-                              "Initial refinement of the box refinement mesh");
+                              "Initial refinement of the box mesh");
 
             if (prm.get("type") == "periodic_hills")
             {
