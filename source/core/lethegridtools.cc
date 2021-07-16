@@ -197,6 +197,65 @@ LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
 }
 
 
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+find_cells_around_edge(const DoFHandler<dim> &dof_handler,
+                       std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
+                       const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
+                       Point<dim> &point_2){
+
+    auto& starting_cell=find_cell_around_point_with_tree(dof_handler,point_1);
+    Tensor<1,dim> unit_direction=(point_2-point_1)/(point_2-point_1).norm();
+    double total_dist=(point_2-point_1).norm();
+
+    bool all_cell_found=false;
+    std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
+    cells_pierced_set.push_back(starting_cell);
+    Point<dim> next_point=point_1;
+    auto& next_cell=starting_cell;
+    double dist_done=0;
+    while(dist_done<dist_done){
+        next_point= next_point+unit_direction*next_cell->measure()/2;
+        dist_done+=next_cell->measure()/2;
+        next_cell=LetheGridTools::find_cell_around_point_with_neighbors(vertices_cell_map,next_point);
+        cells_pierced_set.insert(next_cell);
+    }
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator>
+            cells_pierced(cells_pierced_set.begin(), cells_pierced_set.end());
+    return cells_pierced;
+
+
+}
+
+template <int dim>
+std::vector<typename DoFHandler<dim>::active_cell_iterator>
+find_cells_around_flat_cell(const DoFHandler<dim> &dof_handler,
+                       std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
+                       const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
+                       Point<dim> &point_2){
+
+    auto& starting_cell=find_cell_around_point_with_tree(dof_handler,point_1);
+    Tensor<1,dim> unit_direction=(point_2-point_1)/(point_2-point_1).norm();
+    double total_dist=(point_2-point_1).norm();
+
+    bool all_cell_found=false;
+    std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
+    cells_pierced_set.push_back(starting_cell);
+    Point<dim> next_point=point_1;
+    auto& next_cell=starting_cell;
+    double dist_done=0;
+    while(dist_done<dist_done){
+        next_point= next_point+unit_direction*next_cell->measure()/2;
+        dist_done+=next_cell->measure()/2;
+        next_cell=LetheGridTools::find_cell_around_point_with_neighbors(vertices_cell_map,next_point);
+        cells_pierced_set.insert(next_cell);
+    }
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator>
+            cells_pierced(cells_pierced_set.begin(), cells_pierced_set.end());
+    return cells_pierced;
+}
 
 
 

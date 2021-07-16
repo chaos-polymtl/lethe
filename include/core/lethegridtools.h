@@ -66,7 +66,12 @@ namespace LetheGridTools
     find_cells_around_cell(std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
             const typename DoFHandler<dim>::active_cell_iterator &cell);
 
-
+    template <int dim>
+    std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    find_cells_around_flat_cell(const DoFHandler<dim> &dof_handler,
+                                std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
+                                const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
+                                Point<dim> &point_2);
 
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -74,16 +79,15 @@ namespace LetheGridTools
                             const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
                             Point<dim> &point_2);
 
-    /**
-      * @brief
-      *Return a vector of cells around a cell including vertex neighbors
-      *
-      * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
-      */
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
             const typename DoFHandler<dim>::active_cell_iterator &cell);
+
+    template <int dim>
+    std::vector<typename DoFHandler<dim>::active_cell_iterator>
+    move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
+
 
 
 
