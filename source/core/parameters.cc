@@ -550,6 +550,12 @@ namespace Parameters
         "Kinsol from the SUNDIALS library is used. This solver has an internal algorithm"
         "that decides whether to reassemble the Jacobian matrix or not.");
 
+      prm.declare_entry(
+        "kinsol strategy",
+        "line_search",
+        Patterns::Selection("normal_newton|line_search|fixed_point|picard"),
+        "Strategy that will be used by the kinsol newton solver");
+
       prm.declare_entry("tolerance",
                         "1e-6",
                         Patterns::Double(),
@@ -595,6 +601,17 @@ namespace Parameters
         solver = SolverType::kinsol_newton;
       else
         throw(std::runtime_error("Invalid non-linear solver "));
+
+      const std::string str_kinsol_strategy = prm.get("kinsol strategy");
+      if (str_kinsol_strategy == "normal_newton")
+        kinsol_strategy = KinsolStrategy::normal_newton;
+      else if (str_kinsol_strategy == "line_search")
+        kinsol_strategy = KinsolStrategy::line_search;
+      else if (str_kinsol_strategy == "picard")
+        kinsol_strategy = KinsolStrategy::picard;
+      else
+        throw(
+          std::runtime_error("Invalid strategy for kinsol non-linear solver "));
 
       tolerance         = prm.get_double("tolerance");
       step_tolerance    = prm.get_double("step tolerance");

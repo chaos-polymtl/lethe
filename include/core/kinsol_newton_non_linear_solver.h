@@ -19,6 +19,7 @@
 
 #include <core/multiphysics.h>
 #include <core/non_linear_solver.h>
+#include <core/parameters.h>
 
 #include <deal.II/sundials/kinsol.h>
 
@@ -84,6 +85,29 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   additional_data.function_tolerance            = this->params.tolerance;
   additional_data.maximum_non_linear_iterations = this->params.max_iterations;
   additional_data.step_tolerance                = this->params.tolerance;
+
+  // Kinsol solution strategy, the default one is line search
+  if (this->params.kinsol_strategy ==
+      Parameters::NonLinearSolver::KinsolStrategy::normal_newton)
+    {
+      additional_data.strategy =
+        SUNDIALS::KINSOL<VectorType>::AdditionalData::SolutionStrategy::newton;
+    }
+  else if (this->params.kinsol_strategy ==
+           Parameters::NonLinearSolver::KinsolStrategy::line_search)
+    {
+      additional_data.strategy = SUNDIALS::KINSOL<
+        VectorType>::AdditionalData::SolutionStrategy::linesearch;
+    }
+  else if (this->params.kinsol_strategy ==
+           Parameters::NonLinearSolver::KinsolStrategy::picard)
+    {
+      additional_data.strategy =
+        SUNDIALS::KINSOL<VectorType>::AdditionalData::SolutionStrategy::picard;
+    }
+
+  std::cout << "Kinsol strategy:" << additional_data.strategy << std::endl;
+
   SUNDIALS::KINSOL<VectorType> nonlinear_solver(additional_data);
 
   nonlinear_solver.reinit_vector = [&](VectorType &x) {
