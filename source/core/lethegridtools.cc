@@ -200,7 +200,7 @@ LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-find_cells_around_edge(const DoFHandler<dim> &dof_handler,
+LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
                        std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
                        const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
                        Point<dim> &point_2){
@@ -224,13 +224,28 @@ find_cells_around_edge(const DoFHandler<dim> &dof_handler,
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
             cells_pierced(cells_pierced_set.begin(), cells_pierced_set.end());
     return cells_pierced;
+}
 
+
+bool
+LetheGridTools::cell_cut_by_flat(const typename DoFHandler<3>::active_cell_iterator &cell,
+        const typename DoFHandler<2,3>::active_cell_iterator &cell_flat){
+    Tensor<1,3> vect_1= cell_flat->vertex(1)-cell_flat->vertex(0);
+    Tensor<1,3> vect_2= cell_flat->vertex(2)-cell_flat->vertex(0);
+    Tensor<1,3> normal= cross_product_3d(vect_1,vect_2);
+
+    for(unsigned int i=0; i<GeometryInfo<3>::vertices_per_cell;++i){
+
+    }
 
 }
 
+
+
+
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
-find_cells_around_flat_cell(
+LetheGridTools::find_cells_around_flat_cell(
   const DoFHandler<dim> &                                   dof_handler,
   const typename DoFHandler<dim - 1>::active_cell_iterator &cell,
   std::map<unsigned int,
@@ -285,7 +300,7 @@ find_cells_around_flat_cell(
           if(true){
               // If the cell was not present in the intersected cells set
               if (intersected_cells.insert(cell_iter).second) {
-                  previous_candidate_cells.insert(cell_iter)
+                  previous_candidate_cells.insert(cell_iter);
                 }
             }
         }

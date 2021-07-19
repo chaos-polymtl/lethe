@@ -70,25 +70,32 @@ namespace LetheGridTools
 
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    find_cells_around_flat_cell(const DoFHandler<dim> &dof_handler,
-                                std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
-                                const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
-                                Point<dim> &point_2);
+    find_cells_around_flat_cell(const DoFHandler<dim> &                                   dof_handler,
+                                const typename DoFHandler<dim - 1>::active_cell_iterator &cell,
+                                std::map<unsigned int,
+                                        std::set<typename DoFHandler<dim>::active_cell_iterator>>
+                                &vertices_cell_map);
 
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     find_cells_around_edge(const DoFHandler<dim> &dof_handler,
-                            const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
-                            Point<dim> &point_2);
+                           std::map<unsigned int,std::set<typename DoFHandler<dim>::active_cell_iterator>> &vertices_cell_map,
+                           const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
+                           Point<dim> &point_2);
 
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
             const typename DoFHandler<dim>::active_cell_iterator &cell);
 
+
+    bool
+    cell_cut_by_flat(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<dim>::active_cell_iterator &cell_flat);
+
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
+
 
     template <int dim>
     struct hash_cell
