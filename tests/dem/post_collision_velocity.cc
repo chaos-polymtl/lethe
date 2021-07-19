@@ -100,11 +100,11 @@ test(double coefficient_of_restitution)
   for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
        ++counter)
     {
-      dem_parameters.boundary_motion.boundary_rotational_speed.insert(
+      dem_parameters.boundary_conditions.boundary_rotational_speed.insert(
         {counter, 0});
-      dem_parameters.boundary_motion.boundary_translational_velocity.insert(
+      dem_parameters.boundary_conditions.boundary_translational_velocity.insert(
         {counter, translational_and_rotational_veclocity});
-      dem_parameters.boundary_motion.boundary_rotational_vector.insert(
+      dem_parameters.boundary_conditions.boundary_rotational_vector.insert(
         {counter, translational_and_rotational_veclocity});
     }
 
@@ -154,8 +154,8 @@ test(double coefficient_of_restitution)
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
-
-  boundary_cells_object.build(tr);
+  std::vector<unsigned int>     outlet_boundaries;
+  boundary_cells_object.build(tr, outlet_boundaries);
 
   // P-W broad search
   PWBroadSearch<dim> pw_broad_search_object;
@@ -179,9 +179,9 @@ test(double coefficient_of_restitution)
                      std::map<unsigned int, pw_contact_info_struct<dim>>>
                         pw_contact_information;
   PWNonLinearForce<dim> pw_force_object(
-    dem_parameters.boundary_motion.boundary_translational_velocity,
-    dem_parameters.boundary_motion.boundary_rotational_speed,
-    dem_parameters.boundary_motion.boundary_rotational_vector,
+    dem_parameters.boundary_conditions.boundary_translational_velocity,
+    dem_parameters.boundary_conditions.boundary_rotational_speed,
+    dem_parameters.boundary_conditions.boundary_rotational_vector,
     grid_radius,
     dem_parameters);
   VelocityVerletIntegrator<dim> integrator_object;

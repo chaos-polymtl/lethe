@@ -62,15 +62,17 @@ public:
    * @param triangulation Triangulation to access the information of the cells
    * @param floating_wall_properties Properties of floating walls specified in
    * the parameter handler file
-   * @param maximum_cell_diameter Maximum cell length in the triangulation
+   * @param outlet_boundaries A vector which contains the outlet boundary IDs
    */
   void
   build(
     const parallel::distributed::Triangulation<dim> & triangulation,
-    const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties);
+    const Parameters::Lagrangian::FloatingWalls<dim> &floating_wall_properties,
+    const std::vector<unsigned int> &                 outlet_boundaries);
 
   void
-  build(const parallel::distributed::Triangulation<dim> &triangulation);
+  build(const parallel::distributed::Triangulation<dim> &triangulation,
+        const std::vector<unsigned int> &                outlet_boundaries);
 
   std::map<int, boundary_cells_info_struct<dim>> &
   get_boundary_cells_information()
@@ -122,18 +124,13 @@ private:
    * boundary cells and for the boundary faces the normal vector and a point
    * locating on the face are obtained
    *
-   * @param boundary_cells_with_faces A vector which contains all the boundary
-   * cells which has atleast one boundary face
    * @param triangulation Triangulation to access the information of the cells
-   * @return A map of structs (boundary_cells_info_struct), this struct
-   * contains 1, an integer which shows the number of boundary face 2, the
-   * corresponding boundary cell 3, the face number of the cell 4, normal vector
-   * of the face 5, a point on the face which will be used to obtain the
-   * distance between center of particles and the face
+   * @param outlet_boundaries A vector which contains the outlet boundary IDs
    */
   void
   find_boundary_cells_information(
-    const parallel::distributed::Triangulation<dim> &triangulation);
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    const std::vector<unsigned int> &                outlet_boundaries);
 
   /**
    * Loops over all the cells to find cells which should be searched for

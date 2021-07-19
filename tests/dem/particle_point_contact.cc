@@ -109,7 +109,8 @@ test()
 
   // Construct boundary cells object and build it
   BoundaryCellsInformation<dim> boundary_cells_object;
-  boundary_cells_object.build(tr);
+  std::vector<unsigned int>     outlet_boundaries;
+  boundary_cells_object.build(tr, outlet_boundaries);
 
   // Particle-point broad search
   std::unordered_map<unsigned int,

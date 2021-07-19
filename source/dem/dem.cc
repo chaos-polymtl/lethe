@@ -258,7 +258,9 @@ DEMSolver<dim>::load_balance()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
 
-  boundary_cell_object.build(triangulation, parameters.floating_walls);
+  boundary_cell_object.build(triangulation,
+                             parameters.floating_walls,
+                             parameters.boundary_conditions.outlet_boundaries);
 
   if (parameters.grid_motion.motion_type !=
       Parameters::Lagrangian::GridMotion<dim>::MotionType::none)
@@ -649,9 +651,9 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
       Parameters::Lagrangian::ModelParameters::PWContactForceModel::pw_linear)
     {
       pw_contact_force_object = std::make_shared<PWLinearForce<dim>>(
-        parameters.boundary_motion.boundary_translational_velocity,
-        parameters.boundary_motion.boundary_rotational_speed,
-        parameters.boundary_motion.boundary_rotational_vector,
+        parameters.boundary_conditions.boundary_translational_velocity,
+        parameters.boundary_conditions.boundary_rotational_speed,
+        parameters.boundary_conditions.boundary_rotational_vector,
         triangulation_cell_diameter,
         parameters,
         boundary_index);
@@ -661,9 +663,9 @@ DEMSolver<dim>::set_pw_contact_force(const DEMSolverParameters<dim> &parameters)
              pw_nonlinear)
     {
       pw_contact_force_object = std::make_shared<PWNonLinearForce<dim>>(
-        parameters.boundary_motion.boundary_translational_velocity,
-        parameters.boundary_motion.boundary_rotational_speed,
-        parameters.boundary_motion.boundary_rotational_vector,
+        parameters.boundary_conditions.boundary_translational_velocity,
+        parameters.boundary_conditions.boundary_rotational_speed,
+        parameters.boundary_conditions.boundary_rotational_vector,
         triangulation_cell_diameter,
         parameters,
         boundary_index);
@@ -790,7 +792,9 @@ DEMSolver<dim>::solve()
                                             cells_local_neighbor_list,
                                             cells_ghost_neighbor_list);
   // Finding boundary cells with faces
-  boundary_cell_object.build(triangulation, parameters.floating_walls);
+  boundary_cell_object.build(triangulation,
+                             parameters.floating_walls,
+                             parameters.boundary_conditions.outlet_boundaries);
 
   // Setting chosen contact force, insertion and integration methods
   insertion_object        = set_insertion_type(parameters);
