@@ -3,7 +3,7 @@
 //
 
 #include <core/lethegridtools.h>
-
+#include <deal.II/grid/manifold.h>
 
 
 template <int dim>
@@ -229,15 +229,53 @@ LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
 
 bool
 LetheGridTools::cell_cut_by_flat(const typename DoFHandler<3>::active_cell_iterator &cell,
-        const typename DoFHandler<2,3>::active_cell_iterator &cell_flat){
-    Tensor<1,3> vect_1= cell_flat->vertex(1)-cell_flat->vertex(0);
-    Tensor<1,3> vect_2= cell_flat->vertex(2)-cell_flat->vertex(0);
-    Tensor<1,3> normal= cross_product_3d(vect_1,vect_2);
+                                 const typename DoFHandler<2, 3>::active_cell_iterator &cell_flat) {
+    Tensor<1, 3> vect_1 = cell_flat->vertex(1) - cell_flat->vertex(0);
+    Tensor<1, 3> vect_2 = cell_flat->vertex(2) - cell_flat->vertex(0);
+    Tensor<1, 3> normal = cross_product_3d(vect_1, vect_2);
 
-    for(unsigned int i=0; i<GeometryInfo<3>::vertices_per_cell;++i){
 
+    auto &local_manifold = cell_flat->get_manifold();
+    std::vector<Point<3>> manifold_points(GeometryInfo<2>::vertices_per_cell);
+
+
+    for (unsigned int i = 0; i < GeometryInfo<2>::vertices_per_cell; ++i) {
+        manifold_points[i] = cell_flat->vertex(i);
+    }
+    auto surrounding_points = make_array_view(manifold_points.begin(),
+                                              manifold_points.end());
+
+    // A cell that is cut as to fill 2 conditions:
+    // First the projection of its vertex on the flat must fall on the flat cell.
+    // Second the normal between the flat and the vertex of the cell must change side relative to the flat.
+
+    bool cell_is_cut = false;
+    bool first_condition = false;
+    bool second_condition = false;
+
+
+    double last_scalar_product = 0;
+    Tensor<1, 3> last_normal;
+    last_normal = 0;
+
+    for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i) {
+        Point<3> projected_point = local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
+        Tensor<1, 3> normal = cell->vertex(i) - projected_point;
+        // check if some of the vertex are on the other side of the cell
+        double scalar_prod = scalar_product(normal, last_normal);
+        last_normal = normal;
+        if (scalar_prod < 0)
+            second_condition = true;
+        if (cell->point_inside(projected_point))
+            first_condition = true;
+
+        if(first_condition && second_condition) {
+            cell_is_cut = true;
+            break;
+        }
     }
 
+    return cell_is_cut;
 }
 
 
@@ -247,64 +285,77 @@ template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
 LetheGridTools::find_cells_around_flat_cell(
   const DoFHandler<dim> &                                   dof_handler,
-  const typename DoFHandler<dim - 1>::active_cell_iterator &cell,
+  const typename DoFHandler<dim - 1,dim>::active_cell_iterator &cell,
   std::map<unsigned int,
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     &vertices_cell_map)
 {
-  auto &starting_cell =
-    find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_cut;
+  if(dim==2){
+      cells_cut=LetheGridTools::find_cells_around_edge(dof_handler,
+      vertices_cell_map,
+      cell->vertex(0),
+      cell->vertex(1));
 
-  std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
-                     LetheGridTools::hash_cell<dim>,
-                     LetheGridTools::equal_cell<dim>>
-    previous_candidate_cells;
+  }
 
-  std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
-                     LetheGridTools::hash_cell<dim>,
-                     LetheGridTools::equal_cell<dim>>
-    current_candidate_cells;
+  if(dim==3) {
+      auto &starting_cell =
+              find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
 
-  std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
-                     LetheGridTools::hash_cell<dim>,
-                     LetheGridTools::equal_cell<dim>>
-    intersected_cells;
+      std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+              LetheGridTools::hash_cell<dim>,
+              LetheGridTools::equal_cell<dim>>
+              previous_candidate_cells;
 
-  previous_candidate_cells.insert(starting_cell);
-  current_candidate_cells.insert(starting_cell);
-  intersected_cells.insert(starting_cell);
+      std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+              LetheGridTools::hash_cell<dim>,
+              LetheGridTools::equal_cell<dim>>
+              current_candidate_cells;
 
-  int n_previous_intersected = 0;
+      std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+              LetheGridTools::hash_cell<dim>,
+              LetheGridTools::equal_cell<dim>>
+              intersected_cells;
 
-  while (intersected_cells.size() > n_previous_intersected)
-    {
-      // Find all cells around previous candidate cells
-      for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
-           previous_candidate_cells)
-        {
-          current_candidate_cells.insert(
-            LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
-                                                        cell_iter));
-        }
+      previous_candidate_cells.insert(starting_cell);
+      current_candidate_cells.insert(starting_cell);
+      intersected_cells.insert(starting_cell);
 
-      // Reset the list of previous candidates
-      previous_candidate_cells.clear();
+      int n_previous_intersected = 0;
 
-      // Check if current candidate cells are intersected, and if they are, add
-      // them to the intersected cell set. If the added cell was not already
-      // present in the intersected cell set, add it to the previous candidate
-      // cells as well.
-      for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
-        current_candidate_cells) {
-          //TODO If intersection is detected
-          if(true){
-              // If the cell was not present in the intersected cells set
-              if (intersected_cells.insert(cell_iter).second) {
-                  previous_candidate_cells.insert(cell_iter);
-                }
-            }
-        }
-    }
+      while (intersected_cells.size() > n_previous_intersected) {
+          // Find all cells around previous candidate cells
+          for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
+                  previous_candidate_cells) {
+              current_candidate_cells.insert(
+                      LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
+                                                                  cell_iter));
+          }
+
+          // Reset the list of previous candidates
+          previous_candidate_cells.clear();
+
+          // Check if current candidate cells are intersected, and if they are, add
+          // them to the intersected cell set. If the added cell was not already
+          // present in the intersected cell set, add it to the previous candidate
+          // cells as well.
+          for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
+                  current_candidate_cells) {
+              bool cell_is_cut= LetheGridTools::cell_cut_by_flat(cell_iter,
+              cell);
+              if (true) {
+                  // If the cell was not present in the intersected cells set
+                  if (intersected_cells.insert(cell_iter).second) {
+                      previous_candidate_cells.insert(cell_iter);
+                  }
+              }
+          }
+      }
+      cells_cut(intersected_cells.begin(), intersected_cells.end());
+
+  }
+  return cells_cut;
 }
 
 

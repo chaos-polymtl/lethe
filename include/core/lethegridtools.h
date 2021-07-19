@@ -71,7 +71,7 @@ namespace LetheGridTools
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     find_cells_around_flat_cell(const DoFHandler<dim> &                                   dof_handler,
-                                const typename DoFHandler<dim - 1>::active_cell_iterator &cell,
+                                const typename DoFHandler<dim - 1,dim>::active_cell_iterator &cell,
                                 std::map<unsigned int,
                                         std::set<typename DoFHandler<dim>::active_cell_iterator>>
                                 &vertices_cell_map);
