@@ -90,7 +90,7 @@ namespace LetheGridTools
 
 
     bool
-    cell_cut_by_flat(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<dim>::active_cell_iterator &cell_flat);
+    cell_cut_by_flat(const typename DoFHandler<3>::active_cell_iterator &cell,const typename DoFHandler<2,3>::active_cell_iterator &cell_flat);
 
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
