@@ -96,11 +96,11 @@ test()
   for (unsigned int counter = 0; counter < rotating_wall_maximum_number;
        ++counter)
     {
-      dem_parameters.boundary_motion.boundary_rotational_speed.insert(
+      dem_parameters.boundary_conditions.boundary_rotational_speed.insert(
         {counter, 0});
-      dem_parameters.boundary_motion.boundary_translational_velocity.insert(
+      dem_parameters.boundary_conditions.boundary_translational_velocity.insert(
         {counter, translational_and_rotational_veclocity});
-      dem_parameters.boundary_motion.boundary_rotational_vector.insert(
+      dem_parameters.boundary_conditions.boundary_rotational_vector.insert(
         {counter, translational_and_rotational_veclocity});
     }
 
@@ -147,7 +147,8 @@ test()
 
   // Finding boundary cells
   BoundaryCellsInformation<dim> boundary_cells_object;
-  boundary_cells_object.build(tr);
+  std::vector<unsigned int>     outlet_boundaries;
+  boundary_cells_object.build(tr, outlet_boundaries);
 
   // Calling broad search
   PWBroadSearch<dim> broad_search_object;
@@ -175,9 +176,9 @@ test()
 
   // Calling non-linear force
   PWNonLinearForce<dim> force_object(
-    dem_parameters.boundary_motion.boundary_translational_velocity,
-    dem_parameters.boundary_motion.boundary_rotational_speed,
-    dem_parameters.boundary_motion.boundary_rotational_vector,
+    dem_parameters.boundary_conditions.boundary_translational_velocity,
+    dem_parameters.boundary_conditions.boundary_rotational_speed,
+    dem_parameters.boundary_conditions.boundary_rotational_vector,
     grid_radius,
     dem_parameters);
   force_object.calculate_pw_contact_force(pw_contact_information,
