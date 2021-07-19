@@ -31,6 +31,7 @@
 #include <dem/locate_local_particles.h>
 #include <dem/non_uniform_insertion.h>
 #include <dem/output_force_torque_calculation.h>
+#include <dem/lagrangian_post_processing.h>
 #include <dem/particle_point_line_broad_search.h>
 #include <dem/particle_point_line_contact_force.h>
 #include <dem/particle_point_line_contact_info_struct.h>
@@ -250,6 +251,12 @@ private:
   void
   write_output_results();
 
+  /**
+   * @brief post_process_results
+   */
+  void
+  post_process_results();
+
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
@@ -352,6 +359,7 @@ private:
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
   Visualization<dim>                   visualization_object;
+  LagrangianPostProcessing<dim>        post_processing_object;
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
   const double                         standard_deviation_multiplier;

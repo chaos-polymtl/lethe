@@ -389,11 +389,11 @@ namespace Parameters
       // Enable granular temperature post-processing
       bool calculate_granular_temperature;
 
-      // Set initial time to start post-processing calculations
-      double initial_time;
+      // Set initial step to start post-processing calculations
+      double initial_step;
 
-      // Set end time to finish post-processing calculations
-      double end_time;
+      // Set end step to finish post-processing calculations
+      double end_step;
 
       // Set post-processing output frequency
       unsigned int output_frequency;

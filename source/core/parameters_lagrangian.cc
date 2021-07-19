@@ -1077,27 +1077,27 @@ namespace Parameters
                           Patterns::Bool(),
                           "Enable calculation of granular temperature.");
 
-        prm.declare_entry("initial time",
+        prm.declare_entry("initial step",
                           "0.0",
                           Patterns::Double(),
-                          "Initial time to start Lagrangian post-processing.");
+                          "Initial step to start Lagrangian post-processing.");
 
-        prm.declare_entry("end time",
+        prm.declare_entry("end step",
                           "0.0",
                           Patterns::Double(),
-                          "End time to finish Lagrangian post-processing.");
+                          "End step to finish Lagrangian post-processing.");
 
         prm.declare_entry("output frequency",
                           "100000",
                           Patterns::Integer(),
                           "Post-processing output frequency.");
 
-        prm.declare_entry("particles velocity name",
+        prm.declare_entry("particles velocity output name",
                           "particles_velocity",
                           Patterns::FileName(),
                           "File output particles velocity.");
 
-        prm.declare_entry("granular temperature name",
+        prm.declare_entry("granular temperature output name",
                           "granular_temperature",
                           Patterns::FileName(),
                           "File output granular temperature.");
@@ -1115,11 +1115,11 @@ namespace Parameters
           prm.get_bool("calculate particles average velocity");
         calculate_granular_temperature =
           prm.get_bool("calculate granular temperature");
-        initial_time              = prm.get_double("initial time");
-        end_time                  = prm.get_double("end time");
+        initial_step              = prm.get_double("initial step");
+        end_step                  = prm.get_double("end step");
         output_frequency          = prm.get_integer("output frequency");
-        particles_velocity_name   = prm.get("particles velocity name");
-        granular_temperature_name = prm.get("granular temperature name");
+        particles_velocity_name   = prm.get("particles velocity output name");
+        granular_temperature_name = prm.get("granular temperature output name");
       }
       prm.leave_subsection();
     }
