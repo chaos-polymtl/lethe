@@ -7,9 +7,9 @@ subsection simulation control
   set method                  = bdf1
   set number mesh adapt       = 0
   set output name              = result_
-  set output frequency	  	= 1
+  set output frequency	  	= 1000
   set startup time scaling         = 0.6
-  set time end                     = 0.01
+  set time end                     = 0.02
   set time step                    = 0.002
   set subdivision             = 1 
   set log precision     = 10 
@@ -64,6 +64,7 @@ subsection cfd-dem
    set grad div = true
    set full stress tensor = false
    set drag model = rong
+   set post processing = true
 end
 
 #---------------------------------------------------

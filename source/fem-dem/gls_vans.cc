@@ -1,8 +1,8 @@
-#include <fem-dem/gls_vans.h>
-
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
 
 
 // Constructor for class GLS_VANS
@@ -661,7 +661,8 @@ GLSVANSSolver<dim>::assembleGLS()
   Tensor<1, dim>                       average_particle_velocity;
   Tensor<1, dim>                       fluid_velocity_at_particle_location;
   Tensor<1, dim>                       relative_velocity;
-  double                               c_d = 0;
+  double                               c_d                = 0;
+  double                               cell_void_fraction = 0;
   int                                  particles_in_cell;
 
 
@@ -861,7 +862,7 @@ GLSVANSSolver<dim>::assembleGLS()
                 }
               double cell_volume = cell->measure();
 
-              double cell_void_fraction =
+              cell_void_fraction =
                 (cell_volume - particles_volume_in_cell) / cell_volume;
 
               // Get the local dof indices for velocity field interpolation
@@ -891,6 +892,7 @@ GLSVANSSolver<dim>::assembleGLS()
                   auto reference_location = particle.get_reference_location();
 
                   fluid_velocity_at_particle_location = 0;
+
 
                   for (unsigned int j = 0; j < dofs_per_cell; ++j)
                     {
@@ -1612,16 +1614,22 @@ GLSVANSSolver<dim>::output_field_hook(DataOut<dim> &data_out)
 
 template <int dim>
 void
-GLSVANSSolver<dim>::global_mass_conservation()
+GLSVANSSolver<dim>::post_processing()
 {
-  QGauss<dim>   quadrature_formula(this->number_quadrature_points);
-  FEValues<dim> fe_values(*this->mapping,
+  QGauss<dim>     quadrature_formula(this->number_quadrature_points);
+  QGauss<dim - 1> face_quadrature_formula(this->number_quadrature_points);
+
+  FEValues<dim>     fe_values(*this->mapping,
                           *this->fe,
                           quadrature_formula,
                           update_values | update_quadrature_points |
                             update_JxW_values | update_gradients |
                             update_hessians);
-  FEValues<dim> fe_values_void_fraction(*this->mapping,
+  FEFaceValues<dim> fe_face_values(*this->fe,
+                                   face_quadrature_formula,
+                                   update_values | update_quadrature_points |
+                                     update_normal_vectors | update_JxW_values);
+  FEValues<dim>     fe_values_void_fraction(*this->mapping,
                                         this->fe_void_fraction,
                                         quadrature_formula,
                                         update_values |
@@ -1629,7 +1637,10 @@ GLSVANSSolver<dim>::global_mass_conservation()
                                           update_JxW_values | update_gradients);
 
   const FEValuesExtractors::Vector velocities(0);
-  const unsigned int               n_q_points = quadrature_formula.size();
+  const FEValuesExtractors::Scalar pressure(dim);
+
+  const unsigned int n_q_points      = quadrature_formula.size();
+  const unsigned int face_n_q_points = face_quadrature_formula.size();
 
   std::vector<double>         present_void_fraction_values(n_q_points);
   std::vector<Tensor<1, dim>> present_void_fraction_gradients(n_q_points);
@@ -1641,7 +1652,19 @@ GLSVANSSolver<dim>::global_mass_conservation()
 
   std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
-  double                      mass_flow = 0;
+
+  std::vector<double>         present_pressure_values(n_q_points);
+  std::vector<Tensor<1, dim>> present_pressure_gradients(n_q_points);
+
+  double mass_source             = 0;
+  double fluid_volume            = 0;
+  double bed_volume              = 0;
+  double average_void_fraction   = 0;
+  double pressure_upper_boundary = 0;
+  double upper_surface           = 0;
+  double pressure_lower_boundary = 0;
+  double lower_surface           = 0;
+  double pressure_drop           = 0;
 
   Vector<double>      bdf_coefs;
   std::vector<double> time_steps_vector =
@@ -1667,6 +1690,7 @@ GLSVANSSolver<dim>::global_mass_conservation()
             cell->index(),
             &this->void_fraction_dof_handler);
           fe_values_void_fraction.reinit(void_fraction_cell);
+
           // Gather void fraction (values, gradient)
           fe_values_void_fraction.get_function_values(
             nodal_void_fraction_relevant, present_void_fraction_values);
@@ -1674,12 +1698,19 @@ GLSVANSSolver<dim>::global_mass_conservation()
             nodal_void_fraction_relevant, present_void_fraction_gradients);
 
           fe_values.reinit(cell);
-          // Gather velocity (values, gradient and laplacian)
+
+          // Gather velocity (values and gradient)
           auto &evaluation_point = this->evaluation_point;
           fe_values[velocities].get_function_values(evaluation_point,
                                                     present_velocity_values);
           fe_values[velocities].get_function_gradients(
             evaluation_point, present_velocity_gradients);
+
+          // Gather pressure (values and gradient)
+          fe_values[pressure].get_function_values(evaluation_point,
+                                                  present_pressure_values);
+          fe_values[pressure].get_function_gradients(
+            evaluation_point, present_pressure_gradients);
 
           // Gather the previous time steps depending on the number of stages
           // of the time integration scheme for the void fraction
@@ -1705,39 +1736,91 @@ GLSVANSSolver<dim>::global_mass_conservation()
               const double present_velocity_divergence =
                 trace(present_velocity_gradients[q]);
 
-              mass_flow += (present_velocity_values[q] *
-                              present_void_fraction_gradients[q] +
-                            present_void_fraction_values[q] *
-                              present_velocity_divergence) *
-                           fe_values_void_fraction.JxW(q);
+              // Evaluation of global mass conservation
+              mass_source += (present_velocity_values[q] *
+                                present_void_fraction_gradients[q] +
+                              present_void_fraction_values[q] *
+                                present_velocity_divergence) *
+                             fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                     Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
                   scheme == Parameters::SimulationControl::TimeSteppingMethod::
                               steady_bdf)
-                mass_flow += (bdf_coefs[0] * present_void_fraction_values[q] +
-                              bdf_coefs[1] * p1_void_fraction_values[q]) *
-                             fe_values_void_fraction.JxW(q);
+                mass_source += (bdf_coefs[0] * present_void_fraction_values[q] +
+                                bdf_coefs[1] * p1_void_fraction_values[q]) *
+                               fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                mass_flow += (bdf_coefs[0] * present_void_fraction_values[q] +
-                              bdf_coefs[1] * p1_void_fraction_values[q] +
-                              bdf_coefs[2] * p2_void_fraction_values[q]) *
-                             fe_values_void_fraction.JxW(q);
+                mass_source += (bdf_coefs[0] * present_void_fraction_values[q] +
+                                bdf_coefs[1] * p1_void_fraction_values[q] +
+                                bdf_coefs[2] * p2_void_fraction_values[q]) *
+                               fe_values_void_fraction.JxW(q);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                mass_flow += (bdf_coefs[0] * present_void_fraction_values[q] +
-                              bdf_coefs[1] * p1_void_fraction_values[q] +
-                              bdf_coefs[2] * p2_void_fraction_values[q] +
-                              bdf_coefs[3] * p3_void_fraction_values[q]) *
-                             fe_values_void_fraction.JxW(q);
+                mass_source += (bdf_coefs[0] * present_void_fraction_values[q] +
+                                bdf_coefs[1] * p1_void_fraction_values[q] +
+                                bdf_coefs[2] * p2_void_fraction_values[q] +
+                                bdf_coefs[3] * p3_void_fraction_values[q]) *
+                               fe_values_void_fraction.JxW(q);
+
+              // Calculation of fluid and bed volumes in bed
+              if (present_void_fraction_values[q] < 0.6)
+                {
+                  fluid_volume += present_void_fraction_values[q] *
+                                  fe_values_void_fraction.JxW(q);
+
+                  bed_volume += fe_values_void_fraction.JxW(q);
+                }
+            }
+
+          for (unsigned int q = 0; q < face_n_q_points; ++q)
+            {
+              for (const auto &face : cell->face_iterators())
+                {
+                  if (face->at_boundary() && (face->boundary_id() == 2))
+                    {
+                      fe_face_values.reinit(cell, face);
+                      pressure_upper_boundary +=
+                        present_pressure_values[q] * fe_face_values.JxW(q);
+
+                      upper_surface += fe_face_values.JxW(q);
+                    }
+
+                  if (face->at_boundary() && (face->boundary_id() == 1))
+                    {
+                      fe_face_values.reinit(cell, face);
+                      pressure_lower_boundary +=
+                        present_pressure_values[q] * fe_face_values.JxW(q);
+
+                      lower_surface += fe_face_values.JxW(q);
+                    }
+                }
             }
         }
     }
-  mass_flow = Utilities::MPI::sum(mass_flow, this->mpi_communicator);
-  // this->pcout << "mass source is: " << mass_flow << std::endl;
+
+  mass_source  = Utilities::MPI::sum(mass_source, this->mpi_communicator);
+  fluid_volume = Utilities::MPI::sum(fluid_volume, this->mpi_communicator);
+  bed_volume   = Utilities::MPI::sum(bed_volume, this->mpi_communicator);
+  pressure_lower_boundary =
+    Utilities::MPI::sum(pressure_lower_boundary, this->mpi_communicator);
+  lower_surface = Utilities::MPI::sum(lower_surface, this->mpi_communicator);
+  pressure_upper_boundary =
+    Utilities::MPI::sum(pressure_upper_boundary, this->mpi_communicator);
+  upper_surface = Utilities::MPI::sum(upper_surface, this->mpi_communicator);
+
+  average_void_fraction   = fluid_volume / bed_volume;
+  pressure_upper_boundary = pressure_upper_boundary / upper_surface;
+  pressure_lower_boundary = pressure_lower_boundary / lower_surface;
+  pressure_drop           = pressure_lower_boundary - pressure_upper_boundary;
+
+  this->pcout << "Mass Source: " << mass_source << std::endl;
+  this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
+              << std::endl;
+  this->pcout << "Pressure Drop: " << pressure_drop << std::endl;
 }
 
 template <int dim>
@@ -1775,8 +1858,9 @@ GLSVANSSolver<dim>::solve()
         }
       this->postprocess(false);
       this->finish_time_step();
-      // To remove
-      global_mass_conservation();
+
+      if (this->simulation_parameters.cfd_dem.post_processing)
+        post_processing();
     }
 
   this->finish_simulation();

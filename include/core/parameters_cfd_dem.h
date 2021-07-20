@@ -20,9 +20,9 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parsed_function.h>
+
+#include <core/parameters.h>
 
 
 using namespace dealii;
@@ -88,6 +88,7 @@ namespace Parameters
     bool      full_stress_tensor;
     double    reference_velocity;
     DragModel drag_model;
+    bool      post_processing;
   };
 
 

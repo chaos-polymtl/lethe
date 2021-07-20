@@ -87,6 +87,10 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "The refernce velocity for the shock capturing scheme");
+    prm.declare_entry("post processing",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply post_processing");
     prm.leave_subsection();
   }
 
@@ -99,6 +103,7 @@ namespace Parameters
     grad_div             = prm.get_bool("grad div");
     full_stress_tensor   = prm.get_bool("full stress tensor");
     reference_velocity   = prm.get_double("reference velocity");
+    post_processing      = prm.get_bool("post processing");
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;
