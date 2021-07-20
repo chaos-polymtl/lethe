@@ -226,59 +226,64 @@ LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
     return cells_pierced;
 }
 
-
 bool
-LetheGridTools::cell_cut_by_flat(const typename DoFHandler<3>::active_cell_iterator &cell,
-                                 const typename DoFHandler<2, 3>::active_cell_iterator &cell_flat) {
-    Tensor<1, 3> vect_1 = cell_flat->vertex(1) - cell_flat->vertex(0);
-    Tensor<1, 3> vect_2 = cell_flat->vertex(2) - cell_flat->vertex(0);
-    Tensor<1, 3> normal = cross_product_3d(vect_1, vect_2);
+LetheGridTools::cell_cut_by_flat(
+  const typename DoFHandler<3>::active_cell_iterator &   cell,
+  const typename DoFHandler<2, 3>::active_cell_iterator &cell_flat)
+{
+  auto &                local_manifold = cell_flat->get_manifold();
+  std::vector<Point<3>> manifold_points(GeometryInfo<2>::vertices_per_cell);
 
-
-    auto &local_manifold = cell_flat->get_manifold();
-    std::vector<Point<3>> manifold_points(GeometryInfo<2>::vertices_per_cell);
-
-
-    for (unsigned int i = 0; i < GeometryInfo<2>::vertices_per_cell; ++i) {
-        manifold_points[i] = cell_flat->vertex(i);
+  for (unsigned int i = 0; i < GeometryInfo<2>::vertices_per_cell; ++i)
+    {
+      manifold_points[i] = cell_flat->vertex(i);
     }
-    auto surrounding_points = make_array_view(manifold_points.begin(),
-                                              manifold_points.end());
+  auto surrounding_points =
+    make_array_view(manifold_points.begin(), manifold_points.end());
 
-    // A cell that is cut as to fill 2 conditions:
-    // First the projection of its vertex on the flat must fall on the flat cell.
-    // Second the normal between the flat and the vertex of the cell must change side relative to the flat.
+  // A cell that is cut either has to:
+  // A) Contain a vertex from the flat
+  // B) Fill these two conditions
+  //    B1) The projection of one of the cell's
+  //         vertices must fall on the flat
+  //    B2) The cell must have vertices on each side of the flat
 
-    bool cell_is_cut = false;
-    bool first_condition = false;
-    bool second_condition = false;
-
-
-    double last_scalar_product = 0;
-    Tensor<1, 3> last_normal;
-    last_normal = 0;
-
-    for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i) {
-        Point<3> projected_point = local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
-        Tensor<1, 3> normal = cell->vertex(i) - projected_point;
-        // check if some of the vertex are on the other side of the cell
-        double scalar_prod = scalar_product(normal, last_normal);
-        last_normal = normal;
-        if (scalar_prod < 0)
-            second_condition = true;
-        if (cell->point_inside(projected_point))
-            first_condition = true;
-
-        if(first_condition && second_condition) {
-            cell_is_cut = true;
-            break;
-        }
+  // Check for condition A
+  for (const Point<3> &point : manifold_points)
+    {
+      if (cell->point_inside(point))
+        return true;
     }
 
-    return cell_is_cut;
+  // Check for condition B
+  bool         condition_B1 = false;
+  bool         condition_B2 = false;
+  Tensor<1, 3> last_normal;
+  last_normal.clear();
+
+  for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i)
+    {
+      Point<3> projected_point =
+        local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
+      Tensor<1, 3> normal = cell->vertex(i) - projected_point;
+
+      // Check if the projected vertex falls inside the flat
+      if (cell->point_inside(projected_point))
+        condition_B1 = true;
+
+      // Check if we switched to the other side
+      // of the flat during this iteration
+      double scalar_prod = scalar_product(normal, last_normal);
+      last_normal        = normal;
+      if (scalar_prod < 0)
+        condition_B2 = true;
+
+      if (condition_B1 && condition_B2)
+        return true
+    }
+
+  return false;
 }
-
-
 
 
 template <int dim>
@@ -291,15 +296,14 @@ LetheGridTools::find_cells_around_flat_cell(
     &vertices_cell_map)
 {
     std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_cut;
-  if(dim==2){
+  if constexpr (dim==2) {
       cells_cut=LetheGridTools::find_cells_around_edge(dof_handler,
       vertices_cell_map,
       cell->vertex(0),
       cell->vertex(1));
-
   }
 
-  if(dim==3) {
+  if constexpr (dim==3) {
       auto &starting_cell =
               find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
 
@@ -342,9 +346,8 @@ LetheGridTools::find_cells_around_flat_cell(
           // cells as well.
           for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
                   current_candidate_cells) {
-              bool cell_is_cut= LetheGridTools::cell_cut_by_flat(cell_iter,
-              cell);
-              if (true) {
+              if (LetheGridTools::cell_cut_by_flat(cell_iter, cell))
+                {
                   // If the cell was not present in the intersected cells set
                   if (intersected_cells.insert(cell_iter).second) {
                       previous_candidate_cells.insert(cell_iter);
