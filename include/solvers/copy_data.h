@@ -123,7 +123,7 @@ public:
 };
 
 /**
- * @brief The StabilizedMethodsCopyData class is responsible for
+ * @brief The StabilizedMethodsTensorCopyData class is responsible for
  * storing the information calculated using the assembly of stabilized
  * Tensor<1,dim> equations. Like the CopyData class, this class is used to
  * initialize, zero (reset) and store the cell_matrix and the cell_rhs. Contrary
