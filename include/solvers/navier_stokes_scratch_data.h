@@ -14,6 +14,7 @@
  * ---------------------------------------------------------------------
  */
 
+#include <core/bdf.h>
 #include <core/parameters.h>
 
 #include <deal.II/base/quadrature.h>
@@ -21,14 +22,15 @@
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
+#include <deal.II/fe/fe_q.h>
 #include <deal.II/fe/fe_system.h>
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
 
 
-#ifndef LETHE_SCRATCH_DATA_H
-#  define LETHE_SCRATCH_DATA_H
+#ifndef lethe_navier_stokes_scratch_data_h
+#  define lethe_navier_stokes_scratch_data_h
 
 using namespace dealii;
 
@@ -36,9 +38,9 @@ template <int dim>
 class NavierStokesScratchData
 {
 public:
-  NavierStokesScratchData(FESystem<dim> &  fe,
-                          Quadrature<dim> &quadrature,
-                          Mapping<dim> &   mapping)
+  NavierStokesScratchData(const FESystem<dim> &  fe,
+                          const Quadrature<dim> &quadrature,
+                          const Mapping<dim> &   mapping)
     : fe_values(mapping,
                 fe,
                 quadrature,
@@ -46,6 +48,7 @@ public:
                   update_gradients | update_hessians)
   {
     allocate();
+    gather_free_surface = false;
   };
 
   NavierStokesScratchData(const NavierStokesScratchData<dim> &sd)
@@ -56,6 +59,10 @@ public:
                   update_gradients | update_hessians)
   {
     allocate();
+    if (sd.gather_free_surface)
+      enable_free_surface(sd.fe_values_free_surface->get_fe(),
+                          sd.fe_values_free_surface->get_quadrature(),
+                          sd.fe_values_free_surface->get_mapping());
   };
 
 
@@ -152,6 +159,46 @@ public:
       }
   }
 
+  void
+  enable_free_surface(const FiniteElement<dim> &fe,
+                      const Quadrature<dim> &   quadrature,
+                      const Mapping<dim> &      mapping)
+  {
+    gather_free_surface    = true;
+    fe_values_free_surface = std::make_shared<FEValues<dim>>(
+      mapping, fe, quadrature, update_values | update_gradients);
+
+    // Free surface
+    phase_values = std::vector<double>(this->n_q_points);
+    previous_phase_values =
+      std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                       std::vector<double>(this->n_q_points));
+    phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+  }
+
+
+  template <typename VectorType>
+  void
+  reinit_free_surface(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType &                                    current_solution,
+    const std::vector<VectorType> &                       previous_solutions,
+    const std::vector<VectorType> &                       solution_stages)
+  {
+    // Gather phase fraction (values, gradient)
+    this->fe_values_free_surface->get_function_values(current_solution,
+                                                      this->phase_values);
+    this->fe_values_free_surface->get_function_gradients(
+      current_solution, this->phase_gradient_values);
+
+    // Gather previous phase fraction values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_free_surface->get_function_values(
+          previous_solutions[p], previous_phase_values[p]);
+      }
+  }
+
 
   FEValues<dim>              fe_values;
   unsigned int               n_dofs;
@@ -188,14 +235,15 @@ public:
   std::vector<std::vector<double>>         phi_p;
   std::vector<std::vector<Tensor<1, dim>>> grad_phi_p;
 
-  // Values at previous time step for transient schemes
-  // std::vector<std::vector<Tensor<1, dim>>> velocity_values = {
-  //  std::vector<Tensor<1, dim>>(n_q_points),
-  //  std::vector<Tensor<1, dim>>(n_q_points),
-  //  std::vector<Tensor<1, dim>>(n_q_points)};
 
-  //  std::vector<double> time_steps_vector =
-  //    this->simulation_control->get_time_steps_vector();
+  // Phase values for free surface
+  bool                             gather_free_surface;
+  unsigned int                     n_dofs_free_surface;
+  std::vector<double>              phase_values;
+  std::vector<std::vector<double>> previous_phase_values;
+  std::vector<Tensor<1, dim>>      phase_gradient_values;
+  // This is stored as a shared_ptr because it is only instantiated when needed
+  std::shared_ptr<FEValues<dim>> fe_values_free_surface;
 };
 
 #endif // LETHE_SCRATCH_DATA_H

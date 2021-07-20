@@ -325,15 +325,27 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
   this->system_matrix = 0;
   setup_assemblers();
 
+  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping);
+
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
+    }
+
+
   WorkStream::run(
     this->dof_handler.begin_active(),
     this->dof_handler.end(),
     *this,
     &GLSNavierStokesSolver::assemble_local_system_matrix,
     &GLSNavierStokesSolver::copy_local_matrix_to_global_matrix,
-    NavierStokesScratchData<dim>(*this->fe,
-                                 *this->cell_quadrature,
-                                 *this->mapping),
+    scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
   system_matrix.compress(VectorOperation::add);
@@ -358,6 +370,18 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_fs);
+      // scratch_data.reinit_free_surface(cell, scratch_data, copy_data);
+    }
+
   copy_data.zero();
 
 
@@ -393,6 +417,19 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
   this->system_rhs = 0;
   setup_assemblers();
 
+  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping);
+
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
+    }
+
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -400,9 +437,7 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
     *this,
     &GLSNavierStokesSolver::assemble_local_system_rhs,
     &GLSNavierStokesSolver::copy_local_rhs_to_global_rhs,
-    NavierStokesScratchData<dim>(*this->fe,
-                                 *this->cell_quadrature,
-                                 *this->mapping),
+    scratch_data,
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
 
@@ -427,6 +462,17 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
                       this->solution_stages,
                       this->forcing_function,
                       this->beta);
+
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_fs);
+    }
 
   copy_data.zero();
 

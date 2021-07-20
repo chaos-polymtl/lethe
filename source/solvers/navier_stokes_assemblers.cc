@@ -673,3 +673,23 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
 
 template class GLSNavierStokesAssemblerSDIRK<2>;
 template class GLSNavierStokesAssemblerSDIRK<3>;
+
+template <int dim>
+void
+GLSNavierStokesFreeSurfaceAssemblerCore<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{}
+
+
+template <int dim>
+void
+GLSNavierStokesFreeSurfaceAssemblerCore<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{}
+
+
+
+template class GLSNavierStokesFreeSurfaceAssemblerCore<2>;
+template class GLSNavierStokesFreeSurfaceAssemblerCore<3>;

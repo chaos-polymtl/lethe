@@ -117,3 +117,30 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
 };
+
+template <int dim>
+class GLSNavierStokesFreeSurfaceAssemblerCore
+  : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSNavierStokesFreeSurfaceAssemblerCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {}
+
+
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  const bool SUPG = true;
+  const bool PSPG = true;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+};
