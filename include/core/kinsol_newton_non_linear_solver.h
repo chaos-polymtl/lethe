@@ -106,8 +106,6 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
         SUNDIALS::KINSOL<VectorType>::AdditionalData::SolutionStrategy::picard;
     }
 
-  std::cout << "Kinsol strategy:" << additional_data.strategy << std::endl;
-
   SUNDIALS::KINSOL<VectorType> nonlinear_solver(additional_data);
 
   nonlinear_solver.reinit_vector = [&](VectorType &x) {
@@ -116,21 +114,20 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
 
   nonlinear_solver.residual = [&](const VectorType &evaluation_point_for_kinsol,
                                   VectorType &      residual) {
-    std::cout << "Computing residual vector..." << std::endl;
-
+    solver->pcout << "Computing residual vector..." << std::endl;
     evaluation_point = evaluation_point_for_kinsol;
     solver->apply_constraints();
     solver->assemble_rhs(time_stepping_method);
     auto &current_residual = solver->get_system_rhs();
     residual               = current_residual;
+    solver->pcout << "      -Residual: " << residual.l2_norm() << std::endl;
     return 0;
   };
 
   nonlinear_solver.setup_jacobian =
     [&](const VectorType &present_solution_for_kinsol,
         const VectorType & /*current_f*/) {
-      // TODO Replace the function by assemble matrix only
-      std::cout << "Computing jacobian matrix..." << std::endl;
+      solver->pcout << "Computing jacobian matrix..." << std::endl;
       evaluation_point = present_solution_for_kinsol;
       solver->assemble_matrix_and_rhs(time_stepping_method);
       return 0;
@@ -139,7 +136,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   nonlinear_solver.solve_with_jacobian = [&](const VectorType & /* residual */,
                                              VectorType &dst,
                                              const double /* tolerance */) {
-    std::cout << "Solving linear system..." << std::endl;
+    solver->pcout << "Solving linear system..." << std::endl;
     solver->solve_linear_system(first_step);
     dst = solver->get_newton_update();
     return 0;
