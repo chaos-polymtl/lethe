@@ -57,8 +57,16 @@ protected:
 
   /**
    * @brief Sets the initial condition for the solver
+   *
    * If the simulation is restarted from a checkpoint, the initial solution
    * setting is bypassed and the checkpoint is instead read.
+   *
+   * @param initial_condition_type The type of initial condition to be set
+   *
+   * @param restart A boolean that indicates if the simulation is being restarted.
+   * if set to true, the initial conditions are never set, but are instead
+   * overriden by the read_checkpoint functionnality.
+   *
    **/
   virtual void
   set_initial_condition_fd(
@@ -80,8 +88,20 @@ protected:
 
 
   /**
-   * @brief Assemble the local matrix for a given cell
+   * @brief Assemble the local matrix for a given cell.
    *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
    */
   void
   assemble_local_system_matrix(
@@ -89,8 +109,18 @@ protected:
     NavierStokesScratchData<dim> &                        scratch_data,
     StabilizedMethodsTensorCopyData<dim> &                copy_data);
 
-  /*
-   * Assemble the local rhs for a given cell
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
    */
   void
   assemble_local_system_rhs(
@@ -124,11 +154,23 @@ protected:
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override;
+      time_stepping_method) override
+  {
+    TimerOutput::Scope t(this->computing_timer, "assemble_system");
+    this->simulation_control->set_assembly_method(time_stepping_method);
+    assemble_system_matrix();
+    assemble_system_rhs();
+  };
 
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
+                 time_stepping_method) override
+  {
+    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+    this->simulation_control->set_assembly_method(time_stepping_method);
+
+    assemble_system_rhs();
+  }
 
   void
   solve_linear_system(const bool initial_step,
@@ -175,15 +217,6 @@ private:
                       const double absolute_residual,
                       const double relative_residual,
                       const bool   renewed_matrix);
-
-  /**
-   * TFQMR solver with ILU preconditioner
-   */
-  void
-  solve_system_TFQMR(const bool   initial_step,
-                     const double absolute_residual,
-                     const double relative_residual,
-                     const bool   renewed_matrix);
 
   /**
    * Set-up AMG preconditioner

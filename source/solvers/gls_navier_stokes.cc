@@ -464,6 +464,9 @@ GLSNavierStokesSolver<dim>::assemble_system_rhs()
                                          this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
+
+  if (this->simulation_control->is_first_assembly())
+    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
 
 
@@ -668,35 +671,6 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
-{
-  TimerOutput::Scope t(this->computing_timer, "assemble_system");
-
-  this->simulation_control->set_assembly_method(time_stepping_method);
-
-  assemble_system_matrix();
-  assemble_system_rhs();
-
-
-  if (this->simulation_control->is_first_assembly())
-    {
-      this->simulation_control->provide_residual(this->system_rhs.l2_norm());
-    }
-}
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
-{
-  TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-  this->simulation_control->set_assembly_method(time_stepping_method);
-
-  assemble_system_rhs();
-}
-
-template <int dim>
-void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                                                 const bool renewed_matrix)
 {
@@ -723,12 +697,6 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
                      absolute_residual,
                      relative_residual,
                      renewed_matrix);
-  else if (this->simulation_parameters.linear_solver.solver ==
-           Parameters::LinearSolver::SolverType::tfqmr)
-    solve_system_TFQMR(initial_step,
-                       absolute_residual,
-                       relative_residual,
-                       renewed_matrix);
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::direct)
     solve_system_direct(initial_step,
@@ -1115,86 +1083,6 @@ GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
   constraints_used.distribute(completely_distributed_solution);
   auto &newton_update = this->newton_update;
   newton_update       = completely_distributed_solution;
-}
-
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::solve_system_TFQMR(const bool   initial_step,
-                                               const double absolute_residual,
-                                               const double relative_residual,
-                                               const bool   renewed_matrix)
-{
-  const unsigned int max_iter = 3;
-  int                current_ilu_preconditioner_fill_level =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
-  unsigned int iter    = 0;
-  bool         success = false;
-
-  while (success == false and iter < max_iter)
-    {
-      try
-        {
-          auto &system_rhs          = this->system_rhs;
-          auto &nonzero_constraints = this->nonzero_constraints;
-
-          const AffineConstraints<double> &constraints_used =
-            initial_step ? nonzero_constraints : this->zero_constraints;
-          const double linear_solver_tolerance =
-            std::max(relative_residual * system_rhs.l2_norm(),
-                     absolute_residual);
-
-          if (this->simulation_parameters.linear_solver.verbosity !=
-              Parameters::Verbosity::quiet)
-            {
-              this->pcout << "  -Tolerance of iterative solver is : "
-                          << linear_solver_tolerance << std::endl;
-            }
-          TrilinosWrappers::MPI::Vector completely_distributed_solution(
-            this->locally_owned_dofs, this->mpi_communicator);
-
-          SolverControl solver_control(
-            this->simulation_parameters.linear_solver.max_iterations,
-            linear_solver_tolerance,
-            true,
-            true);
-
-          TrilinosWrappers::SolverTFQMR solver(solver_control);
-
-          if (renewed_matrix || !ilu_preconditioner)
-            setup_ILU(current_ilu_preconditioner_fill_level);
-
-          {
-            TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
-
-            solver.solve(system_matrix,
-                         completely_distributed_solution,
-                         system_rhs,
-                         *ilu_preconditioner);
-
-            if (this->simulation_parameters.linear_solver.verbosity !=
-                Parameters::Verbosity::quiet)
-              {
-                this->pcout
-                  << "  -Iterative solver took : " << solver_control.last_step()
-                  << " steps " << std::endl;
-              }
-          }
-          constraints_used.distribute(completely_distributed_solution);
-          this->newton_update = completely_distributed_solution;
-          success             = true;
-        }
-      catch (std::exception &e)
-        {
-          current_ilu_preconditioner_fill_level += 1;
-          this->pcout
-            << " TFQMR solver failed! Trying with a higher preconditioner fill level. New fill = "
-            << current_ilu_preconditioner_fill_level << std::endl;
-          if (iter == max_iter - 1)
-            throw e;
-        }
-      iter += 1;
-    }
 }
 
 template <int dim>
