@@ -228,61 +228,92 @@ LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
 
 bool
 LetheGridTools::cell_cut_by_flat(
-  const typename DoFHandler<3>::active_cell_iterator &   cell,
-  const typename DoFHandler<2, 3>::active_cell_iterator &cell_flat)
-{
-  auto &                local_manifold = cell_flat->get_manifold();
-  std::vector<Point<3>> manifold_points(GeometryInfo<2>::vertices_per_cell);
+        const typename DoFHandler<3>::active_cell_iterator &cell,
+        const typename DoFHandler<2, 3>::active_cell_iterator &cell_flat) {
+    auto &local_manifold = cell_flat->get_manifold();
+    std::vector<Point<3>> manifold_points(GeometryInfo<2>::vertices_per_cell);
 
-  for (unsigned int i = 0; i < GeometryInfo<2>::vertices_per_cell; ++i)
-    {
-      manifold_points[i] = cell_flat->vertex(i);
+    for (unsigned int i = 0; i < GeometryInfo<2>::vertices_per_cell; ++i) {
+        manifold_points[i] = cell_flat->vertex(i);
     }
-  auto surrounding_points =
-    make_array_view(manifold_points.begin(), manifold_points.end());
+    auto surrounding_points =
+            make_array_view(manifold_points.begin(), manifold_points.end());
 
-  // A cell that is cut either has to:
-  // A) Contain a vertex from the flat
-  // B) Fill these two conditions
-  //    B1) The projection of one of the cell's
-  //         vertices must fall on the flat
-  //    B2) The cell must have vertices on each side of the flat
+    // A cell that is cut either has to:
+    // A) Contain a vertex from the flat
+    // B) Fill these two conditions
+    //    B1) The projection of one of the cell's
+    //         vertices must fall on the flat
+    //    B2) The cell must have vertices on each side of the flat
+    // C) Fill these conditions
+    //    C1) One of the faces of the cell must have vertices of the flat cell on either side of it.
+    //    C2) The cell must have vertices on each side of the flat (identical to B2)
 
-  // Check for condition A
-  for (const Point<3> &point : manifold_points)
-    {
-      if (cell->point_inside(point))
-        return true;
-    }
 
-  // Check for condition B
-  bool         condition_B1 = false;
-  bool         condition_B2 = false;
-  Tensor<1, 3> last_normal;
-  last_normal.clear();
-
-  for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i)
-    {
-      Point<3> projected_point =
-        local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
-      Tensor<1, 3> normal = cell->vertex(i) - projected_point;
-
-      // Check if the projected vertex falls inside the flat
-      if (cell->point_inside(projected_point))
-        condition_B1 = true;
-
-      // Check if we switched to the other side
-      // of the flat during this iteration
-      double scalar_prod = scalar_product(normal, last_normal);
-      last_normal        = normal;
-      if (scalar_prod < 0)
-        condition_B2 = true;
-
-      if (condition_B1 && condition_B2)
-        return true
+    // Check for condition A
+    for (const Point<3> &point : manifold_points) {
+        if (cell->point_inside(point))
+            return true;
     }
 
-  return false;
+    // Check for condition B
+    bool condition_B1 = false;
+    bool condition_B2 = false;
+    Tensor<1, 3> last_normal;
+    last_normal.clear();
+
+    for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i) {
+        Point<3> projected_point =
+                local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
+        Tensor<1, 3> normal = cell->vertex(i) - projected_point;
+
+        // Check if the projected vertex falls inside the flat
+        if (cell->point_inside(projected_point))
+            condition_B1 = true;
+
+        // Check if we switched to the other side
+        // of the flat during this iteration
+        double scalar_prod = scalar_product(normal, last_normal);
+        last_normal = normal;
+        if (scalar_prod < 0)
+            condition_B2 = true;
+
+        if (condition_B1 && condition_B2)
+            return true;
+    }
+
+
+    if(condition_B2) {
+        bool condition_C2 = false;
+        manifold_points.clear();
+        for (const auto face : cell->face_indices()) {
+            auto face_iter = cell->face(face);
+            last_normal.clear();
+            auto &local_face_manifold = face_iter->get_manifold();
+
+            for (unsigned int i = 0; i < GeometryInfo<2>::vertices_per_cell; ++i) {
+                manifold_points[i] = face_iter->vertex(i);
+            }
+            auto surrounding_points_face =
+                    make_array_view(manifold_points.begin(), manifold_points.end());
+
+            for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_face; ++i) {
+                Point<3> projected_point =
+                        local_face_manifold.project_to_manifold(surrounding_points_face, cell_flat->vertex(i));
+                Tensor<1, 3> normal = cell->vertex(i) - projected_point;
+                double scalar_prod = scalar_product(normal, last_normal);
+                last_normal = normal;
+                if (scalar_prod < 0)
+                    condition_C2 = true;
+
+            }
+            if (condition_B1 && condition_C2)
+                return true;
+        }
+    }
+
+
+    return false;
 }
 
 
