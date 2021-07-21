@@ -183,8 +183,9 @@ public:
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     const VectorType &                                    current_solution,
     const std::vector<VectorType> &                       previous_solutions,
-    const std::vector<VectorType> &                       solution_stages)
+    const std::vector<VectorType> & /*solution_stages*/)
   {
+    this->fe_values_free_surface->reinit(cell);
     // Gather phase fraction (values, gradient)
     this->fe_values_free_surface->get_function_values(current_solution,
                                                       this->phase_values);

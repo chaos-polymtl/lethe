@@ -379,7 +379,12 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         cell->level(),
         cell->index(),
         dof_handler_fs);
-      // scratch_data.reinit_free_surface(cell, scratch_data, copy_data);
+
+      scratch_data.reinit_free_surface(
+        cell,
+        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        std::vector<TrilinosWrappers::MPI::Vector>(),
+        std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   copy_data.zero();
@@ -472,6 +477,12 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         cell->level(),
         cell->index(),
         dof_handler_fs);
+
+      scratch_data.reinit_free_surface(
+        cell,
+        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        std::vector<TrilinosWrappers::MPI::Vector>(),
+        std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
   copy_data.zero();
