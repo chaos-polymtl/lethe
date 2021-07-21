@@ -18,6 +18,7 @@
  */
 
 #include <dem/dem_properties.h>
+#include <dem/dem_solver_parameters.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -55,11 +56,16 @@ public:
    *
    * @param triangulation Triangulation
    * @param particle_handler Particle handler
+   * @param dem_parameters DEM parameters for setting the names of the output
+   * files
+   * @param step_number DEM step number
    */
   void
   calculate_average_particles_velocity(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler);
+    const Particles::ParticleHandler<dim> &          particle_handler,
+    const DEMSolverParameters<dim> &                 dem_parameters,
+    const unsigned int &                             step_number);
 
   /**
    * Carries out the calculation of the granular temperature in each local cell.
@@ -69,11 +75,16 @@ public:
    *
    * @param triangulation Triangulation
    * @param particle_handler Particle handler
+   * @param dem_parameters DEM parameters for setting the names of the output
+   * files
+   * @param step_number DEM step number
    */
   void
   calculate_average_granular_temperature(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler);
+    const Particles::ParticleHandler<dim> &          particle_handler,
+    const DEMSolverParameters<dim> &                 dem_parameters,
+    const unsigned int &                             step_number);
 
 private:
   /**

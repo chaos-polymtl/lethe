@@ -735,10 +735,16 @@ DEMSolver<dim>::post_process_results()
 {
   if (parameters.post_processing.calculate_particles_average_velocity)
     post_processing_object.calculate_average_particles_velocity(
-      triangulation, particle_handler);
+      triangulation,
+      particle_handler,
+      parameters,
+      simulation_control->get_step_number());
   if (parameters.post_processing.calculate_granular_temperature)
     post_processing_object.calculate_average_granular_temperature(
-      triangulation, particle_handler);
+      triangulation,
+      particle_handler,
+      parameters,
+      simulation_control->get_step_number());
 }
 
 template <int dim>
@@ -1000,7 +1006,12 @@ DEMSolver<dim>::solve()
                 parameters.post_processing.initial_step &&
               simulation_control->get_step_number() <=
                 parameters.post_processing.end_step)
-            post_process_results();
+            {
+              if (simulation_control->get_step_number() %
+                    parameters.post_processing.output_frequency ==
+                  0)
+                post_process_results();
+            }
         }
 
       if (parameters.restart.checkpoint &&
