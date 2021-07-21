@@ -120,20 +120,6 @@ protected:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-  template <bool                                              assemble_matrix,
-            Parameters::SimulationControl::TimeSteppingMethod scheme,
-            Parameters::VelocitySource::VelocitySourceType    velocity_source>
-  void
-  assembleGLS();
-
-  // assembleGLS specialized in the case of two fluids with free surface
-  // simulation
-  template <bool                                              assemble_matrix,
-            Parameters::SimulationControl::TimeSteppingMethod scheme,
-            Parameters::VelocitySource::VelocitySourceType    velocity_source>
-  void
-  assembleGLSFreeSurface();
-
   virtual void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod

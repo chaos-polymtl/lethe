@@ -17,31 +17,19 @@
 #include <core/simulation_control.h>
 
 #include <solvers/copy_data.h>
+#include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
 
-#ifndef lethe_navier_stokes_assemblers_h
-#  define lethe_navier_stokes_assemblers_h
-
-template <int dim>
-class NavierStokesAssemblerBase
-{
-public:
-  virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
-                  StabilizedMethodsTensorCopyData<dim> &copy_data) = 0;
-
-  virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
-               StabilizedMethodsTensorCopyData<dim> &copy_data) = 0;
-};
-
+#ifndef lethe_navier_stokes_vof_assemblers_h
+#  define lethe_navier_stokes_vof_assemblers_h
 
 
 template <int dim>
-class GLSNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesFreeSurfaceAssemblerCore
+  : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSNavierStokesAssemblerCore(
+  GLSNavierStokesFreeSurfaceAssemblerCore(
     std::shared_ptr<SimulationControl> simulation_control,
     Parameters::PhysicalProperties     physical_properties)
     : simulation_control(simulation_control)
@@ -64,31 +52,15 @@ public:
 };
 
 template <int dim>
-class GLSNavierStokesAssemblerSRF : public NavierStokesAssemblerBase<dim>
+class GLSNavierStokesFreeSurfaceAssemblerBDF
+  : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSNavierStokesAssemblerSRF(Parameters::VelocitySource velocity_sources)
-    : velocity_sources(velocity_sources)
-  {}
-
-  virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
-                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-  virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
-               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  Parameters::VelocitySource velocity_sources;
-};
-
-
-template <int dim>
-class GLSNavierStokesAssemblerBDF : public NavierStokesAssemblerBase<dim>
-{
-public:
-  GLSNavierStokesAssemblerBDF(
-    std::shared_ptr<SimulationControl> simulation_control)
+  GLSNavierStokesFreeSurfaceAssemblerBDF(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties)
     : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
   {}
 
   virtual void
@@ -99,25 +71,7 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   std::shared_ptr<SimulationControl> simulation_control;
-};
-
-template <int dim>
-class GLSNavierStokesAssemblerSDIRK : public NavierStokesAssemblerBase<dim>
-{
-public:
-  GLSNavierStokesAssemblerSDIRK(
-    std::shared_ptr<SimulationControl> simulation_control)
-    : simulation_control(simulation_control)
-  {}
-
-  virtual void
-  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
-                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-  virtual void
-  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
-               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
 };
 
 #endif
