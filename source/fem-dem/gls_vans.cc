@@ -747,14 +747,15 @@ GLSVANSSolver<dim>::assembleGLS()
   // Drag variables
   double                               beta;
   std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
-  std::vector<types::global_dof_index> void_fraction_dof_indices(dofs_per_cell);
-  Tensor<1, dim>                       particle_velocity;
-  Tensor<1, dim>                       average_particle_velocity;
-  Tensor<1, dim>                       fluid_velocity_at_particle_location;
-  Tensor<1, dim>                       relative_velocity;
-  double                               c_d                = 0;
-  double                               cell_void_fraction = 0;
-  int                                  particles_in_cell;
+  std::vector<types::global_dof_index> void_fraction_dof_indices(
+    void_fraction_dofs_per_cell);
+  Tensor<1, dim> particle_velocity;
+  Tensor<1, dim> average_particle_velocity;
+  Tensor<1, dim> fluid_velocity_at_particle_location;
+  Tensor<1, dim> relative_velocity;
+  double         c_d                = 0;
+  double         cell_void_fraction = 0;
+  int            particles_in_cell;
 
 
   // Velocity dependent source term
