@@ -834,6 +834,18 @@ DEMSolver<dim>::solve()
       // Load balancing
       load_balance_step = (this->*check_load_balance_step)();
 
+      if (load_balance_step)
+#if DEAL_II_VERSION_GTE(10, 0, 0)
+        displacement.resize(particle_handler.get_max_local_particle_index());
+#else
+        {
+          unsigned int max_particle_id = 0;
+          for (const auto &particle : particle_handler)
+            max_particle_id = std::max(max_particle_id, particle.get_id());
+          displacement.resize(max_particle_id + 1);
+        }
+#endif
+
       // Check to see if it is contact search step
       contact_detection_step = (this->*check_contact_search_step)();
 
