@@ -57,15 +57,6 @@ GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver()
   this->dof_handler.clear();
 }
 
-
-
-template <int dim>
-void
-GLSNavierStokesSolver<dim>::set_solution_vector(double value)
-{
-  this->present_solution = value;
-}
-
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_dofs_fd()
@@ -413,7 +404,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_matrix(
         std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  copy_data.zero();
+  copy_data.reset();
 
 
   for (auto &assembler : this->assemblers)
@@ -516,7 +507,7 @@ GLSNavierStokesSolver<dim>::assemble_local_system_rhs(
         std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-  copy_data.zero();
+  copy_data.reset();
 
 
   for (auto &assembler : this->assemblers)

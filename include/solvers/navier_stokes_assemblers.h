@@ -57,7 +57,6 @@ public:
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   const bool SUPG = true;
-  const bool PSPG = true;
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;

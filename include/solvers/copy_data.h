@@ -52,7 +52,7 @@ public:
    * @brief Resets the cell_matrix and the cell_rhs to zero
    */
   void
-  zero()
+  reset()
   {
     local_matrix = 0;
     local_rhs    = 0;
@@ -102,7 +102,7 @@ public:
    * and strong_jacobian to zero
    */
   void
-  zero()
+  reset()
   {
     local_matrix = 0;
     local_rhs    = 0;
@@ -161,7 +161,7 @@ public:
    * and strong_jacobian to zero
    */
   void
-  zero()
+  reset()
   {
     local_matrix = 0;
     local_rhs    = 0;

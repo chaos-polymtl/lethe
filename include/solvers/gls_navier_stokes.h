@@ -31,7 +31,7 @@
 using namespace dealii;
 
 /**
- * A solver class for the Navier-Stokes equation using GLS stabilization
+ * @brief A solver class for the Navier-Stokes equation using GLS stabilization
  *
  * @tparam dim An integer that denotes the dimension of the space in which
  * the flow is solved
@@ -55,32 +55,33 @@ protected:
   virtual void
   setup_dofs_fd();
 
-
-
+  /**
+   * @brief Sets the initial condition for the solver
+   * If the simulation is restarted from a checkpoint, the initial solution
+   * setting is bypassed and the checkpoint is instead read.
+   **/
   virtual void
   set_initial_condition_fd(
     Parameters::InitialConditionType initial_condition_type,
     bool                             restart = false) override;
 
-  void
-  set_solution_vector(double value);
-
 protected:
-  /*
-   *  Assemble the matrix associated with the solver
+  /**
+   *  @brief Assembles the matrix associated with the solver
    */
   void
   assemble_system_matrix();
 
-  /*
-   *  Assemble the rhs associated with the solver
+  /**
+   * @brief Assemble the rhs associated with the solver
    */
   void
   assemble_system_rhs();
 
 
-  /*
-   * Assemble the local matrix for a given cell
+  /**
+   * @brief Assemble the local matrix for a given cell
+   *
    */
   void
   assemble_local_system_matrix(
