@@ -94,6 +94,7 @@ Visualization<dim>::print_xyz(
     }
 
   pcout << "id, type, dp, x, y, z " << std::endl;
+  std::flush(std::cout);
 
   for (auto &iterator : local_particles)
     {
@@ -108,6 +109,7 @@ Visualization<dim>::print_xyz(
                 << std::setprecision(5)
                 << particle_properties[DEM::PropertiesIndex::dp] << " "
                 << std::setprecision(4) << particle_location << std::endl;
+      std::flush(std::cout);
     }
 }
 
