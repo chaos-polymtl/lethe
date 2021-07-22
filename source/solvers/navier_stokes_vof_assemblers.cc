@@ -404,12 +404,10 @@ GLSNavierStokesFreeSurfaceAssemblerBDF<dim>::assemble_matrix(
            ++p)
         {
           densities[p] =
-            calculate_point_property(previous_phase_values[p][q],
+            calculate_point_property(previous_phase_values[p - 1][q],
                                      physical_properties.fluids[0].density,
                                      physical_properties.fluids[1].density);
         }
-
-
 
       for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
            ++p)
@@ -487,7 +485,7 @@ GLSNavierStokesFreeSurfaceAssemblerBDF<dim>::assemble_rhs(
            ++p)
         {
           densities[p] =
-            calculate_point_property(previous_phase_values[p][q],
+            calculate_point_property(previous_phase_values[p - 1][q],
                                      physical_properties.fluids[0].density,
                                      physical_properties.fluids[1].density);
         }
