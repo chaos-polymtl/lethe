@@ -1089,6 +1089,8 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve()
 {
+  // This is enforced to 1 right now because it does not provide
+  // better speed-up than using MPI. This could be eventually changed...
   MultithreadInfo::set_thread_limit(1);
 
   read_mesh_and_manifolds(
