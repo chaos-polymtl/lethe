@@ -733,7 +733,7 @@ namespace Parameters
       delta_y   = prm.get_double("delta_y");
       delta_z   = prm.get_double("delta_z");
 
-      rotate = prm.get_bool("translate");
+      rotate = prm.get_bool("rotate");
       axis   = prm.get_integer("axis");
       angle  = prm.get_double("angle");
     }
