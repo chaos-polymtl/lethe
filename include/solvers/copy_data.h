@@ -39,7 +39,7 @@ class CopyData
 {
 public:
   /**
-   * @brief Constructor. Allocates the memory for the cell_matrix and cell_rhs
+   * @brief Constructor. Allocates the memory for the cell_matrix, cell_rhs and the local_dof_indices
    *
    * @param n_dofs Number of degrees of freedom per cell in the problem
    */
@@ -61,7 +61,11 @@ public:
   FullMatrix<double>                   local_matrix;
   Vector<double>                       local_rhs;
   std::vector<types::global_dof_index> local_dof_indices;
-  bool                                 cell_is_local;
+
+  // Boolean used to indicate if the cell being assembled is local or not
+  // This information is used to indicate to the copy_local_to_global function
+  // if it should indeed copy or not.
+  bool cell_is_local;
 };
 
 
@@ -80,9 +84,9 @@ class StabilizedMethodsCopyData
 {
 public:
   /**
-   * @brief Constructor. Allocates the memory for the cell_matrix and cell_rhs
-   * using the number of dofs and the strong_residual using the number of
-   * quadrature points and, the strong_jacobian using both
+   * @brief Constructor. Allocates the memory for the cell_matrix, cell_rhs
+   * and dof-indices using the number of dofs and the strong_residual using the
+   * number of quadrature points and, the strong_jacobian using both
    *
    * @param n_dofs Number of degrees of freedom per cell in the problem
    *
@@ -119,7 +123,11 @@ public:
   std::vector<types::global_dof_index> local_dof_indices;
   Vector<double>                       strong_residual;
   std::vector<Vector<double>>          strong_jacobian;
-  bool                                 cell_is_local;
+
+  // Boolean used to indicate if the cell being assembled is local or not
+  // This information is used to indicate to the copy_local_to_global function
+  // if it should indeed copy or not.
+  bool cell_is_local;
 };
 
 /**
@@ -180,7 +188,12 @@ public:
   std::vector<types::global_dof_index>     local_dof_indices;
   std::vector<Tensor<1, dim>>              strong_residual;
   std::vector<std::vector<Tensor<1, dim>>> strong_jacobian;
-  bool                                     cell_is_local;
+
+
+  // Boolean used to indicate if the cell being assembled is local or not
+  // This information is used to indicate to the copy_local_to_global function
+  // if it should indeed copy or not.
+  bool cell_is_local;
 };
 
 

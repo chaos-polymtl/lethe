@@ -24,6 +24,19 @@
 #  define lethe_navier_stokes_vof_assemblers_h
 
 
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation with
+ * free surface using VOF modeling.
+ * This class assembles the weak form of:
+ * $$\rho \mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \mu \nabla^2
+ * \mathbf{u} =0 $$ with an SUPG and PSPG stabilziation
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
 template <int dim>
 class GLSNavierStokesFreeSurfaceAssemblerCore
   : public NavierStokesAssemblerBase<dim>
@@ -36,10 +49,20 @@ public:
     , physical_properties(physical_properties)
   {}
 
-
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
   virtual void
   assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;
@@ -49,6 +72,18 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
 };
+
+/**
+ * @brief Class that assembles the transient time arising from BDF time
+ * integration for the Navier-Stokes equation with
+ * free surface using VOF modeling.. For example, if a BDF1 scheme is
+ * chosen, the following is assembled
+ * $$\frac{(\rho \mathbf{u})^{t+\Delta t}-(\rho \mathbf{u})^{t}{\Delta t}
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
 
 template <int dim>
 class GLSNavierStokesFreeSurfaceAssemblerBDF
@@ -62,9 +97,20 @@ public:
     , physical_properties(physical_properties)
   {}
 
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
   virtual void
   assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
                   StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
   virtual void
   assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                StabilizedMethodsTensorCopyData<dim> &copy_data) override;

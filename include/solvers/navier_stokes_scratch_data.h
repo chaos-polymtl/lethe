@@ -34,10 +34,46 @@
 
 using namespace dealii;
 
+
+/**
+ * @brief NavierStokesScratchData class is
+ * stores the information required by the assembly procedure
+ * for a Navier-Stokes equation. Consequently, this class calculates
+ * the velocity (values, gradients, laplacians) and the shape function
+ * (values, gradients, laplacians) at all the gauss points for all degrees
+ * of freedom and stores it into arrays. Additionnaly, the use can request
+ * that this class gathers additional fields for physics which are coupled
+ * to the Navier-Stokes equation, such as the free surface. This class
+ * serves as a seperation between the evaluation at the gauss point of the
+ * variables of interest and their use in the assembly, which is carried out
+ * by the assembler functions. For more information on this design, the reader
+ * can consult deal.II step-9
+ * "https://www.dealii.org/current/doxygen/deal.II/step_9.html". In this latter
+ * example, the scratch is a struct instead of a templated class because of the
+ * simplicity of step-9.
+ *
+ * @tparam dim An integer that denotes the dimension of the space in which
+ * the flow is solved
+ *  @ingroup solvers
+ **/
+
 template <int dim>
 class NavierStokesScratchData
 {
 public:
+  /**
+   * @brief Constructor. The constructor creates the fe_values that will be used
+   * to fill the member variables of the scratch. It also allocated the
+   * necessary memory for all member variables. However, it does not do any
+   * evalution, since this needs to be done at the cell level.
+   *
+   * @param fe The FESystem used to solve the Navier-Stokes equations
+   *
+   * @param quadrature The quadrature to use for the assembly
+   *
+   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   *
+   */
   NavierStokesScratchData(const FESystem<dim> &  fe,
                           const Quadrature<dim> &quadrature,
                           const Mapping<dim> &   mapping)
@@ -48,9 +84,25 @@ public:
                   update_gradients | update_hessians)
   {
     allocate();
-    gather_free_surface = false;
-  };
 
+    // By default, the assembly of variables belonging to auxiliary physics is
+    // disabled.
+    gather_free_surface = false;
+  }
+
+  /**
+   * @brief Copy Constructor. Same as the main constructor.
+   *  This constructor only uses the other scratch to build the FeValues, it
+   * does not copy the content of the other scratch into itself since, by
+   * definition of the WorkStream mechanism it is assumed that the content of
+   * the scratch will be reset on a cell basis.
+   *
+   * @param fe The FESystem used to solve the Navier-Stokes equations
+   *
+   * @param quadrature The quadrature to use for the assembly
+   *
+   * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
+   */
   NavierStokesScratchData(const NavierStokesScratchData<dim> &sd)
     : fe_values(sd.fe_values.get_mapping(),
                 sd.fe_values.get_fe(),
@@ -63,12 +115,37 @@ public:
       enable_free_surface(sd.fe_values_free_surface->get_fe(),
                           sd.fe_values_free_surface->get_quadrature(),
                           sd.fe_values_free_surface->get_mapping());
-  };
+  }
 
 
+  /** @brief Allocates the memory for the scratch
+   *
+   * This function allocates the necessary memory for all members of the scratch
+   *
+   */
   void
   allocate();
 
+  /** @brief Reinitialize the content of the scratch
+   *
+   * Using the FeValues and the content ofthe solutions, previous solutions and
+   * solutions stages, fills all of the class member of the scratch
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the fe which is used to fill the FeValues
+   *
+   * @param current_solution The present value of the solution for [u,p]
+   *
+   * @param previous_solutions The solutions at the previous time steps
+   *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
+   *
+   * @param forcing_function The function describing the momentum/mass source term
+   *
+   * @param beta_force The additional force for flow control. TODO : Deprecate this argument and pass it
+   * to the constructor of the assembler
+   *
+   */
 
   template <typename VectorType>
   void
@@ -159,6 +236,17 @@ public:
       }
   }
 
+
+  /**
+   * @brief enable_free_surface Enables the collection of the free surface data by the scratch
+   *
+   * @param fe FiniteElement associated with the free surface.
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+
   void
   enable_free_surface(const FiniteElement<dim> &fe,
                       const Quadrature<dim> &   quadrature,
@@ -176,6 +264,19 @@ public:
     phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
   }
 
+  /** @brief Reinitialize the content of the scratch for the free surface
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the free surface FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for [alpha]
+   *
+   * @param previous_solutions The solutions at the previous time steps for [alpha]
+   *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [alpha]
+   *
+   */
 
   template <typename VectorType>
   void
@@ -200,7 +301,7 @@ public:
       }
   }
 
-
+  // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
   unsigned int               n_dofs;
   unsigned int               n_q_points;
@@ -237,7 +338,9 @@ public:
   std::vector<std::vector<Tensor<1, dim>>> grad_phi_p;
 
 
-  // Phase values for free surface
+  /**
+   * Scratch component for the free surface auxiliary physics
+   */
   bool                             gather_free_surface;
   unsigned int                     n_dofs_free_surface;
   std::vector<double>              phase_values;
@@ -247,4 +350,4 @@ public:
   std::shared_ptr<FEValues<dim>> fe_values_free_surface;
 };
 
-#endif // LETHE_SCRATCH_DATA_H
+#endif

@@ -37,7 +37,6 @@ using namespace dealii;
  * the flow is solved
  *
  * @ingroup solvers
- * @author Bruno Blais, 2019
  */
 
 template <int dim>
@@ -48,10 +47,20 @@ public:
   GLSNavierStokesSolver(SimulationParameters<dim> &nsparam);
   ~GLSNavierStokesSolver();
 
+  /**
+   * @brief solve Solves the Navier-Stokes problem
+   *
+   * This functions solves the problem defined by the Navier-Stokes paramter
+   * by iterating through time or through the mesh refinements.
+   */
   virtual void
   solve();
 
 protected:
+  /**
+   * @brief setup_dofs_fd Setup the degree of freedom, system matrix and solution vectors
+   * Navier-Stokes problem
+   */
   virtual void
   setup_dofs_fd();
 
@@ -128,28 +137,37 @@ protected:
     NavierStokesScratchData<dim> &                        scratch_data,
     StabilizedMethodsTensorCopyData<dim> &                copy_data);
 
-  /*
-   * Sets up the vector of assembler functions
+  /**
+   * @brief sets up the vector of assembler functions
    */
   void
   setup_assemblers();
 
 
-  /*
-   * Copy local cell information to global matrix
+  /**
+   * @brief Copy local cell information to global matrix
    */
 
   void
   copy_local_matrix_to_global_matrix(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-  /*
-   * Copy local cell rhs information to global rhs
+  /**
+   * @brief Copy local cell rhs information to global rhs
    */
 
   void
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
+
+  /**
+   * @brief Call for the assembly of the matrix and the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
 
   virtual void
   assemble_matrix_and_rhs(
@@ -160,8 +178,17 @@ protected:
     this->simulation_control->set_assembly_method(time_stepping_method);
     assemble_system_matrix();
     assemble_system_rhs();
-  };
+  }
 
+
+  /**
+   * @brief Call for the assembly of the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                  time_stepping_method) override
@@ -172,18 +199,37 @@ protected:
     assemble_system_rhs();
   }
 
+
+  /**
+   * @brief Call for the assembly of the linear system of equation
+   *
+   * @param initial_step Indicates if this is the first solution of the linear system.
+   * If this is the case, the non_zero version of the constraints are used for
+   * the Dirichlet boundary conditions
+   *
+   * @param renewed_matrix Indicates if the matrix has been reassembled, and thus
+   * the preconditioner needs to be reassmbled.
+   *
+   * //TODO the renewed_matrix parameters needs to be deprecated
+   *
+   */
   void
   solve_linear_system(const bool initial_step,
                       const bool renewed_matrix = true);
 
 private:
+  /**
+   * @brief Assembles an L2_projection matrix for the velocity and the pressure.
+   * This L2 projection matrix can be used to set the initial condition for
+   * the Navier-Stokes problem
+   */
   void
   assemble_L2_projection();
 
 
 
   /**
-   * GMRES solver with ILU(N) preconditioning
+   * @brief GMRES solver with ILU(N) preconditioning
    */
   void
   solve_system_GMRES(const bool   initial_step,
@@ -192,7 +238,7 @@ private:
                      const bool   renewed_matrix);
 
   /**
-   * BiCGStab solver with ILU(N) preconditioning
+   * @brief BiCGStab solver with ILU(N) preconditioning
    */
   void
   solve_system_BiCGStab(const bool   initial_step,
@@ -201,7 +247,7 @@ private:
                         const bool   renewed_matrix);
 
   /**
-   * AMG preconditioner with ILU smoother and coarsener and GMRES final solver
+   * @brief GMRES solver with AMG preconditioner with ILU smoother and coarsener
    */
   void
   solve_system_AMG(const bool   initial_step,
@@ -210,7 +256,8 @@ private:
                    const bool   renewed_matrix);
 
   /**
-   * Direct solver
+   * @brief Direct solver using TrilinosWrappers::SolverDirect
+   * The use of this solver should be avoided for 3D probelm
    */
   void
   solve_system_direct(const bool   initial_step,
@@ -219,13 +266,13 @@ private:
                       const bool   renewed_matrix);
 
   /**
-   * Set-up AMG preconditioner
+   * @brief  Set-up AMG preconditioner
    */
   void
   setup_AMG(const int current_amg_ilu_preconditioner_fill_level);
 
   /**
-   * Set-up ILU preconditioner
+   * @brief Set-up ILU preconditioner
    */
   void
   setup_ILU(const int current_ilu_preconditioner_fill_level);
@@ -241,9 +288,6 @@ private:
   SparsityPattern                                    sparsity_pattern;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
-
-  const bool   SUPG        = true;
-  const double GLS_u_scale = 1;
 };
 
 
