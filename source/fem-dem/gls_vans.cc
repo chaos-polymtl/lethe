@@ -1868,10 +1868,10 @@ GLSVANSSolver<dim>::post_processing()
     this->simulation_parameters.cfd_dem.inlet_boundary_id,
     this->simulation_parameters.cfd_dem.outlet_boundary_id);
 
-  this->pcout << "Mass Source: " << mass_source << std::endl;
+  this->pcout << "Mass Source: " << mass_source << " s^-1" << std::endl;
   this->pcout << "Average Void Fraction in Bed: " << average_void_fraction
               << std::endl;
-  this->pcout << "Pressure Drop: " << pressure_drop << std::endl;
+  this->pcout << "Pressure Drop: " << pressure_drop << " m^2.s^-2" << std::endl;
 }
 
 template <int dim>
