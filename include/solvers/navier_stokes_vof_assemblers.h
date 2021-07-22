@@ -35,8 +35,6 @@
  *
  * @ingroup assemblers
  */
-
-
 template <int dim>
 class GLSNavierStokesFreeSurfaceAssemblerCore
   : public NavierStokesAssemblerBase<dim>
