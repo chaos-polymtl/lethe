@@ -199,6 +199,11 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
                                      param->solid_mesh.delta_y,
                                      param->solid_mesh.delta_z),
                      *solid_tria);
+  // Rotate the triangulation
+  if (param->solid_mesh.rotate)
+    {
+      rotate_grid(param->solid_mesh.angle, param->solid_mesh.axis);
+    }
 
   // Refine the solid triangulation to its initial size
   // NB: solid_tria should not be refined if loaded from a restart file
@@ -216,6 +221,26 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
       solid_dh.distribute_dofs(*fe);
     }
 }
+
+template <>
+void
+SolidBase<2, 2>::rotate_grid(double angle, int axis)
+{
+  GridTools::rotate(angle, *solid_tria);
+}
+template <>
+void
+SolidBase<2, 3>::rotate_grid(double angle, int axis)
+{
+  GridTools::rotate(angle, axis, *solid_tria);
+}
+template <>
+void
+SolidBase<3, 3>::rotate_grid(double angle, int axis)
+{
+  GridTools::rotate(angle, axis, *solid_tria);
+}
+
 
 template <int dim, int spacedim>
 void

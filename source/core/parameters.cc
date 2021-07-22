@@ -675,6 +675,25 @@ namespace Parameters
                         "0 ",
                         Patterns::Double(),
                         "Z component of the desired translation of the mesh");
+
+      // Grid rotation at initiation
+      prm.declare_entry(
+        "rotate",
+        "false",
+        Patterns::Bool(),
+        "Indicates that the mesh should be rotated. To be "
+        "used to reposition solid grids relative to the fluid grid.");
+
+      prm.declare_entry(
+        "axis",
+        "0",
+        Patterns::Integer(),
+        "Axis around which the rotation should occur (0 for x, 1 for y, 2 for z)");
+
+      prm.declare_entry("angle",
+                        "0 ",
+                        Patterns::Double(),
+                        "Angle of rotation around the axis in radian");
     }
     prm.leave_subsection();
   }
@@ -713,6 +732,10 @@ namespace Parameters
       delta_x   = prm.get_double("delta_x");
       delta_y   = prm.get_double("delta_y");
       delta_z   = prm.get_double("delta_z");
+
+      rotate = prm.get_bool("translate");
+      axis   = prm.get_integer("axis");
+      angle  = prm.get_double("angle");
     }
     prm.leave_subsection();
   }

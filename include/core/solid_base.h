@@ -151,6 +151,9 @@ public:
   void
   print_particle_positions();
 
+  void
+  rotate_grid(double angle, int axis);
+
 
 private:
   // Member variables

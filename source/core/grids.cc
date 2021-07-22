@@ -129,6 +129,10 @@ attach_grid_to_triangulation(
   if (mesh_parameters.translate)
     throw std::runtime_error(
       "Main grid can't be moved: the solid mesh must be moved instead. Grid will not be moved.");
+  // Rotate the mesh
+  if (mesh_parameters.rotate)
+    throw std::runtime_error(
+      "Main grid can't be rotated: the solid mesh must be rotated instead. Grid will not be rotated.");
 
 
   // Setup periodic boundary conditions
