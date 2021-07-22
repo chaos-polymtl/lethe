@@ -131,8 +131,11 @@ GLSNavierStokesAssemblerCore<dim>::assemble_matrix(
               // PSPG GLS term
               local_matrix_ij += tau * (strong_jac * grad_phi_p_i);
 
-
-              // Jacobian is currently incomplete
+              // The jacobian matrix for the SUPG formulation
+              // currently does not include the jacobian of the stabilization
+              // parameter tau. Our experience has shown that does not alter the
+              // number of newton iteration for convergence, but greatly
+              // simplifies assembly.
               if (SUPG)
                 {
                   local_matrix_ij +=
@@ -224,9 +227,10 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
           const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
           const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
 
+          double local_rhs_i = 0;
 
           // Navier-Stokes Residual
-          local_rhs(i) +=
+          local_rhs_i +=
             (
               // Momentum
               -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
@@ -237,14 +241,15 @@ GLSNavierStokesAssemblerCore<dim>::assemble_rhs(
             JxW;
 
           // PSPG GLS term
-          local_rhs(i) += -tau * (strong_residual * grad_phi_p_i) * JxW;
+          local_rhs_i += -tau * (strong_residual * grad_phi_p_i) * JxW;
 
           // SUPG GLS term
           if (SUPG)
             {
-              local_rhs(i) +=
+              local_rhs_i +=
                 -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
             }
+          local_rhs(i) += local_rhs_i;
         }
     }
 }
