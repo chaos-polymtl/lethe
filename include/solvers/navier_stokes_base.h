@@ -29,6 +29,7 @@
 
 #include <solvers/flow_control.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/navier_stokes_assemblers.h>
 #include <solvers/post_processors.h>
 #include <solvers/postprocessing_velocities.h>
 #include <solvers/simulation_parameters.h>
@@ -390,8 +391,6 @@ protected:
   Function<dim> *exact_solution;
   Function<dim> *forcing_function;
 
-
-
   // Dynamic flow control
   FlowControl<dim> flow_control;
   Tensor<1, dim>   beta;
@@ -425,6 +424,8 @@ protected:
   std::shared_ptr<Quadrature<dim>>     cell_quadrature;
   std::shared_ptr<Quadrature<dim - 1>> face_quadrature;
 
+  // Assemblers for the matrix
+  std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers;
 
   // Multiphysics interface
   std::shared_ptr<MultiphysicsInterface<dim>> multiphysics;

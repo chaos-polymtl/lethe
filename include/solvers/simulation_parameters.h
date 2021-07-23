@@ -54,8 +54,8 @@ public:
   BoundaryConditions::TracerBoundaryConditions<dim> boundary_conditions_tracer;
   Parameters::InitialConditions<dim> *              initial_condition;
   AnalyticalSolutions::AnalyticalSolution<dim> *    analytical_solution;
-  SourceTerms::SourceTerm<dim> *                    sourceTerm;
-  Parameters::VelocitySource                        velocitySource;
+  SourceTerms::SourceTerm<dim> *                    source_term;
+  Parameters::VelocitySource                        velocity_sources;
   Parameters::IBParticles<dim>                      particlesParameters;
   std::shared_ptr<Parameters::VoidFraction<dim>>    void_fraction;
   Parameters::CFDDEM                                cfd_dem;
@@ -93,8 +93,8 @@ public:
 
     analytical_solution = new AnalyticalSolutions::AnalyticalSolution<dim>;
     analytical_solution->declare_parameters(prm);
-    sourceTerm = new SourceTerms::SourceTerm<dim>;
-    sourceTerm->declare_parameters(prm);
+    source_term = new SourceTerms::SourceTerm<dim>;
+    source_term->declare_parameters(prm);
     Parameters::Testing::declare_parameters(prm);
 
     Parameters::VelocitySource::declare_parameters(prm);
@@ -129,9 +129,9 @@ public:
     manifolds_parameters.parse_parameters(prm);
     initial_condition->parse_parameters(prm);
     analytical_solution->parse_parameters(prm);
-    sourceTerm->parse_parameters(prm);
+    source_term->parse_parameters(prm);
     simulation_control.parse_parameters(prm);
-    velocitySource.parse_parameters(prm);
+    velocity_sources.parse_parameters(prm);
     particlesParameters.parse_parameters(prm);
     void_fraction->parse_parameters(prm);
     cfd_dem.parse_parameters(prm);

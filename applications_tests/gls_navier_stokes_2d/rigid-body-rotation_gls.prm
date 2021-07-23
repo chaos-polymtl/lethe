@@ -10,7 +10,7 @@ subsection simulation control
   set output name             = couette
   set output frequency        = 1
   set subdivision             = 1
-  set number mesh adapt       = 2      # If steady, nb mesh adaptation
+  set number mesh adapt       = 1      # If steady, nb mesh adaptation
   set log precision           = 3         # Log precision
 end
 

@@ -87,5 +87,83 @@ number_of_intermediary_stages(
   return n_stages;
 }
 
+inline unsigned int
+intermediary_stages(Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
+    return 0;
+
+  else if (method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2 ||
+           method ==
+             Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
+    return 1;
+
+  else // if (method ==
+       // Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
+    return 2;
+}
+
+inline unsigned int
+max_number_of_intermediary_stages()
+{
+  return 3;
+}
+
+
+/**
+ * @brief Determines if this is the first step of an sdirk method
+ *
+ * @param method A time integration method
+ */
+inline bool
+is_sdirk_step1(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1);
+}
+
+/**
+ * @brief Determines if this is the second step of an sdirk method
+ *
+ * @param method A time integration method
+ */
+inline bool
+is_sdirk_step2(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2 ||
+    method == Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2);
+}
+
+/**
+ * @brief Determines if this is the third step of an sdirk method
+ *
+ * @param method A time integration method
+ */
+inline bool
+is_sdirk_step3(const Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  return (method ==
+          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3);
+}
+
+
+inline unsigned int
+sdirk_step(Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  if (is_sdirk_step1(method))
+    return 1;
+  else if (is_sdirk_step2(method))
+    return 2;
+  else if (is_sdirk_step3(method))
+    return 3;
+  else
+    return 0;
+}
+
+
 
 #endif

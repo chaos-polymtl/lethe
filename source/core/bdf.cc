@@ -12,11 +12,7 @@
  * the top level of the Lethe distribution.
  *
  * ---------------------------------------------------------------------
-
- *
- * Author: Bruno Blais, Polytechnique Montreal, 2019 -
  */
-
 
 #include "core/bdf.h"
 
@@ -72,4 +68,25 @@ bdf_coefficients(unsigned int p, const std::vector<double> dt)
       alpha += term;
     }
   return alpha;
+}
+
+Vector<double>
+bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
+                 const std::vector<double>                         dt)
+{
+  switch (method)
+    {
+      case (Parameters::SimulationControl::TimeSteppingMethod::bdf1):
+        return bdf_coefficients(1, dt);
+      case (Parameters::SimulationControl::TimeSteppingMethod::steady_bdf):
+        return bdf_coefficients(1, dt);
+      case (Parameters::SimulationControl::TimeSteppingMethod::bdf2):
+        return bdf_coefficients(2, dt);
+      case (Parameters::SimulationControl::TimeSteppingMethod::bdf3):
+        return bdf_coefficients(3, dt);
+      default:
+        throw(std::runtime_error(
+          "BDF coefficients were requested without a BDF method"));
+        break;
+    }
 }

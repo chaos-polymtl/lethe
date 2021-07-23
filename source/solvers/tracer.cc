@@ -94,7 +94,7 @@ Tracer<dim>::assemble_system(
     }
 
 
-  auto &source_term = simulation_parameters.sourceTerm->tracer_source;
+  auto &source_term = simulation_parameters.source_term->tracer_source;
   source_term.set_time(simulation_control->get_current_time());
 
   FEValues<dim> fe_values_tracer(*mapping,

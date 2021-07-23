@@ -35,6 +35,11 @@ protected:
   // Time stepping method used for the simulation
   Parameters::SimulationControl::TimeSteppingMethod method;
 
+  // Current method used for the present assembly
+  // This is used to differentiate the substeps of SDIRK methods or
+  // to start-up BDF simulations
+  Parameters::SimulationControl::TimeSteppingMethod assembly_method;
+
   // Time of the current iteration being solved for
   double current_time;
 
@@ -364,6 +369,17 @@ public:
     return subdivision;
   }
 
+  Parameters::SimulationControl::TimeSteppingMethod
+  get_assembly_method()
+  {
+    return assembly_method;
+  }
+
+  void
+  set_assembly_method(Parameters::SimulationControl::TimeSteppingMethod method)
+  {
+    assembly_method = method;
+  }
 
 
   void
