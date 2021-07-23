@@ -163,8 +163,8 @@ NavierStokesBase<dim, VectorType, DofsType>::NavierStokesBase(
   exact_solution = &simulation_parameters.analytical_solution->uvwp;
 
   // If there is a forcing function, get it from the parser
-  if (simulation_parameters.sourceTerm->source_term())
-    forcing_function = &simulation_parameters.sourceTerm->navier_stokes_source;
+  if (simulation_parameters.source_term->source_term())
+    forcing_function = &simulation_parameters.source_term->navier_stokes_source;
   else
     forcing_function = new NoForce<dim>;
 
@@ -1182,7 +1182,6 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   data_component_interpretation.push_back(
     DataComponentInterpretation::component_is_scalar);
 
-
   DataOut<dim> data_out;
 
   // Additional flag to enable the output of high-order elements
@@ -1277,11 +1276,11 @@ NavierStokesBase<dim, VectorType, DofsType>::write_output_results(
   QCriterionPostprocessor<dim> qcriterion;
   data_out.add_data_vector(solution, qcriterion);
 
-  SRFPostprocessor<dim> srf(simulation_parameters.velocitySource.omega_x,
-                            simulation_parameters.velocitySource.omega_y,
-                            simulation_parameters.velocitySource.omega_z);
+  SRFPostprocessor<dim> srf(simulation_parameters.velocity_sources.omega_x,
+                            simulation_parameters.velocity_sources.omega_y,
+                            simulation_parameters.velocity_sources.omega_z);
 
-  if (simulation_parameters.velocitySource.type ==
+  if (simulation_parameters.velocity_sources.type ==
       Parameters::VelocitySource::VelocitySourceType::srf)
     data_out.add_data_vector(solution, srf);
 

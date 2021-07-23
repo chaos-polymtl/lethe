@@ -117,8 +117,8 @@ RestartNavierStokes<dim>::run()
   this->finish_time_step_fd();
   this->write_checkpoint(); // write_checkpoint needs to be called explicitly
 
-  this->set_solution_vector(0.);
-  auto errors_p2 = calculate_L2_error(this->dof_handler,
+  this->present_solution = 0;
+  auto errors_p2         = calculate_L2_error(this->dof_handler,
                                       this->present_solution,
                                       this->exact_solution,
                                       this->mpi_communicator,

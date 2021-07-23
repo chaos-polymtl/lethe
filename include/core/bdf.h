@@ -20,6 +20,8 @@
 #ifndef lethe_bdf_h
 #define lethe_bdf_h
 
+#include <core/parameters.h>
+
 #include <deal.II/lac/vector.h>
 
 #include <vector>
@@ -45,6 +47,25 @@ bdf_coefficients(unsigned int order, const std::vector<double> time_steps);
 
 
 /**
+ * @brief Calculate the coefficients required for BDF integration of order n.
+ * The coefficients are determined through a recursion algorithm.
+ * The algorithm is taken from : Hay, Alexander, et al. "hp-Adaptive time
+ * integration based on the BDF for viscous flows." Journal of Computational
+ * Physics 291 (2015): 151-176.
+ *
+ * @param method The time stepping method
+ *
+ * @param time_steps a vector containing all the time steps. The time steps should be in reverse order.
+ * For example, if the method is a BDF2, it uses three values for the time : (t)
+ * (t-dt_1) and (t-dt_2). Thus the time step vector should contain dt_1 and
+ * dt_2.
+ */
+Vector<double>
+bdf_coefficients(Parameters::SimulationControl::TimeSteppingMethod method,
+                 const std::vector<double>                         time_steps);
+
+
+/**
  * @brief Recursion function to calculate the bdf coefficient
  *
  * @param order Order of the bdf method
@@ -63,7 +84,7 @@ delta(unsigned int order, unsigned int n, unsigned int j, Vector<double> times);
 
 
 /**
- * @brief Returns the number of previous time steps supposed by the BDF schemes implemented in Lethe.
+ * @brief Returns the maximum number of previous time steps supposed by the BDF schemes implemented in Lethe.
  *  At the moment this is hardcoded to 3, but eventually this could be made
  * larger or smaller depending on the methods used.
  *
@@ -72,6 +93,25 @@ inline unsigned int
 maximum_number_of_previous_solutions()
 {
   return 3;
+}
+
+/**
+ * @brief Returns the number of previous time steps for a BDF Scheme
+ *
+ */
+inline unsigned int
+number_of_previous_solutions(
+  Parameters::SimulationControl::TimeSteppingMethod method)
+{
+  if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
+      method == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
+    return 1;
+  else if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
+    return 2;
+  else if (method == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
+    return 3;
+  else
+    return 0;
 }
 
 

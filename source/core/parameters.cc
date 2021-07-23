@@ -731,7 +731,7 @@ namespace Parameters
       prm.declare_entry(
         "method",
         "gmres",
-        Patterns::Selection("gmres|bicgstab|amg|tfqmr|direct"),
+        Patterns::Selection("gmres|bicgstab|amg|direct"),
         "The iterative solver for the linear system of equations. "
         "Choices are <gmres|bicgstab|amg|tfqmr|direct>. gmres is a GMRES iterative "
         "solver "
@@ -838,13 +838,11 @@ namespace Parameters
         solver = SolverType::gmres;
       else if (sv == "bicgstab")
         solver = SolverType::bicgstab;
-      else if (sv == "tfqmr")
-        solver = SolverType::tfqmr;
       else if (sv == "direct")
         solver = SolverType::direct;
       else
         throw std::logic_error(
-          "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab, tfqmr or direct");
+          "Error, invalid iterative solver type. Choices are amg, gmres, bicgstab or direct");
 
       relative_residual  = prm.get_double("relative residual");
       minimum_residual   = prm.get_double("minimum residual");
