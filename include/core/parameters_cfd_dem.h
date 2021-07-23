@@ -20,9 +20,9 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
-#include <deal.II/base/parsed_function.h>
-
 #include <core/parameters.h>
+
+#include <deal.II/base/parsed_function.h>
 
 
 using namespace dealii;
@@ -83,14 +83,14 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
-    bool      shock_capturing;
-    bool      grad_div;
-    bool      full_stress_tensor;
-    double    reference_velocity;
-    DragModel drag_model;
-    bool      post_processing;
-    unsigned int       inlet_boundary_id;
-    unsigned int       outlet_boundary_id;
+    bool         shock_capturing;
+    bool         grad_div;
+    bool         full_stress_tensor;
+    double       reference_velocity;
+    DragModel    drag_model;
+    bool         post_processing;
+    unsigned int inlet_boundary_id;
+    unsigned int outlet_boundary_id;
   };
 
 

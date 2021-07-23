@@ -100,11 +100,36 @@ BoundaryCellsInformation<dim>::find_boundary_cells_information(
                   // Check to see if the face is located at boundary
                   if (cell->face(face_id)->at_boundary())
                     {
-                      fe_face_values.reinit(cell, face_id);
+                      // Finding the normal vector of the boundary face
+                      Tensor<1, dim> normal_vector =
+                        -fe_face_values.normal_vector(f_q_point);
 
-                      for (unsigned int f_q_point = 0;
-                           f_q_point < n_face_q_points;
-                           ++f_q_point)
+                      // Finding a point on the boundary face
+                      Point<dim> quad_point =
+                        fe_face_values.quadrature_point(0);
+
+                      // Storing these information into the
+                      // boundary_cells_info_struct
+                      boundary_cells_info_struct<dim> boundary_information;
+                      boundary_information.cell = cell;
+                      boundary_information.boundary_id =
+                        cell->face(face_id)->boundary_id();
+                      boundary_information.global_face_id =
+                        cell->face_index(face_id);
+                      boundary_information.normal_vector = normal_vector;
+                      boundary_information.point_on_face = quad_point;
+
+                      // Searching to see if boundary with these information
+                      // were already found or not. If this is a new boundary
+                      // face, it will be added to the output_vector as well as
+                      // the search_vector to avoid repetition
+                      auto information_search_element =
+                        std::make_pair(face_id, cell);
+                      auto search_iterator =
+                        std::find(search_vector.begin(),
+                                  search_vector.end(),
+                                  information_search_element);
+                      if (search_iterator == search_vector.end())
                         {
                           // Finding the normal vector of the boundary face
                           Tensor<1, dim> normal_vector =
