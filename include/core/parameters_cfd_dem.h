@@ -89,8 +89,8 @@ namespace Parameters
     double    reference_velocity;
     DragModel drag_model;
     bool      post_processing;
-    int       inlet_boundary_id;
-    int       outlet_boundary_id;
+    unsigned int       inlet_boundary_id;
+    unsigned int       outlet_boundary_id;
   };
 
 
