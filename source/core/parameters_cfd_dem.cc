@@ -87,6 +87,18 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "The refernce velocity for the shock capturing scheme");
+    prm.declare_entry("post processing",
+                      "false",
+                      Patterns::Bool(),
+                      "Choose whether or not to apply post_processing");
+    prm.declare_entry("inlet boundary id",
+                      "1",
+                      Patterns::Double(),
+                      "The inlet boundary of the bed");
+    prm.declare_entry("outlet boundary id",
+                      "2",
+                      Patterns::Double(),
+                      "The outlet boundary of the bed");
     prm.leave_subsection();
   }
 
@@ -99,6 +111,9 @@ namespace Parameters
     grad_div             = prm.get_bool("grad div");
     full_stress_tensor   = prm.get_bool("full stress tensor");
     reference_velocity   = prm.get_double("reference velocity");
+    post_processing      = prm.get_bool("post processing");
+    inlet_boundary_id    = prm.get_double("inlet boundary id");
+    outlet_boundary_id   = prm.get_double("outlet boundary id");
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;
