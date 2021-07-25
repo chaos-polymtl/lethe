@@ -370,7 +370,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                               if (component_i == 0)
                                 {
                                   // Count the number of evaluation
-                                  nb_evaluation += 1;
+
                                   auto [point, interpolation_points] =
                                     stencil.points(
                                       order,
@@ -411,6 +411,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                             interpolation_points[j - 1]);
                                     }
 
+
                                   fluide_stress_at_ib = 0;
 
                                   // Create a quadrature that is based on the IB
@@ -428,16 +429,17 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   fe_values_cell2.reinit(cell_2);
                                   fe_values_cell2[velocities]
                                     .get_function_gradients(
-                                      this->present_solution,
+                                      this->evaluation_point,
                                       velocity_gradients);
                                   fe_values_cell2[pressure].get_function_values(
-                                    this->present_solution, pressure_values);
+                                    this->evaluation_point, pressure_values);
 
                                   // Extrapolate the fluid stress tensor on the
                                   // surface of the IB.
                                   for (unsigned int k = 0; k < ib_coef.size();
                                        ++k)
                                     {
+                                      fluid_pressure=0;
                                       for (int d = 0; d < dim; ++d)
                                         {
                                           fluid_pressure[d][d] =
@@ -451,6 +453,11 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
 
                                       fluide_stress_at_ib +=
                                         fluid_stress * ib_coef[k];
+                                     /* std::cout<<"i "<< i <<" face_tensor "<< fluid_stress<<" ib_coef  "<<ib_coef[k] <<std::endl;
+                                      std::cout<<"i "<< i <<" velocity_tensor "<< velocity_gradients[k] <<" point  "<<point <<std::endl;
+                                      std::cout<<"i "<< i <<" pressure_tensor "<< fluid_pressure  << "dof support point "<<support_points[local_face_dof_indices[i]] <<std::endl;
+                                      std::cout<<"i "<< i <<" interpolation point "<<interpolation_points[stencil.nb_points(order) - 1]<<std::endl;*/
+
                                     }
                                   // Store the stress tensor that results from
                                   // the extrapolation in the local evaluation
@@ -486,7 +493,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                           for (unsigned int q = 0; q < n_q_points_face; q++)
                             {
                               // Evaluate the total surface
-                              total_area += fe_face_projection_values.JxW(q);
+
                               // Redefined the normal at the quadrature point
                               // since we dont control the orientation of the
                               // cell.
@@ -494,6 +501,7 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                 (q_points[q] - particles[p].position) /
                                 (q_points[q] - particles[p].position).norm();
                               fluid_stress = 0;
+                              double local_weight = 0;
                               // Integrate
                               for (unsigned int i = 0;
                                    i < local_face_dof_indices.size();
@@ -502,17 +510,33 @@ GLSSharpNavierStokesSolver<dim>::force_on_ib()
                                   const unsigned int component_i =
                                     this->fe->system_to_component_index(i)
                                       .first;
-                                  if (component_i == 0)
+                                  if (component_i == 0  && this->locally_owned_dofs.is_element(
+                                          local_face_dof_indices[i]))
                                     {
                                       fluid_stress +=
                                         fe_face_projection_values.shape_value(
                                           i, q) *
                                         local_face_tensor[i];
+                                      total_area += fe_face_projection_values.JxW(q)*fe_face_projection_values.shape_value(
+                                              i, q);
+                                      local_weight+=fe_face_projection_values.shape_value(
+                                              i, q);
+                                      /*std::cout<<"i_face_tensor "<< local_face_tensor[i]<<" fe  "<< fe_face_projection_values.shape_value(
+                                              i, q)<<std::endl;*/
+
                                     }
                                 }
 
                               auto force = fluid_stress * normal_vector *
                                            fe_face_projection_values.JxW(q);
+                              if(force.norm()>0) {
+                                  nb_evaluation += local_weight;
+                                  /*std::cout<<"fluid_stress "<< fluid_stress<<" JxW(q) "<< fe_face_projection_values.JxW(q)<<std::endl;
+                                  std::cout<<"force "<< force<<" application point "<< q_points[q]<<std::endl;*/
+                              }
+
+
+
                               // Add the local contribution of this surface
                               // cell.
                               particles[p].forces += force;
