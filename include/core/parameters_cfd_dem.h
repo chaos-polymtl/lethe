@@ -83,11 +83,14 @@ namespace Parameters
     void
     parse_parameters(ParameterHandler &prm);
 
-    bool      shock_capturing;
-    bool      grad_div;
-    bool      full_stress_tensor;
-    double    reference_velocity;
-    DragModel drag_model;
+    bool         shock_capturing;
+    bool         grad_div;
+    bool         full_stress_tensor;
+    double       reference_velocity;
+    DragModel    drag_model;
+    bool         post_processing;
+    unsigned int inlet_boundary_id;
+    unsigned int outlet_boundary_id;
   };
 
 

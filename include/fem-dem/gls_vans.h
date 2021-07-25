@@ -91,7 +91,7 @@ private:
   solve_L2_system_void_fraction();
 
   void
-  global_mass_conservation();
+  post_processing();
 
   virtual void
   iterate() override;
