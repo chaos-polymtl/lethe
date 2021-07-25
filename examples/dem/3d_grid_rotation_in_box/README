@@ -1,0 +1,4 @@
+grid rotation in box tutorial
+This example can be solved using the dem_3d solver
+A description of the test case can be found at the following link :
+https://github.com/lethe-cfd/lethe/wiki/Example-15-:-Rotation-in-Box
