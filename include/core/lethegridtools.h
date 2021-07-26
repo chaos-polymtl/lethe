@@ -93,6 +93,10 @@ namespace LetheGridTools
     cell_cut_by_flat(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<dim-1,dim>::active_cell_iterator &cell_flat);
 
     template <int dim>
+    bool
+    cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge);
+
+    template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
 

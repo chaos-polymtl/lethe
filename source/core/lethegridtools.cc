@@ -4,6 +4,7 @@
 
 #include <core/lethegridtools.h>
 #include <deal.II/grid/manifold.h>
+#include <deal.II/fe/fe_q.h>
 
 
 template <int dim>
@@ -206,6 +207,15 @@ LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
     return cells_inside;
 }
 
+template <int dim>
+bool
+cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge){
+
+
+
+    return false;
+}
+
 
 template <int dim>
 std::vector<typename DoFHandler<dim>::active_cell_iterator>
@@ -214,24 +224,102 @@ LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
                        const typename DoFHandler<dim>::active_cell_iterator &cell,Point<dim> &point_1,
                        Point<dim> &point_2){
 
-    auto& starting_cell=find_cell_around_point_with_tree(dof_handler,point_1);
-    Tensor<1,dim> unit_direction=(point_2-point_1)/(point_2-point_1).norm();
-    double total_dist=(point_2-point_1).norm();
+
+
 
     std::set<typename DoFHandler<dim>::active_cell_iterator> cells_pierced_set;
-    cells_pierced_set.push_back(starting_cell);
-    Point<dim> next_point=point_1;
-    auto& next_cell=starting_cell;
-    double dist_done=0;
-    while(dist_done<total_dist){
-        next_point= next_point+unit_direction*next_cell->measure()/2;
-        dist_done+=next_cell->measure()/2;
-        next_cell=LetheGridTools::find_cell_around_point_with_neighbors(vertices_cell_map,next_point);
-        cells_pierced_set.insert(next_cell);
+    DoFHandler<1, dim>    local_edge_dof_handler;
+    Triangulation< 1, dim> local_edge_triangulation;
+    std::vector<Point<dim>>        vertices_of_edge(2);
+    std::vector<CellData<1>> local_edge_cell_data(1);
+    FESystem<dim - 1, dim> local_face_fe(
+            FE_Q<dim - 1, dim>(1));
+
+    vertices_of_edge[0]=point_1;
+    vertices_of_edge[1]=point_2;
+    local_edge_cell_data[0].vertices[0] = 0;
+    local_edge_cell_data[0].vertices[1] = 1;
+
+    local_edge_triangulation.create_triangulation(
+            vertices_of_edge,
+            local_edge_cell_data,
+            SubCellData());
+    local_edge_dof_handler.reinit(
+            local_edge_triangulation);
+    local_edge_dof_handler.distribute_dofs(local_face_fe);
+
+    const typename DoFHandler<1,dim>::active_cell_iterator edge_cell;
+    edge_cell=local_edge_dof_handler.active_cell_iterators().begin();
+    if(dim==2){
+
+        cells_pierced_set = find_cells_around_flat_cell(dof_handler, edge_cell, vertices_cell_map);
+
+    }
+    if(dim==3){
+        auto& starting_cell=find_cell_around_point_with_tree(dof_handler,point_1);
+        Tensor<1,dim> unit_direction=(point_2-point_1)/(point_2-point_1).norm();
+        double total_dist=(point_2-point_1).norm();
+
+        std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+                LetheGridTools::hash_cell<dim>,
+                LetheGridTools::equal_cell<dim>>
+                previous_candidate_cells;
+
+        std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+                LetheGridTools::hash_cell<dim>,
+                LetheGridTools::equal_cell<dim>>
+                current_candidate_cells;
+
+        std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
+                LetheGridTools::hash_cell<dim>,
+                LetheGridTools::equal_cell<dim>>
+                intersected_cells;
+
+        previous_candidate_cells.insert(starting_cell);
+        current_candidate_cells.insert(starting_cell);
+        intersected_cells.insert(starting_cell);
+
+        int n_previous_intersected = 0;
+
+        while (intersected_cells.size() > n_previous_intersected) {
+            n_previous_intersected=intersected_cells.size();
+            // Find all cells around previous candidate cells
+            for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
+                    previous_candidate_cells) {
+                current_candidate_cells.insert(
+                        LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
+                                                                    cell_iter));
+            }
+
+            // Reset the list of previous candidates
+            previous_candidate_cells.clear();
+
+            // Check if current candidate cells are intersected, and if they are, add
+            // them to the intersected cell set. If the added cell was not already
+            // present in the intersected cell set, add it to the previous candidate
+            // cells as well.
+            for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
+                    current_candidate_cells) {
+                if (LetheGridTools::cell_pierced_by_edge(cell_iter, edge_cell))
+                {
+                    // If the cell was not present in the intersected cells set
+                    if (intersected_cells.insert(cell_iter).second) {
+                        previous_candidate_cells.insert(cell_iter);
+                    }
+                }
+            }
+            current_candidate_cells.clear();
+        }
+
+
+
+
+
     }
 
-    std::vector<typename DoFHandler<dim>::active_cell_iterator>
-            cells_pierced(cells_pierced_set.begin(), cells_pierced_set.end());
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_pierced(cells_pierced_set.begin(),cells_pierced_set.end());
+
     return cells_pierced;
 }
 
@@ -335,14 +423,6 @@ LetheGridTools::find_cells_around_flat_cell(
     &vertices_cell_map)
 {
     std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_cut;
-  if constexpr (dim==2) {
-      cells_cut=LetheGridTools::find_cells_around_edge(dof_handler,
-      vertices_cell_map,
-      cell->vertex(0),
-      cell->vertex(1));
-  }
-
-  if constexpr (dim==3) {
       auto &starting_cell =
               find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
 
@@ -368,8 +448,9 @@ LetheGridTools::find_cells_around_flat_cell(
       int n_previous_intersected = 0;
 
       while (intersected_cells.size() > n_previous_intersected) {
+          n_previous_intersected=intersected_cells.size();
           // Find all cells around previous candidate cells
-          for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
+          for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
                   previous_candidate_cells) {
               current_candidate_cells.insert(
                       LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
@@ -383,7 +464,7 @@ LetheGridTools::find_cells_around_flat_cell(
           // them to the intersected cell set. If the added cell was not already
           // present in the intersected cell set, add it to the previous candidate
           // cells as well.
-          for (const typename DoFHandler<dim - 1>::active_cell_iterator &cell_iter :
+          for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
                   current_candidate_cells) {
               if (LetheGridTools::cell_cut_by_flat(cell_iter, cell))
                 {
@@ -393,10 +474,11 @@ LetheGridTools::find_cells_around_flat_cell(
                   }
               }
           }
+          current_candidate_cells.clear();
       }
       cells_cut(intersected_cells.begin(), intersected_cells.end());
 
-  }
+
   return cells_cut;
 }
 
