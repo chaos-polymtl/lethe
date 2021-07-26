@@ -679,3 +679,149 @@ GLSNavierStokesAssemblerSDIRK<dim>::assemble_rhs(
 
 template class GLSNavierStokesAssemblerSDIRK<2>;
 template class GLSNavierStokesAssemblerSDIRK<3>;
+
+
+template <int dim>
+void
+GDNavierStokesAssemblerCore<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const double viscosity = physical_properties.viscosity;
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      std::vector<Tensor<1, dim>> grad_phi_u_j_x_velocity(n_dofs);
+      std::vector<Tensor<1, dim>> velocity_gradient_x_phi_u_j(n_dofs);
+
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j      = scratch_data.phi_u[q][j];
+          const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+
+          // Store these temporary products in auxiliary variables for speed
+          grad_phi_u_j_x_velocity[j]     = grad_phi_u_j * velocity;
+          velocity_gradient_x_phi_u_j[j] = velocity_gradient * phi_u_j;
+        }
+
+
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i      = scratch_data.phi_u[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &div_phi_u_i  = scratch_data.div_phi_u[q][i];
+          const auto &phi_p_i      = scratch_data.phi_p[q][i];
+
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto &div_phi_u_j  = scratch_data.div_phi_u[q][j];
+
+              const auto &phi_p_j = scratch_data.phi_p[q][j];
+
+
+              double local_matrix_ij =
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i) +
+                velocity_gradient_x_phi_u_j[j] * phi_u_i +
+                grad_phi_u_j_x_velocity[j] * phi_u_i - div_phi_u_i * phi_p_j -
+                // Continuity
+                phi_p_i * div_phi_u_j + gamma * div_phi_u_j * div_phi_u_i +
+                // Mass matrix for S block in schur complement
+                phi_p_i * phi_p_j;
+
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+GDNavierStokesAssemblerCore<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Scheme and physical properties
+  const double viscosity = physical_properties.viscosity;
+
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &local_rhs = copy_data.local_rhs;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Velocity
+      const Tensor<1, dim> velocity    = scratch_data.velocity_values[q];
+      const double velocity_divergence = scratch_data.velocity_divergences[q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
+
+      // Pressure
+      const double pressure = scratch_data.pressure_values[q];
+
+      // Forcing term
+      const Tensor<1, dim> force = scratch_data.force[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i      = scratch_data.phi_u[q][i];
+          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto phi_p_i      = scratch_data.phi_p[q][i];
+          const auto div_phi_u_i  = scratch_data.div_phi_u[q][i];
+
+          double local_rhs_i = 0;
+
+          // Navier-Stokes Residual
+          local_rhs_i +=
+            (
+              // Momentum
+              -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) -
+              velocity_gradient * velocity * phi_u_i + pressure * div_phi_u_i +
+              force * phi_u_i +
+              // Continuity
+              velocity_divergence * phi_p_i -
+              gamma * velocity_divergence * div_phi_u_i) *
+            JxW;
+
+          local_rhs(i) += local_rhs_i;
+        }
+    }
+}
+
+
+
+template class GDNavierStokesAssemblerCore<2>;
+template class GDNavierStokesAssemblerCore<3>;

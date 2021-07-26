@@ -25,6 +25,10 @@
 #include <core/utilities.h>
 
 #include <solvers/gd_navier_stokes.h>
+#include <solvers/navier_stokes_assemblers.h>
+#include <solvers/navier_stokes_vof_assemblers.h>
+
+#include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -52,292 +56,283 @@ GDNavierStokesSolver<dim>::~GDNavierStokesSolver()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GDNavierStokesSolver<dim>::setup_assemblers()
 {
-  TimerOutput::Scope t(this->computing_timer, "assemble_system");
+  this->assemblers.clear();
 
-  if (time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    assembleGD<true, Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::TimeSteppingMethod::steady)
-    assembleGD<true,
-               Parameters::SimulationControl::TimeSteppingMethod::steady>();
-}
-
-template <int dim>
-void
-GDNavierStokesSolver<dim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
-{
-  TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-
-  if (time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    assembleGD<false,
-               Parameters::SimulationControl::TimeSteppingMethod::bdf1>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    assembleGD<false,
-               Parameters::SimulationControl::TimeSteppingMethod::bdf2>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    assembleGD<false,
-               Parameters::SimulationControl::TimeSteppingMethod::bdf3>();
-  else if (time_stepping_method ==
-           Parameters::SimulationControl::TimeSteppingMethod::steady)
-    assembleGD<false,
-               Parameters::SimulationControl::TimeSteppingMethod::steady>();
-}
-
-template <int dim>
-template <bool                                              assemble_matrix,
-          Parameters::SimulationControl::TimeSteppingMethod scheme>
-void
-GDNavierStokesSolver<dim>::assembleGD()
-{
-  double viscosity = this->simulation_parameters.physical_properties.viscosity;
-
-  Function<dim> *l_forcing_function = this->forcing_function;
-
-  if (assemble_matrix)
-    system_matrix = 0;
-
-  this->system_rhs = 0;
-
-  FEValues<dim> fe_values(*this->mapping,
-                          *this->fe,
-                          *this->cell_quadrature,
-                          update_values | update_quadrature_points |
-                            update_JxW_values | update_gradients);
-
-  const unsigned int dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int n_q_points    = this->cell_quadrature->size();
-
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-
-  FullMatrix<double>          local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>              local_rhs(dofs_per_cell);
-  std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
-
-
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-
-  // For the linearized system, we create temporary storage for present
-  // velocity and gradient, and present pressure. In practice, they are all
-  // obtained through their shape functions at quadrature points.
-
-  std::vector<Tensor<1, dim>> present_velocity_values(n_q_points);
-  std::vector<Tensor<2, dim>> present_velocity_gradients(n_q_points);
-  std::vector<double>         present_pressure_values(n_q_points);
-
-  std::vector<double>         div_phi_u(dofs_per_cell);
-  std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
-  std::vector<Tensor<2, dim>> grad_phi_u(dofs_per_cell);
-  std::vector<double>         phi_p(dofs_per_cell);
-
-  Tensor<1, dim> force;
-  Tensor<1, dim> beta_force = this->beta;
-
-  // Get the BDF coefficients
-  Vector<double> alpha_bdf;
-
-  std::vector<double> time_steps =
-    this->simulation_control->get_time_steps_vector();
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    alpha_bdf = bdf_coefficients(1, time_steps);
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    alpha_bdf = bdf_coefficients(2, time_steps);
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    alpha_bdf = bdf_coefficients(3, time_steps);
-
-  // Values at previous time step for backward Euler scheme
-  std::vector<std::vector<Tensor<1, dim>>> velocity_values = {
-    std::vector<Tensor<1, dim>>(n_q_points),
-    std::vector<Tensor<1, dim>>(n_q_points),
-    std::vector<Tensor<1, dim>>(n_q_points),
-    std::vector<Tensor<1, dim>>(n_q_points)};
-
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+  if (this->simulation_parameters.multiphysics.free_surface)
     {
-      if (cell->is_locally_owned())
+      // Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          auto &evaluation_point = this->evaluation_point;
-          fe_values.reinit(cell);
-
-          local_matrix = 0;
-          local_rhs    = 0;
-
-          fe_values[velocities].get_function_values(evaluation_point,
-                                                    present_velocity_values);
-
-          fe_values[velocities].get_function_gradients(
-            evaluation_point, present_velocity_gradients);
-
-          fe_values[pressure].get_function_values(evaluation_point,
-                                                  present_pressure_values);
-
-          if (scheme !=
-              Parameters::SimulationControl::TimeSteppingMethod::steady)
-            fe_values[velocities].get_function_values(
-              this->previous_solutions[0], velocity_values[0]);
-
-          if (scheme ==
-                Parameters::SimulationControl::TimeSteppingMethod::bdf2 ||
-              scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-            fe_values[velocities].get_function_values(
-              this->previous_solutions[1], velocity_values[1]);
-
-          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-            fe_values[velocities].get_function_values(
-              this->previous_solutions[2], velocity_values[2]);
-
-          if (l_forcing_function)
-            l_forcing_function->vector_value_list(
-              fe_values.get_quadrature_points(), rhs_force);
-
-          for (unsigned int q = 0; q < n_q_points; ++q)
-            {
-              // Establish the force vector
-              for (int i = 0; i < dim; ++i)
-                {
-                  const unsigned int component_i =
-                    this->fe->system_to_component_index(i).first;
-                  force[i] = rhs_force[q](component_i);
-                }
-              // Correct force to include the dynamic forcing term for flow
-              // control
-              force = force + beta_force;
-
-              for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                {
-                  div_phi_u[k]  = fe_values[velocities].divergence(k, q);
-                  grad_phi_u[k] = fe_values[velocities].gradient(k, q);
-                  phi_u[k]      = fe_values[velocities].value(k, q);
-                  phi_p[k]      = fe_values[pressure].value(k, q);
-                }
-
-              for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                {
-                  if (assemble_matrix)
-                    {
-                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                        {
-                          local_matrix(i, j) +=
-                            (viscosity *
-                               scalar_product(grad_phi_u[j], grad_phi_u[i]) +
-                             present_velocity_gradients[q] * phi_u[j] *
-                               phi_u[i] +
-                             grad_phi_u[j] * present_velocity_values[q] *
-                               phi_u[i] -
-                             div_phi_u[i] * phi_p[j] - phi_p[i] * div_phi_u[j] +
-                             gamma * div_phi_u[j] * div_phi_u[i] +
-                             phi_p[i] * phi_p[j]) *
-                            fe_values.JxW(q);
-
-                          // Mass matrix
-                          if (scheme == Parameters::SimulationControl::
-                                          TimeSteppingMethod::bdf1 ||
-                              scheme == Parameters::SimulationControl::
-                                          TimeSteppingMethod::bdf2 ||
-                              scheme == Parameters::SimulationControl::
-                                          TimeSteppingMethod::bdf3)
-                            local_matrix(i, j) += phi_u[j] * phi_u[i] *
-                                                  alpha_bdf[0] *
-                                                  fe_values.JxW(q);
-                        }
-                    }
-
-                  double present_velocity_divergence =
-                    trace(present_velocity_gradients[q]);
-                  local_rhs(i) +=
-                    (-viscosity * scalar_product(present_velocity_gradients[q],
-                                                 grad_phi_u[i]) -
-                     present_velocity_gradients[q] *
-                       present_velocity_values[q] * phi_u[i] +
-                     present_pressure_values[q] * div_phi_u[i] +
-                     present_velocity_divergence * phi_p[i] -
-                     gamma * present_velocity_divergence * div_phi_u[i] +
-                     force * phi_u[i]) *
-                    fe_values.JxW(q);
-
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-                    local_rhs(i) -=
-                      alpha_bdf[0] *
-                      (present_velocity_values[q] - velocity_values[0][q]) *
-                      phi_u[i] * fe_values.JxW(q);
-
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    local_rhs(i) -=
-                      (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[1] * (velocity_values[0][q] * phi_u[i]) +
-                       alpha_bdf[2] * (velocity_values[1][q] * phi_u[i])) *
-                      fe_values.JxW(q);
-
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                    local_rhs(i) -=
-                      (alpha_bdf[0] * (present_velocity_values[q] * phi_u[i]) +
-                       alpha_bdf[1] * (velocity_values[0][q] * phi_u[i]) +
-                       alpha_bdf[2] * (velocity_values[1][q] * phi_u[i]) +
-                       alpha_bdf[3] * (velocity_values[2][q] * phi_u[i])) *
-                      fe_values.JxW(q);
-                }
-            }
-
-          cell->get_dof_indices(local_dof_indices);
-
-          const AffineConstraints<double> &constraints_used =
-            this->zero_constraints;
-
-          if (assemble_matrix)
-            {
-              constraints_used.distribute_local_to_global(local_matrix,
-                                                          local_rhs,
-                                                          local_dof_indices,
-                                                          system_matrix,
-                                                          this->system_rhs);
-            }
-          else
-            {
-              constraints_used.distribute_local_to_global(local_rhs,
-                                                          local_dof_indices,
-                                                          this->system_rhs);
-            }
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties));
         }
+      // Core assembler
+      this->assemblers.push_back(
+        std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties));
     }
-
-  if (assemble_matrix)
+  else
     {
-      system_matrix.compress(VectorOperation::add);
+      // Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
+              this->simulation_control));
+        }
+      else if (is_sdirk(this->simulation_control->get_assembly_method()))
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+              this->simulation_control));
+        }
 
-      // Finally we move pressure mass matrix into a separate matrix:
-      pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
-      pressure_mass_matrix.copy_from(system_matrix.block(1, 1));
+      // Velocity sources term
+      if (this->simulation_parameters.velocity_sources.type ==
+          Parameters::VelocitySource::VelocitySourceType::srf)
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
+              this->simulation_parameters.velocity_sources));
+        }
 
-      // Note that settings this pressure block to zero is not identical to
-      // not assembling anything in this block, because this operation here
-      // will (incorrectly) delete diagonal entries that come in from
-      // hanging node constraints for pressure DoFs. This means that our
-      // whole system matrix will have rows that are completely
-      // zero. Luckily, FGMRES handles these rows without any problem.
-      system_matrix.block(1, 1) = 0;
+
+      // Core assembler
+      this->assemblers.push_back(
+        std::make_shared<GDNavierStokesAssemblerCore<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties,
+          gamma));
     }
-  this->system_rhs.compress(VectorOperation::add);
 }
+
+template <int dim>
+void
+GDNavierStokesSolver<dim>::assemble_system_matrix()
+{
+  this->system_matrix = 0;
+  setup_assemblers();
+
+  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping);
+
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
+    }
+
+
+  WorkStream::run(
+    this->dof_handler.begin_active(),
+    this->dof_handler.end(),
+    *this,
+    &GDNavierStokesSolver::assemble_local_system_matrix,
+    &GDNavierStokesSolver::copy_local_matrix_to_global_matrix,
+    scratch_data,
+    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                         this->cell_quadrature->size()));
+
+
+  system_matrix.compress(VectorOperation::add);
+
+  // Finally we move pressure mass matrix into a separate matrix:
+  pressure_mass_matrix.reinit(sparsity_pattern.block(1, 1));
+  pressure_mass_matrix.copy_from(system_matrix.block(1, 1));
+
+  // Note that settings this pressure block to zero is not identical to
+  // not assembling anything in this block, because this operation here
+  // will (incorrectly) delete diagonal entries that come in from
+  // hanging node constraints for pressure DoFs. This means that our
+  // whole system matrix will have rows that are completely
+  // zero. Luckily, FGMRES handles these rows without any problem.
+  system_matrix.block(1, 1) = 0;
+}
+
+
+
+template <int dim>
+void
+GDNavierStokesSolver<dim>::assemble_local_system_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      this->forcing_function,
+                      this->beta);
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_fs);
+
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+
+      scratch_data.reinit_free_surface(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        previous_solutions,
+        std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  copy_data.reset();
+
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_matrix(scratch_data, copy_data);
+    }
+
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+GDNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
+  const StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                              copy_data.local_dof_indices,
+                                              system_matrix);
+}
+
+
+template <int dim>
+void
+GDNavierStokesSolver<dim>::assemble_system_rhs()
+{
+  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->system_rhs = 0;
+  setup_assemblers();
+
+  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping);
+
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
+    }
+
+
+  WorkStream::run(
+    this->dof_handler.begin_active(),
+    this->dof_handler.end(),
+    *this,
+    &GDNavierStokesSolver::assemble_local_system_rhs,
+    &GDNavierStokesSolver::copy_local_rhs_to_global_rhs,
+    scratch_data,
+    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                         this->cell_quadrature->size()));
+
+  this->system_rhs.compress(VectorOperation::add);
+
+  if (this->simulation_control->is_first_assembly())
+    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
+}
+
+
+template <int dim>
+void
+GDNavierStokesSolver<dim>::assemble_local_system_rhs(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      this->forcing_function,
+                      this->beta);
+
+  if (this->simulation_parameters.multiphysics.free_surface)
+    {
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_fs);
+
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+
+
+      scratch_data.reinit_free_surface(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        previous_solutions,
+        std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+  copy_data.reset();
+
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_rhs(scratch_data, copy_data);
+    }
+
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+
+
+template <int dim>
+void
+GDNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
+  const StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                              copy_data.local_dof_indices,
+                                              this->system_rhs);
+}
+
+
 
 template <int dim>
 void
@@ -1101,6 +1096,10 @@ template <int dim>
 void
 GDNavierStokesSolver<dim>::solve()
 {
+  // This is enforced to 1 right now because it does not provide
+  // better speed-up than using MPI. This could be eventually changed...
+  MultithreadInfo::set_thread_limit(1);
+
   read_mesh_and_manifolds(
     this->triangulation,
     this->simulation_parameters.mesh,
