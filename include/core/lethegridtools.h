@@ -109,7 +109,7 @@ namespace LetheGridTools
         const noexcept
       {
         size_t value = 0;
-        for (int i = GeometryInfo<dim>::vertices_per_cell; i > 0; --i)
+        for (std::size_t i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
           {
             value = value ^ std::hash<int>()(cell->vertex_index(i));
           }
@@ -126,7 +126,7 @@ namespace LetheGridTools
         const noexcept
       {
         bool is_equal = true;
-        for (int i = GeometryInfo<dim>::vertices_per_cell; i > 0; --i)
+        for (std::size_t i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
           {
             if (cell1->vertex_index(i) != cell2->vertex_index(i))
               {
