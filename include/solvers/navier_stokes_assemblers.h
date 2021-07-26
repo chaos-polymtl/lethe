@@ -242,4 +242,56 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
 };
 
+
+/**
+ * @brief Class that assembles the core of the Navier-Stokes equation.
+ * This class assembles the weak form of:
+ * $$\mathbf{u} \cdot \nabla \mathbf{u} - \nabla p - \nu \nabla^2 \mathbf{u}
+ * =0 $$ with a grad-div stabilization
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+
+template <int dim>
+class GDNavierStokesAssemblerCore : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GDNavierStokesAssemblerCore(
+    std::shared_ptr<SimulationControl> simulation_control,
+    Parameters::PhysicalProperties     physical_properties,
+    const double                       gamma)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , gamma(gamma)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  double                             gamma;
+};
+
+
 #endif

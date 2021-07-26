@@ -88,14 +88,121 @@ public:
   solve();
 
 private:
+  /**
+   *  @brief Assembles the matrix associated with the solver
+   */
   void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override;
+  assemble_system_matrix();
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
+
+
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+
+  /**
+   * @brief sets up the vector of assembler functions
+   */
+  void
+  setup_assemblers();
+
+
+  /**
+   * @brief Copy local cell information to global matrix
+   */
 
   void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   */
+
+  void
+  copy_local_rhs_to_global_rhs(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+
+  /**
+   * @brief Call for the assembly of the matrix and the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
+
+  virtual void
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override
+  {
+    TimerOutput::Scope t(this->computing_timer, "assemble_system");
+    this->simulation_control->set_assembly_method(time_stepping_method);
+    assemble_system_matrix();
+    assemble_system_rhs();
+  }
+
+
+  /**
+   * @brief Call for the assembly of the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
+  virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
+                 time_stepping_method) override
+  {
+    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+    this->simulation_control->set_assembly_method(time_stepping_method);
+
+    assemble_system_rhs();
+  }
 
   template <bool                                              assemble_matrix,
             Parameters::SimulationControl::TimeSteppingMethod scheme>
