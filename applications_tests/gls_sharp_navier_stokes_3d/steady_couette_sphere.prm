@@ -101,8 +101,8 @@ subsection particles
 	    set omega x = 1
 	    set omega y = 1
 	    set omega z = 1
-	    set pressure x =0.00001
-	    set pressure y =0.00001
+	    set pressure x =0.12501
+	    set pressure y =0.12501
 	    set pressure z =0.00001
 	    set radius = 0.25
     end
@@ -117,8 +117,8 @@ subsection particle info 1
 	    set omega y = 0
 	    set omega z = 0
 	    set pressure x =0.40001
-	    set pressure y =0.00001
-	    set pressure z =0.00001
+	    set pressure y =0.125001
+	    set pressure z =0.125001
 	    set radius = 0.65
     end
 
@@ -166,7 +166,7 @@ end
 subsection non-linear solver
   set tolerance               = 1e-8
   set max iterations          = 6
-  set residual precision      = 2
+  set residual precision      = 5
   set verbosity               = quiet
 end
 
@@ -184,7 +184,7 @@ end
 subsection linear solver
   set method                                 = gmres
   set max iters                              = 500
-  set relative residual                      = 1e-3
+  set relative residual                      = 1e-6
   set minimum residual                       = 1e-9
   set ilu preconditioner fill                = 0
   set ilu preconditioner absolute tolerance  = 1e-10

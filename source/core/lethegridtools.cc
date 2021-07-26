@@ -164,7 +164,8 @@ LetheGridTools::find_cells_around_cell(std::map<unsigned int,std::set<typename D
 {
     // Find all the cells that share a vertex with a reference cell including the
     // initial cell.
-    std::unordered_set<typename DoFHandler<dim>::active_cell_iterator, LetheGridTools::hash_cell<dim>, LetheGridTools::equal_cell<dim>> neighbors_cells;
+    //std::unordered_set<typename DoFHandler<dim>::active_cell_iterator, LetheGridTools::hash_cell<dim>, LetheGridTools::equal_cell<dim>> neighbors_cells;
+    std::set<typename DoFHandler<dim>::active_cell_iterator> neighbors_cells;
 
     // Loop over the vertices of the initial cell and find all the cells around
     // each vertex and add them to the set of cells around the reference cell.
