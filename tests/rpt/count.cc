@@ -63,16 +63,16 @@ test()
 
   // Other parameters
   RPTCalculatingParameters rpt_parameters;
-  rpt_parameters.rpt_param.reactor_radius                       = 0.5;
-  rpt_parameters.rpt_param.peak_to_total_ratio                  = 1;
-  rpt_parameters.rpt_param.sampling_time                        = 1;
-  rpt_parameters.rpt_param.n_monte_carlo_iteration              = 10000;
-  rpt_parameters.rpt_param.seed                                 = 1;
-  rpt_parameters.initial_param.dead_time                        = 1;
-  rpt_parameters.initial_param.activity                         = 1;
-  rpt_parameters.initial_param.gamma_rays_emitted               = 1;
-  rpt_parameters.initial_param.attenuation_coefficient_reactor  = 1;
-  rpt_parameters.initial_param.attenuation_coefficient_detector = 1;
+  rpt_parameters.rpt_param.reactor_radius                   = 0.5;
+  rpt_parameters.rpt_param.peak_to_total_ratio              = 1;
+  rpt_parameters.rpt_param.sampling_time                    = 1;
+  rpt_parameters.rpt_param.n_monte_carlo_iteration          = 10000;
+  rpt_parameters.rpt_param.seed                             = 1;
+  rpt_parameters.rpt_param.dead_time                        = 1;
+  rpt_parameters.rpt_param.activity                         = 1;
+  rpt_parameters.rpt_param.gamma_rays_emitted               = 1;
+  rpt_parameters.rpt_param.attenuation_coefficient_reactor  = 1;
+  rpt_parameters.rpt_param.attenuation_coefficient_detector = 1;
 
   // Counts for every particle positions with Monte Carlo
   for (unsigned int i_particle = 0; i_particle < n_particle; i_particle++)

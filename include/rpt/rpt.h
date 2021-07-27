@@ -32,7 +32,6 @@
  * them in .csv file if enable.
  */
 
-// deal.II includes
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/utilities.h>
@@ -42,6 +41,7 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
+#include <rpt/rpt_map.h>
 
 using namespace dealii;
 

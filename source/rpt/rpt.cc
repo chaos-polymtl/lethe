@@ -10,29 +10,54 @@
 template <int dim>
 RPT<dim>::RPT(RPTCalculatingParameters &RPTparameters)
   : rpt_parameters(RPTparameters)
-{}
+{
+  // Seed the random number generator
+  srand(rpt_parameters.rpt_param.seed);
+}
 
 template <int dim>
 void
 RPT<dim>::calculate()
 {
-  // Reading and assigning positions to particles and detectors
-  assign_particle_positions();
-  assign_detector_positions();
-
+  // Initiate calculated and measured counts vector if needed
   std::vector<double> calculated_counts;
   std::vector<double> measured_counts;
-  if (rpt_parameters.initial_param.tuning == true)
-    {
-      measured_counts = extract_experimental_counts();
-      AssertThrow(
-        measured_counts.size() == particle_positions.size(),
-        ExcMessage(
-          "Prior tuning parameters, the number of particle positions provided"
-          " has to be the same number of counts of experimental data. "
-          "Note : The experimental counts also have to be at the same positions which can not be verified."))
-    }
 
+  // Reading and assigning positions of detectors
+  assign_detector_positions();
+
+  // Create grid for reconstruction if enable
+  RPTMap<dim> map(detectors, rpt_parameters);
+  if (rpt_parameters.reconstruction_param.reconstruction == true)
+    {
+      map.create_grid();
+
+      // Get position of the grid nodes & create particle positions
+      std::vector<Point<dim>> positions;
+      positions = map.get_positions();
+
+      for (unsigned int i = 0; i < positions.size(); i++)
+        {
+          RadioParticle<dim> position(positions[i], i);
+          particle_positions.push_back(position);
+        }
+    }
+  else
+    {
+      // Reading and assigning positions to particles
+      assign_particle_positions();
+
+      if (rpt_parameters.tuning_param.tuning == true)
+        {
+          measured_counts = extract_experimental_counts();
+          AssertThrow(
+            measured_counts.size() == particle_positions.size(),
+            ExcMessage(
+              "Prior tuning parameters, the number of particle positions provided"
+              " has to be the same number of counts of experimental data. "
+              "Note : The experimental counts also have to be at the same positions which can not be verified."))
+        }
+    }
 
   // Open a .csv or .dat file if exporting results in enable
   std::ofstream myfile;
@@ -57,8 +82,6 @@ RPT<dim>::calculate()
         }
     }
 
-  // Seed the random number generator
-  srand(rpt_parameters.rpt_param.seed);
 
   // Calculate count for every particle-detector pair
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();
@@ -74,12 +97,15 @@ RPT<dim>::calculate()
             rpt_parameters);
 
           // Calculate count and print it in terminal or store is if tuning
-          // is enable
+          // or reconstruction is enable
           double count = particle_detector_interactions.calculate_count();
-          if (rpt_parameters.initial_param.tuning == true)
+          if (rpt_parameters.tuning_param.tuning == true ||
+              rpt_parameters.reconstruction_param.reconstruction == true)
             calculated_counts.push_back(count);
           else
-            std::cout << count << std::endl;
+            std::cout << "Count for particle position " << i_particle
+                      << " and detector " << i_detector << " : " << count
+                      << std::endl;
 
           // Export results in .csv if enable
           if (myfile.is_open())
@@ -92,7 +118,12 @@ RPT<dim>::calculate()
   if (myfile.is_open())
     myfile.close();
 
-  if (rpt_parameters.initial_param.tuning == true)
+  // Add calculated count to grid nodes
+  if (rpt_parameters.reconstruction_param.reconstruction == true)
+    map.add_calculated_counts(calculated_counts);
+
+  // Calculate the cost function for parameters tuning
+  if (rpt_parameters.tuning_param.tuning == true)
     {
       double cost_function =
         calculate_cost_function(measured_counts, calculated_counts);
@@ -112,10 +143,10 @@ RPT<dim>::assign_particle_positions()
             std::istream_iterator<double>(),
             std::back_inserter(values));
 
-  int number_of_positions = values.size() / dim;
+  unsigned int number_of_positions = values.size() / dim;
 
   // Extract positions, create point objects and radioactive particles
-  for (int i = 0; i < number_of_positions; i++)
+  for (unsigned int i = 0; i < number_of_positions; i++)
     {
       Point<dim>         point(values[dim * i],
                        values[dim * i + 1],
@@ -165,7 +196,7 @@ RPT<dim>::extract_experimental_counts()
 {
   // Read text file with experimental counts
   std::ifstream experimental_file(
-    rpt_parameters.initial_param.experimental_file);
+    rpt_parameters.tuning_param.experimental_file);
 
   std::vector<double> measured_counts;
   std::copy(std::istream_iterator<double>(experimental_file),
@@ -182,8 +213,8 @@ RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
 {
   double cost_function = 0;
 
-  if (rpt_parameters.initial_param.cost_function_type ==
-      Parameters::InitialRPTParameters::CostFunctionType::larachi)
+  if (rpt_parameters.tuning_param.cost_function_type ==
+      Parameters::RPTTuningParameters::CostFunctionType::larachi)
     {
       for (unsigned int i = 0; i < measured_counts.size(); i++)
         {
@@ -193,16 +224,16 @@ RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
                      2);
         }
     }
-  else if (rpt_parameters.initial_param.cost_function_type ==
-           Parameters::InitialRPTParameters::CostFunctionType::L1)
+  else if (rpt_parameters.tuning_param.cost_function_type ==
+           Parameters::RPTTuningParameters::CostFunctionType::L1)
     {
       for (unsigned int i = 0; i < measured_counts.size(); i++)
         cost_function += abs(calculated_counts[i] - measured_counts[i]);
 
       cost_function /= measured_counts.size();
     }
-  else if (rpt_parameters.initial_param.cost_function_type ==
-           Parameters::InitialRPTParameters::CostFunctionType::L2)
+  else if (rpt_parameters.tuning_param.cost_function_type ==
+           Parameters::RPTTuningParameters::CostFunctionType::L2)
     {
       for (unsigned int i = 0; i < measured_counts.size(); i++)
         cost_function +=

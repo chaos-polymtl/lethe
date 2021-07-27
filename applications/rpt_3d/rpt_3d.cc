@@ -36,6 +36,9 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+
       ParameterHandler         prm;
       RPTCalculatingParameters rpt_parameters;
       rpt_parameters.declare(prm);

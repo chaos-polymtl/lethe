@@ -185,7 +185,7 @@ std::vector<double> ParticleDetectorInteractions<dim>::solve_t(
 {
   // Function value when evaluate with t (circle equation)
   auto F = [=](double t) {
-    double R = fixed_parameters.reactor_radius;
+    double R = parameters.reactor_radius;
 
     Tensor<1, dim> line_equations(
       {particle_position_rotation[0] + t * std::sin(theta) * std::cos(alpha),
@@ -306,7 +306,7 @@ ParticleDetectorInteractions<dim>::calculate_detector_interaction_probability(
 {
   calculate_detector_path_length();
 
-  double mu_d = initial_parameters.attenuation_coefficient_detector;
+  double mu_d = parameters.attenuation_coefficient_detector;
   double detector_interaction_probability =
     1 - std::exp(-mu_d * detector_path_length);
 
@@ -320,7 +320,7 @@ ParticleDetectorInteractions<dim>::calculate_non_interaction_probability(
 {
   calculate_reactor_path_length();
 
-  double mu_a = initial_parameters.attenuation_coefficient_reactor;
+  double mu_a = parameters.attenuation_coefficient_reactor;
   double non_interaction_probability = std::exp(-mu_a * reactor_path_length);
 
   return non_interaction_probability;
@@ -336,7 +336,7 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
   // Calculate position parameters for the particle position
   calculate_position_parameters();
 
-  for (unsigned int i = 0; i < fixed_parameters.n_monte_carlo_iteration; i++)
+  for (unsigned int i = 0; i < parameters.n_monte_carlo_iteration; i++)
     {
       // Generate random values for Monte Carlo
       double n_alpha = (double)rand() / RAND_MAX;
@@ -360,7 +360,7 @@ ParticleDetectorInteractions<dim>::calculate_efficiency()
                     non_interaction_probability;
     }
 
-  efficiency /= fixed_parameters.n_monte_carlo_iteration;
+  efficiency /= parameters.n_monte_carlo_iteration;
 }
 
 template <int dim>
@@ -369,11 +369,11 @@ ParticleDetectorInteractions<dim>::calculate_count()
 {
   double T, nu, R, phi, tau, count;
 
-  T   = fixed_parameters.sampling_time;
-  nu  = initial_parameters.gamma_rays_emitted;
-  R   = initial_parameters.activity;
-  phi = fixed_parameters.peak_to_total_ratio;
-  tau = initial_parameters.dead_time;
+  T   = parameters.sampling_time;
+  nu  = parameters.gamma_rays_emitted;
+  R   = parameters.activity;
+  phi = parameters.peak_to_total_ratio;
+  tau = parameters.dead_time;
 
   calculate_efficiency();
 

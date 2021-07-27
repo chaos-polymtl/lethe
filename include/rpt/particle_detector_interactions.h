@@ -56,8 +56,8 @@ public:
     , detector_middle_position(detector.get_middle_position())
     , detector_radius(detector.get_radius())
     , detector_length(detector.get_length())
-    , fixed_parameters(rpt_parameters.rpt_param)
-    , initial_parameters(rpt_parameters.initial_param)
+    , parameters(rpt_parameters.rpt_param)
+    , tuning_parameters(rpt_parameters.tuning_param)
   {}
 
   /**
@@ -175,10 +175,10 @@ private:
   Point<dim> detector_face_position;
   Point<dim> detector_middle_position;
 
-  double                           detector_radius;
-  double                           detector_length;
-  Parameters::RPTParameters        fixed_parameters;
-  Parameters::InitialRPTParameters initial_parameters;
+  double                          detector_radius;
+  double                          detector_length;
+  Parameters::RPTParameters       parameters;
+  Parameters::RPTTuningParameters tuning_parameters;
 };
 
 

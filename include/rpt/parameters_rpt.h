@@ -65,8 +65,19 @@ namespace Parameters
 
     // All parameters that are fixed by the user
     double reactor_radius; // [m]
+    double reactor_height; // [m]
     double peak_to_total_ratio;
     double sampling_time; // [s]
+
+    // Parameters to tune or fixed parameters if tuning is disable
+    double dead_time;          // Dead time of the detector per accepted pulse
+    double activity;           // Activity of the tracer
+    double gamma_rays_emitted; // Number of gamma-rays emitted by each
+    // disintegration
+    double attenuation_coefficient_reactor; // Total linear attenuation
+    // coefficient of the medium
+    double attenuation_coefficient_detector; // Total linear attenuation
+    // coefficient of the detector
 
     static void
     declare_parameters(ParameterHandler &prm);
@@ -80,7 +91,7 @@ namespace Parameters
    * otherwise those act as fixed parameters.
    */
 
-  struct InitialRPTParameters
+  struct RPTTuningParameters
   {
     // Enable tuning parameters
     bool tuning;
@@ -108,16 +119,6 @@ namespace Parameters
     // Filename of experimental data
     std::string experimental_file;
 
-    // Parameters to tune or fixed parameters if tuning is disable
-    double dead_time;          // Dead time of the detector per accepted pulse
-    double activity;           // Activity of the tracer
-    double gamma_rays_emitted; // Number of gamma-rays emitted by each
-                               // disintegration
-    double attenuation_coefficient_reactor;  // Total linear attenuation
-                                             // coefficient of the medium
-    double attenuation_coefficient_detector; // Total linear attenuation
-                                             // coefficient of the detector
-
     static void
     declare_parameters(ParameterHandler &prm);
     void
@@ -134,6 +135,20 @@ namespace Parameters
     double      radius;
     double      length;
     std::string detector_positions_file;
+
+    static void
+    declare_parameters(ParameterHandler &prm);
+    void
+    parse_parameters(ParameterHandler &prm);
+  };
+
+  struct RPTReconstructionParameters
+  {
+    // Enable tuning parameters
+    bool        reconstruction;
+    int         reactor_refinement;
+    std::string reconstruction_counts_file;
+
 
     static void
     declare_parameters(ParameterHandler &prm);
