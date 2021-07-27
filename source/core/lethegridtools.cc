@@ -210,7 +210,54 @@ LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
 
 template <int dim>
 bool
-cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge){
+LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge){
+
+    auto &local_manifold = cell_edge->get_manifold();
+    std::vector<Point<dim>> manifold_points(GeometryInfo<dim-1>::vertices_per_cell);
+
+    for (unsigned int i = 0; i < GeometryInfo<dim-1>::vertices_per_cell; ++i) {
+        manifold_points[i] = cell_edge->vertex(i);
+    }
+    auto surrounding_points =
+            make_array_view(manifold_points.begin(), manifold_points.end());
+
+    // A cell that is pierced either has to:
+    // A) Fill these two conditions
+    //    A1) The projection of one of the cell's
+    //         vertices must fall on the edge
+    //    A2) At least one of the scalar product of the normal as to be negative
+
+    bool condition_a1=false;
+    bool condition_a2=false;
+
+    for (const auto face : cell->face_indices())
+    {
+        auto local_face = cell->face(face);
+        std::vector<Tensor<1,dim>> normals_of_face_vertex(GeometryInfo<dim>::vertices_per_face);
+        for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i) {
+            Point<dim> projected_point =
+                    local_manifold.project_to_manifold(surrounding_points, local_face->vertex(i));
+            if (cell_edge->point_inside(projected_point))
+                condition_a1 = true;
+            if(( local_face->vertex(i) - projected_point).norm()!=0)
+                normals_of_face_vertex[i] =( local_face->vertex(i) - projected_point)/( local_face->vertex(i) - projected_point).norm();
+            else
+                return true;
+        }
+
+        for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i) {
+            for (unsigned int j = 0; j < GeometryInfo<dim>::vertices_per_face; ++j) {
+                if(i!=j){
+                    double scalar_prod = scalar_product(normals_of_face_vertex[i], normals_of_face_vertex[j]);
+                    if (scalar_prod < 0)
+                        condition_a2 = true;
+                }
+            }
+        }
+        if (condition_a1 && condition_a2)
+            return true;
+
+    }
 
 
 
@@ -361,7 +408,7 @@ LetheGridTools::cell_cut_by_flat(
     Tensor<1, dim> last_normal;
     last_normal.clear();
 
-    for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i) {
+    for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i) {
         Point<dim> projected_point =
                 local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
         Tensor<1, dim> normal = cell->vertex(i) - projected_point;
