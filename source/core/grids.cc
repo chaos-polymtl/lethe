@@ -28,30 +28,27 @@ attach_grid_to_triangulation(
     {
       if (mesh_parameters.simplex)
         {
-          // TODO - Serial triangulation should only be created on one
-          // processor... Get communicator from triangulation auto communicator
-          // = triangulation->get_communicator(); auto this_mpi_process =
-          // Utilities::MPI::this_mpi_process(communicator);
-
-          Triangulation<dim, spacedim> basetria(
-            Triangulation<dim, spacedim>::limit_level_difference_at_vertices);
-
-          GridIn<dim, spacedim> grid_in;
-          grid_in.attach_triangulation(basetria);
-          std::ifstream input_file(mesh_parameters.file_name);
-
-          grid_in.read_msh(input_file);
-
-          // By default uses the METIS partitioner.
-          // A user parameter option could be made to chose a partitionner.
-          GridTools::partition_triangulation(
-            Utilities::MPI::n_mpi_processes(triangulation->get_communicator()),
-            basetria);
-
+          auto        comm      = triangulation->get_communicator();
+          std::string file_name = mesh_parameters.file_name;
 
           auto construction_data = TriangulationDescription::Utilities::
-            create_description_from_triangulation(
-              basetria, triangulation->get_communicator());
+            create_description_from_triangulation_in_groups<dim, spacedim>(
+              [file_name](dealii::Triangulation<dim, spacedim> &basetria) {
+                GridIn<dim, spacedim> grid_in;
+                grid_in.attach_triangulation(basetria);
+                std::ifstream input_file(file_name);
+
+                grid_in.read_msh(input_file);
+              },
+              [](dealii::Triangulation<dim, spacedim> &basetria,
+                 const MPI_Comm                        comm,
+                 const unsigned int /*group_size*/) {
+                GridTools::partition_triangulation(
+                  Utilities::MPI::n_mpi_processes(comm), basetria);
+              },
+              comm,
+              Utilities::MPI::n_mpi_processes(comm) /* group size */,
+              dealii::Triangulation<dim, spacedim>::none);
 
           triangulation->create_triangulation(construction_data);
         }
