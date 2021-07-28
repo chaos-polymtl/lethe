@@ -5,6 +5,7 @@
 #include <core/lethegridtools.h>
 #include <deal.II/grid/manifold.h>
 #include <deal.II/fe/fe_q.h>
+#include <cmath>
 
 
 template <int dim>
@@ -220,6 +221,7 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
     }
     auto surrounding_points =
             make_array_view(manifold_points.begin(), manifold_points.end());
+    using numbers::PI;
 
     // A cell that is pierced either has to:
     // A) Fill these two conditions
@@ -245,12 +247,35 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
                 return true;
         }
 
-        for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i) {
+        for (unsigned int i = 0; i < 3; ++i) {
+            if(i==2){
+                Tensor<1,dim> temp =  normals_of_face_vertex[1];
+                normals_of_face_vertex[1]=normals_of_face_vertex[0];
+                normals_of_face_vertex[0]=temp;
+
+            }
+            if(i==3){
+                Tensor<1,dim> temp =  normals_of_face_vertex[3];
+                normals_of_face_vertex[3]=normals_of_face_vertex[1];
+                normals_of_face_vertex[1]=temp;
+            }
+
             for (unsigned int j = 0; j < GeometryInfo<dim>::vertices_per_face; ++j) {
-                if(i!=j){
-                    double scalar_prod = scalar_product(normals_of_face_vertex[i], normals_of_face_vertex[j]);
-                    if (scalar_prod < 0)
-                        condition_a2 = true;
+                double s=0;
+                for (unsigned int k = 0; k < 3; ++k) {
+                    unsigned int index_1=j+k;
+                    unsigned int index_2=j+k+1;
+                    if((j+k)>=GeometryInfo<dim>::vertices_per_face){
+                        index_1=j+k-GeometryInfo<dim>::vertices_per_face;
+                    }
+                    if((j+k+1)>=GeometryInfo<dim>::vertices_per_face){
+                        index_1=j+k+1-GeometryInfo<dim>::vertices_per_face;
+                    }
+
+                    s+=std::acos( scalar_product(normals_of_face_vertex[index_1], normals_of_face_vertex[index_2])/(normals_of_face_vertex[index_1].norm()*normals_of_face_vertex[index_2].norm()));
+                }
+                if(s<PI){
+                    condition_a2 = true;
                 }
             }
         }
