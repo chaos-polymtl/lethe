@@ -11,7 +11,7 @@ import sys
 
 # Path to files/application
 path = "./"  # Current directory
-path_to_rpt_3d = "/home/audrey/work/lethe/build/applications/rpt_3d/rpt_3d"
+path_to_rpt_3d = "/home/      /work/lethe/build/applications/rpt_3d/rpt_3d"  # TO FILL OUT
 
 # Get new calculated parameters
 tmpfile = sys.argv[1]  # Temporary file for new values
