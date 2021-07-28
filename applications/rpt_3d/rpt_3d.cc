@@ -48,7 +48,7 @@ main(int argc, char *argv[])
       rpt_parameters.parse(prm);
 
       RPT<3> rpt(rpt_parameters);
-      rpt.calculate();
+      rpt.setup_and_calculate();
     }
   catch (std::exception &exc)
     {

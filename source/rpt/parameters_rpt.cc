@@ -12,6 +12,12 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
                       "Particle positions filename");
 
     prm.declare_entry(
+      "verbose",
+      "true",
+      Patterns::Bool(),
+      "Enable to show counts results during computation <true|false>");
+
+    prm.declare_entry(
       "export counts",
       "false",
       Patterns::Bool(),
@@ -86,6 +92,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("rpt parameters");
   {
     particle_positions_file = prm.get("particle positions file");
+    verbose                 = prm.get_bool("verbose");
     export_counts           = prm.get_bool("export counts");
     export_counts_file      = prm.get("counts file");
     n_monte_carlo_iteration = prm.get_integer("monte carlo iteration");

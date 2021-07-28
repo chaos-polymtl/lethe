@@ -52,13 +52,16 @@ public:
          RPTCalculatingParameters &  rpt_parameters);
 
   void
-  add_calculated_counts(std::vector<double> calculated_counts);
-
-  void
   create_grid();
 
   std::vector<Point<dim>>
   get_positions();
+
+  void
+  add_calculated_counts(std::vector<double> calculated_counts);
+
+  void
+  find_closer_cells();
 
   void
   output_results();
@@ -77,8 +80,8 @@ private:
   Parameters::RPTReconstructionParameters reconstruction_parameters;
   std::vector<RadioParticle<dim>>         particle_positions;
   std::vector<Detector<dim>>              detectors_positions;
-  Vector<double>                          counts;
-  unsigned int                            p = 1;
+  Vector<double>                          map_counts;
+  std::vector<double>                     reconstruction_counts;
 };
 
 

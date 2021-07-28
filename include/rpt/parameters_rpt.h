@@ -48,6 +48,9 @@ namespace Parameters
     // Particle positions filename
     std::string particle_positions_file;
 
+    // Show results in terminal during computation
+    bool verbose;
+
     // Enable to export counts result in a .csv file
     bool export_counts;
 

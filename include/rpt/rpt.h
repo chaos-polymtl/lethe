@@ -59,10 +59,11 @@ public:
   RPT(RPTCalculatingParameters &RPTparameters);
 
   /**
-   * @brief Calculate photon count for all particle positions and detector
+   * @brief Set up data assignation & call photon counts calculation
+   * for all particle positions and detector
    */
   void
-  calculate();
+  setup_and_calculate();
 
   /**
    * @brief Read text file for particle positions and assign them to particle
@@ -81,8 +82,20 @@ public:
   /**
    * @brief Read text file for experimental count data and store it in a vector
    */
-  std::vector<double>
-  extract_experimental_counts();
+  void
+  extract_experimental_counts(std::vector<double> &measured_counts);
+
+  /**
+   * @brief Export position, detector id and count results on .csv
+   */
+  void
+  export_data(std::vector<double> &calculated_counts);
+
+  /**
+   * @brief Calculate photon counts for all particle positions and detector
+   */
+  void
+  calculate_counts(std::vector<double> &calculated_counts);
 
   /**
    * @brief Calculate cost function for calculated and measured counts

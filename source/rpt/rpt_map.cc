@@ -2,6 +2,7 @@
 
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
+#include <deal.II/grid/grid_refinement.h>
 #include <deal.II/grid/grid_tools.h>
 #include <deal.II/grid/manifold_lib.h>
 
@@ -22,7 +23,16 @@ RPTMap<dim>::RPTMap(std::vector<Detector<dim>> &detectors,
   , parameters(rpt_parameters.rpt_param)
   , reconstruction_parameters(rpt_parameters.reconstruction_param)
   , detectors_positions(detectors)
-{}
+{
+  // Read counts for reconstruction
+  const std::string filename =
+    rpt_parameters.reconstruction_param.reconstruction_counts_file;
+  std::ifstream counts_file(filename);
+
+  std::copy(std::istream_iterator<double>(counts_file),
+            std::istream_iterator<double>(),
+            std::back_inserter(reconstruction_counts));
+}
 
 template <int dim>
 void
@@ -84,7 +94,11 @@ RPTMap<dim>::get_positions()
   dof_index_location.erase(last, dof_index_location.end());
 
   for (unsigned int i = 0; i < dof_index_location.size(); i++)
-    positions.push_back(dof_index_location[i].second);
+    {
+      positions.push_back(dof_index_location[i].second);
+      // std::cout << dof_index_location[i].first << " " <<
+      // dof_index_location[i].second << std::endl;
+    }
 
   return positions;
 }
@@ -118,7 +132,7 @@ RPTMap<dim>::output_results()
   // Attach the solution data to data_out object
   data_out.attach_dof_handler(dof_handler);
 
-  data_out.add_data_vector(counts,
+  data_out.add_data_vector(map_counts,
                            detector_ids,
                            DataOut<dim>::type_dof_data,
                            data_component_interpretation);
@@ -134,8 +148,63 @@ void
 RPTMap<dim>::add_calculated_counts(std::vector<double> calculated_counts)
 {
   Vector<double> solution(calculated_counts.begin(), calculated_counts.end());
-  counts = solution;
+  map_counts = solution;
 
+
+  find_closer_cells();
+}
+
+template <int dim>
+void
+RPTMap<dim>::find_closer_cells()
+{
+  // std::vector<std::pair<unsigned int, double>>  cellid_error;
+
+  Vector<double> error(triangulation.n_active_cells());
+
+  // Calculate least squared error cell by cell for all counts per detector and
+  // all vertices of the cell
+  for (const auto &cell : dof_handler.active_cell_iterators())
+    {
+      error[cell->active_cell_index()] = 0;
+      for (unsigned int i = 0; i < cell->n_vertices(); i++)
+        {
+          for (unsigned int j = 0; j < detectors_positions.size(); j++)
+            {
+              types::global_dof_index dof_index = cell->vertex_dof_index(i, j);
+              error[cell->active_cell_index()] += std::pow(
+                std::fabs(reconstruction_counts[j] - map_counts[dof_index]), 2);
+            }
+        }
+      // cellid_error.push_back(std::make_pair(cell->index(), error));
+    }
+
+  /*
+  // Sorted index of cell
+  std::sort(cellid_error.begin(),
+            cellid_error.end(),
+            [](std::pair<unsigned int, double> &pair1,
+               std::pair<unsigned int, double> &pair2) {
+              return (pair1.second < pair2.second);
+            });
+
+  for (unsigned int i = 0; i < cellid_error.size(); i++)
+    std::cout << cellid_error[i].first << " " << cellid_error[i].second <<
+  std::endl; */
+
+  Vector<double> max_value(triangulation.n_active_cells());
+  max_value.add(error.linfty_norm());
+  GridRefinement::refine_and_coarsen_fixed_number(triangulation,
+                                                  max_value -= error,
+                                                  0.1,
+                                                  0.1);
+
+
+  double anisotropic_threshold_ratio = 1.5;
+
+
+
+  triangulation.execute_coarsening_and_refinement();
   output_results();
 }
 
