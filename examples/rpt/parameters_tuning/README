@@ -1,0 +1,22 @@
+To use NOMAD with the rpt_3d application you need to :
+- Modify the paths in script "rpt_nomad_lethe.py"
+- Modify the initial guess of parameters and number of black box evaluations 
+  for NOMAD in "param_nomad.txt"
+- Run NOMAD with its parameter file with => /path/to/NOMAD/ param_nomad.txt
+
+How it works :
+- NOMAD will execute the Python script which in provided by the 
+  "param_nomad.txt" file.
+- The Python script "rpt_nomad_lethe.py" proceeds the values of parameters to 
+  tune gave by NOMAD, modifies the parameter file for Lethe and runs the rpt_3d 
+  application.
+- rpt_3d of Lethe executes the Monte Carlo ray model and calculates a cost 
+  function which is got by NOMAD
+- NOMAD executes its MADS algorithm and generates new set of parameters until a 
+  criteria
+
+Note :
+Two files are not used in the example execution but are still provided in the 
+current directory. "noisy_positions.particle" keeps track of the positions used 
+to generate noisy_counts.experimental and "real_counts.experimental" are results
+ of articifial data with no noise with 10 000 000 MC iterations.

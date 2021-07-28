@@ -21,7 +21,6 @@ with open(tmpfile, "r") as values:
 # Parameter filenames
 initial_lethe_parameter_file = "rpt_parameters.prm"
 tmp_lethe_parameter_file = "/tmp/rpt_new_parameters_" + tmpfile.split("/")[2] + ".prm"
-nomad_parameter_file = "param_nomad.txt"
 
 # List of parameters to tune
 parameters_to_tune = ["dead time", "activity", "attenuation coefficient reactor"]
