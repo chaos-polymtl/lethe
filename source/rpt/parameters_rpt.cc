@@ -76,25 +76,16 @@ Parameters::InitialRPTParameters::declare_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("parameter tuning");
   {
-    prm.declare_entry("Larachi cost function",
-                      "false",
-                      Patterns::Bool(),
-                      "Enable Larachi cost function <true|false>");
-
-    prm.declare_entry("L1 cost function",
-                      "false",
-                      Patterns::Bool(),
-                      "Enable L1 cost function <true|false>");
-
-    prm.declare_entry("L2 cost function",
-                      "false",
-                      Patterns::Bool(),
-                      "Enable L2 cost function <true|false>");
-
     prm.declare_entry("tuning",
                       "false",
                       Patterns::Bool(),
                       "Enable parameter tuning <true|false>");
+
+    prm.declare_entry("cost function type",
+                      "larachi",
+                      Patterns::Selection("larachi|L1|L2"),
+                      "Cost function used for the parameter tuning"
+                      "Choices are <larachi|L1|L2>.");
 
     prm.declare_entry("experimental data file",
                       "none",
@@ -134,14 +125,23 @@ Parameters::InitialRPTParameters::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("parameter tuning");
   {
-    tuning                = prm.get_bool("tuning");
-    Larachi_cost_function = prm.get_bool("Larachi cost function");
-    L1_cost_function      = prm.get_bool("L1 cost function");
-    L2_cost_function      = prm.get_bool("L2 cost function");
-    experimental_file     = prm.get("experimental data file");
-    dead_time             = prm.get_double("dead time");
-    activity              = prm.get_double("activity");
-    gamma_rays_emitted    = prm.get_double("gamma-rays emitted");
+    tuning = prm.get_bool("tuning");
+
+    const std::string type = prm.get("cost function type");
+    if (type == "larachi")
+      cost_function_type = CostFunctionType::larachi;
+    else if (type == "dealii")
+      cost_function_type = CostFunctionType::L1;
+    else if (type == "periodic_hills")
+      cost_function_type = CostFunctionType::L2;
+    else
+      throw std::logic_error(
+        "Error, invalid cost function type. Choices are larachi, L2 or L1.");
+
+    experimental_file  = prm.get("experimental data file");
+    dead_time          = prm.get_double("dead time");
+    activity           = prm.get_double("activity");
+    gamma_rays_emitted = prm.get_double("gamma-rays emitted");
     attenuation_coefficient_reactor =
       prm.get_double("attenuation coefficient reactor");
     attenuation_coefficient_detector =

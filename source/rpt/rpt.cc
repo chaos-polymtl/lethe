@@ -82,25 +82,9 @@ RPT<dim>::calculate()
 
   if (rpt_parameters.initial_param.tuning == true)
     {
-      if (rpt_parameters.initial_param.Larachi_cost_function == true)
-        {
-          double cost_function =
-            calculate_cost_function_Larachi(measured_counts, calculated_counts);
-          std::cout << cost_function << std::endl;
-        }
-
-      else if (rpt_parameters.initial_param.L1_cost_function == true)
-        {
-          double cost_function =
-            calculate_cost_function_L1(measured_counts, calculated_counts);
-          std::cout << cost_function << std::endl;
-        }
-      else
-        {
-          double cost_function =
-            calculate_cost_function_L2(measured_counts, calculated_counts);
-          std::cout << cost_function << std::endl;
-        }
+      double cost_function =
+        calculate_cost_function(measured_counts, calculated_counts);
+      std::cout << cost_function << std::endl;
     }
 }
 
@@ -178,52 +162,43 @@ RPT<dim>::extract_experimental_counts()
 
   return measured_counts;
 }
+
 template <int dim>
 double
-RPT<dim>::calculate_cost_function_Larachi(
-  std::vector<double> &measured_counts,
-  std::vector<double> &calculated_counts)
+RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
+                                  std::vector<double> &calculated_counts)
 {
   double cost_function = 0;
 
-  for (unsigned int i = 0; i < measured_counts.size(); i++)
+  if (rpt_parameters.initial_param.cost_function_type ==
+      Parameters::InitialRPTParameters::CostFunctionType::larachi)
     {
-      cost_function +=
-        std::pow((calculated_counts[i] - measured_counts[i]) /
-                   ((calculated_counts[i] + measured_counts[i]) / 2),
-                 2);
+      for (unsigned int i = 0; i < measured_counts.size(); i++)
+        {
+          cost_function +=
+            std::pow((calculated_counts[i] - measured_counts[i]) /
+                       (calculated_counts[i] + measured_counts[i]),
+                     2);
+        }
+    }
+  else if (rpt_parameters.initial_param.cost_function_type ==
+           Parameters::InitialRPTParameters::CostFunctionType::L1)
+    {
+      for (unsigned int i = 0; i < measured_counts.size(); i++)
+        cost_function += abs(calculated_counts[i] - measured_counts[i]);
+
+      cost_function /= measured_counts.size();
+    }
+  else if (rpt_parameters.initial_param.cost_function_type ==
+           Parameters::InitialRPTParameters::CostFunctionType::L2)
+    {
+      for (unsigned int i = 0; i < measured_counts.size(); i++)
+        cost_function +=
+          std::pow((calculated_counts[i] - measured_counts[i]), 2);
+
+      cost_function /= measured_counts.size();
     }
 
-  return cost_function;
-}
-template <int dim>
-double
-RPT<dim>::calculate_cost_function_L1(std::vector<double> &measured_counts,
-                                     std::vector<double> &calculated_counts)
-{
-  double cost_function = 0;
-
-  for (unsigned int i = 0; i < measured_counts.size(); i++)
-    {
-      cost_function += abs(calculated_counts[i] - measured_counts[i]);
-    }
-
-  cost_function = cost_function / measured_counts.size();
-  return cost_function;
-}
-template <int dim>
-double
-RPT<dim>::calculate_cost_function_L2(std::vector<double> &measured_counts,
-                                     std::vector<double> &calculated_counts)
-{
-  double cost_function = 0;
-
-  for (unsigned int i = 0; i < measured_counts.size(); i++)
-    {
-      cost_function += std::pow((calculated_counts[i] - measured_counts[i]), 2);
-    }
-
-  cost_function = cost_function / measured_counts.size();
   return cost_function;
 }
 
