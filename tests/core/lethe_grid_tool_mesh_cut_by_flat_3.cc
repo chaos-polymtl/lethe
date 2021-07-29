@@ -82,28 +82,11 @@ test()
     flat_dof_handler.reinit(
             flat_triangulation);
 
-
+    Vector<double> subdomain(triangulation.n_active_cells());
     std::map<unsigned int,std::set<typename DoFHandler<3>::active_cell_iterator>> vertice_to_cell;
 
     LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
     std::vector<typename DoFHandler<3>::active_cell_iterator> cells_cut;
-
-    for (const auto &flat_cell :
-            flat_dof_handler.active_cell_iterators()) {
-        cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
-    }
-
-
-    Vector<double> subdomain(triangulation.n_active_cells());
-    for (unsigned int i=0 ; i<cells_cut.size() ; ++i)
-    {
-        cells_cut[i]->set_subdomain_id(1);
-        subdomain(cells_cut[i]->global_active_cell_index()) =1;
-        std::cout<< "The cell with ID : "<< cells_cut[i]->global_active_cell_index()<<" is cut "<< std::endl;
-    }
-
-    // Printing the final position for all the vertices
-
     DataOut<3> data_out;
     data_out.attach_dof_handler(dof_handler);
     data_out.add_data_vector(subdomain, "subdomain");
@@ -116,6 +99,23 @@ test()
     flat_data_out.build_patches();
     std::ofstream flat_output("flat_trig.vtu");
     flat_data_out.write_vtu(flat_output);
+    for (const auto &flat_cell :
+            flat_dof_handler.active_cell_iterators()) {
+        cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
+    }
+
+
+
+    for (unsigned int i=0 ; i<cells_cut.size() ; ++i)
+    {
+        cells_cut[i]->set_subdomain_id(1);
+        subdomain(cells_cut[i]->global_active_cell_index()) =1;
+        std::cout<< "The cell with ID : "<< cells_cut[i]->global_active_cell_index()<<" is cut "<< std::endl;
+    }
+
+    // Printing the final position for all the vertices
+
+
 
 
 

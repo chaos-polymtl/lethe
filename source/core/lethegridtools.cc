@@ -444,7 +444,7 @@ LetheGridTools::cell_cut_by_flat(
         Tensor<1, dim> normal = cell->vertex(i) - projected_point;
 
         // Check if the projected vertex falls inside the flat
-        if (cell->point_inside(projected_point))
+        if (cell_flat->point_inside(projected_point))
             condition_B1 = true;
 
         // Check if we switched to the other side
