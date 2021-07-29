@@ -74,6 +74,7 @@ test()
   param->solid_mesh.simplex            = false;
   param->particles_sub_iterations      = 1;
   param->solid_mesh.translate          = false;
+  param->solid_mesh.rotate             = false;
 
 
   double time_step = 0.01;

@@ -492,6 +492,11 @@ namespace Parameters
     double delta_y;
     double delta_z;
 
+    // Grid rotation at initiation
+    bool   rotate;
+    int    axis;
+    double angle;
+
     static void
     declare_parameters(ParameterHandler &prm);
     void
