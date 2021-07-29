@@ -834,7 +834,7 @@ DEMSolver<dim>::solve()
       // Load balancing
       load_balance_step = (this->*check_load_balance_step)();
 
-      if (load_balance_step)
+      if (load_balance_step || checkpoint_step)
 #if DEAL_II_VERSION_GTE(10, 0, 0)
         displacement.resize(particle_handler.get_max_local_particle_index());
 #else
