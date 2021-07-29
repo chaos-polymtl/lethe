@@ -27,13 +27,9 @@
 #include <deal.II/particles/data_out.h>
 
 // Lethe
-#include <core/nitsche.h>
-#include <core/parameters.h>
-#include <core/solid_base.h>
-#include <core/solutions_output.h>
+#include <core/lethegridtools.h>
 
-#include <solvers/simulation_parameters.h>
-
+#include <deal.II/numerics/data_out.h>
 
 // Tests (with common definitions)
 #include <../tests/tests.h>
@@ -43,104 +39,93 @@
 void
 test()
 {
-    MPI_Comm mpi_communicator(MPI_COMM_WORLD);
+    //MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
-    SimulationParameters<3> NSparam;
-    auto             param = std::make_shared<Parameters::NitscheSolid<3>>();
-    ParameterHandler prm;
-    std::shared_ptr<parallel::DistributedTriangulationBase<3>> fluid_tria =
-            std::make_shared<parallel::distributed::Triangulation<3>>(
-                    mpi_communicator,
-                    typename Triangulation<3>::MeshSmoothing(
-                            Triangulation<3>::smoothing_on_refinement |
-                            Triangulation<3>::smoothing_on_coarsening));
 
-    std::shared_ptr<parallel::DistributedTriangulationBase<3>> solid_tria =
-            std::make_shared<parallel::distributed::Triangulation<3>>(
-                    mpi_communicator,
-                    typename Triangulation<3, 3>::MeshSmoothing(
-                            Triangulation<3, 3>::smoothing_on_refinement |
-                            Triangulation<3, 3>::smoothing_on_coarsening));
+    Triangulation<3> triangulation;
 
-    // Mesh of the solid
-    param->solid_mesh.type               = Parameters::Mesh::Type::dealii;
-    param->solid_mesh.grid_type          = "hyper_cube";
-    param->solid_mesh.grid_arguments     = "-0.5 : 0.5 : false";
-    param->solid_mesh.initial_refinement = 3;
-    param->solid_mesh.simplex            = false;
-    param->solid_mesh.translate          = false;
+    Triangulation<2,3> flat_triangulation;
+    std::vector<Point<3>> vertices_of_flat(GeometryInfo<3>::vertices_per_face);
+    std::vector<CellData<2>> flat_cell_data(1);
 
-    double time_step = 0.01;
-    param->solid_velocity.declare_parameters(prm, 3);
-    prm.set("Function expression", "-pi*y; pi*x; 0");
-    param->solid_velocity.parse_parameters(prm);
+    DoFHandler<3>    dof_handler;
+    DoFHandler<2,3>  flat_dof_handler;
 
-    // Mesh of the fluid
-    GridGenerator::hyper_cube(*fluid_tria, -1, 1);
+    /*FESystem<3> fe(
+            FE_Q<3>(1));
 
-    const unsigned int degree_velocity = 1;
+    FESystem<2,3> flat_fe(
+            FE_Q<2,3>(1));*/
 
-    // SolidBase class
-    std::shared_ptr<Mapping<3>> fluid_mapping =
-            std::make_shared<MappingQGeneric<3>>(1);
-    SolidBase<3, 3> solid(param, fluid_tria, fluid_mapping, degree_velocity);
-    solid.initial_setup();
-    solid.setup_particles();
-    DoFHandler<3, 3> &solid_dh = solid.get_solid_dof_handler();
+    // Mesh
+    GridGenerator::hyper_cube(triangulation, -1, 1);
 
-    DataOut<3> data_out;
-    data_out.attach_dof_handler(solid_dh);
+    // Mesh flat
+    Point<3> v0(0,0,0) ;
+    Point<3> v1(0.5,0.5,0.1) ;
+    Point<3> v2(-0.1,-0.2,0.7) ;
+    Point<3> v3(0.6,0.7,0.8) ;
 
-    const bool        mapping_all = true;
-    const MappingQ<3> mapping(degree_velocity, mapping_all);
-    data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
+    vertices_of_flat[0]=v0;
+    vertices_of_flat[1]=v1;
+    vertices_of_flat[2]=v2;
+    vertices_of_flat[3]=v3;
 
-    PVDHandler pvdhandler;
 
-    data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
-    write_vtu_and_pvd<3>(pvdhandler,
-                         data_out,
-                         "./",
-                         "output_solid_triangulation",
-                         0,
-                         0,
-                         1,
-                         mpi_communicator);
+    flat_cell_data[0].vertices[0] = 0;
+    flat_cell_data[0].vertices[1] = 1;
+    flat_cell_data[0].vertices[2] = 2;
+    flat_cell_data[0].vertices[3] = 3;
 
-    for (unsigned int i = 0; i < 100; ++i)
-    {
-        solid.move_solid_triangulation(time_step);
-        data_out.build_patches(mapping, 1, DataOut<3>::curved_inner_cells);
-        double time = (i + 1) * time_step;
-        if ((i + 1) % 10 == 0)
-        {
-            write_vtu_and_pvd<3>(pvdhandler,
-                                 data_out,
-                                 "./",
-                                 "output_solid_triangulation",
-                                 time,
-                                 i + 1,
-                                 1,
-                                 mpi_communicator);
-        }
+    flat_cell_data[0].material_id = 0;
+    flat_triangulation.create_triangulation(vertices_of_flat,flat_cell_data,SubCellData());
+    triangulation.refine_global(3);
+
+    // Attach triangulation to dof_handler
+
+    dof_handler.reinit(
+            triangulation);
+    flat_dof_handler.reinit(
+            flat_triangulation);
+
+
+    std::map<unsigned int,std::set<typename DoFHandler<3>::active_cell_iterator>> vertice_to_cell;
+
+    LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
+    std::vector<typename DoFHandler<3>::active_cell_iterator> cells_cut;
+
+    for (const auto &flat_cell :
+            flat_dof_handler.active_cell_iterators()) {
+        cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
     }
+
+
+    Vector<double> subdomain(triangulation.n_active_cells());
+    for (unsigned int i=0 ; i<cells_cut.size() ; ++i)
+    {
+        cells_cut[i]->set_subdomain_id(1);
+        subdomain(cells_cut[i]->global_active_cell_index()) =1;
+        std::cout<< "The cell with ID : "<< cells_cut[i]->global_active_cell_index()<<" is cut "<< std::endl;
+    }
+
     // Printing the final position for all the vertices
 
-    const unsigned int n_dofs = solid_dh.n_dofs();
-    std::vector<bool>  position_printed(n_dofs, false);
+    DataOut<3> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(subdomain, "subdomain");
+    data_out.build_patches();
+    std::ofstream output("solution.vtu");
+    data_out.write_vtu(output);
 
-    for (const auto &cell : solid_dh.active_cell_iterators())
-    {
-        for (unsigned int i = 0; i < GeometryInfo<3>::vertices_per_cell; ++i)
-        {
-            if (position_printed[cell->vertex_index(i)] == false)
-            {
-                deallog << "Final position of vertex " << cell->vertex_index(i)
-                        << " : " << cell->vertex(i) << std::endl;
-                position_printed[cell->vertex_index(i)] = true;
-            }
-        }
-    }
+    DataOut<2,3> flat_data_out;
+    flat_data_out.attach_dof_handler(flat_dof_handler);
+    flat_data_out.build_patches();
+    std::ofstream flat_output("flat_trig.vtu");
+    flat_data_out.write_vtu(flat_output);
+
+
+
+
 }
 
 int

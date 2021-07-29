@@ -495,8 +495,8 @@ LetheGridTools::find_cells_around_flat_cell(
            std::set<typename DoFHandler<dim>::active_cell_iterator>>
     &vertices_cell_map)
 {
-    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_cut;
-      auto &starting_cell =
+
+      TriaActiveIterator<DoFCellAccessor<dim, dim, 0>> starting_cell =
               find_cell_around_point_with_tree(dof_handler, cell->vertex(0));
 
       std::unordered_set<typename DoFHandler<dim>::active_cell_iterator,
@@ -525,9 +525,10 @@ LetheGridTools::find_cells_around_flat_cell(
           // Find all cells around previous candidate cells
           for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
                   previous_candidate_cells) {
+              auto new_cell=LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
+              cell_iter);
               current_candidate_cells.insert(
-                      LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
-                                                                  cell_iter));
+                      new_cell.begin(),new_cell.end());
           }
 
           // Reset the list of previous candidates
@@ -539,7 +540,7 @@ LetheGridTools::find_cells_around_flat_cell(
           // cells as well.
           for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
                   current_candidate_cells) {
-              if (LetheGridTools::cell_cut_by_flat(cell_iter, cell))
+              if (LetheGridTools::cell_cut_by_flat<dim>(cell_iter, cell))
                 {
                   // If the cell was not present in the intersected cells set
                   if (intersected_cells.insert(cell_iter).second) {
@@ -549,7 +550,8 @@ LetheGridTools::find_cells_around_flat_cell(
           }
           current_candidate_cells.clear();
       }
-      cells_cut(intersected_cells.begin(), intersected_cells.end());
+
+    std::vector<typename DoFHandler<dim>::active_cell_iterator> cells_cut(intersected_cells.begin(), intersected_cells.end());
 
 
   return cells_cut;
@@ -610,3 +612,20 @@ template bool
 LetheGridTools::cell_cut_by_flat<3>(
         const typename DoFHandler<3>::active_cell_iterator &cell,
         const typename DoFHandler<3-1, 3>::active_cell_iterator &cell_flat);
+
+
+template std::vector<typename DoFHandler<2>::active_cell_iterator>
+LetheGridTools::find_cells_around_flat_cell(
+        const DoFHandler<2> &                                   dof_handler,
+        const typename DoFHandler<2 - 1,2>::active_cell_iterator &cell,
+        std::map<unsigned int,
+                std::set<typename DoFHandler<2>::active_cell_iterator>>
+        &vertices_cell_map);
+
+template std::vector<typename DoFHandler<3>::active_cell_iterator>
+LetheGridTools::find_cells_around_flat_cell(
+        const DoFHandler<3> &                                   dof_handler,
+        const typename DoFHandler<3 - 1,3>::active_cell_iterator &cell,
+        std::map<unsigned int,
+                std::set<typename DoFHandler<3>::active_cell_iterator>>
+        &vertices_cell_map);
