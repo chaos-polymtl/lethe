@@ -42,38 +42,34 @@ test()
     //MPI_Comm mpi_communicator(MPI_COMM_WORLD);
 
 
-    Triangulation<3> triangulation;
+    Triangulation<2> triangulation;
 
-    Triangulation<2,3> flat_triangulation;
-    std::vector<Point<3>> vertices_of_flat(GeometryInfo<3>::vertices_per_face);
-    std::vector<CellData<2>> flat_cell_data(1);
+    Triangulation<1,2> flat_triangulation;
+    std::vector<Point<2>> vertices_of_flat(GeometryInfo<2>::vertices_per_face);
+    std::vector<CellData<1>> flat_cell_data(1);
 
-    DoFHandler<3>    dof_handler;
-    DoFHandler<2,3>  flat_dof_handler;
+    DoFHandler<2>    dof_handler;
+    DoFHandler<1,2>  flat_dof_handler;
 
     // Mesh
     GridGenerator::hyper_cube(triangulation, -1, 1);
 
     // Mesh flat
-    Point<3> v0(0,0,0) ;
-    Point<3> v1(0.5,0.5,0.1) ;
-    Point<3> v2(-0.1,-0.2,0.7) ;
-    Point<3> v3(0.6,0.7,0.8) ;
+    Point<2> v0(0.023521234,0.0233297) ;
+    Point<2> v1(0.5,0.5234) ;
+
 
     vertices_of_flat[0]=v0;
     vertices_of_flat[1]=v1;
-    vertices_of_flat[2]=v2;
-    vertices_of_flat[3]=v3;
+
 
 
     flat_cell_data[0].vertices[0] = 0;
     flat_cell_data[0].vertices[1] = 1;
-    flat_cell_data[0].vertices[2] = 2;
-    flat_cell_data[0].vertices[3] = 3;
 
     flat_cell_data[0].material_id = 0;
     flat_triangulation.create_triangulation(vertices_of_flat,flat_cell_data,SubCellData());
-    triangulation.refine_global(3);
+    triangulation.refine_global(5);
 
     // Attach triangulation to dof_handler
 
@@ -83,10 +79,10 @@ test()
             flat_triangulation);
 
 
-    std::map<unsigned int,std::set<typename DoFHandler<3>::active_cell_iterator>> vertice_to_cell;
+    std::map<unsigned int,std::set<typename DoFHandler<2>::active_cell_iterator>> vertice_to_cell;
 
     LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
-    std::vector<typename DoFHandler<3>::active_cell_iterator> cells_cut;
+    std::vector<typename DoFHandler<2>::active_cell_iterator> cells_cut;
 
     for (const auto &flat_cell :
             flat_dof_handler.active_cell_iterators()) {
@@ -104,14 +100,14 @@ test()
 
     // Printing the final position for all the vertices
 
-    DataOut<3> data_out;
+    DataOut<2> data_out;
     data_out.attach_dof_handler(dof_handler);
     data_out.add_data_vector(subdomain, "subdomain");
     data_out.build_patches();
     std::ofstream output("solution.vtu");
     data_out.write_vtu(output);
 
-    DataOut<2,3> flat_data_out;
+    DataOut<1,2> flat_data_out;
     flat_data_out.attach_dof_handler(flat_dof_handler);
     flat_data_out.build_patches();
     std::ofstream flat_output("flat_trig.vtu");

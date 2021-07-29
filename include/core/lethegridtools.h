@@ -108,12 +108,7 @@ namespace LetheGridTools
       operator()(const typename DoFHandler<dim>::active_cell_iterator &cell)
         const noexcept
       {
-        size_t value = 0;
-        for (std::size_t i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
-          {
-            value = value ^ std::hash<int>()(cell->vertex_index(i));
-          }
-        return value;
+        return  std::hash<int>()(cell->global_active_cell_index());
       }
     };
 
@@ -125,16 +120,7 @@ namespace LetheGridTools
                  const typename DoFHandler<dim>::active_cell_iterator &cell2)
         const noexcept
       {
-        bool is_equal = true;
-        for (std::size_t i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i)
-          {
-            if (cell1->vertex_index(i) != cell2->vertex_index(i))
-              {
-                is_equal = false;
-                break;
-              }
-          }
-        return is_equal;
+        return cell1->global_active_cell_index()==cell2->global_active_cell_index();
       }
     };
 

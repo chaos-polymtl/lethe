@@ -521,14 +521,17 @@ LetheGridTools::find_cells_around_flat_cell(
       int n_previous_intersected = 0;
 
       while (intersected_cells.size() > n_previous_intersected) {
+          //std::cout<<"current number of intersected cell" << intersected_cells.size()<<std::endl;
           n_previous_intersected=intersected_cells.size();
           // Find all cells around previous candidate cells
           for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
                   previous_candidate_cells) {
-              auto new_cell=LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
+              auto new_cells=LetheGridTools::find_cells_around_cell<dim>(vertices_cell_map,
               cell_iter);
-              current_candidate_cells.insert(
-                      new_cell.begin(),new_cell.end());
+              for (unsigned int i=0 ; i<new_cells.size() ; ++i) {
+                  current_candidate_cells.insert(
+                          new_cells[i]);
+              }
           }
 
           // Reset the list of previous candidates
@@ -542,10 +545,10 @@ LetheGridTools::find_cells_around_flat_cell(
                   current_candidate_cells) {
               if (LetheGridTools::cell_cut_by_flat<dim>(cell_iter, cell))
                 {
+                  previous_candidate_cells.insert(cell_iter);
+                  intersected_cells.insert(cell_iter);
                   // If the cell was not present in the intersected cells set
-                  if (intersected_cells.insert(cell_iter).second) {
-                      previous_candidate_cells.insert(cell_iter);
-                  }
+
               }
           }
           current_candidate_cells.clear();
