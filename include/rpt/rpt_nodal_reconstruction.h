@@ -45,26 +45,37 @@
 using namespace dealii;
 
 template <int dim>
-class RPTMap
+class RPTNodalReconstruction
 {
 public:
-  RPTMap(std::vector<Detector<dim>> &detectors,
-         RPTCalculatingParameters &  rpt_parameters);
+  RPTNodalReconstruction(std::vector<Detector<dim>> &detectors,
+                         RPTCalculatingParameters   &rpt_parameters);
+
+  void
+  execute_nodal_reconstruction();
 
   void
   create_grid();
 
+  void
+  find_unknown_position();
+
   std::vector<Point<dim>>
-  get_positions();
+  get_positions(
+    IteratorRange<TriaIterator<CellAccessor<dim, dim>>> &cell_iterators,
+    std::vector<int> parent_cell_indexes = {-1, 0});
+
+  std::vector<int>
+  find_closer_cell(
+    IteratorRange<TriaIterator<CellAccessor<dim, dim>>> &cell_iterators,
+    std::vector<int> parent_cell_indexes = {-1, 0});
 
   void
-  add_calculated_counts(std::vector<double> calculated_counts);
+  calculate_counts(std::map<unsigned int, std::vector<double>> &index_counts);
 
-  void
-  find_closer_cells();
 
-  void
-  output_results();
+  // void
+  // output_results();
 
 private:
   Triangulation<dim> triangulation;
@@ -75,13 +86,17 @@ private:
   QGauss<dim>        cell_quadrature;
   QGauss<dim - 1>    face_quadrature;
 
-  std::vector<Point<dim>>                 positions;
-  Parameters::RPTParameters               parameters;
-  Parameters::RPTReconstructionParameters reconstruction_parameters;
-  std::vector<RadioParticle<dim>>         particle_positions;
-  std::vector<Detector<dim>>              detectors_positions;
-  Vector<double>                          map_counts;
-  std::vector<double>                     reconstruction_counts;
+  std::vector<Point<dim>> positions;
+  std::vector<Point<dim>> positions_coarse_mesh;
+
+  std::map<unsigned int, std::vector<double>> map_vertices_index_coarse_mesh;
+  RPTCalculatingParameters                    parameters;
+  Parameters::RPTReconstructionParameters     reconstruction_parameters;
+  std::vector<RadioParticle<dim>>             particle_positions;
+  std::vector<Detector<dim>>                  detectors;
+  Vector<double>                              map_counts;
+  std::vector<double>                         reconstruction_counts;
+  std::map<unsigned int, std::vector<double>> map_vertices_index;
 };
 
 

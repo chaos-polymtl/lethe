@@ -8,7 +8,7 @@ subsection rpt parameters
     set verbose                          = true
     set export counts                    = false
     set counts file                      = test
-    set monte carlo iteration            = 100
+    set monte carlo iteration            = 100000
     set random number seed               = 0
     set reactor height                   = 0.3
     set reactor radius       			 = 0.1
@@ -26,8 +26,8 @@ end
 # Particle reconstruction
 #---------------------------------------------------
 subsection reconstruction
-	set reconstruction                          = false
-	set refinement                              = 3
+	set reconstruction                          = true
+	set refinement                              = 4
 	set reconstruction counts file              = testing.reconstruction
 end
 

@@ -17,7 +17,7 @@ RPT<dim>::RPT(RPTCalculatingParameters &RPTparameters)
 
 template <int dim>
 void
-RPT<dim>::calculate()
+RPT<dim>::setup_and_calculate()
 {
   // Initiate calculated and measured counts vector if needed
   std::vector<double> calculated_counts;
@@ -27,29 +27,19 @@ RPT<dim>::calculate()
   assign_detector_positions();
 
   // Create grid for reconstruction if enable
-  RPTMap<dim> map(detectors, rpt_parameters);
-  if (rpt_parameters.reconstruction_param.reconstruction == true)
+  if (rpt_parameters.reconstruction_param.reconstruction)
     {
-      map.create_grid();
-
-      // Get position of the grid nodes & create particle positions
-      std::vector<Point<dim>> positions;
-      positions = map.get_positions();
-
-      for (unsigned int i = 0; i < positions.size(); i++)
-        {
-          RadioParticle<dim> position(positions[i], i);
-          particle_positions.push_back(position);
-        }
+      RPTNodalReconstruction<dim> reconstruction(detectors, rpt_parameters);
+      reconstruction.execute_nodal_reconstruction();
     }
   else
     {
       // Reading and assigning positions to particles
       assign_particle_positions();
 
-      if (rpt_parameters.tuning_param.tuning == true)
+      if (rpt_parameters.tuning_param.tuning)
         {
-          measured_counts = extract_experimental_counts();
+          extract_experimental_counts(measured_counts);
           AssertThrow(
             measured_counts.size() == particle_positions.size(),
             ExcMessage(
@@ -57,31 +47,31 @@ RPT<dim>::calculate()
               " has to be the same number of counts of experimental data. "
               "Note : The experimental counts also have to be at the same positions which can not be verified."))
         }
-    }
 
-  // Open a .csv or .dat file if exporting results in enable
-  std::ofstream myfile;
-  std::string   sep;
-  if (rpt_parameters.rpt_param.export_counts)
-    {
-      std::string filename = rpt_parameters.rpt_param.export_counts_file;
-      myfile.open(filename);
-      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+      // Calculate count for every particle-detector pair and transfer it to
+      // calculated_counts
+      calculate_counts(calculated_counts);
+
+      // Export results in .csv if enable
+      if (rpt_parameters.rpt_param.export_counts)
+        export_data(calculated_counts);
+
+      // Calculate the cost function for parameters tuning
+      if (rpt_parameters.tuning_param.tuning)
         {
-          myfile
-            << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
-            << std::endl;
-          sep = " ";
-        }
-      else // .csv is default
-        {
-          myfile
-            << "particle_positions_x,particle_positions_y,particle_positions_z,detector_id,counts"
-            << std::endl;
-          sep = ",";
+          double cost_function =
+            calculate_cost_function(measured_counts, calculated_counts);
+          std::cout << cost_function << std::endl;
         }
     }
+}
 
+template <int dim>
+void
+RPT<dim>::calculate_counts(std::vector<double> &calculated_counts)
+{
+  // Reinitialize the counts vector
+  calculated_counts.clear();
 
   // Calculate count for every particle-detector pair
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();
@@ -96,38 +86,14 @@ RPT<dim>::calculate()
             detectors[i_detector],
             rpt_parameters);
 
-          // Calculate count and print it in terminal or store is if tuning
-          // or reconstruction is enable
           double count = particle_detector_interactions.calculate_count();
-          if (rpt_parameters.tuning_param.tuning == true ||
-              rpt_parameters.reconstruction_param.reconstruction == true)
-            calculated_counts.push_back(count);
-          else
+          calculated_counts.push_back(count);
+
+          if (rpt_parameters.rpt_param.verbose)
             std::cout << "Count for particle position " << i_particle
                       << " and detector " << i_detector << " : " << count
                       << std::endl;
-
-          // Export results in .csv if enable
-          if (myfile.is_open())
-            myfile << particle_positions[i_particle].get_position() << sep
-                   << detectors[i_detector].get_id() << sep << count
-                   << std::endl;
         }
-    }
-
-  if (myfile.is_open())
-    myfile.close();
-
-  // Add calculated count to grid nodes
-  if (rpt_parameters.reconstruction_param.reconstruction == true)
-    map.add_calculated_counts(calculated_counts);
-
-  // Calculate the cost function for parameters tuning
-  if (rpt_parameters.tuning_param.tuning == true)
-    {
-      double cost_function =
-        calculate_cost_function(measured_counts, calculated_counts);
-      std::cout << cost_function << std::endl;
     }
 }
 
@@ -190,6 +156,51 @@ RPT<dim>::assign_detector_positions()
       detectors.push_back(detector);
     }
 }
+
+template <int dim>
+void
+RPT<dim>::export_data(std::vector<double> &calculated_counts)
+{
+  // Open a .csv file
+  std::ofstream myfile;
+  std::string   sep;
+  if (rpt_parameters.rpt_param.export_counts)
+    {
+      std::string filename = rpt_parameters.rpt_param.export_counts_file;
+      myfile.open(filename);
+      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+        {
+          myfile
+            << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
+            << std::endl;
+          sep = " ";
+        }
+      else // .csv is default
+        {
+          myfile
+            << "particle_positions_x,particle_positions_y,particle_positions_z,detector_id,counts"
+            << std::endl;
+          sep = ",";
+        }
+    }
+
+  for (unsigned int i_particle = 0; i_particle < particle_positions.size();
+       i_particle++)
+    {
+      for (unsigned int i_detector = 0; i_detector < detectors.size();
+           i_detector++)
+        {
+          myfile << particle_positions[i_particle].get_position() << sep
+                 << detectors[i_detector].get_id() << sep
+                 << calculated_counts[i_particle * particle_positions.size() +
+                                      i_detector]
+                 << std::endl;
+        }
+    }
+
+  myfile.close();
+}
+
 template <int dim>
 std::vector<double>
 RPT<dim>::extract_experimental_counts()

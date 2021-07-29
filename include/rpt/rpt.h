@@ -41,7 +41,7 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
-#include <rpt/rpt_map.h>
+#include <rpt/rpt_nodal_reconstruction.h>
 
 using namespace dealii;
 
