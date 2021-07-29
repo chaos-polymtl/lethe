@@ -11,7 +11,7 @@
 
 #include <rpt/rpt_map.h>
 
-#include <iostream>
+#include <fstream>
 
 template <int dim>
 RPTMap<dim>::RPTMap(std::vector<Detector<dim>> &detectors,

@@ -63,9 +63,6 @@ namespace Parameters
     // Seed of the random number generator
     int seed;
 
-    // Seed of the random number generator
-    int seed;
-
     // All parameters that are fixed by the user
     double reactor_radius; // [m]
     double reactor_height; // [m]
