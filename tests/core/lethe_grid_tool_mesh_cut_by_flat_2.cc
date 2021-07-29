@@ -26,6 +26,11 @@
 
 #include <deal.II/particles/data_out.h>
 
+#include <deal.II/grid/manifold.h>
+
+#include <deal.II/grid/manifold_lib.h>
+
+
 // Lethe
 #include <core/lethegridtools.h>
 
@@ -51,13 +56,27 @@ test()
     DoFHandler<2>    dof_handler;
     DoFHandler<1,2>  flat_dof_handler;
 
+    FlatManifold<1, 2> flat_manifold();
+
+
     // Mesh
     GridGenerator::hyper_cube(triangulation, -1, 1);
+    triangulation.refine_global(5);
 
     // Mesh flat
     Point<2> v0(0.023521234,0.0233297) ;
     Point<2> v1(0.5,0.5234) ;
 
+
+
+    Tensor<1,2> vect;
+    vect[0]=-(v1-v0)[1];
+    vect[1]=(v1-v0)[0];
+    Point<2> p;
+    p=v0+100000.0*vect;
+
+    SphericalManifold<1, 2> sphere_manifold(
+            p);
 
     vertices_of_flat[0]=v0;
     vertices_of_flat[1]=v1;
@@ -69,8 +88,10 @@ test()
 
     flat_cell_data[0].material_id = 0;
     flat_triangulation.create_triangulation(vertices_of_flat,flat_cell_data,SubCellData());
-    triangulation.refine_global(5);
-
+    flat_triangulation.set_all_manifold_ids(
+            0);
+    flat_triangulation.set_manifold(
+            0, sphere_manifold);
     // Attach triangulation to dof_handler
 
     dof_handler.reinit(

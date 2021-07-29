@@ -4,6 +4,9 @@
 
 #include <core/lethegridtools.h>
 #include <deal.II/grid/manifold.h>
+#include <deal.II/grid/manifold_lib.h>
+#include <deal.II/grid/grid_tools.h>
+#include <deal.II/grid/grid_tools_cache.h>
 #include <deal.II/fe/fe_q.h>
 #include <cmath>
 
@@ -239,6 +242,7 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
         for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i) {
             Point<dim> projected_point =
                     local_manifold.project_to_manifold(surrounding_points, local_face->vertex(i));
+            projected_point= GridTools::project_to_object(cell_edge,local_face->vertex(i));
             if (cell_edge->point_inside(projected_point))
                 condition_a1 = true;
             if(( local_face->vertex(i) - projected_point).norm()!=0)
@@ -422,8 +426,8 @@ LetheGridTools::cell_cut_by_flat(
 
 
     // Check for condition A
-    for (const Point<dim> &point : manifold_points) {
-        if (cell->point_inside(point))
+    for (unsigned int i= 0 ; i< GeometryInfo<dim-1>::vertices_per_cell;++i) {
+        if (cell->point_inside(cell_flat->vertex(i)))
             return true;
     }
 
@@ -436,6 +440,7 @@ LetheGridTools::cell_cut_by_flat(
     for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i) {
         Point<dim> projected_point =
                 local_manifold.project_to_manifold(surrounding_points, cell->vertex(i));
+        projected_point= GridTools::project_to_object(cell_flat,cell->vertex(i));
         Tensor<1, dim> normal = cell->vertex(i) - projected_point;
 
         // Check if the projected vertex falls inside the flat
@@ -445,6 +450,12 @@ LetheGridTools::cell_cut_by_flat(
         // Check if we switched to the other side
         // of the flat during this iteration
         double scalar_prod = scalar_product(normal, last_normal);
+        std::cout<<" projected_point"<<projected_point<<std::endl;
+        std::cout<<" cell->vertex(i)"<<cell->vertex(i)<<std::endl;
+        std::cout<<scalar_prod<<std::endl;
+
+        std::cout<<normal<<std::endl;
+
         last_normal = normal;
         if (scalar_prod < 0)
             condition_B2 = true;
