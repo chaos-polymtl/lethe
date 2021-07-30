@@ -115,9 +115,13 @@ RPTNodalReconstruction<dim>::get_positions(
 
   for (const auto &cell : cell_iterators)
     {
-      if (parent_cell_indexes[0] == -1 ||
-          cell->parent()->index() == parent_cell_indexes[0] ||
-          cell->parent()->index() == parent_cell_indexes[1])
+      bool parent_is_candidate = false;
+      for (auto &id : parent_cell_indexes)
+        {
+          if (id == cell->parent()->index())
+            parent_is_candidate = true;
+        }
+      if (parent_is_candidate)
         {
           for (unsigned int i = 0; i < cell->n_vertices(); i++)
             {
@@ -163,45 +167,54 @@ RPTNodalReconstruction<dim>::find_closer_cell(
 {
   std::vector<std::pair<int, double>> cellid_error;
 
+  double min, max;
+
+  std::vector<unsigned int> candidate_detector(detectors.size());
+  std::vector<int>          candidates;
+
   // Calculate least squared error cell by cell for all counts per detector and
   // all vertices of the cell
   for (const auto &cell : cell_iterators)
     {
-      if (parent_cell_indexes[0] == -1 ||
-          cell->parent()->index() == parent_cell_indexes[0] ||
-          cell->parent()->index() == parent_cell_indexes[1])
+      bool parent_is_candidate = false;
+      for (auto &id : parent_cell_indexes)
         {
-          double error = 0;
-          for (unsigned int i = 0; i < cell->n_vertices(); i++)
+          if (id == cell->parent()->index())
+            parent_is_candidate = true;
+        }
+      if (parent_is_candidate)
+        {
+          for (unsigned int j = 0; j < detectors.size(); j++)
             {
-              for (unsigned int j = 0; j < detectors.size(); j++)
+              std::cout << "detector_" << j << std::endl;
+              std::vector<double> counts_vertices(8);
+              for (unsigned int i = 0; i < cell->n_vertices(); i++)
                 {
                   unsigned int vertex_index = cell->vertex_index(i);
-                  error +=
-                    std::pow(std::fabs(reconstruction_counts[j] -
-                                       map_vertices_index[vertex_index][j]),
-                             2);
+                  counts_vertices[i] = map_vertices_index[vertex_index][j];
                 }
+              min = *std::min_element(counts_vertices.begin(),
+                                      counts_vertices.end());
+              max = *std::max_element(counts_vertices.begin(),
+                                      counts_vertices.end());
+              std::cout << min << " " << max << std::endl;
+              if (reconstruction_counts[j] >= min &&
+                  reconstruction_counts[j] <= max)
+                candidate_detector[j] = 1;
+              else
+                candidate_detector[j] = 0;
             }
-          cellid_error.push_back(std::make_pair(cell->index(), error));
+          if (std::accumulate(candidate_detector.begin(),
+                              candidate_detector.end(),
+                              0) >= detectors.size())
+            candidates.push_back(cell->index());
         }
     }
 
+  for (unsigned int i = 0; i < candidates.size(); i++)
+    std::cout << candidates[i] << std::endl;
 
-  // Sorted index of cell
-  std::sort(cellid_error.begin(),
-            cellid_error.end(),
-            [](std::pair<int, double> &pair1, std::pair<int, double> &pair2) {
-              return (pair1.second < pair2.second);
-            });
-
-  for (unsigned int i = 0; i < cellid_error.size(); i++)
-    std::cout << cellid_error[i].first << " " << cellid_error[i].second
-              << std::endl;
-
-  std::vector<int> cellids{cellid_error[0].first, cellid_error[1].first};
-
-  return cellids;
+  return candidates;
 }
 
 /*
@@ -286,8 +299,12 @@ RPTNodalReconstruction<dim>::calculate_counts(
         calculated_counts.begin() + i + detectors.size();
       std::vector<double> counts(first, last);
       it.second = counts;
-      i++;
+      std::cout << it.first << " " << it.second[0] << " " << it.second[1] << " "
+                << it.second[2] << " " << it.second[3] << " " << it.second[4]
+                << " " << it.second[5] << std::endl;
+      i += detectors.size();
     }
 }
+
 
 template class RPTNodalReconstruction<3>;

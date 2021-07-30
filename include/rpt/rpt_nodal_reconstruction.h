@@ -63,12 +63,12 @@ public:
   std::vector<Point<dim>>
   get_positions(
     IteratorRange<TriaIterator<CellAccessor<dim, dim>>> &cell_iterators,
-    std::vector<int> parent_cell_indexes = {-1, 0});
+    std::vector<int> parent_cell_indexes = {-1});
 
   std::vector<int>
   find_closer_cell(
     IteratorRange<TriaIterator<CellAccessor<dim, dim>>> &cell_iterators,
-    std::vector<int> parent_cell_indexes = {-1, 0});
+    std::vector<int> parent_cell_indexes = {-1});
 
   void
   calculate_counts(std::map<unsigned int, std::vector<double>> &index_counts);

@@ -145,9 +145,9 @@ namespace Parameters
   struct RPTReconstructionParameters
   {
     // Enable tuning parameters
-    bool        reconstruction;
-    int         reactor_refinement;
-    std::string reconstruction_counts_file;
+    bool         reconstruction;
+    unsigned int reactor_refinement;
+    std::string  reconstruction_counts_file;
 
 
     static void
