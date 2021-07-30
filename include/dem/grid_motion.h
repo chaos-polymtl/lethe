@@ -19,6 +19,7 @@
 
 #include <dem/dem_solver_parameters.h>
 #include <dem/pw_contact_info_struct.h>
+#include <dem/pw_contact_force.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -55,7 +56,8 @@ public:
    * @param dem_time_step DEM time-step
    */
   GridMotion(const DEMSolverParameters<dim> &dem_parameters,
-             const double &                  dem_time_step);
+             const double &                  dem_time_step,
+             std::shared_ptr<PWContactForce<dim>> pw_contact_force_object={});
 
   /**
    * Calls the desired grid motion.
@@ -109,14 +111,49 @@ private:
   move_grid_translational(
     parallel::distributed::Triangulation<dim> &triangulation);
 
+  /**
+   * Carries out translational motion of the triangulation
+   *
+   * @param triangulation Triangulation
+   */
+  void
+  move_grid_due_particles_forces(
+    parallel::distributed::Triangulation<dim> &triangulation);
+
+  /**
+   * Update member information like boundary_forces
+   */
+  void
+  update_parameters_before_motion();
+
+  /**
+   * Update member information like inertia tensor,
+   * center of mass coordinate, etc..
+   */
+  void
+  update_parameters_after_motion();
+
+  /**
+   * Calculate motion_parameters as rotation_angle and shift_vector
+   * members
+   */
+  void
+  calculate_motion_parameters();
+
   // Since the DEM time-step and rotational speed are constant, we calculate the
   // rotation angle at each time-step once in the constructor and define it as a
   // member variable.
-  double rotation_angle;
+  Tensor<1,3> rotation_angle;
+  Tensor<1,dim> shift_vector;
 
-  unsigned int rotation_axis;
-
-  Tensor<1, dim> shift_vector;
+  const double boundary_mass;
+  Tensor<1,3> boundary_inertia;
+  Tensor<1,dim> boundary_forces;
+  Tensor<1,dim> boundary_torques;
+  const double dt;
+  Tensor<1,dim>     boundary_translational_velocity;
+  Tensor<1,3> boundary_rotational_velocity;
+  std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
 };
 
 

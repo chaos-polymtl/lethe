@@ -9,7 +9,9 @@ using namespace dealii;
 
 template <int dim>
 GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
-                            const double &                  dem_time_step)
+                            const double &                  dem_time_step,
+                            std::shared_ptr<PWContactForce<dim>> pw_contact_force_object)
+  : boundary_mass(dem_parameters.forces_torques.boundary_mass),dt(dem_parameters.simulation_control.dt)
 {
   // Setting grid motion type
   if (dem_parameters.grid_motion.motion_type ==
@@ -18,7 +20,6 @@ GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
       grid_motion = &GridMotion<dim>::move_grid_rotational;
       rotation_angle =
         dem_parameters.grid_motion.grid_rotational_speed * dem_time_step;
-      rotation_axis = dem_parameters.grid_motion.grid_rotational_axis;
     }
   else if (dem_parameters.grid_motion.motion_type ==
            Parameters::Lagrangian::GridMotion<dim>::MotionType::translational)
@@ -27,20 +28,42 @@ GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
       shift_vector =
         dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
     }
+  else if (dem_parameters.grid_motion.motion_type ==
+           Parameters::Lagrangian::GridMotion<dim>::MotionType::forces)
+  {
+    grid_motion = &GridMotion<dim>::move_grid_due_particles_forces;
+    boundary_inertia = dem_parameters.forces_torques.boundary_inertia;
+    boundary_rotational_velocity = dem_parameters.forces_torques.boundary_initial_rotational_velocity;
+    boundary_translational_velocity = dem_parameters.forces_torques.boundary_initial_translational_velocity;
+    GridMotion<dim>::pw_contact_force_object=pw_contact_force_object;
+  }
 }
 
 template <>
 void GridMotion<2>::move_grid_rotational(
   parallel::distributed::Triangulation<2> &triangulation)
 {
-  GridTools::rotate(rotation_angle, triangulation);
+  unsigned int count(0);
+  for (unsigned int i=0;i<3;i++)
+  {
+    if (rotation_angle[i] != 0)
+    {
+      count++;
+      if (count>1)
+        throw("In 2D, you cannot rotate around more than two axis");
+      GridTools::rotate(rotation_angle[i], triangulation);
+    }
+  }
 }
 
 template <>
 void GridMotion<3>::move_grid_rotational(
   parallel::distributed::Triangulation<3> &triangulation)
 {
-  GridTools::rotate(rotation_angle, rotation_axis, triangulation);
+  for (unsigned int i=0;i<3;i++)
+    {
+      GridTools::rotate(rotation_angle[i], i, triangulation);
+    }
 }
 
 template <int dim>
@@ -50,6 +73,89 @@ GridMotion<dim>::move_grid_translational(
 {
   GridTools::shift(shift_vector, triangulation);
 }
+
+template <int dim>
+void
+GridMotion<dim>::move_grid_due_particles_forces(
+  parallel::distributed::Triangulation<dim> &triangulation)
+{
+  update_parameters_before_motion();
+  calculate_motion_parameters();
+  move_grid_translational(triangulation);
+  // TODO : insert a move_grid_rotational(triangulation); The problem right now
+  //  is that this function make the rotation around (0,0,0) point and not
+  //  around the center of mass, which is moving
+  update_parameters_after_motion();
+}
+
+template<int dim> void
+GridMotion<dim>::calculate_motion_parameters()
+{
+  unsigned int this_mpi_process(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
+
+  if (this_mpi_process==0)
+    {
+      Tensor<1, dim>         translational_velocity_one_step_time_further;
+      Tensor<1, 3> rotational_velocity_one_step_time_further;
+
+      translational_velocity_one_step_time_further =
+        (dt / boundary_mass) * boundary_forces +
+        boundary_translational_velocity;
+
+      for (unsigned int i = 0; i < (2 * dim - 3); i++)
+        {
+          rotational_velocity_one_step_time_further[i] =
+            (dt / boundary_inertia[i]) * boundary_torques[i] +
+            boundary_rotational_velocity[i];
+        }
+
+      // Shift vector should be the integral between two time step, here it's done by taking the area (trapeze) formed by the velocity distance in a time step.
+      shift_vector = (translational_velocity_one_step_time_further +
+                      boundary_translational_velocity) *
+                     dt / 2;
+
+      rotation_angle = (rotational_velocity_one_step_time_further +
+                        boundary_rotational_velocity) *
+                       dt / 2;
+
+      boundary_translational_velocity =
+        translational_velocity_one_step_time_further;
+      boundary_rotational_velocity = rotational_velocity_one_step_time_further;
+    }
+
+  shift_vector=Utilities::MPI::broadcast(MPI_COMM_WORLD,shift_vector);
+  rotation_angle=Utilities::MPI::broadcast(MPI_COMM_WORLD,rotation_angle);
+}
+
+template<int dim> void
+GridMotion<dim>::update_parameters_before_motion()
+{
+  unsigned int this_mpi_process(Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
+
+  if (this_mpi_process==0)
+    {
+      // Update forces like torque and force
+      std::map<unsigned int, Tensor<1, dim>> force_on_walls, torque_on_walls;
+      force_on_walls  = pw_contact_force_object->get_force();
+      torque_on_walls = pw_contact_force_object->get_torque();
+
+      boundary_forces  = 0;
+      boundary_torques = 0;
+      for (auto it : force_on_walls)
+        {
+          boundary_forces += it.second;
+          boundary_torques += torque_on_walls[it.first];
+        }
+    }
+}
+
+template<int dim> void
+GridMotion<dim>::update_parameters_after_motion()
+{
+  pw_contact_force_object->update_center_mass(shift_vector);
+  // TODO : make an update_inertia(rotation_angle) function;
+}
+
 
 template <int dim>
 void

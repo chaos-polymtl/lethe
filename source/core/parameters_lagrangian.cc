@@ -587,6 +587,7 @@ namespace Parameters
     ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("boundary forces");
+
       prm.declare_entry("calculation",
                         "false",
                         Patterns::Bool(),
@@ -605,21 +606,33 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
-      prm.enter_subsection("center of mass coordinate");
-      prm.declare_entry("x",
+      prm.declare_entry("center of mass coordinate",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double(),3,3),
+                        "Coordinate of center of mass");
+      prm.declare_entry("boundary inertia",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double(),3,3),
+                        "Boundary inertia around x,y,z axis");
+      prm.declare_entry("boundary mass",
                         "0",
                         Patterns::Double(),
-                        "X coordinate of center of mass");
-      prm.declare_entry("y",
-                        "0",
-                        Patterns::Double(),
-                        "Y coordinate of center of mass");
-      prm.declare_entry("z",
-                        "0",
-                        Patterns::Double(),
-                        "Z coordinate of center of mass");
-      prm.leave_subsection();
+                        "Boundary mass in kg");
 
+      prm.enter_subsection("boundary motion");
+      prm.declare_entry("enable",
+                        "false",
+                        Patterns::Bool(),
+                        "Enable moving boundary due to particles forces");
+      prm.declare_entry("initial translational velocity",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double(),3,3),
+                        "initial boundary translational velocity tensor");
+      prm.declare_entry("initial rotational velocity",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double(),3,3),
+                        "initial boundary rotational velocity tensor");
+      prm.leave_subsection();
       prm.leave_subsection();
     }
 
@@ -628,6 +641,7 @@ namespace Parameters
     ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("boundary forces");
+
       calculate_force_torque    = prm.get_bool("calculation");
       const std::string verbose = prm.get("verbosity");
       if (verbose == "quiet")
@@ -640,11 +654,28 @@ namespace Parameters
         }
       force_torque_output_name = prm.get("filename");
       output_frequency         = prm.get_integer("output frequency");
-      prm.enter_subsection("center of mass coordinate");
-      point_center_mass[0] = prm.get_double("x");
-      point_center_mass[1] = prm.get_double("y");
-      if (dim == 3)
-        point_center_mass[2] = prm.get_double("z");
+      std::vector<double> vec_center_mass = Utilities::string_to_double(Utilities::split_string_list(prm.get("center of mass coordinate")));
+      std::vector<double> vec_inertia = Utilities::string_to_double(Utilities::split_string_list(prm.get("boundary inertia")));
+      for (unsigned int i=0;i<3;i++)
+      {
+          point_center_mass[i]=vec_center_mass[i];
+          boundary_inertia[i]=vec_inertia[i];
+      }
+
+      boundary_mass=prm.get_double("boundary mass");
+
+      prm.enter_subsection("boundary motion");
+      enable_moving_boundary=prm.get_bool("enable");
+
+      std::vector<double> vec_tr_vel = Utilities::string_to_double(Utilities::split_string_list(prm.get("initial translational velocity")));
+      std::vector<double> vec_ro_vel = Utilities::string_to_double(Utilities::split_string_list(prm.get("initial rotational velocity")));
+
+      for (unsigned int i=0;i<3;i++)
+      {
+        boundary_initial_translational_velocity[i]= vec_tr_vel[i];
+        boundary_initial_rotational_velocity[i]= vec_ro_vel[i];
+      }
+
       prm.leave_subsection();
       prm.leave_subsection();
     }
@@ -994,28 +1025,15 @@ namespace Parameters
           "Choosing grid motion type. "
           "Choices are <none|translational|rotational|translational_rotational>.");
 
-        prm.declare_entry("grid translational velocity x",
-                          "0",
-                          Patterns::Double(),
-                          "grid translational velocity x");
-        prm.declare_entry("grid translational velocity y",
-                          "0",
-                          Patterns::Double(),
-                          "grid translational velocity y");
-        prm.declare_entry("grid translational velocity z",
-                          "0",
-                          Patterns::Double(),
-                          "grid translational velocity z");
+        prm.declare_entry("grid translational velocity",
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(),2,3),
+                          "grid translational velocity");
 
         prm.declare_entry("grid rotational speed",
-                          "0",
-                          Patterns::Double(),
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(),3,3),
                           "grid rotational speed");
-
-        prm.declare_entry("grid rotational axis",
-                          "0",
-                          Patterns::Integer(),
-                          "grid rotational axis");
       }
       prm.leave_subsection();
     }
@@ -1026,23 +1044,25 @@ namespace Parameters
     {
       prm.enter_subsection("grid motion");
       {
+        std::vector<double> tr_sp_vec = Utilities::string_to_double(Utilities::split_string_list(prm.get("grid translational velocity")));
+        std::vector<double> ro_sp_vec = Utilities::string_to_double(Utilities::split_string_list(prm.get("grid rotational speed")));
+
         const std::string motion = prm.get("motion type");
         if (motion == "rotational")
           {
             motion_type           = MotionType::rotational;
-            grid_rotational_speed = prm.get_double("grid rotational speed");
-            grid_rotational_axis  = prm.get_integer("grid rotational axis");
+            for (unsigned int i=0;i<3;i++)
+              {
+                grid_rotational_speed[i] = ro_sp_vec[i];
+              }
           }
         else if (motion == "translational")
           {
             motion_type = MotionType::translational;
-            grid_translational_velocity[0] =
-              prm.get_double("grid translational velocity x");
-            grid_translational_velocity[1] =
-              prm.get_double("grid translational velocity y");
-            if (dim == 3)
-              grid_translational_velocity[2] =
-                prm.get_double("grid translational velocity z");
+            for (unsigned int i=0;i<dim;i++)
+            {
+              grid_translational_velocity[i] = tr_sp_vec[i];
+            }
           }
         else if (motion == "none")
           {

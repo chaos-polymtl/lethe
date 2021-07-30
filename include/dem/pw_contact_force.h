@@ -80,6 +80,15 @@ public:
     return torque_on_walls;
   }
 
+  /** This function is used to update the center of mass container member class
+   * @param Tensor would be added to the member class to make the update
+   */
+  void
+  update_center_mass(const Tensor<1, dim> Tensor)
+  {
+    center_mass_container += Tensor;
+  }
+
 protected:
   /**
    * Carries out updating the contact pair information for both non-linear and

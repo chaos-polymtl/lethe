@@ -256,6 +256,21 @@ namespace Parameters
       // Center of mass
       Point<dim> point_center_mass;
 
+      // Boundary Inertia
+      Tensor<1,3> boundary_inertia;
+
+      // Boundary mass
+      double boundary_mass;
+
+      // Enable moving boundary due to particles forces collision with walls
+      bool enable_moving_boundary;
+
+      // Initial translational boundary velocity
+      Tensor<1,dim> boundary_initial_translational_velocity;
+
+      // Initial rotational boundary velocity
+      Tensor<1,3> boundary_initial_rotational_velocity;
+
       void
       declare_parameters(ParameterHandler &prm);
       void
@@ -350,10 +365,13 @@ namespace Parameters
     {
     public:
       // Choosing grid motion type
+      // forces motion type is something that ForceTorqueOnWall set when
+      // enable is at true
       enum class MotionType
       {
         translational,
         rotational,
+        forces,
         none
       } motion_type;
 
@@ -361,11 +379,7 @@ namespace Parameters
       Tensor<1, dim> grid_translational_velocity;
 
       // Rotational speed of rotating grid in rad/s
-      double grid_rotational_speed;
-
-      // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
-      // 1=y axis, 2=z axis.
-      unsigned int grid_rotational_axis;
+      Tensor<1,3> grid_rotational_speed;
 
       static void
       declare_parameters(ParameterHandler &prm);
