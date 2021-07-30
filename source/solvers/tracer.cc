@@ -253,6 +253,11 @@ Tracer<dim>::assemble_system(
               const Tensor<2, dim> dcdd_factor = rr - k_corr;
 
 
+              const double d_vdcdd =
+                order * (0.5 * h * h) * (velocity.norm() * velocity.norm()) *
+                pow(tracer_gradients[q].norm() * h, order - 1);
+
+
 
               // Calculation of the magnitude of the velocity for the
               // stabilization parameter
@@ -332,11 +337,11 @@ Tracer<dim>::assemble_system(
                                                dcdd_factor * grad_phi_T_i) *
                                 JxW;
 
-                              // cell_matrix(i, j) +=
-                              //  d_vdcdd * grad_phi_T_j.norm() *
-                              //  scalar_product(tracer_gradients[q],
-                              //                 grad_phi_T_i) *
-                              //  JxW;
+                              cell_matrix(i, j) +=
+                                d_vdcdd * grad_phi_T_j.norm() *
+                                scalar_product(tracer_gradients[q],
+                                               dcdd_factor * grad_phi_T_i) *
+                                JxW;
                             }
                         }
                     }
