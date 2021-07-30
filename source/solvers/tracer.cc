@@ -236,19 +236,21 @@ Tracer<dim>::assemble_system(
               const auto velocity = velocity_values[q];
 
               // Shock capturing viscosity term
-              const double cte = 0.4;
               const double order =
                 this->simulation_parameters.fem_parameters.tracer_order;
 
 
               const double vdcdd = (0.5 * h) *
-                                   pow(tracer_gradients[q].norm() * h, order) *
-                                   pow((1 / cte), 2);
+                                   (velocity.norm() * velocity.norm()) *
+                                   pow(tracer_gradients[q].norm() * h, order);
 
-              const double d_vdcdd =
-                order * (0.5 * h * h) *
-                pow(tracer_gradients[q].norm() * h, order - 1) *
-                pow((1 / cte), 2);
+              Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
+              Tensor<1, dim> r =
+                tracer_gradients[q] / (tracer_gradients[q].norm() + 1e-12);
+
+              const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+              const Tensor<2, dim> rr          = outer_product(r, r);
+              const Tensor<2, dim> dcdd_factor = rr - k_corr;
 
 
 
@@ -326,14 +328,15 @@ Tracer<dim>::assemble_system(
                             {
                               cell_matrix(i, j) +=
                                 vdcdd *
-                                scalar_product(grad_phi_T_j, grad_phi_T_i) *
+                                scalar_product(grad_phi_T_j,
+                                               dcdd_factor * grad_phi_T_i) *
                                 JxW;
 
-                              cell_matrix(i, j) +=
-                                d_vdcdd * grad_phi_T_j.norm() *
-                                scalar_product(tracer_gradients[q],
-                                               grad_phi_T_i) *
-                                JxW;
+                              // cell_matrix(i, j) +=
+                              //  d_vdcdd * grad_phi_T_j.norm() *
+                              //  scalar_product(tracer_gradients[q],
+                              //                 grad_phi_T_i) *
+                              //  JxW;
                             }
                         }
                     }
@@ -407,9 +410,13 @@ Tracer<dim>::assemble_system(
                     JxW;
 
                   if (DCDD)
-                    cell_rhs(i) +=
-                      -vdcdd *
-                      scalar_product(tracer_gradients[q], grad_phi_T_i) * JxW;
+                    {
+                      cell_rhs(i) +=
+                        -vdcdd *
+                        scalar_product(tracer_gradients[q],
+                                       dcdd_factor * grad_phi_T_i) *
+                        JxW;
+                    }
                 }
 
             } // end loop on quadrature points
