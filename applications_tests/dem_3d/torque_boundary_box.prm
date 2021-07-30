@@ -82,9 +82,5 @@ subsection boundary forces
     set verbosity                                                               = verbose
     set filename     	     		                                            = force_and_torque
     set output frequency                                                        = 2000
-    subsection center of mass coordinate
-        set x                                                                       = 0.05
-        set y                                                                       = 0.05
-        set z                                                                       = 0
-    end
+    set center of mass                                                          = 0.05,0.05,0
 end

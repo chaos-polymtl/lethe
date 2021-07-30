@@ -96,7 +96,5 @@ end
 #---------------------------------------------------
 subsection grid motion
     set motion type                 			= translational
-    set grid translational velocity x            	= 0
-    set grid translational velocity y            	= 0
-    set grid translational velocity z            	= 0.5
+    set grid translational velocity          	= 0,0,0.5
 end

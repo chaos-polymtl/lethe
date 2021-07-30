@@ -254,13 +254,13 @@ namespace Parameters
       std::string force_torque_output_name;
 
       // Center of mass
-      Point<dim> point_center_mass;
+      Point<dim> triangulation_center_mass;
 
-      // Boundary Inertia
-      Tensor<1,3> boundary_inertia;
+      // Triangulation inertia
+      Tensor<1,3> triangulation_inertia;
 
       // Boundary mass
-      double boundary_mass;
+      double triangulation_mass;
 
       // Enable moving boundary due to particles forces collision with walls
       bool enable_moving_boundary;

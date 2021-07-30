@@ -107,7 +107,7 @@ PWNonLinearForce<dim>::PWNonLinearForce(
     }
   this->calculate_force_torque_on_boundary =
     dem_parameters.forces_torques.calculate_force_torque;
-  this->center_mass_container = dem_parameters.forces_torques.point_center_mass;
+  this->center_mass_container = dem_parameters.forces_torques.triangulation_center_mass;
   this->boundary_index        = boundary_index;
   this->force_on_walls        = this->initialize();
   this->torque_on_walls       = this->initialize();

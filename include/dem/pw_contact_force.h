@@ -81,12 +81,12 @@ public:
   }
 
   /** This function is used to update the center of mass container member class
-   * @param Tensor would be added to the member class to make the update
+   * @param displacement will be added to the member class to make the update
    */
   void
-  update_center_mass(const Tensor<1, dim> Tensor)
+  update_center_of_mass(const Tensor<1, dim> displacement)
   {
-    center_mass_container += Tensor;
+    center_mass_container += displacement;
   }
 
 protected:

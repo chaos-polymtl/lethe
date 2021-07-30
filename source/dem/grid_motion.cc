@@ -11,7 +11,7 @@ template <int dim>
 GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
                             const double &                  dem_time_step,
                             std::shared_ptr<PWContactForce<dim>> pw_contact_force_object)
-  : boundary_mass(dem_parameters.forces_torques.boundary_mass),dt(dem_parameters.simulation_control.dt)
+  : triangulation_mass(dem_parameters.forces_torques.triangulation_mass),dt(dem_parameters.simulation_control.dt)
 {
   // Setting grid motion type
   if (dem_parameters.grid_motion.motion_type ==
@@ -32,7 +32,7 @@ GridMotion<dim>::GridMotion(const DEMSolverParameters<dim> &dem_parameters,
            Parameters::Lagrangian::GridMotion<dim>::MotionType::forces)
   {
     grid_motion = &GridMotion<dim>::move_grid_due_particles_forces;
-    boundary_inertia = dem_parameters.forces_torques.boundary_inertia;
+    triangulation_inertia = dem_parameters.forces_torques.triangulation_inertia;
     boundary_rotational_velocity = dem_parameters.forces_torques.boundary_initial_rotational_velocity;
     boundary_translational_velocity = dem_parameters.forces_torques.boundary_initial_translational_velocity;
     GridMotion<dim>::pw_contact_force_object=pw_contact_force_object;
@@ -99,13 +99,13 @@ GridMotion<dim>::calculate_motion_parameters()
       Tensor<1, 3> rotational_velocity_one_step_time_further;
 
       translational_velocity_one_step_time_further =
-        (dt / boundary_mass) * boundary_forces +
+        (dt / triangulation_mass) * triangulation_forces +
         boundary_translational_velocity;
 
       for (unsigned int i = 0; i < (2 * dim - 3); i++)
         {
           rotational_velocity_one_step_time_further[i] =
-            (dt / boundary_inertia[i]) * boundary_torques[i] +
+            (dt / triangulation_inertia[i]) * triangulation_torques[i] +
             boundary_rotational_velocity[i];
         }
 
@@ -139,12 +139,12 @@ GridMotion<dim>::update_parameters_before_motion()
       force_on_walls  = pw_contact_force_object->get_force();
       torque_on_walls = pw_contact_force_object->get_torque();
 
-      boundary_forces  = 0;
-      boundary_torques = 0;
+      triangulation_forces = 0;
+      triangulation_torques = 0;
       for (auto it : force_on_walls)
         {
-          boundary_forces += it.second;
-          boundary_torques += torque_on_walls[it.first];
+          triangulation_forces += it.second;
+          triangulation_torques += torque_on_walls[it.first];
         }
     }
 }
@@ -152,7 +152,7 @@ GridMotion<dim>::update_parameters_before_motion()
 template<int dim> void
 GridMotion<dim>::update_parameters_after_motion()
 {
-  pw_contact_force_object->update_center_mass(shift_vector);
+  pw_contact_force_object->update_center_of_mass(shift_vector);
   // TODO : make an update_inertia(rotation_angle) function;
 }
 

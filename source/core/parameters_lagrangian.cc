@@ -606,20 +606,20 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
-      prm.declare_entry("center of mass coordinate",
+      prm.declare_entry("center of mass",
                         "0,0,0",
                         Patterns::List(Patterns::Double(),3,3),
                         "Coordinate of center of mass");
-      prm.declare_entry("boundary inertia",
+      prm.declare_entry("moment of inertia",
                         "0,0,0",
                         Patterns::List(Patterns::Double(),3,3),
                         "Boundary inertia around x,y,z axis");
-      prm.declare_entry("boundary mass",
+      prm.declare_entry("triangulation mass",
                         "0",
                         Patterns::Double(),
-                        "Boundary mass in kg");
+                        "Triangulation mass in kg");
 
-      prm.enter_subsection("boundary motion");
+      prm.enter_subsection("triangulation motion");
       prm.declare_entry("enable",
                         "false",
                         Patterns::Bool(),
@@ -654,17 +654,17 @@ namespace Parameters
         }
       force_torque_output_name = prm.get("filename");
       output_frequency         = prm.get_integer("output frequency");
-      std::vector<double> vec_center_mass = Utilities::string_to_double(Utilities::split_string_list(prm.get("center of mass coordinate")));
-      std::vector<double> vec_inertia = Utilities::string_to_double(Utilities::split_string_list(prm.get("boundary inertia")));
+      std::vector<double> vec_center_mass = Utilities::string_to_double(Utilities::split_string_list(prm.get("center of mass")));
+      std::vector<double> vec_inertia = Utilities::string_to_double(Utilities::split_string_list(prm.get("moment of inertia")));
       for (unsigned int i=0;i<3;i++)
       {
-          point_center_mass[i]=vec_center_mass[i];
-          boundary_inertia[i]=vec_inertia[i];
+        triangulation_center_mass[i]=vec_center_mass[i];
+          triangulation_inertia[i]=vec_inertia[i];
       }
 
-      boundary_mass=prm.get_double("boundary mass");
+      triangulation_mass =prm.get_double("triangulation mass");
 
-      prm.enter_subsection("boundary motion");
+      prm.enter_subsection("triangulation motion");
       enable_moving_boundary=prm.get_bool("enable");
 
       std::vector<double> vec_tr_vel = Utilities::string_to_double(Utilities::split_string_list(prm.get("initial translational velocity")));
