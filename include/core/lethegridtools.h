@@ -100,6 +100,13 @@ namespace LetheGridTools
     std::vector<typename DoFHandler<dim>::active_cell_iterator>
     move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
 
+    template  <int spacedim, int structdim>
+    Point<spacedim>
+    project_to_d_linear_object(const typename DoFHandler<structdim,spacedim>::active_cell_iterator &       object,
+                               const Point<spacedim> &trial_point);
+
+
+
 
     template <int dim>
     struct hash_cell
