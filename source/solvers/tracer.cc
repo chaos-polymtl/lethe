@@ -235,6 +235,29 @@ Tracer<dim>::assemble_system(
 
               const auto velocity = velocity_values[q];
 
+              // Shock capturing viscosity term
+              const double order =
+                this->simulation_parameters.fem_parameters.tracer_order;
+
+
+              const double vdcdd = (0.5 * h) *
+                                   (velocity.norm() * velocity.norm()) *
+                                   pow(tracer_gradients[q].norm() * h, order);
+
+              Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
+              Tensor<1, dim> r =
+                tracer_gradients[q] / (tracer_gradients[q].norm() + 1e-12);
+
+              const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
+              const Tensor<2, dim> rr          = outer_product(r, r);
+              const Tensor<2, dim> dcdd_factor = rr - k_corr;
+
+
+              const double d_vdcdd =
+                order * (0.5 * h * h) * (velocity.norm() * velocity.norm()) *
+                pow(tracer_gradients[q].norm() * h, order - 1);
+
+
 
               // Calculation of the magnitude of the velocity for the
               // stabilization parameter
@@ -289,6 +312,10 @@ Tracer<dim>::assemble_system(
                             velocity * grad_phi_T_j -
                             tracer_diffusivity * laplacian_phi_T_j;
 
+                          if (DCDD)
+                            strong_jacobian += -vdcdd * laplacian_phi_T_j;
+
+
                           // Mass matrix for transient simulation
                           if (is_bdf(time_stepping_method))
                             {
@@ -301,6 +328,21 @@ Tracer<dim>::assemble_system(
                           cell_matrix(i, j) +=
                             tau * strong_jacobian *
                             (grad_phi_T_i * velocity_values[q]) * JxW;
+
+                          if (DCDD)
+                            {
+                              cell_matrix(i, j) +=
+                                vdcdd *
+                                scalar_product(grad_phi_T_j,
+                                               dcdd_factor * grad_phi_T_i) *
+                                JxW;
+
+                              cell_matrix(i, j) +=
+                                d_vdcdd * grad_phi_T_j.norm() *
+                                scalar_product(tracer_gradients[q],
+                                               dcdd_factor * grad_phi_T_i) *
+                                JxW;
+                            }
                         }
                     }
 
@@ -315,6 +357,9 @@ Tracer<dim>::assemble_system(
                   auto strong_residual =
                     velocity_values[q] * tracer_gradients[q] -
                     tracer_diffusivity * present_tracer_laplacians[q];
+
+                  if (DCDD)
+                    strong_residual += -vdcdd * present_tracer_laplacians[q];
 
 
 
@@ -368,6 +413,15 @@ Tracer<dim>::assemble_system(
                     tau *
                     (strong_residual * (grad_phi_T_i * velocity_values[q])) *
                     JxW;
+
+                  if (DCDD)
+                    {
+                      cell_rhs(i) +=
+                        -vdcdd *
+                        scalar_product(tracer_gradients[q],
+                                       dcdd_factor * grad_phi_T_i) *
+                        JxW;
+                    }
                 }
 
             } // end loop on quadrature points

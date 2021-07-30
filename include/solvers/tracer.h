@@ -327,6 +327,8 @@ private:
 
   // Tracer statistics table
   TableHandler statistics_table;
+
+  const bool DCDD = true;
 };
 
 
