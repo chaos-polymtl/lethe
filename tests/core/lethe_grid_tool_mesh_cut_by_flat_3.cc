@@ -87,18 +87,7 @@ test()
 
     LetheGridTools::vertices_cell_mapping(dof_handler, vertice_to_cell);
     std::vector<typename DoFHandler<3>::active_cell_iterator> cells_cut;
-    DataOut<3> data_out;
-    data_out.attach_dof_handler(dof_handler);
-    data_out.add_data_vector(subdomain, "subdomain");
-    data_out.build_patches();
-    std::ofstream output("solution.vtu");
-    data_out.write_vtu(output);
 
-    DataOut<2,3> flat_data_out;
-    flat_data_out.attach_dof_handler(flat_dof_handler);
-    flat_data_out.build_patches();
-    std::ofstream flat_output("flat_trig.vtu");
-    flat_data_out.write_vtu(flat_output);
     for (const auto &flat_cell :
             flat_dof_handler.active_cell_iterators()) {
         cells_cut = LetheGridTools::find_cells_around_flat_cell(dof_handler, flat_cell, vertice_to_cell);
@@ -116,7 +105,18 @@ test()
     // Printing the final position for all the vertices
 
 
+    DataOut<3> data_out;
+    data_out.attach_dof_handler(dof_handler);
+    data_out.add_data_vector(subdomain, "subdomain");
+    data_out.build_patches();
+    std::ofstream output("solution.vtu");
+    data_out.write_vtu(output);
 
+    DataOut<2,3> flat_data_out;
+    flat_data_out.attach_dof_handler(flat_dof_handler);
+    flat_data_out.build_patches();
+    std::ofstream flat_output("flat_trig.vtu");
+    flat_data_out.write_vtu(flat_output);
 
 
 

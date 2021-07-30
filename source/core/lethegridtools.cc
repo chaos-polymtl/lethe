@@ -443,9 +443,22 @@ LetheGridTools::cell_cut_by_flat(
         projected_point= GridTools::project_to_object(cell_flat,cell->vertex(i));
         Tensor<1, dim> normal = cell->vertex(i) - projected_point;
 
+        std::cout<<" before check B1   n"<<std::endl;
         // Check if the projected vertex falls inside the flat
-        if (cell_flat->point_inside(projected_point))
+
+        bool check_for_b1;
+        try{
+            check_for_b1 =cell_flat->point_inside(projected_point);
+        }
+        catch (...){
+            check_for_b1=false;
+                    }
+
+        if(check_for_b1){
             condition_B1 = true;
+        }
+
+
 
         // Check if we switched to the other side
         // of the flat during this iteration
