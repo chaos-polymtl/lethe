@@ -58,20 +58,29 @@ public:
   create_grid();
 
   void
+  set_coarse_mesh_map();
+
+  void
   find_unknown_position();
 
-  std::vector<Point<dim>>
+  void
   get_positions(
-    IteratorRange<TriaIterator<CellAccessor<dim, dim>>> &cell_iterators,
+    IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
     std::vector<int> parent_cell_indexes = {-1});
 
   std::vector<int>
-  find_closer_cell(
-    IteratorRange<TriaIterator<CellAccessor<dim, dim>>> &cell_iterators,
-    std::vector<int> parent_cell_indexes = {-1});
+  find_cells(IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
+             std::vector<int> parent_cell_indexes = {-1});
+
+  int
+  find_best_cell(
+    IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
+    std::vector<int>                                    candidate);
 
   void
-  calculate_counts(std::map<unsigned int, std::vector<double>> &index_counts);
+  calculate_counts(
+    std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
+      &index_counts);
 
 
   // void
@@ -86,17 +95,18 @@ private:
   QGauss<dim>        cell_quadrature;
   QGauss<dim - 1>    face_quadrature;
 
-  std::vector<Point<dim>> positions;
-  std::vector<Point<dim>> positions_coarse_mesh;
 
-  std::map<unsigned int, std::vector<double>> map_vertices_index_coarse_mesh;
-  RPTCalculatingParameters                    parameters;
-  Parameters::RPTReconstructionParameters     reconstruction_parameters;
-  std::vector<RadioParticle<dim>>             particle_positions;
-  std::vector<Detector<dim>>                  detectors;
-  Vector<double>                              map_counts;
-  std::vector<double>                         reconstruction_counts;
-  std::map<unsigned int, std::vector<double>> map_vertices_index;
+  std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
+                                          map_vertices_index_coarse_mesh;
+  RPTCalculatingParameters                parameters;
+  Parameters::RPTReconstructionParameters reconstruction_parameters;
+  std::vector<RadioParticle<dim>>         particles;
+  std::vector<Detector<dim>>              detectors;
+
+  std::vector<double> reconstruction_counts;
+  std::vector<int>    cells_indexes_coarse_mesh;
+  std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
+    map_vertices_index;
 };
 
 

@@ -221,6 +221,12 @@ Parameters::RPTReconstructionParameters::declare_parameters(
                       "reconstruction_counts",
                       Patterns::FileName(),
                       "Counts of every detector filename");
+
+    prm.declare_entry(
+      "minimum target volume",
+      "0.1",
+      Patterns::Double(),
+      "Value targeted for the minimal volume of a cell. This criteria may not be reached");
   }
   prm.leave_subsection();
 }
@@ -233,6 +239,7 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
     reconstruction             = prm.get_bool("reconstruction");
     reactor_refinement         = prm.get_integer("refinement");
     reconstruction_counts_file = prm.get("reconstruction counts file");
+    minimum_volume             = prm.get_double("minimum target volume");
   }
   prm.leave_subsection();
 }
