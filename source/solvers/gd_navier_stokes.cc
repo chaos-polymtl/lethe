@@ -113,8 +113,12 @@ GDNavierStokesSolver<dim>::setup_assemblers()
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_system_matrix()
+GDNavierStokesSolver<dim>::assemble_system_matrix(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
+  TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
+  this->simulation_control->set_assembly_method(time_stepping_method);
+
   this->system_matrix = 0;
   setup_assemblers();
 
@@ -227,9 +231,12 @@ GDNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
 
 template <int dim>
 void
-GDNavierStokesSolver<dim>::assemble_system_rhs()
+GDNavierStokesSolver<dim>::assemble_system_rhs(
+  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->simulation_control->set_assembly_method(time_stepping_method);
+
   this->system_rhs = 0;
   setup_assemblers();
 

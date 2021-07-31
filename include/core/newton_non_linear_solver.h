@@ -90,7 +90,8 @@ NewtonNonLinearSolver<VectorType>::solve(
     {
       evaluation_point = present_solution;
 
-      solver->assemble_matrix_and_rhs(time_stepping_method);
+      solver->assemble_system_matrix(time_stepping_method);
+      solver->assemble_system_rhs(time_stepping_method);
 
       if (outer_iteration == 0)
         {
@@ -116,7 +117,7 @@ NewtonNonLinearSolver<VectorType>::solve(
           local_evaluation_point.add(alpha, newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
-          solver->assemble_rhs(time_stepping_method);
+          solver->assemble_system_rhs(time_stepping_method);
 
           auto &system_rhs = solver->get_system_rhs();
           current_res      = system_rhs.l2_norm();

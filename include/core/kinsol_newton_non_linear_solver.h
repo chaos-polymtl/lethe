@@ -119,7 +119,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
     solver->pcout << "Computing residual vector..." << std::endl;
     evaluation_point = evaluation_point_for_kinsol;
     solver->apply_constraints();
-    solver->assemble_rhs(time_stepping_method);
+    solver->assemble_system_rhs(time_stepping_method);
     auto &current_residual = solver->get_system_rhs();
     residual               = current_residual;
     solver->pcout << "      -Residual: " << residual.l2_norm() << std::endl;
@@ -131,12 +131,12 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
         const VectorType & /*current_f*/) {
       solver->pcout << "Computing jacobian matrix..." << std::endl;
       evaluation_point = present_solution_for_kinsol;
-      solver->assemble_matrix_and_rhs(time_stepping_method);
+      solver->assemble_system_matrix(time_stepping_method);
       return 0;
     };
 
-  nonlinear_solver.solve_with_jacobian = [&](const VectorType &residual,
-                                             VectorType &      dst,
+  nonlinear_solver.solve_with_jacobian = [&](const VectorType & /* residual */,
+                                             VectorType &dst,
                                              const double /* tolerance */) {
     solver->pcout << "Solving linear system..." << std::endl;
     solver->solve_linear_system(first_step);

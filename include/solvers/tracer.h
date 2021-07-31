@@ -98,26 +98,30 @@ public:
       }
   }
 
-
-
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
+   *
+   * @deprecated This function is to be deprecated when the new assembly mechanism
+   * is integrated to this solver
    */
   void
   assemble_matrix_and_rhs(
     const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override;
+      time_stepping_method);
 
   /**
    * @brief Call for the assembly of the right-hand side
    *
    * @param time_stepping_method Time-Stepping method with which the assembly is called
+   *
+   * @deprecated This function is to be deprecated when the new assembly mechanism
+   * is integrated to this solver
    */
   void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
+                 time_stepping_method);
 
   /**
    * @brief Attach the solution vector to the DataOut provided. This function

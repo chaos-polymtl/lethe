@@ -128,8 +128,6 @@ private:
   /**
    * @brief Call for the assembly of the matrix and the right hand side
    *
-   * @param time_stepping_method The time-stepping method used for the assembly
-   *
    * @deprecated This function is to be deprecated when the non-linear solvers
    * have been refactored to call for rhs and matrix assembly seperately.
    */
@@ -141,9 +139,7 @@ private:
    */
 
   virtual void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override
+  assemble_matrix_and_rhs() override
   {
     if (this->simulation_parameters.particlesParameters.integrate_motion)
       {
@@ -151,7 +147,7 @@ private:
         integrate_particles();
         generate_cut_cells_map();
       }
-    this->simulation_control->set_assembly_method(time_stepping_method);
+    this->simulation_control->set_assembly_method(this->time_stepping_method);
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
       this->assemble_system_matrix();
@@ -164,8 +160,6 @@ private:
   /**
    * @brief Call for the assembly of the right hand side
    *
-   * @param time_stepping_method The time-stepping method used for the assembly
-   *
    * @deprecated This function is to be deprecated when the non-linear solvers
    * have been refactored to call for rhs and matrix assembly seperately.
    *
@@ -174,11 +168,10 @@ private:
    * gls_navier_stokes.h solver.
    */
   virtual void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override
+  assemble_rhs() override
   {
     TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-    this->simulation_control->set_assembly_method(time_stepping_method);
+    this->simulation_control->set_assembly_method(this->time_stepping_method);
 
     this->assemble_system_rhs();
     sharp_edge();

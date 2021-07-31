@@ -791,7 +791,10 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_matrix_and_rhs(
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix(
+    time_stepping_method);
+
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs(
     time_stepping_method);
 
   assemble_nitsche_restriction<true>();
@@ -802,7 +805,8 @@ void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_rhs(time_stepping_method);
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs(
+    time_stepping_method);
 
   assemble_nitsche_restriction<false>();
 }
