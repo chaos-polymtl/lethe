@@ -195,7 +195,6 @@ protected:
   {
     TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
     this->simulation_control->set_assembly_method(time_stepping_method);
-
     assemble_system_rhs();
   }
 

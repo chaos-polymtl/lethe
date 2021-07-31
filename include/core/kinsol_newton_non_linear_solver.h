@@ -78,11 +78,13 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
 
+  auto &local_evaluation_point = solver->get_local_evaluation_point();
+
   VectorType &evaluation_point = solver->get_evaluation_point();
   VectorType &present_solution = solver->get_present_solution();
 
   typename SUNDIALS::KINSOL<VectorType>::AdditionalData additional_data;
-  additional_data.function_tolerance = this->params.tolerance;
+  additional_data.function_tolerance            = this->params.tolerance;
   additional_data.maximum_non_linear_iterations = this->params.max_iterations;
   additional_data.step_tolerance                = this->params.tolerance;
 
@@ -109,7 +111,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   SUNDIALS::KINSOL<VectorType> nonlinear_solver(additional_data);
 
   nonlinear_solver.reinit_vector = [&](VectorType &x) {
-    x.reinit(present_solution);
+    x.reinit(local_evaluation_point);
   };
 
   nonlinear_solver.residual = [&](const VectorType &evaluation_point_for_kinsol,
@@ -142,7 +144,10 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
     return 0;
   };
 
-  nonlinear_solver.solve(present_solution);
+  local_evaluation_point = present_solution;
+
+  nonlinear_solver.solve(local_evaluation_point);
+  present_solution = local_evaluation_point;
 }
 
 #endif

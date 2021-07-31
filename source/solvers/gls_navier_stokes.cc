@@ -203,6 +203,10 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
                                 this->locally_relevant_dofs,
                                 this->mpi_communicator);
 
+  this->evaluation_point.reinit(this->locally_owned_dofs,
+                                this->locally_relevant_dofs,
+                                this->mpi_communicator);
+
   // Initialize vector of previous solutions
   for (auto &solution : this->previous_solutions)
     {
