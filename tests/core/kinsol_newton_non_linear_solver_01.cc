@@ -16,12 +16,12 @@ test()
 {
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::quiet,
-    Parameters::NonLinearSolver::SolverType::skip_newton,
+    Parameters::NonLinearSolver::SolverType::kinsol_newton,
+    Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
     1e-8, // tolerance
     0.9,  // relative tolerance
     10,   // maxIter
-    4,    // display precision
-    1     // skip iterations
+    4     // display precision
   };
 
   deallog << "Creating solver" << std::endl;
@@ -33,7 +33,7 @@ test()
   deallog << "Solving non-linear system " << std::endl;
   // Solve the non-linear system of equation
   solver->solve_non_linear_system(
-    Parameters::SimulationControl::TimeSteppingMethod::steady, true, true);
+    Parameters::SimulationControl::TimeSteppingMethod::steady, true);
 
   auto &present_solution = solver->get_present_solution();
   deallog << "The final solution is : " << present_solution[0] << " "
