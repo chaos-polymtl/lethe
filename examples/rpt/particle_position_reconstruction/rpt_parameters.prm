@@ -4,11 +4,11 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
-    set particle positions file          = unknown_position.particle
+    set particle positions file          = unknown_positions.particle
     set verbose                          = true
     set export counts                    = false
-    set counts file                      = test
-    set monte carlo iteration            = 100000
+    set counts file                      = unknown_positions_counts
+    set monte carlo iteration            = 10000
     set random number seed               = 0
     set reactor height                   = 0.3
     set reactor radius       			 = 0.1

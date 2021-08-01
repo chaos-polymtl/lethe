@@ -28,24 +28,18 @@ RPTNodalReconstruction<dim>::RPTNodalReconstruction(
   , parameters(rpt_parameters)
   , reconstruction_parameters(rpt_parameters.reconstruction_param)
   , detectors(detectors)
-{
-  // Read counts for reconstruction
-  const std::string filename =
-    rpt_parameters.reconstruction_param.reconstruction_counts_file;
-  std::ifstream counts_file(filename);
-
-  std::copy(std::istream_iterator<double>(counts_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(reconstruction_counts));
-}
+{}
 
 template <int dim>
 void
 RPTNodalReconstruction<dim>::execute_nodal_reconstruction()
 {
+  read_counts();
   create_grid();
   set_coarse_mesh_map();
-  find_unknown_position();
+
+  for (auto &particle_reconstruction_counts : reconstruction_counts)
+    find_unknown_position(particle_reconstruction_counts);
 }
 
 template <int dim>
@@ -57,13 +51,12 @@ RPTNodalReconstruction<dim>::set_coarse_mesh_map()
   get_positions(triangulation.cell_iterators_on_level(coarse_level));
   calculate_counts(map_vertices_index);
   map_vertices_index_coarse_mesh = map_vertices_index;
-  cells_indexes_coarse_mesh =
-    find_cells(triangulation.cell_iterators_on_level(coarse_level));
 }
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::find_unknown_position()
+RPTNodalReconstruction<dim>::find_unknown_position(
+  std::vector<double> &particle_reconstruction_counts)
 {
   unsigned int     level = 1;
   std::vector<int> cells_indexes, new_cells_indexes;
@@ -72,7 +65,8 @@ RPTNodalReconstruction<dim>::find_unknown_position()
   double           min_volume = parameters.reconstruction_param.minimum_volume;
   bool             still_new_candidates = true;
 
-  cells_indexes = cells_indexes_coarse_mesh;
+  cells_indexes = find_cells(triangulation.cell_iterators_on_level(level),
+                             particle_reconstruction_counts);
 
   while (volume > min_volume &&
          level <= parameters.reconstruction_param.reactor_refinement &&
@@ -83,7 +77,9 @@ RPTNodalReconstruction<dim>::find_unknown_position()
                     cells_indexes);
       calculate_counts(map_vertices_index);
       new_cells_indexes =
-        find_cells(triangulation.cell_iterators_on_level(level), cells_indexes);
+        find_cells(triangulation.cell_iterators_on_level(level),
+                   particle_reconstruction_counts,
+                   cells_indexes);
 
       // If no refined cells are candidates research has to stop and need to
       // have the cell iterators for the level of parents
@@ -110,6 +106,7 @@ RPTNodalReconstruction<dim>::find_unknown_position()
   if (cells_indexes.size() > 1)
     {
       best_cell = find_best_cell(triangulation.cell_iterators_on_level(level),
+                                 particle_reconstruction_counts,
                                  cells_indexes);
       for (const auto &cell : triangulation.cell_iterators_on_level(level))
         {
@@ -180,34 +177,17 @@ RPTNodalReconstruction<dim>::get_positions(
               unsigned int vertex_index    = cell->vertex_index(i);
               Point<dim>   vertex_location = cell->vertex(i);
 
-              vertices_index_location.push_back(
-                std::make_pair(vertex_index, vertex_location));
+              // Check if vertex already exist and store the position with the
+              // key as the vertex id
+              if (map_vertices_index.find(vertex_index) ==
+                  map_vertices_index.end())
+                {
+                  std::pair<Point<dim>, std::vector<double>> point_empty_vector(
+                    vertex_location, {});
+                  map_vertices_index[vertex_index] = point_empty_vector;
+                }
             }
         }
-    }
-
-  std::sort(vertices_index_location.begin(),
-            vertices_index_location.end(),
-            [](std::pair<unsigned int, Point<dim>> &pair1,
-               std::pair<unsigned int, Point<dim>> &pair2) {
-              return (pair1.first < pair2.first);
-            });
-
-  // Keep unique position to avoid redundant counts calculation
-  auto last =
-    std::unique(vertices_index_location.begin(), vertices_index_location.end());
-  vertices_index_location.erase(last, vertices_index_location.end());
-
-  // Put vertices indexes to a container and position in a vector
-  map_vertices_index.clear();
-  for (auto &it_vertices : vertices_index_location)
-    {
-      std::pair<Point<dim>, std::vector<double>> point_empty_vector(
-        it_vertices.second, {});
-      map_vertices_index.insert({it_vertices.first, point_empty_vector});
-
-      std::cout << it_vertices.first << " "
-                << map_vertices_index[it_vertices.first].first << std::endl;
     }
 }
 
@@ -218,42 +198,31 @@ RPTNodalReconstruction<dim>::calculate_counts(
     &index_count)
 {
   std::vector<double> calculated_counts;
+
   // Create radioactive particle with positions
-  particles.clear();
-  unsigned int id = 0;
-  for (auto &it_map : index_count)
-    {
-      RadioParticle<dim> particle(it_map.second.first, id);
-      particles.push_back(particle);
-      id++;
-    }
-
-
-  // Calculate count for every particle-detector pair
-  for (unsigned int i_particle = 0; i_particle < particles.size(); i_particle++)
-    {
-      for (unsigned int i_detector = 0; i_detector < detectors.size();
-           i_detector++)
-        {
-          // Create the particle-detector interaction object
-          ParticleDetectorInteractions<dim> particle_detector_interactions(
-            particles[i_particle], detectors[i_detector], parameters);
-
-          double count = particle_detector_interactions.calculate_count();
-          calculated_counts.push_back(count);
-        }
-    }
-
-  // Transfer counts to the map of vertices id
   unsigned int i = 0;
   for (auto &it : index_count)
     {
-      std::vector<double>::const_iterator first = calculated_counts.begin() + i;
-      std::vector<double>::const_iterator last =
-        calculated_counts.begin() + i + detectors.size();
-      std::vector<double> counts(first, last);
-      it.second.second = counts;
-      i += detectors.size();
+      // Check if counts are not already calculated at vertex
+      if (it.second.second.empty())
+        {
+          RadioParticle<dim> particle(it.second.first, i);
+          calculated_counts.clear();
+          for (unsigned int i_detector = 0; i_detector < detectors.size();
+               i_detector++)
+            {
+              // Create the particle-detector interaction object
+              ParticleDetectorInteractions<dim> particle_detector_interactions(
+                particle, detectors[i_detector], parameters);
+
+              double count = particle_detector_interactions.calculate_count();
+              calculated_counts.push_back(count);
+            }
+          it.second.second = calculated_counts;
+          i++;
+
+          // std::cout << it.first << " " << it.second.first << std::endl;
+        }
     }
 }
 
@@ -261,7 +230,8 @@ template <int dim>
 std::vector<int>
 RPTNodalReconstruction<dim>::find_cells(
   IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
-  std::vector<int> parent_cell_indexes /* {-1} */)
+  std::vector<double> &particle_reconstruction_counts,
+  std::vector<int>     parent_cell_indexes /* {-1} */)
 {
   double            min, max;
   std::vector<bool> candidate_detector(detectors.size());
@@ -281,7 +251,7 @@ RPTNodalReconstruction<dim>::find_cells(
             }
         }
       else
-        parent_is_candidate = true; // Level 0 : no parent
+        parent_is_candidate = true; // Level 1
 
       if (parent_is_candidate)
         {
@@ -298,8 +268,8 @@ RPTNodalReconstruction<dim>::find_cells(
                                       counts_vertices.end());
               max = *std::max_element(counts_vertices.begin(),
                                       counts_vertices.end());
-              if (reconstruction_counts[j] >= min &&
-                  reconstruction_counts[j] <= max)
+              if (particle_reconstruction_counts[j] >= min &&
+                  particle_reconstruction_counts[j] <= max)
                 candidate_detector[j] = true;
               else
                 candidate_detector[j] = false;
@@ -310,7 +280,6 @@ RPTNodalReconstruction<dim>::find_cells(
             candidates.push_back(cell->index());
         }
     }
-
 
   // If there's no children candidates, parent cells are keep
   if (candidates.empty())
@@ -326,7 +295,8 @@ template <int dim>
 int
 RPTNodalReconstruction<dim>::find_best_cell(
   IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
-  std::vector<int>                                    candidate)
+  std::vector<double> &particle_reconstruction_counts,
+  std::vector<int>     candidate)
 {
   std::vector<std::pair<int, double>> cellid_error;
   double                              error;
@@ -352,7 +322,7 @@ RPTNodalReconstruction<dim>::find_best_cell(
                   unsigned int vertex_index = cell->vertex_index(i);
                   error +=
                     std::pow(std::fabs(
-                               reconstruction_counts[j] -
+                               particle_reconstruction_counts[j] -
                                map_vertices_index[vertex_index].second[j]),
                              2);
                 }
@@ -369,6 +339,36 @@ RPTNodalReconstruction<dim>::find_best_cell(
             });
 
   return best_cell = cellid_error[0].first;
+}
+
+template <int dim>
+void
+RPTNodalReconstruction<dim>::read_counts()
+{
+  // Read counts for reconstruction
+  const std::string filename =
+    parameters.reconstruction_param.reconstruction_counts_file;
+  std::ifstream counts_file(filename);
+
+  std::vector<double> values;
+  std::copy(std::istream_iterator<double>(counts_file),
+            std::istream_iterator<double>(),
+            std::back_inserter(values));
+
+  // Get the number of detector
+  unsigned int number_of_detectors = detectors.size();
+
+  // Extract positions, create point objects and detectors
+  for (unsigned int i = 0; i < values.size(); i += number_of_detectors)
+    {
+      std::vector<double>::const_iterator first = values.begin() + i;
+      std::vector<double>::const_iterator last =
+        values.begin() + i + number_of_detectors;
+
+      std::vector<double> particle_counts(first, last);
+
+      reconstruction_counts.push_back(particle_counts);
+    }
 }
 
 /*

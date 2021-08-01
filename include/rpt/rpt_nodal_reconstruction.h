@@ -61,7 +61,7 @@ public:
   set_coarse_mesh_map();
 
   void
-  find_unknown_position();
+  find_unknown_position(std::vector<double> &particle_reconstruction_counts);
 
   void
   get_positions(
@@ -70,17 +70,22 @@ public:
 
   std::vector<int>
   find_cells(IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
-             std::vector<int> parent_cell_indexes = {-1});
+             std::vector<double> &particle_reconstruction_counts,
+             std::vector<int>     parent_cell_indexes = {-1});
 
   int
   find_best_cell(
     IteratorRange<TriaIterator<CellAccessor<dim, dim>>> cell_iterators,
-    std::vector<int>                                    candidate);
+    std::vector<double> &particle_reconstruction_counts,
+    std::vector<int>     candidate);
 
   void
   calculate_counts(
     std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
       &index_counts);
+
+  void
+  read_counts();
 
 
   // void
@@ -100,15 +105,13 @@ private:
                                           map_vertices_index_coarse_mesh;
   RPTCalculatingParameters                parameters;
   Parameters::RPTReconstructionParameters reconstruction_parameters;
-  std::vector<RadioParticle<dim>>         particles;
   std::vector<Detector<dim>>              detectors;
 
-  std::vector<double> reconstruction_counts;
-  std::vector<int>    cells_indexes_coarse_mesh;
+  std::vector<std::vector<double>> reconstruction_counts;
+  std::vector<int>                 cells_indexes_coarse_mesh;
   std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
     map_vertices_index;
 };
-
 
 
 #endif // LETHE_MAP_H
