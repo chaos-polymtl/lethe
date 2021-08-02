@@ -39,7 +39,7 @@ RPT<dim>::setup_and_calculate()
 
       if (rpt_parameters.tuning_param.tuning)
         {
-          extract_experimental_counts(measured_counts);
+          measured_counts = extract_experimental_counts();
           AssertThrow(
             measured_counts.size() == particle_positions.size(),
             ExcMessage(
@@ -161,7 +161,7 @@ template <int dim>
 void
 RPT<dim>::export_data(std::vector<double> &calculated_counts)
 {
-  // Open a .csv file
+  // Open a file
   std::ofstream myfile;
   std::string   sep;
   if (rpt_parameters.rpt_param.export_counts)

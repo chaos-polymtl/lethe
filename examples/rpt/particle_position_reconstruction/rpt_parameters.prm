@@ -28,8 +28,8 @@ end
 subsection reconstruction
 	set reconstruction                          = true
 	set refinement                              = 6
-	set reconstruction counts file              = testing.reconstruction
-    set minimum target volume = 1e-9
+	set reconstruction counts file              = testing2.reconstruction
+    set export reconstruction positions files   = testing.csv
 end
 
 

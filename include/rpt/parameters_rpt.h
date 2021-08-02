@@ -148,7 +148,7 @@ namespace Parameters
     bool         reconstruction;
     unsigned int reactor_refinement;
     std::string  reconstruction_counts_file;
-    double       minimum_volume;
+    std::string  reconstruction_positions_file;
 
 
     static void

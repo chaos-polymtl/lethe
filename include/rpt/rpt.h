@@ -18,11 +18,6 @@
 * Polytechnique Montreal, 2020-
 */
 
-/**
- * This class allows to calculate the photon count from a particle received by
- * a detector with the Monte Carlo method.
- */
-
 #ifndef lethe_rpt_h
 #define lethe_rpt_h
 
@@ -82,11 +77,11 @@ public:
   /**
    * @brief Read text file for experimental count data and store it in a vector
    */
-  void
-  extract_experimental_counts(std::vector<double> &measured_counts);
+  std::vector<double>
+  extract_experimental_counts();
 
   /**
-   * @brief Export position, detector id and count results on .csv
+   * @brief Export position, detector id and count results in .csv or .dat
    */
   void
   export_data(std::vector<double> &calculated_counts);
