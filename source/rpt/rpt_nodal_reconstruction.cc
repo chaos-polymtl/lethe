@@ -71,7 +71,7 @@ RPTNodalReconstruction<dim>::find_unknown_position(
   cells_indexes = find_cells(level, particle_reconstruction_counts);
 
   // Find the positions with the more refine candidate cell
-  while (level <= parameters.reconstruction_param.reactor_refinement &&
+  while (level < parameters.reconstruction_param.reactor_refinement &&
          still_new_candidates)
     {
       level++; // Start at level 1
