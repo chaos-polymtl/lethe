@@ -55,15 +55,7 @@ SolidBase<dim, spacedim>::SolidBase(
   : mpi_communicator(MPI_COMM_WORLD)
   , n_mpi_processes(Utilities::MPI::n_mpi_processes(mpi_communicator))
   , this_mpi_process(Utilities::MPI::this_mpi_process(mpi_communicator))
-  , solid_tria(
-      dynamic_cast<parallel::DistributedTriangulationBase<dim, spacedim> *>(
-        new parallel::distributed::Triangulation<dim, spacedim>(
-          mpi_communicator,
-          typename Triangulation<dim, spacedim>::MeshSmoothing(
-            Triangulation<dim, spacedim>::smoothing_on_refinement |
-            Triangulation<dim, spacedim>::smoothing_on_coarsening))))
   , fluid_tria(fluid_tria)
-  , solid_dh(*solid_tria)
   , fluid_mapping(fluid_mapping)
   , param(param)
   , velocity(&param->solid_velocity)
@@ -85,8 +77,16 @@ SolidBase<dim, spacedim>::SolidBase(
     {
       // Usual case, for quad/hex meshes
       fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
-      solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
+      solid_mapping = std::make_shared<MappingQ<dim, spacedim>>(1);
       quadrature    = std::make_shared<QGauss<dim>>(degree_velocity + 1);
+      solid_tria =
+        std::make_shared<parallel::distributed::Triangulation<dim, spacedim>>(
+          mpi_communicator,
+          typename Triangulation<dim, spacedim>::MeshSmoothing(
+            Triangulation<dim, spacedim>::smoothing_on_refinement |
+            Triangulation<dim, spacedim>::smoothing_on_coarsening));
+      solid_dh.clear();
+      solid_dh.reinit(*this->solid_tria);
     }
 }
 
@@ -224,7 +224,7 @@ SolidBase<dim, spacedim>::setup_triangulation(const bool restart)
 
 template <>
 void
-SolidBase<2, 2>::rotate_grid(double angle, int axis)
+SolidBase<2, 2>::rotate_grid(double angle, int /*axis*/)
 {
   GridTools::rotate(angle, *solid_tria);
 }
@@ -292,6 +292,11 @@ SolidBase<dim, spacedim>::setup_particles_handler()
   solid_particle_handler->initialize(*fluid_tria, *fluid_mapping, n_properties);
 
   // Connect Nitsche particles to the fluid triangulation
+  fluid_tria->signals.pre_distributed_repartition.connect(
+    [&]() { solid_particle_handler->register_store_callback_function(); });
+  fluid_tria->signals.post_distributed_repartition.connect(
+    [&]() { solid_particle_handler->register_load_callback_function(false); });
+
   fluid_tria->signals.pre_distributed_refinement.connect(
     [&]() { solid_particle_handler->register_store_callback_function(); });
   fluid_tria->signals.post_distributed_refinement.connect(
@@ -308,9 +313,11 @@ SolidBase<dim, spacedim>::setup_particles()
   std::vector<Point<spacedim>> quadrature_points_vec;
   quadrature_points_vec.reserve(quadrature->size() *
                                 solid_tria->n_locally_owned_active_cells());
+  unsigned int n_properties = (dim == 2 && spacedim == 3) ? 1 + spacedim : 1;
+
   std::vector<std::vector<double>> properties;
   properties.reserve(quadrature->size() *
-                     solid_tria->n_locally_owned_active_cells());
+                     solid_tria->n_locally_owned_active_cells() * n_properties);
 
   UpdateFlags update_flags = update_JxW_values | update_quadrature_points;
   if (dim == 2 && spacedim == 3)
