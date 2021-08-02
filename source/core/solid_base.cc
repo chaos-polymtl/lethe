@@ -77,7 +77,7 @@ SolidBase<dim, spacedim>::SolidBase(
     {
       // Usual case, for quad/hex meshes
       fe            = std::make_shared<FE_Q<dim, spacedim>>(1);
-      solid_mapping = std::make_shared<MappingQ<dim, spacedim>>(1);
+      solid_mapping = std::make_shared<MappingQGeneric<dim, spacedim>>(1);
       quadrature    = std::make_shared<QGauss<dim>>(degree_velocity + 1);
       solid_tria =
         std::make_shared<parallel::distributed::Triangulation<dim, spacedim>>(
