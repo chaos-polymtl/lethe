@@ -34,15 +34,27 @@ RPT<dim>::calculate()
     }
 
 
-  // Open a .csv file if exporting results in enable
+  // Open a .csv or .dat file if exporting results in enable
   std::ofstream myfile;
+  std::string   sep;
   if (rpt_parameters.rpt_param.export_counts)
     {
       std::string filename = rpt_parameters.rpt_param.export_counts_file;
-      myfile.open(filename + ".csv");
-      myfile
-        << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
-        << std::endl;
+      myfile.open(filename);
+      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+        {
+          myfile
+            << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
+            << std::endl;
+          sep = " ";
+        }
+      else // .csv is default
+        {
+          myfile
+            << "particle_positions_x,particle_positions_y,particle_positions_z,detector_id,counts"
+            << std::endl;
+          sep = ",";
+        }
     }
 
   // Seed the random number generator
@@ -71,8 +83,8 @@ RPT<dim>::calculate()
 
           // Export results in .csv if enable
           if (myfile.is_open())
-            myfile << particle_positions[i_particle].get_position() << " "
-                   << detectors[i_detector].get_id() << " " << count
+            myfile << particle_positions[i_particle].get_position() << sep
+                   << detectors[i_detector].get_id() << sep << count
                    << std::endl;
         }
     }

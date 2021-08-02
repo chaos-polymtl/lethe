@@ -18,8 +18,7 @@
  */
 
 /**
- * @brief Assure angles are proceed correctly in any different
- * cases related to the particle position regarding the detector position.
+ * @brief Assure cost functions for RPT give expected outcomes.
  */
 
 #include <deal.II/base/point.h>
