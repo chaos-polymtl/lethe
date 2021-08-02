@@ -749,18 +749,11 @@ NavierStokesBase<dim, VectorType, DofsType>::refine_mesh_kelly()
         previous_solutions[i]);
     }
 
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m1(
-    this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m2(
-    this->dof_handler);
-  parallel::distributed::SolutionTransfer<dim, VectorType> solution_transfer_m3(
-    this->dof_handler);
   solution_transfer.prepare_for_coarsening_and_refinement(present_solution);
 
   multiphysics->prepare_for_mesh_adaptation();
   if (this->simulation_parameters.post_processing.calculate_average_velocities)
     average_velocities->prepare_for_mesh_adaptation();
-
 
   tria.execute_coarsening_and_refinement();
   this->setup_dofs();
