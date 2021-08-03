@@ -190,11 +190,11 @@ RPT<dim>::export_data(std::vector<double> &calculated_counts)
       for (unsigned int i_detector = 0; i_detector < detectors.size();
            i_detector++)
         {
-          myfile << particle_positions[i_particle].get_position() << sep
-                 << detectors[i_detector].get_id() << sep
-                 << calculated_counts[i_particle * particle_positions.size() +
-                                      i_detector]
-                 << std::endl;
+          myfile
+            << particle_positions[i_particle].get_position() << sep
+            << detectors[i_detector].get_id() << sep
+            << calculated_counts[i_particle * detectors.size() + i_detector]
+            << std::endl;
         }
     }
 

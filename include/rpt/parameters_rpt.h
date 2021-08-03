@@ -106,16 +106,6 @@ namespace Parameters
 
     CostFunctionType cost_function_type;
 
-    // Type of cost function
-    enum class CostFunctionType
-    {
-      larachi,
-      L1,
-      L2
-    };
-
-    CostFunctionType cost_function_type;
-
     // Filename of experimental data
     std::string experimental_file;
 
