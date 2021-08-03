@@ -1,0 +1,18 @@
+CONTENT OF THIS EXAMPLE
+
+TL;DR
+Generate a geometry with SALOME, mesh it and then add the boundary IDs with GMSH, then use LETHE with simplices on to simulate a flow in a complex geometry.
+
+1. Generating a geometry from SALOME 9.7.0
+	1. Adding geometric objects
+	2. Using boolean operations
+	3. Dumping/loading .py file to edit settings
+	4. Generating a .mesh with Mesh module from GMF export
+2. Adding the boundary IDs from GMSH
+	1. Loading the .mesh file
+	2. Selecting the proper surfaces for inlet/outlet
+	3. "Defaulting" the remaining surfaces to wall boundary
+	4. Generating 3D mesh and exporting to .msh
+3. Building the .prm file
+	1. Adding "simplex = true" to the file
+
