@@ -87,7 +87,8 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_free_surface = false;
+    gather_free_surface  = false;
+    gather_void_fraction = false;
   }
 
   /**
@@ -115,6 +116,11 @@ public:
       enable_free_surface(sd.fe_values_free_surface->get_fe(),
                           sd.fe_values_free_surface->get_quadrature(),
                           sd.fe_values_free_surface->get_mapping());
+
+    if (sd.gather_void_fraction)
+      enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
+                           sd.fe_values_void_fraction->get_quadrature(),
+                           sd.fe_values_void_fraction->get_mapping());
   }
 
 
@@ -250,19 +256,7 @@ public:
   void
   enable_free_surface(const FiniteElement<dim> &fe,
                       const Quadrature<dim> &   quadrature,
-                      const Mapping<dim> &      mapping)
-  {
-    gather_free_surface    = true;
-    fe_values_free_surface = std::make_shared<FEValues<dim>>(
-      mapping, fe, quadrature, update_values | update_gradients);
-
-    // Free surface
-    phase_values = std::vector<double>(this->n_q_points);
-    previous_phase_values =
-      std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
-                                       std::vector<double>(this->n_q_points));
-    phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
-  }
+                      const Mapping<dim> &      mapping);
 
   /** @brief Reinitialize the content of the scratch for the free surface
    *
@@ -298,6 +292,59 @@ public:
       {
         this->fe_values_free_surface->get_function_values(
           previous_solutions[p], previous_phase_values[p]);
+      }
+  }
+
+  /**
+   * @brief enable_void_fraction Enables the collection of the void fraction data by the scratch
+   *
+   * @param fe FiniteElement associated with the void fraction
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+
+  void
+  enable_void_fraction(const FiniteElement<dim> &fe,
+                       const Quadrature<dim> &   quadrature,
+                       const Mapping<dim> &      mapping);
+
+  /** @brief Reinitialize the content of the scratch for the void fraction
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the void fraction FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for [epsilon]
+   *
+   * @param previous_solutions The solutions at the previous time steps for [epsilon]
+   *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [epsilon]
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_void_fraction(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType &                                    current_solution,
+    const std::vector<VectorType> &                       previous_solutions,
+    const std::vector<VectorType> & /*solution_stages*/)
+  {
+    this->fe_values_void_fraction->reinit(cell);
+
+    // Gather void fraction (values, gradient)
+    this->fe_values_void_fraction->get_function_values(
+      current_solution, this->void_fraction_values);
+    this->fe_values_void_fraction->get_function_gradients(
+      current_solution, this->void_fraction_gradient_values);
+
+    // Gather previous phase fraction values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_free_surface->get_function_values(
+          previous_solutions[p], previous_void_fraction_values[p]);
       }
   }
 
@@ -348,6 +395,18 @@ public:
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_free_surface;
+
+
+  /**
+   * Scratch component for the void fractoin auxiliary physics
+   */
+  bool                             gather_void_fraction;
+  unsigned int                     n_dofs_void_fraction;
+  std::vector<double>              void_fraction_values;
+  std::vector<std::vector<double>> previous_void_fraction_values;
+  std::vector<Tensor<1, dim>>      void_fraction_gradient_values;
+  // This is stored as a shared_ptr because it is only instantiated when needed
+  std::shared_ptr<FEValues<dim>> fe_values_void_fraction;
 };
 
 #endif

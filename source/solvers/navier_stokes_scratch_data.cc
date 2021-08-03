@@ -63,6 +63,45 @@ NavierStokesScratchData<dim>::allocate()
     n_q_points, std::vector<Tensor<1, dim>>(n_dofs));
 }
 
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_free_surface(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
+{
+  gather_free_surface    = true;
+  fe_values_free_surface = std::make_shared<FEValues<dim>>(
+    mapping, fe, quadrature, update_values | update_gradients);
+
+  // Free surface
+  phase_values = std::vector<double>(this->n_q_points);
+  previous_phase_values =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
+  phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+}
+
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_void_fraction(
+  const FiniteElement<dim> &fe,
+  const Quadrature<dim> &   quadrature,
+  const Mapping<dim> &      mapping)
+{
+  gather_void_fraction    = true;
+  fe_values_void_fraction = std::make_shared<FEValues<dim>>(
+    mapping, fe, quadrature, update_values | update_gradients);
+
+  // Free surface
+  void_fraction_values = std::vector<double>(this->n_q_points);
+  previous_void_fraction_values =
+    std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
+                                     std::vector<double>(this->n_q_points));
+  void_fraction_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+}
+
 
 template class NavierStokesScratchData<2>;
 template class NavierStokesScratchData<3>;
