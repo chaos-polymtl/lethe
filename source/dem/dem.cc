@@ -534,16 +534,7 @@ DEMSolver<dim>::finish_simulation()
   // Testing
   if (parameters.test.enabled)
     {
-      for (unsigned int processor_number = 0;
-           processor_number < n_mpi_processes;
-           ++processor_number)
-        {
-          MPI_Barrier(MPI_COMM_WORLD);
-          if (this_mpi_process == processor_number)
-            {
-              visualization_object.print_xyz(particle_handler, pcout);
-            }
-        }
+      visualization_object.print_xyz(particle_handler, mpi_communicator, pcout);
     }
 
   // Outputting force and torques over boundary

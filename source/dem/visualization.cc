@@ -82,34 +82,46 @@ template <int dim>
 void
 Visualization<dim>::print_xyz(
   dealii::Particles::ParticleHandler<dim> &particle_handler,
+  const MPI_Comm &                         mpi_communicator,
   const ConditionalOStream &               pcout)
 {
-  // Storing local particles in a map for writing
-  std::map<int, Particles::ParticleIterator<dim>> local_particles;
-  for (auto particle = particle_handler.begin();
-       particle != particle_handler.end();
-       ++particle)
-    {
-      local_particles.insert({particle->get_id(), particle});
-    }
+  unsigned int n_mpi_processes(
+    Utilities::MPI::n_mpi_processes(mpi_communicator));
+  unsigned int this_mpi_process(
+    Utilities::MPI::this_mpi_process(mpi_communicator));
 
   pcout << "id, type, dp, x, y, z " << std::endl;
-  std::flush(std::cout);
-
-  for (auto &iterator : local_particles)
+  for (unsigned int processor_number = 0; processor_number < n_mpi_processes;
+       ++processor_number)
     {
-      unsigned int id                  = iterator.first;
-      auto         particle            = iterator.second;
-      auto         particle_properties = particle->get_properties();
-      auto         particle_location   = particle->get_location();
+      MPI_Barrier(mpi_communicator);
+      if (this_mpi_process == processor_number)
+        {
+          // Storing local particles in a map for writing
+          std::map<int, Particles::ParticleIterator<dim>> local_particles;
+          for (auto particle = particle_handler.begin();
+               particle != particle_handler.end();
+               ++particle)
+            {
+              local_particles.insert({particle->get_id(), particle});
+            }
 
-      std::cout << std::fixed << std::setprecision(0) << id << " "
-                << std::setprecision(0)
-                << particle_properties[DEM::PropertiesIndex::type] << " "
-                << std::setprecision(5)
-                << particle_properties[DEM::PropertiesIndex::dp] << " "
-                << std::setprecision(4) << particle_location << std::endl;
-      std::flush(std::cout);
+          for (auto &iterator : local_particles)
+            {
+              unsigned int id                  = iterator.first;
+              auto         particle            = iterator.second;
+              auto         particle_properties = particle->get_properties();
+              auto         particle_location   = particle->get_location();
+
+              std::cout << std::fixed << std::setprecision(0) << id << " "
+                        << std::setprecision(0)
+                        << particle_properties[DEM::PropertiesIndex::type]
+                        << " " << std::setprecision(5)
+                        << particle_properties[DEM::PropertiesIndex::dp] << " "
+                        << std::setprecision(4) << particle_location
+                        << std::endl;
+            }
+        }
     }
 }
 

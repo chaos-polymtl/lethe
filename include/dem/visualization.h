@@ -71,6 +71,7 @@ public:
    */
   void
   print_xyz(dealii::Particles::ParticleHandler<dim> &particle_handler,
+            const MPI_Comm &                         mpi_communicator,
             const ConditionalOStream &               pcout);
 
   ~Visualization();
