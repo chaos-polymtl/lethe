@@ -1,26 +1,8 @@
-/* ---------------------------------------------------------------------
- *
- * Copyright (C) 2020 - by the Lethe authors
- *
- * This file is part of the Lethe library
- *
- * The Lethe library is free software; you can use it, redistribute
- * it, and/or modify it under the terms of the GNU Lesser General
- * Public License as published by the Free Software Foundation; either
- * version 3.1 of the License, or (at your option) any later version.
- * The full text of the license can be found in the file LICENSE at
- * the top level of the Lethe distribution.
- *
- * ---------------------------------------------------------------------
-
-*
-* Author: Bruno Blais, Ghazaleh Mirakhori Polytechnique Montreal, 2020-
-*/
-
 #include <deal.II/base/point.h>
 
 #include <rpt/rpt.h>
 
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <iterator>
@@ -38,15 +20,41 @@ RPT<dim>::calculate()
   assign_particle_positions();
   assign_detector_positions();
 
-  // Open a .csv file if exporting results in enable
+  std::vector<double> calculated_counts;
+  std::vector<double> measured_counts;
+  if (rpt_parameters.initial_param.tuning == true)
+    {
+      measured_counts = extract_experimental_counts();
+      AssertThrow(
+        measured_counts.size() == particle_positions.size(),
+        ExcMessage(
+          "Prior tuning parameters, the number of particle positions provided"
+          " has to be the same number of counts of experimental data. "
+          "Note : The experimental counts also have to be at the same positions which can not be verified."))
+    }
+
+
+  // Open a .csv or .dat file if exporting results in enable
   std::ofstream myfile;
+  std::string   sep;
   if (rpt_parameters.rpt_param.export_counts)
     {
-      std::string filename = rpt_parameters.rpt_param.particle_positions_file;
-      myfile.open(filename.substr(0, filename.find(".")) + ".csv");
-      myfile
-        << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
-        << std::endl;
+      std::string filename = rpt_parameters.rpt_param.export_counts_file;
+      myfile.open(filename);
+      if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
+        {
+          myfile
+            << "particle_positions_x particle_positions_y particle_positions_z detector_id counts"
+            << std::endl;
+          sep = " ";
+        }
+      else // .csv is default
+        {
+          myfile
+            << "particle_positions_x,particle_positions_y,particle_positions_z,detector_id,counts"
+            << std::endl;
+          sep = ",";
+        }
     }
 
   // Seed the random number generator
@@ -65,22 +73,31 @@ RPT<dim>::calculate()
             detectors[i_detector],
             rpt_parameters);
 
-          // Calculate count and print it in terminal
+          // Calculate count and print it in terminal or store is if tuning
+          // is enable
           double count = particle_detector_interactions.calculate_count();
-          std::cout << "Count for particle position " << i_particle
-                    << " and detector " << i_detector << " : " << count
-                    << std::endl;
+          if (rpt_parameters.initial_param.tuning == true)
+            calculated_counts.push_back(count);
+          else
+            std::cout << count << std::endl;
 
           // Export results in .csv if enable
           if (myfile.is_open())
-            myfile << particle_positions[i_particle].get_position() << " "
-                   << detectors[i_detector].get_id() << " " << count
+            myfile << particle_positions[i_particle].get_position() << sep
+                   << detectors[i_detector].get_id() << sep << count
                    << std::endl;
         }
     }
 
   if (myfile.is_open())
     myfile.close();
+
+  if (rpt_parameters.initial_param.tuning == true)
+    {
+      double cost_function =
+        calculate_cost_function(measured_counts, calculated_counts);
+      std::cout << cost_function << std::endl;
+    }
 }
 
 template <int dim>
@@ -88,7 +105,6 @@ void
 RPT<dim>::assign_particle_positions()
 {
   // Read text file with particle positions and store it in vector
-  std::string   line;
   std::ifstream particle_file(rpt_parameters.rpt_param.particle_positions_file);
 
   std::vector<double> values;
@@ -114,7 +130,6 @@ void
 RPT<dim>::assign_detector_positions()
 {
   // Read text file with detector positions and store it in vector
-  std::string   line;
   std::ifstream detector_file(
     rpt_parameters.detector_param.detector_positions_file);
 
@@ -143,6 +158,60 @@ RPT<dim>::assign_detector_positions()
 
       detectors.push_back(detector);
     }
+}
+template <int dim>
+std::vector<double>
+RPT<dim>::extract_experimental_counts()
+{
+  // Read text file with experimental counts
+  std::ifstream experimental_file(
+    rpt_parameters.initial_param.experimental_file);
+
+  std::vector<double> measured_counts;
+  std::copy(std::istream_iterator<double>(experimental_file),
+            std::istream_iterator<double>(),
+            std::back_inserter(measured_counts));
+
+  return measured_counts;
+}
+
+template <int dim>
+double
+RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
+                                  std::vector<double> &calculated_counts)
+{
+  double cost_function = 0;
+
+  if (rpt_parameters.initial_param.cost_function_type ==
+      Parameters::InitialRPTParameters::CostFunctionType::larachi)
+    {
+      for (unsigned int i = 0; i < measured_counts.size(); i++)
+        {
+          cost_function +=
+            std::pow((calculated_counts[i] - measured_counts[i]) /
+                       (calculated_counts[i] + measured_counts[i]),
+                     2);
+        }
+    }
+  else if (rpt_parameters.initial_param.cost_function_type ==
+           Parameters::InitialRPTParameters::CostFunctionType::L1)
+    {
+      for (unsigned int i = 0; i < measured_counts.size(); i++)
+        cost_function += abs(calculated_counts[i] - measured_counts[i]);
+
+      cost_function /= measured_counts.size();
+    }
+  else if (rpt_parameters.initial_param.cost_function_type ==
+           Parameters::InitialRPTParameters::CostFunctionType::L2)
+    {
+      for (unsigned int i = 0; i < measured_counts.size(); i++)
+        cost_function +=
+          std::pow((calculated_counts[i] - measured_counts[i]), 2);
+
+      cost_function /= measured_counts.size();
+    }
+
+  return cost_function;
 }
 
 template class RPT<3>;

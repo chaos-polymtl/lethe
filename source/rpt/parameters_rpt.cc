@@ -9,13 +9,18 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("particle positions file",
                       "none",
                       Patterns::FileName(),
-                      "Particle positions file name");
+                      "Particle positions filename");
 
     prm.declare_entry(
       "export counts",
       "false",
       Patterns::Bool(),
       "Enable to export counts result in a .csv file <true|false>");
+
+    prm.declare_entry("counts file",
+                      "counts",
+                      Patterns::FileName(),
+                      "Exported count's results filename");
 
     prm.declare_entry("monte carlo iteration",
                       "1",
@@ -52,6 +57,7 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
   {
     particle_positions_file = prm.get("particle positions file");
     export_counts           = prm.get_bool("export counts");
+    export_counts_file      = prm.get("counts file");
     n_monte_carlo_iteration = prm.get_integer("monte carlo iteration");
     reactor_radius          = prm.get_double("reactor radius");
     peak_to_total_ratio     = prm.get_double("peak-to-total ratio");
@@ -74,6 +80,17 @@ Parameters::InitialRPTParameters::declare_parameters(ParameterHandler &prm)
                       "false",
                       Patterns::Bool(),
                       "Enable parameter tuning <true|false>");
+
+    prm.declare_entry("cost function type",
+                      "larachi",
+                      Patterns::Selection("larachi|L1|L2"),
+                      "Cost function used for the parameter tuning"
+                      "Choices are <larachi|L1|L2>.");
+
+    prm.declare_entry("experimental data file",
+                      "none",
+                      Patterns::FileName(),
+                      "Experimental counts data file name");
 
     prm.declare_entry("dead time",
                       "1",
@@ -108,7 +125,20 @@ Parameters::InitialRPTParameters::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("parameter tuning");
   {
-    tuning             = prm.get_bool("tuning");
+    tuning = prm.get_bool("tuning");
+
+    const std::string type = prm.get("cost function type");
+    if (type == "larachi")
+      cost_function_type = CostFunctionType::larachi;
+    else if (type == "dealii")
+      cost_function_type = CostFunctionType::L1;
+    else if (type == "periodic_hills")
+      cost_function_type = CostFunctionType::L2;
+    else
+      throw std::logic_error(
+        "Error, invalid cost function type. Choices are larachi, L2 or L1.");
+
+    experimental_file  = prm.get("experimental data file");
     dead_time          = prm.get_double("dead time");
     activity           = prm.get_double("activity");
     gamma_rays_emitted = prm.get_double("gamma-rays emitted");

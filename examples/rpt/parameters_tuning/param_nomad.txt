@@ -1,0 +1,17 @@
+DIMENSION      3                                      # number of variables
+
+BB_EXE         "$python3 rpt_lethe_nomad.py"          # blackbox (script)
+
+BB_OUTPUT_TYPE OBJ
+
+X0             ( 1e-4 1e6 15 )                        # starting point (dead time, activity,
+                                                      # attenuation coefficient reactor)
+
+LOWER_BOUND    * 0                                    # all variables are >= 0
+
+MAX_BB_EVAL    500                                    # the algorithm terminates when
+                                                      # X black-box evaluations have
+                                                      # been done
+
+DISPLAY_STATS BBE ( SOL ) OBJ                         # Display the number of evaluation (BBE),
+							                          # the current solution ( SOL ) and the objective
