@@ -1,12 +1,12 @@
 #include <dem/lagrangian_post_processing.h>
 
-#include <fstream>
-
 #include <deal.II/dofs/dof_handler.h>
 
 #include <deal.II/lac/block_vector.h>
 
 #include <deal.II/numerics/data_out.h>
+
+#include <fstream>
 
 using namespace dealii;
 
