@@ -48,6 +48,8 @@ test()
 
 
     Triangulation<2> triangulation;
+    GridGenerator::hyper_cube(triangulation, -1, 1);
+
 
     Triangulation<1,2> flat_triangulation;
     std::vector<Point<2>> vertices_of_flat(GeometryInfo<2>::vertices_per_face);
@@ -60,7 +62,7 @@ test()
 
 
     // Mesh
-    GridGenerator::hyper_cube(triangulation, -1, 1);
+
     triangulation.refine_global(5);
 
     // Mesh flat

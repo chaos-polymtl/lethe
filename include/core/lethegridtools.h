@@ -101,11 +101,19 @@ namespace LetheGridTools
     move_grid(Triangulation<dim> mesh,Tensor<2,dim+1> displacement);
 
     template  <int spacedim, int structdim>
-    Point<spacedim>
+    std::pair<std::pair<Point<spacedim>,bool>,Tensor<1,spacedim>>
     project_to_d_linear_object(const typename DoFHandler<structdim,spacedim>::active_cell_iterator &       object,
                                const Point<spacedim> &trial_point);
 
+    template  <int spacedim, int structdim>
+    double
+    dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
+                                        const Point<spacedim> &trial_point, const Point<structdim> &xi);
 
+    template < int spacedim, int structdim>
+    Tensor<1,structdim>
+    grad_dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
+                                                       const Point<spacedim> &trial_point, const Point<structdim> &xi);
 
 
     template <int dim>

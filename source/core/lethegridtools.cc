@@ -216,16 +216,17 @@ template <int dim>
 bool
 LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge){
 
-    auto &local_manifold = cell_edge->get_manifold();
-    std::vector<Point<dim>> manifold_points(GeometryInfo<dim-1>::vertices_per_cell);
+    std::cout<<" a 1 "<<std::endl;
+    std::vector<Point<dim>> manifold_points(GeometryInfo<1>::vertices_per_cell);
 
-    for (unsigned int i = 0; i < GeometryInfo<dim-1>::vertices_per_cell; ++i) {
-        manifold_points[i] = cell_edge->vertex(i);
+    for (unsigned int i = 0; i < GeometryInfo<1>::vertices_per_cell; ++i) {
+        std::cout<<" a 2 "<<std::endl;
+        manifold_points[i] = cell_edge->vertex(i) ;
     }
     auto surrounding_points =
             make_array_view(manifold_points.begin(), manifold_points.end());
     using numbers::PI;
-
+    std::cout<<" a 2 "<<std::endl;
     // A cell that is pierced either has to:
     // A) Fill these two conditions
     //    A1) The projection of one of the cell's
@@ -237,31 +238,36 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
 
     for (const auto face : cell->face_indices())
     {
+        std::cout<<" a 3 "<<std::endl;
         auto local_face = cell->face(face);
         std::vector<Tensor<1,dim>> normals_of_face_vertex(GeometryInfo<dim>::vertices_per_face);
         for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i) {
-            Point<dim> projected_point =
-                    local_manifold.project_to_manifold(surrounding_points, local_face->vertex(i));
-            projected_point= GridTools::project_to_object(cell_edge,local_face->vertex(i));
+            std::cout<<" a 4 "<<std::endl;
+            Point<dim> projected_point= GridTools::project_to_object(cell_edge,local_face->vertex(i));
+            std::cout<<" a 5 "<<std::endl;
             if (cell_edge->point_inside(projected_point))
                 condition_a1 = true;
             if(( local_face->vertex(i) - projected_point).norm()!=0)
                 normals_of_face_vertex[i] =( local_face->vertex(i) - projected_point)/( local_face->vertex(i) - projected_point).norm();
             else
                 return true;
+            std::cout<<" a 6 "<<std::endl;
         }
 
         for (unsigned int i = 0; i < 3; ++i) {
+            std::cout<<" a 7 "<<std::endl;
             if(i==2){
                 Tensor<1,dim> temp =  normals_of_face_vertex[1];
                 normals_of_face_vertex[1]=normals_of_face_vertex[0];
                 normals_of_face_vertex[0]=temp;
+
 
             }
             if(i==3){
                 Tensor<1,dim> temp =  normals_of_face_vertex[3];
                 normals_of_face_vertex[3]=normals_of_face_vertex[1];
                 normals_of_face_vertex[1]=temp;
+
             }
 
             for (unsigned int j = 0; j < GeometryInfo<dim>::vertices_per_face; ++j) {
@@ -294,7 +300,45 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
 }
 
 template < int spacedim, int structdim>
-Point<spacedim>
+double
+LetheGridTools::dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
+                                           const Point<spacedim> &trial_point, const Point<structdim> &xi)
+{
+    Point<spacedim> x_k;
+    for (const unsigned int i : GeometryInfo<structdim>::vertex_indices())
+        x_k += object->vertex(i) *
+               GeometryInfo<structdim>::d_linear_shape_function(xi, i);
+    return (x_k-trial_point).norm();
+
+}
+
+template < int spacedim, int structdim>
+Tensor<1,structdim>
+LetheGridTools::grad_dist_based_on_reference_point(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
+                                              const Point<spacedim> &trial_point, const Point<structdim> &xi)
+{
+    Tensor<1,structdim> F_k;
+    for (const unsigned int i : GeometryInfo<structdim>::vertex_indices()) {
+        double dx=1e-4;
+        Point<structdim> xi_dx=xi;
+        Point<structdim> xi_mdx=xi;
+        xi_dx[i]=xi[i]+dx;
+        xi_mdx[i]=xi[i]-dx;
+        double d0=dist_based_on_reference_point(object,
+                                                trial_point, xi_mdx);
+        double d1=dist_based_on_reference_point(object,
+                                                trial_point, xi_dx);
+        F_k[i] = (d1-d0)/(2*dx);
+    }
+    std::cout<<" aa "<<F_k<<std::endl;
+    return  F_k;
+
+}
+
+
+
+template < int spacedim, int structdim>
+std::pair<std::pair<Point<spacedim>,bool>,Tensor<1,spacedim>>
 LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
                            const Point<spacedim> &trial_point)
 {
@@ -331,7 +375,148 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
     // we start at xi=(0.5, 0.5).
     Point<structdim> xi;
     for (unsigned int d = 0; d < structdim; ++d)
-        xi[d] = 0;
+        xi[d] = 0.5;
+
+    Point<spacedim> x_k;
+    for (const unsigned int i : GeometryInfo<structdim>::vertex_indices())
+        x_k += object->vertex(i) *
+               GeometryInfo<structdim>::d_linear_shape_function(xi, i);
+
+
+    Tensor<1, structdim> last_grad;
+    Point<structdim> last_xi=xi;
+    last_xi[0]=xi[0]+1e-4;
+    for (unsigned int i=0 ;i<structdim; ++i ) {
+        double dx=1e-4;
+        Point<structdim> xi_dx=last_xi;
+        Point<structdim> xi_mdx=last_xi;
+        xi_dx[i]= xi_dx[i]+dx;
+        xi_mdx[i]=xi_mdx[i]-dx;
+        double d0=dist_based_on_reference_point(object,
+                                                trial_point, xi_mdx);
+        double d1=dist_based_on_reference_point(object,
+                                                trial_point, xi_dx);
+        last_grad[i] = (d1-d0)/(2*dx);
+    }
+
+
+
+    do
+    {
+        Tensor<1, structdim> grad;
+        for (unsigned int i=0 ;i<structdim; ++i ) {
+            double dx=1e-4;
+            Point<structdim> xi_dx=xi;
+            Point<structdim> xi_mdx=xi;
+            xi_dx[i]=xi[i]+dx;
+            xi_mdx[i]=xi[i]-dx;
+            double d0=dist_based_on_reference_point(object,
+           trial_point, xi_mdx);
+            double d1=dist_based_on_reference_point(object,
+                                                       trial_point, xi_dx);
+            grad[i] = (d1-d0)/(2*dx);
+        }
+
+        double alpha=abs(scalar_product((xi-last_xi),(grad-last_grad)))/((grad-last_grad).norm_square());
+        last_xi=xi;
+        last_grad=grad;
+        const Tensor<1, structdim> delta_xi = alpha * -grad;
+        xi += delta_xi;
+
+        x_k = Point<spacedim>();
+        for (const unsigned int i :
+                GeometryInfo<structdim>::vertex_indices())
+            x_k += object->vertex(i) *
+                   GeometryInfo<structdim>::d_linear_shape_function(xi, i);
+
+        if (delta_xi.norm() < 1e-7){
+            std::cout<<"local_point" <<xi<<std::endl;
+            break;
+        }
+    }
+    while (true);
+    Tensor<1, spacedim> normal;
+    if(spacedim==3) {
+        double dx=1e-4;
+        Point<structdim> xi_dx=xi;
+        Point<structdim> xi_dy=xi;
+        xi_dx[0]=xi[0]+dx;
+        xi_dy[1]=xi[1]-dx;
+        Point<spacedim> x_k_dx(0,0,0)  ;
+        Point<spacedim> x_k_dy(0,0,0)  ;
+        for (const unsigned int i :
+                GeometryInfo<structdim>::vertex_indices()) {
+            x_k_dx += object->vertex(i) *
+                   GeometryInfo<structdim>::d_linear_shape_function(xi_dx, i);
+            x_k_dy += object->vertex(i) *
+                   GeometryInfo<structdim>::d_linear_shape_function(xi_dy, i);
+
+
+        }
+
+        normal= cross_product_3d((x_k_dx-x_k),(x_k_dy-x_k));
+        normal=normal/normal.norm();
+
+    }
+
+    if(spacedim==2) {
+
+        Tensor<1, spacedim> temp=object->vertex(1)-object->vertex(0) ;
+        normal[0]=-temp[1];
+        normal[1]=temp[0];
+    }
+    bool inside=true;
+    for (unsigned int i=0 ;i<structdim; ++i ) {
+        if(xi[i]<0 || xi[i]>1 )
+            inside=false;
+    }
+
+    std::pair<Point<spacedim>,bool> point=std::make_pair(x_k,inside);
+    std::pair<std::pair<Point<spacedim>,bool>,Tensor<1,spacedim>> output= std::make_pair(point,normal);
+
+
+    return output;
+}
+
+/*template < int spacedim, int structdim>
+Point<spacedim>
+LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,spacedim>::active_cell_iterator&      object,
+                                           const Point<spacedim> &trial_point)
+{
+    // let's look at this for simplicity for a quad (structdim==2) in a
+    // space with spacedim>2 (notate trial_point by y): all points on the
+    // surface are given by
+    //   x(\xi) = sum_i v_i phi_x(\xi)
+    // where v_i are the vertices of the quad, and \xi=(\xi_1,\xi_2) are the
+    // reference coordinates of the quad. so what we are trying to do is
+    // find a point x on the surface that is closest to the point y. there
+    // are different ways to solve this problem, but in the end it's a
+    // nonlinear problem and we have to find reference coordinates \xi so
+    // that J(\xi) = 1/2 || x(\xi)-y ||^2 is minimal. x(\xi) is a function
+    // that is structdim-linear in \xi, so J(\xi) is a polynomial of degree
+    // 2*structdim that we'd like to minimize. unless structdim==1, we'll
+    // have to use a Newton method to find the answer. This leads to the
+    // following formulation of Newton steps:
+    //
+    // Given \xi_k, find \delta\xi_k so that
+    //   H_k \delta\xi_k = - F_k
+    // where H_k is an approximation to the second derivatives of J at
+    // \xi_k, and F_k is the first derivative of J.  We'll iterate this a
+    // number of times until the right hand side is small enough. As a
+    // stopping criterion, we terminate if ||\delta\xi||<eps.
+    //
+    // As for the Hessian, the best choice would be
+    //   H_k = J''(\xi_k)
+    // but we'll opt for the simpler Gauss-Newton form
+    //   H_k = A^T A
+    // i.e.
+    //   (H_k)_{nm} = \sum_{i,j} v_i*v_j *
+    //                   \partial_n phi_i *
+    //                   \partial_m phi_j
+    // we start at xi=(0.5, 0.5).
+    Point<structdim> xi;
+    for (unsigned int d = 0; d < structdim; ++d)
+        xi[d] = 0.5;
 
     Point<spacedim> x_k;
     for (const unsigned int i : GeometryInfo<structdim>::vertex_indices())
@@ -366,6 +551,10 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
         xi += delta_xi;
 
         x_k = Point<spacedim>();
+        std::cout<<"dx " <<delta_xi<<std::endl;
+        std::cout<<"xi" <<xi<<std::endl;
+        std::cout<<"dl,dx " <<F_k<<std::endl;
+        std::cout<<"H" <<H_k<<std::endl;
         for (const unsigned int i :
                 GeometryInfo<structdim>::vertex_indices())
             x_k += object->vertex(i) *
@@ -377,8 +566,7 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
     while (true);
 
     return x_k;
-}
-
+}*/
 
 
 
@@ -476,10 +664,6 @@ LetheGridTools::find_cells_around_edge(const DoFHandler<dim> &dof_handler,
             current_candidate_cells.clear();
         }
 
-
-
-
-
     }
 
 
@@ -519,30 +703,27 @@ LetheGridTools::cell_cut_by_flat(
             return true;
     }
 
+
     // Check for condition B
     bool condition_B1 = false;
     bool condition_B2 = false;
     Tensor<1, dim> last_normal;
     last_normal.clear();
+    double last_scalar_prod=0;
 
     for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell; ++i) {
 
-        Point<dim> projected_point= LetheGridTools::project_to_d_linear_object<dim,dim-1>(cell_flat,cell->vertex(i));
+        auto projected_point= LetheGridTools::project_to_d_linear_object<dim,dim-1>(cell_flat,cell->vertex(i));
 
-        Tensor<1, dim> normal = cell->vertex(i) - projected_point;
+        Tensor<1, dim> normal = cell->vertex(i) - projected_point.first.first;
 
 
         // Check if the projected vertex falls inside the flat
 
-        bool check_for_b1;
-        try{
-            check_for_b1 =cell_flat->point_inside(projected_point);
-        }
-        catch (...){
-            check_for_b1=false;
-                    }
 
-        if(check_for_b1){
+
+        if(projected_point.first.second && cell->point_inside(projected_point.first.first)){
+            std::cout<<" condition B1 ok "<<projected_point.first.first<<std::endl;
             condition_B1 = true;
         }
 
@@ -550,19 +731,22 @@ LetheGridTools::cell_cut_by_flat(
 
         // Check if we switched to the other side
         // of the flat during this iteration
-        double scalar_prod = scalar_product(normal, last_normal);
-        std::cout<<" projected_point"<<projected_point<<std::endl;
+        double scalar_prod = scalar_product(normal, projected_point.second);
+        std::cout<<" projected_point"<<projected_point.first.first<<std::endl;
         std::cout<<" cell->vertex(i)"<<cell->vertex(i)<<std::endl;
         std::cout<<" scalar_prod "<<scalar_prod<<std::endl;
 
         std::cout<<"normal"<<normal<<std::endl;
 
-        last_normal = normal;
-        if (scalar_prod < 0)
+        if (scalar_prod *last_scalar_prod < 0) {
             condition_B2 = true;
-
-        if (condition_B1 && condition_B2)
+            std::cout<<" condition B2 ok "<<scalar_prod<<std::endl;
+        }
+        last_scalar_prod = scalar_prod ;
+        if (condition_B1 && condition_B2) {
+            std::cout<<" condition B2 and B1 ok "<<scalar_prod<<std::endl;
             return true;
+        }
     }
 
 
@@ -746,11 +930,26 @@ LetheGridTools::find_cells_around_flat_cell(
         &vertices_cell_map);
 
 template
-Point<2>
+std::pair<std::pair<Point<2>,bool>,Tensor<1,2>>
 LetheGridTools::project_to_d_linear_object<2,1>(const typename DoFHandler<1,2>::active_cell_iterator&      object,
                                            const Point<2> &trial_point);
 
 template
-Point<3>
+std::pair<std::pair<Point<3>,bool>,Tensor<1,3>>
 LetheGridTools::project_to_d_linear_object<3,2>(const typename DoFHandler<2,3>::active_cell_iterator&      object,
                                            const Point<3> &trial_point);
+
+
+template
+Tensor<1,2>
+LetheGridTools::grad_dist_based_on_reference_point<3,2>(const typename DoFHandler<2,3>::active_cell_iterator&      object,
+                                                   const Point<3> &trial_point, const Point<2> &xi);
+
+template
+Tensor<1,1>
+LetheGridTools::grad_dist_based_on_reference_point<2,1>(const typename DoFHandler<1,2>::active_cell_iterator&      object,
+                                                   const Point<2> &trial_point, const Point<1> &xi);
+
+template
+bool
+LetheGridTools::cell_pierced_by_edge<3>(const typename DoFHandler<3>::active_cell_iterator &cell,const typename DoFHandler<1,3>::active_cell_iterator &cell_edge);
