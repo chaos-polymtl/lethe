@@ -703,6 +703,16 @@ LetheGridTools::cell_cut_by_flat(
             return true;
     }
 
+    if(dim==3) {
+
+        // Check for condition A
+        for (const auto face : cell_flat->face_indices())
+        {
+            const typename DoFHandler<1,dim>::active_cell_iterator local_face = cell_flat->face(face);
+            if (LetheGridTools::cell_pierced_by_edge<3>(cell,local_face))
+                return true;
+        }
+    }
 
     // Check for condition B
     bool condition_B1 = false;
