@@ -340,10 +340,10 @@ public:
     this->fe_values_void_fraction->get_function_gradients(
       current_solution, this->void_fraction_gradient_values);
 
-    // Gather previous phase fraction values
+    // Gather previous void fraction fraction values
     for (unsigned int p = 0; p < previous_solutions.size(); ++p)
       {
-        this->fe_values_free_surface->get_function_values(
+        this->fe_values_void_fraction->get_function_values(
           previous_solutions[p], previous_void_fraction_values[p]);
       }
   }
