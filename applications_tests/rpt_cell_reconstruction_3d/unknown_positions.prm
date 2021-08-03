@@ -28,7 +28,7 @@ subsection reconstruction
 	set reconstruction                          = true
 	set refinement                              = 5
 	set reconstruction counts file              = counts.reconstruction
-    set export reconstruction positions files   = testing.csv
+    set export reconstruction positions file   = testing.csv
 end
 
 
