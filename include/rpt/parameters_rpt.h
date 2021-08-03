@@ -51,6 +51,9 @@ namespace Parameters
     // Enable to export counts result in a .csv file
     bool export_counts;
 
+    // Exporting counts csv filename
+    std::string export_counts_file;
+
     // Number of Monte Carlo iterations for alpha and theta
     unsigned int n_monte_carlo_iteration;
 
@@ -79,11 +82,24 @@ namespace Parameters
     // Enable tuning parameters
     bool tuning;
 
+    // Type of cost function
+    enum class CostFunctionType
+    {
+      larachi,
+      L1,
+      L2
+    };
+
+    CostFunctionType cost_function_type;
+
+    // Filename of experimental data
+    std::string experimental_file;
+
     // Parameters to tune or fixed parameters if tuning is disable
-    double dead_time; // Dead time of the detector per accepted pulse
-    double activity;  // Activity of the tracer
-    double
-           gamma_rays_emitted; // Number of gamma-rays emitted by each disintegration
+    double dead_time;          // Dead time of the detector per accepted pulse
+    double activity;           // Activity of the tracer
+    double gamma_rays_emitted; // Number of gamma-rays emitted by each
+                               // disintegration
     double attenuation_coefficient_reactor;  // Total linear attenuation
                                              // coefficient of the medium
     double attenuation_coefficient_detector; // Total linear attenuation

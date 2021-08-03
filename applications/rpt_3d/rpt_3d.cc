@@ -20,6 +20,7 @@
 #include <rpt/rpt.h>
 #include <rpt/rpt_calculating_parameters.h>
 
+#include <fstream>
 #include <iostream>
 
 using namespace dealii;
