@@ -151,9 +151,9 @@ Parameters::RPTTuningParameters::parse_parameters(ParameterHandler &prm)
     const std::string type = prm.get("cost function type");
     if (type == "larachi")
       cost_function_type = CostFunctionType::larachi;
-    else if (type == "dealii")
+    else if (type == "l1")
       cost_function_type = CostFunctionType::L1;
-    else if (type == "periodic_hills")
+    else if (type == "l2")
       cost_function_type = CostFunctionType::L2;
     else
       throw std::logic_error(
@@ -223,7 +223,7 @@ Parameters::RPTReconstructionParameters::declare_parameters(
       Patterns::FileName(),
       "Counts of every detectors of the unknown particle position filename");
 
-    prm.declare_entry("export reconstruction positions files",
+    prm.declare_entry("export reconstruction positions file",
                       "reconstruction_positions",
                       Patterns::FileName(),
                       "Export positions found by reconstruction");
@@ -240,7 +240,7 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
     reactor_refinement         = prm.get_integer("refinement");
     reconstruction_counts_file = prm.get("reconstruction counts file");
     reconstruction_positions_file =
-      prm.get("export reconstruction positions files");
+      prm.get("export reconstruction positions file");
   }
   prm.leave_subsection();
 }

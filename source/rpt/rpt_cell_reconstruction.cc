@@ -13,23 +13,24 @@
 
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/rpt.h>
-#include <rpt/rpt_nodal_reconstruction.h>
+#include <rpt/rpt_cell_reconstruction.h>
 
 #include <fstream>
 
 template <int dim>
-RPTNodalReconstruction<dim>::RPTNodalReconstruction(
-  std::vector<Detector<dim>> &detectors,
-  RPTCalculatingParameters   &rpt_parameters)
+RPTCellReconstruction<dim>::RPTCellReconstruction(
+  RPTCalculatingParameters &rpt_parameters)
   : parameters(rpt_parameters)
-  , reconstruction_parameters(rpt_parameters.reconstruction_param)
-  , detectors(detectors)
-{}
+{
+  // Seed the random number generator
+  srand(parameters.rpt_param.seed);
+}
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::execute_nodal_reconstruction()
+RPTCellReconstruction<dim>::execute_cell_reconstruction()
 {
+  assign_detector_positions(); // Assign detector position & create detectors
   read_counts(); // Read reconstruction counts of unknown particle positions
   create_grid(); // Read a grid for the reactor vessel
   set_coarse_mesh_counts(); // Calculate counts at vertices of the coarse mesh
@@ -50,7 +51,7 @@ RPTNodalReconstruction<dim>::execute_nodal_reconstruction()
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::set_coarse_mesh_counts()
+RPTCellReconstruction<dim>::set_coarse_mesh_counts()
 {
   find_vertices_positions(0);
   calculate_counts();
@@ -58,7 +59,7 @@ RPTNodalReconstruction<dim>::set_coarse_mesh_counts()
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::find_unknown_position(
+RPTCellReconstruction<dim>::find_unknown_position(
   std::vector<double> &particle_reconstruction_counts)
 {
   unsigned int     level = 0;
@@ -125,7 +126,7 @@ RPTNodalReconstruction<dim>::find_unknown_position(
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::create_grid()
+RPTCellReconstruction<dim>::create_grid()
 {
   // Generate cylinder (needs rotation and shift to get origin at the bottom
   // with z towards top)
@@ -145,12 +146,13 @@ RPTNodalReconstruction<dim>::create_grid()
   // Set manifold and refine global
   triangulation.set_manifold(0, manifold);
   triangulation.prepare_coarsening_and_refinement();
-  triangulation.refine_global(reconstruction_parameters.reactor_refinement);
+  triangulation.refine_global(
+    parameters.reconstruction_param.reactor_refinement);
 }
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::find_vertices_positions(
+RPTCellReconstruction<dim>::find_vertices_positions(
   unsigned int     level,
   std::vector<int> parent_cell_indexes /* {-1} */)
 {
@@ -195,7 +197,7 @@ RPTNodalReconstruction<dim>::find_vertices_positions(
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::calculate_counts()
+RPTCellReconstruction<dim>::calculate_counts()
 {
   // Vector fir calculated counts for one particle postiion
   std::vector<double> calculated_counts;
@@ -228,7 +230,7 @@ RPTNodalReconstruction<dim>::calculate_counts()
 
 template <int dim>
 std::vector<int>
-RPTNodalReconstruction<dim>::find_cells(
+RPTCellReconstruction<dim>::find_cells(
   unsigned int         level,
   std::vector<double> &particle_reconstruction_counts,
   std::vector<int>     parent_cell_indexes /* {-1} */)
@@ -296,7 +298,7 @@ RPTNodalReconstruction<dim>::find_cells(
 
 template <int dim>
 int
-RPTNodalReconstruction<dim>::find_best_cell(
+RPTCellReconstruction<dim>::find_best_cell(
   unsigned int         level,
   std::vector<double> &particle_reconstruction_counts,
   std::vector<int>     candidate)
@@ -349,7 +351,7 @@ RPTNodalReconstruction<dim>::find_best_cell(
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::read_counts()
+RPTCellReconstruction<dim>::read_counts()
 {
   // Read counts for reconstruction
   const std::string filename =
@@ -379,12 +381,12 @@ RPTNodalReconstruction<dim>::read_counts()
 
 template <int dim>
 void
-RPTNodalReconstruction<dim>::export_positions()
+RPTCellReconstruction<dim>::export_positions()
 {
   std::ofstream myfile;
   std::string   sep;
   std::string   filename =
-    reconstruction_parameters.reconstruction_positions_file;
+    parameters.reconstruction_param.reconstruction_positions_file;
   myfile.open(filename);
   if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
     {
@@ -406,8 +408,46 @@ RPTNodalReconstruction<dim>::export_positions()
        i_particle++)
     {
       myfile << i_particle << sep << cells_volumes[i_particle] << sep
-             << reconstruction_positions[i_particle] << std::endl;
+             << reconstruction_positions[i_particle][0] << sep
+             << reconstruction_positions[i_particle][1] << sep
+             << reconstruction_positions[i_particle][2] << std::endl;
     }
 }
 
-template class RPTNodalReconstruction<3>;
+template <int dim>
+void
+RPTCellReconstruction<dim>::assign_detector_positions()
+{
+  // Read text file with detector positions and store it in vector
+  std::ifstream detector_file(
+    parameters.detector_param.detector_positions_file);
+
+  std::vector<double> values;
+  std::copy(std::istream_iterator<double>(detector_file),
+            std::istream_iterator<double>(),
+            std::back_inserter(values));
+
+  // Get the number of detector (2 positions for 1 detector, face and middle)
+  int number_of_detector = values.size() / (2 * dim);
+
+  // Extract positions, create point objects and detectors
+  for (int i = 0; i < number_of_detector; i++)
+    {
+      Point<dim> face_point(values[2 * dim * i],
+                            values[2 * dim * i + 1],
+                            values[2 * dim * i + 2]);
+      Point<dim> middle_point(values[2 * dim * i + dim],
+                              values[2 * dim * i + dim + 1],
+                              values[2 * dim * i + dim + 2]);
+
+      Detector<dim> detector(parameters.detector_param,
+                             i,
+                             face_point,
+                             middle_point);
+
+      detectors.push_back(detector);
+    }
+}
+
+
+template class RPTCellReconstruction<3>;

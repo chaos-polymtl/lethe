@@ -19,60 +19,39 @@ template <int dim>
 void
 RPT<dim>::setup_and_calculate()
 {
-  // Initiate calculated and measured counts vector if needed
-  std::vector<double> calculated_counts;
-  std::vector<double> measured_counts;
-
-  // Reading and assigning positions of detectors
+  // Reading and assigning positions of detectors and particles
   assign_detector_positions();
+  assign_particle_positions();
 
-  // Create grid for reconstruction if enable
-  if (rpt_parameters.reconstruction_param.reconstruction)
+  // Calculate count for every particle-detector pair and transfer it to
+  // calculated_counts
+  calculate_counts();
+
+  // Export results in .csv if enable
+  if (rpt_parameters.rpt_param.export_counts)
+    export_data();
+
+  // Calculate the cost function for parameters tuning
+  if (rpt_parameters.tuning_param.tuning)
     {
-      RPTNodalReconstruction<dim> reconstruction(detectors, rpt_parameters);
-      reconstruction.execute_nodal_reconstruction();
-    }
-  else
-    {
-      // Reading and assigning positions to particles
-      assign_particle_positions();
+      std::vector<double> measured_counts = extract_experimental_counts();
+      AssertThrow(
+        measured_counts.size() == particle_positions.size(),
+        ExcMessage(
+          "Prior tuning parameters, the number of particle positions provided"
+          " has to be the same number of counts of experimental data. "
+          "Note : The experimental counts also have to be at the same positions which can not be verified."))
 
-      if (rpt_parameters.tuning_param.tuning)
-        {
-          measured_counts = extract_experimental_counts();
-          AssertThrow(
-            measured_counts.size() == particle_positions.size(),
-            ExcMessage(
-              "Prior tuning parameters, the number of particle positions provided"
-              " has to be the same number of counts of experimental data. "
-              "Note : The experimental counts also have to be at the same positions which can not be verified."))
-        }
-
-      // Calculate count for every particle-detector pair and transfer it to
-      // calculated_counts
-      calculate_counts(calculated_counts);
-
-      // Export results in .csv if enable
-      if (rpt_parameters.rpt_param.export_counts)
-        export_data(calculated_counts);
-
-      // Calculate the cost function for parameters tuning
-      if (rpt_parameters.tuning_param.tuning)
-        {
-          double cost_function =
-            calculate_cost_function(measured_counts, calculated_counts);
-          std::cout << cost_function << std::endl;
-        }
+        double cost_function =
+          calculate_cost_function(measured_counts, calculated_counts);
+      std::cout << cost_function << std::endl;
     }
 }
 
 template <int dim>
 void
-RPT<dim>::calculate_counts(std::vector<double> &calculated_counts)
+RPT<dim>::calculate_counts()
 {
-  // Reinitialize the counts vector
-  calculated_counts.clear();
-
   // Calculate count for every particle-detector pair
   for (unsigned int i_particle = 0; i_particle < particle_positions.size();
        i_particle++)
@@ -159,7 +138,7 @@ RPT<dim>::assign_detector_positions()
 
 template <int dim>
 void
-RPT<dim>::export_data(std::vector<double> &calculated_counts)
+RPT<dim>::export_data()
 {
   // Open a file
   std::ofstream myfile;
@@ -191,13 +170,14 @@ RPT<dim>::export_data(std::vector<double> &calculated_counts)
            i_detector++)
         {
           myfile
-            << particle_positions[i_particle].get_position() << sep
+            << particle_positions[i_particle].get_position()[0] << sep
+            << particle_positions[i_particle].get_position()[1] << sep
+            << particle_positions[i_particle].get_position()[2] << sep
             << detectors[i_detector].get_id() << sep
             << calculated_counts[i_particle * detectors.size() + i_detector]
             << std::endl;
         }
     }
-
   myfile.close();
 }
 

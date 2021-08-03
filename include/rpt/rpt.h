@@ -36,7 +36,7 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
-#include <rpt/rpt_nodal_reconstruction.h>
+#include <rpt/rpt_cell_reconstruction.h>
 
 using namespace dealii;
 
@@ -84,13 +84,13 @@ public:
    * @brief Export position, detector id and count results in .csv or .dat
    */
   void
-  export_data(std::vector<double> &calculated_counts);
+  export_data();
 
   /**
    * @brief Calculate photon counts for all particle positions and detector
    */
   void
-  calculate_counts(std::vector<double> &calculated_counts);
+  calculate_counts();
 
   /**
    * @brief Calculate cost function for calculated and measured counts
@@ -99,13 +99,12 @@ public:
   calculate_cost_function(std::vector<double> &measured_counts,
                           std::vector<double> &calculated_counts);
 
-
-
   RPTCalculatingParameters rpt_parameters;
 
 private:
   std::vector<RadioParticle<dim>> particle_positions;
   std::vector<Detector<dim>>      detectors;
+  std::vector<double>             calculated_counts;
 };
 
 #endif

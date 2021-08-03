@@ -17,11 +17,11 @@
 * Authors: Audrey Collard-Daigneault, Polytechnique Montreal, 2020-
 */
 
-#ifndef lethe_rpt_map_h
-#define lethe_rpt_map_h
+#ifndef lethe_rpt_cell_reconstruction_h
+#define lethe_rpt_cell_reconstruction_h
 
 /**
- * This class allows nodal position reconstruction of unknown particle positions
+ * This class allows cell position reconstruction of unknown particle positions
  * with counts value for many detector. It finds the center position of the best
  * cell that its vertices counts range contains the counts value of unknown
  * particle positions.
@@ -42,31 +42,37 @@
 using namespace dealii;
 
 template <int dim>
-class RPTNodalReconstruction
+class RPTCellReconstruction
 {
 public:
   /**
-   * @brief Constructor for the RPTNodalReconstruction
+   * @brief Constructor for the RPTCellReconstruction
    *
    * @param detectors Vector of all detector object
    *
    * @param rpt_parameters All parameters for the RPT
    *
    */
-  RPTNodalReconstruction(std::vector<Detector<dim>> &detectors,
-                         RPTCalculatingParameters   &rpt_parameters);
+  RPTCellReconstruction(RPTCalculatingParameters &rpt_parameters);
 
   /**
    * @brief Set up grid and find positions for every unknown particle positions.
    */
   void
-  execute_nodal_reconstruction();
+  execute_cell_reconstruction();
 
   /**
    * @brief Create grid of the reactor vessel (cylinder).
    */
   void
   create_grid();
+
+  /**
+   * @brief Read text file for detector positions and assign them to detector
+   * objects
+   */
+  void
+  assign_detector_positions();
 
   /**
    * @brief Calculate counts at vertices for the coarse mesh.
@@ -147,9 +153,8 @@ public:
 private:
   Triangulation<dim> triangulation;
 
-  RPTCalculatingParameters                parameters;
-  Parameters::RPTReconstructionParameters reconstruction_parameters;
-  std::vector<Detector<dim>>              detectors;
+  RPTCalculatingParameters   parameters;
+  std::vector<Detector<dim>> detectors;
 
   std::vector<std::vector<double>>
     reconstruction_counts; // All counts of the unknown particle positions
@@ -161,4 +166,4 @@ private:
 };
 
 
-#endif // lethe_rpt_map_h
+#endif // lethe_rpt_cell_reconstruction_h

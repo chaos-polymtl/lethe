@@ -4,10 +4,7 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
-    set particle positions file          = none.particle
     set verbose                          = true
-    set export counts                    = false
-    set counts file                      = none.csv
     set monte carlo iteration            = 10000
     set random number seed               = 0
     set reactor height                   = 0.3
@@ -29,16 +26,7 @@ subsection reconstruction
 	set reconstruction                          = true
 	set refinement                              = 6
 	set reconstruction counts file              = counts.reconstruction
-    set export reconstruction positions files   = positions_found.csv
-end
-
-
-# --------------------------------------------------
-# Parameters tuning
-#---------------------------------------------------
-subsection parameter tuning
-	set tuning                           = false
-	set experimental data file           = noisy_counts.experimental
+    set export reconstruction positions file    = positions_found.csv
 end
 
 #---------------------------------------------------

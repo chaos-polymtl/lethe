@@ -1,0 +1,31 @@
+This example uses the rpt_cell_reconstruction_3d application to find particle
+positions of a radioactive particle with counts data of many detector.
+
+It uses cell reconstruction, which means, it aims to find the cell that the 
+particle is and assigns the center position of the cell to the radioactive
+particle.
+
+This example uses the counts generatate with those following known positions
+with 1 000 000 iteration of Monte Carlo and 6 detectors : 
+	0.05	0.05	0.075
+	0.043876276	0.056123724	0.08
+	0.037752551	0.062247449	0.085
+	0.031628827	0.068371173	0.09
+	0.025505103	0.074494897	0.095
+	0.019381378	0.080618622	0.1
+	0.013257654	0.086742346	0.105
+	0.00713393	0.09286607	0.11
+	0.001010205	0.098989795	0.115
+	-0.005113519	0.09286607	0.12
+	-0.011237244	0.086742346	0.125
+	-0.017360968	0.080618622	0.13
+	-0.023484692	0.074494897	0.135
+	-0.029608417	0.068371173	0.14
+	-0.035732141	0.062247449	0.145
+	-0.041855865	0.056123724	0.15
+	-0.04797959	0.05	0.155
+	-0.054103314	0.043876276	0.16
+	-0.060227038	0.037752551	0.165
+	-0.066350763	0.031628827	0.17
+ 
+
