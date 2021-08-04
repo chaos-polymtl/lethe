@@ -17,6 +17,8 @@
  * Author: Shahab Golshan, Polytechnique Montreal, 2019
  */
 
+#include <core/pvd_handler.h>
+
 #include <dem/dem_properties.h>
 #include <dem/dem_solver_parameters.h>
 
@@ -56,16 +58,11 @@ public:
    *
    * @param triangulation Triangulation
    * @param particle_handler Particle handler
-   * @param dem_parameters DEM parameters for setting the names of the output
-   * files
-   * @param step_number DEM step number
    */
   void
   calculate_average_particles_velocity(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler,
-    const DEMSolverParameters<dim> &                 dem_parameters,
-    const unsigned int &                             step_number);
+    const Particles::ParticleHandler<dim> &          particle_handler);
 
   /**
    * Carries out the calculation of the granular temperature in each local cell.
@@ -75,16 +72,49 @@ public:
    *
    * @param triangulation Triangulation
    * @param particle_handler Particle handler
-   * @param dem_parameters DEM parameters for setting the names of the output
-   * files
-   * @param step_number DEM step number
    */
   void
   calculate_average_granular_temperature(
     const parallel::distributed::Triangulation<dim> &triangulation,
-    const Particles::ParticleHandler<dim> &          particle_handler,
+    const Particles::ParticleHandler<dim> &          particle_handler);
+
+  /**
+   * Carries out writing the particles' average velocity distribution
+   *
+   * @param triangulation Triangulation
+   * @param grid_pvdhandler
+   * @param dem_parameters
+   * @param time Simulation time
+   * @param step_number DEM step number
+   * @param mpi_communicator
+   */
+  void
+  write_average_particles_velocity(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    PVDHandler &                                     grid_pvdhandler,
     const DEMSolverParameters<dim> &                 dem_parameters,
-    const unsigned int &                             step_number);
+    const double &                                   time,
+    const unsigned int &                             step_number,
+    const MPI_Comm &                                 mpi_communicator);
+
+  /**
+   * Carries out writing the granular temperature distribution
+   *
+   * @param triangulation Triangulation
+   * @param grid_pvdhandler
+   * @param dem_parameters
+   * @param time Simulation time
+   * @param step_number DEM step number
+   * @param mpi_communicator
+   */
+  void
+  write_granular_temperature(
+    const parallel::distributed::Triangulation<dim> &triangulation,
+    PVDHandler &                                     grid_pvdhandler,
+    const DEMSolverParameters<dim> &                 dem_parameters,
+    const double &                                   time,
+    const unsigned int &                             step_number,
+    const MPI_Comm &                                 mpi_communicator);
 
 private:
   /**
@@ -102,6 +132,12 @@ private:
     const typename parallel::distributed::Triangulation<dim>::cell_iterator
       &                                    cell,
     const Particles::ParticleHandler<dim> &particle_handler);
+
+  Vector<double> velocity_average_x;
+  Vector<double> velocity_average_y;
+  Vector<double> velocity_average_z;
+
+  Vector<double> granular_temperature_average;
 };
 
 #endif /* lagrangian_post_processing_h */

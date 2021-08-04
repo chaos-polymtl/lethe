@@ -734,17 +734,31 @@ void
 DEMSolver<dim>::post_process_results()
 {
   if (parameters.post_processing.calculate_particles_average_velocity)
-    post_processing_object.calculate_average_particles_velocity(
-      triangulation,
-      particle_handler,
-      parameters,
-      simulation_control->get_step_number());
+    {
+      post_processing_object.calculate_average_particles_velocity(
+        triangulation, particle_handler);
+
+      post_processing_object.write_average_particles_velocity(
+        triangulation,
+        grid_pvdhandler,
+        parameters,
+        simulation_control->get_current_time(),
+        simulation_control->get_step_number(),
+        mpi_communicator);
+    }
   if (parameters.post_processing.calculate_granular_temperature)
-    post_processing_object.calculate_average_granular_temperature(
-      triangulation,
-      particle_handler,
-      parameters,
-      simulation_control->get_step_number());
+    {
+      post_processing_object.calculate_average_granular_temperature(
+        triangulation, particle_handler);
+
+      post_processing_object.write_granular_temperature(
+        triangulation,
+        grid_pvdhandler,
+        parameters,
+        simulation_control->get_current_time(),
+        simulation_control->get_step_number(),
+        mpi_communicator);
+    }
 }
 
 template <int dim>

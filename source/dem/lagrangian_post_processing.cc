@@ -1,3 +1,5 @@
+#include <core/solutions_output.h>
+
 #include <dem/lagrangian_post_processing.h>
 
 #include <deal.II/dofs/dof_handler.h>
@@ -18,13 +20,11 @@ template <int dim>
 void
 LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const Particles::ParticleHandler<dim> &          particle_handler,
-  const DEMSolverParameters<dim> &                 dem_parameters,
-  const unsigned int &                             step_number)
+  const Particles::ParticleHandler<dim> &          particle_handler)
 {
-  Vector<double> velocity_average_x(triangulation.n_active_cells());
-  Vector<double> velocity_average_y(triangulation.n_active_cells());
-  Vector<double> velocity_average_z(triangulation.n_active_cells());
+  velocity_average_x.reinit(triangulation.n_active_cells());
+  velocity_average_y.reinit(triangulation.n_active_cells());
+  velocity_average_z.reinit(triangulation.n_active_cells());
 
   // Iterating through the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -43,44 +43,15 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
               cell_velocity_average[2];
         }
     }
-
-  // Writing output file
-  DataOut<dim> data_out;
-  data_out.attach_triangulation(triangulation);
-
-  std::vector<std::string> average_solution_names(1, "average_velocity_x");
-  average_solution_names.push_back("average_velocity_y");
-  if (dim == 3)
-    average_solution_names.push_back("average_velocity_z");
-
-
-  data_out.add_data_vector(velocity_average_x,
-                           average_solution_names[0],
-                           DataOut<dim>::type_cell_data);
-  data_out.add_data_vector(velocity_average_y,
-                           average_solution_names[1],
-                           DataOut<dim>::type_cell_data);
-  if (dim == 3)
-    data_out.add_data_vector(velocity_average_z,
-                             average_solution_names[2],
-                             DataOut<dim>::type_cell_data);
-
-
-  data_out.build_patches();
-  std::ofstream output(dem_parameters.post_processing.particles_velocity_name +
-                       "-" + std::to_string(step_number) + ".vtk");
-  data_out.write_vtk(output);
 }
 
 template <int dim>
 void
 LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
   const parallel::distributed::Triangulation<dim> &triangulation,
-  const Particles::ParticleHandler<dim> &          particle_handler,
-  const DEMSolverParameters<dim> &                 dem_parameters,
-  const unsigned int &                             step_number)
+  const Particles::ParticleHandler<dim> &          particle_handler)
 {
-  Vector<double> granular_temperature_average(triangulation.n_active_cells());
+  granular_temperature_average.reinit(triangulation.n_active_cells());
 
   // Iterating through the active cells in the trangulation
   for (const auto &cell : triangulation.active_cell_iterators())
@@ -143,21 +114,6 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
             granular_temperature_cell;
         }
     }
-
-  // Writing output file
-  DataOut<dim> data_out;
-  data_out.attach_triangulation(triangulation);
-  std::string average_solution_names("granular_temperature");
-
-  data_out.add_data_vector(granular_temperature_average,
-                           average_solution_names,
-                           DataOut<dim>::type_cell_data);
-
-  data_out.build_patches();
-  std::ofstream output(
-    dem_parameters.post_processing.granular_temperature_name + "-" +
-    std::to_string(step_number) + ".vtk");
-  data_out.write_vtk(output);
 }
 
 template <int dim>
@@ -201,6 +157,84 @@ LagrangianPostProcessing<dim>::calculate_cell_average_particles_velocity(
         velocity_cell_average[d] = velocity_cell_sum[d] / particles_cell_number;
     }
   return velocity_cell_average;
+}
+
+template <int dim>
+void
+LagrangianPostProcessing<dim>::write_average_particles_velocity(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  PVDHandler &                                     grid_pvdhandler,
+  const DEMSolverParameters<dim> &                 dem_parameters,
+  const double &                                   time,
+  const unsigned int &                             step_number,
+  const MPI_Comm &                                 mpi_communicator)
+{
+  const std::string folder = dem_parameters.simulation_control.output_folder;
+
+  DataOut<dim> data_out;
+  data_out.attach_triangulation(triangulation);
+
+  std::vector<std::string> average_solution_names(1, "average_velocity_x");
+  average_solution_names.push_back("average_velocity_y");
+  if (dim == 3)
+    average_solution_names.push_back("average_velocity_z");
+
+
+  data_out.add_data_vector(velocity_average_x,
+                           average_solution_names[0],
+                           DataOut<dim>::type_cell_data);
+  data_out.add_data_vector(velocity_average_y,
+                           average_solution_names[1],
+                           DataOut<dim>::type_cell_data);
+  if (dim == 3)
+    data_out.add_data_vector(velocity_average_z,
+                             average_solution_names[2],
+                             DataOut<dim>::type_cell_data);
+
+  data_out.build_patches();
+
+  write_vtu_and_pvd<dim>(grid_pvdhandler,
+                         data_out,
+                         folder,
+                         dem_parameters.post_processing.particles_velocity_name,
+                         time,
+                         step_number,
+                         dem_parameters.simulation_control.group_files,
+                         mpi_communicator);
+}
+
+
+template <int dim>
+void
+LagrangianPostProcessing<dim>::write_granular_temperature(
+  const parallel::distributed::Triangulation<dim> &triangulation,
+  PVDHandler &                                     grid_pvdhandler,
+  const DEMSolverParameters<dim> &                 dem_parameters,
+  const double &                                   time,
+  const unsigned int &                             step_number,
+  const MPI_Comm &                                 mpi_communicator)
+{
+  const std::string folder = dem_parameters.simulation_control.output_folder;
+
+  DataOut<dim> data_out;
+  data_out.attach_triangulation(triangulation);
+  std::string average_solution_names("granular_temperature");
+
+  data_out.add_data_vector(granular_temperature_average,
+                           average_solution_names,
+                           DataOut<dim>::type_cell_data);
+
+  data_out.build_patches();
+
+  write_vtu_and_pvd<dim>(
+    grid_pvdhandler,
+    data_out,
+    folder,
+    dem_parameters.post_processing.granular_temperature_name,
+    time,
+    step_number,
+    dem_parameters.simulation_control.group_files,
+    mpi_communicator);
 }
 
 template class LagrangianPostProcessing<2>;
