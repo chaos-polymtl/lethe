@@ -1819,7 +1819,7 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
                         this->simulation_parameters.physical_properties));
     }
 
-    assemblers_inside_ib.push_back(std::make_shared<GeneralMassMatrix<dim>>(this->simulation_control,
+    assemblers_inside_ib.push_back(std::make_shared<LaplaceAssembly<dim>>(this->simulation_control,
             this->simulation_parameters.physical_properties));
 
 
@@ -1913,15 +1913,16 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
     copy_data.reset();
 
+    // check if we assemble the NS eqaution inside the particle or the Laplacien of the variables
     bool cell_is_inside;
-    std::tie(cell_is_inside,std::ignore) =cells_inside_map[cell];
-    if(cell_is_inside==false) {
-        for (auto &assembler : this->assemblers) {
+    std::tie(cell_is_inside,std::ignore) = cells_inside_map[cell];
+    if(cell_is_inside && this->simulation_parameters.particlesParameters.assemble_inside==false ) {
+        for (auto &assembler : this->assemblers_inside_ib) {
             assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
     else{
-        for (auto &assembler : this->assemblers_inside_ib) {
+        for (auto &assembler : this->assemblers) {
             assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
@@ -2039,16 +2040,16 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 
     copy_data.reset();
 
-
+    // check if we assemble the NS eqaution inside the particle or the Laplacien of the variables
     bool cell_is_inside;
     std::tie(cell_is_inside,std::ignore) = cells_inside_map[cell];
-    if(cell_is_inside==false) {
-        for (auto &assembler : this->assemblers) {
+    if(cell_is_inside && this->simulation_parameters.particlesParameters.assemble_inside==false ) {
+        for (auto &assembler : this->assemblers_inside_ib) {
             assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
     else{
-        for (auto &assembler : this->assemblers_inside_ib) {
+        for (auto &assembler : this->assemblers) {
             assembler->assemble_rhs(scratch_data, copy_data);
         }
     }

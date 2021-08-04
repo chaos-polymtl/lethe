@@ -1187,6 +1187,11 @@ namespace Parameters
         "false",
         Patterns::Bool(),
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
+      prm.declare_entry(
+                "assemble NS inside",
+                "false",
+                Patterns::Bool(),
+                "Bool to define if you assemble the inside of particles with the NS equation.");
       prm.declare_entry("fluid density",
                         "1",
                         Patterns::Double(),
@@ -1283,6 +1288,8 @@ namespace Parameters
       alpha                = prm.get_double("alpha");
       gravity[0]           = prm.get_double("gravity_x");
       gravity[1]           = prm.get_double("gravity_y");
+      assemble_inside      = prm.get_bool("assemble NS inside");
+
       if (dim == 3)
         gravity[2] = prm.get_double("gravity_z");
 

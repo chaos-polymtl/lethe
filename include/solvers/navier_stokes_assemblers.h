@@ -304,10 +304,10 @@ public:
  */
 
 template <int dim>
-class GeneralMassMatrix: public NavierStokesAssemblerBase<dim>
+class LaplaceAssembly: public NavierStokesAssemblerBase<dim>
 {
 public:
-    GeneralMassMatrix(
+    LaplaceAssembly(
             std::shared_ptr<SimulationControl> simulation_control,
             Parameters::PhysicalProperties     physical_properties)
             : simulation_control(simulation_control)

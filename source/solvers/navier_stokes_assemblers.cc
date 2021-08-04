@@ -828,7 +828,7 @@ template class GDNavierStokesAssemblerCore<3>;
 
 template <int dim>
 void
-GeneralMassMatrix<dim>::assemble_matrix(
+LaplaceAssembly<dim>::assemble_matrix(
         NavierStokesScratchData<dim> &        scratch_data,
         StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -858,7 +858,8 @@ GeneralMassMatrix<dim>::assemble_matrix(
     {
         // Calculation of the magnitude of the velocity for the
         // stabilization parameter
-
+        const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+        const double u_mag = std::max(velocity.norm(), 1e-12);
         // Store JxW in local variable for faster access;
         const double JxW = JxW_vec[q];
 
@@ -873,11 +874,10 @@ GeneralMassMatrix<dim>::assemble_matrix(
                 const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
                 const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
-                double local_matrix_ij =
-                        viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i)*sdt ;
+                double local_matrix_ij =h*h *scalar_product(grad_phi_u_j, grad_phi_u_i)*sdt ;
 
                 // PSPG GLS term
-                local_matrix_ij +=viscosity * scalar_product(grad_phi_p_j, grad_phi_p_i)*sdt;
+                local_matrix_ij +=viscosity * h*h *scalar_product(grad_phi_p_j, grad_phi_p_i)*sdt;
 
                 // The jacobian matrix for the SUPG formulation
                 // currently does not include the jacobian of the stabilization
@@ -894,7 +894,7 @@ GeneralMassMatrix<dim>::assemble_matrix(
 
 template <int dim>
 void
-GeneralMassMatrix<dim>::assemble_rhs(
+LaplaceAssembly<dim>::assemble_rhs(
         NavierStokesScratchData<dim> &        scratch_data,
         StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
@@ -942,11 +942,11 @@ GeneralMassMatrix<dim>::assemble_rhs(
             double local_rhs_i = 0;
 
             // Laplacien on the velocity terms
-            local_rhs_i += -viscosity * scalar_product(velocity_gradient, grad_phi_u_i)* JxW *sdt;
+            local_rhs_i += -h*h * scalar_product(velocity_gradient, grad_phi_u_i)* JxW *sdt;
 
 
             // Laplacien on the pressure terms
-            local_rhs_i += -viscosity* scalar_product(pressure_gradient , grad_phi_p_i) * JxW *sdt;
+            local_rhs_i += -viscosity*h*h * scalar_product(pressure_gradient , grad_phi_p_i) * JxW *sdt;
 
 
             local_rhs(i) += local_rhs_i;
@@ -954,5 +954,5 @@ GeneralMassMatrix<dim>::assemble_rhs(
     }
 }
 
-template class GeneralMassMatrix<2>;
-template class GeneralMassMatrix<3>;
+template class LaplaceAssembly<2>;
+template class LaplaceAssembly<3>;

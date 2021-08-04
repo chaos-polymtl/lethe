@@ -90,7 +90,7 @@ subsection particles
 	set number of particles = 2
 	set stencil order = 6
 	set nb force evaluation = 1000
-
+	set assemble NS inside=true
     subsection particle info 0 
             set x = 0
 	    set y = 0
