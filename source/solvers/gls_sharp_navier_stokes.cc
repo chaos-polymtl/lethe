@@ -23,6 +23,9 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
+#include <deal.II/base/work_stream.h>
+
+#include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/gls_sharp_navier_stokes.h>
 
 #include <deal.II/fe/fe_q.h>
@@ -1719,878 +1722,279 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
   this->system_rhs.compress(VectorOperation::insert);
 }
 
+
 template <int dim>
-template <bool                                              assemble_matrix,
-          Parameters::SimulationControl::TimeSteppingMethod scheme,
-          Parameters::VelocitySource::VelocitySourceType    velocity_source>
 void
-GLSSharpNavierStokesSolver<dim>::assembleGLS()
+GLSSharpNavierStokesSolver<dim>::setup_assemblers()
 {
-  auto &system_rhs = this->system_rhs;
-  MPI_Barrier(this->mpi_communicator);
-  if (assemble_matrix)
-    this->system_matrix = 0;
-  this->system_rhs = 0;
+    this->assemblers.clear();
 
-  double viscosity = this->simulation_parameters.physical_properties.viscosity;
-  Function<dim> *l_forcing_function = this->forcing_function;
-
-  FEValues<dim>                    fe_values(*this->mapping,
-                          *this->fe,
-                          *this->cell_quadrature,
-                          update_values | update_quadrature_points |
-                            update_JxW_values | update_gradients |
-                            update_hessians);
-  const unsigned int               dofs_per_cell = this->fe->dofs_per_cell;
-  const unsigned int               n_q_points = this->cell_quadrature->size();
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-  FullMatrix<double>               local_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>                   local_rhs(dofs_per_cell);
-  std::vector<Vector<double>> rhs_force(n_q_points, Vector<double>(dim + 1));
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  std::vector<Tensor<1, dim>>          present_velocity_values(n_q_points);
-  std::vector<Tensor<2, dim>>          present_velocity_gradients(n_q_points);
-  std::vector<double>                  present_pressure_values(n_q_points);
-  std::vector<Tensor<1, dim>>          present_pressure_gradients(n_q_points);
-  std::vector<Tensor<1, dim>>          present_velocity_laplacians(n_q_points);
-  std::vector<Tensor<2, dim>>          present_velocity_hess(n_q_points);
-
-  Tensor<1, dim> force;
-  Tensor<1, dim> beta_force = this->beta;
-
-  // Velocity dependent source term
-  //----------------------------------
-  // Angular velocity of the rotating frame. This is always a 3D vector even
-  // in 2D.
-  Tensor<1, dim> omega_vector;
-
-  double omega_z  = this->simulation_parameters.velocity_sources.omega_z;
-  omega_vector[0] = this->simulation_parameters.velocity_sources.omega_x;
-  omega_vector[1] = this->simulation_parameters.velocity_sources.omega_y;
-  if (dim == 3)
-    omega_vector[2] = this->simulation_parameters.velocity_sources.omega_z;
-
-  std::vector<double>         div_phi_u(dofs_per_cell);
-  std::vector<Tensor<1, dim>> phi_u(dofs_per_cell);
-  std::vector<Tensor<3, dim>> hess_phi_u(dofs_per_cell);
-  std::vector<Tensor<1, dim>> laplacian_phi_u(dofs_per_cell);
-  std::vector<Tensor<2, dim>> grad_phi_u(dofs_per_cell);
-  std::vector<double>         phi_p(dofs_per_cell);
-  std::vector<Tensor<1, dim>> grad_phi_p(dofs_per_cell);
-
-  // Values at previous time step for transient schemes
-  std::vector<Tensor<1, dim>> p1_velocity_values(n_q_points);
-  std::vector<Tensor<1, dim>> p2_velocity_values(n_q_points);
-  std::vector<Tensor<1, dim>> p3_velocity_values(n_q_points);
-
-  std::vector<double> time_steps_vector =
-    this->simulation_control->get_time_steps_vector();
-
-  // Time steps and inverse time steps which is used for numerous
-  // calculations
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
-  // Vector for the BDF coefficients
-  // The coefficients are stored in the following fashion :
-  // 0 - n+1
-  // 1 - n
-  // 2 - n-1
-  // 3 - n-2
-  Vector<double> bdf_coefs;
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-      scheme == Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-    bdf_coefs = bdf_coefficients(1, time_steps_vector);
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    bdf_coefs = bdf_coefficients(2, time_steps_vector);
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    bdf_coefs = bdf_coefficients(3, time_steps_vector);
-
-  // Matrix of coefficients for the SDIRK methods
-  // The lines store the information required for each step
-  // Column 0 always refer to outcome of the step that is being calculated
-  // Column 1 always refer to step n
-  // Column 2+ refer to intermediary steps
-  FullMatrix<double> sdirk_coefs;
-  if (is_sdirk2(scheme))
-    sdirk_coefs = sdirk_coefficients(2, dt);
-
-  if (is_sdirk3(scheme))
-    sdirk_coefs = sdirk_coefficients(3, dt);
-
-  // Element size
-  double h;
-  auto & evaluation_point = this->evaluation_point;
-
-  for (const auto &cell : this->dof_handler.active_cell_iterators())
+    if (this->simulation_parameters.multiphysics.free_surface)
     {
-      if (cell->is_locally_owned())
+        // Time-stepping schemes
+        if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-          cell->get_dof_indices(local_dof_indices);
-
-          bool cell_is_cut;
-          // std::ignore is used because we don't care about what particle cut
-          // the cell.
-          std::tie(cell_is_cut, std::ignore) = cut_cells_map[cell];
-          if (cell_is_cut == false)
-            {
-              fe_values.reinit(cell);
-
-              if (dim == 2)
-                h = std::sqrt(4. * cell->measure() / M_PI) /
-                    this->velocity_fem_degree;
-              else if (dim == 3)
-                h = pow(6 * cell->measure() / M_PI, 1. / 3.) /
-                    this->velocity_fem_degree;
-
-              local_matrix = 0;
-              local_rhs    = 0;
-
-              // Gather velocity (values, gradient and laplacian)
-              fe_values[velocities].get_function_values(
-                evaluation_point, present_velocity_values);
-              fe_values[velocities].get_function_gradients(
-                evaluation_point, present_velocity_gradients);
-              fe_values[velocities].get_function_laplacians(
-                evaluation_point, present_velocity_laplacians);
-
-              // Gather pressure (values, gradient)
-              fe_values[pressure].get_function_values(evaluation_point,
-                                                      present_pressure_values);
-              fe_values[pressure].get_function_gradients(
-                evaluation_point, present_pressure_gradients);
-
-              std::vector<Point<dim>> quadrature_points =
-                fe_values.get_quadrature_points();
-
-              // Calculate forcing term if there is a forcing function
-              if (l_forcing_function)
-                l_forcing_function->vector_value_list(quadrature_points,
-                                                      rhs_force);
-
-              // Gather the previous time steps depending on the number of
-              // stages of the time integration scheme
-              if (scheme !=
-                  Parameters::SimulationControl::TimeSteppingMethod::steady)
-                fe_values[velocities].get_function_values(
-                  this->previous_solutions[0], p1_velocity_values);
-
-              if (time_stepping_method_has_two_stages(scheme))
-                fe_values[velocities].get_function_values(
-                  this->solution_stages[0], p2_velocity_values);
-
-              if (time_stepping_method_has_three_stages(scheme))
-                fe_values[velocities].get_function_values(
-                  this->solution_stages[1], p3_velocity_values);
-
-              if (time_stepping_method_uses_two_previous_solutions(scheme))
-                fe_values[velocities].get_function_values(
-                  this->previous_solutions[1], p2_velocity_values);
-
-              if (time_stepping_method_uses_three_previous_solutions(scheme))
-                fe_values[velocities].get_function_values(
-                  this->previous_solutions[2], p3_velocity_values);
-
-              // Loop over the quadrature points
-              for (unsigned int q = 0; q < n_q_points; ++q)
-                {
-                  // Gather into local variables the relevant fields
-                  const Tensor<1, dim> velocity = present_velocity_values[q];
-                  const Tensor<2, dim> velocity_gradient =
-                    present_velocity_gradients[q];
-                  const double present_velocity_divergence =
-                    trace(velocity_gradient);
-                  const Tensor<1, dim> p1_velocity = p1_velocity_values[q];
-                  const Tensor<1, dim> p2_velocity = p2_velocity_values[q];
-                  const Tensor<1, dim> p3_velocity = p3_velocity_values[q];
-                  const double current_pressure    = present_pressure_values[q];
-
-
-
-                  // Calculation of the magnitude of the velocity for the
-                  // stabilization parameter
-                  const double u_mag =
-                    std::max(velocity.norm(), 1e-12 * GLS_u_scale);
-
-                  // Store JxW in local variable for faster access;
-                  const double JxW = fe_values.JxW(q);
-
-                  // Calculation of the GLS stabilization parameter. The
-                  // stabilization parameter used is different if the simulation
-                  // is steady or unsteady. In the unsteady case it includes the
-                  // value of the time-step
-                  const double tau =
-                    is_steady(scheme) ?
-                      1. / std::sqrt(std::pow(2. * u_mag / h, 2) +
-                                     9 * std::pow(4 * viscosity / (h * h), 2)) :
-                      1. / std::sqrt(std::pow(sdt, 2) +
-                                     std::pow(2. * u_mag / h, 2) +
-                                     9 * std::pow(4 * viscosity / (h * h), 2));
-
-
-
-                  // Gather the shape functions, their gradient and their
-                  // laplacian for the velocity and the pressure
-                  for (unsigned int k = 0; k < dofs_per_cell; ++k)
-                    {
-                      div_phi_u[k]  = fe_values[velocities].divergence(k, q);
-                      grad_phi_u[k] = fe_values[velocities].gradient(k, q);
-                      phi_u[k]      = fe_values[velocities].value(k, q);
-                      hess_phi_u[k] = fe_values[velocities].hessian(k, q);
-                      phi_p[k]      = fe_values[pressure].value(k, q);
-                      grad_phi_p[k] = fe_values[pressure].gradient(k, q);
-
-                      for (int d = 0; d < dim; ++d)
-                        laplacian_phi_u[k][d] = trace(hess_phi_u[k][d]);
-                    }
-
-                  // Establish the force vector
-                  for (int i = 0; i < dim; ++i)
-                    {
-                      const unsigned int component_i =
-                        this->fe->system_to_component_index(i).first;
-                      force[i] = rhs_force[q](component_i);
-                    }
-                  // Correct force to include the dynamic forcing term for flow
-                  // control
-                  force = force + beta_force;
-
-                  // Calculate the strong residual for GLS stabilization
-                  auto strong_residual =
-                    velocity_gradient * velocity +
-                    present_pressure_gradients[q] -
-                    viscosity * present_velocity_laplacians[q] - force;
-
-                  if (velocity_source ==
-                      Parameters::VelocitySource::VelocitySourceType::srf)
-                    {
-                      if (dim == 2)
-                        {
-                          strong_residual +=
-                            2 * omega_z * (-1.) * cross_product_2d(velocity);
-                          auto centrifugal =
-                            omega_z * (-1.) *
-                            cross_product_2d(
-                              omega_z * (-1.) *
-                              cross_product_2d(quadrature_points[q]));
-                          strong_residual += centrifugal;
-                        }
-                      else // dim == 3
-                        {
-                          strong_residual +=
-                            2 * cross_product_3d(omega_vector, velocity);
-                          strong_residual += cross_product_3d(
-                            omega_vector,
-                            cross_product_3d(omega_vector,
-                                             quadrature_points[q]));
-                        }
-                    }
-
-                  /* Adjust the strong residual in cases where the scheme is
-                   transient.
-                   The BDF schemes require values at previous time steps which
-                   are stored in the p1, p2 and p3 vectors. The SDIRK scheme
-                   require the values at the different stages, which are also
-                   stored in the same arrays.
-                   */
-
-                  if (scheme == Parameters::SimulationControl::
-                                  TimeSteppingMethod::bdf1 ||
-                      scheme == Parameters::SimulationControl::
-                                  TimeSteppingMethod::steady_bdf)
-                    strong_residual += bdf_coefs[0] * velocity +
-                                       bdf_coefs[1] * p1_velocity_values[q];
-
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    strong_residual += bdf_coefs[0] * velocity +
-                                       bdf_coefs[1] * p1_velocity +
-                                       bdf_coefs[2] * p2_velocity;
-
-                  if (scheme ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                    strong_residual +=
-                      bdf_coefs[0] * velocity + bdf_coefs[1] * p1_velocity +
-                      bdf_coefs[2] * p2_velocity + bdf_coefs[3] * p3_velocity;
-
-
-                  if (is_sdirk_step1(scheme))
-                    strong_residual += sdirk_coefs[0][0] * velocity +
-                                       sdirk_coefs[0][1] * p1_velocity;
-
-                  if (is_sdirk_step2(scheme))
-                    {
-                      strong_residual += sdirk_coefs[1][0] * velocity +
-                                         sdirk_coefs[1][1] * p1_velocity +
-                                         sdirk_coefs[1][2] * p2_velocity;
-                    }
-
-                  if (is_sdirk_step3(scheme))
-                    {
-                      strong_residual += sdirk_coefs[2][0] * velocity +
-                                         sdirk_coefs[2][1] * p1_velocity +
-                                         sdirk_coefs[2][2] * p2_velocity +
-                                         sdirk_coefs[2][3] * p3_velocity;
-                    }
-
-                  // Matrix assembly
-                  if (assemble_matrix)
-                    {
-                      // We loop over the column first to prevent recalculation
-                      // of the strong jacobian in the inner loop
-                      for (unsigned int j = 0; j < dofs_per_cell; ++j)
-                        {
-                          const auto phi_u_j      = phi_u[j];
-                          const auto grad_phi_u_j = grad_phi_u[j];
-                          const auto phi_p_j      = phi_p[j];
-                          const auto grad_phi_p_j = grad_phi_p[j];
-
-
-
-                          auto strong_jac =
-                            (velocity_gradient * phi_u_j +
-                             grad_phi_u_j * velocity + grad_phi_p_j -
-                             viscosity * laplacian_phi_u[j]);
-
-                          if (is_bdf(scheme))
-                            strong_jac += phi_u_j * bdf_coefs[0];
-                          if (is_sdirk(scheme))
-                            strong_jac += phi_u_j * sdirk_coefs[0][0];
-
-                          if (velocity_source == Parameters::VelocitySource::
-                                                   VelocitySourceType::srf)
-                            {
-                              if (dim == 2)
-                                strong_jac += 2 * omega_z * (-1.) *
-                                              cross_product_2d(phi_u_j);
-                              else if (dim == 3)
-                                strong_jac +=
-                                  2 * cross_product_3d(omega_vector, phi_u_j);
-                            }
-
-                          for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                            {
-                              const auto phi_u_i      = phi_u[i];
-                              const auto grad_phi_u_i = grad_phi_u[i];
-                              const auto phi_p_i      = phi_p[i];
-                              const auto grad_phi_p_i = grad_phi_p[i];
-
-
-                              local_matrix(i, j) +=
-                                (
-                                  // Momentum terms
-                                  viscosity *
-                                    scalar_product(grad_phi_u_j, grad_phi_u_i) +
-                                  velocity_gradient * phi_u_j * phi_u_i +
-                                  grad_phi_u_j * velocity * phi_u_i -
-                                  div_phi_u[i] * phi_p_j +
-                                  // Continuity
-                                  phi_p_i * div_phi_u[j]) *
-                                JxW;
-
-                              // Mass matrix
-                              if (is_bdf(scheme))
-                                local_matrix(i, j) +=
-                                  phi_u_j * phi_u_i * bdf_coefs[0] * JxW;
-
-                              if (is_sdirk(scheme))
-                                local_matrix(i, j) +=
-                                  phi_u_j * phi_u_i * sdirk_coefs[0][0] * JxW;
-
-                              // PSPG GLS term
-                              local_matrix(i, j) +=
-                                tau * (strong_jac * grad_phi_p_i) * JxW;
-
-                              if (velocity_source ==
-                                  Parameters::VelocitySource::
-                                    VelocitySourceType::srf)
-                                {
-                                  if (dim == 2)
-                                    local_matrix(i, j) +=
-                                      2 * omega_z * (-1.) *
-                                      cross_product_2d(phi_u_j) * phi_u_i * JxW;
-
-                                  else if (dim == 3)
-                                    local_matrix(i, j) +=
-                                      2 *
-                                      cross_product_3d(omega_vector, phi_u_j) *
-                                      phi_u_i * JxW;
-                                }
-
-
-                              // PSPG TAU term is currently disabled because it
-                              // does not alter the matrix sufficiently
-                              // local_matrix(i, j) +=
-                              //  -tau * tau * tau * 4 / h / h *
-                              //  (velocity *phi_u_j) *
-                              //  strong_residual * grad_phi_p_i *
-                              //  fe_values.JxW(q);
-
-                              // Jacobian is currently incomplete
-                              if (SUPG)
-                                {
-                                  local_matrix(i, j) +=
-                                    tau *
-                                    (strong_jac * (grad_phi_u_i * velocity) +
-                                     strong_residual *
-                                       (grad_phi_u_i * phi_u_j)) *
-                                    JxW;
-
-                                  // SUPG TAU term is currently disabled because
-                                  // it does not alter the matrix sufficiently
-                                  // local_matrix(i, j)
-                                  // +=
-                                  //   -strong_residual
-                                  //   * (grad_phi_u_i
-                                  //   *
-                                  //   velocity)
-                                  //   * tau * tau *
-                                  //   tau * 4 / h / h
-                                  //   *
-                                  //   (velocity
-                                  //   *phi_u_j) *
-                                  //   fe_values.JxW(q);
-                                }
-                            }
-                        }
-                    }
-
-                  // Assembly of the right-hand side
-                  for (unsigned int i = 0; i < dofs_per_cell; ++i)
-                    {
-                      const auto phi_u_i      = phi_u[i];
-                      const auto grad_phi_u_i = grad_phi_u[i];
-                      const auto phi_p_i      = phi_p[i];
-                      const auto grad_phi_p_i = grad_phi_p[i];
-                      const auto div_phi_u_i  = div_phi_u[i];
-
-
-                      // Navier-Stokes Residual
-                      local_rhs(i) +=
-                        (
-                          // Momentum
-                          -viscosity *
-                            scalar_product(velocity_gradient, grad_phi_u_i) -
-                          velocity_gradient * velocity * phi_u_i +
-                          current_pressure * div_phi_u_i + force * phi_u_i -
-                          // Continuity
-                          present_velocity_divergence * phi_p_i) *
-                        JxW;
-
-                      // Residual associated with BDF schemes
-                      if (scheme == Parameters::SimulationControl::
-                                      TimeSteppingMethod::bdf1 ||
-                          scheme == Parameters::SimulationControl::
-                                      TimeSteppingMethod::steady_bdf)
-                        local_rhs(i) -= bdf_coefs[0] *
-                                        (velocity - p1_velocity) * phi_u_i *
-                                        JxW;
-
-                      if (scheme == Parameters::SimulationControl::
-                                      TimeSteppingMethod::bdf2)
-                        local_rhs(i) -=
-                          (bdf_coefs[0] * (velocity * phi_u_i) +
-                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
-                           bdf_coefs[2] * (p2_velocity * phi_u_i)) *
-                          JxW;
-
-                      if (scheme == Parameters::SimulationControl::
-                                      TimeSteppingMethod::bdf3)
-                        local_rhs(i) -=
-                          (bdf_coefs[0] * (velocity * phi_u_i) +
-                           bdf_coefs[1] * (p1_velocity * phi_u_i) +
-                           bdf_coefs[2] * (p2_velocity * phi_u_i) +
-                           bdf_coefs[3] * (p3_velocity * phi_u_i)) *
-                          JxW;
-
-                      // Residuals associated with SDIRK schemes
-                      if (is_sdirk_step1(scheme))
-                        local_rhs(i) -=
-                          (sdirk_coefs[0][0] * (velocity * phi_u_i) +
-                           sdirk_coefs[0][1] * (p1_velocity * phi_u_i)) *
-                          JxW;
-
-                      if (is_sdirk_step2(scheme))
-                        {
-                          local_rhs(i) -=
-                            (sdirk_coefs[1][0] * (velocity * phi_u_i) +
-                             sdirk_coefs[1][1] * (p1_velocity * phi_u_i) +
-                             sdirk_coefs[1][2] *
-                               (p2_velocity_values[q] * phi_u_i)) *
-                            JxW;
-                        }
-
-                      if (is_sdirk_step3(scheme))
-                        {
-                          local_rhs(i) -=
-                            (sdirk_coefs[2][0] * (velocity * phi_u_i) +
-                             sdirk_coefs[2][1] * (p1_velocity * phi_u_i) +
-                             sdirk_coefs[2][2] * (p2_velocity * phi_u_i) +
-                             sdirk_coefs[2][3] * (p3_velocity * phi_u_i)) *
-                            JxW;
-                        }
-
-                      if (velocity_source ==
-                          Parameters::VelocitySource::VelocitySourceType::srf)
-                        {
-                          if (dim == 2)
-                            {
-                              local_rhs(i) += -2 * omega_z * (-1.) *
-                                              cross_product_2d(velocity) *
-                                              phi_u_i * JxW;
-                              auto centrifugal =
-                                omega_z * (-1.) *
-                                cross_product_2d(
-                                  omega_z * (-1.) *
-                                  cross_product_2d(quadrature_points[q]));
-                              local_rhs(i) += -centrifugal * phi_u_i * JxW;
-                            }
-                          else if (dim == 3)
-                            {
-                              local_rhs(i) +=
-                                -2 * cross_product_3d(omega_vector, velocity) *
-                                phi_u_i * JxW;
-                              local_rhs(i) +=
-                                -cross_product_3d(
-                                  omega_vector,
-                                  cross_product_3d(omega_vector,
-                                                   quadrature_points[q])) *
-                                phi_u_i * JxW;
-                            }
-                        }
-
-                      // PSPG GLS term
-                      local_rhs(i) +=
-                        -tau * (strong_residual * grad_phi_p_i) * JxW;
-
-                      // SUPG GLS term
-                      if (SUPG)
-                        {
-                          local_rhs(i) +=
-                            -tau *
-                            (strong_residual * (grad_phi_u_i * velocity)) * JxW;
-                        }
-                    }
-                }
-
-              cell->get_dof_indices(local_dof_indices);
-
-              // The non-linear solver assumes that the nonzero constraints have
-              // already been applied to the solution
-              const AffineConstraints<double> &constraints_used =
-                this->zero_constraints;
-              // initial_step ? nonzero_constraints : zero_constraints;
-              if (assemble_matrix)
-                {
-                  constraints_used.distribute_local_to_global(
-                    local_matrix,
-                    local_rhs,
-                    local_dof_indices,
-                    this->system_matrix,
-                    this->system_rhs);
-                }
-              else
-                {
-                  constraints_used.distribute_local_to_global(local_rhs,
-                                                              local_dof_indices,
-                                                              this->system_rhs);
-                }
-            }
+            this->assemblers.push_back(
+                    std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
+                    this->simulation_control,
+                            this->simulation_parameters.physical_properties));
         }
+        // Core assembler
+        this->assemblers.push_back(
+                std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
+                this->simulation_control,
+                        this->simulation_parameters.physical_properties));
+    }
+    else
+    {
+        // Time-stepping schemes
+        if (is_bdf(this->simulation_control->get_assembly_method()))
+        {
+            this->assemblers.push_back(
+                    std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
+                            this->simulation_control));
+        }
+        else if (is_sdirk(this->simulation_control->get_assembly_method()))
+        {
+            this->assemblers.push_back(
+                    std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+                            this->simulation_control));
+        }
+
+        // Velocity sources term
+        if (this->simulation_parameters.velocity_sources.type ==
+            Parameters::VelocitySource::VelocitySourceType::srf)
+        {
+            this->assemblers.push_back(
+                    std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
+                            this->simulation_parameters.velocity_sources));
+        }
+
+
+        // Core assembler
+        this->assemblers.push_back(
+                std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+                        this->simulation_control,
+                        this->simulation_parameters.physical_properties));
+    }
+}
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::assemble_system_matrix()
+{
+    this->system_matrix = 0;
+    setup_assemblers();
+
+    auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                     *this->cell_quadrature,
+                                                     *this->mapping);
+
+    if (this->simulation_parameters.multiphysics.free_surface)
+    {
+        const DoFHandler<dim> *dof_handler_fs =
+                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                         *this->cell_quadrature,
+                                         *this->mapping);
     }
 
 
-  if (assemble_matrix)
+    WorkStream::run(
+            this->dof_handler.begin_active(),
+            this->dof_handler.end(),
+            *this,
+            &GLSSharpNavierStokesSolver::assemble_local_system_matrix,
+            &GLSSharpNavierStokesSolver::copy_local_matrix_to_global_matrix,
+            scratch_data,
+            StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                                 this->cell_quadrature->size()));
     this->system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
+}
+
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
+        const typename DoFHandler<dim>::active_cell_iterator &cell,
+        NavierStokesScratchData<dim> &                        scratch_data,
+        StabilizedMethodsTensorCopyData<dim> &                copy_data)
+{
+    copy_data.cell_is_local = cell->is_locally_owned();
+    if (!cell->is_locally_owned())
+        return;
+    // Check if the cell is cut or not by the IB and what the particle the
+    // cut the cell. If the particle is cut
+    bool cell_is_cut;
+    // The id of the particle that cut the cell. Returns 0 if the cell is
+    // not cut.
+    unsigned int ib_particle_id;
+    std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+    if (cell_is_cut)
+        return;
+
+    scratch_data.reinit(cell,
+                        this->evaluation_point,
+                        this->previous_solutions,
+                        this->solution_stages,
+                        this->forcing_function,
+                        this->beta);
+    if (this->simulation_parameters.multiphysics.free_surface)
+    {
+        const DoFHandler<dim> *dof_handler_fs =
+                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        typename DoFHandler<dim>::active_cell_iterator phase_cell(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                dof_handler_fs);
+
+        std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+        previous_solutions.push_back(
+                *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+
+        scratch_data.reinit_free_surface(
+                phase_cell,
+                *this->multiphysics->get_solution(PhysicsID::free_surface),
+                previous_solutions,
+                std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+    copy_data.reset();
+
+
+    for (auto &assembler : this->assemblers)
+    {
+        assembler->assemble_matrix(scratch_data, copy_data);
+    }
+
+
+    cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
+        const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-  if (this->simulation_parameters.particlesParameters.integrate_motion)
-    {
-      force_on_ib();
-      integrate_particles();
-      generate_cut_cells_map();
-    }
-  if (this->simulation_parameters.velocity_sources.type ==
-      Parameters::VelocitySource::VelocitySourceType::none)
-    {
-      TimerOutput::Scope t(this->computing_timer, "assemble_system");
-      if (time_stepping_method ==
-          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else
-        throw std::runtime_error(
-          "The time stepping method provided is not supported by this solver");
-    }
+    if (!copy_data.cell_is_local)
+        return;
 
-  else if (this->simulation_parameters.velocity_sources.type ==
-           Parameters::VelocitySource::VelocitySourceType::srf)
-    {
-      TimerOutput::Scope t(this->computing_timer, "assemble_system");
-      if (time_stepping_method ==
-          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady)
-        assembleGLS<true,
-                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-        assembleGLS<
-          true,
-          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else
-        throw std::runtime_error(
-          "The time stepping method provided is not supported by this solver");
-    }
-
-  sharp_edge();
-  if (this->simulation_control->is_first_assembly())
-    {
-      this->simulation_control->provide_residual(this->system_rhs.l2_norm());
-    }
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+    constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                                copy_data.local_dof_indices,
+                                                this->system_matrix);
 }
+
+
 template <int dim>
 void
-GLSSharpNavierStokesSolver<dim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GLSSharpNavierStokesSolver<dim>::assemble_system_rhs()
 {
-  if (this->simulation_parameters.velocity_sources.type ==
-      Parameters::VelocitySource::VelocitySourceType::none)
+    // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+    this->system_rhs = 0;
+    setup_assemblers();
+
+    auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                     *this->cell_quadrature,
+                                                     *this->mapping);
+
+    if (this->simulation_parameters.multiphysics.free_surface)
     {
-      TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-      if (time_stepping_method ==
-          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-                    Parameters::VelocitySource::VelocitySourceType::none>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
-          Parameters::VelocitySource::VelocitySourceType::none>();
-      else
-        throw std::runtime_error(
-          "The time stepping method provided is not supported by this solver");
+        const DoFHandler<dim> *dof_handler_fs =
+                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                         *this->cell_quadrature,
+                                         *this->mapping);
     }
-  if (this->simulation_parameters.velocity_sources.type ==
-      Parameters::VelocitySource::VelocitySourceType::srf)
-    {
-      TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-      if (time_stepping_method ==
-          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk22_2,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_2,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::sdirk33_3,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady)
-        assembleGLS<false,
-                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-                    Parameters::VelocitySource::VelocitySourceType::srf>();
-      else if (time_stepping_method ==
-               Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-        assembleGLS<
-          false,
-          Parameters::SimulationControl::TimeSteppingMethod::steady_bdf,
-          Parameters::VelocitySource::VelocitySourceType::srf>();
-      else
-        throw std::runtime_error(
-          "The time stepping method provided is not supported by this solver");
-    }
-  sharp_edge();
+
+
+    WorkStream::run(
+            this->dof_handler.begin_active(),
+            this->dof_handler.end(),
+            *this,
+            &GLSSharpNavierStokesSolver::assemble_local_system_rhs,
+            &GLSSharpNavierStokesSolver::copy_local_rhs_to_global_rhs,
+            scratch_data,
+            StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                                 this->cell_quadrature->size()));
+
+    this->system_rhs.compress(VectorOperation::add);
+
+    if (this->simulation_control->is_first_assembly())
+        this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
+        const typename DoFHandler<dim>::active_cell_iterator &cell,
+        NavierStokesScratchData<dim> &                        scratch_data,
+        StabilizedMethodsTensorCopyData<dim> &                copy_data)
+{
+    copy_data.cell_is_local = cell->is_locally_owned();
+    if (!cell->is_locally_owned())
+        return;
+
+    scratch_data.reinit(cell,
+                        this->evaluation_point,
+                        this->previous_solutions,
+                        this->solution_stages,
+                        this->forcing_function,
+                        this->beta);
+
+    if (this->simulation_parameters.multiphysics.free_surface)
+    {
+        const DoFHandler<dim> *dof_handler_fs =
+                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+        typename DoFHandler<dim>::active_cell_iterator phase_cell(
+                &(*(this->triangulation)),
+                cell->level(),
+                cell->index(),
+                dof_handler_fs);
+
+        std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+        previous_solutions.push_back(
+                *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+
+
+        scratch_data.reinit_free_surface(
+                phase_cell,
+                *this->multiphysics->get_solution(PhysicsID::free_surface),
+                previous_solutions,
+                std::vector<TrilinosWrappers::MPI::Vector>());
+    }
+
+    copy_data.reset();
+
+
+    for (auto &assembler : this->assemblers)
+    {
+        assembler->assemble_rhs(scratch_data, copy_data);
+    }
+
+
+    cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+
+
+template <int dim>
+void
+GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
+        const StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+    if (!copy_data.cell_is_local)
+        return;
+
+    const AffineConstraints<double> &constraints_used = this->zero_constraints;
+    constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                                copy_data.local_dof_indices,
+                                                this->system_rhs);
+}
+
 
 template <int dim>
 void
