@@ -15,4 +15,5 @@ Generate a geometry with SALOME, mesh it and then add the boundary IDs with GMSH
 	4. Generating 3D mesh and exporting to .msh
 3. Building the .prm file
 	1. Adding "simplex = true" to the file
+	2. For the boundary conditions, there is only one "no flux/default" condition, so we have to keep only one for this purpose (in case of tracer for example, use 3: Dirichlet 1, Dirichlet 0, Default no flux everywhere else)
 
