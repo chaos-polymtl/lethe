@@ -20,9 +20,9 @@
 #ifndef lethe_parameters_cfd_dem_h
 #define lethe_parameters_cfd_dem_h
 
-#include <core/parameters.h>
-
 #include <deal.II/base/parsed_function.h>
+
+#include <core/parameters.h>
 
 
 using namespace dealii;
@@ -74,6 +74,7 @@ namespace Parameters
     double                         l2_smoothing_factor;
     double                         l2_lower_bound;
     double                         l2_upper_bound;
+    unsigned int                   void_fraction_fem_degree;
   };
 
   struct CFDDEM

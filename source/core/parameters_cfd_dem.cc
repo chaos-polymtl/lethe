@@ -35,6 +35,10 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "The upper bound for void fraction L2 projection");
+    prm.declare_entry("void fraction fem degree",
+                      "1",
+                      Patterns::Integer(),
+                      "The degree of the void fraction element.");
     prm.leave_subsection();
   }
 
@@ -54,11 +58,12 @@ namespace Parameters
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
 
-    read_dem            = prm.get_bool("read dem");
-    dem_file_name       = prm.get("dem file name");
-    l2_smoothing_factor = prm.get_double("l2 smoothing factor");
-    l2_lower_bound      = prm.get_double("l2 lower bound");
-    l2_upper_bound      = prm.get_double("l2 upper bound");
+    read_dem                 = prm.get_bool("read dem");
+    dem_file_name            = prm.get("dem file name");
+    l2_smoothing_factor      = prm.get_double("l2 smoothing factor");
+    l2_lower_bound           = prm.get_double("l2 lower bound");
+    l2_upper_bound           = prm.get_double("l2 upper bound");
+    void_fraction_fem_degree = prm.get_integer("void fraction fem degree");
     prm.leave_subsection();
   }
 
@@ -93,11 +98,11 @@ namespace Parameters
                       "Choose whether or not to apply post_processing");
     prm.declare_entry("inlet boundary id",
                       "1",
-                      Patterns::Double(),
+                      Patterns::Integer(),
                       "The inlet boundary of the bed");
     prm.declare_entry("outlet boundary id",
                       "2",
-                      Patterns::Double(),
+                      Patterns::Integer(),
                       "The outlet boundary of the bed");
     prm.leave_subsection();
   }
@@ -112,8 +117,8 @@ namespace Parameters
     full_stress_tensor   = prm.get_bool("full stress tensor");
     reference_velocity   = prm.get_double("reference velocity");
     post_processing      = prm.get_bool("post processing");
-    inlet_boundary_id    = prm.get_double("inlet boundary id");
-    outlet_boundary_id   = prm.get_double("outlet boundary id");
+    inlet_boundary_id    = prm.get_integer("inlet boundary id");
+    outlet_boundary_id   = prm.get_integer("outlet boundary id");
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;
