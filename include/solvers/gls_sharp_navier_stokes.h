@@ -51,11 +51,6 @@ public:
     solve();
 
 private:
-    template<bool assemble_matrix,
-            Parameters::SimulationControl::TimeSteppingMethod scheme,
-            Parameters::VelocitySource::VelocitySourceType velocity_source>
-    void
-    assembleGLS();
 
 
     void
@@ -151,7 +146,7 @@ private:
     assemble_matrix_and_rhs(
             const Parameters::SimulationControl::TimeSteppingMethod
             time_stepping_method) override {
-        TimerOutput::Scope t(this->computing_timer, "assemble_system");
+
         if (this->simulation_parameters.particlesParameters.integrate_motion)
         {
             force_on_ib();
@@ -159,10 +154,12 @@ private:
             generate_cut_cells_map();
         }
         this->simulation_control->set_assembly_method(time_stepping_method);
-        assemble_system_matrix();
-        assemble_system_rhs();
+        {
+            TimerOutput::Scope t(this->computing_timer, "assemble_system");
+            assemble_system_matrix();
+            assemble_system_rhs();
+        }
         sharp_edge();
-
     }
 
 
@@ -314,16 +311,29 @@ private:
     cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
              std::vector<types::global_dof_index> &local_dof_indices,
              std::map<types::global_dof_index, Point<dim>> &support_points);
-
+    bool
+    cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
+                  std::map<types::global_dof_index, Point<dim>> &support_points,
+                  unsigned int p);
+    /**
+     * @brief
+     * Return a bool to define if a cell is contains inside an IB particle and the local
+     * DOFs of the cell for later us. If the cell is cut, the function will return
+     * the id of the particle, else it returns 0.
+     *
+     * @param cell , the cell that we verify whether it is cut or not.
+     *
+     * @param local_dof_indices, a container for the local dof indices used during the function call.
+     *
+     * @param support_points, a mapping of support points for the DOFs.
+     *
+     */
     std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
     cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
              std::vector<types::global_dof_index> &local_dof_indices,
              std::map<types::global_dof_index, Point<dim>> &support_points);
 
-    bool
-    cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
-                  std::map<types::global_dof_index, Point<dim>> &support_points,
-                  unsigned int p);
+
 
     /**
      * @brief
@@ -390,7 +400,7 @@ private:
             std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
             ib_done;
 
-    // Assemblers for the matrix
+    // Special assembler of the cells inside an IB particle
     std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers_inside_ib;
 
     const bool SUPG = true;

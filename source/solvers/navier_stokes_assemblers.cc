@@ -842,8 +842,6 @@ LaplaceAssembly<dim>::assemble_matrix(
     const double       h          = scratch_data.cell_size;
 
     // Copy data elements
-    auto &strong_residual_vec = copy_data.strong_residual;
-    auto &strong_jacobian_vec = copy_data.strong_jacobian;
     auto &local_matrix        = copy_data.local_matrix;
 
     // Time steps and inverse time steps which is used for stabilization constant
@@ -856,10 +854,6 @@ LaplaceAssembly<dim>::assemble_matrix(
     // Loop over the quadrature points
     for (unsigned int q = 0; q < n_q_points; ++q)
     {
-        // Calculation of the magnitude of the velocity for the
-        // stabilization parameter
-        const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
-        const double u_mag = std::max(velocity.norm(), 1e-12);
         // Store JxW in local variable for faster access;
         const double JxW = JxW_vec[q];
 
@@ -874,9 +868,10 @@ LaplaceAssembly<dim>::assemble_matrix(
                 const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
                 const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
+                // Laplacian on the velocity terms
                 double local_matrix_ij =h*h *scalar_product(grad_phi_u_j, grad_phi_u_i)*sdt ;
 
-                // PSPG GLS term
+                // Laplacian on the pressure terms
                 local_matrix_ij +=viscosity * h*h *scalar_product(grad_phi_p_j, grad_phi_p_i)*sdt;
 
                 // The jacobian matrix for the SUPG formulation
@@ -941,11 +936,11 @@ LaplaceAssembly<dim>::assemble_rhs(
 
             double local_rhs_i = 0;
 
-            // Laplacien on the velocity terms
+            // Laplacian on the velocity terms
             local_rhs_i += -h*h * scalar_product(velocity_gradient, grad_phi_u_i)* JxW *sdt;
 
 
-            // Laplacien on the pressure terms
+            // Laplacian on the pressure terms
             local_rhs_i += -viscosity*h*h * scalar_product(pressure_gradient , grad_phi_p_i) * JxW *sdt;
 
 

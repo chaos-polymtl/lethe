@@ -333,12 +333,6 @@ public:
     assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
-    /**
-     * Enables SUPG stabilization for the Navier-Stokes formulation.
-     * We have not found any scenarios where it is relevant not to use SUPG
-     * stabilization yet.
-     */
-    const bool SUPG = true;
 
     std::shared_ptr<SimulationControl> simulation_control;
     Parameters::PhysicalProperties     physical_properties;
