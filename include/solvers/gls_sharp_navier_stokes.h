@@ -40,376 +40,377 @@ using namespace dealii;
  * @author Lucka Barbeau, Bruno Blais, 2020
  */
 
-template<int dim>
-class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim> {
+template <int dim>
+class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
+{
 public:
-    GLSSharpNavierStokesSolver(SimulationParameters<dim> &nsparam);
+  GLSSharpNavierStokesSolver(SimulationParameters<dim> &nsparam);
 
-    ~GLSSharpNavierStokesSolver();
+  ~GLSSharpNavierStokesSolver();
 
-    void
-    solve();
+  void
+  solve();
 
 private:
+  void
+  assemble_system_matrix();
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
 
 
-    void
-    assemble_system_matrix();
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
 
-    /**
-     * @brief Assemble the rhs associated with the solver
-     */
-    void
-    assemble_system_rhs();
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data);
 
-
-    /**
-     * @brief Assemble the local matrix for a given cell.
-     *
-     * This function is used by the WorkStream class to assemble
-     * the system matrix. It is a thread safe function.
-     *
-     * @param cell The cell for which the local matrix is assembled.
-     *
-     * @param scratch_data The scratch data which is used to store
-     * the calculated finite element information at the gauss point.
-     * See the documentation for NavierStokesScratchData for more
-     * information
-     *
-     * @param copy_data The copy data which is used to store
-     * the results of the assembly over a cell
-     */
-    void
-    assemble_local_system_matrix(
-            const typename DoFHandler<dim>::active_cell_iterator &cell,
-            NavierStokesScratchData<dim> &scratch_data,
-            StabilizedMethodsTensorCopyData<dim> &copy_data);
-
-    /**
-     * @brief Assemble the local rhs for a given cell
-     *
-     * @param cell The cell for which the local matrix is assembled.
-     *
-     * @param scratch_data The scratch data which is used to store
-     * the calculated finite element information at the gauss point.
-     * See the documentation for NavierStokesScratchData for more
-     * information
-     *
-     * @param copy_data The copy data which is used to store
-     * the results of the assembly over a cell
-     */
-    void
-    assemble_local_system_rhs(
-            const typename DoFHandler<dim>::active_cell_iterator &cell,
-            NavierStokesScratchData<dim> &scratch_data,
-            StabilizedMethodsTensorCopyData<dim> &copy_data);
-
-    /**
-     * @brief sets up the vector of assembler functions
-     */
-    void
-    setup_assemblers();
+  /**
+   * @brief sets up the vector of assembler functions
+   */
+  void
+  setup_assemblers();
 
 
-    /**
-     * @brief Copy local cell information to global matrix
-     */
+  /**
+   * @brief Copy local cell information to global matrix
+   */
 
-    void
-    copy_local_matrix_to_global_matrix(
-            const StabilizedMethodsTensorCopyData<dim> &copy_data);
+  void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-    /**
-     * @brief Copy local cell rhs information to global rhs
-     */
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   */
 
-    void
-    copy_local_rhs_to_global_rhs(
-            const StabilizedMethodsTensorCopyData<dim> &copy_data);
+  void
+  copy_local_rhs_to_global_rhs(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
-    /**
-     * @brief Call for the assembly of the matrix and the right hand side
-     *
-     * @param time_stepping_method The time-stepping method used for the assembly
-     *
-     * @deprecated This function is to be deprecated when the non-linear solvers
-     * have been refactored to call for rhs and matrix assembly seperately.
-     */
+  /**
+   * @brief Call for the assembly of the matrix and the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
 
-    /*
-     Modified version of assemble_matrix_and_rhs to include the presence of
-     extra steps. For more detail see the same function in the
-     gls_navier_stokes.h solver.
-     */
+  /*
+   Modified version of assemble_matrix_and_rhs to include the presence of
+   extra steps. For more detail see the same function in the
+   gls_navier_stokes.h solver.
+   */
 
-    virtual void
-    assemble_matrix_and_rhs(
-            const Parameters::SimulationControl::TimeSteppingMethod
-            time_stepping_method) override {
-
-        if (this->simulation_parameters.particlesParameters.integrate_motion)
-        {
-            force_on_ib();
-            integrate_particles();
-            generate_cut_cells_map();
-        }
-        this->simulation_control->set_assembly_method(time_stepping_method);
-        {
-            TimerOutput::Scope t(this->computing_timer, "assemble_system");
-            assemble_system_matrix();
-            assemble_system_rhs();
-        }
-        sharp_edge();
+  virtual void
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override
+  {
+    if (this->simulation_parameters.particlesParameters.integrate_motion)
+      {
+        force_on_ib();
+        integrate_particles();
+        generate_cut_cells_map();
+      }
+    this->simulation_control->set_assembly_method(time_stepping_method);
+    {
+      TimerOutput::Scope t(this->computing_timer, "assemble_system");
+      assemble_system_matrix();
+      assemble_system_rhs();
     }
-
-
-    /**
-     * @brief Call for the assembly of the right hand side
-     *
-     * @param time_stepping_method The time-stepping method used for the assembly
-     *
-     * @deprecated This function is to be deprecated when the non-linear solvers
-     * have been refactored to call for rhs and matrix assembly seperately.
-     */
-    virtual void
-    assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override {
-        TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-        this->simulation_control->set_assembly_method(time_stepping_method);
-
-        assemble_system_rhs();
-        sharp_edge();
-    }
-
-
-    // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
-    // and Adjacent_3 needs to be renamed if possible to a clearer notation
-
-
-    /**
-     * @brief
-     * Map the vertex index to the cell that includes that vertex.
-     * This map is used to find all the cell close to a specific vertex.
-     */
-    void
-    vertices_cell_mapping();
-
-    /**
-     * @brief
-     * Defines the particle structure and value based on the parameter file.
-     * This structure gives access to the position, velocity, force and other
-     * proprieties of each IB particle. All the variables defined for each of the
-     * particle are described in the class: IBparticle. see:
-     * \include\core\ib_particle.h
-     */
-    void
-    define_particles();
-
-    /**
-     * @brief
-     * Evaluate the forces applied on each of the IB particle.
-     */
-    void
-    force_on_ib();
-
-
-    /**
-     * @brief
-     * Modify the system matrix to impose IB condition using the sharp_edge
-     * approach. The detail of this approach are presented in : L. Barbeau, S.
-     * Étienne, C. Béguin & B. Blais, «Development of a high-order continuous
-     * Galerkin sharp-interface immersed boundary method and its application to
-     * incompressible flow problems,» Computers & Fluids, 2020, in press, ref.
-     * CAF-D-20-00773
-     */
-    void
     sharp_edge();
-
-    /**
-     * @brief
-     * Write in a specifique file for each of the paticles its forces, velocity,
-     * position at each time step. LB - TODO refactor the output format of the
-     * file
-     */
-    void
-    write_force_ib();
-
-    /**
-     * @brief
-     * Integrate the particle velocity and position based on the forces and
-     * torques and applies the next value to the particle.
-     */
-    void
-    integrate_particles();
-
-    /**
-     * @brief
-     * Store the solution of the particles dynamics parameters for integration.
-     * Defines the table to store the history of each of the particles.
-     */
-    void
-    finish_time_step_particles();
-
-    /**
-     * @brief
-     * Evaluate the L2 error on the computational domain if an analytical solution
-     * is given. This function is slightly different from its standard GLS
-     * counterpart as the cells that are cut by an immersed boundary should not be
-     * taken into account in the error evaluation. See "computation domain"
-     * definition in: L. Barbeau, S. Étienne, C. Béguin & B. Blais, «Development
-     * of a high-order continuous Galerkin sharp-interface immersed boundary
-     * method and its application to incompressible flow problems,» Computers &
-     * Fluids, 2020, in press, ref. CAF-D-20-0077
-     */
-    double
-    calculate_L2_error_particles();
+  }
 
 
-    /**
-     * @brief
-     * Same function as its standard GLS counterpart but it used the error
-     * evaluation that takes into account the particle’s position.
-     */
-    virtual void
-    postprocess_fd(bool firstIter) override;
+  /**
+   * @brief Call for the assembly of the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override
+  {
+    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+    this->simulation_control->set_assembly_method(time_stepping_method);
 
-    /**
-     * @brief
-     * Allow a refinement around each of the particles.
-     * The zone where the cells will be refined is defined by a ring in 2D and a
-     *shell in 3D. The outside and inside radius of the ring\shell is defined in
-     *relation to the diameter of the particle by the immersed boundaries
-     *parameter: "refine mesh inside radius factor" and "refine mesh outside
-     *radius factor". These factors multiply the radius of the particle to define
-     *the outside and inside radius of the ring\shell.
-     */
-    void
-    refine_ib();
-
-    /**
-     * @brief
-     *This function create a map (cut_cells_map) that indicates if a cell is cut,
-     *and the particle id of the particle that cut it.
-     */
-    void
-    generate_cut_cells_map();
-
-    /**
-     * @brief
-     * Return a bool to define if a cell is cut by an IB particle and the local
-     * DOFs of the cell for later us. If the cell is cut, the function will return
-     * the id of the particle that cut it, else it returns 0.
-     *
-     * @param cell , the cell that we verify whether it is cut or not.
-     *
-     * @param local_dof_indices, a container for the local dof indices used during the function call.
-     *
-     * @param support_points, a mapping of support points for the DOFs.
-     *
-     */
-    std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
-    cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             std::vector<types::global_dof_index> &local_dof_indices,
-             std::map<types::global_dof_index, Point<dim>> &support_points);
-    bool
-    cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
-                  std::map<types::global_dof_index, Point<dim>> &support_points,
-                  unsigned int p);
-    /**
-     * @brief
-     * Return a bool to define if a cell is contains inside an IB particle and the local
-     * DOFs of the cell for later us. If the cell is cut, the function will return
-     * the id of the particle, else it returns 0.
-     *
-     * @param cell , the cell that we verify whether it is cut or not.
-     *
-     * @param local_dof_indices, a container for the local dof indices used during the function call.
-     *
-     * @param support_points, a mapping of support points for the DOFs.
-     *
-     */
-    std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
-    cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
-             std::vector<types::global_dof_index> &local_dof_indices,
-             std::map<types::global_dof_index, Point<dim>> &support_points);
+    assemble_system_rhs();
+    sharp_edge();
+  }
 
 
-
-    /**
-     * @brief
-     * Return the cell around a point based on a initial guess of a closed cell
-     * (look in the neighbors of this cell)
-     *
-     * @param cell , The initial cell. We suspect the point of being in one of the neighbours of this cell.
-     *
-     * @param point, The point that we want to find the cell that contains it
-     */
-    typename DoFHandler<dim>::active_cell_iterator
-    find_cell_around_point_with_neighbors(
-            const typename DoFHandler<dim>::active_cell_iterator &cell,
-            Point<dim> point);
+  // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
+  // and Adjacent_3 needs to be renamed if possible to a clearer notation
 
 
-    /**
-  * @brief
-  Return a bool that describes  if a cell contains a specific point
-  *
-  * @param cell , The initial cell for which we want to check if the point is inside.
-  *
-  * @param point, The point that we wish to check
-  */
-    bool
-    point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,
-                      Point<dim> point);
+  /**
+   * @brief
+   * Map the vertex index to the cell that includes that vertex.
+   * This map is used to find all the cell close to a specific vertex.
+   */
+  void
+  vertices_cell_mapping();
 
-    /**
-     * @brief
-     *Return a vector of cells around a cell including vertex neighbors
-     *
-     * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
-     */
-    std::vector<typename DoFHandler<dim>::active_cell_iterator>
-    find_cells_around_cell(
-            const typename DoFHandler<dim>::active_cell_iterator &cell);
+  /**
+   * @brief
+   * Defines the particle structure and value based on the parameter file.
+   * This structure gives access to the position, velocity, force and other
+   * proprieties of each IB particle. All the variables defined for each of the
+   * particle are described in the class: IBparticle. see:
+   * \include\core\ib_particle.h
+   */
+  void
+  define_particles();
+
+  /**
+   * @brief
+   * Evaluate the forces applied on each of the IB particle.
+   */
+  void
+  force_on_ib();
+
+
+  /**
+   * @brief
+   * Modify the system matrix to impose IB condition using the sharp_edge
+   * approach. The detail of this approach are presented in : L. Barbeau, S.
+   * Étienne, C. Béguin & B. Blais, «Development of a high-order continuous
+   * Galerkin sharp-interface immersed boundary method and its application to
+   * incompressible flow problems,» Computers & Fluids, 2020, in press, ref.
+   * CAF-D-20-00773
+   */
+  void
+  sharp_edge();
+
+  /**
+   * @brief
+   * Write in a specifique file for each of the paticles its forces, velocity,
+   * position at each time step. LB - TODO refactor the output format of the
+   * file
+   */
+  void
+  write_force_ib();
+
+  /**
+   * @brief
+   * Integrate the particle velocity and position based on the forces and
+   * torques and applies the next value to the particle.
+   */
+  void
+  integrate_particles();
+
+  /**
+   * @brief
+   * Store the solution of the particles dynamics parameters for integration.
+   * Defines the table to store the history of each of the particles.
+   */
+  void
+  finish_time_step_particles();
+
+  /**
+   * @brief
+   * Evaluate the L2 error on the computational domain if an analytical solution
+   * is given. This function is slightly different from its standard GLS
+   * counterpart as the cells that are cut by an immersed boundary should not be
+   * taken into account in the error evaluation. See "computation domain"
+   * definition in: L. Barbeau, S. Étienne, C. Béguin & B. Blais, «Development
+   * of a high-order continuous Galerkin sharp-interface immersed boundary
+   * method and its application to incompressible flow problems,» Computers &
+   * Fluids, 2020, in press, ref. CAF-D-20-0077
+   */
+  double
+  calculate_L2_error_particles();
+
+
+  /**
+   * @brief
+   * Same function as its standard GLS counterpart but it used the error
+   * evaluation that takes into account the particle’s position.
+   */
+  virtual void
+  postprocess_fd(bool firstIter) override;
+
+  /**
+   * @brief
+   * Allow a refinement around each of the particles.
+   * The zone where the cells will be refined is defined by a ring in 2D and a
+   *shell in 3D. The outside and inside radius of the ring\shell is defined in
+   *relation to the diameter of the particle by the immersed boundaries
+   *parameter: "refine mesh inside radius factor" and "refine mesh outside
+   *radius factor". These factors multiply the radius of the particle to define
+   *the outside and inside radius of the ring\shell.
+   */
+  void
+  refine_ib();
+
+  /**
+   * @brief
+   *This function create a map (cut_cells_map) that indicates if a cell is cut,
+   *and the particle id of the particle that cut it.
+   */
+  void
+  generate_cut_cells_map();
+
+  /**
+   * @brief
+   * Return a bool to define if a cell is cut by an IB particle and the local
+   * DOFs of the cell for later us. If the cell is cut, the function will return
+   * the id of the particle that cut it, else it returns 0.
+   *
+   * @param cell , the cell that we verify whether it is cut or not.
+   *
+   * @param local_dof_indices, a container for the local dof indices used during the function call.
+   *
+   * @param support_points, a mapping of support points for the DOFs.
+   *
+   */
+  std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+  cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
+           std::vector<types::global_dof_index> &         local_dof_indices,
+           std::map<types::global_dof_index, Point<dim>> &support_points);
+  bool
+  cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
+                std::map<types::global_dof_index, Point<dim>> &support_points,
+                unsigned int                                   p);
+  /**
+   * @brief
+   * Return a bool to define if a cell is contains inside an IB particle and the
+   * local DOFs of the cell for later us. If the cell is cut, the function will
+   * return the id of the particle, else it returns 0.
+   *
+   * @param cell , the cell that we verify whether it is cut or not.
+   *
+   * @param local_dof_indices, a container for the local dof indices used during the function call.
+   *
+   * @param support_points, a mapping of support points for the DOFs.
+   *
+   */
+  std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+  cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
+              std::vector<types::global_dof_index> &         local_dof_indices,
+              std::map<types::global_dof_index, Point<dim>> &support_points);
 
 
 
-    /**
-     * Members
-     */
+  /**
+   * @brief
+   * Return the cell around a point based on a initial guess of a closed cell
+   * (look in the neighbors of this cell)
+   *
+   * @param cell , The initial cell. We suspect the point of being in one of the neighbours of this cell.
+   *
+   * @param point, The point that we want to find the cell that contains it
+   */
+  typename DoFHandler<dim>::active_cell_iterator
+  find_cell_around_point_with_neighbors(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    Point<dim>                                            point);
+
+
+  /**
+* @brief
+Return a bool that describes  if a cell contains a specific point
+*
+* @param cell , The initial cell for which we want to check if the point is inside.
+*
+* @param point, The point that we wish to check
+*/
+  bool
+  point_inside_cell(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                    Point<dim> point);
+
+  /**
+   * @brief
+   *Return a vector of cells around a cell including vertex neighbors
+   *
+   * @param cell , The initial cell. we want to know all the cells that share a vertex with this cell.
+   */
+  std::vector<typename DoFHandler<dim>::active_cell_iterator>
+  find_cells_around_cell(
+    const typename DoFHandler<dim>::active_cell_iterator &cell);
+
+
+
+  /**
+   * Members
+   */
 private:
-    std::map<unsigned int,
-            std::set<typename DoFHandler<dim>::active_cell_iterator>>
-            vertices_to_cell;
-    /*
-     * This map uses the cell as the key, and store the following information:
-     * if that cell is cut (bool) and what particle cut this cell (unsigned int).
-     */
-    std::map<typename DoFHandler<dim>::active_cell_iterator,
-            std::tuple<bool, unsigned int>>
-            cut_cells_map;
+  std::map<unsigned int,
+           std::set<typename DoFHandler<dim>::active_cell_iterator>>
+    vertices_to_cell;
+  /*
+   * This map uses the cell as the key, and store the following information:
+   * if that cell is cut (bool) and what particle cut this cell (unsigned int).
+   */
+  std::map<typename DoFHandler<dim>::active_cell_iterator,
+           std::tuple<bool, unsigned int>>
+    cut_cells_map;
 
-    std::map<typename DoFHandler<dim>::active_cell_iterator,
-            std::tuple<bool, unsigned int>>
-            cells_inside_map;
-    /*
-     * This map is used to keep in memory which DOFs already have an IB equation
-     * imposed on them in order to avoid writing multiple time the same equation.
-     */
-    std::map<unsigned int,
-            std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
-            ib_done;
+  std::map<typename DoFHandler<dim>::active_cell_iterator,
+           std::tuple<bool, unsigned int>>
+    cells_inside_map;
+  /*
+   * This map is used to keep in memory which DOFs already have an IB equation
+   * imposed on them in order to avoid writing multiple time the same equation.
+   */
+  std::map<unsigned int,
+           std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
+    ib_done;
 
-    // Special assembler of the cells inside an IB particle
-    std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers_inside_ib;
+  // Special assembler of the cells inside an IB particle
+  std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>>
+    assemblers_inside_ib;
 
-    const bool SUPG = true;
-    const bool PSPG = true;
-    const double GLS_u_scale = 1;
-    std::vector<IBParticle<dim>> particles;
+  const bool                   SUPG        = true;
+  const bool                   PSPG        = true;
+  const double                 GLS_u_scale = 1;
+  std::vector<IBParticle<dim>> particles;
 
-    std::vector<TableHandler> table_f;
-    std::vector<TableHandler> table_t;
+  std::vector<TableHandler> table_f;
+  std::vector<TableHandler> table_t;
 };
 
 

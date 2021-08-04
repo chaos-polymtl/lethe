@@ -23,10 +23,10 @@
 #include <core/time_integration_utilities.h>
 #include <core/utilities.h>
 
-#include <deal.II/base/work_stream.h>
-
-#include <solvers/navier_stokes_vof_assemblers.h>
 #include <solvers/gls_sharp_navier_stokes.h>
+#include <solvers/navier_stokes_vof_assemblers.h>
+
+#include <deal.II/base/work_stream.h>
 
 #include <deal.II/fe/fe_q.h>
 
@@ -112,8 +112,8 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // particle id that cuts it "p" in the map.
           cut_cells_map[cell] = {cell_is_cut, p};
           std::tie(cell_is_cut, p, local_dof_indices) =
-                    cell_inside(cell, local_dof_indices, support_points);
-          cells_inside_map[cell]={cell_is_cut, p};
+            cell_inside(cell, local_dof_indices, support_points);
+          cells_inside_map[cell] = {cell_is_cut, p};
         }
     }
 }
@@ -1268,39 +1268,38 @@ GLSSharpNavierStokesSolver<dim>::cell_cut(
 template <int dim>
 std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
 GLSSharpNavierStokesSolver<dim>::cell_inside(
-        const typename DoFHandler<dim>::active_cell_iterator &cell,
-        std::vector<types::global_dof_index> &                local_dof_indices,
-        std::map<types::global_dof_index, Point<dim>> &       support_points)
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  std::vector<types::global_dof_index> &                local_dof_indices,
+  std::map<types::global_dof_index, Point<dim>> &       support_points)
 {
-    // Check if a cell is cut and if it's rerun the particle by which it's cut and
-    // the local DOFs index. The check is done by counting the number of DOFs that
-    // is on either side of the boundary define by a particle.
+  // Check if a cell is cut and if it's rerun the particle by which it's cut and
+  // the local DOFs index. The check is done by counting the number of DOFs that
+  // is on either side of the boundary define by a particle.
 
-    cell->get_dof_indices(local_dof_indices);
+  cell->get_dof_indices(local_dof_indices);
 
-    for (unsigned int p = 0; p < particles.size(); ++p)
+  for (unsigned int p = 0; p < particles.size(); ++p)
     {
-        unsigned int nb_dof_inside = 0;
-        for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+      unsigned int nb_dof_inside = 0;
+      for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
         {
-            // Count the number of DOFs that are inside
-            // of the particles. If all the DOfs are on one side
-            // the cell is not cut by the boundary.
-            if ((support_points[local_dof_indices[j]] - particles[p].position)
-                        .norm() <= particles[p].radius)
-                ++nb_dof_inside;
+          // Count the number of DOFs that are inside
+          // of the particles. If all the DOfs are on one side
+          // the cell is not cut by the boundary.
+          if ((support_points[local_dof_indices[j]] - particles[p].position)
+                .norm() <= particles[p].radius)
+            ++nb_dof_inside;
         }
-        if (nb_dof_inside == local_dof_indices.size())
+      if (nb_dof_inside == local_dof_indices.size())
         {
-            // Some of the DOFs are inside the boundary, some are outside.
-            // This mean that the cell is cut so we return that information and
-            // the index of the particle that cut the cell as well as the
-            // container containing local DOF of the cell.
-            return {true, p, local_dof_indices};
+          // Some of the DOFs are inside the boundary, some are outside.
+          // This mean that the cell is cut so we return that information and
+          // the index of the particle that cut the cell as well as the
+          // container containing local DOF of the cell.
+          return {true, p, local_dof_indices};
         }
-
     }
-    return {false, 0, local_dof_indices};
+  return {false, 0, local_dof_indices};
 }
 
 
@@ -1603,9 +1602,22 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                           local_dof_indices_2[j]);
                                     }
                                   // update the matrix.
-                                  /*std::cout<<"this set i "<< global_index_overwrite<<" j "<< local_dof_indices_2[j]<< " this value "<<local_matrix_entry * sum_line <<std::endl;
-                                  std::cout<<"this set i support point "<< global_index_overwrite<<" point "<< support_points[global_index_overwrite]<<std::endl;
-                                  std::cout<<"this set j support point "<< local_dof_indices_2[j]<<" point "<< support_points[local_dof_indices_2[j]]<<std::endl;*/
+                                  /*std::cout << "this set i "
+                                            << global_index_overwrite << " j "
+                                            << local_dof_indices_2[j]
+                                            << " this value "
+                                            << local_matrix_entry * sum_line
+                                            << std::endl;
+                                  std::cout
+                                    << "this set i support point "
+                                    << global_index_overwrite << " point "
+                                    << support_points[global_index_overwrite]
+                                    << std::endl;
+                                  std::cout
+                                    << "this set j support point "
+                                    << local_dof_indices_2[j] << " point "
+                                    << support_points[local_dof_indices_2[j]]
+                                    << std::endl;*/
                                   this->system_matrix.set(
                                     global_index_overwrite,
                                     local_dof_indices_2[j],
@@ -1771,94 +1783,92 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::setup_assemblers()
 {
-    this->assemblers.clear();
+  this->assemblers.clear();
 
-    if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.free_surface)
     {
-        // Time-stepping schemes
-        if (is_bdf(this->simulation_control->get_assembly_method()))
+      // Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-            this->assemblers.push_back(
-                    std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
-                    this->simulation_control,
-                            this->simulation_parameters.physical_properties));
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesFreeSurfaceAssemblerBDF<dim>>(
+              this->simulation_control,
+              this->simulation_parameters.physical_properties));
         }
-        // Core assembler
-        this->assemblers.push_back(
-                std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
-                this->simulation_control,
-                        this->simulation_parameters.physical_properties));
+      // Core assembler
+      this->assemblers.push_back(
+        std::make_shared<GLSNavierStokesFreeSurfaceAssemblerCore<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties));
     }
-    else
+  else
     {
-        // Time-stepping schemes
-        if (is_bdf(this->simulation_control->get_assembly_method()))
+      // Time-stepping schemes
+      if (is_bdf(this->simulation_control->get_assembly_method()))
         {
-            this->assemblers.push_back(
-                    std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
-                            this->simulation_control));
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesAssemblerBDF<dim>>(
+              this->simulation_control));
         }
-        else if (is_sdirk(this->simulation_control->get_assembly_method()))
+      else if (is_sdirk(this->simulation_control->get_assembly_method()))
         {
-            this->assemblers.push_back(
-                    std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
-                            this->simulation_control));
-        }
-
-        // Velocity sources term
-        if (this->simulation_parameters.velocity_sources.type ==
-            Parameters::VelocitySource::VelocitySourceType::srf)
-        {
-            this->assemblers.push_back(
-                    std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
-                            this->simulation_parameters.velocity_sources));
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesAssemblerSDIRK<dim>>(
+              this->simulation_control));
         }
 
+      // Velocity sources term
+      if (this->simulation_parameters.velocity_sources.type ==
+          Parameters::VelocitySource::VelocitySourceType::srf)
+        {
+          this->assemblers.push_back(
+            std::make_shared<GLSNavierStokesAssemblerSRF<dim>>(
+              this->simulation_parameters.velocity_sources));
+        }
 
-        // Core assembler
-        this->assemblers.push_back(
-                std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
-                        this->simulation_control,
-                        this->simulation_parameters.physical_properties));
+
+      // Core assembler
+      this->assemblers.push_back(
+        std::make_shared<GLSNavierStokesAssemblerCore<dim>>(
+          this->simulation_control,
+          this->simulation_parameters.physical_properties));
     }
 
-    assemblers_inside_ib.push_back(std::make_shared<LaplaceAssembly<dim>>(this->simulation_control,
-            this->simulation_parameters.physical_properties));
-
-
+  assemblers_inside_ib.push_back(std::make_shared<LaplaceAssembly<dim>>(
+    this->simulation_control, this->simulation_parameters.physical_properties));
 }
 
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_system_matrix()
 {
-    this->system_matrix = 0;
-    setup_assemblers();
+  this->system_matrix = 0;
+  setup_assemblers();
 
-    auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                     *this->cell_quadrature,
-                                                     *this->mapping);
+  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping);
 
-    if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.free_surface)
     {
-        const DoFHandler<dim> *dof_handler_fs =
-                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-        scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
-                                         *this->cell_quadrature,
-                                         *this->mapping);
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
     }
 
 
-    WorkStream::run(
-            this->dof_handler.begin_active(),
-            this->dof_handler.end(),
-            *this,
-            &GLSSharpNavierStokesSolver::assemble_local_system_matrix,
-            &GLSSharpNavierStokesSolver::copy_local_matrix_to_global_matrix,
-            scratch_data,
-            StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                                 this->cell_quadrature->size()));
-    this->system_matrix.compress(VectorOperation::add);
+  WorkStream::run(
+    this->dof_handler.begin_active(),
+    this->dof_handler.end(),
+    *this,
+    &GLSSharpNavierStokesSolver::assemble_local_system_matrix,
+    &GLSSharpNavierStokesSolver::copy_local_matrix_to_global_matrix,
+    scratch_data,
+    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                         this->cell_quadrature->size()));
+  this->system_matrix.compress(VectorOperation::add);
 }
 
 
@@ -1866,86 +1876,92 @@ GLSSharpNavierStokesSolver<dim>::assemble_system_matrix()
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
-        const typename DoFHandler<dim>::active_cell_iterator &cell,
-        NavierStokesScratchData<dim> &                        scratch_data,
-        StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
-    copy_data.cell_is_local = cell->is_locally_owned();
+  copy_data.cell_is_local = cell->is_locally_owned();
 
-    if (!cell->is_locally_owned())
-        return;
+  if (!cell->is_locally_owned())
+    return;
 
-    // Check if the cell is cut or not by the IB and what the particle the
-    // cut the cell. If the particle is cut
-    bool cell_is_cut=false;
-    // The id of the particle that cut the cell. Returns 0 if the cell is
-    // not cut.
-    unsigned int ib_particle_id;
-    std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-    copy_data.cell_is_cut = cell_is_cut;
+  // Check if the cell is cut or not by the IB and what the particle the
+  // cut the cell. If the particle is cut
+  bool cell_is_cut = false;
+  // The id of the particle that cut the cell. Returns 0 if the cell is
+  // not cut.
+  unsigned int ib_particle_id;
+  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+  copy_data.cell_is_cut                 = cell_is_cut;
 
-    if (cell_is_cut)
-        return;
+  if (cell_is_cut)
+    return;
 
-    scratch_data.reinit(cell,
-                        this->evaluation_point,
-                        this->previous_solutions,
-                        this->solution_stages,
-                        this->forcing_function,
-                        this->beta);
-    if (this->simulation_parameters.multiphysics.free_surface)
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      this->forcing_function,
+                      this->beta);
+  if (this->simulation_parameters.multiphysics.free_surface)
     {
-        const DoFHandler<dim> *dof_handler_fs =
-                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-        typename DoFHandler<dim>::active_cell_iterator phase_cell(
-                &(*(this->triangulation)),
-                cell->level(),
-                cell->index(),
-                dof_handler_fs);
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_fs);
 
-        std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
-        previous_solutions.push_back(
-                *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
 
-        scratch_data.reinit_free_surface(
-                phase_cell,
-                *this->multiphysics->get_solution(PhysicsID::free_surface),
-                previous_solutions,
-                std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_free_surface(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        previous_solutions,
+        std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-    copy_data.reset();
+  copy_data.reset();
 
-    // check if we assemble the NS eqaution inside the particle or the Laplacien of the variables
-    bool cell_is_inside;
-    std::tie(cell_is_inside,std::ignore) = cells_inside_map[cell];
-    if(cell_is_inside && this->simulation_parameters.particlesParameters.assemble_inside==false ) {
-        for (auto &assembler : this->assemblers_inside_ib) {
-            assembler->assemble_matrix(scratch_data, copy_data);
+  // check if we assemble the NS eqaution inside the particle or the Laplacien
+  // of the variables
+  bool cell_is_inside;
+  std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+  if (cell_is_inside &&
+      this->simulation_parameters.particlesParameters.assemble_inside == false)
+    {
+      for (auto &assembler : this->assemblers_inside_ib)
+        {
+          assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
-    else{
-        for (auto &assembler : this->assemblers) {
-            assembler->assemble_matrix(scratch_data, copy_data);
+  else
+    {
+      for (auto &assembler : this->assemblers)
+        {
+          assembler->assemble_matrix(scratch_data, copy_data);
         }
     }
 
 
-    cell->get_dof_indices(copy_data.local_dof_indices);
+  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
-        const StabilizedMethodsTensorCopyData<dim> &copy_data)
+  const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-    if (!copy_data.cell_is_local || copy_data.cell_is_cut)
-        return;
+  if (!copy_data.cell_is_local || copy_data.cell_is_cut)
+    return;
 
-    const AffineConstraints<double> &constraints_used = this->zero_constraints;
-    constraints_used.distribute_local_to_global(copy_data.local_matrix,
-                                                copy_data.local_dof_indices,
-                                                this->system_matrix);
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                              copy_data.local_dof_indices,
+                                              this->system_matrix);
 }
 
 
@@ -1953,113 +1969,118 @@ template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_system_rhs()
 {
-    // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-    this->system_rhs = 0;
-    setup_assemblers();
+  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->system_rhs = 0;
+  setup_assemblers();
 
-    auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                     *this->cell_quadrature,
-                                                     *this->mapping);
+  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
+                                                   *this->cell_quadrature,
+                                                   *this->mapping);
 
-    if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.free_surface)
     {
-        const DoFHandler<dim> *dof_handler_fs =
-                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-        scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
-                                         *this->cell_quadrature,
-                                         *this->mapping);
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
+                                       *this->cell_quadrature,
+                                       *this->mapping);
     }
 
-    WorkStream::run(
-            this->dof_handler.begin_active(),
-            this->dof_handler.end(),
-            *this,
-            &GLSSharpNavierStokesSolver::assemble_local_system_rhs,
-            &GLSSharpNavierStokesSolver::copy_local_rhs_to_global_rhs,
-            scratch_data,
-            StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                                 this->cell_quadrature->size()));
+  WorkStream::run(
+    this->dof_handler.begin_active(),
+    this->dof_handler.end(),
+    *this,
+    &GLSSharpNavierStokesSolver::assemble_local_system_rhs,
+    &GLSSharpNavierStokesSolver::copy_local_rhs_to_global_rhs,
+    scratch_data,
+    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
+                                         this->cell_quadrature->size()));
 
-    this->system_rhs.compress(VectorOperation::add);
+  this->system_rhs.compress(VectorOperation::add);
 
-    if (this->simulation_control->is_first_assembly())
-        this->simulation_control->provide_residual(this->system_rhs.l2_norm());
-
+  if (this->simulation_control->is_first_assembly())
+    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
 
 
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
-        const typename DoFHandler<dim>::active_cell_iterator &cell,
-        NavierStokesScratchData<dim> &                        scratch_data,
-        StabilizedMethodsTensorCopyData<dim> &                copy_data)
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  NavierStokesScratchData<dim> &                        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
-    copy_data.cell_is_local = cell->is_locally_owned();
+  copy_data.cell_is_local = cell->is_locally_owned();
 
-    if (!cell->is_locally_owned())
-        return;
+  if (!cell->is_locally_owned())
+    return;
 
-    // Check if the cell is cut or not by the IB and what the particle the
-    // cut the cell. If the particle is cut
-    bool cell_is_cut=false;
-    // The id of the particle that cut the cell. Returns 0 if the cell is
-    // not cut.
-    unsigned int ib_particle_id;
-    std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
-    copy_data.cell_is_cut = cell_is_cut;
+  // Check if the cell is cut or not by the IB and what the particle the
+  // cut the cell. If the particle is cut
+  bool cell_is_cut = false;
+  // The id of the particle that cut the cell. Returns 0 if the cell is
+  // not cut.
+  unsigned int ib_particle_id;
+  std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+  copy_data.cell_is_cut                 = cell_is_cut;
 
-    if (cell_is_cut)
-        return;
+  if (cell_is_cut)
+    return;
 
-    scratch_data.reinit(cell,
-                        this->evaluation_point,
-                        this->previous_solutions,
-                        this->solution_stages,
-                        this->forcing_function,
-                        this->beta);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      this->forcing_function,
+                      this->beta);
 
-    if (this->simulation_parameters.multiphysics.free_surface)
+  if (this->simulation_parameters.multiphysics.free_surface)
     {
-        const DoFHandler<dim> *dof_handler_fs =
-                this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-        typename DoFHandler<dim>::active_cell_iterator phase_cell(
-                &(*(this->triangulation)),
-                cell->level(),
-                cell->index(),
-                dof_handler_fs);
+      const DoFHandler<dim> *dof_handler_fs =
+        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+        &(*(this->triangulation)),
+        cell->level(),
+        cell->index(),
+        dof_handler_fs);
 
-        std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
-        previous_solutions.push_back(
-                *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+      previous_solutions.push_back(
+        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
 
 
-        scratch_data.reinit_free_surface(
-                phase_cell,
-                *this->multiphysics->get_solution(PhysicsID::free_surface),
-                previous_solutions,
-                std::vector<TrilinosWrappers::MPI::Vector>());
+      scratch_data.reinit_free_surface(
+        phase_cell,
+        *this->multiphysics->get_solution(PhysicsID::free_surface),
+        previous_solutions,
+        std::vector<TrilinosWrappers::MPI::Vector>());
     }
 
-    copy_data.reset();
+  copy_data.reset();
 
-    // check if we assemble the NS eqaution inside the particle or the Laplacien of the variables
-    bool cell_is_inside;
-    std::tie(cell_is_inside,std::ignore) = cells_inside_map[cell];
-    if(cell_is_inside && this->simulation_parameters.particlesParameters.assemble_inside==false ) {
-        for (auto &assembler : this->assemblers_inside_ib) {
-            assembler->assemble_rhs(scratch_data, copy_data);
+  // check if we assemble the NS eqaution inside the particle or the Laplacien
+  // of the variables
+  bool cell_is_inside;
+  std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
+  if (cell_is_inside &&
+      this->simulation_parameters.particlesParameters.assemble_inside == false)
+    {
+      for (auto &assembler : this->assemblers_inside_ib)
+        {
+          assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
-    else{
-        for (auto &assembler : this->assemblers) {
-            assembler->assemble_rhs(scratch_data, copy_data);
+  else
+    {
+      for (auto &assembler : this->assemblers)
+        {
+          assembler->assemble_rhs(scratch_data, copy_data);
         }
     }
 
 
 
-    cell->get_dof_indices(copy_data.local_dof_indices);
+  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
 
@@ -2067,17 +2088,16 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
 template <int dim>
 void
 GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
-        const StabilizedMethodsTensorCopyData<dim> &copy_data)
+  const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
+  if (!copy_data.cell_is_local || copy_data.cell_is_cut)
+    return;
 
-    if (!copy_data.cell_is_local || copy_data.cell_is_cut)
-        return;
 
-
-    const AffineConstraints<double> &constraints_used = this->zero_constraints;
-    constraints_used.distribute_local_to_global(copy_data.local_rhs,
-                                                copy_data.local_dof_indices,
-                                                this->system_rhs);
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                              copy_data.local_dof_indices,
+                                              this->system_rhs);
 }
 
 

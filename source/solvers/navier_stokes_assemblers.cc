@@ -829,59 +829,62 @@ template class GDNavierStokesAssemblerCore<3>;
 template <int dim>
 void
 LaplaceAssembly<dim>::assemble_matrix(
-        NavierStokesScratchData<dim> &        scratch_data,
-        StabilizedMethodsTensorCopyData<dim> &copy_data)
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-    // Scheme and physical properties
-    const double viscosity = physical_properties.viscosity;
+  // Scheme and physical properties
+  const double viscosity = physical_properties.viscosity;
 
-    // Loop and quadrature informations
-    const auto &       JxW_vec    = scratch_data.JxW;
-    const unsigned int n_q_points = scratch_data.n_q_points;
-    const unsigned int n_dofs     = scratch_data.n_dofs;
-    const double       h          = scratch_data.cell_size;
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
 
-    // Copy data elements
-    auto &local_matrix        = copy_data.local_matrix;
+  // Copy data elements
+  auto &local_matrix = copy_data.local_matrix;
 
-    // Time steps and inverse time steps which is used for stabilization constant
-    std::vector<double> time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
-    const double dt  = time_steps_vector[0];
-    const double sdt = 1. / dt;
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
 
 
-    // Loop over the quadrature points
-    for (unsigned int q = 0; q < n_q_points; ++q)
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
     {
-        // Store JxW in local variable for faster access;
-        const double JxW = JxW_vec[q];
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
 
 
-        for (unsigned int i = 0; i < n_dofs; ++i)
+      for (unsigned int i = 0; i < n_dofs; ++i)
         {
-            const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-            const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto &grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto &grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
-            for (unsigned int j = 0; j < n_dofs; ++j)
+          for (unsigned int j = 0; j < n_dofs; ++j)
             {
-                const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
-                const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
+              const auto &grad_phi_u_j = scratch_data.grad_phi_u[q][j];
+              const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
-                // Laplacian on the velocity terms
-                double local_matrix_ij =h*h *scalar_product(grad_phi_u_j, grad_phi_u_i)*sdt ;
+              // Laplacian on the velocity terms
+              double local_matrix_ij =
+                h * h * scalar_product(grad_phi_u_j, grad_phi_u_i) * sdt;
 
-                // Laplacian on the pressure terms
-                local_matrix_ij +=viscosity * h*h *scalar_product(grad_phi_p_j, grad_phi_p_i)*sdt;
+              // Laplacian on the pressure terms
+              local_matrix_ij += viscosity * h * h *
+                                 scalar_product(grad_phi_p_j, grad_phi_p_i) *
+                                 sdt;
 
-                // The jacobian matrix for the SUPG formulation
-                // currently does not include the jacobian of the stabilization
-                // parameter tau. Our experience has shown that does not alter the
-                // number of newton iteration for convergence, but greatly
-                // simplifies assembly.
+              // The jacobian matrix for the SUPG formulation
+              // currently does not include the jacobian of the stabilization
+              // parameter tau. Our experience has shown that does not alter the
+              // number of newton iteration for convergence, but greatly
+              // simplifies assembly.
 
-                local_matrix_ij *= JxW;
-                local_matrix(i, j) += local_matrix_ij;
+              local_matrix_ij *= JxW;
+              local_matrix(i, j) += local_matrix_ij;
             }
         }
     }
@@ -890,61 +893,65 @@ LaplaceAssembly<dim>::assemble_matrix(
 template <int dim>
 void
 LaplaceAssembly<dim>::assemble_rhs(
-        NavierStokesScratchData<dim> &        scratch_data,
-        StabilizedMethodsTensorCopyData<dim> &copy_data)
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-    // Scheme and physical properties
-    const double viscosity = physical_properties.viscosity;
+  // Scheme and physical properties
+  const double viscosity = physical_properties.viscosity;
 
-    // Loop and quadrature informations
-    const auto &       JxW_vec    = scratch_data.JxW;
-    const unsigned int n_q_points = scratch_data.n_q_points;
-    const unsigned int n_dofs     = scratch_data.n_dofs;
-    const double       h          = scratch_data.cell_size;
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+  const double       h          = scratch_data.cell_size;
 
 
-    auto &local_rhs           = copy_data.local_rhs;
+  auto &local_rhs = copy_data.local_rhs;
 
-    // Time steps and inverse time steps which is used for stabilization constant
-    std::vector<double> time_steps_vector =
-            this->simulation_control->get_time_steps_vector();
-    const double dt  = time_steps_vector[0];
-    const double sdt = 1. / dt;
+  // Time steps and inverse time steps which is used for stabilization constant
+  std::vector<double> time_steps_vector =
+    this->simulation_control->get_time_steps_vector();
+  const double dt  = time_steps_vector[0];
+  const double sdt = 1. / dt;
 
-    // Loop over the quadrature points
-    for (unsigned int q = 0; q < n_q_points; ++q)
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
     {
-        // Velocity
+      // Velocity
 
-        const Tensor<2, dim> velocity_gradient =
-                scratch_data.velocity_gradients[q];
+      const Tensor<2, dim> velocity_gradient =
+        scratch_data.velocity_gradients[q];
 
-        // Pressure
-        const Tensor<1, dim> pressure_gradient =
-                scratch_data.pressure_gradients[q];
+      // Pressure
+      const Tensor<1, dim> pressure_gradient =
+        scratch_data.pressure_gradients[q];
 
-        // Store JxW in local variable for faster access;
-        const double JxW = JxW_vec[q];
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
 
 
-        // Assembly of the right-hand side
-        for (unsigned int i = 0; i < n_dofs; ++i)
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
         {
-            const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
-            const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
+          const auto grad_phi_u_i = scratch_data.grad_phi_u[q][i];
+          const auto grad_phi_p_i = scratch_data.grad_phi_p[q][i];
 
 
-            double local_rhs_i = 0;
+          double local_rhs_i = 0;
 
-            // Laplacian on the velocity terms
-            local_rhs_i += -h*h * scalar_product(velocity_gradient, grad_phi_u_i)* JxW *sdt;
-
-
-            // Laplacian on the pressure terms
-            local_rhs_i += -viscosity*h*h * scalar_product(pressure_gradient , grad_phi_p_i) * JxW *sdt;
+          // Laplacian on the velocity terms
+          local_rhs_i += -h * h *
+                         scalar_product(velocity_gradient, grad_phi_u_i) * JxW *
+                         sdt;
 
 
-            local_rhs(i) += local_rhs_i;
+          // Laplacian on the pressure terms
+          local_rhs_i += -viscosity * h * h *
+                         scalar_product(pressure_gradient, grad_phi_p_i) * JxW *
+                         sdt;
+
+
+          local_rhs(i) += local_rhs_i;
         }
     }
 }

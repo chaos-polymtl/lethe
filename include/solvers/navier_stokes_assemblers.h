@@ -304,38 +304,37 @@ public:
  */
 
 template <int dim>
-class LaplaceAssembly: public NavierStokesAssemblerBase<dim>
+class LaplaceAssembly : public NavierStokesAssemblerBase<dim>
 {
 public:
-    LaplaceAssembly(
-            std::shared_ptr<SimulationControl> simulation_control,
-            Parameters::PhysicalProperties     physical_properties)
-            : simulation_control(simulation_control)
-            , physical_properties(physical_properties)
-    {}
+  LaplaceAssembly(std::shared_ptr<SimulationControl> simulation_control,
+                  Parameters::PhysicalProperties     physical_properties)
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+  {}
 
-    /**
-     * @brief assemble_matrix Assembles the matrix
-     * @param scratch_data (see base class)
-     * @param copy_data (see base class)
-     */
-    virtual void
-    assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
-                    StabilizedMethodsTensorCopyData<dim> &copy_data) override;
-
-
-    /**
-     * @brief assemble_rhs Assembles the rhs
-     * @param scratch_data (see base class)
-     * @param copy_data (see base class)
-     */
-    virtual void
-    assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
-                 StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
 
-    std::shared_ptr<SimulationControl> simulation_control;
-    Parameters::PhysicalProperties     physical_properties;
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
 };
 
 
