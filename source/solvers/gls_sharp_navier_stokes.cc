@@ -111,6 +111,9 @@ GLSSharpNavierStokesSolver<dim>::generate_cut_cells_map()
           // Add information about if the cell is cut "cell_is_cut" and the
           // particle id that cuts it "p" in the map.
           cut_cells_map[cell] = {cell_is_cut, p};
+          std::tie(cell_is_cut, p, local_dof_indices) =
+                    cell_inside(cell, local_dof_indices, support_points);
+          cells_inside_map[cell]={cell_is_cut, p};
         }
     }
 }
@@ -1262,6 +1265,44 @@ GLSSharpNavierStokesSolver<dim>::cell_cut(
   return {false, 0, local_dof_indices};
 }
 
+template <int dim>
+std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+GLSSharpNavierStokesSolver<dim>::cell_inside(
+        const typename DoFHandler<dim>::active_cell_iterator &cell,
+        std::vector<types::global_dof_index> &                local_dof_indices,
+        std::map<types::global_dof_index, Point<dim>> &       support_points)
+{
+    // Check if a cell is cut and if it's rerun the particle by which it's cut and
+    // the local DOFs index. The check is done by counting the number of DOFs that
+    // is on either side of the boundary define by a particle.
+
+    cell->get_dof_indices(local_dof_indices);
+
+    for (unsigned int p = 0; p < particles.size(); ++p)
+    {
+        unsigned int nb_dof_inside = 0;
+        for (unsigned int j = 0; j < local_dof_indices.size(); ++j)
+        {
+            // Count the number of DOFs that are inside
+            // of the particles. If all the DOfs are on one side
+            // the cell is not cut by the boundary.
+            if ((support_points[local_dof_indices[j]] - particles[p].position)
+                        .norm() <= particles[p].radius)
+                ++nb_dof_inside;
+        }
+        if (nb_dof_inside == local_dof_indices.size())
+        {
+            // Some of the DOFs are inside the boundary, some are outside.
+            // This mean that the cell is cut so we return that information and
+            // the index of the particle that cut the cell as well as the
+            // container containing local DOF of the cell.
+            return {true, p, local_dof_indices};
+        }
+
+    }
+    return {false, 0, local_dof_indices};
+}
+
 
 
 template <int dim>
@@ -1777,6 +1818,11 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
                         this->simulation_control,
                         this->simulation_parameters.physical_properties));
     }
+
+    assemblers_inside_ib.push_back(std::make_shared<GeneralMassMatrix<dim>>(this->simulation_control,
+            this->simulation_parameters.physical_properties));
+
+
 }
 
 template <int dim>
@@ -1867,10 +1913,17 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
 
     copy_data.reset();
 
-
-    for (auto &assembler : this->assemblers)
-    {
-        assembler->assemble_matrix(scratch_data, copy_data);
+    bool cell_is_inside;
+    std::tie(cell_is_inside,std::ignore) =cells_inside_map[cell];
+    if(cell_is_inside==false) {
+        for (auto &assembler : this->assemblers) {
+            assembler->assemble_matrix(scratch_data, copy_data);
+        }
+    }
+    else{
+        for (auto &assembler : this->assemblers_inside_ib) {
+            assembler->assemble_matrix(scratch_data, copy_data);
+        }
     }
 
 
@@ -1987,10 +2040,19 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
     copy_data.reset();
 
 
-    for (auto &assembler : this->assemblers)
-    {
-        assembler->assemble_rhs(scratch_data, copy_data);
+    bool cell_is_inside;
+    std::tie(cell_is_inside,std::ignore) = cells_inside_map[cell];
+    if(cell_is_inside==false) {
+        for (auto &assembler : this->assemblers) {
+            assembler->assemble_rhs(scratch_data, copy_data);
+        }
     }
+    else{
+        for (auto &assembler : this->assemblers_inside_ib) {
+            assembler->assemble_rhs(scratch_data, copy_data);
+        }
+    }
+
 
 
     cell->get_dof_indices(copy_data.local_dof_indices);

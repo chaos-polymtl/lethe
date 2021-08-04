@@ -315,6 +315,11 @@ private:
              std::vector<types::global_dof_index> &local_dof_indices,
              std::map<types::global_dof_index, Point<dim>> &support_points);
 
+    std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+    cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
+             std::vector<types::global_dof_index> &local_dof_indices,
+             std::map<types::global_dof_index, Point<dim>> &support_points);
+
     bool
     cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
                   std::map<types::global_dof_index, Point<dim>> &support_points,
@@ -373,6 +378,10 @@ private:
     std::map<typename DoFHandler<dim>::active_cell_iterator,
             std::tuple<bool, unsigned int>>
             cut_cells_map;
+
+    std::map<typename DoFHandler<dim>::active_cell_iterator,
+            std::tuple<bool, unsigned int>>
+            cells_inside_map;
     /*
      * This map is used to keep in memory which DOFs already have an IB equation
      * imposed on them in order to avoid writing multiple time the same equation.
@@ -380,6 +389,9 @@ private:
     std::map<unsigned int,
             std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
             ib_done;
+
+    // Assemblers for the matrix
+    std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>> assemblers_inside_ib;
 
     const bool SUPG = true;
     const bool PSPG = true;
