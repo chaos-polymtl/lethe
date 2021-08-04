@@ -1822,15 +1822,19 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
         StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
     copy_data.cell_is_local = cell->is_locally_owned();
+
     if (!cell->is_locally_owned())
         return;
+
     // Check if the cell is cut or not by the IB and what the particle the
     // cut the cell. If the particle is cut
-    bool cell_is_cut;
+    bool cell_is_cut=false;
     // The id of the particle that cut the cell. Returns 0 if the cell is
     // not cut.
     unsigned int ib_particle_id;
     std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+    copy_data.cell_is_cut = cell_is_cut;
+
     if (cell_is_cut)
         return;
 
@@ -1878,7 +1882,7 @@ void
 GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
         const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-    if (!copy_data.cell_is_local)
+    if (!copy_data.cell_is_local || copy_data.cell_is_cut)
         return;
 
     const AffineConstraints<double> &constraints_used = this->zero_constraints;
@@ -1909,7 +1913,6 @@ GLSSharpNavierStokesSolver<dim>::assemble_system_rhs()
                                          *this->mapping);
     }
 
-
     WorkStream::run(
             this->dof_handler.begin_active(),
             this->dof_handler.end(),
@@ -1924,6 +1927,7 @@ GLSSharpNavierStokesSolver<dim>::assemble_system_rhs()
 
     if (this->simulation_control->is_first_assembly())
         this->simulation_control->provide_residual(this->system_rhs.l2_norm());
+
 }
 
 
@@ -1935,7 +1939,20 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
         StabilizedMethodsTensorCopyData<dim> &                copy_data)
 {
     copy_data.cell_is_local = cell->is_locally_owned();
+
     if (!cell->is_locally_owned())
+        return;
+
+    // Check if the cell is cut or not by the IB and what the particle the
+    // cut the cell. If the particle is cut
+    bool cell_is_cut=false;
+    // The id of the particle that cut the cell. Returns 0 if the cell is
+    // not cut.
+    unsigned int ib_particle_id;
+    std::tie(cell_is_cut, ib_particle_id) = cut_cells_map[cell];
+    copy_data.cell_is_cut = cell_is_cut;
+
+    if (cell_is_cut)
         return;
 
     scratch_data.reinit(cell,
@@ -1986,8 +2003,10 @@ void
 GLSSharpNavierStokesSolver<dim>::copy_local_rhs_to_global_rhs(
         const StabilizedMethodsTensorCopyData<dim> &copy_data)
 {
-    if (!copy_data.cell_is_local)
+
+    if (!copy_data.cell_is_local || copy_data.cell_is_cut)
         return;
+
 
     const AffineConstraints<double> &constraints_used = this->zero_constraints;
     constraints_used.distribute_local_to_global(copy_data.local_rhs,
