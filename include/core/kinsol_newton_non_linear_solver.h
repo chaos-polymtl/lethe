@@ -74,6 +74,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
   const bool                                              is_initial_step)
 {
+#ifdef DEAL_II_WITH_SUNDIALS
   bool first_step = is_initial_step;
 
   PhysicsSolver<VectorType> *solver = this->physics_solver;
@@ -148,6 +149,10 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
 
   nonlinear_solver.solve(local_evaluation_point);
   present_solution = local_evaluation_point;
+#else
+  throw std::runtime_error(
+    "Kinsol newton nonlinear solver requires DEAL_II to be compiled with SUNDIALS");
+#endif // DEAL_II_WITH_SUNDIALS
 }
 
 #endif
