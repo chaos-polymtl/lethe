@@ -159,6 +159,7 @@ RPT<dim>::assign_detector_positions()
       detectors.push_back(detector);
     }
 }
+
 template <int dim>
 std::vector<double>
 RPT<dim>::extract_experimental_counts()
