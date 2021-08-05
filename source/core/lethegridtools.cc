@@ -216,45 +216,47 @@ template <int dim>
 bool
 LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, const TriaIterator<CellAccessor<1, dim>> &cell_edge){
 
-    std::cout<<" a 1 "<<std::endl;
+    std::cout<<" before cell pierced by edge   n cell index "<< cell->global_active_cell_index() <<std::endl;
     std::vector<Point<dim>> manifold_points(GeometryInfo<1>::vertices_per_cell);
 
     for (unsigned int i = 0; i < GeometryInfo<1>::vertices_per_cell; ++i) {
-        std::cout<<" a 2 "<<std::endl;
+
         manifold_points[i] = cell_edge->vertex(i) ;
     }
 
     using numbers::PI;
-    std::cout<<" a 2 "<<std::endl;
+
     // A cell that is pierced either has to:
     // A) Fill these two conditions
     //    A1) The projection of one of the cell's
     //         vertices must fall on the edge
     //    A2) At least one of the scalar product of the normal as to be negative
 
-    bool condition_a1=false;
-    bool condition_a2=false;
+
 
     for (const auto face : cell->face_indices())
     {
-        std::cout<<" a 3 "<<std::endl;
+        bool condition_a1=false;
+        bool condition_a2=true;
         auto local_face = cell->face(face);
         std::vector<Tensor<1,dim>> normals_of_face_vertex(GeometryInfo<dim>::vertices_per_face);
         for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_face; ++i) {
-            std::cout<<" a 4 "<<std::endl;
+
             Point<dim> projected_point= GridTools::project_to_object(cell_edge,local_face->vertex(i));
-            std::cout<<" a 5 "<<std::endl;
-            if (cell_edge->point_inside(projected_point))
+
+            if (cell_edge->point_inside(projected_point)) {
+                std::cout<<"a1 ok "<<std::endl;
                 condition_a1 = true;
+            }
             if(( local_face->vertex(i) - projected_point).norm()!=0)
                 normals_of_face_vertex[i] =( local_face->vertex(i) - projected_point)/( local_face->vertex(i) - projected_point).norm();
             else
                 return true;
-            std::cout<<" a 6 "<<std::endl;
+
         }
 
         for (unsigned int i = 0; i < 3; ++i) {
-            std::cout<<" a 7 "<<std::endl;
+
             if(i==2){
                 Tensor<1,dim> temp =  normals_of_face_vertex[1];
                 normals_of_face_vertex[1]=normals_of_face_vertex[0];
@@ -285,13 +287,18 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
                     s+=std::acos( std::clamp(dot, -1.0, 1.0));
                 }
                 if(s<PI){
-                    condition_a2 = true;
+                    std::cout<<"a2 not ok "<<std::endl;
+                    condition_a2 = false;
                     break;
                 }
             }
         }
-        if (condition_a1 && condition_a2)
+        if(condition_a2)
+            std::cout<<"a2 ok "<<std::endl;
+        if (condition_a1 && condition_a2) {
+            std::cout<<"a1 a2 are true"<<std::endl;
             return true;
+        }
 
     }
 
@@ -317,8 +324,9 @@ bool LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active
             local_edge_cell_data,
             SubCellData());
 
-    auto edge_cell = local_edge_triangulation.active_cell_iterators().begin();
-    return LetheGridTools::cell_pierced_by_edge<dim>(cell, edge_cell);
+    for (const auto &edge_cell : local_edge_triangulation.active_cell_iterators()) {
+        return LetheGridTools::cell_pierced_by_edge<dim>(cell, edge_cell);
+    }
 }
 
 template < int spacedim, int structdim>
