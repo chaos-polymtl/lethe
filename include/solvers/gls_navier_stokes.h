@@ -195,8 +195,7 @@ private:
   void
   solve_system_GMRES(const bool   initial_step,
                      const double absolute_residual,
-                     const double relative_residual,
-                     const bool   renewed_matrix);
+                     const double relative_residual);
 
   /**
    * @brief BiCGStab solver with ILU(N) preconditioning
@@ -204,8 +203,7 @@ private:
   void
   solve_system_BiCGStab(const bool   initial_step,
                         const double absolute_residual,
-                        const double relative_residual,
-                        const bool   renewed_matrix);
+                        const double relative_residual);
 
   /**
    * @brief GMRES solver with AMG preconditioner with ILU smoother and coarsener
@@ -213,8 +211,7 @@ private:
   void
   solve_system_AMG(const bool   initial_step,
                    const double absolute_residual,
-                   const double relative_residual,
-                   const bool   renewed_matrix);
+                   const double relative_residual);
 
   /**
    * @brief Direct solver using TrilinosWrappers::SolverDirect
@@ -223,8 +220,13 @@ private:
   void
   solve_system_direct(const bool   initial_step,
                       const double absolute_residual,
-                      const double relative_residual,
-                      const bool   renewed_matrix);
+                      const double relative_residual);
+
+  /**
+   * @brief  Set-up the appropriate preconditioner
+   */
+  void
+  setup_preconditioner(const int current_preconditioner_fill_level);
 
   /**
    * @brief  Set-up AMG preconditioner

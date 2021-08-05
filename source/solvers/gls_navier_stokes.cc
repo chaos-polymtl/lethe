@@ -370,6 +370,14 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix(
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
   system_matrix.compress(VectorOperation::add);
+
+  // Assemble the preconditioner only if the matrix is reassembled
+  const int preconditioner_fill_level =
+    ((this->simulation_parameters.linear_solver.solver ==
+      Parameters::LinearSolver::SolverType::amg) ?
+       this->simulation_parameters.linear_solver.amg_precond_ilu_fill :
+       this->simulation_parameters.linear_solver.ilu_precond_fill);
+  setup_preconditioner(preconditioner_fill_level);
 }
 
 
@@ -569,7 +577,7 @@ GLSNavierStokesSolver<dim>::set_initial_condition_fd(
            Parameters::InitialConditionType::L2projection)
     {
       assemble_L2_projection();
-      solve_system_GMRES(true, 1e-15, 1e-15, true);
+      solve_system_GMRES(true, 1e-15, 1e-15);
       this->present_solution = this->newton_update;
       this->finish_time_step_fd();
     }
@@ -683,7 +691,7 @@ GLSNavierStokesSolver<dim>::assemble_L2_projection()
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
-                                                const bool renewed_matrix)
+                                                const bool /* renewed_matrix */)
 {
   const double absolute_residual =
     this->simulation_parameters.linear_solver.minimum_residual;
@@ -692,31 +700,35 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
   if (this->simulation_parameters.linear_solver.solver ==
       Parameters::LinearSolver::SolverType::gmres)
-    solve_system_GMRES(initial_step,
-                       absolute_residual,
-                       relative_residual,
-                       renewed_matrix);
+    solve_system_GMRES(initial_step, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::bicgstab)
-    solve_system_BiCGStab(initial_step,
-                          absolute_residual,
-                          relative_residual,
-                          renewed_matrix);
+    solve_system_BiCGStab(initial_step, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::amg)
-    solve_system_AMG(initial_step,
-                     absolute_residual,
-                     relative_residual,
-                     renewed_matrix);
+    solve_system_AMG(initial_step, absolute_residual, relative_residual);
   else if (this->simulation_parameters.linear_solver.solver ==
            Parameters::LinearSolver::SolverType::direct)
-    solve_system_direct(initial_step,
-                        absolute_residual,
-                        relative_residual,
-                        renewed_matrix);
+    solve_system_direct(initial_step, absolute_residual, relative_residual);
   else
     throw(std::runtime_error("This solver is not allowed"));
 }
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::setup_preconditioner(
+  const int current_preconditioner_fill_level)
+{
+  if (this->simulation_parameters.linear_solver.solver ==
+        Parameters::LinearSolver::SolverType::gmres ||
+      this->simulation_parameters.linear_solver.solver ==
+        Parameters::LinearSolver::SolverType::bicgstab)
+    setup_ILU(current_preconditioner_fill_level);
+  else if (this->simulation_parameters.linear_solver.solver ==
+           Parameters::LinearSolver::SolverType::amg)
+    setup_AMG(current_preconditioner_fill_level);
+}
+
 
 template <int dim>
 void
@@ -809,8 +821,7 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
                                                const double absolute_residual,
-                                               const double relative_residual,
-                                               const bool   renewed_matrix)
+                                               const double relative_residual)
 {
   // Try multiple fill of the ILU preconditioner. Start from the initial fill
   // given in the parameter file. If for any reason the linear solver would have
@@ -861,9 +872,6 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           TrilinosWrappers::SolverGMRES solver(solver_control,
                                                solver_parameters);
 
-          if (renewed_matrix || !ilu_preconditioner)
-            setup_ILU(current_ilu_preconditioner_fill_level);
-
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
@@ -891,6 +899,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
           this->pcout
             << " GMRES solver failed! Trying with a higher preconditioner fill level. New fill = "
             << current_ilu_preconditioner_fill_level << std::endl;
+          setup_preconditioner(current_ilu_preconditioner_fill_level);
+
           if (iter == max_iter - 1)
             throw e;
         }
@@ -903,8 +913,7 @@ void
 GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
   const bool   initial_step,
   const double absolute_residual,
-  const double relative_residual,
-  const bool   renewed_matrix)
+  const double relative_residual)
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
   const unsigned int max_iter = 3;
@@ -941,9 +950,6 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             true);
           TrilinosWrappers::SolverBicgstab solver(solver_control);
 
-          if (renewed_matrix || !ilu_preconditioner)
-            setup_ILU(current_ilu_preconditioner_fill_level);
-
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
@@ -970,6 +976,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
           this->pcout
             << " BiCGStab solver failed! Trying with a higher preconditioner fill level. New fill = "
             << current_ilu_preconditioner_fill_level << std::endl;
+          setup_preconditioner(current_ilu_preconditioner_fill_level);
+
           if (iter == max_iter - 1)
             throw e;
         }
@@ -981,8 +989,7 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const double absolute_residual,
-                                             const double relative_residual,
-                                             const bool   renewed_matrix)
+                                             const double relative_residual)
 {
   const unsigned int max_iter = 3;
   int                current_amg_ilu_preconditioner_fill_level =
@@ -1025,9 +1032,6 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
           TrilinosWrappers::SolverGMRES solver(solver_control,
                                                solver_parameters);
 
-          if (renewed_matrix || !amg_preconditioner)
-            setup_AMG(current_amg_ilu_preconditioner_fill_level);
-
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
@@ -1056,6 +1060,8 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
           this->pcout
             << " AMG solver failed! Trying with a higher preconditioner fill level. New fill = "
             << current_amg_ilu_preconditioner_fill_level << std::endl;
+          setup_preconditioner(current_amg_ilu_preconditioner_fill_level);
+
           if (iter == max_iter - 1)
             throw e;
         }
@@ -1068,8 +1074,7 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::solve_system_direct(const bool   initial_step,
                                                 const double absolute_residual,
-                                                const double relative_residual,
-                                                const bool /*renewed_matrix*/)
+                                                const double relative_residual)
 {
   auto &system_rhs          = this->system_rhs;
   auto &nonzero_constraints = this->nonzero_constraints;
