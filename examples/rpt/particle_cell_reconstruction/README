@@ -5,7 +5,7 @@ It uses cell reconstruction, which means, it aims to find the cell that the
 particle is and assigns the center position of the cell to the radioactive
 particle.
 
-This example uses the counts generatate with those following known positions
+This example uses the counts generated with the following known positions
 with 1 000 000 iteration of Monte Carlo and 6 detectors : 
 	0.05	0.05	0.075
 	0.043876276	0.056123724	0.08

@@ -36,7 +36,6 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
-#include <rpt/rpt_cell_reconstruction.h>
 
 using namespace dealii;
 

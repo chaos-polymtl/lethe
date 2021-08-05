@@ -1,6 +1,3 @@
-
-#include <core/solutions_output.h>
-
 #include <deal.II/grid/cell_id.h>
 #include <deal.II/grid/grid_generator.h>
 #include <deal.II/grid/grid_out.h>
@@ -166,7 +163,7 @@ RPTCellReconstruction<dim>::find_vertices_positions(
         {
           for (auto &id : parent_cell_indexes)
             {
-              if (id == cell->parent()->index())
+              if (id == cell->parent_index())
                 parent_is_candidate = true;
             }
         }
@@ -358,6 +355,8 @@ RPTCellReconstruction<dim>::read_counts()
     parameters.reconstruction_param.reconstruction_counts_file;
   std::ifstream counts_file(filename);
 
+  std::string skip;
+  std::getline(counts_file, skip); // Skip header line
   std::vector<double> values;
   std::copy(std::istream_iterator<double>(counts_file),
             std::istream_iterator<double>(),
@@ -422,6 +421,8 @@ RPTCellReconstruction<dim>::assign_detector_positions()
   std::ifstream detector_file(
     parameters.detector_param.detector_positions_file);
 
+  std::string skip;
+  std::getline(detector_file, skip); // Skip header line
   std::vector<double> values;
   std::copy(std::istream_iterator<double>(detector_file),
             std::istream_iterator<double>(),

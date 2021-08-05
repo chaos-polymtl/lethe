@@ -6,7 +6,6 @@
 subsection rpt parameters
     set verbose                          = true
     set export counts                    = false
-    set counts file                      = unknown_positions_counts
     set monte carlo iteration            = 1000
     set random number seed               = 0
     set reactor height                   = 0.3
@@ -28,17 +27,9 @@ subsection reconstruction
 	set reconstruction                          = true
 	set refinement                              = 5
 	set reconstruction counts file              = counts.reconstruction
-    set export reconstruction positions file   = testing.csv
+    set export reconstruction positions file    = testing.csv
 end
 
-
-# --------------------------------------------------
-# Parameters tuning
-#---------------------------------------------------
-subsection parameter tuning
-	set tuning                           = false
-	set experimental data file           = noisy_counts.experimental
-end
 
 #---------------------------------------------------
 # Detector parameters
