@@ -1784,7 +1784,7 @@ void
 GLSSharpNavierStokesSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
-
+  assemblers_inside_ib.clear();
   if (this->simulation_parameters.multiphysics.free_surface)
     {
       // Time-stepping schemes
