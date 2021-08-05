@@ -4,7 +4,7 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
-    set particle positions file          = positions.particle
+    set particle positions file          = positions.particles
     set export counts                    = true
     set counts file                      = counts_10000
     set monte carlo iteration            = 10000
