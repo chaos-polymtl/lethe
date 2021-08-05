@@ -21,4 +21,5 @@ ADD_SUBDIRECTORY(rpt_3d)
 ADD_SUBDIRECTORY(rpt_cell_reconstruction_3d)
 ADD_SUBDIRECTORY(cfd_dem_coupling_2d)
 ADD_SUBDIRECTORY(cfd_dem_coupling_3d)
+ADD_SUBDIRECTORY(rpt_fem_reconstruction_3d)
 
