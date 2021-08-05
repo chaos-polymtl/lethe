@@ -94,7 +94,11 @@ namespace LetheGridTools
 
     template <int dim>
     bool
-    cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge);
+    cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, const TriaIterator<CellAccessor<1, dim>> &cell_edge);
+
+    template <int dim>
+    bool
+    cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, Point<dim> point_1, Point<dim> point_2);
 
     template <int dim>
     std::vector<typename DoFHandler<dim>::active_cell_iterator>

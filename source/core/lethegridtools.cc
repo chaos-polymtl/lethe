@@ -214,7 +214,7 @@ LetheGridTools::find_cells_in_cells(const DoFHandler<dim> &dof_handler_1,
 
 template <int dim>
 bool
-LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell,const typename DoFHandler<1,dim>::active_cell_iterator &cell_edge){
+LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, const TriaIterator<CellAccessor<1, dim>> &cell_edge){
 
     std::cout<<" a 1 "<<std::endl;
     std::vector<Point<dim>> manifold_points(GeometryInfo<1>::vertices_per_cell);
@@ -223,8 +223,7 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
         std::cout<<" a 2 "<<std::endl;
         manifold_points[i] = cell_edge->vertex(i) ;
     }
-    auto surrounding_points =
-            make_array_view(manifold_points.begin(), manifold_points.end());
+
     using numbers::PI;
     std::cout<<" a 2 "<<std::endl;
     // A cell that is pierced either has to:
@@ -279,13 +278,15 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
                         index_1=j+k-GeometryInfo<dim>::vertices_per_face;
                     }
                     if((j+k+1)>=GeometryInfo<dim>::vertices_per_face){
-                        index_1=j+k+1-GeometryInfo<dim>::vertices_per_face;
+                        index_2=j+k+1-GeometryInfo<dim>::vertices_per_face;
                     }
 
-                    s+=std::acos( scalar_product(normals_of_face_vertex[index_1], normals_of_face_vertex[index_2])/(normals_of_face_vertex[index_1].norm()*normals_of_face_vertex[index_2].norm()));
+                    double dot = scalar_product(normals_of_face_vertex[index_1], normals_of_face_vertex[index_2]);
+                    s+=std::acos( std::clamp(dot, -1.0, 1.0));
                 }
                 if(s<PI){
                     condition_a2 = true;
+                    break;
                 }
             }
         }
@@ -297,6 +298,27 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
 
 
     return false;
+}
+
+template<int dim>
+bool LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, Point<dim> point_1,
+                                          Point<dim> point_2) {
+    Triangulation< 1, dim> local_edge_triangulation;
+    std::vector<Point<dim>>        vertices_of_edge(2);
+    std::vector<CellData<1>> local_edge_cell_data(1);
+
+    vertices_of_edge[0]=point_1;
+    vertices_of_edge[1]=point_2;
+    local_edge_cell_data[0].vertices[0] = 0;
+    local_edge_cell_data[0].vertices[1] = 1;
+
+    local_edge_triangulation.create_triangulation(
+            vertices_of_edge,
+            local_edge_cell_data,
+            SubCellData());
+
+    auto edge_cell = local_edge_triangulation.active_cell_iterators().begin();
+    return LetheGridTools::cell_pierced_by_edge<dim>(cell, edge_cell);
 }
 
 template < int spacedim, int structdim>
@@ -677,14 +699,11 @@ bool
 LetheGridTools::cell_cut_by_flat(
         const typename DoFHandler<dim>::active_cell_iterator &cell,
         const typename DoFHandler<dim-1, dim>::active_cell_iterator &cell_flat) {
-    auto &local_manifold = cell_flat->get_manifold();
     std::vector<Point<dim>> manifold_points(GeometryInfo<dim-1>::vertices_per_cell);
     std::cout<<" before check B1   n cell index "<< cell->global_active_cell_index() <<std::endl;
     for (unsigned int i = 0; i < GeometryInfo<dim-1>::vertices_per_cell; ++i) {
         manifold_points[i] = cell_flat->vertex(i);
     }
-    auto surrounding_points =
-            make_array_view(manifold_points.begin(), manifold_points.end());
 
     // A cell that is cut either has to:
     // A) Contain a vertex from the flat
@@ -703,13 +722,13 @@ LetheGridTools::cell_cut_by_flat(
             return true;
     }
 
-    if(dim==3) {
+    if constexpr(dim==3) {
 
         // Check for condition A
         for (const auto face : cell_flat->face_indices())
         {
-            const typename DoFHandler<1,dim>::active_cell_iterator local_face = cell_flat->face(face);
-            if (LetheGridTools::cell_pierced_by_edge<3>(cell,local_face))
+            auto local_face = cell_flat->face(face);
+            if (LetheGridTools::cell_pierced_by_edge<3>(cell,local_face->vertex(0), local_face->vertex(1)))
                 return true;
         }
     }
@@ -824,7 +843,7 @@ LetheGridTools::find_cells_around_flat_cell(
       current_candidate_cells.insert(starting_cell);
       intersected_cells.insert(starting_cell);
 
-      int n_previous_intersected = 0;
+      size_t n_previous_intersected = 0;
 
       while (intersected_cells.size() > n_previous_intersected) {
           //std::cout<<"current number of intersected cell" << intersected_cells.size()<<std::endl;
@@ -865,7 +884,6 @@ LetheGridTools::find_cells_around_flat_cell(
 
   return cells_cut;
 }
-
 
 
 template typename DoFHandler<3>::active_cell_iterator
@@ -962,4 +980,8 @@ LetheGridTools::grad_dist_based_on_reference_point<2,1>(const typename DoFHandle
 
 template
 bool
-LetheGridTools::cell_pierced_by_edge<3>(const typename DoFHandler<3>::active_cell_iterator &cell,const typename DoFHandler<1,3>::active_cell_iterator &cell_edge);
+LetheGridTools::cell_pierced_by_edge<3>(const typename DoFHandler<3>::active_cell_iterator &cell,const TriaIterator<CellAccessor<1, 3>> &cell_edge);
+
+template
+bool
+LetheGridTools::cell_pierced_by_edge<3>(const typename DoFHandler<3>::active_cell_iterator &cell, Point<3> point_1, Point<3> point_2);
