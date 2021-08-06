@@ -1,7 +1,5 @@
 # Listing of Parameters
 # ---------------------
-
-
 # --------------------------------------------------
 # Simulation Control
 #---------------------------------------------------
@@ -91,7 +89,7 @@ subsection boundary conditions
     end
 end
 subsection boundary conditions tracer
-  set number                  = 3
+  set number                  = 2
     subsection bc 0
     set id = 1
     set type              = dirichlet
@@ -112,7 +110,7 @@ end
 # Non-Linear Solver Control
 #---------------------------------------------------
 subsection non-linear solver
-  set tolerance               = 1e-4
+  set tolerance               = 1e-6
   set max iterations          = 10
   set residual precision      = 5
   set verbosity               = verbose
