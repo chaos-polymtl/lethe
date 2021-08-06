@@ -1188,7 +1188,7 @@ namespace Parameters
         Patterns::Bool(),
         "Bool to define if the particle trajectory is integrated meaning it's velocity and position will be updated at each time step according to the hydrodynamic force applied to it");
       prm.declare_entry(
-        "assemble NS inside",
+        "assemble Navier-Stokes inside particles",
         "false",
         Patterns::Bool(),
         "Bool to define if you assemble the inside of particles with the NS equation.");
