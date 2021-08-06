@@ -2134,7 +2134,9 @@ GLSSharpNavierStokesSolver<dim>::solve()
   this->simulation_parameters.mesh_adaptation.refinement_fraction = temp_refine;
   this->simulation_parameters.mesh_adaptation.coarsening_fraction = temp_coarse;
 
-
+  vertices_cell_mapping();
+  generate_cut_cells_map();
+  
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
