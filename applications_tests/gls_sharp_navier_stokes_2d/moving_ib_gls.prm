@@ -88,6 +88,7 @@ subsection particles
 	set refine mesh outside radius factor=2
 	set integrate motion = true
 	set alpha=0.5
+	set assemble Navier-Stokes inside particles=true
     subsection particle info 0 
             set x = 1.0
 	    set y = 1

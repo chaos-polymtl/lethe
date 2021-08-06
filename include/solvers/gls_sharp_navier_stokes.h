@@ -45,17 +45,144 @@ class GLSSharpNavierStokesSolver : public GLSNavierStokesSolver<dim>
 {
 public:
   GLSSharpNavierStokesSolver(SimulationParameters<dim> &nsparam);
+
   ~GLSSharpNavierStokesSolver();
 
   void
   solve();
 
 private:
-  template <bool                                              assemble_matrix,
-            Parameters::SimulationControl::TimeSteppingMethod scheme,
-            Parameters::VelocitySource::VelocitySourceType    velocity_source>
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle
+   */
   void
-  assembleGLS();
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
+
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for NavierStokesScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    NavierStokesScratchData<dim> &                        scratch_data,
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
+
+  /**
+   * @brief sets up the vector of assembler functions
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle. Refer to 2 different assembler
+   * depending on what type of equations is assembled inside the particles.
+   */
+  void
+  setup_assemblers() override;
+
+
+  /**
+   * @brief Copy local cell information to global matrix
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle
+   */
+
+  void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle
+   */
+
+  void
+  copy_local_rhs_to_global_rhs(
+    const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief Call for the assembly of the matrix and the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   */
+
+  /*
+   Modified version of assemble_matrix_and_rhs to include the presence of
+   extra steps. For more detail see the same function in the
+   gls_navier_stokes.h solver.
+   */
+
+  virtual void
+  assemble_matrix_and_rhs(
+    const Parameters::SimulationControl::TimeSteppingMethod
+      time_stepping_method) override
+  {
+    if (this->simulation_parameters.particlesParameters.integrate_motion)
+      {
+        force_on_ib();
+        integrate_particles();
+        generate_cut_cells_map();
+      }
+    this->simulation_control->set_assembly_method(time_stepping_method);
+    {
+      TimerOutput::Scope t(this->computing_timer, "assemble_system");
+      this->assemble_system_matrix();
+      this->assemble_system_rhs();
+    }
+    sharp_edge();
+  }
+
+
+  /**
+   * @brief Call for the assembly of the right hand side
+   *
+   * @param time_stepping_method The time-stepping method used for the assembly
+   *
+   * @deprecated This function is to be deprecated when the non-linear solvers
+   * have been refactored to call for rhs and matrix assembly seperately.
+   *
+   * Modified version of assemble_matrix_and_rhs to include the presence of
+   * extra steps. For more detail see the same function in the
+   * gls_navier_stokes.h solver.
+   */
+  virtual void
+  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
+                 time_stepping_method) override
+  {
+    TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
+    this->simulation_control->set_assembly_method(time_stepping_method);
+
+    this->assemble_system_rhs();
+    sharp_edge();
+  }
 
 
   // BB - TODO This explanation needs to be made clearer. Adjacent, Adjacent_2
@@ -141,7 +268,6 @@ private:
   calculate_L2_error_particles();
 
 
-
   /**
    * @brief
    * Same function as its standard GLS counterpart but it used the error
@@ -188,11 +314,29 @@ private:
   cell_cut(const typename DoFHandler<dim>::active_cell_iterator &cell,
            std::vector<types::global_dof_index> &         local_dof_indices,
            std::map<types::global_dof_index, Point<dim>> &support_points);
-
   bool
   cell_cut_by_p(std::vector<types::global_dof_index> &local_dof_indices,
                 std::map<types::global_dof_index, Point<dim>> &support_points,
                 unsigned int                                   p);
+  /**
+   * @brief
+   * Return a bool to define if a cell is contains inside an IB particle and the
+   * local DOFs of the cell for later us. If the cell is cut, the function will
+   * return the id of the particle, else it returns 0.
+   *
+   * @param cell , the cell that we verify whether it is cut or not.
+   *
+   * @param local_dof_indices, a container for the local dof indices used during the function call.
+   *
+   * @param support_points, a mapping of support points for the DOFs.
+   *
+   */
+  std::tuple<bool, unsigned int, std::vector<types::global_dof_index>>
+  cell_inside(const typename DoFHandler<dim>::active_cell_iterator &cell,
+              std::vector<types::global_dof_index> &         local_dof_indices,
+              std::map<types::global_dof_index, Point<dim>> &support_points);
+
+
 
   /**
    * @brief
@@ -207,7 +351,6 @@ private:
   find_cell_around_point_with_neighbors(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     Point<dim>                                            point);
-
 
 
   /**
@@ -232,19 +375,7 @@ Return a bool that describes  if a cell contains a specific point
   find_cells_around_cell(
     const typename DoFHandler<dim>::active_cell_iterator &cell);
 
-  /*
-   Modified version of assemble_matrix_and_rhs to include the presence of
-   extra steps. For more detail see the same function in the
-   gls_navier_stokes.h solver.
-   */
-  void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method) override;
 
-  void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method) override;
 
   /**
    * Members
@@ -260,6 +391,10 @@ private:
   std::map<typename DoFHandler<dim>::active_cell_iterator,
            std::tuple<bool, unsigned int>>
     cut_cells_map;
+
+  std::map<typename DoFHandler<dim>::active_cell_iterator,
+           std::tuple<bool, unsigned int>>
+    cells_inside_map;
   /*
    * This map is used to keep in memory which DOFs already have an IB equation
    * imposed on them in order to avoid writing multiple time the same equation.
@@ -267,6 +402,10 @@ private:
   std::map<unsigned int,
            std::pair<bool, typename DoFHandler<dim>::active_cell_iterator>>
     ib_done;
+
+  // Special assembler of the cells inside an IB particle
+  std::vector<std::shared_ptr<NavierStokesAssemblerBase<dim>>>
+    assemblers_inside_ib;
 
   const bool                   SUPG        = true;
   const bool                   PSPG        = true;
