@@ -90,7 +90,7 @@ subsection particles
 	set refine mesh inside radius factor = 0
 	set refine mesh outside radius factor = 1.3
 	set initial refinement = 0
-	set assemble NS inside=true
+	set assemble Navier-Stokes inside particles=true
     subsection particle info 0 
             set x = 0
 	    set y = 0

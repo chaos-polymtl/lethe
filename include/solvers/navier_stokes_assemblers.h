@@ -295,8 +295,8 @@ public:
 
 
 /**
- * @brief Class that assembles a masse matrix for all variables .
- * This class assembles the weak form of: X=0
+ * @brief Class that assembles a Poisson problem for all velocity components and pressure variables .
+ * This class assembles the weak form of: d^2 U/dx^2=0 and  d^2 P/dx^2=0
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
