@@ -1602,22 +1602,6 @@ GLSSharpNavierStokesSolver<dim>::sharp_edge()
                                           local_dof_indices_2[j]);
                                     }
                                   // update the matrix.
-                                  /*std::cout << "this set i "
-                                            << global_index_overwrite << " j "
-                                            << local_dof_indices_2[j]
-                                            << " this value "
-                                            << local_matrix_entry * sum_line
-                                            << std::endl;
-                                  std::cout
-                                    << "this set i support point "
-                                    << global_index_overwrite << " point "
-                                    << support_points[global_index_overwrite]
-                                    << std::endl;
-                                  std::cout
-                                    << "this set j support point "
-                                    << local_dof_indices_2[j] << " point "
-                                    << support_points[local_dof_indices_2[j]]
-                                    << std::endl;*/
                                   this->system_matrix.set(
                                     global_index_overwrite,
                                     local_dof_indices_2[j],
@@ -2136,7 +2120,7 @@ GLSSharpNavierStokesSolver<dim>::solve()
 
   vertices_cell_mapping();
   generate_cut_cells_map();
-  
+
   this->set_initial_condition(
     this->simulation_parameters.initial_condition->type,
     this->simulation_parameters.restart_parameters.restart);
