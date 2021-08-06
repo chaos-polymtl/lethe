@@ -847,7 +847,6 @@ LaplaceAssembly<dim>::assemble_matrix(
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
-  const double dt = time_steps_vector[0];
 
 
   // Loop over the quadrature points
@@ -909,7 +908,6 @@ LaplaceAssembly<dim>::assemble_rhs(
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
-  const double dt = time_steps_vector[0];
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
