@@ -19,7 +19,6 @@ subsection FEM
     set velocity order            = 1
     set pressure order            = 1
     set tracer order              = 1
-    set qmapping all              = false
 end
 
 #---------------------------------------------------
@@ -55,7 +54,7 @@ end
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 4
+  set number                  = 3
     subsection bc 0
         set id = 1
         set type              = function
