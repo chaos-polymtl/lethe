@@ -1288,7 +1288,7 @@ namespace Parameters
       alpha                = prm.get_double("alpha");
       gravity[0]           = prm.get_double("gravity_x");
       gravity[1]           = prm.get_double("gravity_y");
-      assemble_inside      = prm.get_bool("assemble NS inside");
+      assemble_navier_stokes_inside      = prm.get_bool("assemble NS inside");
 
       if (dim == 3)
         gravity[2] = prm.get_double("gravity_z");
