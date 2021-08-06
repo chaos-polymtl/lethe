@@ -53,18 +53,6 @@ public:
 
 private:
 
-    /**
-   *  @brief Assembles the matrix associated with the solver
-   * This function is modified compared to the GLS function to take into account the cells that are cut.
-   */
-  void
-  assemble_system_matrix();
-
-  /**
-   * @brief Assemble the rhs associated with the solver
-   */
-  void
-  assemble_system_rhs();
 
 
   /**
@@ -82,12 +70,13 @@ private:
    *
    * @param copy_data The copy data which is used to store
    * the results of the assembly over a cell
+   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle
    */
   void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
    * @brief Assemble the local rhs for a given cell
@@ -106,30 +95,34 @@ private:
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     NavierStokesScratchData<dim> &                        scratch_data,
-    StabilizedMethodsTensorCopyData<dim> &                copy_data);
+    StabilizedMethodsTensorCopyData<dim> &                copy_data) override;
 
   /**
    * @brief sets up the vector of assembler functions
+   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle.
+   * Refer to 2 different assembler depending on what type of equations is assembled inside the particles.
    */
   void
-  setup_assemblers();
+  setup_assemblers() override;
 
 
   /**
    * @brief Copy local cell information to global matrix
+   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle
    */
 
   void
   copy_local_matrix_to_global_matrix(
-    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+    const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
    * @brief Copy local cell rhs information to global rhs
+   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle
    */
 
   void
   copy_local_rhs_to_global_rhs(
-    const StabilizedMethodsTensorCopyData<dim> &copy_data);
+    const StabilizedMethodsTensorCopyData<dim> &copy_data) override;
 
   /**
    * @brief Call for the assembly of the matrix and the right hand side
@@ -160,8 +153,8 @@ private:
     this->simulation_control->set_assembly_method(time_stepping_method);
     {
       TimerOutput::Scope t(this->computing_timer, "assemble_system");
-      assemble_system_matrix();
-      assemble_system_rhs();
+      this->assemble_system_matrix();
+      this->assemble_system_rhs();
     }
     sharp_edge();
   }
@@ -182,7 +175,7 @@ private:
     TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
     this->simulation_control->set_assembly_method(time_stepping_method);
 
-    assemble_system_rhs();
+    this->assemble_system_rhs();
     sharp_edge();
   }
 

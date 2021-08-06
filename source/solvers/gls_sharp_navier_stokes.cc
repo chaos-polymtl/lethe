@@ -1822,39 +1822,6 @@ GLSSharpNavierStokesSolver<dim>::setup_assemblers()
     this->simulation_control, this->simulation_parameters.physical_properties));
 }
 
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::assemble_system_matrix()
-{
-  this->system_matrix = 0;
-  setup_assemblers();
-
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping);
-
-  if (this->simulation_parameters.multiphysics.free_surface)
-    {
-      const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
-    }
-
-
-  WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
-    *this,
-    &GLSSharpNavierStokesSolver::assemble_local_system_matrix,
-    &GLSSharpNavierStokesSolver::copy_local_matrix_to_global_matrix,
-    scratch_data,
-    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                         this->cell_quadrature->size()));
-  this->system_matrix.compress(VectorOperation::add);
-}
-
 
 
 template <int dim>
@@ -1949,42 +1916,6 @@ GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
 }
 
 
-template <int dim>
-void
-GLSSharpNavierStokesSolver<dim>::assemble_system_rhs()
-{
-  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
-  this->system_rhs = 0;
-  setup_assemblers();
-
-  auto scratch_data = NavierStokesScratchData<dim>(*this->fe,
-                                                   *this->cell_quadrature,
-                                                   *this->mapping);
-
-  if (this->simulation_parameters.multiphysics.free_surface)
-    {
-      const DoFHandler<dim> *dof_handler_fs =
-        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
-      scratch_data.enable_free_surface(dof_handler_fs->get_fe(),
-                                       *this->cell_quadrature,
-                                       *this->mapping);
-    }
-
-  WorkStream::run(
-    this->dof_handler.begin_active(),
-    this->dof_handler.end(),
-    *this,
-    &GLSSharpNavierStokesSolver::assemble_local_system_rhs,
-    &GLSSharpNavierStokesSolver::copy_local_rhs_to_global_rhs,
-    scratch_data,
-    StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
-                                         this->cell_quadrature->size()));
-
-  this->system_rhs.compress(VectorOperation::add);
-
-  if (this->simulation_control->is_first_assembly())
-    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
-}
 
 
 template <int dim>

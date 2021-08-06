@@ -112,7 +112,7 @@ protected:
    * @param copy_data The copy data which is used to store
    * the results of the assembly over a cell
    */
-  void
+  virtual void
   assemble_local_system_matrix(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     NavierStokesScratchData<dim> &                        scratch_data,
@@ -131,7 +131,7 @@ protected:
    * @param copy_data The copy data which is used to store
    * the results of the assembly over a cell
    */
-  void
+  virtual void
   assemble_local_system_rhs(
     const typename DoFHandler<dim>::active_cell_iterator &cell,
     NavierStokesScratchData<dim> &                        scratch_data,
@@ -140,7 +140,7 @@ protected:
   /**
    * @brief sets up the vector of assembler functions
    */
-  void
+  virtual void
   setup_assemblers();
 
 
@@ -148,7 +148,7 @@ protected:
    * @brief Copy local cell information to global matrix
    */
 
-  void
+  virtual void
   copy_local_matrix_to_global_matrix(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
@@ -156,7 +156,7 @@ protected:
    * @brief Copy local cell rhs information to global rhs
    */
 
-  void
+  virtual void
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
