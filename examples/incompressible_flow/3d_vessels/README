@@ -1,0 +1,4 @@
+Vessels
+This example can be solved using the gls_navier_stokes_3d solver 
+A description of the test case can be found at the following link :
+https://github.com/lethe-cfd/lethe/wiki/Example-16-:-Vessels-Junction-with-Tracer-Physics-on-a-Simplex-Mesh
