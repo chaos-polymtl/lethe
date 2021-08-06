@@ -626,7 +626,7 @@ namespace Parameters
     double                       outside_radius;
     std::vector<IBParticle<dim>> particles;
     bool                         calculate_force_ib;
-    bool                         assemble_navier_stokes_inside ;
+    bool                         assemble_navier_stokes_inside;
     std::string                  ib_force_output_file;
     double                       density;
     Tensor<1, dim>               gravity;

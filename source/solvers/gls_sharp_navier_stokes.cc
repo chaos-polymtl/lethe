@@ -1881,8 +1881,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_matrix(
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-  if (cell_is_inside &&
-      this->simulation_parameters.particlesParameters.assemble_navier_stokes_inside == false)
+  if (cell_is_inside && this->simulation_parameters.particlesParameters
+                            .assemble_navier_stokes_inside == false)
     {
       for (auto &assembler : this->assemblers_inside_ib)
         {
@@ -1914,7 +1914,6 @@ GLSSharpNavierStokesSolver<dim>::copy_local_matrix_to_global_matrix(
                                               copy_data.local_dof_indices,
                                               this->system_matrix);
 }
-
 
 
 
@@ -1977,8 +1976,8 @@ GLSSharpNavierStokesSolver<dim>::assemble_local_system_rhs(
   // of the variables
   bool cell_is_inside;
   std::tie(cell_is_inside, std::ignore) = cells_inside_map[cell];
-  if (cell_is_inside &&
-      this->simulation_parameters.particlesParameters.assemble_navier_stokes_inside == false)
+  if (cell_is_inside && this->simulation_parameters.particlesParameters
+                            .assemble_navier_stokes_inside == false)
     {
       for (auto &assembler : this->assemblers_inside_ib)
         {

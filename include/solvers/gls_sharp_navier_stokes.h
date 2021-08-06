@@ -52,9 +52,6 @@ public:
   solve();
 
 private:
-
-
-
   /**
    * @brief Assemble the local matrix for a given cell.
    *
@@ -70,7 +67,8 @@ private:
    *
    * @param copy_data The copy data which is used to store
    * the results of the assembly over a cell
-   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle
    */
   void
   assemble_local_system_matrix(
@@ -99,8 +97,9 @@ private:
 
   /**
    * @brief sets up the vector of assembler functions
-   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle.
-   * Refer to 2 different assembler depending on what type of equations is assembled inside the particles.
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle. Refer to 2 different assembler
+   * depending on what type of equations is assembled inside the particles.
    */
   void
   setup_assemblers() override;
@@ -108,7 +107,8 @@ private:
 
   /**
    * @brief Copy local cell information to global matrix
-   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle
    */
 
   void
@@ -117,7 +117,8 @@ private:
 
   /**
    * @brief Copy local cell rhs information to global rhs
-   * This function is modified compared to the GLS function to take into account the cells that are cut or inside a particle
+   * This function is modified compared to the GLS function to take into account
+   * the cells that are cut or inside a particle
    */
 
   void

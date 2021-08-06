@@ -847,7 +847,7 @@ LaplaceAssembly<dim>::assemble_matrix(
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
+  const double dt = time_steps_vector[0];
 
 
   // Loop over the quadrature points
@@ -868,11 +868,12 @@ LaplaceAssembly<dim>::assemble_matrix(
               const auto &grad_phi_p_j = scratch_data.grad_phi_p[q][j];
 
               // Laplacian on the velocity terms
-              double local_matrix_ij =viscosity*scalar_product(grad_phi_u_j, grad_phi_u_i) ;
+              double local_matrix_ij =
+                viscosity * scalar_product(grad_phi_u_j, grad_phi_u_i);
 
               // Laplacian on the pressure terms
-              local_matrix_ij += 1/viscosity * h *
-                                 scalar_product(grad_phi_p_j, grad_phi_p_i) ;
+              local_matrix_ij +=
+                1 / viscosity * h * scalar_product(grad_phi_p_j, grad_phi_p_i);
 
               // The jacobian matrix for the SUPG formulation
               // currently does not include the jacobian of the stabilization
@@ -908,7 +909,7 @@ LaplaceAssembly<dim>::assemble_rhs(
   // Time steps and inverse time steps which is used for stabilization constant
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
-  const double dt  = time_steps_vector[0];
+  const double dt = time_steps_vector[0];
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -936,12 +937,13 @@ LaplaceAssembly<dim>::assemble_rhs(
           double local_rhs_i = 0;
 
           // Laplacian on the velocity terms
-          local_rhs_i += -viscosity*scalar_product(velocity_gradient, grad_phi_u_i) * JxW ;
+          local_rhs_i +=
+            -viscosity * scalar_product(velocity_gradient, grad_phi_u_i) * JxW;
 
 
           // Laplacian on the pressure terms
-          local_rhs_i += -1/viscosity * h *
-                         scalar_product(pressure_gradient, grad_phi_p_i) * JxW ;
+          local_rhs_i += -1 / viscosity * h *
+                         scalar_product(pressure_gradient, grad_phi_p_i) * JxW;
 
 
           local_rhs(i) += local_rhs_i;
