@@ -848,7 +848,6 @@ LaplaceAssembly<dim>::assemble_matrix(
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
 
 
   // Loop over the quadrature points
@@ -910,7 +909,6 @@ LaplaceAssembly<dim>::assemble_rhs(
   std::vector<double> time_steps_vector =
     this->simulation_control->get_time_steps_vector();
   const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)

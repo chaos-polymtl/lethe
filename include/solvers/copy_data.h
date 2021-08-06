@@ -194,7 +194,7 @@ public:
   // This information is used to indicate to the copy_local_to_global function
   // if it should indeed copy or not.
   bool cell_is_local;
-  bool cell_is_cut = false;
+  bool cell_is_cut;
 };
 
 

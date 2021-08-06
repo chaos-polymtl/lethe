@@ -52,6 +52,11 @@ public:
   solve();
 
 private:
+
+    /**
+   *  @brief Assembles the matrix associated with the solver
+   * This function is modified compared to the GLS function to take into account the cells that are cut.
+   */
   void
   assemble_system_matrix();
 
