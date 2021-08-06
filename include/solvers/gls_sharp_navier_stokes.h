@@ -167,6 +167,10 @@ private:
    *
    * @deprecated This function is to be deprecated when the non-linear solvers
    * have been refactored to call for rhs and matrix assembly seperately.
+   *
+   * Modified version of assemble_matrix_and_rhs to include the presence of
+   * extra steps. For more detail see the same function in the
+   * gls_navier_stokes.h solver.
    */
   virtual void
   assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
