@@ -100,8 +100,8 @@ namespace Parameters
     enum class CostFunctionType
     {
       larachi,
-      L1,
-      L2
+      l1,
+      l2
     };
 
     CostFunctionType cost_function_type;
@@ -134,12 +134,12 @@ namespace Parameters
 
   struct RPTReconstructionParameters
   {
-    // Enable tuning parameters
-    bool         reconstruction;
-    unsigned int reactor_refinement;
-    std::string  reconstruction_counts_file;
-    std::string  reconstruction_positions_file;
-
+    bool reconstruction; // Enable tuning parameters
+    int  reactor_refinement;
+    int  coarse_mesh_level; // Level of the coarse mesh where all the counts of
+                            // the first vertices
+    std::string reconstruction_counts_file;
+    std::string reconstruction_positions_file;
 
     static void
     declare_parameters(ParameterHandler &prm);

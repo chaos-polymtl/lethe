@@ -152,12 +152,12 @@ Parameters::RPTTuningParameters::parse_parameters(ParameterHandler &prm)
     if (type == "larachi")
       cost_function_type = CostFunctionType::larachi;
     else if (type == "l1")
-      cost_function_type = CostFunctionType::L1;
+      cost_function_type = CostFunctionType::l1;
     else if (type == "l2")
-      cost_function_type = CostFunctionType::L2;
+      cost_function_type = CostFunctionType::l2;
     else
       throw std::logic_error(
-        "Error, invalid cost function type. Choices are larachi, L2 or L1.");
+        "Error, invalid cost function type. Choices are larachi, l2 or l1.");
 
     experimental_file = prm.get("experimental data file");
   }
@@ -218,6 +218,12 @@ Parameters::RPTReconstructionParameters::declare_parameters(
                       "Number of refinement for the reactor");
 
     prm.declare_entry(
+      "coarse mesh level",
+      "0",
+      Patterns::Integer(),
+      "Level of the coarse mesh where all the counts of the first vertices");
+
+    prm.declare_entry(
       "reconstruction counts file",
       "reconstruction_counts",
       Patterns::FileName(),
@@ -238,9 +244,14 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
   {
     reconstruction             = prm.get_bool("reconstruction");
     reactor_refinement         = prm.get_integer("refinement");
+    coarse_mesh_level          = prm.get_integer("coarse mesh level");
     reconstruction_counts_file = prm.get("reconstruction counts file");
     reconstruction_positions_file =
       prm.get("export reconstruction positions file");
+
+    if (coarse_mesh_level > reactor_refinement)
+      throw std::logic_error(
+        "Error, the level of the coarse mesh can't be higher that the refinement value (max level).");
   }
   prm.leave_subsection();
 }

@@ -51,13 +51,13 @@ test()
   deallog << " Larachi cost function = " << cost_function << std::endl;
 
   RPT.rpt_parameters.tuning_param.cost_function_type =
-    Parameters::RPTTuningParameters::CostFunctionType::L1;
+    Parameters::RPTTuningParameters::CostFunctionType::l1;
   cost_function =
     RPT.calculate_cost_function(calculated_counts, measured_counts);
   deallog << " L1 cost function = " << cost_function << std::endl;
 
   RPT.rpt_parameters.tuning_param.cost_function_type =
-    Parameters::RPTTuningParameters::CostFunctionType::L2;
+    Parameters::RPTTuningParameters::CostFunctionType::l2;
   cost_function =
     RPT.calculate_cost_function(calculated_counts, measured_counts);
   deallog << " L2 cost function = " << cost_function << std::endl;

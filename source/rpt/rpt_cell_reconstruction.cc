@@ -9,7 +9,7 @@
 #include <deal.II/numerics/data_out.h>
 
 #include <rpt/particle_detector_interactions.h>
-#include <rpt/rpt.h>
+#include <rpt/particle_visualization.h>
 #include <rpt/rpt_cell_reconstruction.h>
 
 #include <fstream>
@@ -18,6 +18,7 @@ template <int dim>
 RPTCellReconstruction<dim>::RPTCellReconstruction(
   RPTCalculatingParameters &rpt_parameters)
   : parameters(rpt_parameters)
+  , computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
 {
   // Seed the random number generator
   srand(parameters.rpt_param.seed);
@@ -31,7 +32,40 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
   read_counts(); // Read reconstruction counts of unknown particle positions
   create_grid(); // Read a grid for the reactor vessel
   set_coarse_mesh_counts(); // Calculate counts at vertices of the coarse mesh
+  find_all_positions();
 
+  // Export positions in file
+  export_positions();
+
+  // Show information about cells and vertices
+  if (parameters.rpt_param.verbose)
+    {
+      std::cout << std::endl;
+      std::cout << "Number of active cells : " << triangulation.n_active_cells()
+                << std::endl;
+      std::cout << "Number of vertices in the mesh : "
+                << triangulation.n_vertices() << std::endl;
+      std::cout << "Number of vertices with calculated counts : "
+                << map_vertices_index.size() << std::endl;
+    }
+
+  visualize_positions();
+}
+
+template <int dim>
+void
+RPTCellReconstruction<dim>::set_coarse_mesh_counts()
+{
+  TimerOutput::Scope t(computing_timer, "coarse_mesh_counts_calculation");
+
+  find_vertices_positions(parameters.reconstruction_param.coarse_mesh_level);
+  calculate_counts();
+}
+
+template <int dim>
+void
+RPTCellReconstruction<dim>::find_all_positions()
+{
   // Show positions in the terminal if verbose is enable
   for (unsigned int i = 0; i < reconstruction_counts.size(); i++)
     {
@@ -41,17 +75,6 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
                   << " Cell volume : " << cells_volumes[i]
                   << " Position : " << reconstruction_positions[i] << std::endl;
     }
-
-  // Export positions in file
-  export_positions();
-}
-
-template <int dim>
-void
-RPTCellReconstruction<dim>::set_coarse_mesh_counts()
-{
-  find_vertices_positions(0);
-  calculate_counts();
 }
 
 template <int dim>
@@ -125,6 +148,8 @@ template <int dim>
 void
 RPTCellReconstruction<dim>::create_grid()
 {
+  TimerOutput::Scope t(computing_timer, "grid_creation");
+
   // Generate cylinder (needs rotation and shift to get origin at the bottom
   // with z towards top)
   GridGenerator::subdivided_cylinder(triangulation,
@@ -139,9 +164,9 @@ RPTCellReconstruction<dim>::create_grid()
   // Add cylindrical manifold
   const Tensor<1, dim>                direction({0, 0, 1});
   const CylindricalManifold<dim, dim> manifold(direction, {0, 0, 1});
-
-  // Set manifold and refine global
   triangulation.set_manifold(0, manifold);
+
+  // Refine all cells
   triangulation.prepare_coarsening_and_refinement();
   triangulation.refine_global(
     parameters.reconstruction_param.reactor_refinement);
@@ -153,13 +178,15 @@ RPTCellReconstruction<dim>::find_vertices_positions(
   unsigned int     level,
   std::vector<int> parent_cell_indexes /* {-1} */)
 {
+  TimerOutput::Scope t(computing_timer, "finding_vertices_positions");
+
   // Find the positions associated to the vertices of cell
   for (const auto &cell : triangulation.cell_iterators_on_level(level))
     {
       bool parent_is_candidate = false;
 
       // Check if parent cell of current level cell is a candidate
-      if (cell->level() > 0)
+      if (cell->level() > parameters.reconstruction_param.coarse_mesh_level)
         {
           for (auto &id : parent_cell_indexes)
             {
@@ -196,6 +223,8 @@ template <int dim>
 void
 RPTCellReconstruction<dim>::calculate_counts()
 {
+  TimerOutput::Scope t(computing_timer, "vertices_calculation_counts");
+
   // Vector fir calculated counts for one particle postiion
   std::vector<double> calculated_counts;
 
@@ -232,6 +261,8 @@ RPTCellReconstruction<dim>::find_cells(
   std::vector<double> &particle_reconstruction_counts,
   std::vector<int>     parent_cell_indexes /* {-1} */)
 {
+  TimerOutput::Scope t(computing_timer, "finding_cell");
+
   double            min, max;
   std::vector<bool> candidate_detector(detectors.size());
   std::vector<int>  candidates;
@@ -240,7 +271,7 @@ RPTCellReconstruction<dim>::find_cells(
   for (const auto &cell : triangulation.cell_iterators_on_level(level))
     {
       bool parent_is_candidate = false;
-      if (cell->level() > 0)
+      if (cell->level() > parameters.reconstruction_param.coarse_mesh_level)
         {
           for (auto &id : parent_cell_indexes)
             {
@@ -300,6 +331,8 @@ RPTCellReconstruction<dim>::find_best_cell(
   std::vector<double> &particle_reconstruction_counts,
   std::vector<int>     candidate)
 {
+  TimerOutput::Scope t(computing_timer, "finding_cell");
+
   std::vector<std::pair<int, double>> cellid_error;
   double                              error;
   int                                 best_cell;
@@ -448,6 +481,20 @@ RPTCellReconstruction<dim>::assign_detector_positions()
 
       detectors.push_back(detector);
     }
+}
+
+template <int dim>
+void
+RPTCellReconstruction<dim>::visualize_positions()
+{
+  TimerOutput::Scope t(computing_timer, "visualization_files_creation");
+
+  ParticleVisualization<dim> particle_visualization(triangulation,
+                                                    parameters,
+                                                    reconstruction_positions,
+                                                    reconstruction_counts);
+
+  particle_visualization.build_visualization_files();
 }
 
 

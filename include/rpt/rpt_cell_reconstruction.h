@@ -29,10 +29,13 @@
 
 #include <deal.II/base/config.h>
 
+#include <deal.II/base/timer.h>
+
 #include <deal.II/grid/tria.h>
 
 #include <rpt/detector.h>
 #include <rpt/parameters_rpt.h>
+#include <rpt/particle_visualization.h>
 #include <rpt/radioactive_particle.h>
 #include <rpt/rpt_calculating_parameters.h>
 
@@ -89,6 +92,9 @@ public:
    */
   void
   find_unknown_position(std::vector<double> &particle_reconstruction_counts);
+
+  void
+  find_all_positions();
 
   /**
    * @brief Find the vertices position of coarse mesh vertices or the candidate
@@ -150,9 +156,14 @@ public:
   void
   export_positions();
 
-private:
-  Triangulation<dim> triangulation;
+  /**
+   * @brief
+   */
+  void
+  visualize_positions();
 
+private:
+  Triangulation<dim>         triangulation;
   RPTCalculatingParameters   parameters;
   std::vector<Detector<dim>> detectors;
 
@@ -163,6 +174,8 @@ private:
   std::vector<Point<dim>> reconstruction_positions; // Positions found
   std::vector<double>
     cells_volumes; // Cell volumes of the cell that contains positions
+
+  TimerOutput computing_timer;
 };
 
 

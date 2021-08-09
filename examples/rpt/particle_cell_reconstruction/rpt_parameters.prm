@@ -24,6 +24,7 @@ end
 #---------------------------------------------------
 subsection reconstruction
 	set reconstruction                          = true
+	set coarse mesh level                       = 1
 	set refinement                              = 6
 	set reconstruction counts file              = counts.reconstruction
     set export reconstruction positions file    = positions_found.csv

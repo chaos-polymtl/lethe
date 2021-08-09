@@ -222,7 +222,7 @@ RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
         }
     }
   else if (rpt_parameters.tuning_param.cost_function_type ==
-           Parameters::RPTTuningParameters::CostFunctionType::L1)
+           Parameters::RPTTuningParameters::CostFunctionType::l1)
     {
       for (unsigned int i = 0; i < measured_counts.size(); i++)
         cost_function += abs(calculated_counts[i] - measured_counts[i]);
@@ -230,7 +230,7 @@ RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
       cost_function /= measured_counts.size();
     }
   else if (rpt_parameters.tuning_param.cost_function_type ==
-           Parameters::RPTTuningParameters::CostFunctionType::L2)
+           Parameters::RPTTuningParameters::CostFunctionType::l2)
     {
       for (unsigned int i = 0; i < measured_counts.size(); i++)
         cost_function +=
