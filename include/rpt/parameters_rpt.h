@@ -140,6 +140,8 @@ namespace Parameters
                             // the first vertices
     std::string reconstruction_counts_file;
     std::string reconstruction_positions_file;
+    bool analyse_positions; // Allow to analyse results with known positions
+    std::string known_positions_file;
 
     static void
     declare_parameters(ParameterHandler &prm);

@@ -233,6 +233,17 @@ Parameters::RPTReconstructionParameters::declare_parameters(
                       "reconstruction_positions",
                       Patterns::FileName(),
                       "Export positions found by reconstruction");
+
+    prm.declare_entry(
+      "analyse positions",
+      "false",
+      Patterns::Bool(),
+      "Enable evaluation of results with known positions <true|false>");
+
+    prm.declare_entry("known positions file",
+                      "known_positions_file",
+                      Patterns::FileName(),
+                      "Known positions (artificial or from experimental");
   }
   prm.leave_subsection();
 }
@@ -248,6 +259,8 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
     reconstruction_counts_file = prm.get("reconstruction counts file");
     reconstruction_positions_file =
       prm.get("export reconstruction positions file");
+    analyse_positions    = prm.get_bool("analyse positions");
+    known_positions_file = prm.get("known positions file");
 
     if (coarse_mesh_level > reactor_refinement)
       throw std::logic_error(

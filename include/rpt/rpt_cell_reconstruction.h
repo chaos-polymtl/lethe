@@ -89,9 +89,12 @@ public:
    *
    * @param particle_reconstruction_counts Counts the the current unknown particle
    * position for every detector
+   *
+   * @param id Index of the unknown particle, useful when "positions_evaluation" is enable
    */
   void
-  find_unknown_position(std::vector<double> &particle_reconstruction_counts);
+  find_unknown_position(std::vector<double> &particle_reconstruction_counts,
+                        unsigned int         id);
 
   void
   find_all_positions();
@@ -130,6 +133,10 @@ public:
    *
    * @param level Level of the current cells of the mesh
    *
+   * @param particle_reconstruction_counts Counts for every detectors associated
+   *                                       to the unknown position of the
+   * particle
+   *
    * @param candidate List of cell candidates
    */
   int
@@ -157,10 +164,16 @@ public:
   export_positions();
 
   /**
-   * @brief
+   * @brief Generate files for visualization (pvtu/vtu)
    */
   void
   visualize_positions();
+
+  /**
+   * @brief Read the .known file to extract known positions to analyse
+   */
+  void
+  read_known_positions();
 
 private:
   Triangulation<dim>         triangulation;
@@ -171,11 +184,23 @@ private:
     reconstruction_counts; // All counts of the unknown particle positions
   std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
     map_vertices_index; // Map of all calculated counts of vertices
-  std::vector<Point<dim>> reconstruction_positions; // Positions found
+  std::vector<Point<dim>> reconstruction_positions; // Found positions
   std::vector<double>
     cells_volumes; // Cell volumes of the cell that contains positions
+  std::vector<Point<dim>> known_positions; // Known positions to analyse
 
-  TimerOutput computing_timer;
+  TimerOutput               computing_timer;
+  std::vector<unsigned int> final_cell_level; // Level of the best cells
+  // Status of the best cells after analyse of found positions vs known
+  // positions (many status can be associated to a cell)
+  //  - right_cell :    The found position is in the same cell than the known
+  //                    position
+  //  - cost_function : There was many cell candidates at refined mesh and a
+  //                    cost function was needed to get the best cell
+  //  - parent_cell :   The best cell is not at the highest refined level
+  //  - wrong_cell :    The found position is not in the same cell then the
+  //                    known position
+  std::vector<std::string> cell_status;
 };
 
 

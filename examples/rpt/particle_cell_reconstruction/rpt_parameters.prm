@@ -28,6 +28,8 @@ subsection reconstruction
 	set refinement                              = 6
 	set reconstruction counts file              = counts.reconstruction
     set export reconstruction positions file    = positions_found.csv
+    set analyse positions                       = true
+    set known positions file                    = positions.known
 end
 
 #---------------------------------------------------

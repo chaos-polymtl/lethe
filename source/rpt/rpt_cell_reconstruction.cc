@@ -12,6 +12,7 @@
 #include <rpt/particle_visualization.h>
 #include <rpt/rpt_cell_reconstruction.h>
 
+#include <cmath>
 #include <fstream>
 
 template <int dim>
@@ -30,7 +31,18 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
 {
   assign_detector_positions(); // Assign detector position & create detectors
   read_counts(); // Read reconstruction counts of unknown particle positions
-  create_grid(); // Read a grid for the reactor vessel
+
+  // Read known positions if analyse positions if enable
+  if (parameters.reconstruction_param.analyse_positions)
+    {
+      read_known_positions();
+      AssertThrow(
+        known_positions.size() == reconstruction_counts.size(),
+        ExcMessage(
+          "Reconstruction counts and known positions files do not have data for the same number of positions."))
+    }
+
+  create_grid();            // Read a grid for the reactor vessel
   set_coarse_mesh_counts(); // Calculate counts at vertices of the coarse mesh
   find_all_positions();
 
@@ -49,6 +61,7 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
                 << map_vertices_index.size() << std::endl;
     }
 
+  // Generate visualisation files
   visualize_positions();
 }
 
@@ -69,7 +82,7 @@ RPTCellReconstruction<dim>::find_all_positions()
   // Show positions in the terminal if verbose is enable
   for (unsigned int i = 0; i < reconstruction_counts.size(); i++)
     {
-      find_unknown_position(reconstruction_counts[i]);
+      find_unknown_position(reconstruction_counts[i], i);
       if (parameters.rpt_param.verbose)
         std::cout << "Unknown particle : " << i
                   << " Cell volume : " << cells_volumes[i]
@@ -80,13 +93,15 @@ RPTCellReconstruction<dim>::find_all_positions()
 template <int dim>
 void
 RPTCellReconstruction<dim>::find_unknown_position(
-  std::vector<double> &particle_reconstruction_counts)
+  std::vector<double> &particle_reconstruction_counts,
+  unsigned int         id)
 {
-  unsigned int     level = 0;
+  int              level = 0;
   std::vector<int> cells_indexes, new_cells_indexes;
   Point<dim>       reconstruction_position;
   double           volume;
   bool             still_new_candidates = true;
+  std::string      status;
 
   // Find the first cell candidates from coarse mesh
   cells_indexes = find_cells(level, particle_reconstruction_counts);
@@ -113,6 +128,7 @@ RPTCellReconstruction<dim>::find_unknown_position(
         {
           still_new_candidates = false;
           level--;
+          status = "parent_cell"; // Cell isn't the highest refinement level
         }
 
       cells_indexes = new_cells_indexes;
@@ -125,23 +141,51 @@ RPTCellReconstruction<dim>::find_unknown_position(
     {
       best_cell =
         find_best_cell(level, particle_reconstruction_counts, cells_indexes);
+
+      // Update status
+      if (status.empty())
+        status = "cost_function";
+      else
+        status += "|cost_function";
     }
   else
     best_cell = cells_indexes[0];
 
-  // Find the volume and the center position of the best cell
+  // Find the volume and the center position of the best cell and modify
+  // status when analyse positions is enable
   for (const auto &cell : triangulation.cell_iterators_on_level(level))
     {
       if (cell->index() == best_cell)
         {
           volume                  = cell->measure();
           reconstruction_position = cell->center(true);
+
+          // Verify if the best cell is the good cell and update status
+          if (parameters.reconstruction_param.analyse_positions)
+            {
+              if (cell->point_inside(known_positions[id]))
+                {
+                  if (status.empty())
+                    status = "right_cell";
+                  else
+                    status += "|right_cell";
+                }
+              else
+                {
+                  if (status.empty())
+                    status = "wrong_cell";
+                  else
+                    status += "|wrong_cell";
+                }
+            }
         }
     }
 
-  // Store reconstruction positions and volume prior exportation
+  // Store information prior data exportation
   reconstruction_positions.push_back(reconstruction_position);
   cells_volumes.push_back(volume);
+  final_cell_level.push_back(level);
+  cell_status.push_back(status);
 }
 
 template <int dim>
@@ -225,7 +269,7 @@ RPTCellReconstruction<dim>::calculate_counts()
 {
   TimerOutput::Scope t(computing_timer, "vertices_calculation_counts");
 
-  // Vector fir calculated counts for one particle postiion
+  // Vector fir calculated counts for one particle position
   std::vector<double> calculated_counts;
 
   unsigned int i = 0;
@@ -423,17 +467,21 @@ RPTCellReconstruction<dim>::export_positions()
   if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
     {
       myfile
-        << "unknown_positions_id volumes particle_positions_x particle_positions_y particle_positions_z"
-        << std::endl;
+        << "unknown_positions_id volumes particle_positions_x particle_positions_y particle_positions_z cell_level";
       sep = " ";
     }
   else // .csv is default
     {
       myfile
-        << "unknown_positions_id,volumes,particle_positions_x,particle_positions_y,particle_positions_z"
-        << std::endl;
+        << "unknown_positions_id,volumes,particle_positions_x,particle_positions_y,particle_positions_z,cell_level";
       sep = ",";
     }
+
+  // Add status column if analyse positions is enable
+  if (parameters.reconstruction_param.analyse_positions)
+    myfile << sep << "status" << sep << "distance" << std::endl;
+  else
+    myfile << std::endl;
 
   for (unsigned int i_particle = 0;
        i_particle < reconstruction_positions.size();
@@ -442,7 +490,28 @@ RPTCellReconstruction<dim>::export_positions()
       myfile << i_particle << sep << cells_volumes[i_particle] << sep
              << reconstruction_positions[i_particle][0] << sep
              << reconstruction_positions[i_particle][1] << sep
-             << reconstruction_positions[i_particle][2] << std::endl;
+             << reconstruction_positions[i_particle][2] << sep
+             << final_cell_level[i_particle];
+
+      if (parameters.reconstruction_param.analyse_positions)
+        {
+          // Calculate distance between known and found positions
+          double distance =
+            std::sqrt(std::pow(reconstruction_positions[i_particle][0] -
+                                 known_positions[i_particle][0],
+                               2) +
+                      std::pow(reconstruction_positions[i_particle][1] -
+                                 known_positions[i_particle][1],
+                               2) +
+                      std::pow(reconstruction_positions[i_particle][2] -
+                                 known_positions[i_particle][2],
+                               2));
+
+          myfile << sep << cell_status[i_particle] << sep << distance
+                 << std::endl;
+        }
+      else
+        myfile << std::endl;
     }
 }
 
@@ -482,6 +551,35 @@ RPTCellReconstruction<dim>::assign_detector_positions()
       detectors.push_back(detector);
     }
 }
+
+template <int dim>
+void
+RPTCellReconstruction<dim>::read_known_positions()
+{
+  // Read text file with particle positions and store it in vector
+  std::ifstream particle_file(
+    parameters.reconstruction_param.known_positions_file);
+
+  std::string skip;
+  std::getline(particle_file, skip); // Skip header line
+  std::vector<double> values;
+  std::copy(std::istream_iterator<double>(particle_file),
+            std::istream_iterator<double>(),
+            std::back_inserter(values));
+
+  unsigned int number_of_positions = values.size() / dim;
+
+  // Extract positions, create point objects and radioactive particles
+  for (unsigned int i = 0; i < number_of_positions; i++)
+    {
+      Point<dim> point(values[dim * i],
+                       values[dim * i + 1],
+                       values[dim * i + 2]);
+
+      known_positions.push_back(point);
+    }
+}
+
 
 template <int dim>
 void
