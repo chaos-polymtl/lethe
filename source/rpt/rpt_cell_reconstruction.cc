@@ -464,6 +464,8 @@ RPTCellReconstruction<dim>::export_positions()
   std::string   filename =
     parameters.reconstruction_param.reconstruction_positions_file;
   myfile.open(filename);
+
+  // Headers with space or comma
   if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
     {
       myfile
@@ -477,9 +479,10 @@ RPTCellReconstruction<dim>::export_positions()
       sep = ",";
     }
 
-  // Add status column if analyse positions is enable
+  // Add status columns and distance if analyse positions is enable
   if (parameters.reconstruction_param.analyse_positions)
-    myfile << sep << "status" << sep << "distance" << std::endl;
+    myfile << sep << "status" << sep << "status_id" << sep << "distance"
+           << std::endl;
   else
     myfile << std::endl;
 
@@ -507,8 +510,30 @@ RPTCellReconstruction<dim>::export_positions()
                                  known_positions[i_particle][2],
                                2));
 
-          myfile << sep << cell_status[i_particle] << sep << distance
-                 << std::endl;
+          // Associate status to a status id
+          unsigned int status_id;
+          if (cell_status[i_particle] == "right_cell")
+            status_id = 0;
+          else if (cell_status[i_particle] == "cost_function|right_cell")
+            status_id = 1;
+          else if (cell_status[i_particle] == "parent_cell|right_cell")
+            status_id = 2;
+          else if (cell_status[i_particle] ==
+                   "parent_cell|cost_function|right_cell")
+            status_id = 3;
+          else if (cell_status[i_particle] == "wrong_cell")
+            status_id = 4;
+          else if (cell_status[i_particle] == "cost_function|wrong_cell")
+            status_id = 5;
+          else if (cell_status[i_particle] == "parent_cell|wrong_cell")
+            status_id = 6;
+          else if (cell_status[i_particle] ==
+                   "parent_cell|cost_function|wrong_cell")
+            status_id = 7;
+
+
+          myfile << sep << cell_status[i_particle] << sep << status_id << sep
+                 << distance << std::endl;
         }
       else
         myfile << std::endl;

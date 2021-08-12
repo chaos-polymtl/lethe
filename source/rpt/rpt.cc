@@ -42,7 +42,8 @@ RPT<dim>::setup_and_calculate()
           " has to be the same number of counts of experimental data. "
           "Note : The experimental counts also have to be at the same positions which can not be verified."))
 
-        double cost_function = calculate_cost_function(measured_counts);
+        double cost_function =
+          calculate_cost_function(measured_counts, calculated_counts);
       std::cout << cost_function << std::endl;
     }
 }
@@ -204,7 +205,8 @@ RPT<dim>::extract_experimental_counts()
 
 template <int dim>
 double
-RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts)
+RPT<dim>::calculate_cost_function(std::vector<double> &measured_counts,
+                                  std::vector<double> &calculated_counts)
 {
   double cost_function = 0;
 
