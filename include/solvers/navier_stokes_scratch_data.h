@@ -14,9 +14,6 @@
  * ---------------------------------------------------------------------
  */
 
-#include <core/bdf.h>
-#include <core/parameters.h>
-
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -27,6 +24,9 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/parameters.h>
 
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -178,6 +178,11 @@ public:
               fe.system_to_component_index(d).first;
             this->force[q][d] = this->rhs_force[q](component_i);
           }
+
+        const unsigned int component_mass =
+          fe.system_to_component_index(dim).first;
+        this->mass_source[q] = this->rhs_force[q](component_mass);
+
         // Correct force to include the dynamic forcing term for flow
         // control
         force[q] = force[q] + beta_force;
@@ -359,6 +364,7 @@ public:
   std::vector<Vector<double>> rhs_force;
   Tensor<1, dim>              beta_force;
   std::vector<Tensor<1, dim>> force;
+  std::vector<double>         mass_source;
 
   // Quadrature
   std::vector<double>     JxW;

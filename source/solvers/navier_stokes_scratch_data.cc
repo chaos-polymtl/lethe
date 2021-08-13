@@ -1,6 +1,5 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
-
 #include <solvers/navier_stokes_scratch_data.h>
 
 template <int dim>
@@ -17,7 +16,8 @@ NavierStokesScratchData<dim>::allocate()
   // Forcing term array
   this->rhs_force =
     std::vector<Vector<double>>(n_q_points, Vector<double>(dim + 1));
-  this->force = std::vector<Tensor<1, dim>>(n_q_points);
+  this->force       = std::vector<Tensor<1, dim>>(n_q_points);
+  this->mass_source = std::vector<double>(n_q_points);
 
   // Initialize arrays related to velocity and pressure
   this->velocities.first_vector_component = 0;
@@ -94,7 +94,7 @@ NavierStokesScratchData<dim>::enable_void_fraction(
   fe_values_void_fraction = std::make_shared<FEValues<dim>>(
     mapping, fe, quadrature, update_values | update_gradients);
 
-  // Free surface
+  // Void Fraction
   void_fraction_values = std::vector<double>(this->n_q_points);
   previous_void_fraction_values =
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
