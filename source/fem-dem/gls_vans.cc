@@ -99,7 +99,7 @@ GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
   , void_fraction_dof_handler(*this->triangulation)
   , fe_void_fraction(
-      this->simulation_parameters.void_fraction->void_fraction_fem_degree)
+      this->simulation_parameters.fem_parameters.void_fraction_order)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,

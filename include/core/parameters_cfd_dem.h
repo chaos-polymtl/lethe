@@ -74,7 +74,6 @@ namespace Parameters
     double                         l2_smoothing_factor;
     double                         l2_lower_bound;
     double                         l2_upper_bound;
-    unsigned int                   void_fraction_fem_degree;
   };
 
   struct CFDDEM

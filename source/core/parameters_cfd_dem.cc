@@ -35,10 +35,6 @@ namespace Parameters
                       "1",
                       Patterns::Double(),
                       "The upper bound for void fraction L2 projection");
-    prm.declare_entry("void fraction fem degree",
-                      "1",
-                      Patterns::Integer(),
-                      "The degree of the void fraction element.");
     prm.leave_subsection();
   }
 
@@ -58,12 +54,11 @@ namespace Parameters
     void_fraction.parse_parameters(prm);
     prm.leave_subsection();
 
-    read_dem                 = prm.get_bool("read dem");
-    dem_file_name            = prm.get("dem file name");
-    l2_smoothing_factor      = prm.get_double("l2 smoothing factor");
-    l2_lower_bound           = prm.get_double("l2 lower bound");
-    l2_upper_bound           = prm.get_double("l2 upper bound");
-    void_fraction_fem_degree = prm.get_integer("void fraction fem degree");
+    read_dem            = prm.get_bool("read dem");
+    dem_file_name       = prm.get("dem file name");
+    l2_smoothing_factor = prm.get_double("l2 smoothing factor");
+    l2_lower_bound      = prm.get_double("l2 lower bound");
+    l2_upper_bound      = prm.get_double("l2 upper bound");
     prm.leave_subsection();
   }
 
