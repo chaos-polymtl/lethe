@@ -325,6 +325,10 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "interpolation order pressure");
+      prm.declare_entry("void fraction order",
+                        "1",
+                        Patterns::Integer(),
+                        "interpolation order void fraction");
       prm.declare_entry("temperature order",
                         "1",
                         Patterns::Integer(),
@@ -346,11 +350,12 @@ namespace Parameters
   {
     prm.enter_subsection("FEM");
     {
-      velocity_order    = prm.get_integer("velocity order");
-      pressure_order    = prm.get_integer("pressure order");
-      temperature_order = prm.get_integer("temperature order");
-      tracer_order      = prm.get_integer("tracer order");
-      qmapping_all      = prm.get_bool("qmapping all");
+      velocity_order      = prm.get_integer("velocity order");
+      pressure_order      = prm.get_integer("pressure order");
+      void_fraction_order = prm.get_integer("void fraction order");
+      temperature_order   = prm.get_integer("temperature order");
+      tracer_order        = prm.get_integer("tracer order");
+      qmapping_all        = prm.get_bool("qmapping all");
     }
     prm.leave_subsection();
   }
