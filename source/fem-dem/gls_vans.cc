@@ -98,7 +98,8 @@ template <int dim>
 GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
   , void_fraction_dof_handler(*this->triangulation)
-  , fe_void_fraction(p_nsparam.fem_parameters.velocity_order)
+  , fe_void_fraction(
+      this->simulation_parameters.fem_parameters.void_fraction_order)
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
@@ -276,7 +277,7 @@ GLSVANSSolver<dim>::calculate_void_fraction(const double time)
   if (this->simulation_parameters.void_fraction->mode ==
       Parameters::VoidFractionMode::function)
     {
-      const MappingQ<dim> mapping(this->velocity_fem_degree);
+      const MappingQ<dim> mapping(1);
 
       this->simulation_parameters.void_fraction->void_fraction.set_time(time);
 
@@ -413,8 +414,7 @@ GLSVANSSolver<dim>::assemble_L2_projection_void_fraction()
 {
   QGauss<dim>         quadrature_formula(this->number_quadrature_points);
   const MappingQ<dim> mapping(
-    this->velocity_fem_degree,
-    this->simulation_parameters.fem_parameters.qmapping_all);
+    1, this->simulation_parameters.fem_parameters.qmapping_all);
 
   FEValues<dim> fe_values_void_fraction(mapping,
                                         this->fe_void_fraction,
@@ -908,11 +908,11 @@ GLSVANSSolver<dim>::assembleGLS()
             fe_values[velocities].get_function_values(
               this->previous_solutions[0], p1_velocity_values);
 
-          if (time_stepping_method_has_two_stages(scheme))
+          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
             fe_values[velocities].get_function_values(
               this->previous_solutions[1], p2_velocity_values);
 
-          if (time_stepping_method_has_three_stages(scheme))
+          if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
             fe_values[velocities].get_function_values(
               this->previous_solutions[2], p3_velocity_values);
 
@@ -925,11 +925,13 @@ GLSVANSSolver<dim>::assembleGLS()
               fe_values_void_fraction.get_function_values(
                 void_fraction_m1, p1_void_fraction_values);
 
-              if (time_stepping_method_has_two_stages(scheme))
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m2, p2_void_fraction_values);
 
-              if (time_stepping_method_has_three_stages(scheme))
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m3, p3_void_fraction_values);
             }
@@ -1795,11 +1797,13 @@ GLSVANSSolver<dim>::post_processing()
               fe_values_void_fraction.get_function_values(
                 void_fraction_m1, p1_void_fraction_values);
 
-              if (time_stepping_method_has_two_stages(scheme))
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m2, p2_void_fraction_values);
 
-              if (time_stepping_method_has_three_stages(scheme))
+              if (scheme ==
+                  Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                 fe_values_void_fraction.get_function_values(
                   void_fraction_m3, p3_void_fraction_values);
             }

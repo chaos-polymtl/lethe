@@ -93,11 +93,11 @@ namespace Parameters
                       "Choose whether or not to apply post_processing");
     prm.declare_entry("inlet boundary id",
                       "1",
-                      Patterns::Double(),
+                      Patterns::Integer(),
                       "The inlet boundary of the bed");
     prm.declare_entry("outlet boundary id",
                       "2",
-                      Patterns::Double(),
+                      Patterns::Integer(),
                       "The outlet boundary of the bed");
     prm.leave_subsection();
   }
@@ -112,8 +112,8 @@ namespace Parameters
     full_stress_tensor   = prm.get_bool("full stress tensor");
     reference_velocity   = prm.get_double("reference velocity");
     post_processing      = prm.get_bool("post processing");
-    inlet_boundary_id    = prm.get_double("inlet boundary id");
-    outlet_boundary_id   = prm.get_double("outlet boundary id");
+    inlet_boundary_id    = prm.get_integer("inlet boundary id");
+    outlet_boundary_id   = prm.get_integer("outlet boundary id");
     const std::string op = prm.get("drag model");
     if (op == "difelice")
       drag_model = Parameters::DragModel::difelice;
