@@ -244,6 +244,11 @@ Parameters::RPTReconstructionParameters::declare_parameters(
                       "known_positions_file",
                       Patterns::FileName(),
                       "Known positions (artificial or from experimental");
+
+    prm.declare_entry("verbose clock",
+                      "false",
+                      Patterns::Bool(),
+                      "Allow to show total wallclock time elapsed since start");
   }
   prm.leave_subsection();
 }
@@ -261,6 +266,7 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
       prm.get("export reconstruction positions file");
     analyse_positions    = prm.get_bool("analyse positions");
     known_positions_file = prm.get("known positions file");
+    verbose_clock        = prm.get_bool("verbose clock");
 
     if (coarse_mesh_level > reactor_refinement)
       throw std::logic_error(

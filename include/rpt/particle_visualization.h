@@ -39,9 +39,9 @@ template <int dim>
 class ParticleVisualization
 {
 public:
-  ParticleVisualization(Triangulation<dim>       &background_triangulation,
+  ParticleVisualization(Triangulation<dim> &      background_triangulation,
                         RPTCalculatingParameters &rpt_parameters,
-                        std::vector<Point<dim>>  &positions,
+                        std::vector<Point<dim>> & positions,
                         std::vector<std::vector<double>> &counts);
 
   void

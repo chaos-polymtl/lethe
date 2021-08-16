@@ -183,10 +183,10 @@ private:
   std::vector<std::vector<double>>
     reconstruction_counts; // All counts of the unknown particle positions
   std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
-    map_vertices_index; // Map of all calculated counts of vertices
+                          map_vertices_index; // Map of all calculated counts of vertices
   std::vector<Point<dim>> reconstruction_positions; // Found positions
   std::vector<double>
-    cells_volumes; // Cell volumes of the cell that contains positions
+                          cells_volumes; // Cell volumes of the cell that contains positions
   std::vector<Point<dim>> known_positions; // Known positions to analyse
 
   TimerOutput               computing_timer;

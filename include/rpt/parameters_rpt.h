@@ -142,6 +142,8 @@ namespace Parameters
     std::string reconstruction_positions_file;
     bool analyse_positions; // Allow to analyse results with known positions
     std::string known_positions_file;
+    bool
+      verbose_clock; // Allow to show total wallclock time elapsed since start
 
     static void
     declare_parameters(ParameterHandler &prm);

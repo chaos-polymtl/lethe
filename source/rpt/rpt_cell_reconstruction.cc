@@ -63,14 +63,16 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
 
   // Generate visualisation files
   visualize_positions();
+
+  // Disable the output of time clock
+  if (!parameters.reconstruction_param.verbose_clock)
+    computing_timer.disable_output();
 }
 
 template <int dim>
 void
 RPTCellReconstruction<dim>::set_coarse_mesh_counts()
 {
-  TimerOutput::Scope t(computing_timer, "coarse_mesh_counts_calculation");
-
   find_vertices_positions(parameters.reconstruction_param.coarse_mesh_level);
   calculate_counts();
 }

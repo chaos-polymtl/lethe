@@ -11,9 +11,9 @@
 
 template <int dim>
 ParticleVisualization<dim>::ParticleVisualization(
-  Triangulation<dim>               &background_triangulation,
-  RPTCalculatingParameters         &rpt_parameters,
-  std::vector<Point<dim>>          &positions,
+  Triangulation<dim> &              background_triangulation,
+  RPTCalculatingParameters &        rpt_parameters,
+  std::vector<Point<dim>> &         positions,
   std::vector<std::vector<double>> &counts)
   : particle_positions(positions)
   , particle_counts(counts)
