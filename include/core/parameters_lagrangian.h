@@ -257,7 +257,7 @@ namespace Parameters
       Point<dim> triangulation_center_mass;
 
       // Triangulation inertia
-      Tensor<1,3> triangulation_inertia;
+      Tensor<1, 3> triangulation_inertia;
 
       // Boundary mass
       double triangulation_mass;
@@ -266,10 +266,10 @@ namespace Parameters
       bool enable_moving_boundary;
 
       // Initial translational boundary velocity
-      Tensor<1,dim> boundary_initial_translational_velocity;
+      Tensor<1, dim> boundary_initial_translational_velocity;
 
       // Initial rotational boundary velocity
-      Tensor<1,3> boundary_initial_rotational_velocity;
+      Tensor<1, 3> boundary_initial_rotational_velocity;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -379,7 +379,7 @@ namespace Parameters
       Tensor<1, dim> grid_translational_velocity;
 
       // Rotational speed of rotating grid in rad/s
-      Tensor<1,3> grid_rotational_speed;
+      Tensor<1, 3> grid_rotational_speed;
 
       static void
       declare_parameters(ParameterHandler &prm);

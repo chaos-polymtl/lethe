@@ -73,7 +73,6 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
          "less stable integration schemes. It is recommended to decrease the random "
          "number range or to increase the insertion distance threshold."
       << std::endl;
-
 }
 
 template void

@@ -182,9 +182,10 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                standard_deviation_multiplier);
 
   if (parameters.forces_torques.enable_moving_boundary)
-  {
-    parameters.grid_motion.motion_type = Parameters::Lagrangian::GridMotion<dim>::MotionType::forces;
-  }
+    {
+      parameters.grid_motion.motion_type =
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::forces;
+    }
 }
 
 template <int dim>
@@ -828,8 +829,8 @@ DEMSolver<dim>::solve()
 
   grid_motion_object =
     std::make_shared<GridMotion<dim>>(parameters,
-      simulation_control->get_time_step(),
-      pw_contact_force_object);
+                                      simulation_control->get_time_step(),
+                                      pw_contact_force_object);
 
   // DEM engine iterator:
   while (simulation_control->integrate())
@@ -838,8 +839,8 @@ DEMSolver<dim>::solve()
 
       // Grid motion
       if (parameters.grid_motion.motion_type !=
-          Parameters::Lagrangian::GridMotion<dim>::MotionType::none
-          && simulation_control->get_step_number() != 0)
+            Parameters::Lagrangian::GridMotion<dim>::MotionType::none &&
+          simulation_control->get_step_number() != 0)
         {
           grid_motion_object->move_grid(triangulation);
           boundary_cell_object.update_boundary_info_after_grid_motion(

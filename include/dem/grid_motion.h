@@ -18,8 +18,8 @@
  */
 
 #include <dem/dem_solver_parameters.h>
-#include <dem/pw_contact_info_struct.h>
 #include <dem/pw_contact_force.h>
+#include <dem/pw_contact_info_struct.h>
 
 #include <deal.II/distributed/tria.h>
 
@@ -55,9 +55,9 @@ public:
    * @param dem_parameters DEM parameters defined using the parameter handler
    * @param dem_time_step DEM time-step
    */
-  GridMotion(const DEMSolverParameters<dim> &dem_parameters,
-             const double &                  dem_time_step,
-             std::shared_ptr<PWContactForce<dim>> pw_contact_force_object={});
+  GridMotion(const DEMSolverParameters<dim> &     dem_parameters,
+             const double &                       dem_time_step,
+             std::shared_ptr<PWContactForce<dim>> pw_contact_force_object = {});
 
   /**
    * Calls the desired grid motion.
@@ -122,12 +122,12 @@ private:
 
   /**
    * Update member information like triangulation_forces
-   * triangulation_forces variable is used to say at this moment t of the simulation,
-   * this is the forces applied to the triangulation. But the information,
-   * when accessed, is in a form of a map of tensors with as keys the boundary_id.
-   * But we only need the total forces to deduce the motion displacement.
-   * New update in the future like triangulation_torques would be needed to simulate
-   * rotation motion.
+   * triangulation_forces variable is used to say at this moment t of the
+   * simulation, this is the forces applied to the triangulation. But the
+   * information, when accessed, is in a form of a map of tensors with as keys
+   * the boundary_id. But we only need the total forces to deduce the motion
+   * displacement. New update in the future like triangulation_torques would be
+   * needed to simulate rotation motion.
    */
   void
   update_parameters_before_motion();
@@ -152,17 +152,17 @@ private:
   // Since the DEM time-step and rotational speed are constant, we calculate the
   // rotation angle at each time-step once in the constructor and define it as a
   // member variable.
-  Tensor<1,3> rotation_angle;
-  Tensor<1,dim> shift_vector;
+  Tensor<1, 3>   rotation_angle;
+  Tensor<1, dim> shift_vector;
 
   // Grid motion class need some members to permit the motion
   const double                         triangulation_mass;
-  Tensor<1,3>                         triangulation_inertia;
-  Tensor<1,dim>                       triangulation_forces;
-  Tensor<1,dim>                       triangulation_torques;
-  const double dt;
-  Tensor<1,dim>     boundary_translational_velocity;
-  Tensor<1,3> boundary_rotational_velocity;
+  Tensor<1, 3>                         triangulation_inertia;
+  Tensor<1, dim>                       triangulation_forces;
+  Tensor<1, dim>                       triangulation_torques;
+  const double                         dt;
+  Tensor<1, dim>                       boundary_translational_velocity;
+  Tensor<1, 3>                         boundary_rotational_velocity;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
 };
 
