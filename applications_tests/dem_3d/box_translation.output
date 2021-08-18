@@ -1,0 +1,11 @@
+DEM time-step is 0.023533% of Rayleigh time step
+Warning: It is recommended to increase the time-step
+*****************************************************************
+Starting simulation with Lethe/DEM on 1 processors
+*****************************************************************
+
+*****************************************************************
+1 particles of type 0 were inserted, 0 particles of type 0 remaining
+*****************************************************************
+id, type, dp, x, y, z
+0 0 0.01000 0.0000 0.0000 -0.0598
