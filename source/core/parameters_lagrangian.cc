@@ -1079,12 +1079,12 @@ namespace Parameters
 
         prm.declare_entry("initial step",
                           "0.0",
-                          Patterns::Double(),
+                          Patterns::Integer(),
                           "Initial step to start Lagrangian post-processing.");
 
         prm.declare_entry("end step",
                           "0.0",
-                          Patterns::Double(),
+                          Patterns::Integer(),
                           "End step to finish Lagrangian post-processing.");
 
         prm.declare_entry("output frequency",
@@ -1115,8 +1115,8 @@ namespace Parameters
           prm.get_bool("calculate particles average velocity");
         calculate_granular_temperature =
           prm.get_bool("calculate granular temperature");
-        initial_step              = prm.get_double("initial step");
-        end_step                  = prm.get_double("end step");
+        initial_step              = prm.get_integer("initial step");
+        end_step                  = prm.get_integer("end step");
         output_frequency          = prm.get_integer("output frequency");
         particles_velocity_name   = prm.get("particles velocity output name");
         granular_temperature_name = prm.get("granular temperature output name");

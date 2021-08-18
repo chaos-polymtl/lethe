@@ -390,10 +390,10 @@ namespace Parameters
       bool calculate_granular_temperature;
 
       // Set initial step to start post-processing calculations
-      double initial_step;
+      unsigned int initial_step;
 
       // Set end step to finish post-processing calculations
-      double end_step;
+      unsigned int end_step;
 
       // Set post-processing output frequency
       unsigned int output_frequency;
