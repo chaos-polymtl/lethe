@@ -1078,12 +1078,12 @@ namespace Parameters
                           "Enable calculation of granular temperature.");
 
         prm.declare_entry("initial step",
-                          "0.0",
+                          "0",
                           Patterns::Integer(),
                           "Initial step to start Lagrangian post-processing.");
 
         prm.declare_entry("end step",
-                          "0.0",
+                          "0",
                           Patterns::Integer(),
                           "End step to finish Lagrangian post-processing.");
 
