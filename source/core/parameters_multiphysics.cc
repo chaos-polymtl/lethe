@@ -34,7 +34,7 @@ Parameters::Multiphysics::declare_parameters(ParameterHandler &prm)
     prm.declare_entry("viscous dissipation",
                       "false",
                       Patterns::Bool(),
-                      "Viscous thermic dissipation calculation <true|false>");
+                      "Viscous dissipation in heat equation <true|false>");
   }
   prm.leave_subsection();
 }
