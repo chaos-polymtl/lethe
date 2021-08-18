@@ -17,6 +17,9 @@ subsection model parameters
   set contact detection method 		   		 = dynamic
   set dynamic contact search size coefficient	 	 = 0.8
   set neighborhood threshold				 = 1.3
+  set load balance method				 = dynamic
+  set load balance threshold				 = 0.5
+  set dynamic load balance check frequency		 = 10000
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
   set integration method				 = velocity_verlet
@@ -82,11 +85,25 @@ end
 subsection DEM boundary conditions
   set number of boundary conditions         		= 1
     subsection boundary condition 0
-        set boundary id					= 4
+	set boundary id					= 4
         set type              				= rotational
-        set rotational speed				= 11.6
-        set rotational vector x				= 1
-        set rotational vector y				= 0
-        set rotational vector z				= 0
+	set rotational speed				= 11.6
+	set rotational vector x				= 1
+	set rotational vector y				= 0
+	set rotational vector z				= 0
     end
+end
+
+#---------------------------------------------------
+# Lagrangian post-processing
+#---------------------------------------------------
+subsection post-processing
+    set Lagrangian post processing			= true
+    set calculate particles average velocity            = true
+    set calculate granular temperature			= true
+    set initial step            			= 8500000
+    set end step       					= 9500000
+    set output frequency				= 1000
+    set particles velocity output name   		= average_velocity
+    set granular temperature output name		= granular_temperature
 end
