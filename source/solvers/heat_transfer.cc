@@ -1,10 +1,3 @@
-#include <core/bdf.h>
-#include <core/sdirk.h>
-#include <core/time_integration_utilities.h>
-#include <core/utilities.h>
-
-#include <solvers/heat_transfer.h>
-
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
 
@@ -19,6 +12,12 @@
 #include <deal.II/lac/trilinos_solver.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <core/bdf.h>
+#include <core/sdirk.h>
+#include <core/time_integration_utilities.h>
+#include <core/utilities.h>
+#include <solvers/heat_transfer.h>
 
 template <int dim>
 void
@@ -414,12 +413,19 @@ HeatTransfer<dim>::assemble_system(
                     (thermal_conductivity * grad_phi_T_i *
                        temperature_gradients[q] +
                      rho_cp * phi_T_i * velocity * temperature_gradients[q] -
-                     source_term_values[q] * phi_T_i -
-                     dynamic_viscosity * phi_T_i *
-                       scalar_product(velocity_gradient +
-                                        transpose(velocity_gradient),
-                                      transpose(velocity_gradient))) *
+                     source_term_values[q] * phi_T_i) *
                     JxW;
+
+                  if (this->simulation_parameters.multiphysics
+                        .viscous_dissipation)
+                    {
+                      cell_rhs(i) -=
+                        (-dynamic_viscosity * phi_T_i *
+                         scalar_product(velocity_gradient +
+                                          transpose(velocity_gradient),
+                                        transpose(velocity_gradient))) *
+                        JxW;
+                    }
 
                   // Calculate the strong residual for GLS stabilization
                   auto strong_residual =

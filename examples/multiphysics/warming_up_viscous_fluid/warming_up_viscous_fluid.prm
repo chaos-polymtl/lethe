@@ -6,27 +6,26 @@
 # Simulation Control
 #---------------------------------------------------
 subsection simulation control
-  set method                  = steady
-  set number mesh adapt       = 2
-  set output name             = mms_22
-  set output frequency        = 1
-  set subdivision             = 1
+  set method                  = bdf2
+  set time step               = 0.05
+  set time end                = 7.0     
+  set output name             = warming-up
+  set output frequency        = 1       
 end
-
 #---------------------------------------------------
 # FEM
 #---------------------------------------------------
 subsection FEM
     set velocity order        = 1
     set pressure order        = 1
-    set temperature order        = 1
+    set temperature order     = 2
 end
 
 #---------------------------------------------------
 # Timer
 #---------------------------------------------------
 subsection timer
-    set type    = none                                  # <none|iteration|end>
+    set type    = none
 end
 
 #---------------------------------------------------
@@ -43,32 +42,36 @@ end
 # Physical Properties
 #---------------------------------------------------
 subsection physical properties
-    set kinematic viscosity            = 1.0
+  set density              = 0.9
+  set kinematic viscosity    = 0.5
+  set thermal conductivity = 0.12
+# water = 1 density, 0.01 viscosity, 0.59 conductivity
+# oil = 0.9 density, 0.5 viscosity, 0.12 conductivity
 end
 
 #---------------------------------------------------
 # Mesh
 #---------------------------------------------------
 subsection mesh
-		set type = dealii
-		set grid type = hyper_rectangle
-		set grid arguments = 0, 0 : 1, 1.0 : true
-		set initial refinement = 3
+  set type = dealii
+  set grid type = hyper_rectangle
+  set grid arguments = 0, 0 : 0.5, 1 : true
+  set initial refinement = 4
 end
 
 #---------------------------------------------------
 # Multiphysics
 #---------------------------------------------------
 subsection multiphysics
-	set heat transfer = true
-	set viscous dissipation = true
+  set heat transfer = true
+  set viscous dissipation = true
 end
 
 # --------------------------------------------------
 # Mesh Adaptation Control
 #---------------------------------------------------
 subsection mesh adaptation
-  set type                    = uniform
+  set type                    = none
 end
 
 # --------------------------------------------------
@@ -78,97 +81,47 @@ subsection analytical solution
   set enable                 = true
   set verbosity = verbose
     subsection uvwp
-            set Function expression = y*y ; x*x ; 0 
+            set Function expression =  0 ; 0 ; 0
     end
-subsection temperature
-            set Function expression =  x*(x-1)*y*(y-1)
-end
+    subsection temperature
+	  set Function constants = rho=0.9, nu=0.5, K=0.12, Tw=80, v=2, B=0.5
+          set Function expression = Tw+(((rho*nu)*v*v)/(2*K))*(1-(x/B)*(x/B))
+    end
 end
 
 # --------------------------------------------------
 # Boundary Conditions
 #---------------------------------------------------
 subsection boundary conditions
-  set number                  = 4
+  set number                  = 2
     subsection bc 0
     set id = 0
-        set type              = function
-        subsection u
-            set Function expression = y*y
-        end
-        subsection v
-            set Function expression = x*x
-        end
+        set type              = noslip
     end
     subsection bc 1
     set id = 1
         set type              = function
         subsection u
-            set Function expression = y*y
+            set Function expression = 0
         end
         subsection v
-            set Function expression = x*x
-        end
-    end
-    subsection bc 2
-    set id = 2
-        set type              = function
-        subsection u
-            set Function expression = y*y
-        end
-        subsection v
-            set Function expression = x*x
-        end
-    end
-    subsection bc 3
-    set id = 3
-        set type              = function
-        subsection u
-            set Function expression = y*y
-        end
-        subsection v
-            set Function expression = x*x
+            set Function expression = 2
         end
     end
 end
-
 
 subsection boundary conditions heat transfer
-  set number                  = 4
+  set number                  = 2
     subsection bc 0
     set id = 0
-        set type              = temperature
-        set value             = 0 
+        set type          = convection
+	set h             = 0
+	set Tinf	  = 0
     end
     subsection bc 1
     set id = 1
         set type              = temperature
-        set value             = 0
-    end
-    subsection bc 2
-    set id = 2
-        set type              = temperature
-        set value             = 0
-    end
-    subsection bc 3
-    set id = 3
-        set type              = temperature
-        set value             = 0
-    end
-end
-
-# --------------------------------------------------
-# Source term
-#---------------------------------------------------
-subsection source term
-  set enable                 = true
-    subsection xyz
-            set Function expression =  2*x*x*y-2; 2*x*y*y-2 ; 0
-    end
-
-    subsection heat transfer
-	    set Function expression = x^3*(x - 1)*(2*y - 1) - 2*x*(x - 1) + y^3*(2*x - 1)*(y - 1) - 2*y*(y - 1) - 4*(x + y)^2
-
+	set value             = 80
     end
 end
 
@@ -177,7 +130,7 @@ end
 #---------------------------------------------------
 subsection non-linear solver
   set verbosity               = quiet
-  set tolerance               = 1e-10
+  set tolerance               = 1e-12
   set max iterations          = 10
 end
 
@@ -188,9 +141,9 @@ subsection linear solver
   set verbosity               = quiet
   set method                  = gmres
   set max iters               = 5000
-  set relative residual       = 1e-4
+  set relative residual       = 1e-13
   set minimum residual        = 1e-14
-  set ilu preconditioner fill = 1
+  set ilu preconditioner fill = 0
   set ilu preconditioner absolute tolerance = 1e-14
   set ilu preconditioner relative tolerance = 1.00
 end
