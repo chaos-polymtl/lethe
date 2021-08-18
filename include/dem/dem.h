@@ -26,6 +26,7 @@
 #include <dem/grid_motion.h>
 #include <dem/insertion.h>
 #include <dem/integrator.h>
+#include <dem/lagrangian_post_processing.h>
 #include <dem/localize_contacts.h>
 #include <dem/locate_ghost_particles.h>
 #include <dem/locate_local_particles.h>
@@ -250,6 +251,12 @@ private:
   void
   write_output_results();
 
+  /**
+   * @brief post_process_results
+   */
+  void
+  post_process_results();
+
 
   MPI_Comm                                  mpi_communicator;
   const unsigned int                        n_mpi_processes;
@@ -352,6 +359,7 @@ private:
   std::shared_ptr<PPContactForce<dim>> pp_contact_force_object;
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object;
   Visualization<dim>                   visualization_object;
+  LagrangianPostProcessing<dim>        post_processing_object;
   FindCellNeighbors<dim>               cell_neighbors_object;
   PVDHandler                           particles_pvdhandler;
   const double                         standard_deviation_multiplier;
