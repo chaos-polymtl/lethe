@@ -4,8 +4,8 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                 			 = 1e-5
-  set time end       					 = 1
+  set time step                 			 = 1e-6
+  set time end       					 = 10
   set log frequency				         = 1000
   set output frequency            			 = 1000
 end
@@ -15,11 +15,11 @@ end
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		 = dynamic
-  set dynamic contact search size coefficient	 	 = 0.75
-  set neighborhood threshold				 = 1.5
+  set dynamic contact search size coefficient	 	 = 0.8
+  set neighborhood threshold				 = 1.3
   set load balance method				 = dynamic
   set load balance threshold				 = 0.5
-  set dynamic load balance check frequency		 = 5000
+  set dynamic load balance check frequency		 = 10000
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear
   set integration method				 = velocity_verlet
@@ -36,19 +36,19 @@ subsection physical properties
     	subsection particle type 0
 		set size distribution type		= uniform
     		set diameter            	 	= 0.003
-		set number				= 10000
-    		set density particles           	 = 2000
-    		set young modulus particles         	= 1000000
-    		set poisson ratio particles          	= 0.3
-    		set restitution coefficient particles	= 0.7
-    		set friction coefficient particles      = 0.2
-    		set rolling friction particles         	= 0.002
+    		set number              		= 226080
+    		set density particles  	 		= 2500
+    		set young modulus particles         	= 100000000
+    		set poisson ratio particles          	= 0.24
+    		set restitution coefficient particles	= 0.97
+    		set friction coefficient particles      = 0.3
+    		set rolling friction particles         	= 0.01
 	end
-    set young modulus wall            			= 1000000
-    set poisson ratio wall            			= 0.3
-    set restitution coefficient wall           		= 0.7
-    set friction coefficient wall         		= 0.2
-    set rolling friction wall         	      	  	= 0.002
+    set young modulus wall            			= 100000000
+    set poisson ratio wall            			= 0.24
+    set restitution coefficient wall           		= 0.85
+    set friction coefficient wall         		= 0.35
+    set rolling friction wall         	      	  	= 0.01
 end
 
 #---------------------------------------------------
@@ -56,16 +56,16 @@ end
 #---------------------------------------------------
 subsection insertion info
     set insertion method				= non_uniform
-    set inserted number of particles at each time step  = 10000
-    set insertion frequency            		 	= 20000
-    set insertion box minimum x            	 	= -0.01
-    set insertion box minimum y            	        = -0.05
-    set insertion box minimum z            	        = -0.04
-    set insertion box maximum x            	        = 0.05
-    set insertion box maximum y           	 	= 0.05
-    set insertion box maximum z            	        = 0.07
-    set insertion distance threshold			= 1.6
-    set insertion random number range			= 0.2
+    set inserted number of particles at each time step  = 75110
+    set insertion frequency            		 	= 200000
+    set insertion box minimum x            	 	= -0.175
+    set insertion box minimum y            	        = -0.07
+    set insertion box minimum z            	        = -0.085
+    set insertion box maximum x            	        = 0.175
+    set insertion box maximum y           	 	= 0.07
+    set insertion box maximum z            	        = 0.085
+    set insertion distance threshold			= 1.575
+    set insertion random number range			= 0.05
     set insertion random number seed			= 19
 end
 
@@ -75,8 +75,8 @@ end
 subsection mesh
     set type                 				= dealii
     set grid type      	     				= cylinder
-    set grid arguments       				= 0.08:0.02
-    set initial refinement   				= 3
+    set grid arguments       				= 0.12:0.18
+    set initial refinement   				= 4
 end
 
 #---------------------------------------------------
@@ -85,12 +85,12 @@ end
 subsection DEM boundary conditions
   set number of boundary conditions         		= 1
     subsection boundary condition 0
-        set boundary id					= 4
+	set boundary id					= 4
         set type              				= rotational
-        set rotational speed				= 10
-        set rotational vector x				= 1
-        set rotational vector y				= 0
-        set rotational vector z				= 0
+	set rotational speed				= 11.6
+	set rotational vector x				= 1
+	set rotational vector y				= 0
+	set rotational vector z				= 0
     end
 end
 
@@ -101,8 +101,8 @@ subsection post-processing
     set Lagrangian post processing			= true
     set calculate particles average velocity            = true
     set calculate granular temperature			= true
-    set initial step            			= 80000
-    set end step       					= 90000
+    set initial step            			= 8500000
+    set end step       					= 9500000
     set output frequency				= 1000
     set particles velocity output name   		= average_velocity
     set granular temperature output name		= granular_temperature
