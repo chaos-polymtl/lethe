@@ -525,8 +525,7 @@ SolidBase<dim, spacedim>::move_solid_triangulation(double time_step)
     {
       if (cell->is_locally_owned())
         {
-          for (unsigned int i = 0;
-               i < GeometryInfo<spacedim>::vertices_per_cell;
+          for (unsigned int i = 0; i < GeometryInfo<dim>::vertices_per_cell;
                ++i)
             {
               if (!displacement[cell->vertex_index(i)])
