@@ -31,18 +31,19 @@ template <int dim>
 class DEMSolverParameters
 {
 public:
-  Parameters::Mesh                                mesh;
-  Parameters::Testing                             test;
-  Parameters::Restart                             restart;
-  Parameters::Timer                               timer;
-  Parameters::SimulationControl                   simulation_control;
-  Parameters::Lagrangian::PhysicalProperties<dim> physical_properties;
-  Parameters::Lagrangian::InsertionInfo           insertion_info;
-  Parameters::Lagrangian::ModelParameters         model_parameters;
-  Parameters::Lagrangian::FloatingWalls<dim>      floating_walls;
-  Parameters::Lagrangian::BCDEM<dim>              boundary_conditions;
-  Parameters::Lagrangian::ForceTorqueOnWall<dim>  forces_torques;
-  Parameters::Lagrangian::GridMotion<dim>         grid_motion;
+  Parameters::Mesh                                 mesh;
+  Parameters::Testing                              test;
+  Parameters::Restart                              restart;
+  Parameters::Timer                                timer;
+  Parameters::SimulationControl                    simulation_control;
+  Parameters::Lagrangian::PhysicalProperties<dim>  physical_properties;
+  Parameters::Lagrangian::InsertionInfo            insertion_info;
+  Parameters::Lagrangian::ModelParameters          model_parameters;
+  Parameters::Lagrangian::FloatingWalls<dim>       floating_walls;
+  Parameters::Lagrangian::BCDEM<dim>               boundary_conditions;
+  Parameters::Lagrangian::ForceTorqueOnWall<dim>   forces_torques;
+  Parameters::Lagrangian::GridMotion<dim>          grid_motion;
+  Parameters::Lagrangian::LagrangianPostProcessing post_processing;
 
   void
   declare(ParameterHandler &prm)
@@ -59,6 +60,7 @@ public:
     boundary_conditions.declare_parameters(prm);
     forces_torques.declare_parameters(prm);
     grid_motion.declare_parameters(prm);
+    post_processing.declare_parameters(prm);
   }
 
   void
@@ -76,6 +78,7 @@ public:
     boundary_conditions.parse_parameters(prm);
     forces_torques.parse_parameters(prm);
     grid_motion.parse_parameters(prm);
+    post_processing.parse_parameters(prm);
   }
 };
 
