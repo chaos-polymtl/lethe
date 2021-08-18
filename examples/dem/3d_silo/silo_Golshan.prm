@@ -19,27 +19,14 @@ subsection restart
 	set frequency					 = 100000
 end
 
-
-#---------------------------------------------------
-# Timer
-#---------------------------------------------------
-subsection timer
-    set type    					 = none
-end
-
-#---------------------------------------------------
-# Test
-#---------------------------------------------------
-subsection test
-    set enable 						 = true
-end
-
 # --------------------------------------------------
 # Model parameters
 #---------------------------------------------------
 subsection model parameters
   set contact detection method 		   		 = dynamic
   set dynamic contact search size coefficient	 	 = 0.8
+  set load balance method				 = frequent
+  set load balance frequency				 = 200000
   set neighborhood threshold				 = 1.3
   set particle particle contact force method             = pp_nonlinear
   set particle wall contact force method                 = pw_nonlinear

@@ -34,12 +34,12 @@ LagrangianPostProcessing<dim>::calculate_average_particles_velocity(
           Tensor<1, dim> cell_velocity_average =
             calculate_cell_average_particles_velocity(cell, particle_handler);
 
-          velocity_average_x[cell->global_active_cell_index()] =
+          velocity_average_x[cell->active_cell_index()] =
             cell_velocity_average[0];
-          velocity_average_y[cell->global_active_cell_index()] =
+          velocity_average_y[cell->active_cell_index()] =
             cell_velocity_average[1];
           if (dim == 3)
-            velocity_average_z[cell->global_active_cell_index()] =
+            velocity_average_z[cell->active_cell_index()] =
               cell_velocity_average[2];
         }
     }
@@ -110,7 +110,7 @@ LagrangianPostProcessing<dim>::calculate_average_granular_temperature(
                     (1.0 / dim) * cell_velocity_fluctuation_squared_average[d];
                 }
             }
-          granular_temperature_average[cell->global_active_cell_index()] =
+          granular_temperature_average[cell->active_cell_index()] =
             granular_temperature_cell;
         }
     }
