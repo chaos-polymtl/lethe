@@ -49,7 +49,7 @@ namespace Parameters
     std::string particle_positions_file;
 
     // Show results in terminal during computation
-    bool verbose;
+    Parameters::Verbosity verbosity;
 
     // Enable to export counts result in a .csv file
     bool export_counts;
@@ -134,10 +134,9 @@ namespace Parameters
 
   struct RPTReconstructionParameters
   {
-    bool reconstruction; // Enable tuning parameters
-    int  reactor_refinement;
-    int  coarse_mesh_level; // Level of the coarse mesh where all the counts of
-                            // the first vertices
+    int reactor_refinement;
+    int coarse_mesh_level; // Level of the coarse mesh where all the counts of
+                           // the first vertices
     std::string reconstruction_counts_file;
     std::string reconstruction_positions_file;
     bool analyse_positions; // Allow to analyse results with known positions

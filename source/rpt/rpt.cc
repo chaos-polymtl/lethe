@@ -1,6 +1,7 @@
 #include <deal.II/base/point.h>
 
 #include <rpt/rpt.h>
+#include <rpt/rpt_utilities.h>
 
 #include <cmath>
 #include <fstream>
@@ -20,8 +21,9 @@ void
 RPT<dim>::setup_and_calculate()
 {
   // Reading and assigning positions of detectors and particles
-  assign_detector_positions();
-  assign_particle_positions();
+  detectors = assign_detector_positions<dim>(rpt_parameters.detector_param);
+  particle_positions = assign_particle_positions<dim>(
+    rpt_parameters.detector_param.detector_positions_file);
 
   // Calculate count for every particle-detector pair and transfer it to
   // calculated_counts
@@ -34,7 +36,8 @@ RPT<dim>::setup_and_calculate()
   // Calculate the cost function for parameters tuning
   if (rpt_parameters.tuning_param.tuning)
     {
-      std::vector<double> measured_counts = extract_experimental_counts();
+      std::vector<double> measured_counts =
+        read_counts<dim>(rpt_parameters.tuning_param.experimental_file);
       AssertThrow(
         measured_counts.size() == particle_positions.size(),
         ExcMessage(
@@ -63,12 +66,14 @@ RPT<dim>::calculate_counts()
           ParticleDetectorInteractions<dim> particle_detector_interactions(
             particle_positions[i_particle],
             detectors[i_detector],
-            rpt_parameters);
+
+            rpt_parameters.rpt_param);
 
           double count = particle_detector_interactions.calculate_count();
           calculated_counts.push_back(count);
 
-          if (rpt_parameters.rpt_param.verbose)
+          if (rpt_parameters.rpt_param.verbosity ==
+              Parameters::Verbosity::verbose)
             std::cout << "Count for particle position " << i_particle
                       << " and detector " << i_detector << " : " << count
                       << std::endl;
@@ -76,69 +81,6 @@ RPT<dim>::calculate_counts()
     }
 }
 
-template <int dim>
-void
-RPT<dim>::assign_particle_positions()
-{
-  // Read text file with particle positions and store it in vector
-  std::ifstream particle_file(rpt_parameters.rpt_param.particle_positions_file);
-
-  std::string skip;
-  std::getline(particle_file, skip); // Skip header line
-  std::vector<double> values;
-  std::copy(std::istream_iterator<double>(particle_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(values));
-
-  unsigned int number_of_positions = values.size() / dim;
-
-  // Extract positions, create point objects and radioactive particles
-  for (unsigned int i = 0; i < number_of_positions; i++)
-    {
-      Point<dim>         point(values[dim * i],
-                       values[dim * i + 1],
-                       values[dim * i + 2]);
-      RadioParticle<dim> position(point, i);
-      particle_positions.push_back(position);
-    }
-}
-
-template <int dim>
-void
-RPT<dim>::assign_detector_positions()
-{
-  // Read text file with detector positions and store it in vector
-  std::ifstream detector_file(
-    rpt_parameters.detector_param.detector_positions_file);
-
-  std::string skip;
-  std::getline(detector_file, skip); // Skip header line
-  std::vector<double> values;
-  std::copy(std::istream_iterator<double>(detector_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(values));
-
-  // Get the number of detector (2 positions for 1 detector, face and middle)
-  int number_of_detector = values.size() / (2 * dim);
-
-  // Extract positions, create point objects and detectors
-  for (int i = 0; i < number_of_detector; i++)
-    {
-      Point<dim> face_point(values[2 * dim * i],
-                            values[2 * dim * i + 1],
-                            values[2 * dim * i + 2]);
-      Point<dim> middle_point(values[2 * dim * i + dim],
-                              values[2 * dim * i + dim + 1],
-                              values[2 * dim * i + dim + 2]);
-
-      Detector<dim> detector(rpt_parameters.detector_param,
-                             i,
-                             face_point,
-                             middle_point);
-
-      detectors.push_back(detector);
-    }
-}
 
 template <int dim>
 void
@@ -183,24 +125,6 @@ RPT<dim>::export_data()
         }
     }
   myfile.close();
-}
-
-template <int dim>
-std::vector<double>
-RPT<dim>::extract_experimental_counts()
-{
-  // Read text file with experimental counts
-  std::ifstream experimental_file(
-    rpt_parameters.tuning_param.experimental_file);
-
-  std::string skip;
-  std::getline(experimental_file, skip); // Skip header line
-  std::vector<double> measured_counts;
-  std::copy(std::istream_iterator<double>(experimental_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(measured_counts));
-
-  return measured_counts;
 }
 
 template <int dim>

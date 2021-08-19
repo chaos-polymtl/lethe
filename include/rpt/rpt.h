@@ -60,26 +60,6 @@ public:
   setup_and_calculate();
 
   /**
-   * @brief Read text file for particle positions and assign them to particle
-   * objects
-   */
-  void
-  assign_particle_positions();
-
-  /**
-   * @brief Read text file for detector positions and assign them to detector
-   * objects
-   */
-  void
-  assign_detector_positions();
-
-  /**
-   * @brief Read text file for experimental count data and store it in a vector
-   */
-  std::vector<double>
-  extract_experimental_counts();
-
-  /**
    * @brief Export position, detector id and count results in .csv or .dat
    */
   void

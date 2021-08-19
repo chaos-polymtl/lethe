@@ -47,7 +47,10 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       rpt_parameters.parse(prm);
 
-      RPTCellReconstruction<3> rpt_cell_reconstruction(rpt_parameters);
+      RPTCellReconstruction<3> rpt_cell_reconstruction(
+        rpt_parameters.rpt_param,
+        rpt_parameters.reconstruction_param,
+        rpt_parameters.detector_param);
       rpt_cell_reconstruction.execute_cell_reconstruction();
     }
   catch (std::exception &exc)

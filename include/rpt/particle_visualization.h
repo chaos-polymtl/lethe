@@ -39,9 +39,9 @@ template <int dim>
 class ParticleVisualization
 {
 public:
-  ParticleVisualization(Triangulation<dim> &      background_triangulation,
-                        RPTCalculatingParameters &rpt_parameters,
-                        std::vector<Point<dim>> & positions,
+  ParticleVisualization(Triangulation<dim> &     background_triangulation,
+                        std::string &            filename,
+                        std::vector<Point<dim>> &positions,
                         std::vector<std::vector<double>> &counts);
 
   void
@@ -56,7 +56,7 @@ private:
   std::vector<Point<dim>>          particle_positions;
   std::vector<std::vector<double>> particle_counts;
   double                           dt;
-  RPTCalculatingParameters         parameters;
+  std::string                      visualization_filename;
   Particles::ParticleHandler<dim>  particle_handler;
   DoFHandler<dim>                  empty_dof_handler;
   MappingQGeneric<dim>             mapping;

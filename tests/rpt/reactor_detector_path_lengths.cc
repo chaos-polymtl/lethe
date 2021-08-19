@@ -61,8 +61,8 @@ test()
   Detector<3> detector(detector_param, 0, FP, MP);
 
   // Other parameters
-  RPTCalculatingParameters rpt_parameters;
-  rpt_parameters.rpt_param.reactor_radius = 0.5;
+  RPTParameters rpt_param;
+  rpt_param.reactor_radius = 0.5;
 
   // Two sets of n values to check when rho < r => theta < theta_cri & theta >
   // theta_cri
@@ -74,7 +74,7 @@ test()
       for (unsigned int i_n = 0; i_n < 3; i_n++)
         {
           ParticleDetectorInteractions<3> particle_detector_interactions(
-            particle_positions[i_particle], detector, rpt_parameters);
+            particle_positions[i_particle], detector, rpt_param);
 
           double detector_path_length =
             particle_detector_interactions.get_detector_path_length(

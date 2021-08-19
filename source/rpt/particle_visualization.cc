@@ -11,13 +11,13 @@
 
 template <int dim>
 ParticleVisualization<dim>::ParticleVisualization(
-  Triangulation<dim> &              background_triangulation,
-  RPTCalculatingParameters &        rpt_parameters,
-  std::vector<Point<dim>> &         positions,
+  Triangulation<dim>               &background_triangulation,
+  std::string                      &filename,
+  std::vector<Point<dim>>          &positions,
   std::vector<std::vector<double>> &counts)
   : particle_positions(positions)
   , particle_counts(counts)
-  , parameters(rpt_parameters)
+  , visualization_filename(filename)
   , mapping(1)
 {
   // Initialize particle handler and empty dof handler with reactor grid
@@ -35,7 +35,7 @@ ParticleVisualization<dim>::build_visualization_files()
   DataOutFaces<dim> grid_out_faces;
   grid_out_faces.attach_dof_handler(empty_dof_handler);
   grid_out_faces.build_patches();
-  std::string s = parameters.reconstruction_param.reconstruction_positions_file;
+  std::string s        = visualization_filename;
   std::string filename = s.substr(0, s.find(".")) + "_grid_";
   write_boundaries_vtu<dim>(
     grid_out_faces, "./", 0, 0, MPI_COMM_WORLD, filename, 0);
@@ -90,7 +90,7 @@ ParticleVisualization<dim>::output_particles(unsigned int it)
                                 detector_ids,
                                 data_component_interpretation);
 
-  std::string s = parameters.reconstruction_param.reconstruction_positions_file;
+  std::string s        = visualization_filename;
   std::string filename = s.substr(0, s.find(".")) + "_";
   particle_output.write_vtu_with_pvtu_record("./",
                                              filename,

@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection rpt parameters
     set particle positions file          = real_positions.particle
-    set verbose                          = false
+    set verbosity                        = quiet
     set export counts                    = false
     set counts file                      = run.csv
     set monte carlo iteration            = 10000

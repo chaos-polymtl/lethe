@@ -1,9 +1,4 @@
 #include <deal.II/grid/cell_id.h>
-#include <deal.II/grid/grid_generator.h>
-#include <deal.II/grid/grid_out.h>
-#include <deal.II/grid/grid_refinement.h>
-#include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/manifold_lib.h>
 
 #include <deal.II/numerics/data_component_interpretation.h>
 #include <deal.II/numerics/data_out.h>
@@ -11,46 +6,60 @@
 #include <rpt/particle_detector_interactions.h>
 #include <rpt/particle_visualization.h>
 #include <rpt/rpt_cell_reconstruction.h>
+#include <rpt/rpt_utilities.h>
 
 #include <cmath>
 #include <fstream>
 
 template <int dim>
 RPTCellReconstruction<dim>::RPTCellReconstruction(
-  RPTCalculatingParameters &rpt_parameters)
+  Parameters::RPTParameters               &rpt_parameters,
+  Parameters::RPTReconstructionParameters &rpt_reconstruction_parameters,
+  Parameters::DetectorParameters          &rpt_detector_parameters)
   : parameters(rpt_parameters)
+  , reconstruction_parameters(rpt_reconstruction_parameters)
+  , detector_parameters(rpt_detector_parameters)
   , computing_timer(std::cout, TimerOutput::summary, TimerOutput::wall_times)
 {
   // Seed the random number generator
-  srand(parameters.rpt_param.seed);
+  srand(parameters.seed);
 }
 
 template <int dim>
 void
 RPTCellReconstruction<dim>::execute_cell_reconstruction()
 {
-  assign_detector_positions(); // Assign detector position & create detectors
-  read_counts(); // Read reconstruction counts of unknown particle positions
+  // Assign detector position & create detectors
+  detectors = assign_detector_positions<dim>(detector_parameters);
+
+  // Read reconstruction (experimental) counts of unknown particle positions
+  reconstruction_counts = read_detectors_counts<dim>(
+    reconstruction_parameters.reconstruction_counts_file, detectors.size());
 
   // Read known positions if analyse positions if enable
-  if (parameters.reconstruction_param.analyse_positions)
+  if (reconstruction_parameters.analyse_positions)
     {
-      read_known_positions();
+      known_positions =
+        read_positions<dim>(reconstruction_parameters.known_positions_file);
       AssertThrow(
         known_positions.size() == reconstruction_counts.size(),
         ExcMessage(
           "Reconstruction counts and known positions files do not have data for the same number of positions."))
     }
 
-  create_grid();            // Read a grid for the reactor vessel
-  set_coarse_mesh_counts(); // Calculate counts at vertices of the coarse mesh
+  // Create a grid for the reactor vessel
+  attach_grid_to_triangulation<dim>(
+    triangulation, parameters, reconstruction_parameters.reactor_refinement);
+
+  // Calculate counts at vertices of the coarse mesh
+  set_coarse_mesh_counts();
   find_all_positions();
 
   // Export positions in file
   export_positions();
 
   // Show information about cells and vertices
-  if (parameters.rpt_param.verbose)
+  if (parameters.verbosity == Parameters::Verbosity::verbose)
     {
       std::cout << std::endl;
       std::cout << "Number of active cells : " << triangulation.n_active_cells()
@@ -65,7 +74,7 @@ RPTCellReconstruction<dim>::execute_cell_reconstruction()
   visualize_positions();
 
   // Disable the output of time clock
-  if (!parameters.reconstruction_param.verbose_clock)
+  if (!reconstruction_parameters.verbose_clock)
     computing_timer.disable_output();
 }
 
@@ -73,7 +82,7 @@ template <int dim>
 void
 RPTCellReconstruction<dim>::set_coarse_mesh_counts()
 {
-  find_vertices_positions(parameters.reconstruction_param.coarse_mesh_level);
+  find_vertices_positions(reconstruction_parameters.coarse_mesh_level);
   calculate_counts();
 }
 
@@ -85,7 +94,7 @@ RPTCellReconstruction<dim>::find_all_positions()
   for (unsigned int i = 0; i < reconstruction_counts.size(); i++)
     {
       find_unknown_position(reconstruction_counts[i], i);
-      if (parameters.rpt_param.verbose)
+      if (parameters.verbosity == Parameters::Verbosity::verbose)
         std::cout << "Unknown particle : " << i
                   << " Cell volume : " << cells_volumes[i]
                   << " Position : " << reconstruction_positions[i] << std::endl;
@@ -109,10 +118,10 @@ RPTCellReconstruction<dim>::find_unknown_position(
   cells_indexes = find_cells(level, particle_reconstruction_counts);
 
   // Find the positions with the more refine candidate cell
-  while (level < parameters.reconstruction_param.reactor_refinement &&
+  while (level < reconstruction_parameters.reactor_refinement &&
          still_new_candidates)
     {
-      level++; // Start at level 1
+      level++; // Start at coarse mesh level + 1
 
       // Get vertices positions at current level and calculate their counts
       find_vertices_positions(level, cells_indexes);
@@ -163,7 +172,7 @@ RPTCellReconstruction<dim>::find_unknown_position(
           reconstruction_position = cell->center(true);
 
           // Verify if the best cell is the good cell and update status
-          if (parameters.reconstruction_param.analyse_positions)
+          if (reconstruction_parameters.analyse_positions)
             {
               if (cell->point_inside(known_positions[id]))
                 {
@@ -192,34 +201,6 @@ RPTCellReconstruction<dim>::find_unknown_position(
 
 template <int dim>
 void
-RPTCellReconstruction<dim>::create_grid()
-{
-  TimerOutput::Scope t(computing_timer, "grid_creation");
-
-  // Generate cylinder (needs rotation and shift to get origin at the bottom
-  // with z towards top)
-  GridGenerator::subdivided_cylinder(triangulation,
-                                     5,
-                                     parameters.rpt_param.reactor_radius,
-                                     parameters.rpt_param.reactor_height / 2.);
-  GridTools::rotate(M_PI_2, 1, triangulation);
-  const Tensor<1, dim> shift_vector(
-    {0, 0, parameters.rpt_param.reactor_height / 2.});
-  GridTools::shift(shift_vector, triangulation);
-
-  // Add cylindrical manifold
-  const Tensor<1, dim>                direction({0, 0, 1});
-  const CylindricalManifold<dim, dim> manifold(direction, {0, 0, 1});
-  triangulation.set_manifold(0, manifold);
-
-  // Refine all cells
-  triangulation.prepare_coarsening_and_refinement();
-  triangulation.refine_global(
-    parameters.reconstruction_param.reactor_refinement);
-}
-
-template <int dim>
-void
 RPTCellReconstruction<dim>::find_vertices_positions(
   unsigned int     level,
   std::vector<int> parent_cell_indexes /* {-1} */)
@@ -229,10 +210,12 @@ RPTCellReconstruction<dim>::find_vertices_positions(
   // Find the positions associated to the vertices of cell
   for (const auto &cell : triangulation.cell_iterators_on_level(level))
     {
+      // Stay false if
       bool parent_is_candidate = false;
 
       // Check if parent cell of current level cell is a candidate
-      if (cell->level() > parameters.reconstruction_param.coarse_mesh_level)
+      // Stay false at coarsh mesh or if no candidate at refined level
+      if (cell->level() > reconstruction_parameters.coarse_mesh_level)
         {
           for (auto &id : parent_cell_indexes)
             {
@@ -241,7 +224,7 @@ RPTCellReconstruction<dim>::find_vertices_positions(
             }
         }
       else
-        parent_is_candidate = true; // Level 0 : no parent
+        parent_is_candidate = true; // Coarse mesh level : no parent
 
       if (parent_is_candidate)
         {
@@ -317,7 +300,7 @@ RPTCellReconstruction<dim>::find_cells(
   for (const auto &cell : triangulation.cell_iterators_on_level(level))
     {
       bool parent_is_candidate = false;
-      if (cell->level() > parameters.reconstruction_param.coarse_mesh_level)
+      if (cell->level() > reconstruction_parameters.coarse_mesh_level)
         {
           for (auto &id : parent_cell_indexes)
             {
@@ -427,62 +410,30 @@ RPTCellReconstruction<dim>::find_best_cell(
 
 template <int dim>
 void
-RPTCellReconstruction<dim>::read_counts()
-{
-  // Read counts for reconstruction
-  const std::string filename =
-    parameters.reconstruction_param.reconstruction_counts_file;
-  std::ifstream counts_file(filename);
-
-  std::string skip;
-  std::getline(counts_file, skip); // Skip header line
-  std::vector<double> values;
-  std::copy(std::istream_iterator<double>(counts_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(values));
-
-  // Get the number of detector
-  unsigned int number_of_detectors = detectors.size();
-
-  // Extract positions, create point objects and detectors
-  for (unsigned int i = 0; i < values.size(); i += number_of_detectors)
-    {
-      std::vector<double>::const_iterator first = values.begin() + i;
-      std::vector<double>::const_iterator last =
-        values.begin() + i + number_of_detectors;
-
-      std::vector<double> particle_counts(first, last);
-
-      reconstruction_counts.push_back(particle_counts);
-    }
-}
-
-template <int dim>
-void
 RPTCellReconstruction<dim>::export_positions()
 {
   std::ofstream myfile;
   std::string   sep;
   std::string   filename =
-    parameters.reconstruction_param.reconstruction_positions_file;
+    reconstruction_parameters.reconstruction_positions_file;
   myfile.open(filename);
 
   // Headers with space or comma
   if (filename.substr(filename.find_last_of(".") + 1) == ".dat")
     {
       myfile
-        << "unknown_positions_id volumes particle_positions_x particle_positions_y particle_positions_z cell_level";
+        << "reconstructed_positions_id volumes particle_positions_x particle_positions_y particle_positions_z cell_level";
       sep = " ";
     }
   else // .csv is default
     {
       myfile
-        << "unknown_positions_id,volumes,particle_positions_x,particle_positions_y,particle_positions_z,cell_level";
+        << "reconstructed_positions_id,volumes,particle_positions_x,particle_positions_y,particle_positions_z,cell_level";
       sep = ",";
     }
 
   // Add status columns and distance if analyse positions is enable
-  if (parameters.reconstruction_param.analyse_positions)
+  if (reconstruction_parameters.analyse_positions)
     myfile << sep << "status" << sep << "status_id" << sep << "distance"
            << std::endl;
   else
@@ -498,7 +449,7 @@ RPTCellReconstruction<dim>::export_positions()
              << reconstruction_positions[i_particle][2] << sep
              << final_cell_level[i_particle];
 
-      if (parameters.reconstruction_param.analyse_positions)
+      if (reconstruction_parameters.analyse_positions)
         {
           // Calculate distance between known and found positions
           double distance =
@@ -542,71 +493,6 @@ RPTCellReconstruction<dim>::export_positions()
     }
 }
 
-template <int dim>
-void
-RPTCellReconstruction<dim>::assign_detector_positions()
-{
-  // Read text file with detector positions and store it in vector
-  std::ifstream detector_file(
-    parameters.detector_param.detector_positions_file);
-
-  std::string skip;
-  std::getline(detector_file, skip); // Skip header line
-  std::vector<double> values;
-  std::copy(std::istream_iterator<double>(detector_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(values));
-
-  // Get the number of detector (2 positions for 1 detector, face and middle)
-  int number_of_detector = values.size() / (2 * dim);
-
-  // Extract positions, create point objects and detectors
-  for (int i = 0; i < number_of_detector; i++)
-    {
-      Point<dim> face_point(values[2 * dim * i],
-                            values[2 * dim * i + 1],
-                            values[2 * dim * i + 2]);
-      Point<dim> middle_point(values[2 * dim * i + dim],
-                              values[2 * dim * i + dim + 1],
-                              values[2 * dim * i + dim + 2]);
-
-      Detector<dim> detector(parameters.detector_param,
-                             i,
-                             face_point,
-                             middle_point);
-
-      detectors.push_back(detector);
-    }
-}
-
-template <int dim>
-void
-RPTCellReconstruction<dim>::read_known_positions()
-{
-  // Read text file with particle positions and store it in vector
-  std::ifstream particle_file(
-    parameters.reconstruction_param.known_positions_file);
-
-  std::string skip;
-  std::getline(particle_file, skip); // Skip header line
-  std::vector<double> values;
-  std::copy(std::istream_iterator<double>(particle_file),
-            std::istream_iterator<double>(),
-            std::back_inserter(values));
-
-  unsigned int number_of_positions = values.size() / dim;
-
-  // Extract positions, create point objects and radioactive particles
-  for (unsigned int i = 0; i < number_of_positions; i++)
-    {
-      Point<dim> point(values[dim * i],
-                       values[dim * i + 1],
-                       values[dim * i + 2]);
-
-      known_positions.push_back(point);
-    }
-}
-
 
 template <int dim>
 void
@@ -614,10 +500,11 @@ RPTCellReconstruction<dim>::visualize_positions()
 {
   TimerOutput::Scope t(computing_timer, "visualization_files_creation");
 
-  ParticleVisualization<dim> particle_visualization(triangulation,
-                                                    parameters,
-                                                    reconstruction_positions,
-                                                    reconstruction_counts);
+  ParticleVisualization<dim> particle_visualization(
+    triangulation,
+    reconstruction_parameters.reconstruction_positions_file,
+    reconstruction_positions,
+    reconstruction_counts);
 
   particle_visualization.build_visualization_files();
 }

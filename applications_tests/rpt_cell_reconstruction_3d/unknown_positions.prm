@@ -4,7 +4,7 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
-    set verbose                          = true
+    set verbosity                        = verbose
     set export counts                    = false
     set monte carlo iteration            = 1000
     set random number seed               = 0

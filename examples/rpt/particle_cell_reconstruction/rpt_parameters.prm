@@ -4,7 +4,7 @@
 # RPT Monte Carlo technique
 #---------------------------------------------------
 subsection rpt parameters
-    set verbose                          = true
+    set verbosity                        = verbose
     set monte carlo iteration            = 10000
     set random number seed               = 0
     set reactor height                   = 0.3
@@ -23,7 +23,6 @@ end
 # Particle reconstruction
 #---------------------------------------------------
 subsection reconstruction
-	set reconstruction                          = true
 	set coarse mesh level                       = 1
 	set refinement                              = 6
 	set reconstruction counts file              = counts.reconstruction

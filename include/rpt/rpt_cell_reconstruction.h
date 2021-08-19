@@ -56,26 +56,16 @@ public:
    * @param rpt_parameters All parameters for the RPT
    *
    */
-  RPTCellReconstruction(RPTCalculatingParameters &rpt_parameters);
+  RPTCellReconstruction(
+    Parameters::RPTParameters               &rpt_parameters,
+    Parameters::RPTReconstructionParameters &rpt_reconstruction_parameters,
+    Parameters::DetectorParameters          &rpt_detector_parameters);
 
   /**
    * @brief Set up grid and find positions for every unknown particle positions.
    */
   void
   execute_cell_reconstruction();
-
-  /**
-   * @brief Create grid of the reactor vessel (cylinder).
-   */
-  void
-  create_grid();
-
-  /**
-   * @brief Read text file for detector positions and assign them to detector
-   * objects
-   */
-  void
-  assign_detector_positions();
 
   /**
    * @brief Calculate counts at vertices for the coarse mesh.
@@ -151,13 +141,6 @@ public:
   calculate_counts();
 
   /**
-   * @brief Read the .reconstruction file to extract counts of unknown particle
-   * positions
-   */
-  void
-  read_counts();
-
-  /**
    * @brief Export positions and cell volumes in .csv or .dat
    */
   void
@@ -169,38 +152,50 @@ public:
   void
   visualize_positions();
 
-  /**
-   * @brief Read the .known file to extract known positions to analyse
-   */
-  void
-  read_known_positions();
 
 private:
-  Triangulation<dim>         triangulation;
-  RPTCalculatingParameters   parameters;
-  std::vector<Detector<dim>> detectors;
+  Triangulation<dim>                      triangulation;
+  Parameters::RPTParameters               parameters;
+  Parameters::RPTReconstructionParameters reconstruction_parameters;
+  Parameters::DetectorParameters          detector_parameters;
+  std::vector<Detector<dim>>              detectors;
 
-  std::vector<std::vector<double>>
-    reconstruction_counts; // All counts of the unknown particle positions
+  // All counts of the unknown particle positions
+  // Data structure : [[detector_counts_0_particle_0, ...,
+  //                    detector_counts_n_particle_0],
+  //                   [...],
+  //                   [detector_counts_0_particle_n, ...,
+  //                   detector_counts_n_particle_n]]
+  std::vector<std::vector<double>> reconstruction_counts;
+
+  // Map of all calculated counts of vertices (key : vertex_id)
+  // Data structure : {{vertex_id_0, <vertex_position_0(x, y, z),
+  //                    [detector_counts_0_particle_0, ...]>},
+  //                   {...},
+  //                   {vertex_id_m, <vertex_position_m(x, y, z),
+  //                   [detector_counts_0_particle_0, ...]>}}
   std::map<unsigned int, std::pair<Point<dim>, std::vector<double>>>
-                          map_vertices_index; // Map of all calculated counts of vertices
+    map_vertices_index;
+
   std::vector<Point<dim>> reconstruction_positions; // Found positions
   std::vector<double>
-                          cells_volumes; // Cell volumes of the cell that contains positions
-  std::vector<Point<dim>> known_positions; // Known positions to analyse
-
-  TimerOutput               computing_timer;
+    cells_volumes; // Cell volumes of the cell that contains positions
+  std::vector<Point<dim>>   known_positions;  // Known positions to analyse
   std::vector<unsigned int> final_cell_level; // Level of the best cells
-  // Status of the best cells after analyse of found positions vs known
+
+  // Status of the best cells after analyse of reconstructed positions vs real
   // positions (many status can be associated to a cell)
-  //  - right_cell :    The found position is in the same cell than the known
+  //  - right_cell :    The reconstructed position is in the same cell than the
+  //  real
   //                    position
   //  - cost_function : There was many cell candidates at refined mesh and a
   //                    cost function was needed to get the best cell
   //  - parent_cell :   The best cell is not at the highest refined level
-  //  - wrong_cell :    The found position is not in the same cell then the
-  //                    known position
+  //  - wrong_cell :    The reconstructed position is not in the same cell than
+  //                    the real position
   std::vector<std::string> cell_status;
+
+  TimerOutput computing_timer;
 };
 
 

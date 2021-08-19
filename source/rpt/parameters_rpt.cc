@@ -11,11 +11,11 @@ Parameters::RPTParameters::declare_parameters(ParameterHandler &prm)
                       Patterns::FileName(),
                       "Particle positions filename");
 
-    prm.declare_entry(
-      "verbose",
-      "true",
-      Patterns::Bool(),
-      "Enable to show counts results during computation <true|false>");
+    prm.declare_entry("verbosity",
+                      "quiet",
+                      Patterns::Selection("quiet|verbose"),
+                      "Enable to show results during computation "
+                      "Choices are <quiet|verbose>.");
 
     prm.declare_entry(
       "export counts",
@@ -92,7 +92,6 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
   prm.enter_subsection("rpt parameters");
   {
     particle_positions_file = prm.get("particle positions file");
-    verbose                 = prm.get_bool("verbose");
     export_counts           = prm.get_bool("export counts");
     export_counts_file      = prm.get("counts file");
     n_monte_carlo_iteration = prm.get_integer("monte carlo iteration");
@@ -107,6 +106,12 @@ Parameters::RPTParameters::parse_parameters(ParameterHandler &prm)
       prm.get_double("attenuation coefficient reactor");
     attenuation_coefficient_detector =
       prm.get_double("attenuation coefficient detector");
+
+    const std::string op = prm.get("verbosity");
+    if (op == "verbose")
+      verbosity = Verbosity::verbose;
+    if (op == "quiet")
+      verbosity = Verbosity::quiet;
 
     seed = (prm.get("random number seed") == "auto") ?
              time(NULL) :
@@ -207,11 +212,6 @@ Parameters::RPTReconstructionParameters::declare_parameters(
 {
   prm.enter_subsection("reconstruction");
   {
-    prm.declare_entry("reconstruction",
-                      "false",
-                      Patterns::Bool(),
-                      "Enable position reconstruction <true|false>");
-
     prm.declare_entry("refinement",
                       "1",
                       Patterns::Integer(),
@@ -258,7 +258,6 @@ Parameters::RPTReconstructionParameters::parse_parameters(ParameterHandler &prm)
 {
   prm.enter_subsection("reconstruction");
   {
-    reconstruction             = prm.get_bool("reconstruction");
     reactor_refinement         = prm.get_integer("refinement");
     coarse_mesh_level          = prm.get_integer("coarse mesh level");
     reconstruction_counts_file = prm.get("reconstruction counts file");
