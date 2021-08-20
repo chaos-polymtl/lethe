@@ -24,7 +24,6 @@ end
 # Particle reconstruction
 #---------------------------------------------------
 subsection reconstruction
-	set reconstruction                          = true
 	set refinement                              = 5
 	set reconstruction counts file              = counts.reconstruction
     set export reconstruction positions file    = testing.csv

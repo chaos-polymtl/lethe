@@ -23,7 +23,7 @@ RPT<dim>::setup_and_calculate()
   // Reading and assigning positions of detectors and particles
   detectors = assign_detector_positions<dim>(rpt_parameters.detector_param);
   particle_positions = assign_particle_positions<dim>(
-    rpt_parameters.detector_param.detector_positions_file);
+    rpt_parameters.rpt_param.particle_positions_file);
 
   // Calculate count for every particle-detector pair and transfer it to
   // calculated_counts

@@ -5,7 +5,7 @@
 #---------------------------------------------------
 subsection rpt parameters
     set verbosity                        = verbose
-    set monte carlo iteration            = 10000
+    set monte carlo iteration            = 1000
     set random number seed               = 0
     set reactor height                   = 0.3
     set reactor radius       			 = 0.1
@@ -26,7 +26,7 @@ subsection reconstruction
 	set coarse mesh level                       = 1
 	set refinement                              = 6
 	set reconstruction counts file              = counts.reconstruction
-    set export reconstruction positions file    = positions_found.csv
+    set export reconstruction positions file    = reconstruction.csv
     set analyse positions                       = true
     set known positions file                    = positions.known
 end

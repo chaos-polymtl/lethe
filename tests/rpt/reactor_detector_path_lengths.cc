@@ -61,7 +61,7 @@ test()
   Detector<3> detector(detector_param, 0, FP, MP);
 
   // Other parameters
-  RPTParameters rpt_param;
+  Parameters::RPTParameters rpt_param;
   rpt_param.reactor_radius = 0.5;
 
   // Two sets of n values to check when rho < r => theta < theta_cri & theta >
