@@ -230,25 +230,43 @@ FreeSurface<dim>::assemble_system(
                   grad_phi_phase[k] = fe_values_fs.shape_grad(k, q);
                 }
 
+              // Implementation of a DCDD shock capturing scheme.
+              // For more information see
+              // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
+              // finite element formulations for nonlinear
+              // convection-diffusion-reaction equations. Computer methods in
+              // applied mechanics and engineering, 59(3), 307-325.
 
-              // Shock capturing viscosity term
+              // Gather the order of the free surface interpolation
               const double order =
-                this->simulation_parameters.fem_parameters.tracer_order;
+                this->simulation_parameters.fem_parameters.free_surface_order;
 
+              // Calculate the artificial viscosity of the shock capture
               const double vdcdd = (0.5 * h) *
                                    (velocity.norm() * velocity.norm()) *
                                    pow(phase_gradients[q].norm() * h, order);
 
-              // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
-              Tensor<1, dim> r =
-                phase_gradients[q] / (phase_gradients[q].norm() + 1e-12);
+              const double tol = 1e-12;
 
+              // We neglect to remove the diffusion aligned with the velocity
+              // as is done in the original article. We re-enable those
+              // terms if artificial diffusion becomes a problem
+              // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
               // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
               // s);
-              const Tensor<2, dim> rr          = outer_product(r, r);
+
+              // Calculate the unit vector associated with the phase gradient
+              Tensor<1, dim> r =
+                phase_gradients[q] / (phase_gradients[q].norm() + tol);
+
+              // Calculate the dyadic product of this vector with itself
+              const Tensor<2, dim> rr = outer_product(r, r);
+              // Agglomerate this as a factor in case we want to remove
+              // the contribution aligned with the velocity
               const Tensor<2, dim> dcdd_factor = rr; // - k_corr;
 
-
+              // Gradient of the shock capturing viscosity for the assemblyu
+              // of the jacobian matrix
               const double d_vdcdd =
                 order * (0.5 * h * h) * (velocity.norm() * velocity.norm()) *
                 pow(phase_gradients[q].norm() * h, order - 1);
@@ -309,15 +327,13 @@ FreeSurface<dim>::assemble_system(
                           if (DCDD)
                             {
                               cell_matrix(i, j) +=
-                                vdcdd *
-                                scalar_product(grad_phi_phase_j,
-                                               dcdd_factor * grad_phi_phase_i) *
-                                JxW;
-
-                              cell_matrix(i, j) +=
-                                d_vdcdd * grad_phi_phase_j.norm() *
-                                scalar_product(phase_gradients[q],
-                                               dcdd_factor * grad_phi_phase_i) *
+                                (vdcdd * scalar_product(grad_phi_phase_j,
+                                                        dcdd_factor *
+                                                          grad_phi_phase_i) +
+                                 d_vdcdd * grad_phi_phase_j.norm() *
+                                   scalar_product(phase_gradients[q],
+                                                  dcdd_factor *
+                                                    grad_phi_phase_i)) *
                                 JxW;
                             }
                         }
