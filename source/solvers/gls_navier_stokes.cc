@@ -868,6 +868,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             false,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
 
+            if (!ilu_preconditioner)
+                setup_preconditioner(current_ilu_preconditioner_fill_level);
 
           TrilinosWrappers::SolverGMRES solver(solver_control,
                                                solver_parameters);
@@ -950,6 +952,9 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             true);
           TrilinosWrappers::SolverBicgstab solver(solver_control);
 
+            if (!ilu_preconditioner)
+                setup_preconditioner(current_ilu_preconditioner_fill_level);
+
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
 
@@ -1031,6 +1036,9 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
 
           TrilinosWrappers::SolverGMRES solver(solver_control,
                                                solver_parameters);
+
+          if (!amg_preconditioner)
+                setup_preconditioner(current_amg_ilu_preconditioner_fill_level);
 
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
