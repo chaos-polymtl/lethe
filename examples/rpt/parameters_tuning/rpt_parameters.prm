@@ -15,7 +15,7 @@ subsection rpt parameters
     set sampling time        			 = 1
     set gamma-rays emitted        		 = 2
     set attenuation coefficient detector = 21.477
-    set dead time       				 = 1e-6
+    set dead time       				 = 1e-5
     set activity  						 = 2e6
     set attenuation coefficient reactor  = 10
 end
