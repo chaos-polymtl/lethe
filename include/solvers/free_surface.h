@@ -314,6 +314,9 @@ private:
   std::vector<
     parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
     previous_solutions_transfer;
+
+  // Enable DCDD shock capturing scheme
+  const bool DCDD = true;
 };
 
 

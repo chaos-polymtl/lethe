@@ -328,6 +328,7 @@ private:
   // Tracer statistics table
   TableHandler statistics_table;
 
+  // Enable DCDD shock capturing scheme
   const bool DCDD = true;
 };
 
