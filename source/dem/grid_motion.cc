@@ -31,7 +31,7 @@ GridMotion<dim>::GridMotion(
         dem_parameters.grid_motion.grid_translational_velocity * dem_time_step;
     }
   else if (dem_parameters.grid_motion.motion_type ==
-           Parameters::Lagrangian::GridMotion<dim>::MotionType::forces)
+           Parameters::Lagrangian::GridMotion<dim>::MotionType::free)
     {
       grid_motion = &GridMotion<dim>::move_grid_due_particles_forces;
       triangulation_inertia =

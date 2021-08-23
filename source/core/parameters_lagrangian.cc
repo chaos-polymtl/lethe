@@ -1024,13 +1024,12 @@ namespace Parameters
     {
       prm.enter_subsection("grid motion");
       {
-        prm.declare_entry(
-          "motion type",
-          "none",
-          Patterns::Selection(
-            "none|translational|rotational|translational_rotational"),
-          "Choosing grid motion type. "
-          "Choices are <none|translational|rotational|translational_rotational>.");
+        prm.declare_entry("motion type",
+                          "none",
+                          Patterns::Selection(
+                            "none|translational|rotational|free"),
+                          "Choosing grid motion type. "
+                          "Choices are <none|translational|rotational|free>.");
 
         prm.declare_entry("grid translational velocity",
                           "0,0,0",
@@ -1072,6 +1071,10 @@ namespace Parameters
               {
                 grid_translational_velocity[i] = tr_sp_vec[i];
               }
+          }
+        else if (motion == "free")
+          {
+            motion_type = MotionType::free;
           }
         else if (motion == "none")
           {

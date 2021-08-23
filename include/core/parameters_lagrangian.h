@@ -371,7 +371,7 @@ namespace Parameters
       {
         translational,
         rotational,
-        forces,
+        free,
         none
       } motion_type;
 
