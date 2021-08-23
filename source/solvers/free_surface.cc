@@ -92,7 +92,8 @@ FreeSurface<dim>::assemble_system(
   FEValues<dim> fe_values_fs(*fe,
                              *this->cell_quadrature,
                              update_values | update_gradients |
-                               update_quadrature_points | update_JxW_values);
+                               update_quadrature_points | update_hessians |
+                               update_JxW_values);
 
   auto &evaluation_point = this->get_evaluation_point();
 
@@ -114,6 +115,8 @@ FreeSurface<dim>::assemble_system(
   // Shape functions and gradients
   std::vector<double>         phi_phase(dofs_per_cell);
   std::vector<Tensor<1, dim>> grad_phi_phase(dofs_per_cell);
+  std::vector<double>         laplacian_phi_phase(dofs_per_cell);
+
 
   // Velocity values
   const FEValuesExtractors::Vector velocities(0);
@@ -122,8 +125,11 @@ FreeSurface<dim>::assemble_system(
   std::vector<Tensor<1, dim>> velocity_values(n_q_points);
   std::vector<Tensor<2, dim>> velocity_gradient_values(n_q_points);
 
+
   std::vector<double>         present_phase_values(n_q_points);
   std::vector<Tensor<1, dim>> phase_gradients(n_q_points);
+  std::vector<double>         phase_laplacians(n_q_points);
+
 
   // Values for backward Euler scheme
   std::vector<double> p1_phase_values(n_q_points);
@@ -144,6 +150,8 @@ FreeSurface<dim>::assemble_system(
 
           fe_values_fs.get_function_gradients(evaluation_point,
                                               phase_gradients);
+          fe_values_fs.get_function_laplacians(evaluation_point,
+                                               phase_laplacians);
 
           // Element size (NB : dim is implicitly converted to double)
           const double h = pow(2. * dim * cell->measure() / M_PI, 1. / dim) /
@@ -178,7 +186,7 @@ FreeSurface<dim>::assemble_system(
           fe_values_fs.get_function_values(evaluation_point,
                                            present_phase_values);
 
-          // Gather the previous time steps for heat transfer depending on
+          // Gather the previous time steps for free surface depending on
           // the number of stages of the time integration method
           if (time_stepping_method !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
@@ -215,6 +223,54 @@ FreeSurface<dim>::assemble_system(
               // indicator
               const double u_mag = std::max(velocity.norm(), 1e-12);
 
+              // Gather the shape functions and their gradient
+              for (unsigned int k : fe_values_fs.dof_indices())
+                {
+                  phi_phase[k]      = fe_values_fs.shape_value(k, q);
+                  grad_phi_phase[k] = fe_values_fs.shape_grad(k, q);
+                }
+
+              // Implementation of a DCDD shock capturing scheme.
+              // For more information see
+              // Tezduyar, T. E., & Park, Y. J. (1986). Discontinuity-capturing
+              // finite element formulations for nonlinear
+              // convection-diffusion-reaction equations. Computer methods in
+              // applied mechanics and engineering, 59(3), 307-325.
+
+              // Gather the order of the free surface interpolation
+              const double order =
+                this->simulation_parameters.fem_parameters.free_surface_order;
+
+              // Calculate the artificial viscosity of the shock capture
+              const double vdcdd = (0.5 * h) *
+                                   (velocity.norm() * velocity.norm()) *
+                                   pow(phase_gradients[q].norm() * h, order);
+
+              const double tol = 1e-12;
+
+              // We neglect to remove the diffusion aligned with the velocity
+              // as is done in the original article. We re-enable those
+              // terms if artificial diffusion becomes a problem
+              // Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
+              // const Tensor<2, dim> k_corr      = (r * s) * outer_product(s,
+              // s);
+
+              // Calculate the unit vector associated with the phase gradient
+              Tensor<1, dim> r =
+                phase_gradients[q] / (phase_gradients[q].norm() + tol);
+
+              // Calculate the dyadic product of this vector with itself
+              const Tensor<2, dim> rr = outer_product(r, r);
+              // Agglomerate this as a factor in case we want to remove
+              // the contribution aligned with the velocity
+              const Tensor<2, dim> dcdd_factor = rr; // - k_corr;
+
+              // Gradient of the shock capturing viscosity for the assemblyu
+              // of the jacobian matrix
+              const double d_vdcdd =
+                order * (0.5 * h * h) * (velocity.norm() * velocity.norm()) *
+                pow(phase_gradients[q].norm() * h, order - 1);
+
               // Calculation of the GLS stabilization parameter. The
               // stabilization parameter used is different if the simulation is
               // steady or unsteady. In the unsteady case it includes the value
@@ -226,12 +282,6 @@ FreeSurface<dim>::assemble_system(
                   h / (2. * u_mag) :
                   1. / std::sqrt(std::pow(2. * u_mag / h, 2) + sdt2);
 
-              // Gather the shape functions and their gradient
-              for (unsigned int k : fe_values_fs.dof_indices())
-                {
-                  phi_phase[k]      = fe_values_fs.shape_value(k, q);
-                  grad_phi_phase[k] = fe_values_fs.shape_grad(k, q);
-                }
 
               for (const unsigned int i : fe_values_fs.dof_indices())
                 {
@@ -245,6 +295,9 @@ FreeSurface<dim>::assemble_system(
                         {
                           const auto phi_phase_j      = phi_phase[j];
                           const auto grad_phi_phase_j = grad_phi_phase[j];
+                          const auto laplacian_phi_phase_j =
+                            laplacian_phi_phase[j];
+
 
                           // Weak form for advection: u * nabla(phase) = 0
                           cell_matrix(i, j) +=
@@ -253,6 +306,9 @@ FreeSurface<dim>::assemble_system(
                           // Strong Jacobian associated with the GLS
                           // stabilization
                           auto strong_jacobian = velocity * grad_phi_phase_j;
+
+                          if (DCDD)
+                            strong_jacobian += -vdcdd * laplacian_phi_phase_j;
 
                           // Mass matrix for transient simulation
                           if (is_bdf(time_stepping_method))
@@ -267,6 +323,19 @@ FreeSurface<dim>::assemble_system(
                           cell_matrix(i, j) +=
                             tau * strong_jacobian *
                             (grad_phi_phase_i * velocity_values[q]) * JxW;
+
+                          if (DCDD)
+                            {
+                              cell_matrix(i, j) +=
+                                (vdcdd * scalar_product(grad_phi_phase_j,
+                                                        dcdd_factor *
+                                                          grad_phi_phase_i) +
+                                 d_vdcdd * grad_phi_phase_j.norm() *
+                                   scalar_product(phase_gradients[q],
+                                                  dcdd_factor *
+                                                    grad_phi_phase_i)) *
+                                JxW;
+                            }
                         }
                     }
 
@@ -278,6 +347,9 @@ FreeSurface<dim>::assemble_system(
                   // Calculate the strong residual for GLS stabilization
                   auto strong_residual =
                     velocity_values[q] * phase_gradients[q];
+
+                  if (DCDD)
+                    strong_residual += -vdcdd * phase_laplacians[q];
 
                   // Residual associated with BDF schemes
                   if (time_stepping_method == Parameters::SimulationControl::
@@ -326,6 +398,15 @@ FreeSurface<dim>::assemble_system(
                                  (strong_residual *
                                   (grad_phi_phase_i * velocity_values[q])) *
                                  JxW;
+
+                  if (DCDD)
+                    {
+                      cell_rhs(i) +=
+                        -vdcdd *
+                        scalar_product(phase_gradients[q],
+                                       dcdd_factor * grad_phi_phase_i) *
+                        JxW;
+                    }
                 }
 
             } // end loop on quadrature points
