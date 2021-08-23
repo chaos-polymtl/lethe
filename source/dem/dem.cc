@@ -181,7 +181,7 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
                                pcout,
                                standard_deviation_multiplier);
 
-  if (parameters.forces_torques.enable_moving_boundary)
+  if (parameters.forces_torques.free_boundary_motion)
     {
       parameters.grid_motion.motion_type =
         Parameters::Lagrangian::GridMotion<dim>::MotionType::forces;

@@ -262,8 +262,8 @@ namespace Parameters
       // Boundary mass
       double triangulation_mass;
 
-      // Enable moving boundary due to particles forces collision with walls
-      bool enable_moving_boundary;
+      // Enable free boundary motion due to particles collision with walls
+      bool free_boundary_motion;
 
       // Initial translational boundary velocity
       Tensor<1, dim> boundary_initial_translational_velocity;

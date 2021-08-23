@@ -668,7 +668,7 @@ namespace Parameters
       triangulation_mass = prm.get_double("triangulation mass");
 
       prm.enter_subsection("triangulation motion");
-      enable_moving_boundary = prm.get_bool("enable");
+      free_boundary_motion = prm.get_bool("enable");
 
       std::vector<double> vec_tr_vel =
         Utilities::string_to_double(Utilities::split_string_list(
