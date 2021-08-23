@@ -180,6 +180,13 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
+
+  // If we enable free_boundary_motion, the free type is set for grid motion
+  if (parameters.forces_torques.free_boundary_motion)
+    {
+      parameters.grid_motion.motion_type =
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::free;
+    }
 }
 
 template <int dim>

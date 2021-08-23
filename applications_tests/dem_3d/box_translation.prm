@@ -93,6 +93,7 @@ subsection boundary forces
     set filename                                        = force_and_torque
     set output frequency                                = 10
     set center of mass                                  = 0,0,0
+    set moment of inertia				= 0.1, 0.1, 0.1
     set triangulation mass                              = 1
     subsection triangulation motion
         set enable                                      = true

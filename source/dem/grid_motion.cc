@@ -33,7 +33,7 @@ GridMotion<dim>::GridMotion(
   else if (dem_parameters.grid_motion.motion_type ==
            Parameters::Lagrangian::GridMotion<dim>::MotionType::free)
     {
-      grid_motion = &GridMotion<dim>::move_grid_due_particles_forces;
+      grid_motion = &GridMotion<dim>::move_grid_free_motion;
       triangulation_inertia =
         dem_parameters.forces_torques.triangulation_inertia;
       boundary_rotational_velocity =
@@ -81,7 +81,7 @@ GridMotion<dim>::move_grid_translational(
 
 template <int dim>
 void
-GridMotion<dim>::move_grid_due_particles_forces(
+GridMotion<dim>::move_grid_free_motion(
   parallel::distributed::Triangulation<dim> &triangulation)
 {
   update_parameters_before_motion();
@@ -102,36 +102,42 @@ GridMotion<dim>::calculate_motion_parameters()
 
   if (this_mpi_process == 0)
     {
-      Tensor<1, dim> translational_velocity_one_step_time_further;
-      Tensor<1, 3>   rotational_velocity_one_step_time_further;
+      Tensor<1, dim> translational_velocity_one_time_step_further;
+      Tensor<1, 3>   rotational_velocity_one_time_step_further;
 
-      translational_velocity_one_step_time_further =
-        (dt / triangulation_mass) * triangulation_forces +
-        boundary_translational_velocity;
+      if (triangulation_mass != 0)
+        translational_velocity_one_time_step_further =
+          (dt / triangulation_mass) * triangulation_forces +
+          boundary_translational_velocity;
+      else
+        throw std::runtime_error("Triangulation mass cannot be equal to zero");
 
       for (unsigned int i = 0; i < (2 * dim - 3); i++)
         {
-          rotational_velocity_one_step_time_further[i] =
-            (dt / triangulation_inertia[i]) * triangulation_torques[i] +
-            boundary_rotational_velocity[i];
+          if (triangulation_inertia[i] != 0)
+            rotational_velocity_one_time_step_further[i] =
+              (dt / triangulation_inertia[i]) * triangulation_torques[i] +
+              boundary_rotational_velocity[i];
+          else
+            throw std::runtime_error(
+              "Triangulation inertia cannot be equal to zero");
         }
 
       // Shift vector should be the integral between two time step, here it's
       // done by taking the area (trapeze) formed by the velocity distance in a
       // time step.
-      shift_vector = (translational_velocity_one_step_time_further +
+      shift_vector = (translational_velocity_one_time_step_further +
                       boundary_translational_velocity) *
                      dt / 2;
 
-      rotation_angle = (rotational_velocity_one_step_time_further +
+      rotation_angle = (rotational_velocity_one_time_step_further +
                         boundary_rotational_velocity) *
                        dt / 2;
 
       boundary_translational_velocity =
-        translational_velocity_one_step_time_further;
-      boundary_rotational_velocity = rotational_velocity_one_step_time_further;
+        translational_velocity_one_time_step_further;
+      boundary_rotational_velocity = rotational_velocity_one_time_step_further;
     }
-
   shift_vector   = Utilities::MPI::broadcast(MPI_COMM_WORLD, shift_vector);
   rotation_angle = Utilities::MPI::broadcast(MPI_COMM_WORLD, rotation_angle);
 }

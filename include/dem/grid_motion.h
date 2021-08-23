@@ -117,7 +117,7 @@ private:
    * @param triangulation Triangulation
    */
   void
-  move_grid_due_particles_forces(
+  move_grid_free_motion(
     parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
