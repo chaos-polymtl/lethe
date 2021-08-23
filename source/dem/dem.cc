@@ -1004,6 +1004,7 @@ DEMSolver<dim>::solve()
         {
           write_output_results();
         }
+
       if (parameters.forces_torques.calculate_force_torque &&
           (this_mpi_process == 0) &&
           (simulation_control->get_step_number() %

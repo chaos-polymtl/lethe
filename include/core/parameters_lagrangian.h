@@ -244,7 +244,7 @@ namespace Parameters
       // Enable force post-processing
       bool calculate_force_torque;
 
-      // Choosing how the outputs is gonna be displayed
+      // Choosing how the outputs is displayed
       Parameters::Verbosity force_torque_verbosity;
 
       // Output frequency
@@ -365,8 +365,8 @@ namespace Parameters
     {
     public:
       // Choosing grid motion type
-      // forces motion type is something that ForceTorqueOnWall set when
-      // enable is at true
+      // ForceTorqueOnWall sets free motion type when
+      // calculate_force_torque is true
       enum class MotionType
       {
         translational,

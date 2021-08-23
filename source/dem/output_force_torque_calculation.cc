@@ -13,17 +13,21 @@ write_forces_torques_output_locally(
       table.add_value("B_id", it.first);
       table.add_value("Fx", force_on_walls[it.first][0]);
       table.add_value("Fy", force_on_walls[it.first][1]);
-      table.add_value("Fz", force_on_walls[it.first][2]);
+      if (dim == 3)
+        table.add_value("Fz", force_on_walls[it.first][2]);
       table.add_value("Tx", torque_on_walls[it.first][0]);
       table.add_value("Ty", torque_on_walls[it.first][1]);
-      table.add_value("Tz", torque_on_walls[it.first][2]);
+      if (dim == 3)
+        table.add_value("Tz", torque_on_walls[it.first][2]);
     }
   table.set_precision("Fx", 9);
   table.set_precision("Fy", 9);
-  table.set_precision("Fz", 9);
+  if (dim == 3)
+    table.set_precision("Fz", 9);
   table.set_precision("Tx", 9);
   table.set_precision("Ty", 9);
-  table.set_precision("Tz", 9);
+  if (dim == 3)
+    table.set_precision("Tz", 9);
 
   table.write_text(std::cout);
 }

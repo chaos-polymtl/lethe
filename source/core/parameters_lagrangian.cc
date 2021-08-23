@@ -588,7 +588,7 @@ namespace Parameters
     {
       prm.enter_subsection("boundary forces");
 
-      prm.declare_entry("calculation",
+      prm.declare_entry("calculate force and torque",
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of forces");
@@ -642,7 +642,7 @@ namespace Parameters
     {
       prm.enter_subsection("boundary forces");
 
-      calculate_force_torque    = prm.get_bool("calculation");
+      calculate_force_torque    = prm.get_bool("calculate force and torque");
       const std::string verbose = prm.get("verbosity");
       if (verbose == "quiet")
         force_torque_verbosity = Parameters::Verbosity::quiet;

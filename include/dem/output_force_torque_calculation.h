@@ -72,22 +72,28 @@ write_forces_torques_output_results(
             {
               table.add_value("Force x", forces_boundary_information[j][i][0]);
               table.add_value("Force y", forces_boundary_information[j][i][1]);
-              table.add_value("Force z", forces_boundary_information[j][i][2]);
+              if (dim == 3)
+                table.add_value("Force z",
+                                forces_boundary_information[j][i][2]);
+
               table.add_value("Torque x",
                               torques_boundary_information[j][i][0]);
               table.add_value("Torque y",
                               torques_boundary_information[j][i][1]);
-              table.add_value("Torque z",
-                              torques_boundary_information[j][i][2]);
+              if (dim == 3)
+                table.add_value("Torque z",
+                                torques_boundary_information[j][i][2]);
               table.add_value("Current time", j * time_step);
             }
 
           table.set_precision("Force x", 9);
           table.set_precision("Force y", 9);
-          table.set_precision("Force z", 9);
+          if (dim == 3)
+            table.set_precision("Force z", 9);
           table.set_precision("Torque x", 9);
           table.set_precision("Torque y", 9);
-          table.set_precision("Torque z", 9);
+          if (dim == 3)
+            table.set_precision("Torque z", 9);
           table.set_precision("Current time", 9);
 
           // output

@@ -4,9 +4,9 @@
 # Simulation and IO Control
 #---------------------------------------------------
 subsection simulation control
-  set time step                             = 1e-5
-  set time end                              = 0.1
-  set log frequency                         = 100000
+  set time step                             		= 1e-5
+  set time end                              		= 0.1
+  set log frequency                         		= 100000
   set output frequency            			= 100000
 end
 
@@ -88,14 +88,13 @@ end
 
 #---------------------------------------------------
 subsection boundary forces
-    set calculation               	                                            = true
-    set verbosity                                                               = quiet
-    set filename                                            	     		    = force_and_torque
-    set output frequency                                                        = 10
-    set center of mass                                                          = 0,0,0
-    set triangulation mass                                                      = 1
-
+    set calculate force and torque             	        = true
+    set verbosity                                       = quiet
+    set filename                                        = force_and_torque
+    set output frequency                                = 10
+    set center of mass                                  = 0,0,0
+    set triangulation mass                              = 1
     subsection triangulation motion
-        set enable                                                                  = true
+        set enable                                      = true
     end
 end
