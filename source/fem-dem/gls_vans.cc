@@ -560,6 +560,8 @@ GLSVANSSolver<dim>::solve_L2_system_void_fraction()
   ilu_preconditioner->initialize(system_matrix_void_fraction,
                                  preconditionerOptions);
 
+  this->setup_preconditioner();
+
   solver.solve(system_matrix_void_fraction,
                completely_distributed_solution,
                system_rhs_void_fraction,

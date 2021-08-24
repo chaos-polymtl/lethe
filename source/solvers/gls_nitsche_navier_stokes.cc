@@ -798,6 +798,7 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
     time_stepping_method);
 
   assemble_nitsche_restriction<true>();
+  this->setup_preconditioner();
 }
 
 template <int dim, int spacedim>

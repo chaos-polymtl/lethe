@@ -97,6 +97,13 @@ protected:
   assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
                         time_stepping_method) override;
 
+
+  /**
+   * @brief  Set-up the appropriate preconditioner
+   */
+  void
+  setup_preconditioner();
+
   /**
    * @brief Assemble the local matrix for a given cell.
    *
@@ -161,6 +168,7 @@ protected:
   copy_local_rhs_to_global_rhs(
     const StabilizedMethodsTensorCopyData<dim> &copy_data);
 
+
   /**
    * @brief Call for the assembly of the linear system of equation
    *
@@ -223,12 +231,6 @@ private:
                       const double relative_residual);
 
   /**
-   * @brief  Set-up the appropriate preconditioner
-   */
-  void
-  setup_preconditioner(const int current_preconditioner_fill_level);
-
-  /**
    * @brief  Set-up AMG preconditioner
    */
   void
@@ -251,6 +253,8 @@ private:
   SparsityPattern                                    sparsity_pattern;
   std::shared_ptr<TrilinosWrappers::PreconditionILU> ilu_preconditioner;
   std::shared_ptr<TrilinosWrappers::PreconditionAMG> amg_preconditioner;
+  int current_preconditioner_fill_level;
+  int initial_preconditioner_fill_level;
 };
 
 

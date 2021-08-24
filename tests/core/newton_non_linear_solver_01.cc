@@ -17,10 +17,11 @@ test()
   Parameters::NonLinearSolver params{
     Parameters::Verbosity::quiet,
     Parameters::NonLinearSolver::SolverType::newton,
-    Parameters::NonLinearSolver::KinsolStrategy::normal_newton, // kinsol strategy, not used in this case
-    1e-8, // tolerance
-    10,   // maxIter
-    4     // display precision
+    Parameters::NonLinearSolver::KinsolStrategy::
+      normal_newton, // kinsol strategy, not used in this case
+    1e-8,            // tolerance
+    10,              // maxIter
+    4                // display precision
   };
 
   deallog << "Creating solver" << std::endl;

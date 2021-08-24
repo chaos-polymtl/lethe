@@ -49,7 +49,13 @@ template <int dim>
 GLSNavierStokesSolver<dim>::GLSNavierStokesSolver(
   SimulationParameters<dim> &p_nsparam)
   : NavierStokesBase<dim, TrilinosWrappers::MPI::Vector, IndexSet>(p_nsparam)
-{}
+{
+  initial_preconditioner_fill_level =
+    ((this->simulation_parameters.linear_solver.solver ==
+      Parameters::LinearSolver::SolverType::amg) ?
+       this->simulation_parameters.linear_solver.amg_precond_ilu_fill :
+       this->simulation_parameters.linear_solver.ilu_precond_fill);
+}
 
 template <int dim>
 GLSNavierStokesSolver<dim>::~GLSNavierStokesSolver()
@@ -67,6 +73,8 @@ GLSNavierStokesSolver<dim>::setup_dofs_fd()
   // cleared
   amg_preconditioner.reset();
   ilu_preconditioner.reset();
+  current_preconditioner_fill_level = initial_preconditioner_fill_level;
+
 
   // Now reset system matrix
   system_matrix.clear();
@@ -371,13 +379,8 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix(
                                          this->cell_quadrature->size()));
   system_matrix.compress(VectorOperation::add);
 
-  // Assemble the preconditioner only if the matrix is reassembled
-  const int preconditioner_fill_level =
-    ((this->simulation_parameters.linear_solver.solver ==
-      Parameters::LinearSolver::SolverType::amg) ?
-       this->simulation_parameters.linear_solver.amg_precond_ilu_fill :
-       this->simulation_parameters.linear_solver.ilu_precond_fill);
-  setup_preconditioner(preconditioner_fill_level);
+  // Assemble the preconditioner
+  this->setup_preconditioner();
 }
 
 
@@ -716,8 +719,7 @@ GLSNavierStokesSolver<dim>::solve_linear_system(const bool initial_step,
 
 template <int dim>
 void
-GLSNavierStokesSolver<dim>::setup_preconditioner(
-  const int current_preconditioner_fill_level)
+GLSNavierStokesSolver<dim>::setup_preconditioner()
 {
   if (this->simulation_parameters.linear_solver.solver ==
         Parameters::LinearSolver::SolverType::gmres ||
@@ -733,7 +735,7 @@ GLSNavierStokesSolver<dim>::setup_preconditioner(
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_ILU(
-  const int current_ilu_preconditioner_fill_level)
+  const int /* current_ilu_preconditioner_fill_level */)
 {
   TimerOutput::Scope t(this->computing_timer, "setup_ILU");
 
@@ -742,7 +744,7 @@ GLSNavierStokesSolver<dim>::setup_ILU(
   const double ilu_rtol =
     this->simulation_parameters.linear_solver.ilu_precond_rtol;
   TrilinosWrappers::PreconditionILU::AdditionalData preconditionerOptions(
-    current_ilu_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
+    current_preconditioner_fill_level, ilu_atol, ilu_rtol, 0);
 
   ilu_preconditioner = std::make_shared<TrilinosWrappers::PreconditionILU>();
 
@@ -752,7 +754,7 @@ GLSNavierStokesSolver<dim>::setup_ILU(
 template <int dim>
 void
 GLSNavierStokesSolver<dim>::setup_AMG(
-  const int current_amg_ilu_preconditioner_fill_level)
+  const int /* current_amg_ilu_preconditioner_fill_level */)
 {
   TimerOutput::Scope t(this->computing_timer, "setup_AMG");
 
@@ -801,7 +803,7 @@ GLSNavierStokesSolver<dim>::setup_AMG(
   preconditionerOptions.set_parameters(parameter_ml,
                                        distributed_constant_modes,
                                        system_matrix);
-  const double ilu_fill = current_amg_ilu_preconditioner_fill_level;
+  const double ilu_fill = current_preconditioner_fill_level;
   const double ilu_atol =
     this->simulation_parameters.linear_solver.amg_precond_ilu_atol;
   const double ilu_rtol =
@@ -831,10 +833,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
   // it's original value at the end of the restart process.
 
   const unsigned int max_iter = 3;
-  int                current_ilu_preconditioner_fill_level =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
-  unsigned int iter    = 0;
-  bool         success = false;
+  unsigned int       iter     = 0;
+  bool               success  = false;
 
   while (success == false and iter < max_iter)
     {
@@ -868,8 +868,8 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
             false,
             this->simulation_parameters.linear_solver.max_krylov_vectors);
 
-            if (!ilu_preconditioner)
-                setup_preconditioner(current_ilu_preconditioner_fill_level);
+          if (!ilu_preconditioner)
+            setup_preconditioner();
 
           TrilinosWrappers::SolverGMRES solver(solver_control,
                                                solver_parameters);
@@ -897,11 +897,11 @@ GLSNavierStokesSolver<dim>::solve_system_GMRES(const bool   initial_step,
         }
       catch (std::exception &e)
         {
-          current_ilu_preconditioner_fill_level += 1;
+          current_preconditioner_fill_level += 1;
           this->pcout
             << " GMRES solver failed! Trying with a higher preconditioner fill level. New fill = "
-            << current_ilu_preconditioner_fill_level << std::endl;
-          setup_preconditioner(current_ilu_preconditioner_fill_level);
+            << current_preconditioner_fill_level << std::endl;
+          setup_preconditioner();
 
           if (iter == max_iter - 1)
             throw e;
@@ -919,10 +919,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
 {
   TimerOutput::Scope t(this->computing_timer, "solve");
   const unsigned int max_iter = 3;
-  int                current_ilu_preconditioner_fill_level =
-    this->simulation_parameters.linear_solver.ilu_precond_fill;
-  unsigned int iter    = 0;
-  bool         success = false;
+  unsigned int       iter     = 0;
+  bool               success  = false;
 
   while (success == false and iter < max_iter)
     {
@@ -952,8 +950,8 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
             true);
           TrilinosWrappers::SolverBicgstab solver(solver_control);
 
-            if (!ilu_preconditioner)
-                setup_preconditioner(current_ilu_preconditioner_fill_level);
+          if (!ilu_preconditioner)
+            setup_preconditioner();
 
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
@@ -977,11 +975,11 @@ GLSNavierStokesSolver<dim>::solve_system_BiCGStab(
         }
       catch (std::exception &e)
         {
-          current_ilu_preconditioner_fill_level += 1;
+          current_preconditioner_fill_level += 1;
           this->pcout
             << " BiCGStab solver failed! Trying with a higher preconditioner fill level. New fill = "
-            << current_ilu_preconditioner_fill_level << std::endl;
-          setup_preconditioner(current_ilu_preconditioner_fill_level);
+            << current_preconditioner_fill_level << std::endl;
+          setup_preconditioner();
 
           if (iter == max_iter - 1)
             throw e;
@@ -997,10 +995,8 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                              const double relative_residual)
 {
   const unsigned int max_iter = 3;
-  int                current_amg_ilu_preconditioner_fill_level =
-    this->simulation_parameters.linear_solver.amg_precond_ilu_fill;
-  unsigned int iter    = 0;
-  bool         success = false;
+  unsigned int       iter     = 0;
+  bool               success  = false;
 
   while (success == false and iter < max_iter)
     {
@@ -1038,7 +1034,7 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
                                                solver_parameters);
 
           if (!amg_preconditioner)
-                setup_preconditioner(current_amg_ilu_preconditioner_fill_level);
+            setup_preconditioner();
 
           {
             TimerOutput::Scope t(this->computing_timer, "solve_linear_system");
@@ -1064,11 +1060,11 @@ GLSNavierStokesSolver<dim>::solve_system_AMG(const bool   initial_step,
         }
       catch (std::exception &e)
         {
-          current_amg_ilu_preconditioner_fill_level += 1;
+          current_preconditioner_fill_level += 1;
           this->pcout
             << " AMG solver failed! Trying with a higher preconditioner fill level. New fill = "
-            << current_amg_ilu_preconditioner_fill_level << std::endl;
-          setup_preconditioner(current_amg_ilu_preconditioner_fill_level);
+            << current_preconditioner_fill_level << std::endl;
+          setup_preconditioner();
 
           if (iter == max_iter - 1)
             throw e;

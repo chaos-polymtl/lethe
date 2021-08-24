@@ -18,10 +18,10 @@ test()
     Parameters::Verbosity::quiet,
     Parameters::NonLinearSolver::SolverType::kinsol_newton,
     Parameters::NonLinearSolver::KinsolStrategy::line_search, // kinsol strategy
-    1e-8, // tolerance
-    0.9,  // relative tolerance
-    10,   // maxIter
-    4     // display precision
+    1e-8,                                                     // tolerance
+    0.9, // relative tolerance
+    10,  // maxIter
+    4    // display precision
   };
 
   deallog << "Creating solver" << std::endl;

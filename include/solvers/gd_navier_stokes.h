@@ -93,14 +93,14 @@ private:
    */
   void
   assemble_system_matrix(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+                           time_stepping_method);
 
   /**
    * @brief Assemble the rhs associated with the solver
    */
   void
   assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+                        time_stepping_method);
 
 
   /**
