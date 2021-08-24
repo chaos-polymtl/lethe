@@ -4,6 +4,7 @@
 #include <core/utilities.h>
 
 #include <solvers/tracer.h>
+#include <solvers/tracer_scratch_data.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
