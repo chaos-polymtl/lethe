@@ -244,7 +244,7 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
 
             Point<dim> projected_point= GridTools::project_to_object(cell_edge,local_face->vertex(i));
 
-            if (cell_edge->point_inside(projected_point)) {
+            if (cell_edge->point_inside(projected_point) && cell->point_inside(projected_point)) {
                 std::cout<<"a1 ok "<<std::endl;
                 condition_a1 = true;
             }
