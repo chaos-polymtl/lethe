@@ -1,11 +1,11 @@
+#include <fem-dem/gls_vans.h>
+#include <fem-dem/vans_assemblers.h>
+
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
-
-#include <fem-dem/gls_vans.h>
-#include <fem-dem/vans_assemblers.h>
 
 template <int dim>
 double
@@ -111,7 +111,9 @@ GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
   , particle_handler(*this->triangulation,
                      particle_mapping,
                      DEM::get_number_properties())
-{}
+{
+  previous_void_fraction.resize(maximum_number_of_previous_solutions());
+}
 
 template <int dim>
 GLSVANSSolver<dim>::~GLSVANSSolver()
@@ -146,15 +148,14 @@ GLSVANSSolver<dim>::setup_dofs()
   nodal_void_fraction_relevant.reinit(locally_owned_dofs_voidfraction,
                                       locally_relevant_dofs_voidfraction,
                                       this->mpi_communicator);
-  void_fraction_m1.reinit(locally_owned_dofs_voidfraction,
-                          locally_relevant_dofs_voidfraction,
-                          this->mpi_communicator);
-  void_fraction_m2.reinit(locally_owned_dofs_voidfraction,
-                          locally_relevant_dofs_voidfraction,
-                          this->mpi_communicator);
-  void_fraction_m3.reinit(locally_owned_dofs_voidfraction,
-                          locally_relevant_dofs_voidfraction,
-                          this->mpi_communicator);
+
+  for (unsigned int i = 0; i < previous_void_fraction.size(); ++i)
+    {
+      previous_void_fraction[i].reinit(locally_owned_dofs_voidfraction,
+                                       locally_relevant_dofs_voidfraction,
+                                       this->mpi_communicator);
+    }
+
   nodal_void_fraction_owned.reinit(locally_owned_dofs_voidfraction,
                                    this->mpi_communicator);
 
@@ -197,6 +198,17 @@ GLSVANSSolver<dim>::setup_dofs()
   assemble_mass_matrix_diagonal(mass_matrix);
 }
 
+template <int dim>
+void
+GLSVANSSolver<dim>::percolate_void_fraction()
+{
+  for (unsigned int i = previous_void_fraction.size() - 1; i > 0; --i)
+    {
+      previous_void_fraction[i] = previous_void_fraction[i - 1];
+    }
+  previous_void_fraction[0] = nodal_void_fraction_relevant;
+}
+
 
 template <int dim>
 void
@@ -204,9 +216,7 @@ GLSVANSSolver<dim>::finish_time_step_fd()
 {
   GLSNavierStokesSolver<dim>::finish_time_step_fd();
 
-  void_fraction_m3 = void_fraction_m2;
-  void_fraction_m2 = void_fraction_m1;
-  void_fraction_m1 = nodal_void_fraction_relevant;
+  percolate_void_fraction();
 }
 
 template <int dim>
@@ -273,9 +283,8 @@ void
 GLSVANSSolver<dim>::initialize_void_fraction()
 {
   calculate_void_fraction(this->simulation_control->get_current_time());
-  void_fraction_m3 = nodal_void_fraction_relevant;
-  void_fraction_m2 = nodal_void_fraction_relevant;
-  void_fraction_m1 = nodal_void_fraction_relevant;
+  for (unsigned int i = 0; i < previous_void_fraction.size(); ++i)
+    previous_void_fraction[i] = nodal_void_fraction_relevant;
 }
 
 template <int dim>
@@ -606,8 +615,7 @@ GLSVANSSolver<dim>::first_iteration()
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->percolate_time_vectors_fd();
-      void_fraction_m2 = void_fraction_m1;
-      void_fraction_m1 = nodal_void_fraction_relevant;
+      percolate_void_fraction();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps to complete the full step
@@ -647,8 +655,7 @@ GLSVANSSolver<dim>::first_iteration()
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->percolate_time_vectors_fd();
-      void_fraction_m2 = void_fraction_m1;
-      void_fraction_m1 = nodal_void_fraction_relevant;
+      percolate_void_fraction();
 
       // Reset the time step and do a bdf 2 newton iteration using the two
       // steps
@@ -662,9 +669,7 @@ GLSVANSSolver<dim>::first_iteration()
       PhysicsSolver<TrilinosWrappers::MPI::Vector>::solve_non_linear_system(
         Parameters::SimulationControl::TimeSteppingMethod::bdf1, false, true);
       this->percolate_time_vectors_fd();
-      void_fraction_m3 = void_fraction_m2;
-      void_fraction_m2 = void_fraction_m1;
-      void_fraction_m1 = nodal_void_fraction_relevant;
+      percolate_void_fraction();
 
       // Reset the time step and do a bdf 3 newton iteration using the two
       // steps to complete the full step
@@ -765,32 +770,10 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     cell->index(),
     &this->void_fraction_dof_handler);
 
-  std::vector<TrilinosWrappers::MPI::Vector> previous_solutions_void_fraction;
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    // previous_solutions_void_fraction.push_back(void_fraction_m1);
-    previous_solutions_void_fraction[0] = void_fraction_m1;
-  else if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    {
-      //      previous_solutions_void_fraction.push_back(void_fraction_m1);
-      //      previous_solutions_void_fraction.push_back(void_fraction_m2);
-      previous_solutions_void_fraction[0] = void_fraction_m1;
-      previous_solutions_void_fraction[1] = void_fraction_m2;
-    }
-  else if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    {
-      //      previous_solutions_void_fraction.push_back(void_fraction_m1);
-      //      previous_solutions_void_fraction.push_back(void_fraction_m2);
-      //      previous_solutions_void_fraction.push_back(void_fraction_m3);
-      previous_solutions_void_fraction[0] = void_fraction_m1;
-      previous_solutions_void_fraction[1] = void_fraction_m2;
-      previous_solutions_void_fraction[2] = void_fraction_m3;
-    }
-
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
     nodal_void_fraction_relevant,
-    previous_solutions_void_fraction,
+    previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
   copy_data.reset();
@@ -874,32 +857,10 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     cell->index(),
     &this->void_fraction_dof_handler);
 
-  std::vector<TrilinosWrappers::MPI::Vector> previous_solutions_void_fraction;
-
-  if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-    // previous_solutions_void_fraction.push_back(void_fraction_m1);
-    previous_solutions_void_fraction[0] = void_fraction_m1;
-  else if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    {
-      //      previous_solutions_void_fraction.push_back(void_fraction_m1);
-      //      previous_solutions_void_fraction.push_back(void_fraction_m2);
-      previous_solutions_void_fraction[0] = void_fraction_m1;
-      previous_solutions_void_fraction[1] = void_fraction_m2;
-    }
-  else if (scheme == Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    {
-      //      previous_solutions_void_fraction.push_back(void_fraction_m1);
-      //      previous_solutions_void_fraction.push_back(void_fraction_m2);
-      //      previous_solutions_void_fraction.push_back(void_fraction_m3);
-      previous_solutions_void_fraction[0] = void_fraction_m1;
-      previous_solutions_void_fraction[1] = void_fraction_m2;
-      previous_solutions_void_fraction[2] = void_fraction_m3;
-    }
-
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
     nodal_void_fraction_relevant,
-    previous_solutions_void_fraction,
+    previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
   copy_data.reset();
@@ -1142,12 +1103,12 @@ GLSVANSSolver<dim>::post_processing()
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_void_fraction.get_function_values(
-                void_fraction_m1, p1_void_fraction_values);
+                previous_void_fraction[0], p1_void_fraction_values);
 
               if (scheme ==
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                 fe_values_void_fraction.get_function_values(
-                  void_fraction_m2, p2_void_fraction_values);
+                  previous_void_fraction[1], p2_void_fraction_values);
 
               if (scheme ==
 <<<<<<< HEAD
@@ -1156,7 +1117,7 @@ GLSVANSSolver<dim>::post_processing()
                   Parameters::SimulationControl::TimeSteppingMethod::bdf2)
 >>>>>>> start assemble mechanism for vans solver
                 fe_values_void_fraction.get_function_values(
-                  void_fraction_m3, p3_void_fraction_values);
+                  previous_void_fraction[2], p3_void_fraction_values);
             }
 
           for (unsigned int q = 0; q < n_q_points; ++q)

@@ -20,6 +20,19 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
+#include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+#include "core/time_integration_utilities.h"
+#include <core/grids.h>
+#include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
+
+#include "solvers/gls_navier_stokes.h"
+
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
+
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -29,18 +42,6 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
-
-#include <core/grids.h>
-#include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
-#include "solvers/gls_navier_stokes.h"
 
 
 
@@ -255,6 +256,9 @@ protected:
   virtual void
   output_field_hook(DataOut<dim> &data_out) override;
 
+  void
+  percolate_void_fraction();
+
   /**
    *Member Variables
    */
@@ -272,9 +276,8 @@ private:
   IndexSet locally_relevant_dofs_voidfraction;
 
   // Solution of the void fraction at previous time steps
-  TrilinosWrappers::MPI::Vector void_fraction_m1;
-  TrilinosWrappers::MPI::Vector void_fraction_m2;
-  TrilinosWrappers::MPI::Vector void_fraction_m3;
+  std::vector<TrilinosWrappers::MPI::Vector> previous_void_fraction;
+
 
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
