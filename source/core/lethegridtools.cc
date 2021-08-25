@@ -433,24 +433,29 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
 
     do
     {
-        Tensor<1, structdim> grad;
-        for (unsigned int i=0 ;i<structdim; ++i ) {
-            double dx=1e-4;
-            Point<structdim> xi_dx=xi;
-            Point<structdim> xi_mdx=xi;
-            xi_dx[i]=xi[i]+dx;
-            xi_mdx[i]=xi[i]-dx;
-            double d0=dist_based_on_reference_point(object,
-           trial_point, xi_mdx);
-            double d1=dist_based_on_reference_point(object,
-                                                       trial_point, xi_dx);
-            grad[i] = (d1-d0)/(2*dx);
-        }
+        Tensor<1, structdim> F_k;
+        for (const unsigned int i :
+        GeometryInfo<structdim>::vertex_indices())
+            F_k +=
+                    (x_k - trial_point) * object->vertex(i) *
+                    GeometryInfo<structdim>::d_linear_shape_function_gradient(xi,
+                                                                              i);
 
-        double alpha=abs(scalar_product((xi-last_xi),(grad-last_grad)))/((grad-last_grad).norm_square());
-        last_xi=xi;
-        last_grad=grad;
-        const Tensor<1, structdim> delta_xi = alpha * -grad;
+        Tensor<2, structdim> H_k;
+        for (const unsigned int i :
+        GeometryInfo<structdim>::vertex_indices())
+            for (const unsigned int j :
+            GeometryInfo<structdim>::vertex_indices())
+            {
+                Tensor<2, structdim> tmp = outer_product(
+                        GeometryInfo<structdim>::d_linear_shape_function_gradient(
+                                xi, i),
+                                GeometryInfo<structdim>::d_linear_shape_function_gradient(
+                                        xi, j));
+                H_k += (object->vertex(i) * object->vertex(j)) * tmp;
+            }
+
+        const Tensor<1, structdim> delta_xi = -invert(H_k) * F_k;
         xi += delta_xi;
 
         x_k = Point<spacedim>();
