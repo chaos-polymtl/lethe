@@ -62,7 +62,7 @@ test()
 
   Detector<3> detector0(detector_param, 0, FP0, MP0);
 
-  RPTCalculatingParameters rpt_parameters;
+  Parameters::RPTParameters rpt_parameters;
 
   // Two sets of n values to check when rho < r => theta < theta_cri & theta >
   // theta_cri and both alpha_min & theta_min

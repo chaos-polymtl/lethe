@@ -62,23 +62,23 @@ test()
   Detector<3> detector(detector_param, 0, FP, MP);
 
   // Other parameters
-  RPTCalculatingParameters rpt_parameters;
-  rpt_parameters.rpt_param.reactor_radius                       = 0.5;
-  rpt_parameters.rpt_param.peak_to_total_ratio                  = 1;
-  rpt_parameters.rpt_param.sampling_time                        = 1;
-  rpt_parameters.rpt_param.n_monte_carlo_iteration              = 10000;
-  rpt_parameters.rpt_param.seed                                 = 1;
-  rpt_parameters.initial_param.dead_time                        = 1;
-  rpt_parameters.initial_param.activity                         = 1;
-  rpt_parameters.initial_param.gamma_rays_emitted               = 1;
-  rpt_parameters.initial_param.attenuation_coefficient_reactor  = 1;
-  rpt_parameters.initial_param.attenuation_coefficient_detector = 1;
+  Parameters::RPTParameters rpt_param;
+  rpt_param.reactor_radius                   = 0.5;
+  rpt_param.peak_to_total_ratio              = 1;
+  rpt_param.sampling_time                    = 1;
+  rpt_param.n_monte_carlo_iteration          = 10000;
+  rpt_param.seed                             = 1;
+  rpt_param.dead_time                        = 1;
+  rpt_param.activity                         = 1;
+  rpt_param.gamma_rays_emitted               = 1;
+  rpt_param.attenuation_coefficient_reactor  = 1;
+  rpt_param.attenuation_coefficient_detector = 1;
 
   // Counts for every particle positions with Monte Carlo
   for (unsigned int i_particle = 0; i_particle < n_particle; i_particle++)
     {
       ParticleDetectorInteractions<3> particle_detector_interactions(
-        particle_positions[i_particle], detector, rpt_parameters);
+        particle_positions[i_particle], detector, rpt_param);
 
       double count = particle_detector_interactions.calculate_count();
 

@@ -5,6 +5,7 @@
 #---------------------------------------------------
 subsection rpt parameters
     set particle positions file          = real_positions.particle
+    set verbosity                        = quiet
     set export counts                    = false
     set counts file                      = run.csv
     set monte carlo iteration            = 10000
@@ -12,6 +13,11 @@ subsection rpt parameters
     set reactor radius       			 = 0.1
     set peak-to-total ratio  			 = 0.4
     set sampling time        			 = 1
+    set gamma-rays emitted        		 = 2
+    set attenuation coefficient detector = 21.477
+    set dead time       				 = 1e-5
+    set activity  						 = 2e6
+    set attenuation coefficient reactor  = 10
 end
 	
 # --------------------------------------------------
@@ -21,11 +27,6 @@ subsection parameter tuning
 	set tuning                           = true
 	set cost function type               = larachi
 	set experimental data file           = noisy_counts.experimental
-    set gamma-rays emitted        		 = 2
-    set attenuation coefficient detector = 21.477
-    set dead time       				 = 1e-6
-    set activity  						 = 2e6
-    set attenuation coefficient reactor  = 10
 end
 
 #---------------------------------------------------

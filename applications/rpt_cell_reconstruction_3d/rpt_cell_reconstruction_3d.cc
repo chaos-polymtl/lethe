@@ -17,8 +17,8 @@
 * Author: Bruno Blais, Polytechnique Montreal, 2019-
 */
 
-#include <rpt/rpt.h>
 #include <rpt/rpt_calculating_parameters.h>
+#include <rpt/rpt_cell_reconstruction.h>
 
 #include <fstream>
 #include <iostream>
@@ -36,6 +36,9 @@ main(int argc, char *argv[])
           std::exit(1);
         }
 
+      Utilities::MPI::MPI_InitFinalize mpi_initialization(
+        argc, argv, numbers::invalid_unsigned_int);
+
       ParameterHandler         prm;
       RPTCalculatingParameters rpt_parameters;
       rpt_parameters.declare(prm);
@@ -44,8 +47,11 @@ main(int argc, char *argv[])
       prm.parse_input(argv[1]);
       rpt_parameters.parse(prm);
 
-      RPT<3> rpt(rpt_parameters);
-      rpt.setup_and_calculate();
+      RPTCellReconstruction<3> rpt_cell_reconstruction(
+        rpt_parameters.rpt_param,
+        rpt_parameters.reconstruction_param,
+        rpt_parameters.detector_param);
+      rpt_cell_reconstruction.execute_cell_reconstruction();
     }
   catch (std::exception &exc)
     {
