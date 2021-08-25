@@ -788,14 +788,11 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::output_solid_triangulation(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs()
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix(
-    time_stepping_method);
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix();
 
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs(
-    time_stepping_method);
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs();
 
   assemble_nitsche_restriction<true>();
   this->setup_preconditioner();
@@ -803,11 +800,9 @@ GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs(
 
 template <int dim, int spacedim>
 void
-GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_rhs()
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs(
-    time_stepping_method);
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs();
 
   assemble_nitsche_restriction<false>();
 }

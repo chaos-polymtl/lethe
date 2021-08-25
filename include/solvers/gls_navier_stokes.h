@@ -87,15 +87,13 @@ protected:
    *  @brief Assembles the matrix associated with the solver
    */
   virtual void
-  assemble_system_matrix(const Parameters::SimulationControl::TimeSteppingMethod
-                           time_stepping_method) override;
+  assemble_system_matrix() override;
 
   /**
    * @brief Assemble the rhs associated with the solver
    */
   virtual void
-  assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) override;
+  assemble_system_rhs() override;
 
 
   /**

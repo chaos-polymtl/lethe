@@ -23,27 +23,24 @@
 
 template <int dim>
 void
-FreeSurface<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+FreeSurface<dim>::assemble_matrix_and_rhs()
 {
-  assemble_system<true>(time_stepping_method);
+  assemble_system<true>();
 }
 
 
 template <int dim>
 void
-FreeSurface<dim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+FreeSurface<dim>::assemble_rhs()
 {
-  assemble_system<false>(time_stepping_method);
+  assemble_system<false>();
 }
 
 
 template <int dim>
 template <bool assemble_matrix>
 void
-FreeSurface<dim>::assemble_system(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+FreeSurface<dim>::assemble_system()
 {
   if (assemble_matrix)
     system_matrix = 0;
@@ -64,23 +61,23 @@ FreeSurface<dim>::assemble_system(
 
   Vector<double> bdf_coefs;
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-      time_stepping_method ==
+          this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     bdf_coefs = bdf_coefficients(2, time_steps_vector);
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     bdf_coefs = bdf_coefficients(3, time_steps_vector);
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-      time_stepping_method ==
+          this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
     {
       throw std::runtime_error(
@@ -188,7 +185,7 @@ FreeSurface<dim>::assemble_system(
 
           // Gather the previous time steps for free surface depending on
           // the number of stages of the time integration method
-          if (time_stepping_method !=
+          if (this->time_stepping_method !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_fs.get_function_values(previous_solutions[0],
@@ -196,14 +193,14 @@ FreeSurface<dim>::assemble_system(
             }
 
           if (time_stepping_method_uses_two_previous_solutions(
-                time_stepping_method))
+                  this->time_stepping_method))
             {
               fe_values_fs.get_function_values(previous_solutions[1],
                                                p2_phase_values);
             }
 
           if (time_stepping_method_uses_three_previous_solutions(
-                time_stepping_method))
+                  this->time_stepping_method))
             {
               fe_values_fs.get_function_values(previous_solutions[2],
                                                p3_phase_values);
@@ -278,7 +275,7 @@ FreeSurface<dim>::assemble_system(
               // (Pe>3) [Bochev et al., Stability of the SUPG finite element
               // method for transient advection-diffusion problems, CMAME 2004]
               const double tau =
-                is_steady(time_stepping_method) ?
+                is_steady(this->time_stepping_method) ?
                   h / (2. * u_mag) :
                   1. / std::sqrt(std::pow(2. * u_mag / h, 2) + sdt2);
 
@@ -311,7 +308,7 @@ FreeSurface<dim>::assemble_system(
                             strong_jacobian += -vdcdd * laplacian_phi_phase_j;
 
                           // Mass matrix for transient simulation
-                          if (is_bdf(time_stepping_method))
+                          if (is_bdf(this->time_stepping_method))
                             {
                               cell_matrix(i, j) +=
                                 phi_phase_j * phi_phase_i * bdf_coefs[0] * JxW;
@@ -352,9 +349,9 @@ FreeSurface<dim>::assemble_system(
                     strong_residual += -vdcdd * phase_laplacians[q];
 
                   // Residual associated with BDF schemes
-                  if (time_stepping_method == Parameters::SimulationControl::
+                  if (this->time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::bdf1 ||
-                      time_stepping_method == Parameters::SimulationControl::
+                          this->time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::steady_bdf)
                     {
                       cell_rhs(i) -= (bdf_coefs[0] * present_phase +
@@ -365,7 +362,7 @@ FreeSurface<dim>::assemble_system(
                                          bdf_coefs[1] * p1_phase_values[q];
                     }
 
-                  if (time_stepping_method ==
+                  if (this->time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     {
                       cell_rhs(i) -= (bdf_coefs[0] * present_phase +
@@ -378,7 +375,7 @@ FreeSurface<dim>::assemble_system(
                                          bdf_coefs[2] * p2_phase_values[q];
                     }
 
-                  if (time_stepping_method ==
+                  if (this->time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     {
                       cell_rhs(i) -= (bdf_coefs[0] * present_phase +

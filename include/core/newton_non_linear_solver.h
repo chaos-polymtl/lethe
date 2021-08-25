@@ -47,17 +47,11 @@ public:
   /**
    * @brief Solve the non-linear system of equation.
    *
-   * @param time_stepping_method Time stepping method being used. This is
-   * required since the jacobian of the matrix is going to depend on the method
-   * used
-   *
    * @param is_initial_step Boolean variable that controls which constraints are
    * going to be applied to the equations
    */
   void
-  solve(const Parameters::SimulationControl::TimeSteppingMethod
-                   time_stepping_method,
-        const bool is_initial_step) override;
+  solve(const bool is_initial_step) override;
 };
 
 template <typename VectorType>
@@ -69,9 +63,7 @@ NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step)
+NewtonNonLinearSolver<VectorType>::solve(  const bool                                              is_initial_step)
 {
   double       current_res;
   double       last_res;
@@ -90,8 +82,8 @@ NewtonNonLinearSolver<VectorType>::solve(
     {
       evaluation_point = present_solution;
 
-      solver->assemble_system_matrix(time_stepping_method);
-      solver->assemble_system_rhs(time_stepping_method);
+      solver->assemble_system_matrix();
+      solver->assemble_system_rhs();
 
       if (outer_iteration == 0)
         {
@@ -117,7 +109,7 @@ NewtonNonLinearSolver<VectorType>::solve(
           local_evaluation_point.add(alpha, newton_update);
           solver->apply_constraints();
           evaluation_point = local_evaluation_point;
-          solver->assemble_system_rhs(time_stepping_method);
+          solver->assemble_system_rhs();
 
           auto &system_rhs = solver->get_system_rhs();
           current_res      = system_rhs.l2_norm();

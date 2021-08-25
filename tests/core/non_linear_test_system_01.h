@@ -60,8 +60,7 @@ public:
 
   // Assembling Jacobian Matrix
   virtual void
-  assemble_system_matrix(const Parameters::SimulationControl::TimeSteppingMethod
-                         /*time_stepping_method*/) override
+  assemble_system_matrix() override
   {
     system_matrix.reinit(2);
     // System
@@ -86,8 +85,7 @@ public:
   }
 
   virtual void
-  assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                      /*time_stepping_method*/) override
+  assemble_system_rhs() override
   {
     double x_0 = evaluation_point[0];
     double x_1 = evaluation_point[1];

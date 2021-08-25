@@ -111,53 +111,40 @@ public:
 
   /**
    * @brief Call for the assembly of the matrix
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
-  assemble_system_matrix(const Parameters::SimulationControl::TimeSteppingMethod
-                           time_stepping_method)
+  assemble_system_matrix()
   {
-    assemble_matrix_and_rhs(time_stepping_method);
+    assemble_matrix_and_rhs();
   }
 
   /**
    * @brief Call for the assembly of the right-hand side
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
-  assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method)
+  assemble_system_rhs()
   {
-    assemble_rhs(time_stepping_method);
+    assemble_rhs();
   }
 
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
    *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   *
    * @deprecated This function is to be deprecated when the new assembly mechanism
    * is integrated to this solver
    */
   void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method);
+  assemble_matrix_and_rhs();
 
   /**
    * @brief Call for the assembly of the right-hand side
    *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
-   *
    * @deprecated This function is to be deprecated when the new assembly mechanism
    * is integrated to this solver
    */
   void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+  assemble_rhs();
 
   /**
    * @brief Attach the solution vector to the DataOut provided. This function
@@ -300,8 +287,7 @@ public:
 private:
   template <bool assemble_matrix>
   void
-  assemble_system(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method);
+  assemble_system();
 
   MultiphysicsInterface<dim> *     multiphysics;
   const SimulationParameters<dim> &simulation_parameters;

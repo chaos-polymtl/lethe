@@ -47,18 +47,11 @@ public:
 
   /**
    * @brief Solve the non-linear system of equation.
-   *
-   * @param time_stepping_method Time stepping method being used. This is
-   * required since the jacobian of the matrix is going to depend on the method
-   * used
-   *
    * @param is_initial_step Boolean variable that controls which constraints are
    * going to be applied to the equations
    */
   void
-  solve(const Parameters::SimulationControl::TimeSteppingMethod
-                   time_stepping_method,
-        const bool is_initial_step) override;
+  solve(const bool is_initial_step) override;
 };
 
 template <typename VectorType>
@@ -70,9 +63,7 @@ KinsolNewtonNonLinearSolver<VectorType>::KinsolNewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-KinsolNewtonNonLinearSolver<VectorType>::solve(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-  const bool                                              is_initial_step)
+KinsolNewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
 #ifdef DEAL_II_WITH_SUNDIALS
   bool first_step = is_initial_step;
@@ -120,7 +111,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
     solver->pcout << "Computing residual vector..." << std::endl;
     evaluation_point = evaluation_point_for_kinsol;
     solver->apply_constraints();
-    solver->assemble_system_rhs(time_stepping_method);
+    solver->assemble_system_rhs();
     auto &current_residual = solver->get_system_rhs();
     residual               = current_residual;
     solver->pcout << "      -Residual: " << residual.l2_norm() << std::endl;
@@ -132,7 +123,7 @@ KinsolNewtonNonLinearSolver<VectorType>::solve(
         const VectorType & /*current_f*/) {
       solver->pcout << "Computing jacobian matrix..." << std::endl;
       evaluation_point = present_solution_for_kinsol;
-      solver->assemble_system_matrix(time_stepping_method);
+      solver->assemble_system_matrix();
       return 0;
     };
 

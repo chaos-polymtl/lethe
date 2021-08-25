@@ -59,9 +59,7 @@ public:
    * going to be applied to the equations
    */
   virtual void
-  solve(const Parameters::SimulationControl::TimeSteppingMethod
-                   time_stepping_method,
-        const bool is_initial_step) = 0;
+  solve(const bool is_initial_step) = 0;
 
 protected:
   PhysicsSolver<VectorType> * physics_solver;

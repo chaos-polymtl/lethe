@@ -205,32 +205,24 @@ protected:
 
   /**
    * @brief Call for the assembly of the matrix
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
-  assemble_system_matrix(const Parameters::SimulationControl::TimeSteppingMethod
-                           time_stepping_method) override
+  assemble_system_matrix() override
   {
-    assemble_matrix_and_rhs(time_stepping_method);
+    assemble_matrix_and_rhs();
   }
 
   /**
    * @brief Call for the assembly of the right-hand side
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
-  assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) override
+  assemble_system_rhs() override
   {
-    assemble_rhs(time_stepping_method);
+    assemble_rhs();
   }
 
   /**
    * @brief Call for the assembly of the matrix and the right hand side
-   *
-   * @param time_stepping_method The time-stepping method used for the assembly
    *
    * @deprecated This function is to be deprecated when the new assembly mechanism
    * is integrated to this solver
@@ -258,8 +250,6 @@ protected:
 
   /**
    * @brief Call for the assembly of the right hand side
-   *
-   * @param time_stepping_method The time-stepping method used for the assembly
    *
    * @deprecated This function is to be deprecated when the new assembly mechanism
    * is integrated to this solver

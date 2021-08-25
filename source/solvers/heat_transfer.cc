@@ -22,27 +22,24 @@
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+HeatTransfer<dim>::assemble_matrix_and_rhs()
 {
-  assemble_system<true>(time_stepping_method);
+  assemble_system<true>();
 }
 
 
 template <int dim>
 void
-HeatTransfer<dim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+HeatTransfer<dim>::assemble_rhs()
 {
-  assemble_system<false>(time_stepping_method);
+  assemble_system<false>();
 }
 
 
 template <int dim>
 template <bool assemble_matrix>
 void
-HeatTransfer<dim>::assemble_system(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+HeatTransfer<dim>::assemble_system()
 {
   auto &physical_properties = this->simulation_parameters.physical_properties;
 
@@ -77,23 +74,23 @@ HeatTransfer<dim>::assemble_system(
 
   Vector<double> bdf_coefs;
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-      time_stepping_method ==
+          this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
     bdf_coefs = bdf_coefficients(2, time_steps_vector);
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
     bdf_coefs = bdf_coefficients(3, time_steps_vector);
 
-  if (time_stepping_method ==
+  if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-      time_stepping_method ==
+          this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
     {
       throw std::runtime_error(
@@ -251,7 +248,7 @@ HeatTransfer<dim>::assemble_system(
 
           // Gather the previous time steps for heat transfer depending on
           // the number of stages of the time integration method
-          if (time_stepping_method !=
+          if (this->time_stepping_method !=
               Parameters::SimulationControl::TimeSteppingMethod::steady)
             {
               fe_values_ht.get_function_values(previous_solutions[0],
@@ -261,7 +258,7 @@ HeatTransfer<dim>::assemble_system(
             }
 
           if (time_stepping_method_uses_two_previous_solutions(
-                time_stepping_method))
+                  this->time_stepping_method))
             {
               fe_values_ht.get_function_values(previous_solutions[1],
                                                p2_temperature_values);
@@ -271,7 +268,7 @@ HeatTransfer<dim>::assemble_system(
             }
 
           if (time_stepping_method_uses_three_previous_solutions(
-                time_stepping_method))
+                  this->time_stepping_method))
             {
               fe_values_ht.get_function_values(previous_solutions[2],
                                                p3_temperature_values);
@@ -333,7 +330,7 @@ HeatTransfer<dim>::assemble_system(
               // steady or unsteady. In the unsteady case it includes the value
               // of the time-step
               const double tau =
-                is_steady(time_stepping_method) ?
+                is_steady(this->time_stepping_method) ?
                   1. / std::sqrt(std::pow(2. * rho_cp * u_mag / h, 2) +
                                  9 * std::pow(4 * alpha / (h * h), 2)) :
                   1. / std::sqrt(std::pow(sdt, 2) +
@@ -386,7 +383,7 @@ HeatTransfer<dim>::assemble_system(
                             thermal_conductivity * laplacian_phi_T_j;
 
                           // Mass matrix for transient simulation
-                          if (is_bdf(time_stepping_method))
+                          if (is_bdf(this->time_stepping_method))
                             {
                               cell_matrix(i, j) +=
                                 rho_cp * phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
@@ -436,9 +433,9 @@ HeatTransfer<dim>::assemble_system(
 
 
                   // Residual associated with BDF schemes
-                  if (time_stepping_method == Parameters::SimulationControl::
+                  if (this->time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::bdf1 ||
-                      time_stepping_method == Parameters::SimulationControl::
+                          this->time_stepping_method == Parameters::SimulationControl::
                                                 TimeSteppingMethod::steady_bdf)
                     {
                       cell_rhs(i) -=
@@ -461,7 +458,7 @@ HeatTransfer<dim>::assemble_system(
                         }
                     }
 
-                  if (time_stepping_method ==
+                  if (this->time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf2)
                     {
                       cell_rhs(i) -=
@@ -487,7 +484,7 @@ HeatTransfer<dim>::assemble_system(
                         }
                     }
 
-                  if (time_stepping_method ==
+                  if (this->time_stepping_method ==
                       Parameters::SimulationControl::TimeSteppingMethod::bdf3)
                     {
                       cell_rhs(i) -=

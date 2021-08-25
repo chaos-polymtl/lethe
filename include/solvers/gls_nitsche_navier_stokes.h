@@ -93,26 +93,20 @@ private:
 
   /**
    * @brief Call for the assembly of the matrix
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
-  assemble_system_matrix(const Parameters::SimulationControl::TimeSteppingMethod
-                           time_stepping_method) override
+  assemble_system_matrix() override
   {
-    assemble_matrix_and_rhs(time_stepping_method);
+    assemble_matrix_and_rhs();
   }
 
   /**
    * @brief Call for the assembly of the right-hand side
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
-  assemble_system_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                        time_stepping_method) override
+  assemble_system_rhs() override
   {
-    assemble_rhs(time_stepping_method);
+    assemble_rhs();
   }
 
   /**
@@ -122,9 +116,7 @@ private:
    * is integrated to this solver
    */
   void
-  assemble_matrix_and_rhs(
-    const Parameters::SimulationControl::TimeSteppingMethod
-      time_stepping_method);
+  assemble_matrix_and_rhs();
 
   /**
    * @brief Same as in gls_navier_stokes, but calls assemble_nitsche_restriction() when rhs is assembled
@@ -133,8 +125,7 @@ private:
    * is integrated to this solver
    */
   void
-  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-                 time_stepping_method);
+  assemble_rhs();
 
   /**
    * @brief Outputs a vtu file for each output frequency of the particles
