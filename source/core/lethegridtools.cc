@@ -6,7 +6,6 @@
 #include <deal.II/grid/manifold.h>
 #include <deal.II/grid/manifold_lib.h>
 #include <deal.II/grid/grid_tools.h>
-#include <deal.II/grid/grid_tools_cache.h>
 #include <deal.II/fe/fe_q.h>
 #include <cmath>
 
@@ -121,7 +120,7 @@ LetheGridTools::find_cell_around_point_with_tree(const DoFHandler<dim> &dof_hand
 
             if (cell_found == false)
             {
-                std::cout << "cell not found" << point << std::endl;
+                std::cout << "Cell not found around " << point << std::endl;
                 break;
             }
 
@@ -216,7 +215,6 @@ template <int dim>
 bool
 LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell_iterator &cell, const TriaIterator<CellAccessor<1, dim>> &cell_edge){
 
-    std::cout<<" before cell pierced by edge   n cell index "<< cell->global_active_cell_index() <<std::endl;
     std::vector<Point<dim>> manifold_points(GeometryInfo<1>::vertices_per_cell);
 
     for (unsigned int i = 0; i < GeometryInfo<1>::vertices_per_cell; ++i) {
@@ -245,7 +243,6 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
             Point<dim> projected_point= GridTools::project_to_object(cell_edge,local_face->vertex(i));
 
             if (cell_edge->point_inside(projected_point) && cell->point_inside(projected_point)) {
-                std::cout<<"a1 ok "<<std::endl;
                 condition_a1 = true;
             }
             if(( local_face->vertex(i) - projected_point).norm()!=0)
@@ -287,16 +284,13 @@ LetheGridTools::cell_pierced_by_edge(const typename DoFHandler<dim>::active_cell
                     s+=std::acos( std::clamp(dot, -1.0, 1.0));
                 }
                 if(s<PI){
-                    std::cout<<"a2 not ok "<<std::endl;
                     condition_a2 = false;
                     break;
                 }
             }
         }
         if(condition_a2)
-            std::cout<<"a2 ok "<<std::endl;
         if (condition_a1 && condition_a2) {
-            std::cout<<"a1 a2 are true"<<std::endl;
             return true;
         }
 
@@ -360,7 +354,6 @@ LetheGridTools::grad_dist_based_on_reference_point(const typename DoFHandler<str
                                                 trial_point, xi_dx);
         F_k[i] = (d1-d0)/(2*dx);
     }
-    std::cout<<" aa "<<F_k<<std::endl;
     return  F_k;
 
 }
@@ -465,7 +458,6 @@ LetheGridTools::project_to_d_linear_object(const typename DoFHandler<structdim,s
                    GeometryInfo<structdim>::d_linear_shape_function(xi, i);
 
         if (delta_xi.norm() < 1e-7){
-            std::cout<<"local_point" <<xi<<std::endl;
             break;
         }
     }
@@ -713,7 +705,6 @@ LetheGridTools::cell_cut_by_flat(
         const typename DoFHandler<dim>::active_cell_iterator &cell,
         const typename DoFHandler<dim-1, dim>::active_cell_iterator &cell_flat) {
     std::vector<Point<dim>> manifold_points(GeometryInfo<dim-1>::vertices_per_cell);
-    std::cout<<" before check B1   n cell index "<< cell->global_active_cell_index() <<std::endl;
     for (unsigned int i = 0; i < GeometryInfo<dim-1>::vertices_per_cell; ++i) {
         manifold_points[i] = cell_flat->vertex(i);
     }
@@ -765,7 +756,6 @@ LetheGridTools::cell_cut_by_flat(
 
 
         if(projected_point.first.second && cell->point_inside(projected_point.first.first)){
-            std::cout<<" condition B1 ok "<<projected_point.first.first<<std::endl;
             condition_B1 = true;
         }
 
@@ -774,19 +764,12 @@ LetheGridTools::cell_cut_by_flat(
         // Check if we switched to the other side
         // of the flat during this iteration
         double scalar_prod = scalar_product(normal, projected_point.second);
-        std::cout<<" projected_point"<<projected_point.first.first<<std::endl;
-        std::cout<<" cell->vertex(i)"<<cell->vertex(i)<<std::endl;
-        std::cout<<" scalar_prod "<<scalar_prod<<std::endl;
-
-        std::cout<<"normal"<<normal<<std::endl;
 
         if (scalar_prod *last_scalar_prod < 0) {
             condition_B2 = true;
-            std::cout<<" condition B2 ok "<<scalar_prod<<std::endl;
         }
         last_scalar_prod = scalar_prod ;
         if (condition_B1 && condition_B2) {
-            std::cout<<" condition B2 and B1 ok "<<scalar_prod<<std::endl;
             return true;
         }
     }
@@ -859,7 +842,6 @@ LetheGridTools::find_cells_around_flat_cell(
       size_t n_previous_intersected = 0;
 
       while (intersected_cells.size() > n_previous_intersected) {
-          //std::cout<<"current number of intersected cell" << intersected_cells.size()<<std::endl;
           n_previous_intersected=intersected_cells.size();
           // Find all cells around previous candidate cells
           for (const typename DoFHandler<dim>::active_cell_iterator &cell_iter :
