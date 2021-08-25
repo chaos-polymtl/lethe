@@ -18,11 +18,6 @@
 * Polytechnique Montreal, 2020-
 */
 
-/**
- * This class allows to calculate the photon count from a particle received by
- * a detector with the Monte Carlo method.
- */
-
 #ifndef lethe_rpt_h
 #define lethe_rpt_h
 
@@ -32,7 +27,6 @@
  * them in .csv file if enable.
  */
 
-// deal.II includes
 #include <deal.II/base/point.h>
 #include <deal.II/base/tensor.h>
 #include <deal.II/base/utilities.h>
@@ -59,30 +53,23 @@ public:
   RPT(RPTCalculatingParameters &RPTparameters);
 
   /**
-   * @brief Calculate photon count for all particle positions and detector
+   * @brief Set up data assignation & call photon counts calculation
+   * for all particle positions and detector
    */
   void
-  calculate();
+  setup_and_calculate();
 
   /**
-   * @brief Read text file for particle positions and assign them to particle
-   * objects
+   * @brief Export position, detector id and count results in .csv or .dat
    */
   void
-  assign_particle_positions();
+  export_data();
 
   /**
-   * @brief Read text file for detector positions and assign them to detector
-   * objects
+   * @brief Calculate photon counts for all particle positions and detector
    */
   void
-  assign_detector_positions();
-
-  /**
-   * @brief Read text file for experimental count data and store it in a vector
-   */
-  std::vector<double>
-  extract_experimental_counts();
+  calculate_counts();
 
   /**
    * @brief Calculate cost function for calculated and measured counts
@@ -91,12 +78,12 @@ public:
   calculate_cost_function(std::vector<double> &measured_counts,
                           std::vector<double> &calculated_counts);
 
-
   RPTCalculatingParameters rpt_parameters;
 
 private:
   std::vector<RadioParticle<dim>> particle_positions;
   std::vector<Detector<dim>>      detectors;
+  std::vector<double>             calculated_counts;
 };
 
 #endif

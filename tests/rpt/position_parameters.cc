@@ -69,7 +69,7 @@ test()
   const unsigned int n_detector = 2;
   Detector<3>        detector_positions[n_detector]{detector0, detector1};
 
-  RPTCalculatingParameters rpt_parameters;
+  Parameters::RPTParameters rpt_parameters;
 
   for (unsigned int i_particle = 0; i_particle < n_particle; i_particle++)
     {
