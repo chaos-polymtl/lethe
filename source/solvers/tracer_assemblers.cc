@@ -25,8 +25,10 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+
   // Copy data elements
-  auto &local_matrix = copy_data.local_matrix;
+  auto &strong_jacobian_vec = copy_data.strong_jacobian;
+  auto &local_matrix        = copy_data.local_matrix;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -92,15 +94,15 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
                                      phi_T_i * velocity * grad_phi_T_j) *
                                     JxW;
 
-              auto strong_jacobian =
+              strong_jacobian_vec[q][j] +=
                 velocity * grad_phi_T_j - diffusivity * laplacian_phi_T_j;
 
               if (DCDD)
-                strong_jacobian += -vdcdd * laplacian_phi_T_j;
+                strong_jacobian_vec[q][j] += -vdcdd * laplacian_phi_T_j;
 
 
-              local_matrix(i, j) +=
-                tau * strong_jacobian * (grad_phi_T_i * velocity) * JxW;
+              local_matrix(i, j) += tau * strong_jacobian_vec[q][j] *
+                                    (grad_phi_T_i * velocity) * JxW;
 
               if (DCDD)
                 {
@@ -140,14 +142,16 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
   const double sdt = 1. / dt;
 
   // Copy data elements
-  auto &local_rhs = copy_data.local_rhs;
+  auto &strong_residual_vec = copy_data.strong_residual;
+  auto &local_rhs           = copy_data.local_rhs;
 
   // assembling local matrix and right hand side
   for (unsigned int q = 0; q < n_q_points; ++q)
     {
       // Gather into local variables the relevant fields
-      const Tensor<1, dim> tracer_gradient = scratch_data.tracer_gradients[q];
-      const Tensor<1, dim> velocity        = scratch_data.velocity_values[q];
+      const Tensor<1, dim> tracer_gradient  = scratch_data.tracer_gradients[q];
+      const double         tracer_laplacian = scratch_data.tracer_laplacians[q];
+      const Tensor<1, dim> velocity         = scratch_data.velocity_values[q];
 
       // Store JxW in local variable for faster access;
       const double JxW = JxW_vec[q];
@@ -188,6 +192,30 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
         {
           const auto phi_T_i      = scratch_data.phi[i];
           const auto grad_phi_T_i = scratch_data.grad_phi[i];
+
+          // rhs for : - D * laplacian T +  u * grad T - f=0
+          local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient +
+                           phi_T_i * velocity * tracer_gradient -
+                           scratch_data.source[q] * phi_T_i) *
+                          JxW;
+
+          // Calculate the strong residual for GLS stabilization
+          strong_residual_vec[q] =
+            velocity * tracer_gradient - diffusivity * tracer_laplacian;
+
+          if (DCDD)
+            strong_residual_vec[q] += -vdcdd * tracer_laplacian;
+
+          local_rhs(i) -=
+            tau * (strong_residual_vec[q] * (grad_phi_T_i * velocity)) * JxW;
+
+          if (DCDD)
+            {
+              local_rhs(i) +=
+                -vdcdd *
+                scalar_product(tracer_gradient, dcdd_factor * grad_phi_T_i) *
+                JxW;
+            }
         }
     } // end loop on quadrature points
 }
