@@ -99,7 +99,7 @@ test()
     {
         cells_cut[i]->set_subdomain_id(1);
         subdomain(cells_cut[i]->global_active_cell_index()) =cells_cut[i]->global_active_cell_index();
-        std::cout<< "The cell with ID : "<< cells_cut[i]->global_active_cell_index()<<" is cut "<< std::endl;
+        deallog << "The cell with ID : "<< cells_cut[i]->global_active_cell_index()<<" is cut "<< std::endl;
     }
 
     // Printing the final position for all the vertices
