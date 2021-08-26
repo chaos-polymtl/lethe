@@ -16,6 +16,8 @@
  * Scratch data for the tracer auxiliary physics
  */
 
+#include <core/multiphysics.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -73,10 +75,10 @@ public:
    * @param mapping The mapping of the domain in which the Navier-Stokes equations are solved
    *
    */
-  TracerScratchData(const FE_Q<dim> &      fe_tracer,
-                    const Quadrature<dim> &quadrature,
-                    const Mapping<dim> &   mapping,
-                    const FESystem<dim> &  fe_navier_stokes)
+  TracerScratchData(const FiniteElement<dim> &fe_tracer,
+                    const Quadrature<dim> &   quadrature,
+                    const Mapping<dim> &      mapping,
+                    const FiniteElement<dim> &fe_navier_stokes)
     : fe_values_tracer(mapping,
                        fe_tracer,
                        quadrature,
@@ -140,10 +142,7 @@ public:
    *
    * @param solution_stages The solution at the intermediary stages (for SDIRK methods)
    *
-   * @param forcing_function The function describing the momentum/mass source term
-   *
-   * @param beta_force The additional force for flow control. TODO : Deprecate this argument and pass it
-   * to the constructor of the assembler
+   * @param source_function The function describing the tracer source term
    *
    */
 
@@ -160,7 +159,7 @@ public:
     quadrature_points = this->fe_values_tracer.get_quadrature_points();
     auto &fe_tracer   = this->fe_values_tracer.get_fe();
 
-    source_function->vector_value_list(quadrature_points, source);
+    source_function->value_list(quadrature_points, source);
 
     if (dim == 2)
       this->cell_size =
@@ -169,7 +168,7 @@ public:
       this->cell_size =
         pow(6 * cell->measure() / M_PI, 1. / 3.) / fe_tracer.degree;
 
-    // Gather velocity (values, gradient and laplacian)
+    // Gather tracer (values, gradient and laplacian)
     this->fe_values_tracer.get_function_values(current_solution,
                                                this->tracer_values);
     this->fe_values_tracer.get_function_gradients(current_solution,
@@ -199,11 +198,25 @@ public:
         for (unsigned int k = 0; k < n_dofs; ++k)
           {
             // Shape function
-            this->phi[q][k] = this->fe_values_tracer[velocities].value(k, q);
-            this->grad_phi[q][k]      = this->fe_values_tracer.gradient(k, q);
-            this->hess_phi[q][k]      = this->fe_values_tracer.hessian(k, q);
+            this->phi[q][k]      = this->fe_values_tracer.shape_value(k, q);
+            this->grad_phi[q][k] = this->fe_values_tracer.shape_grad(k, q);
+            this->hess_phi[q][k] = this->fe_values_tracer.shape_hessian(k, q);
             this->laplacian_phi[q][k] = trace(this->hess_phi[q][k]);
           }
+      }
+  }
+
+  template <typename VectorType>
+  void
+  reinit_velocity(const typename DoFHandler<dim>::active_cell_iterator &cell,
+                  const VectorType &current_solution)
+  {
+    this->fe_values_navier_stokes.reinit(cell);
+
+    for (unsigned int q = 0; q < n_q_points; ++q)
+      {
+        this->fe_values_navier_stokes[velocities].get_function_values(
+          current_solution, velocity_values[q]);
       }
   }
 

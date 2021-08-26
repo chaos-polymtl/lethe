@@ -20,6 +20,9 @@
 #include <solvers/tracer_scratch_data.h>
 
 
+#ifndef lethe_tracer_assemblers_h
+#  define lethe_tracer_assemblers_h
+
 /**
  * @brief A pure virtual class that serves as an interface for all
  * of the assemblers for the Tracer Equation
@@ -105,3 +108,5 @@ public:
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
 };
+
+#endif

@@ -39,8 +39,7 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
       const double JxW = JxW_vec[q];
 
       // Shock capturing viscosity term
-      const double order =
-        this->simulation_parameters.fem_parameters.tracer_order;
+      const double order = scratch_data.fe_values_tracer.get_fe().degree;
 
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
                            pow(tracer_gradient.norm() * h, order);
@@ -77,14 +76,14 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i      = scratch_data.phi[i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[i];
+          const auto phi_T_i      = scratch_data.phi[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const auto phi_T_j           = scratch_data.phi[j];
-              const auto grad_phi_T_j      = scratch_data.grad_phi[j];
-              const auto laplacian_phi_T_j = scratch_data.laplacian_phi[j];
+              const double         phi_T_j      = scratch_data.phi[q][j];
+              const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
+              const double laplacian_phi_T_j = scratch_data.laplacian_phi[q][j];
 
 
               // Weak form : - D * laplacian T +  u * gradT - f=0
@@ -153,8 +152,8 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
       const double JxW = JxW_vec[q];
 
       // Shock capturing viscosity term
-      const double order =
-        this->simulation_parameters.fem_parameters.tracer_order;
+      const double order = scratch_data.fe_values_tracer.get_fe().degree;
+
 
       const double vdcdd = (0.5 * h) * (velocity.norm() * velocity.norm()) *
                            pow(tracer_gradient.norm() * h, order);
@@ -186,8 +185,11 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-          const auto phi_T_i      = scratch_data.phi[i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[i];
+          const auto phi_T_i      = scratch_data.phi[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
         }
     } // end loop on quadrature points
 }
+
+template class TracerAssemblerCore<2>;
+template class TracerAssemblerCore<3>;
