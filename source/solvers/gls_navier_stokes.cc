@@ -347,6 +347,17 @@ template <int dim>
 void
 GLSNavierStokesSolver<dim>::assemble_system_matrix()
 {
+  this->GLSNavierStokesSolver<
+    dim>::assemble_system_matrix_without_preconditioner();
+
+  // Assemble the preconditioner
+  this->setup_preconditioner();
+}
+
+template <int dim>
+void
+GLSNavierStokesSolver<dim>::assemble_system_matrix_without_preconditioner()
+{
   TimerOutput::Scope t(this->computing_timer, "Assemble matrix");
   this->simulation_control->set_assembly_method(this->time_stepping_method);
 
@@ -377,12 +388,7 @@ GLSNavierStokesSolver<dim>::assemble_system_matrix()
     StabilizedMethodsTensorCopyData<dim>(this->fe->n_dofs_per_cell(),
                                          this->cell_quadrature->size()));
   system_matrix.compress(VectorOperation::add);
-
-  // Assemble the preconditioner
-  this->setup_preconditioner();
 }
-
-
 
 template <int dim>
 void

@@ -76,7 +76,7 @@ HeatTransfer<dim>::assemble_system()
 
   if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-          this->time_stepping_method ==
+      this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
@@ -90,7 +90,7 @@ HeatTransfer<dim>::assemble_system()
 
   if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-          this->time_stepping_method ==
+      this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
     {
       throw std::runtime_error(
@@ -258,7 +258,7 @@ HeatTransfer<dim>::assemble_system()
             }
 
           if (time_stepping_method_uses_two_previous_solutions(
-                  this->time_stepping_method))
+                this->time_stepping_method))
             {
               fe_values_ht.get_function_values(previous_solutions[1],
                                                p2_temperature_values);
@@ -268,7 +268,7 @@ HeatTransfer<dim>::assemble_system()
             }
 
           if (time_stepping_method_uses_three_previous_solutions(
-                  this->time_stepping_method))
+                this->time_stepping_method))
             {
               fe_values_ht.get_function_values(previous_solutions[2],
                                                p3_temperature_values);
@@ -433,10 +433,12 @@ HeatTransfer<dim>::assemble_system()
 
 
                   // Residual associated with BDF schemes
-                  if (this->time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::bdf1 ||
-                          this->time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::steady_bdf)
+                  if (this->time_stepping_method ==
+                        Parameters::SimulationControl::TimeSteppingMethod::
+                          bdf1 ||
+                      this->time_stepping_method ==
+                        Parameters::SimulationControl::TimeSteppingMethod::
+                          steady_bdf)
                     {
                       cell_rhs(i) -=
                         rho_cp *

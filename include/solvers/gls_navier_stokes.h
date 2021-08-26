@@ -90,6 +90,12 @@ protected:
   assemble_system_matrix() override;
 
   /**
+   *  @brief Assembles the matrix associated with the solver without computing the preconditioner
+   */
+  virtual void
+  assemble_system_matrix_without_preconditioner();
+
+  /**
    * @brief Assemble the rhs associated with the solver
    */
   virtual void

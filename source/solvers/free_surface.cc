@@ -63,7 +63,7 @@ FreeSurface<dim>::assemble_system()
 
   if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-          this->time_stepping_method ==
+      this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
     bdf_coefs = bdf_coefficients(1, time_steps_vector);
 
@@ -77,7 +77,7 @@ FreeSurface<dim>::assemble_system()
 
   if (this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-          this->time_stepping_method ==
+      this->time_stepping_method ==
         Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
     {
       throw std::runtime_error(
@@ -193,14 +193,14 @@ FreeSurface<dim>::assemble_system()
             }
 
           if (time_stepping_method_uses_two_previous_solutions(
-                  this->time_stepping_method))
+                this->time_stepping_method))
             {
               fe_values_fs.get_function_values(previous_solutions[1],
                                                p2_phase_values);
             }
 
           if (time_stepping_method_uses_three_previous_solutions(
-                  this->time_stepping_method))
+                this->time_stepping_method))
             {
               fe_values_fs.get_function_values(previous_solutions[2],
                                                p3_phase_values);
@@ -349,10 +349,12 @@ FreeSurface<dim>::assemble_system()
                     strong_residual += -vdcdd * phase_laplacians[q];
 
                   // Residual associated with BDF schemes
-                  if (this->time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::bdf1 ||
-                          this->time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::steady_bdf)
+                  if (this->time_stepping_method ==
+                        Parameters::SimulationControl::TimeSteppingMethod::
+                          bdf1 ||
+                      this->time_stepping_method ==
+                        Parameters::SimulationControl::TimeSteppingMethod::
+                          steady_bdf)
                     {
                       cell_rhs(i) -= (bdf_coefs[0] * present_phase +
                                       bdf_coefs[1] * p1_phase_values[q]) *

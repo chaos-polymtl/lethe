@@ -61,8 +61,6 @@ public:
 
   /**
    * @brief Call for the assembly of right-hand side
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
    */
   virtual void
   assemble_system_rhs() = 0;
@@ -82,8 +80,10 @@ public:
                       const bool renewed_matrix = true) = 0;
 
   void
-  solve_non_linear_system(const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method,
-          const bool first_iteration);
+  solve_non_linear_system(
+    const Parameters::SimulationControl::TimeSteppingMethod
+               time_stepping_method,
+    const bool first_iteration);
 
   virtual void
   apply_constraints()
@@ -114,7 +114,7 @@ public:
 
   // attributes
   // TODO std::unique or std::shared pointer
-  ConditionalOStream pcout;
+  ConditionalOStream                                pcout;
   Parameters::SimulationControl::TimeSteppingMethod time_stepping_method;
 
 private:
@@ -152,7 +152,7 @@ PhysicsSolver<VectorType>::solve_non_linear_system(
   // BB IMPORTANT
   // for (unsigned int iphys = 0; iphys < 1; iphys++)
   {
-      this->time_stepping_method = time_stepping_method;
+    this->time_stepping_method = time_stepping_method;
     this->non_linear_solver->solve(first_iteration);
   }
 }

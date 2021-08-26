@@ -790,7 +790,7 @@ template <int dim, int spacedim>
 void
 GLSNitscheNavierStokesSolver<dim, spacedim>::assemble_matrix_and_rhs()
 {
-  this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix();
+  this->GLSNavierStokesSolver<spacedim>::assemble_system_matrix_without_preconditioner();
 
   this->GLSNavierStokesSolver<spacedim>::assemble_system_rhs();
 

@@ -63,7 +63,7 @@ NewtonNonLinearSolver<VectorType>::NewtonNonLinearSolver(
 
 template <typename VectorType>
 void
-NewtonNonLinearSolver<VectorType>::solve(  const bool                                              is_initial_step)
+NewtonNonLinearSolver<VectorType>::solve(const bool is_initial_step)
 {
   double       current_res;
   double       last_res;
