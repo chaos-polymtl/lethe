@@ -213,11 +213,8 @@ public:
   {
     this->fe_values_navier_stokes.reinit(cell);
 
-    for (unsigned int q = 0; q < n_q_points; ++q)
-      {
-        this->fe_values_navier_stokes[velocities].get_function_values(
-          current_solution, velocity_values[q]);
-      }
+    this->fe_values_navier_stokes[velocities].get_function_values(
+      current_solution, velocity_values);
   }
 
 

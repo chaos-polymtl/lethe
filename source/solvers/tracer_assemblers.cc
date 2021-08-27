@@ -83,7 +83,6 @@ TracerAssemblerCore<dim>::assemble_matrix(TracerScratchData<dim> &scratch_data,
 
           for (unsigned int j = 0; j < n_dofs; ++j)
             {
-              const double         phi_T_j      = scratch_data.phi[q][j];
               const Tensor<1, dim> grad_phi_T_j = scratch_data.grad_phi[q][j];
               const double laplacian_phi_T_j = scratch_data.laplacian_phi[q][j];
 
@@ -189,9 +188,8 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
 
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
-<<<<<<< HEAD
-          const auto phi_T_i      = scratch_data.phi[i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[i];
+          const auto phi_T_i      = scratch_data.phi[q][i];
+          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
 
           // rhs for : - D * laplacian T +  u * grad T - f=0
           local_rhs(i) -= (diffusivity * grad_phi_T_i * tracer_gradient +
@@ -216,10 +214,6 @@ TracerAssemblerCore<dim>::assemble_rhs(TracerScratchData<dim> &   scratch_data,
                 scalar_product(tracer_gradient, dcdd_factor * grad_phi_T_i) *
                 JxW;
             }
-=======
-          const auto phi_T_i      = scratch_data.phi[q][i];
-          const auto grad_phi_T_i = scratch_data.grad_phi[q][i];
->>>>>>> c24873e8621a62256682289904d8ea944138acc3
         }
     } // end loop on quadrature points
 }

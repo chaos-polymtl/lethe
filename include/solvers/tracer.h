@@ -108,8 +108,8 @@ public:
   /**
    * @brief Assemble the rhs associated with the solver
    */
-  // void
-  // assemble_system_rhs();
+  void
+  assemble_system_rhs();
 
 
   /**
@@ -147,11 +147,11 @@ public:
    * @param copy_data The copy data which is used to store
    * the results of the assembly over a cell
    */
-  // virtual void
-  // assemble_local_system_rhs(
-  //  const typename DoFHandler<dim>::active_cell_iterator &cell,
-  //  TracerScratchData<dim> &                              scratch_data,
-  //  StabilizedMethodsCopyData &                           copy_data);
+  virtual void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    TracerScratchData<dim> &                              scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
 
   /**
    * @brief sets up the vector of assembler functions
@@ -172,8 +172,8 @@ public:
    * @brief Copy local cell rhs information to global rhs
    */
 
-  //  virtual void
-  //  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
+  virtual void
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
