@@ -4,7 +4,10 @@
 #include <core/utilities.h>
 
 #include <solvers/tracer.h>
+#include <solvers/tracer_assemblers.h>
 #include <solvers/tracer_scratch_data.h>
+
+#include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -24,6 +27,7 @@
 #include <deal.II/numerics/vector_tools.h>
 
 
+
 template <int dim>
 void
 Tracer<dim>::assemble_matrix_and_rhs(
@@ -40,6 +44,144 @@ Tracer<dim>::assemble_rhs(
 {
   assemble_system<false>(time_stepping_method);
 }
+
+
+template <int dim>
+void
+Tracer<dim>::setup_assemblers()
+{
+  this->assemblers.clear();
+  // Core assembler
+  this->assemblers.push_back(std::make_shared<TracerAssemblerCore<dim>>(
+    this->simulation_control, this->simulation_parameters.physical_properties));
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_system_matrix()
+{
+  this->system_matrix = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = TracerScratchData<dim>(*this->fe,
+                                             *this->cell_quadrature,
+                                             *this->mapping,
+                                             dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &Tracer::assemble_local_system_matrix,
+                  &Tracer::copy_local_matrix_to_global_matrix,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  system_matrix.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_local_system_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  TracerScratchData<dim> &                              scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  auto &source_term = simulation_parameters.source_term->tracer_source;
+  source_term.set_time(simulation_control->get_current_time());
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
+  //  if (this->simulation_parameters.multiphysics.free_surface)
+  //    {
+  //      const DoFHandler<dim> *dof_handler_fs =
+  //        this->multiphysics->get_dof_handler(PhysicsID::free_surface);
+  //      typename DoFHandler<dim>::active_cell_iterator phase_cell(
+  //        &(*(this->triangulation)),
+  //        cell->level(),
+  //        cell->index(),
+  //        dof_handler_fs);
+
+  //      std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  //      previous_solutions.push_back(
+  //        *this->multiphysics->get_solution_m1(PhysicsID::free_surface));
+
+  //      scratch_data.reinit_free_surface(
+  //        phase_cell,
+  //        *this->multiphysics->get_solution(PhysicsID::free_surface),
+  //        previous_solutions,
+  //        std::vector<TrilinosWrappers::MPI::Vector>());
+  //    }
+
+  //  copy_data.reset();
+
+
+  //  for (auto &assembler : this->assemblers)
+  //    {
+  //      assembler->assemble_matrix(scratch_data, copy_data);
+  //    }
+
+
+  //  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+Tracer<dim>::copy_local_matrix_to_global_matrix(
+  const StabilizedMethodsCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                              copy_data.local_dof_indices,
+                                              system_matrix);
+}
+
+
+// template <int dim>
+// void
+// Tracer<dim>::assemble_system_rhs()
+//{
+//  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+//  this->system_rhs = 0;
+//  setup_assemblers();
+
+//  const DoFHandler<dim> *dof_handler_fluid =
+//    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+//  auto scratch_data = TracerScratchData<dim>(*this->fe,
+//                                             *this->cell_quadrature,
+//                                             *this->mapping,
+//                                             dof_handler_fluid->get_fe());
+
+
+//  WorkStream::run(this->dof_handler.begin_active(),
+//                  this->dof_handler.end(),
+//                  *this,
+//                  &Tracer::assemble_local_system_rhs,
+//                  &Tracer::copy_local_rhs_to_global_rhs,
+//                  scratch_data,
+//                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+//                                            this->cell_quadrature->size()));
+
+//  this->system_rhs.compress(VectorOperation::add);
+
+//  if (this->simulation_control->is_first_assembly())
+//    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
+//}
+
 
 
 template <int dim>
