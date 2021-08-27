@@ -35,7 +35,6 @@ Tracer<dim>::assemble_matrix_and_rhs(
 {
   assemble_system_matrix();
   assemble_system_rhs();
-  // assemble_system<true>(time_stepping_method);
 }
 
 
@@ -45,8 +44,6 @@ Tracer<dim>::assemble_rhs(
   const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
 {
   assemble_system_rhs();
-
-  // assemble_system<false>(time_stepping_method);
 }
 
 
@@ -55,6 +52,13 @@ void
 Tracer<dim>::setup_assemblers()
 {
   this->assemblers.clear();
+
+  // Time-stepping schemes
+  if (is_bdf(this->simulation_control->get_assembly_method()))
+    {
+      this->assemblers.push_back(
+        std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
+    }
   // Core assembler
   this->assemblers.push_back(std::make_shared<TracerAssemblerCore<dim>>(
     this->simulation_control, this->simulation_parameters.physical_properties));
@@ -115,13 +119,14 @@ Tracer<dim>::assemble_local_system_matrix(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(
-        cell, *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
     }
   else
     {
       scratch_data.reinit_velocity(
-        cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
   copy_data.reset();
 
@@ -175,9 +180,6 @@ Tracer<dim>::assemble_system_rhs()
                                             this->cell_quadrature->size()));
 
   this->system_rhs.compress(VectorOperation::add);
-
-  if (this->simulation_control->is_first_assembly())
-    this->simulation_control->provide_residual(this->system_rhs.l2_norm());
 }
 
 template <int dim>
@@ -208,21 +210,22 @@ Tracer<dim>::assemble_local_system_rhs(
 
   if (multiphysics->fluid_dynamics_is_block())
     {
-      scratch_data.reinit_velocity(
-        cell, *multiphysics->get_block_solution(PhysicsID::fluid_dynamics));
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
     }
   else
     {
       scratch_data.reinit_velocity(
-        cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
     }
+
   copy_data.reset();
 
   for (auto &assembler : this->assemblers)
     {
       assembler->assemble_rhs(scratch_data, copy_data);
     }
-
 
   cell->get_dof_indices(copy_data.local_dof_indices);
 }
@@ -633,8 +636,10 @@ Tracer<dim>::assemble_system(
                                                       local_dof_indices,
                                                       system_matrix,
                                                       system_rhs);
+
         } // end loop active cell
     }
+
   system_matrix.compress(VectorOperation::add);
   system_rhs.compress(VectorOperation::add);
 }
