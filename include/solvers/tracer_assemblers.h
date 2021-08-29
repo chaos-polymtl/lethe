@@ -25,7 +25,7 @@
 
 /**
  * @brief A pure virtual class that serves as an interface for all
- * of the assemblers for the Tracer Equation
+ * of the assemblers for the Tracer equation
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
@@ -111,9 +111,9 @@ public:
 
 /**
  * @brief Class that assembles the transient time arising from BDF time
- * integration for the Navier Stokes equations. For example, if a BDF1 scheme is
+ * integration for the Tracer equations. For example, if a BDF1 scheme is
  * chosen, the following is assembled
- * $$\frac{\mathbf{u}^{t+\Delta t}-\mathbf{u}^{t}{\Delta t}
+ * $$\frac{\mathbf{T}^{t+\Delta t}-\mathbf{T}^{t}{\Delta t}
  *
  * @tparam dim An integer that denotes the number of spatial dimensions
  *
