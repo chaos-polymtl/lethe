@@ -30,6 +30,8 @@
 
 #include <solvers/auxiliary_physics.h>
 #include <solvers/multiphysics_interface.h>
+#include <solvers/tracer_assemblers.h>
+#include <solvers/tracer_scratch_data.h>
 
 #include <deal.II/base/convergence_table.h>
 #include <deal.II/base/quadrature_lib.h>
@@ -95,6 +97,8 @@ public:
               this->dof_handler));
       }
   }
+
+
 
   /**
    * @brief Call for the assembly of the matrix and the right-hand side.
@@ -193,7 +197,7 @@ public:
   get_dof_handler() override
   {
     return dof_handler;
-  };
+  }
 
   /**
    * @brief Sets-up the DofHandler and the degree of freedom associated with the physics.
@@ -262,14 +266,80 @@ public:
 
 private:
   /**
-   * @brief Actual assembly of the matrix and rhs
-   *
-   * @param time_stepping_method Time-Stepping method with which the assembly is called
+   *  @brief Assembles the matrix associated with the solver
    */
-  template <bool assemble_matrix>
   void
-  assemble_system(const Parameters::SimulationControl::TimeSteppingMethod
-                    time_stepping_method);
+  assemble_system_matrix();
+
+  /**
+   * @brief Assemble the rhs associated with the solver
+   */
+  void
+  assemble_system_rhs();
+
+
+  /**
+   * @brief Assemble the local matrix for a given cell.
+   *
+   * This function is used by the WorkStream class to assemble
+   * the system matrix. It is a thread safe function.
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for TracerScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_matrix(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    TracerScratchData<dim> &                              scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief Assemble the local rhs for a given cell
+   *
+   * @param cell The cell for which the local matrix is assembled.
+   *
+   * @param scratch_data The scratch data which is used to store
+   * the calculated finite element information at the gauss point.
+   * See the documentation for TracerScratchData for more
+   * information
+   *
+   * @param copy_data The copy data which is used to store
+   * the results of the assembly over a cell
+   */
+  virtual void
+  assemble_local_system_rhs(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    TracerScratchData<dim> &                              scratch_data,
+    StabilizedMethodsCopyData &                           copy_data);
+
+  /**
+   * @brief sets up the vector of assembler functions
+   */
+  virtual void
+  setup_assemblers();
+
+
+  /**
+   * @brief Copy local cell information to global matrix
+   */
+
+  virtual void
+  copy_local_matrix_to_global_matrix(
+    const StabilizedMethodsCopyData &copy_data);
+
+  /**
+   * @brief Copy local cell rhs information to global rhs
+   */
+
+  virtual void
+  copy_local_rhs_to_global_rhs(const StabilizedMethodsCopyData &copy_data);
 
   /**
    * @brief Calculate tracer statistics : Max, min, average and standard-deviation
@@ -317,6 +387,7 @@ private:
 
   // Previous solutions vectors
   std::vector<TrilinosWrappers::MPI::Vector> previous_solutions;
+  std::vector<TrilinosWrappers::MPI::Vector> solution_stages;
 
   // Solution transfer classes
   parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>
@@ -325,11 +396,11 @@ private:
     parallel::distributed::SolutionTransfer<dim, TrilinosWrappers::MPI::Vector>>
     previous_solutions_transfer;
 
+  // Assemblers for the matrix and rhs
+  std::vector<std::shared_ptr<TracerAssemblerBase<dim>>> assemblers;
+
   // Tracer statistics table
   TableHandler statistics_table;
-
-  // Enable DCDD shock capturing scheme
-  const bool DCDD = true;
 };
 
 

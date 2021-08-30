@@ -4,6 +4,10 @@
 #include <core/utilities.h>
 
 #include <solvers/tracer.h>
+#include <solvers/tracer_assemblers.h>
+#include <solvers/tracer_scratch_data.h>
+
+#include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
 #include <deal.II/dofs/dof_tools.h>
@@ -23,422 +27,223 @@
 #include <deal.II/numerics/vector_tools.h>
 
 
+
 template <int dim>
 void
 Tracer<dim>::assemble_matrix_and_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+  const Parameters::SimulationControl::
+    TimeSteppingMethod /*time_stepping_method*/)
 {
-  assemble_system<true>(time_stepping_method);
+  assemble_system_matrix();
+  assemble_system_rhs();
 }
 
 
 template <int dim>
 void
-Tracer<dim>::assemble_rhs(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+Tracer<dim>::assemble_rhs(const Parameters::SimulationControl::
+                            TimeSteppingMethod /*time_stepping_method*/)
 {
-  assemble_system<false>(time_stepping_method);
+  assemble_system_rhs();
 }
 
 
 template <int dim>
-template <bool assemble_matrix>
 void
-Tracer<dim>::assemble_system(
-  const Parameters::SimulationControl::TimeSteppingMethod time_stepping_method)
+Tracer<dim>::setup_assemblers()
 {
-  const double tracer_diffusivity =
-    simulation_parameters.physical_properties.tracer_diffusivity;
+  this->assemblers.clear();
 
-  if (assemble_matrix)
-    system_matrix = 0;
-  system_rhs = 0;
-
-  // Vector for the BDF coefficients
-  // The coefficients are stored in the following fashion :
-  // 0 - n+1
-  // 1 - n
-  // 2 - n-1
-  // 3 - n-2
-  std::vector<double> time_steps_vector =
-    simulation_control->get_time_steps_vector();
-
-  // Time steps and inverse time steps which is used for numerous calculations
-  const double dt  = time_steps_vector[0];
-  const double sdt = 1. / dt;
-
-
-  Vector<double> bdf_coefs;
-
-  if (time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::bdf1 ||
-      time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::steady_bdf)
-    bdf_coefs = bdf_coefficients(1, time_steps_vector);
-
-  if (time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-    bdf_coefs = bdf_coefficients(2, time_steps_vector);
-
-  if (time_stepping_method ==
-      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-    bdf_coefs = bdf_coefficients(3, time_steps_vector);
-
-  if (time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk22_1 ||
-      time_stepping_method ==
-        Parameters::SimulationControl::TimeSteppingMethod::sdirk33_1)
+  // Time-stepping schemes
+  if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      throw std::runtime_error(
-        "SDIRK schemes are not supported by tracer physics");
+      this->assemblers.push_back(
+        std::make_shared<TracerAssemblerBDF<dim>>(this->simulation_control));
     }
+  // Core assembler
+  this->assemblers.push_back(std::make_shared<TracerAssemblerCore<dim>>(
+    this->simulation_control, this->simulation_parameters.physical_properties));
+}
 
+template <int dim>
+void
+Tracer<dim>::assemble_system_matrix()
+{
+  this->system_matrix = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = TracerScratchData<dim>(*this->fe,
+                                             *this->cell_quadrature,
+                                             *this->mapping,
+                                             dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &Tracer::assemble_local_system_matrix,
+                  &Tracer::copy_local_matrix_to_global_matrix,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  system_matrix.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_local_system_matrix(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  TracerScratchData<dim> &                              scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
 
   auto &source_term = simulation_parameters.source_term->tracer_source;
   source_term.set_time(simulation_control->get_current_time());
 
-  FEValues<dim> fe_values_tracer(*mapping,
-                                 *fe,
-                                 *cell_quadrature,
-                                 update_values | update_gradients |
-                                   update_quadrature_points |
-                                   update_JxW_values | update_hessians);
-
-  auto &evaluation_point = this->get_evaluation_point();
-
-  const unsigned int dofs_per_cell = fe->dofs_per_cell;
-
-  FullMatrix<double> cell_matrix(dofs_per_cell, dofs_per_cell);
-  Vector<double>     cell_rhs(dofs_per_cell);
-  std::vector<types::global_dof_index> local_dof_indices(dofs_per_cell);
-  const unsigned int                   n_q_points = cell_quadrature->size();
-  std::vector<double>                  source_term_values(n_q_points);
-
-
-  const MappingQ<dim> mapping(
-    fe->degree, simulation_parameters.fem_parameters.qmapping_all);
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
 
   const DoFHandler<dim> *dof_handler_fluid =
     multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
-  FEValues<dim> fe_values_flow(dof_handler_fluid->get_fe(),
-                               *cell_quadrature,
-                               update_values | update_quadrature_points |
-                                 update_gradients);
 
-  // Shape functions and gradients
-  std::vector<double>         phi_T(dofs_per_cell);
-  std::vector<Tensor<1, dim>> grad_phi_T(dofs_per_cell);
-  std::vector<Tensor<2, dim>> hess_phi_T(dofs_per_cell);
-  std::vector<double>         laplacian_phi_T(dofs_per_cell);
+  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
 
-
-  // Velocity values
-  const FEValuesExtractors::Vector velocities(0);
-  const FEValuesExtractors::Scalar pressure(dim);
-
-  std::vector<Tensor<1, dim>> velocity_values(n_q_points);
-  std::vector<Tensor<2, dim>> velocity_gradient_values(n_q_points);
-
-  std::vector<double>         present_tracer_values(n_q_points);
-  std::vector<Tensor<1, dim>> tracer_gradients(n_q_points);
-  std::vector<double>         present_tracer_laplacians(n_q_points);
-
-  // Values for backward Euler scheme
-  std::vector<double> p1_tracer_values(n_q_points);
-  std::vector<double> p2_tracer_values(n_q_points);
-  std::vector<double> p3_tracer_values(n_q_points);
-
-  for (const auto &cell : dof_handler.active_cell_iterators())
+  if (multiphysics->fluid_dynamics_is_block())
     {
-      if (cell->is_locally_owned())
-        {
-          cell_matrix = 0;
-          cell_rhs    = 0;
-          double h    = 0;
-
-          if (dim == 2)
-            h = std::sqrt(4. * cell->measure() / M_PI) / fe->degree;
-          else if (dim == 3)
-            h = pow(6 * cell->measure() / M_PI, 1. / 3.) / fe->degree;
-
-          fe_values_tracer.reinit(cell);
-
-          fe_values_tracer.get_function_gradients(evaluation_point,
-                                                  tracer_gradients);
-
-
-          typename DoFHandler<dim>::active_cell_iterator velocity_cell(
-            &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
-
-          fe_values_flow.reinit(velocity_cell);
-
-          if (multiphysics->fluid_dynamics_is_block())
-            {
-              fe_values_flow[velocities].get_function_values(
-                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-                velocity_values);
-              fe_values_flow[velocities].get_function_gradients(
-                *multiphysics->get_block_solution(PhysicsID::fluid_dynamics),
-                velocity_gradient_values);
-            }
-          else
-            {
-              fe_values_flow[velocities].get_function_values(
-                *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-                velocity_values);
-              fe_values_flow[velocities].get_function_gradients(
-                *multiphysics->get_solution(PhysicsID::fluid_dynamics),
-                velocity_gradient_values);
-            }
-
-          // Gather present value
-          fe_values_tracer.get_function_values(evaluation_point,
-                                               present_tracer_values);
-
-          // Gather present laplacian
-          fe_values_tracer.get_function_laplacians(evaluation_point,
-                                                   present_tracer_laplacians);
-
-          // Gather the previous time steps for tracer depending on
-          // the number of stages of the time integration method
-          if (time_stepping_method !=
-              Parameters::SimulationControl::TimeSteppingMethod::steady)
-            {
-              fe_values_tracer.get_function_values(previous_solutions[0],
-                                                   p1_tracer_values);
-            }
-
-          if (time_stepping_method_uses_two_previous_solutions(
-                time_stepping_method))
-            {
-              fe_values_tracer.get_function_values(previous_solutions[1],
-                                                   p2_tracer_values);
-            }
-
-          if (time_stepping_method_uses_three_previous_solutions(
-                time_stepping_method))
-            {
-              fe_values_tracer.get_function_values(previous_solutions[2],
-                                                   p3_tracer_values);
-            }
-
-          source_term.value_list(fe_values_tracer.get_quadrature_points(),
-                                 source_term_values);
-
-
-          // assembling local matrix and right hand side
-          for (const unsigned int q :
-               fe_values_tracer.quadrature_point_indices())
-            {
-              // Store JxW in local variable for faster access
-              const double JxW = fe_values_tracer.JxW(q);
-
-              const auto velocity = velocity_values[q];
-
-              // Shock capturing viscosity term
-              const double order =
-                this->simulation_parameters.fem_parameters.tracer_order;
-
-
-              const double vdcdd = (0.5 * h) *
-                                   (velocity.norm() * velocity.norm()) *
-                                   pow(tracer_gradients[q].norm() * h, order);
-
-              Tensor<1, dim> s = velocity / (velocity.norm() + 1e-12);
-              Tensor<1, dim> r =
-                tracer_gradients[q] / (tracer_gradients[q].norm() + 1e-12);
-
-              const Tensor<2, dim> k_corr      = (r * s) * outer_product(s, s);
-              const Tensor<2, dim> rr          = outer_product(r, r);
-              const Tensor<2, dim> dcdd_factor = rr - k_corr;
-
-
-              const double d_vdcdd =
-                order * (0.5 * h * h) * (velocity.norm() * velocity.norm()) *
-                pow(tracer_gradients[q].norm() * h, order - 1);
-
-
-
-              // Calculation of the magnitude of the velocity for the
-              // stabilization parameter
-              const double u_mag = std::max(velocity.norm(), 1e-12);
-
-              // Calculation of the GLS stabilization parameter. The
-              // stabilization parameter used is different if the simulation is
-              // steady or unsteady. In the unsteady case it includes the value
-              // of the time-step
-              const double tau =
-                is_steady(time_stepping_method) ?
-                  1. / std::sqrt(
-                         std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * tracer_diffusivity / (h * h), 2)) :
-                  1. / std::sqrt(
-                         std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
-                         9 * std::pow(4 * tracer_diffusivity / (h * h), 2));
-
-              // Gather the shape functions and their gradient
-              for (unsigned int k : fe_values_tracer.dof_indices())
-                {
-                  phi_T[k]      = fe_values_tracer.shape_value(k, q);
-                  grad_phi_T[k] = fe_values_tracer.shape_grad(k, q);
-                  hess_phi_T[k] = fe_values_tracer.shape_hessian(k, q);
-
-                  laplacian_phi_T[k] = trace(hess_phi_T[k]);
-                }
-
-              for (const unsigned int i : fe_values_tracer.dof_indices())
-                {
-                  const auto phi_T_i      = phi_T[i];
-                  const auto grad_phi_T_i = grad_phi_T[i];
-
-
-                  if (assemble_matrix)
-                    {
-                      for (const unsigned int j :
-                           fe_values_tracer.dof_indices())
-                        {
-                          const auto phi_T_j           = phi_T[j];
-                          const auto grad_phi_T_j      = grad_phi_T[j];
-                          const auto laplacian_phi_T_j = laplacian_phi_T[j];
-
-
-                          // Weak form : - D * laplacian T +  u * gradT - f=0
-                          cell_matrix(i, j) +=
-                            (tracer_diffusivity * grad_phi_T_i * grad_phi_T_j +
-                             phi_T_i * velocity * grad_phi_T_j) *
-                            JxW;
-
-                          auto strong_jacobian =
-                            velocity * grad_phi_T_j -
-                            tracer_diffusivity * laplacian_phi_T_j;
-
-                          if (DCDD)
-                            strong_jacobian += -vdcdd * laplacian_phi_T_j;
-
-
-                          // Mass matrix for transient simulation
-                          if (is_bdf(time_stepping_method))
-                            {
-                              cell_matrix(i, j) +=
-                                phi_T_j * phi_T_i * bdf_coefs[0] * JxW;
-
-                              strong_jacobian += phi_T_j * bdf_coefs[0];
-                            }
-
-                          cell_matrix(i, j) +=
-                            tau * strong_jacobian *
-                            (grad_phi_T_i * velocity_values[q]) * JxW;
-
-                          if (DCDD)
-                            {
-                              cell_matrix(i, j) +=
-                                vdcdd *
-                                scalar_product(grad_phi_T_j,
-                                               dcdd_factor * grad_phi_T_i) *
-                                JxW;
-
-                              cell_matrix(i, j) +=
-                                d_vdcdd * grad_phi_T_j.norm() *
-                                scalar_product(tracer_gradients[q],
-                                               dcdd_factor * grad_phi_T_i) *
-                                JxW;
-                            }
-                        }
-                    }
-
-                  // rhs for : - D * laplacian T +  u * grad T - f=0
-                  cell_rhs(i) -=
-                    (tracer_diffusivity * grad_phi_T_i * tracer_gradients[q] +
-                     phi_T_i * velocity_values[q] * tracer_gradients[q] -
-                     source_term_values[q] * phi_T_i) *
-                    JxW;
-
-                  // Calculate the strong residual for GLS stabilization
-                  auto strong_residual =
-                    velocity_values[q] * tracer_gradients[q] -
-                    tracer_diffusivity * present_tracer_laplacians[q];
-
-                  if (DCDD)
-                    strong_residual += -vdcdd * present_tracer_laplacians[q];
-
-
-
-                  // Residual associated with BDF schemes
-                  if (time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::bdf1 ||
-                      time_stepping_method == Parameters::SimulationControl::
-                                                TimeSteppingMethod::steady_bdf)
-                    {
-                      cell_rhs(i) -= (bdf_coefs[0] * present_tracer_values[q] +
-                                      bdf_coefs[1] * p1_tracer_values[q]) *
-                                     phi_T_i * JxW;
-
-                      strong_residual +=
-                        (bdf_coefs[0] * present_tracer_values[q] +
-                         bdf_coefs[1] * p1_tracer_values[q]);
-                    }
-
-                  if (time_stepping_method ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-                    {
-                      cell_rhs(i) -= (bdf_coefs[0] * present_tracer_values[q] +
-                                      bdf_coefs[1] * p1_tracer_values[q] +
-                                      bdf_coefs[2] * p2_tracer_values[q]) *
-                                     phi_T_i * JxW;
-
-                      strong_residual +=
-                        (bdf_coefs[0] * present_tracer_values[q] +
-                         bdf_coefs[1] * p1_tracer_values[q] +
-                         bdf_coefs[2] * p2_tracer_values[q]);
-                    }
-
-                  if (time_stepping_method ==
-                      Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-                    {
-                      cell_rhs(i) -= (bdf_coefs[0] * present_tracer_values[q] +
-                                      bdf_coefs[1] * p1_tracer_values[q] +
-                                      bdf_coefs[2] * p2_tracer_values[q] +
-                                      bdf_coefs[3] * p3_tracer_values[q]) *
-                                     phi_T_i * JxW;
-
-                      strong_residual +=
-                        (bdf_coefs[0] * present_tracer_values[q] +
-                         bdf_coefs[1] * p1_tracer_values[q] +
-                         bdf_coefs[2] * p2_tracer_values[q] +
-                         bdf_coefs[3] * p3_tracer_values[q]);
-                    }
-
-
-                  cell_rhs(i) -=
-                    tau *
-                    (strong_residual * (grad_phi_T_i * velocity_values[q])) *
-                    JxW;
-
-                  if (DCDD)
-                    {
-                      cell_rhs(i) +=
-                        -vdcdd *
-                        scalar_product(tracer_gradients[q],
-                                       dcdd_factor * grad_phi_T_i) *
-                        JxW;
-                    }
-                }
-
-            } // end loop on quadrature points
-
-          // transfer cell contribution into global objects
-          cell->get_dof_indices(local_dof_indices);
-          zero_constraints.distribute_local_to_global(cell_matrix,
-                                                      cell_rhs,
-                                                      local_dof_indices,
-                                                      system_matrix,
-                                                      system_rhs);
-        } // end loop active cell
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
     }
-  system_matrix.compress(VectorOperation::add);
-  system_rhs.compress(VectorOperation::add);
+  else
+    {
+      scratch_data.reinit_velocity(
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+  copy_data.reset();
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_matrix(scratch_data, copy_data);
+    }
+
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
 }
 
+template <int dim>
+void
+Tracer<dim>::copy_local_matrix_to_global_matrix(
+  const StabilizedMethodsCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_matrix,
+                                              copy_data.local_dof_indices,
+                                              system_matrix);
+}
+
+
+template <int dim>
+void
+Tracer<dim>::assemble_system_rhs()
+{
+  // TimerOutput::Scope t(this->computing_timer, "Assemble RHS");
+  this->system_rhs = 0;
+  setup_assemblers();
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  auto scratch_data = TracerScratchData<dim>(*this->fe,
+                                             *this->cell_quadrature,
+                                             *this->mapping,
+                                             dof_handler_fluid->get_fe());
+
+  WorkStream::run(this->dof_handler.begin_active(),
+                  this->dof_handler.end(),
+                  *this,
+                  &Tracer::assemble_local_system_rhs,
+                  &Tracer::copy_local_rhs_to_global_rhs,
+                  scratch_data,
+                  StabilizedMethodsCopyData(this->fe->n_dofs_per_cell(),
+                                            this->cell_quadrature->size()));
+
+  this->system_rhs.compress(VectorOperation::add);
+}
+
+template <int dim>
+void
+Tracer<dim>::assemble_local_system_rhs(
+  const typename DoFHandler<dim>::active_cell_iterator &cell,
+  TracerScratchData<dim> &                              scratch_data,
+  StabilizedMethodsCopyData &                           copy_data)
+{
+  copy_data.cell_is_local = cell->is_locally_owned();
+  if (!cell->is_locally_owned())
+    return;
+
+  auto &source_term = simulation_parameters.source_term->tracer_source;
+  source_term.set_time(simulation_control->get_current_time());
+
+  scratch_data.reinit(cell,
+                      this->evaluation_point,
+                      this->previous_solutions,
+                      this->solution_stages,
+                      &source_term);
+
+  const DoFHandler<dim> *dof_handler_fluid =
+    multiphysics->get_dof_handler(PhysicsID::fluid_dynamics);
+
+  typename DoFHandler<dim>::active_cell_iterator velocity_cell(
+    &(*triangulation), cell->level(), cell->index(), dof_handler_fluid);
+
+  if (multiphysics->fluid_dynamics_is_block())
+    {
+      scratch_data.reinit_velocity(velocity_cell,
+                                   *multiphysics->get_block_solution(
+                                     PhysicsID::fluid_dynamics));
+    }
+  else
+    {
+      scratch_data.reinit_velocity(
+        velocity_cell, *multiphysics->get_solution(PhysicsID::fluid_dynamics));
+    }
+
+  copy_data.reset();
+
+  for (auto &assembler : this->assemblers)
+    {
+      assembler->assemble_rhs(scratch_data, copy_data);
+    }
+
+  cell->get_dof_indices(copy_data.local_dof_indices);
+}
+
+template <int dim>
+void
+Tracer<dim>::copy_local_rhs_to_global_rhs(
+  const StabilizedMethodsCopyData &copy_data)
+{
+  if (!copy_data.cell_is_local)
+    return;
+
+  const AffineConstraints<double> &constraints_used = this->zero_constraints;
+  constraints_used.distribute_local_to_global(copy_data.local_rhs,
+                                              copy_data.local_dof_indices,
+                                              system_rhs);
+}
 
 template <int dim>
 void
@@ -514,7 +319,6 @@ Tracer<dim>::finish_simulation()
         Parameters::Verbosity::verbose)
     {
       error_table.omit_column_from_convergence_rate_evaluation("cells");
-
 
       if (simulation_parameters.simulation_control.method ==
           Parameters::SimulationControl::TimeSteppingMethod::steady)

@@ -57,9 +57,9 @@ public:
    *
    */
   RPTCellReconstruction(
-    Parameters::RPTParameters               &rpt_parameters,
+    Parameters::RPTParameters &              rpt_parameters,
     Parameters::RPTReconstructionParameters &rpt_reconstruction_parameters,
-    Parameters::DetectorParameters          &rpt_detector_parameters);
+    Parameters::DetectorParameters &         rpt_detector_parameters);
 
   /**
    * @brief Set up grid and find positions for every unknown particle positions.
@@ -179,7 +179,7 @@ private:
 
   std::vector<Point<dim>> reconstruction_positions; // Found positions
   std::vector<double>
-    cells_volumes; // Cell volumes of the cell that contains positions
+                            cells_volumes; // Cell volumes of the cell that contains positions
   std::vector<Point<dim>>   known_positions;  // Known positions to analyse
   std::vector<unsigned int> final_cell_level; // Level of the best cells
 
