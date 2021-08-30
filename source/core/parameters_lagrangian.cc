@@ -998,10 +998,9 @@ namespace Parameters
         prm.declare_entry(
           "motion type",
           "none",
-          Patterns::Selection(
-            "none|translational|rotational|translational_rotational"),
+          Patterns::Selection("none|translational|rotational|cylinder_motion"),
           "Choosing grid motion type. "
-          "Choices are <none|translational|rotational|translational_rotational>.");
+          "Choices are <none|translational|rotational|cylinder_motion>.");
 
         prm.declare_entry("grid translational velocity x",
                           "0",
@@ -1025,6 +1024,21 @@ namespace Parameters
                           "0",
                           Patterns::Integer(),
                           "grid rotational axis");
+
+        prm.declare_entry("triangulation mass",
+                          "1",
+                          Patterns::Double(),
+                          "mass of triangulation");
+
+        prm.declare_entry("triangulation MOI",
+                          "1",
+                          Patterns::Double(),
+                          "MOI of triangulation");
+
+        prm.declare_entry("cylinder rotation axis",
+                          "0",
+                          Patterns::Integer(),
+                          "cylinder rotation axis");
       }
       prm.leave_subsection();
     }
@@ -1052,6 +1066,13 @@ namespace Parameters
             if (dim == 3)
               grid_translational_velocity[2] =
                 prm.get_double("grid translational velocity z");
+          }
+        else if (motion == "cylinder_motion")
+          {
+            motion_type            = MotionType::cylinder_motion;
+            triangulation_mass     = prm.get_double("triangulation mass");
+            triangulation_MOI      = prm.get_double("triangulation MOI");
+            cylinder_rotation_axis = prm.get_integer("cylinder rotation axis");
           }
         else if (motion == "none")
           {

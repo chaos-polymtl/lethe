@@ -357,6 +357,7 @@ namespace Parameters
       {
         translational,
         rotational,
+        cylinder_motion,
         none
       } motion_type;
 
@@ -369,6 +370,14 @@ namespace Parameters
       // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
       // 1=y axis, 2=z axis.
       unsigned int grid_rotational_axis;
+
+      // Mass and MOI of the triangulation
+      double triangulation_mass;
+      double triangulation_MOI;
+
+      // Cylinder axis (the cylinder can only rotate around its axis. Similar
+      // to deal.II, we use 0=x axis, 1=y and 2=z axis.
+      unsigned int cylinder_rotation_axis;
 
       static void
       declare_parameters(ParameterHandler &prm);
