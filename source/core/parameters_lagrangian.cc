@@ -1013,11 +1013,11 @@ namespace Parameters
                           "mass of triangulation in kg");
         prm.declare_entry("center of mass",
                           "0,0,0",
-                          Patterns::List(Patterns::Double(), dim, dim),
+                          Patterns::List(Patterns::Double(), 3, 3),
                           "coordinate of center of mass");
         prm.declare_entry("moment of inertia",
                           "0,0,0",
-                          Patterns::List(Patterns::Double(), dim, dim),
+                          Patterns::List(Patterns::Double(), 3, 3),
                           "Boundary inertia around x,y,z axis");
         prm.declare_entry("cylinder rotation axis",
                           "0",
@@ -1025,11 +1025,11 @@ namespace Parameters
                           "cylinder rotation axis");
         prm.declare_entry("initial translational velocity",
                           "0,0,0",
-                          Patterns::List(Patterns::Double(), dim, dim),
+                          Patterns::List(Patterns::Double(), 3, 3),
                           "initial boundary translational velocity tensor");
         prm.declare_entry("initial rotational velocity",
                           "0,0,0",
-                          Patterns::List(Patterns::Double(), dim, dim),
+                          Patterns::List(Patterns::Double(), 3, 3),
                           "initial boundary rotational velocity tensor");
       }
       prm.leave_subsection();
