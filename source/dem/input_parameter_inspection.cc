@@ -96,6 +96,14 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
               " axis or 1 for rotation around y axis or 2 for rotation around z axis.");
         }
     }
+
+  // Check to see if the cylinder motion is applied to cylinder triangulation
+  if (parameters.grid_motion.motion_type ==
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion &&
+      parameters.mesh.grid_type != "cylinder")
+    pcout
+      << "Warning: cylinder_motion should only be used for cylindrical geometries."
+      << std::endl;
 }
 
 template void
