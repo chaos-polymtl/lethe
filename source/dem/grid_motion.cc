@@ -88,6 +88,8 @@ GridMotion<dim>::move_grid_translational(
   GridTools::shift(shift_vector, triangulation);
 }
 
+// Note that the cylinder_motion is only available for rotation of
+// three-dimensional cylindrical geometries at the moment.
 template <>
 void GridMotion<3>::cylinder_motion(
   parallel::distributed::Triangulation<3> &triangulation)
@@ -95,12 +97,22 @@ void GridMotion<3>::cylinder_motion(
   unsigned int this_mpi_process(
     Utilities::MPI::this_mpi_process(MPI_COMM_WORLD));
 
+  // Calculation of rotation angle is only performed on one process in
+  // parallel simulations
   if (this_mpi_process == 0)
     {
       // Update forces like torque and force
       std::map<unsigned int, Tensor<1, 3>> force_on_walls, torque_on_walls;
+
+      // Calling get_force() and get_torque() functions in PWContactForce class
       force_on_walls  = pw_contact_force_object->get_force();
       torque_on_walls = pw_contact_force_object->get_torque();
+
+      // At the moment, we only define rotational motion of the cylindrical
+      // triangulations. For this purpose, the linear forces applied from
+      // particles collision with triangulation boundaries are not necessary
+      // (and hence, commented in the following). For enabling the linear
+      // forces, one should uncomment the commented lines in the following.
 
       // triangulation_forces  = 0;
       triangulation_torques = 0;
@@ -111,6 +123,7 @@ void GridMotion<3>::cylinder_motion(
         }
       Tensor<1, 3> rotational_velocity_one_time_step_further;
 
+      // Calculation of rotation angle
       for (unsigned int i = 0; i < 3; i++)
         {
           if (triangulation_inertia[i] != 0)
@@ -128,17 +141,23 @@ void GridMotion<3>::cylinder_motion(
       boundary_rotational_velocity = rotational_velocity_one_time_step_further;
     }
 
+  // The following line enables locking the rotation of the cylinder around
+  // desired axis (cylinder_rotation_unit_vector which is equivalent to
+  // "cylinder rotation axis" parameter in the parameter handler.
   double rotation_angle_around_axis =
     rotation_angle * cylinder_rotation_unit_vector;
+
+  // Broadcast the rotation angle to all the processes
   rotation_angle_around_axis =
     Utilities::MPI::broadcast(MPI_COMM_WORLD, rotation_angle_around_axis);
 
+  // Apply the rotation using rotate function
   GridTools::rotate(rotation_angle_around_axis, rotation_axis, triangulation);
 }
 
 template <>
 void GridMotion<2>::cylinder_motion(
-  parallel::distributed::Triangulation<2> &triangulation)
+  parallel::distributed::Triangulation<2> & /*triangulation*/)
 {}
 
 template <int dim>

@@ -112,7 +112,12 @@ private:
     parallel::distributed::Triangulation<dim> &triangulation);
 
   /**
-   * Carries out translational motion of the triangulation
+   * Carries out cylinderical grid motion due to collision with particles. This
+   * type of grid motion can only be used for rotation of three-dimensional
+   * cylinders at the moment. We also lock the rotation axis by defining
+   * "cylinder rotation axis" parameter in the parameter handler file. By using
+   * this, the cylindrical triangulation is only allowed to rotate around the
+   * defined "cylinder rotation axis".
    *
    * @param triangulation Triangulation
    */
