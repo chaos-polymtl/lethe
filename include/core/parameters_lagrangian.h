@@ -247,7 +247,7 @@ namespace Parameters
       // Enable force post-processing
       bool calculate_force_torque;
 
-      // Choosing how the outputs is gonna be displayed
+      // Choosing how the outputs is displayed
       Parameters::Verbosity force_torque_verbosity;
 
       // Output frequency
@@ -255,9 +255,6 @@ namespace Parameters
 
       // Prefix for simulation output
       std::string force_torque_output_name;
-
-      // Center of mass
-      Point<dim> point_center_mass;
 
       void
       declare_parameters(ParameterHandler &prm);
@@ -373,11 +370,22 @@ namespace Parameters
 
       // Mass and MOI of the triangulation
       double triangulation_mass;
-      double triangulation_MOI;
+
+      // Center of mass of the triangulation
+      Point<dim> triangulation_center_mass;
+
+      // Triangulation inertia
+      Tensor<1, dim> triangulation_inertia;
 
       // Cylinder axis (the cylinder can only rotate around its axis. Similar
       // to deal.II, we use 0=x axis, 1=y and 2=z axis.
       unsigned int cylinder_rotation_axis;
+
+      // Initial translational boundary velocity
+      Tensor<1, dim> boundary_initial_translational_velocity;
+
+      // Initial rotational boundary velocity
+      Tensor<1, dim> boundary_initial_rotational_velocity;
 
       static void
       declare_parameters(ParameterHandler &prm);

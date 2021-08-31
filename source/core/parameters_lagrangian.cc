@@ -596,7 +596,8 @@ namespace Parameters
     ForceTorqueOnWall<dim>::declare_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("boundary forces");
-      prm.declare_entry("calculation",
+
+      prm.declare_entry("calculate force and torque",
                         "false",
                         Patterns::Bool(),
                         "Enable calculation of forces");
@@ -614,21 +615,6 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
-      prm.enter_subsection("center of mass coordinate");
-      prm.declare_entry("x",
-                        "0",
-                        Patterns::Double(),
-                        "X coordinate of center of mass");
-      prm.declare_entry("y",
-                        "0",
-                        Patterns::Double(),
-                        "Y coordinate of center of mass");
-      prm.declare_entry("z",
-                        "0",
-                        Patterns::Double(),
-                        "Z coordinate of center of mass");
-      prm.leave_subsection();
-
       prm.leave_subsection();
     }
 
@@ -637,7 +623,8 @@ namespace Parameters
     ForceTorqueOnWall<dim>::parse_parameters(ParameterHandler &prm)
     {
       prm.enter_subsection("boundary forces");
-      calculate_force_torque    = prm.get_bool("calculation");
+
+      calculate_force_torque    = prm.get_bool("calculate force and torque");
       const std::string verbose = prm.get("verbosity");
       if (verbose == "quiet")
         force_torque_verbosity = Parameters::Verbosity::quiet;
@@ -649,12 +636,7 @@ namespace Parameters
         }
       force_torque_output_name = prm.get("filename");
       output_frequency         = prm.get_integer("output frequency");
-      prm.enter_subsection("center of mass coordinate");
-      point_center_mass[0] = prm.get_double("x");
-      point_center_mass[1] = prm.get_double("y");
-      if (dim == 3)
-        point_center_mass[2] = prm.get_double("z");
-      prm.leave_subsection();
+
       prm.leave_subsection();
     }
 
@@ -1028,17 +1010,27 @@ namespace Parameters
         prm.declare_entry("triangulation mass",
                           "1",
                           Patterns::Double(),
-                          "mass of triangulation");
-
-        prm.declare_entry("triangulation MOI",
-                          "1",
-                          Patterns::Double(),
-                          "MOI of triangulation");
-
+                          "mass of triangulation in kg");
+        prm.declare_entry("center of mass",
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(), dim, dim),
+                          "coordinate of center of mass");
+        prm.declare_entry("moment of inertia",
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(), dim, dim),
+                          "Boundary inertia around x,y,z axis");
         prm.declare_entry("cylinder rotation axis",
                           "0",
                           Patterns::Integer(),
                           "cylinder rotation axis");
+        prm.declare_entry("initial translational velocity",
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(), dim, dim),
+                          "initial boundary translational velocity tensor");
+        prm.declare_entry("initial rotational velocity",
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(), dim, dim),
+                          "initial boundary rotational velocity tensor");
       }
       prm.leave_subsection();
     }
@@ -1071,8 +1063,32 @@ namespace Parameters
           {
             motion_type            = MotionType::cylinder_motion;
             triangulation_mass     = prm.get_double("triangulation mass");
-            triangulation_MOI      = prm.get_double("triangulation MOI");
             cylinder_rotation_axis = prm.get_integer("cylinder rotation axis");
+
+            std::vector<double> vec_center_mass = Utilities::string_to_double(
+              Utilities::split_string_list(prm.get("center of mass")));
+            std::vector<double> vec_inertia = Utilities::string_to_double(
+              Utilities::split_string_list(prm.get("moment of inertia")));
+            for (unsigned int i = 0; i < 3; i++)
+              {
+                if (!(dim == 2 & i == 2))
+                  triangulation_center_mass[i] = vec_center_mass[i];
+                triangulation_inertia[i] = vec_inertia[i];
+              }
+
+            std::vector<double> vec_tr_vel =
+              Utilities::string_to_double(Utilities::split_string_list(
+                prm.get("initial translational velocity")));
+            std::vector<double> vec_ro_vel =
+              Utilities::string_to_double(Utilities::split_string_list(
+                prm.get("initial rotational velocity")));
+
+            for (unsigned int i = 0; i < 3; i++)
+              {
+                if (!(dim == 2 & i == 2))
+                  boundary_initial_translational_velocity[i] = vec_tr_vel[i];
+                boundary_initial_rotational_velocity[i] = vec_ro_vel[i];
+              }
           }
         else if (motion == "none")
           {

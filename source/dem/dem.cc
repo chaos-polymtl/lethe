@@ -188,10 +188,6 @@ DEMSolver<dim>::DEMSolver(DEMSolverParameters<dim> dem_parameters)
     input_parameter_inspection(parameters,
                                pcout,
                                standard_deviation_multiplier);
-
-  grid_motion_object =
-    std::make_shared<GridMotion<dim>>(parameters,
-                                      simulation_control->get_time_step());
 }
 
 template <int dim>
@@ -839,6 +835,11 @@ DEMSolver<dim>::solve()
   integrator_object       = set_integrator_type(parameters);
   pp_contact_force_object = set_pp_contact_force(parameters);
   pw_contact_force_object = set_pw_contact_force(parameters);
+
+  grid_motion_object =
+    std::make_shared<GridMotion<dim>>(parameters,
+                                      simulation_control->get_time_step(),
+                                      pw_contact_force_object);
 
   // DEM engine iterator:
   while (simulation_control->integrate())
