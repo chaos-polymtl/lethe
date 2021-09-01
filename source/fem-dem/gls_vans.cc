@@ -101,12 +101,8 @@ template <int dim>
 GLSVANSSolver<dim>::GLSVANSSolver(SimulationParameters<dim> &p_nsparam)
   : GLSNavierStokesSolver<dim>(p_nsparam)
   , void_fraction_dof_handler(*this->triangulation)
-<<<<<<< HEAD
   , fe_void_fraction(
       this->simulation_parameters.fem_parameters.void_fraction_order)
-=======
-  , fe_void_fraction(1)
->>>>>>> start assemble mechanism for vans solver
   , particle_mapping(1)
   , particle_handler(*this->triangulation,
                      particle_mapping,
@@ -1043,11 +1039,7 @@ GLSVANSSolver<dim>::post_processing()
                   previous_void_fraction[1], p2_void_fraction_values);
 
               if (scheme ==
-<<<<<<< HEAD
                   Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-=======
-                  Parameters::SimulationControl::TimeSteppingMethod::bdf2)
->>>>>>> start assemble mechanism for vans solver
                 fe_values_void_fraction.get_function_values(
                   previous_void_fraction[2], p3_void_fraction_values);
             }
