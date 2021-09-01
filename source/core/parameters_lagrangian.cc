@@ -653,7 +653,7 @@ namespace Parameters
         Utilities::split_string_list(prm.get("center of mass")));
       std::vector<double> vec_inertia = Utilities::string_to_double(
         Utilities::split_string_list(prm.get("moment of inertia")));
-      for (unsigned int i = 0; i < 3; i++)
+      for (unsigned int i = 0; i < dim; i++)
         {
           if (!(dim == 2 & i == 2))
             triangulation_center_mass[i] = vec_center_mass[i];
@@ -1054,7 +1054,7 @@ namespace Parameters
         if (motion == "rotational")
           {
             motion_type = MotionType::rotational;
-            for (unsigned int i = 0; i < 3; i++)
+            for (unsigned int i = 0; i < dim; i++)
               {
                 grid_rotational_speed[i] = ro_sp_vec[i];
               }
@@ -1079,11 +1079,10 @@ namespace Parameters
               Utilities::string_to_double(Utilities::split_string_list(
                 prm.get("initial rotational velocity")));
 
-            for (unsigned int i = 0; i < 3; i++)
+            for (unsigned int i = 0; i < dim; i++)
               {
-                if (!(dim == 2 & i == 2))
-                  boundary_initial_translational_velocity[i] = vec_tr_vel[i];
-                boundary_initial_rotational_velocity[i] = vec_ro_vel[i];
+                boundary_initial_translational_velocity[i] = vec_tr_vel[i];
+                boundary_initial_rotational_velocity[i]    = vec_ro_vel[i];
               }
           }
         else if (motion == "none")
