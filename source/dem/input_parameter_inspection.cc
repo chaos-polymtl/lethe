@@ -81,6 +81,24 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
     pcout
       << "Warning: cylinder_motion should only be used for cylindrical geometries."
       << std::endl;
+
+  // Check to see if the dem_3d solver is used for cylinder motion
+  if (parameters.grid_motion.motion_type ==
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion &&
+      dim == 2)
+    throw std::runtime_error(
+      "Grid motion of type 'cylinder_motion' can only be solved with three dimensional"
+      "(dem_3d) solver.");
+
+  // Parallel simulations with load-balancing lead to deformed manifolds in
+  // simulations with grid motion
+  if (parameters.grid_motion.motion_type !=
+        Parameters::Lagrangian::GridMotion<dim>::MotionType::none &&
+      parameters.model_parameters.load_balance_method !=
+        Parameters::Lagrangian::ModelParameters::LoadBalanceMethod::none)
+    pcout
+      << "Warning: Parallel simulations with load-balancing may lead to deformed manifolds in simulations with grid motion."
+      << std::endl;
 }
 
 template void
