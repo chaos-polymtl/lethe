@@ -74,29 +74,6 @@ input_parameter_inspection(const DEMSolverParameters<dim> &dem_parameters,
          "number range or to increase the insertion distance threshold."
       << std::endl;
 
-  // Grid motion check
-  if (parameters.grid_motion.motion_type ==
-      Parameters::Lagrangian::GridMotion<dim>::MotionType::rotational)
-    {
-      if (dim == 2)
-        {
-          if (parameters.grid_motion.grid_rotational_axis != 0 &&
-              parameters.grid_motion.grid_rotational_axis != 1)
-            throw std::runtime_error(
-              "Specified grid rotational axis is not valid, use 0 for rotation around x"
-              " axis or 1 for rotation around y axis.");
-        }
-      else if (dim == 3)
-        {
-          if (parameters.grid_motion.grid_rotational_axis != 0 &&
-              parameters.grid_motion.grid_rotational_axis != 1 &&
-              parameters.grid_motion.grid_rotational_axis != 2)
-            throw std::runtime_error(
-              "Specified grid rotational axis is not valid, use 0 for rotation around x"
-              " axis or 1 for rotation around y axis or 2 for rotation around z axis.");
-        }
-    }
-
   // Check to see if the cylinder motion is applied to cylinder triangulation
   if (parameters.grid_motion.motion_type ==
         Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion &&

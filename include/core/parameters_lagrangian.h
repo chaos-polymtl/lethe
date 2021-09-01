@@ -253,6 +253,15 @@ namespace Parameters
       // Output frequency
       unsigned int output_frequency;
 
+      // Mass and MOI of the triangulation
+      double triangulation_mass;
+
+      // Center of mass of the triangulation
+      Point<dim> triangulation_center_mass;
+
+      // Triangulation inertia
+      Tensor<1, dim> triangulation_inertia;
+
       // Prefix for simulation output
       std::string force_torque_output_name;
 
@@ -362,20 +371,7 @@ namespace Parameters
       Tensor<1, dim> grid_translational_velocity;
 
       // Rotational speed of rotating grid in rad/s
-      double grid_rotational_speed;
-
-      // Rotational axis of rotating grid. Similar to deal.II, we use 0=x axis,
-      // 1=y axis, 2=z axis.
-      unsigned int grid_rotational_axis;
-
-      // Mass and MOI of the triangulation
-      double triangulation_mass;
-
-      // Center of mass of the triangulation
-      Point<dim> triangulation_center_mass;
-
-      // Triangulation inertia
-      Tensor<1, dim> triangulation_inertia;
+      Tensor<1, dim> grid_rotational_speed;
 
       // Cylinder axis (the cylinder can only rotate around its axis. Similar
       // to deal.II, we use 0=x axis, 1=y and 2=z axis.

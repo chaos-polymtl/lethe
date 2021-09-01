@@ -96,6 +96,5 @@ end
 #---------------------------------------------------
 subsection grid motion
     set motion type                 			= rotational
-    set grid rotational speed            		= 1
-    set grid rotational axis		            	= 0
+    set grid rotational speed            		= 1,0,0
 end

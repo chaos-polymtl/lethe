@@ -615,6 +615,18 @@ namespace Parameters
                         "1",
                         Patterns::Integer(),
                         "Output frequency");
+      prm.declare_entry("triangulation mass",
+                        "1",
+                        Patterns::Double(),
+                        "mass of triangulation in kg");
+      prm.declare_entry("center of mass",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double(), 3, 3),
+                        "coordinate of center of mass");
+      prm.declare_entry("moment of inertia",
+                        "0,0,0",
+                        Patterns::List(Patterns::Double(), 3, 3),
+                        "Boundary inertia around x,y,z axis");
       prm.leave_subsection();
     }
 
@@ -636,6 +648,17 @@ namespace Parameters
         }
       force_torque_output_name = prm.get("filename");
       output_frequency         = prm.get_integer("output frequency");
+      triangulation_mass       = prm.get_double("triangulation mass");
+      std::vector<double> vec_center_mass = Utilities::string_to_double(
+        Utilities::split_string_list(prm.get("center of mass")));
+      std::vector<double> vec_inertia = Utilities::string_to_double(
+        Utilities::split_string_list(prm.get("moment of inertia")));
+      for (unsigned int i = 0; i < 3; i++)
+        {
+          if (!(dim == 2 & i == 2))
+            triangulation_center_mass[i] = vec_center_mass[i];
+          triangulation_inertia[i] = vec_inertia[i];
+        }
 
       prm.leave_subsection();
     }
@@ -984,22 +1007,15 @@ namespace Parameters
           "Choosing grid motion type. "
           "Choices are <none|translational|rotational|cylinder_motion>.");
 
-        prm.declare_entry("grid translational velocity x",
-                          "0",
-                          Patterns::Double(),
-                          "grid translational velocity x");
-        prm.declare_entry("grid translational velocity y",
-                          "0",
-                          Patterns::Double(),
-                          "grid translational velocity y");
-        prm.declare_entry("grid translational velocity z",
-                          "0",
-                          Patterns::Double(),
-                          "grid translational velocity z");
+
+        prm.declare_entry("grid translational velocity",
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(), 2, 3),
+                          "grid translational velocity");
 
         prm.declare_entry("grid rotational speed",
-                          "0",
-                          Patterns::Double(),
+                          "0,0,0",
+                          Patterns::List(Patterns::Double(), 3, 3),
                           "grid rotational speed");
 
         prm.declare_entry("grid rotational axis",
@@ -1007,18 +1023,6 @@ namespace Parameters
                           Patterns::Integer(),
                           "grid rotational axis");
 
-        prm.declare_entry("triangulation mass",
-                          "1",
-                          Patterns::Double(),
-                          "mass of triangulation in kg");
-        prm.declare_entry("center of mass",
-                          "0,0,0",
-                          Patterns::List(Patterns::Double(), 3, 3),
-                          "coordinate of center of mass");
-        prm.declare_entry("moment of inertia",
-                          "0,0,0",
-                          Patterns::List(Patterns::Double(), 3, 3),
-                          "Boundary inertia around x,y,z axis");
         prm.declare_entry("cylinder rotation axis",
                           "0",
                           Patterns::Integer(),
@@ -1041,40 +1045,32 @@ namespace Parameters
     {
       prm.enter_subsection("grid motion");
       {
+        std::vector<double> tr_sp_vec = Utilities::string_to_double(
+          Utilities::split_string_list(prm.get("grid translational velocity")));
+        std::vector<double> ro_sp_vec = Utilities::string_to_double(
+          Utilities::split_string_list(prm.get("grid rotational speed")));
+
         const std::string motion = prm.get("motion type");
         if (motion == "rotational")
           {
-            motion_type           = MotionType::rotational;
-            grid_rotational_speed = prm.get_double("grid rotational speed");
-            grid_rotational_axis  = prm.get_integer("grid rotational axis");
+            motion_type = MotionType::rotational;
+            for (unsigned int i = 0; i < 3; i++)
+              {
+                grid_rotational_speed[i] = ro_sp_vec[i];
+              }
           }
         else if (motion == "translational")
           {
             motion_type = MotionType::translational;
-            grid_translational_velocity[0] =
-              prm.get_double("grid translational velocity x");
-            grid_translational_velocity[1] =
-              prm.get_double("grid translational velocity y");
-            if (dim == 3)
-              grid_translational_velocity[2] =
-                prm.get_double("grid translational velocity z");
+            for (unsigned int i = 0; i < dim; i++)
+              {
+                grid_translational_velocity[i] = tr_sp_vec[i];
+              }
           }
         else if (motion == "cylinder_motion")
           {
             motion_type            = MotionType::cylinder_motion;
-            triangulation_mass     = prm.get_double("triangulation mass");
             cylinder_rotation_axis = prm.get_integer("cylinder rotation axis");
-
-            std::vector<double> vec_center_mass = Utilities::string_to_double(
-              Utilities::split_string_list(prm.get("center of mass")));
-            std::vector<double> vec_inertia = Utilities::string_to_double(
-              Utilities::split_string_list(prm.get("moment of inertia")));
-            for (unsigned int i = 0; i < 3; i++)
-              {
-                if (!(dim == 2 & i == 2))
-                  triangulation_center_mass[i] = vec_center_mass[i];
-                triangulation_inertia[i] = vec_inertia[i];
-              }
 
             std::vector<double> vec_tr_vel =
               Utilities::string_to_double(Utilities::split_string_list(

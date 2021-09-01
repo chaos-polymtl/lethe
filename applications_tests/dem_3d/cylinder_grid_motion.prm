@@ -95,9 +95,6 @@ end
 #---------------------------------------------------
 subsection grid motion
     set motion type                 			= cylinder_motion
-    set triangulation mass            			= 0.01
-    set moment of inertia		            	= 0.0001, 0.0001, 0.0001
-    set center of mass					= 0, 0, 0
     set cylinder rotation axis		 		= 0
 end
 
@@ -108,4 +105,7 @@ subsection boundary forces
     set calculate force and torque             	        = true
     set verbosity                                       = quiet
     set filename                                        = force_and_torque
+    set triangulation mass            			= 0.01
+    set moment of inertia		            	= 0.0001, 0.0001, 0.0001
+    set center of mass					= 0, 0, 0
 end

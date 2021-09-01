@@ -12,7 +12,7 @@ GridMotion<dim>::GridMotion(
   DEMSolverParameters<dim> &           dem_parameters,
   const double &                       dem_time_step,
   std::shared_ptr<PWContactForce<dim>> pw_contact_force_object)
-  : triangulation_mass(dem_parameters.grid_motion.triangulation_mass)
+  : triangulation_mass(dem_parameters.forces_torques.triangulation_mass)
   , dt(dem_parameters.simulation_control.dt)
 {
   // Setting grid motion type
@@ -33,8 +33,9 @@ GridMotion<dim>::GridMotion(
   else if (dem_parameters.grid_motion.motion_type ==
            Parameters::Lagrangian::GridMotion<dim>::MotionType::cylinder_motion)
     {
-      grid_motion           = &GridMotion<dim>::cylinder_motion;
-      triangulation_inertia = dem_parameters.grid_motion.triangulation_inertia;
+      grid_motion = &GridMotion<dim>::cylinder_motion;
+      triangulation_inertia =
+        dem_parameters.forces_torques.triangulation_inertia;
       GridMotion<dim>::pw_contact_force_object = pw_contact_force_object;
       rotation_axis = dem_parameters.grid_motion.cylinder_rotation_axis;
 
