@@ -383,6 +383,9 @@ namespace Parameters
       // Initial rotational boundary velocity
       Tensor<1, dim> boundary_initial_rotational_velocity;
 
+      // Inclined plane angle for cylinder motion
+      double inclined_plane_angle;
+
       static void
       declare_parameters(ParameterHandler &prm);
       void

@@ -1035,6 +1035,11 @@ namespace Parameters
                           "0,0,0",
                           Patterns::List(Patterns::Double(), 3, 3),
                           "initial boundary rotational velocity tensor");
+        prm.declare_entry(
+          "inclined plane angle",
+          "0.",
+          Patterns::Double(),
+          "inclined plane angle on which the cylinder is rolling");
       }
       prm.leave_subsection();
     }
@@ -1084,6 +1089,8 @@ namespace Parameters
                 boundary_initial_translational_velocity[i] = vec_tr_vel[i];
                 boundary_initial_rotational_velocity[i]    = vec_ro_vel[i];
               }
+
+            inclined_plane_angle = prm.get_double("inclined plane angle");
           }
         else if (motion == "none")
           {
