@@ -110,15 +110,21 @@ PWContactForce<dim>::calculate_force_and_torque_on_boundary(
       if (dim == 2)
         {
           Tensor<1, dim> r = point_contact - center_mass_container;
-          torque_on_walls[boundary_id][2] =
-            torque_on_walls[boundary_id][2] -
-            (r[0] * add_force[1] - r[1] * add_force[2]);
+          torque_on_walls[boundary_id][2] +=
+            -(r[0] * add_force[1] - r[1] * add_force[2]);
         }
       else if (dim == 3)
         {
-          torque_on_walls[boundary_id] =
-            torque_on_walls[boundary_id] -
-            cross_product_3d(point_contact - center_mass_container, add_force);
+          torque_on_walls[boundary_id] +=
+            -cross_product_3d(point_contact - center_mass_container, add_force);
+        }
+
+      if (inclined_plane_angle != 0)
+        {
+          Tensor<1, dim> gravitational_torque =
+            cross_product_3d(center_mass_container - point_contact,
+                             triangulation_mass * gravity);
+          torque_on_walls[boundary_id] += gravitational_torque;
         }
     }
 }

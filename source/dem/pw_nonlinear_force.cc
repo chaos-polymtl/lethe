@@ -113,7 +113,11 @@ PWNonLinearForce<dim>::PWNonLinearForce(
     dem_parameters.forces_torques.calculate_force_torque;
   this->center_mass_container =
     dem_parameters.forces_torques.triangulation_center_mass;
-  this->boundary_index  = boundary_index;
+  this->triangulation_mass   = dem_parameters.forces_torques.triangulation_mass;
+  this->inclined_plane_angle = dem_parameters.grid_motion.inclined_plane_angle;
+  this->boundary_index       = boundary_index;
+  for (unsigned int d = 0; d < dim; ++d)
+    this->gravity[d] = dem_parameters.physical_properties.g[d];
   this->force_on_walls  = this->initialize();
   this->torque_on_walls = this->initialize();
 }

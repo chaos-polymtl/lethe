@@ -200,7 +200,13 @@ protected:
   std::map<unsigned int, Tensor<1, dim>> torque_on_walls;
   bool                                   calculate_force_torque_on_boundary;
   Point<dim>                             center_mass_container;
+  double                                 triangulation_mass;
+  Tensor<1, dim>                         gravity;
   std::vector<types::boundary_id>        boundary_index;
+
+  // A variable for cylinder_motion (grid motion) to show the angle of the
+  // inclined plane on which the cylinder is rolling
+  double inclined_plane_angle;
 };
 
 #endif /* particle_wall_contact_force_h */
