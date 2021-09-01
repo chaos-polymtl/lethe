@@ -31,6 +31,8 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
   const double dt  = time_steps_vector[0];
   const double sdt = 1. / dt;
 
+  // Grad-div weight factor
+  const double gamma = 0.1;
 
   // Loop over the quadrature points
   for (unsigned int q = 0; q < n_q_points; ++q)
@@ -148,6 +150,16 @@ GLSVansAssemblerCore<dim>::assemble_matrix(
                     tau * (strong_jac * grad_phi_u_i * velocity +
                            strong_residual * grad_phi_u_i * phi_u_j);
                 }
+
+              // Grad-div stabilization
+              if (cfd_dem.grad_div == true)
+                {
+                  local_matrix_ij += gamma *
+                                     (div_phi_u_j * void_fraction +
+                                      phi_u_j * void_fraction_gradients) *
+                                     div_phi_u_i;
+                }
+
               local_matrix_ij *= JxW;
               local_matrix(i, j) += local_matrix_ij;
             }
@@ -196,7 +208,7 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
       const Tensor<1, dim> pressure_gradient =
         scratch_data.pressure_gradients[q];
 
-
+      // Void Fraction
       const double         void_fraction = scratch_data.void_fraction_values[q];
       const Tensor<1, dim> void_fraction_gradients =
         scratch_data.void_fraction_gradient_values[q];
@@ -224,6 +236,8 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
           1. / std::sqrt(std::pow(sdt, 2) + std::pow(2. * u_mag / h, 2) +
                          9 * std::pow(4 * viscosity / (h * h), 2));
 
+      // Grad-div weight factor
+      const double gamma = 0.1;
 
       // Calculate the strong residual for GLS stabilization
       auto strong_residual = velocity_gradient * velocity * void_fraction +
@@ -272,6 +286,16 @@ GLSVansAssemblerCore<dim>::assemble_rhs(
               local_rhs_i +=
                 -tau * (strong_residual * (grad_phi_u_i * velocity)) * JxW;
             }
+
+          // Grad-div stabilization
+          if (cfd_dem.grad_div == true)
+            {
+              local_rhs_i -= gamma *
+                             (void_fraction * velocity_divergence +
+                              velocity * void_fraction_gradients) *
+                             div_phi_u_i * JxW;
+            }
+
           local_rhs(i) += local_rhs_i;
         }
     }
@@ -391,6 +415,7 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
       for (unsigned int i = 0; i < n_dofs; ++i)
         {
           const auto phi_u_i     = scratch_data.phi_u[q][i];
+          const auto div_phi_u_i = scratch_data.div_phi_u[q][i];
           double     local_rhs_i = 0;
           for (unsigned int p = 0; p < number_of_previous_solutions(method) + 1;
                ++p)
@@ -398,6 +423,12 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
               local_rhs_i -=
                 (bdf_coefs[p] * void_fraction[0] * (velocity[p] * phi_u_i) +
                  bdf_coefs[p] * (void_fraction[p] * scratch_data.phi_p[q][i]));
+
+              if (cfd_dem.grad_div == true)
+                {
+                  local_rhs_i -=
+                    (bdf_coefs[p] * void_fraction[p]) * div_phi_u_i;
+                }
             }
           local_rhs(i) += local_rhs_i * JxW[q];
         }
@@ -406,3 +437,171 @@ GLSVansAssemblerBDF<dim>::assemble_rhs(
 
 template class GLSVansAssemblerBDF<2>;
 template class GLSVansAssemblerBDF<3>;
+
+
+template <int dim>
+void
+GLSVansAssemblerPFI<dim>::calculate_particle_fluid_interactions(
+  NavierStokesScratchData<dim> &scratch_data)
+
+{
+  unsigned int   particle_number = 0;
+  double         c_d             = 0;
+  auto &         beta_drag       = scratch_data.beta_drag;
+  Tensor<1, dim> relative_velocity;
+
+  const auto pic = scratch_data.pic;
+  beta_drag      = 0;
+
+  // Loop over particles in cell
+  for (auto &particle : pic)
+    {
+      auto particle_properties = particle.get_properties();
+
+      relative_velocity =
+        scratch_data.fluid_velocity_at_particle_location[particle_number] -
+        scratch_data.particle_velocity[particle_number];
+
+      double cell_void_fraction =
+        scratch_data.cell_void_fraction[particle_number];
+
+      // Particle's Reynolds number
+      double re = 1e-1 + relative_velocity.norm() *
+                           particle_properties[DEM::PropertiesIndex::dp] /
+                           physical_properties.viscosity;
+
+      // Drag Coefficient Calculation
+      if (cfd_dem.drag_model == Parameters::DragModel::difelice)
+        // Di Felice Drag Model CD Calculation
+        {
+          c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+                pow(cell_void_fraction,
+                    -(3.7 - 0.65 * exp(-pow((1.5 - log10(re)), 2) / 2)));
+        }
+      // Rong Drag Model CD Calculation
+      else if (cfd_dem.drag_model == Parameters::DragModel::rong)
+        {
+          c_d = pow((0.63 + 4.8 / sqrt(re)), 2) *
+                pow(cell_void_fraction,
+                    -(2.65 * (cell_void_fraction + 1) -
+                      (5.3 - (3.5 * cell_void_fraction)) *
+                        pow(cell_void_fraction, 2) *
+                        exp(-pow(1.5 - log10(re), 2) / 2)));
+        }
+
+      beta_drag += (0.5 * c_d * M_PI *
+                    pow(particle_properties[DEM::PropertiesIndex::dp], 2) / 4) *
+                   relative_velocity.norm();
+
+      particle_number += 1;
+    }
+  beta_drag = beta_drag / scratch_data.cell_volume;
+}
+
+
+template class GLSVansAssemblerPFI<2>;
+template class GLSVansAssemblerPFI<3>;
+
+template <int dim>
+void
+GLSVansAssemblerFPI<dim>::assemble_matrix(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &               strong_residual = copy_data.strong_residual;
+  auto &               strong_jacobian = copy_data.strong_jacobian;
+  auto &               local_matrix    = copy_data.local_matrix;
+  auto &               beta_drag       = scratch_data.beta_drag;
+  const Tensor<1, dim> average_particles_velocity =
+    scratch_data.average_particle_velocity;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Gather into local variables the relevant fields
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculate the strong residual for GLS stabilization
+      strong_residual[q] += // Drag Force
+        beta_drag * (velocity - average_particles_velocity);
+
+      // We loop over the column first to prevent recalculation
+      // of the strong jacobian in the inner loop
+      for (unsigned int j = 0; j < n_dofs; ++j)
+        {
+          const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+          strong_jacobian[q][j] +=
+            // Drag Force
+            beta_drag * phi_u_j;
+        }
+
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto &phi_u_i = scratch_data.phi_u[q][i];
+
+          for (unsigned int j = 0; j < n_dofs; ++j)
+            {
+              const auto &phi_u_j = scratch_data.phi_u[q][j];
+
+              local_matrix(i, j) += // Drag Force
+                beta_drag * phi_u_j * phi_u_i * JxW;
+            }
+        }
+    }
+}
+
+template <int dim>
+void
+GLSVansAssemblerFPI<dim>::assemble_rhs(
+  NavierStokesScratchData<dim> &        scratch_data,
+  StabilizedMethodsTensorCopyData<dim> &copy_data)
+{
+  // Loop and quadrature informations
+  const auto &       JxW_vec    = scratch_data.JxW;
+  const unsigned int n_q_points = scratch_data.n_q_points;
+  const unsigned int n_dofs     = scratch_data.n_dofs;
+
+  // Copy data elements
+  auto &               strong_residual = copy_data.strong_residual;
+  auto &               local_rhs       = copy_data.local_rhs;
+  auto &               beta_drag       = scratch_data.beta_drag;
+  const Tensor<1, dim> average_particles_velocity =
+    scratch_data.average_particle_velocity;
+
+  // Loop over the quadrature points
+  for (unsigned int q = 0; q < n_q_points; ++q)
+    {
+      // Velocity
+      const Tensor<1, dim> velocity = scratch_data.velocity_values[q];
+
+      // Store JxW in local variable for faster access;
+      const double JxW = JxW_vec[q];
+
+      // Calculate the strong residual for GLS stabilization
+      strong_residual[q] += // Drag Force
+        beta_drag * (velocity - average_particles_velocity);
+
+      // Assembly of the right-hand side
+      for (unsigned int i = 0; i < n_dofs; ++i)
+        {
+          const auto phi_u_i = scratch_data.phi_u[q][i];
+          // Drag Force
+          local_rhs(i) -=
+            beta_drag * (velocity - average_particles_velocity) * phi_u_i * JxW;
+        }
+    }
+}
+
+
+template class GLSVansAssemblerFPI<2>;
+template class GLSVansAssemblerFPI<3>;

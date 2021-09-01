@@ -1,5 +1,7 @@
 #include <core/bdf.h>
 #include <core/sdirk.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
 #include <solvers/navier_stokes_scratch_data.h>
 
 template <int dim>
@@ -100,6 +102,23 @@ NavierStokesScratchData<dim>::enable_void_fraction(
     std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
                                      std::vector<double>(this->n_q_points));
   void_fraction_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
+}
+
+
+template <int dim>
+void
+NavierStokesScratchData<dim>::enable_particle_fluid_interactions(
+  const unsigned int n_global_max_particles_per_cell)
+{
+  gather_particles_information     = true;
+  max_number_of_particles_per_cell = n_global_max_particles_per_cell;
+
+  // Velocities
+  particle_velocity =
+    std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
+  fluid_velocity_at_particle_location =
+    std::vector<Tensor<1, dim>>(n_global_max_particles_per_cell);
+  cell_void_fraction = std::vector<double>(n_global_max_particles_per_cell);
 }
 
 

@@ -1,11 +1,11 @@
-#include <fem-dem/gls_vans.h>
-#include <fem-dem/vans_assemblers.h>
-
 #include <deal.II/base/work_stream.h>
 
 #include <deal.II/dofs/dof_tools.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <fem-dem/gls_vans.h>
+
 
 template <int dim>
 double
@@ -706,17 +706,35 @@ void
 GLSVANSSolver<dim>::setup_assemblers()
 {
   this->assemblers.clear();
+  particle_fluid_assemblers.clear();
+
+  // Particle_Fluid Interactions Assembler
+  particle_fluid_assemblers.push_back(
+    std::make_shared<GLSVansAssemblerPFI<dim>>(
+      this->simulation_control,
+      this->simulation_parameters.physical_properties,
+      this->simulation_parameters.cfd_dem));
 
   // Time-stepping schemes
   if (is_bdf(this->simulation_control->get_assembly_method()))
     {
-      this->assemblers.push_back(
-        std::make_shared<GLSVansAssemblerBDF<dim>>(this->simulation_control));
+      this->assemblers.push_back(std::make_shared<GLSVansAssemblerBDF<dim>>(
+        this->simulation_control, this->simulation_parameters.cfd_dem));
     }
 
+  //  Fluid_Particle Interactions Assembler
+  this->assemblers.push_back(std::make_shared<GLSVansAssemblerFPI<dim>>(
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.cfd_dem));
+
+  // The core assembler should always be the last assembler to be called in the
+  // stabilized formulation as to have all strong residual and jacobian stored.
   // Core assembler
   this->assemblers.push_back(std::make_shared<GLSVansAssemblerCore<dim>>(
-    this->simulation_control, this->simulation_parameters.physical_properties));
+    this->simulation_control,
+    this->simulation_parameters.physical_properties,
+    this->simulation_parameters.cfd_dem));
 }
 
 template <int dim>
@@ -733,6 +751,10 @@ GLSVANSSolver<dim>::assemble_system_matrix()
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
                                     *this->mapping);
+
+
+  scratch_data.enable_particle_fluid_interactions(
+    particle_handler.n_global_max_particles_per_cell());
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -776,7 +798,18 @@ GLSVANSSolver<dim>::assemble_local_system_matrix(
     previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
+
+  scratch_data.reinit_particle_fluid_interactions(this->previous_solutions[0],
+                                                  nodal_void_fraction_relevant,
+                                                  particle_handler,
+                                                  this->dof_handler,
+                                                  void_fraction_dof_handler);
   copy_data.reset();
+
+  for (auto &pf_assembler : particle_fluid_assemblers)
+    {
+      pf_assembler->calculate_particle_fluid_interactions(scratch_data);
+    }
 
   for (auto &assembler : this->assemblers)
     {
@@ -816,6 +849,9 @@ GLSVANSSolver<dim>::assemble_system_rhs()
   scratch_data.enable_void_fraction(fe_void_fraction,
                                     *this->cell_quadrature,
                                     *this->mapping);
+
+  scratch_data.enable_particle_fluid_interactions(
+    particle_handler.n_global_max_particles_per_cell());
 
   WorkStream::run(
     this->dof_handler.begin_active(),
@@ -857,13 +893,25 @@ GLSVANSSolver<dim>::assemble_local_system_rhs(
     cell->index(),
     &this->void_fraction_dof_handler);
 
+
   scratch_data.reinit_void_fraction(
     void_fraction_cell,
     nodal_void_fraction_relevant,
     previous_void_fraction,
     std::vector<TrilinosWrappers::MPI::Vector>());
 
+  scratch_data.reinit_particle_fluid_interactions(this->previous_solutions[0],
+                                                  nodal_void_fraction_relevant,
+                                                  particle_handler,
+                                                  this->dof_handler,
+                                                  void_fraction_dof_handler);
+
   copy_data.reset();
+
+  for (auto &pf_assembler : particle_fluid_assemblers)
+    {
+      pf_assembler->calculate_particle_fluid_interactions(scratch_data);
+    }
 
   for (auto &assembler : this->assemblers)
     {
@@ -887,122 +935,6 @@ GLSVANSSolver<dim>::copy_local_rhs_to_global_rhs(
                                               this->system_rhs);
 }
 
-
-// template <int dim>
-// void
-// GLSVANSSolver<dim>::assemble_matrix_and_rhs(
-//  const Parameters::SimulationControl::TimeSteppingMethod
-//  time_stepping_method)
-//{
-//  TimerOutput::Scope t(this->computing_timer, "assemble_system");
-
-//  if (this->simulation_parameters.velocity_sources.type ==
-//      Parameters::VelocitySource::VelocitySourceType::none)
-//    {
-//      if (time_stepping_method ==
-//          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::steady)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//    }
-
-//  else if (this->simulation_parameters.velocity_sources.type ==
-//           Parameters::VelocitySource::VelocitySourceType::srf)
-//    {
-//      if (time_stepping_method ==
-//          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::steady)
-//        assembleGLS<true,
-//                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//    }
-//}
-// template <int dim>
-// void
-// GLSVANSSolver<dim>::assemble_rhs(
-//  const Parameters::SimulationControl::TimeSteppingMethod
-//  time_stepping_method)
-//{
-//  TimerOutput::Scope t(this->computing_timer, "assemble_rhs");
-
-//  if (this->simulation_parameters.velocity_sources.type ==
-//      Parameters::VelocitySource::VelocitySourceType::none)
-//    {
-//      if (time_stepping_method ==
-//          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::steady)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-//                    Parameters::VelocitySource::VelocitySourceType::none>();
-//    }
-//  if (this->simulation_parameters.velocity_sources.type ==
-//      Parameters::VelocitySource::VelocitySourceType::srf)
-//    {
-//      if (time_stepping_method ==
-//          Parameters::SimulationControl::TimeSteppingMethod::bdf1)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf1,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf2)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf2,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::bdf3)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::bdf3,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//      else if (time_stepping_method ==
-//               Parameters::SimulationControl::TimeSteppingMethod::steady)
-//        assembleGLS<false,
-//                    Parameters::SimulationControl::TimeSteppingMethod::steady,
-//                    Parameters::VelocitySource::VelocitySourceType::srf>();
-//    }
-//}
 
 template <int dim>
 void
@@ -1194,6 +1126,10 @@ template <int dim>
 void
 GLSVANSSolver<dim>::solve()
 {
+  // This is enforced to 1 right now because it does not provide
+  // better speed-up than using MPI. This could be eventually changed...
+  MultithreadInfo::set_thread_limit(1);
+
   read_mesh_and_manifolds(
     this->triangulation,
     this->simulation_parameters.mesh,

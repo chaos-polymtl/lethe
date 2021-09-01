@@ -14,13 +14,42 @@
  * ---------------------------------------------------------------------*/
 
 
+#include <deal.II/particles/particle_handler.h>
+
 #include <core/simulation_control.h>
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
+#include <solvers/simulation_parameters.h>
 
 #ifndef lethe_vans_assemblers_h
 #  define lethe_vans_assemblers_h
+
+/**
+ * @brief A pure virtual class that serves as an interface for all
+ * of the assemblers for the particle_fluid interqactions of the
+ * VANS equations
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+template <int dim>
+class ParticleFluidAssemblerBase
+{
+public:
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data Scratch data containing the Navier-Stokes information.
+   * It is important to note that the scratch data has to have been re-inited
+   * before calling for matrix assembly.
+   * @param copy_data Destination where the local_rhs and loc
+   */
+
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) = 0;
+};
 
 
 /**
@@ -35,9 +64,11 @@ class GLSVansAssemblerCore : public NavierStokesAssemblerBase<dim>
 {
 public:
   GLSVansAssemblerCore(std::shared_ptr<SimulationControl> simulation_control,
-                       Parameters::PhysicalProperties     physical_properties)
+                       Parameters::PhysicalProperties     physical_properties,
+                       Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
     , physical_properties(physical_properties)
+    , cfd_dem(cfd_dem)
   {}
 
   /**
@@ -51,7 +82,7 @@ public:
 
   /**
    * @brief assemble_rhs Assembles the rhs
-   * @param scratch_data (see base class)
+   * @param scratch_data (see base class)Particles::ParticleHandler
    * @param copy_data (see base class)
    */
   virtual void
@@ -62,6 +93,7 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
+  Parameters::CFDDEM                 cfd_dem;
 };
 
 /**
@@ -80,8 +112,92 @@ template <int dim>
 class GLSVansAssemblerBDF : public NavierStokesAssemblerBase<dim>
 {
 public:
-  GLSVansAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control)
+  GLSVansAssemblerBDF(std::shared_ptr<SimulationControl> simulation_control,
+                      Parameters::CFDDEM                 cfd_dem)
     : simulation_control(simulation_control)
+    , cfd_dem(cfd_dem)
+  {}
+
+  /**
+   * @brief assemble_matrix Assembles the matrix
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_matrix(NavierStokesScratchData<dim> &        scratch_data,
+                  StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  /**
+   * @brief assemble_rhs Assembles the rhs
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  assemble_rhs(NavierStokesScratchData<dim> &        scratch_data,
+               StabilizedMethodsTensorCopyData<dim> &copy_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::CFDDEM                 cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the particle_fluid interactions (PFI) for the
+ * VANS equations such as the drag force.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerPFI : public ParticleFluidAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerPFI(std::shared_ptr<SimulationControl> simulation_control,
+                      Parameters::PhysicalProperties     physical_properties,
+                      Parameters::CFDDEM                 cfd_dem)
+
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , cfd_dem(cfd_dem)
+
+  {}
+
+  /**
+   * @brief calculate_particle_fluid_interactions calculted the solid_fluid interactions
+   * @param scratch_data (see base class)
+   * @param copy_data (see base class)
+   */
+  virtual void
+  calculate_particle_fluid_interactions(
+    NavierStokesScratchData<dim> &scratch_data) override;
+
+  std::shared_ptr<SimulationControl> simulation_control;
+  Parameters::PhysicalProperties     physical_properties;
+  Parameters::CFDDEM                 cfd_dem;
+};
+
+/**
+ * @brief Class that assembles the fluid_particle interactions (FPI) for the
+ * VANS equations such as the drag force.
+ *
+ * @tparam dim An integer that denotes the number of spatial dimensions
+ *
+ * @ingroup assemblers
+ */
+
+template <int dim>
+class GLSVansAssemblerFPI : public NavierStokesAssemblerBase<dim>
+{
+public:
+  GLSVansAssemblerFPI(std::shared_ptr<SimulationControl> simulation_control,
+                      Parameters::PhysicalProperties     physical_properties,
+                      Parameters::CFDDEM                 cfd_dem)
+
+    : simulation_control(simulation_control)
+    , physical_properties(physical_properties)
+    , cfd_dem(cfd_dem)
+
   {}
 
   /**
@@ -104,6 +220,8 @@ public:
 
   std::shared_ptr<SimulationControl> simulation_control;
   Parameters::PhysicalProperties     physical_properties;
+  Parameters::CFDDEM                 cfd_dem;
 };
+
 
 #endif

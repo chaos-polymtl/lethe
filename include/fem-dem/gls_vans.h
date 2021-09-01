@@ -20,19 +20,6 @@
 #ifndef lethe_gls_vans_h
 #define lethe_gls_vans_h
 
-#include "core/bdf.h"
-#include "core/grids.h"
-#include "core/manifolds.h"
-#include "core/time_integration_utilities.h"
-#include <core/grids.h>
-#include <core/parameters.h>
-#include <core/parameters_cfd_dem.h>
-
-#include "solvers/gls_navier_stokes.h"
-
-#include <dem/dem.h>
-#include <dem/dem_properties.h>
-
 #include <deal.II/distributed/tria.h>
 
 #include <deal.II/fe/mapping_q.h>
@@ -42,6 +29,19 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+
+#include <core/grids.h>
+#include <core/parameters.h>
+#include <core/parameters_cfd_dem.h>
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
+#include <fem-dem/vans_assemblers.h>
+
+#include "core/bdf.h"
+#include "core/grids.h"
+#include "core/manifolds.h"
+#include "core/time_integration_utilities.h"
+#include "solvers/gls_navier_stokes.h"
 
 
 
@@ -116,13 +116,6 @@ private:
   finish_time_step_fd();
 
 protected:
-  //  template <bool assemble_matrix,
-  //            Parameters::SimulationControl::TimeSteppingMethod scheme,
-  //            Parameters::VelocitySource::VelocitySourceType velocity_source>
-
-  //  void
-  //  assembleGLS();
-
   /**
    *  @brief Assembles the matrix associated with the solver
    */
@@ -240,15 +233,6 @@ protected:
     assemble_system_rhs();
   }
 
-  //  virtual void
-  //  assemble_matrix_and_rhs(
-  //    const Parameters::SimulationControl::TimeSteppingMethod
-  //      time_stepping_method) override;
-
-  //  virtual void
-  //  assemble_rhs(const Parameters::SimulationControl::TimeSteppingMethod
-  //                 time_stepping_method) override;
-
   /**
    * @brief a function for adding data vectors to the data_out object for
    * post_processing additional results
@@ -281,6 +265,10 @@ private:
 
   TrilinosWrappers::MPI::Vector nodal_void_fraction_relevant;
   TrilinosWrappers::MPI::Vector nodal_void_fraction_owned;
+
+  // Assemblers for the particle_fluid interactions
+  std::vector<std::shared_ptr<ParticleFluidAssemblerBase<dim>>>
+    particle_fluid_assemblers;
 
   TrilinosWrappers::SparseMatrix system_matrix_void_fraction;
   TrilinosWrappers::MPI::Vector  system_rhs_void_fraction;
