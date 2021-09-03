@@ -14,13 +14,14 @@
  * ---------------------------------------------------------------------*/
 
 
-#include <deal.II/particles/particle_handler.h>
-
 #include <core/simulation_control.h>
+
 #include <solvers/copy_data.h>
 #include <solvers/navier_stokes_assemblers.h>
 #include <solvers/navier_stokes_scratch_data.h>
 #include <solvers/simulation_parameters.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 #ifndef lethe_vans_assemblers_h
 #  define lethe_vans_assemblers_h
