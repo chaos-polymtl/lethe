@@ -17,6 +17,9 @@
 #include <core/bdf.h>
 #include <core/parameters.h>
 
+#include <dem/dem.h>
+#include <dem/dem_properties.h>
+
 #include <deal.II/base/quadrature.h>
 
 #include <deal.II/dofs/dof_renumbering.h>
@@ -27,6 +30,8 @@
 #include <deal.II/fe/mapping.h>
 
 #include <deal.II/numerics/vector_tools.h>
+
+#include <deal.II/particles/particle_handler.h>
 
 
 #ifndef lethe_navier_stokes_scratch_data_h
@@ -87,7 +92,9 @@ public:
 
     // By default, the assembly of variables belonging to auxiliary physics is
     // disabled.
-    gather_free_surface = false;
+    gather_free_surface          = false;
+    gather_void_fraction         = false;
+    gather_particles_information = false;
   }
 
   /**
@@ -115,6 +122,13 @@ public:
       enable_free_surface(sd.fe_values_free_surface->get_fe(),
                           sd.fe_values_free_surface->get_quadrature(),
                           sd.fe_values_free_surface->get_mapping());
+
+    if (sd.gather_void_fraction)
+      enable_void_fraction(sd.fe_values_void_fraction->get_fe(),
+                           sd.fe_values_void_fraction->get_quadrature(),
+                           sd.fe_values_void_fraction->get_mapping());
+    if (sd.gather_particles_information)
+      enable_particle_fluid_interactions(sd.max_number_of_particles_per_cell);
   }
 
 
@@ -172,6 +186,11 @@ public:
               fe.system_to_component_index(d).first;
             this->force[q][d] = this->rhs_force[q](component_i);
           }
+
+        const unsigned int component_mass =
+          fe.system_to_component_index(dim).first;
+        this->mass_source[q] = this->rhs_force[q](component_mass);
+
         // Correct force to include the dynamic forcing term for flow
         // control
         force[q] = force[q] + beta_force;
@@ -250,19 +269,7 @@ public:
   void
   enable_free_surface(const FiniteElement<dim> &fe,
                       const Quadrature<dim> &   quadrature,
-                      const Mapping<dim> &      mapping)
-  {
-    gather_free_surface    = true;
-    fe_values_free_surface = std::make_shared<FEValues<dim>>(
-      mapping, fe, quadrature, update_values | update_gradients);
-
-    // Free surface
-    phase_values = std::vector<double>(this->n_q_points);
-    previous_phase_values =
-      std::vector<std::vector<double>>(maximum_number_of_previous_solutions(),
-                                       std::vector<double>(this->n_q_points));
-    phase_gradient_values = std::vector<Tensor<1, dim>>(this->n_q_points);
-  }
+                      const Mapping<dim> &      mapping);
 
   /** @brief Reinitialize the content of the scratch for the free surface
    *
@@ -301,6 +308,172 @@ public:
       }
   }
 
+  /**
+   * @brief enable_void_fraction Enables the collection of the void fraction data by the scratch
+   *
+   * @param fe FiniteElement associated with the void fraction
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+
+  void
+  enable_void_fraction(const FiniteElement<dim> &fe,
+                       const Quadrature<dim> &   quadrature,
+                       const Mapping<dim> &      mapping);
+
+  /** @brief Reinitialize the content of the scratch for the void fraction
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the void fraction FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for [epsilon]
+   *
+   * @param previous_solutions The solutions at the previous time steps for [epsilon]
+   *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [epsilon]
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_void_fraction(
+    const typename DoFHandler<dim>::active_cell_iterator &cell,
+    const VectorType &                                    current_solution,
+    const std::vector<VectorType> &                       previous_solutions,
+    const std::vector<VectorType> & /*solution_stages*/)
+  {
+    this->fe_values_void_fraction->reinit(cell);
+
+    // Gather void fraction (values, gradient)
+    this->fe_values_void_fraction->get_function_values(
+      current_solution, this->void_fraction_values);
+    this->fe_values_void_fraction->get_function_gradients(
+      current_solution, this->void_fraction_gradient_values);
+
+    // Gather previous void fraction fraction values
+    for (unsigned int p = 0; p < previous_solutions.size(); ++p)
+      {
+        this->fe_values_void_fraction->get_function_values(
+          previous_solutions[p], previous_void_fraction_values[p]);
+      }
+  }
+
+  /**
+   * @brief enable_particle_fluid_interactions Enables the calculation of the drag force by the scratch
+   *
+   * @param fe FiniteElement associated with the void fraction
+   *
+   * @param quadrature Quadrature rule of the Navier-Stokes problem assembly
+   *
+   * @param mapping Mapping used for the Navier-Stokes problem assembly
+   */
+
+  void
+  enable_particle_fluid_interactions(
+    const unsigned int n_global_max_particles_per_cell);
+
+  /** @brief Calculate the content of the scratch for the particle fluid interactions
+   *
+   * @param cell The cell over which the assembly is being carried.
+   * This cell must be compatible with the void fraction FE and not the
+   * Navier-Stokes FE
+   *
+   * @param current_solution The present value of the solution for [epsilon]
+   *
+   * @param previous_solutions The solutions at the previous time steps for [epsilon]
+   *
+   * @param solution_stages The solution at the intermediary stages (for SDIRK methods) for [epsilon]
+   *
+   */
+
+  template <typename VectorType>
+  void
+  reinit_particle_fluid_interactions(
+    const VectorType                       velocity_solution,
+    const VectorType                       void_fraction_solution,
+    const Particles::ParticleHandler<dim> &particle_handler,
+    DoFHandler<dim> &                      dof_handler,
+    DoFHandler<dim> &                      void_fraction_dof_handler)
+  {
+    const FiniteElement<dim> &fe = this->fe_values.get_fe();
+    const FiniteElement<dim> &fe_void_fraction =
+      this->fe_values_void_fraction->get_fe();
+
+    const unsigned int                   dofs_per_cell = fe.dofs_per_cell;
+    std::vector<types::global_dof_index> fluid_dof_indices(dofs_per_cell);
+    std::vector<types::global_dof_index> void_fraction_dof_indices(
+      fe_void_fraction.dofs_per_cell);
+
+    pic = particle_handler.particles_in_cell(this->fe_values.get_cell());
+
+    unsigned int particle_number = 0;
+    average_particle_velocity    = 0;
+    cell_volume                  = this->fe_values.get_cell()->measure();
+
+    // Get the local dof indices for velocity and void fraction field
+    // interpolation at particle's position
+    const auto &dh_cell =
+      typename DoFHandler<dim>::cell_iterator(*this->fe_values.get_cell(),
+                                              &dof_handler);
+    dh_cell->get_dof_indices(fluid_dof_indices);
+
+    const auto &void_fraction_dh_cell = typename DoFHandler<dim>::cell_iterator(
+      *this->fe_values_void_fraction->get_cell(), &void_fraction_dof_handler);
+    void_fraction_dh_cell->get_dof_indices(void_fraction_dof_indices);
+
+    // Loop over particles in cell
+    for (auto &particle : pic)
+      {
+        auto particle_properties = particle.get_properties();
+
+        cell_void_fraction[particle_number]                  = 0;
+        fluid_velocity_at_particle_location[particle_number] = 0;
+
+        // Stock the values of particle velocity in a tensor
+        particle_velocity[particle_number][0] =
+          particle_properties[DEM::PropertiesIndex::v_x];
+        particle_velocity[particle_number][1] =
+          particle_properties[DEM::PropertiesIndex::v_y];
+        if (dim == 3)
+          particle_velocity[particle_number][2] =
+            particle_properties[DEM::PropertiesIndex::v_z];
+
+        // Interpolate velocity and void fraction at particle position
+        // Reference location of the particle
+        auto reference_location = particle.get_reference_location();
+
+        for (unsigned int j = 0; j < dofs_per_cell; ++j)
+          {
+            const auto comp_j = fe.system_to_component_index(j).first;
+            if (comp_j < dim)
+              {
+                auto &evaluation_point = velocity_solution;
+                fluid_velocity_at_particle_location[particle_number][comp_j] +=
+                  evaluation_point[fluid_dof_indices[j]] *
+                  fe.shape_value(j, reference_location);
+              }
+          }
+        for (unsigned int j = 0; j < fe_void_fraction.dofs_per_cell; ++j)
+          {
+            cell_void_fraction[particle_number] +=
+              void_fraction_solution[void_fraction_dof_indices[j]] *
+              fe_void_fraction.shape_value(j, reference_location);
+          }
+
+        average_particle_velocity += particle_velocity[particle_number];
+        particle_number += 1;
+      }
+
+    if (particle_number != 0)
+      {
+        average_particle_velocity = average_particle_velocity / particle_number;
+      }
+  }
+
+
   // FEValues for the Navier-Stokes problem
   FEValues<dim>              fe_values;
   unsigned int               n_dofs;
@@ -312,6 +485,7 @@ public:
   std::vector<Vector<double>> rhs_force;
   Tensor<1, dim>              beta_force;
   std::vector<Tensor<1, dim>> force;
+  std::vector<double>         mass_source;
 
   // Quadrature
   std::vector<double>     JxW;
@@ -348,6 +522,31 @@ public:
   std::vector<Tensor<1, dim>>      phase_gradient_values;
   // This is stored as a shared_ptr because it is only instantiated when needed
   std::shared_ptr<FEValues<dim>> fe_values_free_surface;
+
+
+  /**
+   * Scratch component for the void fractoin auxiliary physics
+   */
+  bool                             gather_void_fraction;
+  unsigned int                     n_dofs_void_fraction;
+  std::vector<double>              void_fraction_values;
+  std::vector<std::vector<double>> previous_void_fraction_values;
+  std::vector<Tensor<1, dim>>      void_fraction_gradient_values;
+  // This is stored as a shared_ptr because it is only instantiated when needed
+  std::shared_ptr<FEValues<dim>> fe_values_void_fraction;
+
+  /**
+   * Scratch component for the particle fluid interaction auxiliary physics
+   */
+  bool                        gather_particles_information;
+  std::vector<Tensor<1, dim>> particle_velocity;
+  Tensor<1, dim>              average_particle_velocity;
+  std::vector<Tensor<1, dim>> fluid_velocity_at_particle_location;
+  std::vector<double>         cell_void_fraction;
+  unsigned int                max_number_of_particles_per_cell;
+  typename Particles::ParticleHandler<dim>::particle_iterator_range pic;
+  double                                                            cell_volume;
+  double                                                            beta_drag;
 };
 
 #endif
